@@ -1,0 +1,7 @@
+﻿	public interface IGeometryBuffer
+	{
+		IVertexBuffer VertexBuffer { get; }
+		IIndexBuffer IndexBuffer { get; }
+	}
+
+

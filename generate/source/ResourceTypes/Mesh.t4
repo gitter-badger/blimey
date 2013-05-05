@@ -1,0 +1,13 @@
+﻿	// Each model part represents a piece of geometry that uses one
+	// single effect. Multiple parts are needed for models that use
+	// more than one effect.
+	public abstract class Mesh
+        : IResource
+	{
+		public int TriangleCount;
+		public int VertexCount;
+
+		public abstract VertexDeclaration VertDecl { get; }
+
+		public IGeometryBuffer GeomBuffer;
+	}

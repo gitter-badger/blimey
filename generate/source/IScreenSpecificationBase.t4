@@ -1,0 +1,17 @@
+﻿    public interface IScreenSpecification
+    {
+        // Screen is refers to the entire screen, not your frame
+        // buffer.  So if you had a monitor with a resolution of
+        // 1024x768 and a window with size 640x360 this would
+        // return 1024x768.
+
+        // Defines the total width of the screen in question in pixels.
+        Int32 ScreenResolutionWidth { get; }
+
+        // Defines the total height of the screen in question in pixels.
+        Int32 ScreenResolutionHeight { get; }
+
+        // This is just the ratio of the width / and height from the
+        // two functions above.
+        Single ScreenResolutionAspectRatio { get; }
+    }

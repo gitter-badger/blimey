@@ -1,0 +1,7 @@
+	public enum ShaderType
+	{
+		Unlit,
+		Gouraud,
+		Phong,
+		Toon
+	}

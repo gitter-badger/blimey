@@ -1,0 +1,8 @@
+﻿	public interface IApp
+	{
+		void Initilise(ICor cor);
+
+		Boolean Update(AppTime time);
+
+		void Render();
+	}

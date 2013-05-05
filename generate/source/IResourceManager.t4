@@ -1,0 +1,6 @@
+﻿	public interface IResourceManager
+	{
+        T Load<T>(String path) where T : IResource;
+
+		IShader LoadShader(ShaderType shaderType);
+	}

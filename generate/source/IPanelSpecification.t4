@@ -1,0 +1,9 @@
+﻿	// Specifies the attributes a panel,
+	// a panel could be a screen, a touch device, or both.
+	public interface IPanelSpecification
+	{
+		Vector2 PanelPhysicalSize { get; }
+		Single PanelPhysicalAspectRatio { get; }
+
+		PanelType PanelType { get; }
+	}

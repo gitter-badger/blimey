@@ -1,0 +1,85 @@
+﻿	public class GenericGamepad
+	{
+		IInputManager _inputManager;
+
+		ButtonState _down;
+		ButtonState _left;
+		ButtonState _right;
+		ButtonState _up;
+		ButtonState _north;
+		ButtonState _south;
+		ButtonState _east;
+		ButtonState _west;
+		ButtonState _option;
+		ButtonState _pause;
+
+		public ButtonState Down { get { return _down; } }
+		public ButtonState Left { get { return _left; } }
+		public ButtonState Right { get { return _right; } }
+		public ButtonState Up { get { return _up; } }
+		public ButtonState North { get { return _north; } }
+		public ButtonState South { get { return _south; } }
+		public ButtonState East { get { return _east; } }
+		public ButtonState West { get { return _west; } }
+		public ButtonState Option { get { return _option; } }
+		public ButtonState Pause { get { return _pause; } }
+
+
+		public GenericGamepad(IInputManager inputManager)
+		{
+			_inputManager = inputManager;
+		}
+
+
+		internal void Reset()
+		{
+			_down = ButtonState.Released;
+			_left = ButtonState.Released;
+			_right = ButtonState.Released;
+			_up = ButtonState.Released;
+			_north = ButtonState.Released;
+			_south = ButtonState.Released;
+			_east = ButtonState.Released;
+			_west = ButtonState.Released;
+			_option = ButtonState.Released;
+			_pause = ButtonState.Released;
+		}
+
+		internal void Update(AppTime time)
+		{
+			this.Reset();
+
+			var xbox360Gamepad = _inputManager.GetXbox360Gamepad(PlayerIndex.One);
+			var vitaGamepad = _inputManager.GetPsmGamepad();
+
+			if( xbox360Gamepad != null )
+			{
+				if( xbox360Gamepad.DPad.Down == ButtonState.Pressed) _down = ButtonState.Pressed;
+				if( xbox360Gamepad.DPad.Left == ButtonState.Pressed) _left = ButtonState.Pressed;
+				if( xbox360Gamepad.DPad.Right == ButtonState.Pressed) _right = ButtonState.Pressed;
+				if( xbox360Gamepad.DPad.Up == ButtonState.Pressed) _up = ButtonState.Pressed;
+				if( xbox360Gamepad.Buttons.Y == ButtonState.Pressed) _north = ButtonState.Pressed;
+				if( xbox360Gamepad.Buttons.A == ButtonState.Pressed) _south = ButtonState.Pressed;
+				if( xbox360Gamepad.Buttons.B == ButtonState.Pressed) _east = ButtonState.Pressed;
+				if( xbox360Gamepad.Buttons.X == ButtonState.Pressed) _west = ButtonState.Pressed;
+				if( xbox360Gamepad.Buttons.Back == ButtonState.Pressed) _option = ButtonState.Pressed;
+				if( xbox360Gamepad.Buttons.Start == ButtonState.Pressed) _pause = ButtonState.Pressed;
+			}
+
+
+			if( vitaGamepad != null )
+			{
+				if( vitaGamepad.DPad.Down == ButtonState.Pressed) _down = ButtonState.Pressed;
+				if( vitaGamepad.DPad.Left == ButtonState.Pressed) _left = ButtonState.Pressed;
+				if( vitaGamepad.DPad.Right == ButtonState.Pressed) _right = ButtonState.Pressed;
+				if( vitaGamepad.DPad.Up == ButtonState.Pressed) _up = ButtonState.Pressed;
+				if( vitaGamepad.Buttons.Triangle == ButtonState.Pressed) _north = ButtonState.Pressed;
+				if( vitaGamepad.Buttons.Cross == ButtonState.Pressed) _south = ButtonState.Pressed;
+				if( vitaGamepad.Buttons.Circle == ButtonState.Pressed) _east = ButtonState.Pressed;
+				if( vitaGamepad.Buttons.Square == ButtonState.Pressed) _west = ButtonState.Pressed;
+				if( vitaGamepad.Buttons.Select == ButtonState.Pressed) _option = ButtonState.Pressed;
+				if( vitaGamepad.Buttons.Start == ButtonState.Pressed) _pause = ButtonState.Pressed;
+			}
+
+		}
+	}

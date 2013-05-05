@@ -1,0 +1,97 @@
+	public abstract class SystemManager
+		: ISystemManager
+	{
+		public virtual Point2 CurrentDisplaySize
+		{
+			get
+			{
+				Int32 w = ScreenSpecification.ScreenResolutionWidth;
+				Int32 h = ScreenSpecification.ScreenResolutionHeight;
+
+				GetEffectiveDisplaySize(ref w, ref h);
+
+				return new Point2(w, h);
+
+			}
+		}
+
+		void GetEffectiveDisplaySize(ref Int32 screenSpecWidth, ref Int32 screenSpecHeight)
+		{
+			if (this.CurrentOrientation == DeviceOrientation.Default ||
+			    this.CurrentOrientation == DeviceOrientation.Upsidedown )
+			{
+				return;
+			}
+			else
+			{
+				Int32 temp = screenSpecWidth;
+				screenSpecWidth = screenSpecHeight;
+				screenSpecHeight = temp;
+			}
+		}
+
+		public virtual String OperatingSystem
+		{ 
+			get	
+			{
+				throw new NotImplementedException();	
+			}
+		}
+
+		public virtual String DeviceName
+		{ 
+			get	
+			{
+				throw new NotImplementedException();	
+			}
+		}
+
+		public virtual String DeviceModel
+		{ 
+			get	
+			{
+				throw new NotImplementedException();	
+			}
+		}
+
+		public virtual String SystemName
+		{ 
+			get	
+			{
+				throw new NotImplementedException();	
+			}
+		}
+
+		public virtual String SystemVersion
+		{ 
+			get	
+			{
+				throw new NotImplementedException();	
+			}
+		}
+
+		public virtual DeviceOrientation CurrentOrientation
+		{ 
+			get	
+			{
+				throw new NotImplementedException();	
+			}
+		}
+
+		public virtual IScreenSpecification ScreenSpecification
+		{ 
+			get	
+			{
+				throw new NotImplementedException();	
+			}
+		}
+
+		public virtual IPanelSpecification PanelSpecification
+		{ 
+			get	
+			{
+				throw new NotImplementedException();	
+			}
+		}
+	}
+

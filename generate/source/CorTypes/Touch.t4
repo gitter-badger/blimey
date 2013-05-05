@@ -1,0 +1,91 @@
+﻿	// A touch in a single frame definition of a finger on the screen
+	public struct Touch
+	{
+		Int32 id;
+
+		// The position of a touch ranges between -0.5 and 0.5 in both X and Y
+		Vector2 normalisedEngineSpacePosition;
+
+		TouchPhase phase;
+
+		Int64 frameNumber;
+
+		Single timestamp;
+
+		static Touch invalidTouch;
+
+
+		public Int32 ID
+		{
+			get
+			{
+				return id;
+			}
+		}
+
+		public Vector2 Position
+		{
+			get
+			{
+				return normalisedEngineSpacePosition;
+			}
+		}
+
+		public TouchPhase Phase
+		{
+			get
+			{
+				return phase;
+			}
+		}
+
+		public Int64 FrameNumber
+		{
+			get
+			{
+				return frameNumber;
+			}
+		}
+
+		public Single Timestamp
+		{
+			get
+			{
+				return timestamp;
+			}
+		}
+
+
+
+		public Touch(
+			Int32 id,
+			Vector2 normalisedEngineSpacePosition,
+			TouchPhase phase,
+			Int64 frame,
+			Single timestamp)
+		{
+			if( normalisedEngineSpacePosition.X > 0.5f || normalisedEngineSpacePosition.X < -0.5f )
+			{
+				throw new Exception("Touch has a bad X coordinate: " + normalisedEngineSpacePosition.X);
+			}
+
+			if( normalisedEngineSpacePosition.Y > 0.5f || normalisedEngineSpacePosition.X < -0.5f )
+			{
+				throw new Exception("Touch has a bad Y coordinate: " + normalisedEngineSpacePosition.Y);
+			}
+
+			this.id = id;
+			this.normalisedEngineSpacePosition = normalisedEngineSpacePosition;
+			this.phase = phase;
+			this.frameNumber = frame;
+			this.timestamp = timestamp;
+		}
+
+		static Touch()
+		{
+			invalidTouch = new Touch(-1, Vector2.Zero, TouchPhase.Invalid, -1, 0f);
+		}
+
+		public static Touch Invalid { get { return invalidTouch; } }
+
+	}

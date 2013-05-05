@@ -1,0 +1,18 @@
+#if !aot
+
+	public abstract class ResourceManager
+		: IResourceManager
+	{
+		public virtual T Load<T>(String path) 
+            where T : IResource	
+		{
+			throw new NotImplementedException();	
+		}
+
+		public virtual IShader LoadShader(ShaderType shaderType)
+		{
+			throw new NotImplementedException();	
+		}
+	}
+	
+#endif

@@ -1,0 +1,27 @@
+﻿    public interface IInputManager
+    {
+        // Depending on the implementation you are running against
+        // various input devices will be avaiable.  Those that are
+        // not will be returned as NULL.  It is down to your app to
+        // deal with only some of input devices being available.
+        // For example, if you are running on iPad, the GetXbox360Gamepad
+        // method will return NULL.  The way to make your app deal with
+        // multiple platforms is to poll the input devices at bootup
+        // and then query only those that are avaible in your update
+        // loop.  
+
+        // An Xbox 360 gamepad
+	Xbox360Gamepad		    GetXbox360Gamepad(PlayerIndex player);
+
+        // The virtual gamepad used by PlayStation Mobile, 
+        // if you are running on Vita this will be the Vita itself.
+        PsmGamepad GetPsmGamepad();
+
+        // A generalised multitouch pad, which may or may
+        // not have a screen.
+	MultiTouchController	GetMultiTouchController();
+
+        // A very basic gamepad, supported by most implementations
+        // for platforms that have gamepads.
+	GenericGamepad			GetGenericGamepad();
+    }

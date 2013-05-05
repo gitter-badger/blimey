@@ -1,0 +1,114 @@
+#if !aot
+    public abstract class GraphicsManager
+        : IGraphicsManager
+    {
+        public virtual IDisplayStatus DisplayStatus
+		{ 
+			get			
+			{
+				throw new NotImplementedException();	
+			}
+		}
+        
+        public virtual IGpuUtils GpuUtils
+		{ 
+			get	
+			{
+				throw new NotImplementedException();	
+			}
+		}
+        
+        public virtual void Reset()
+        {
+            this.ClearDepthBuffer();
+            this.ClearColourBuffer();
+
+            this.SetActiveGeometryBuffer(null);
+            this.SetActiveTexture(0, null);
+        }
+
+        public virtual void ClearColourBuffer(Rgba32 colour = new Rgba32())
+		{
+			throw new NotImplementedException();	
+		}
+
+        public virtual void ClearDepthBuffer(Single depth = 1f)
+		{
+			throw new NotImplementedException();	
+		}
+
+        public virtual IGeometryBuffer CreateGeometryBuffer(
+            VertexDeclaration vertexDeclaration,
+            Int32 vertexCount,
+            Int32 indexCount)
+			
+		{
+			throw new NotImplementedException();	
+		}
+
+        public virtual void SetActiveGeometryBuffer(IGeometryBuffer buffer)		
+		{
+			throw new NotImplementedException();	
+		}
+
+        public virtual void SetActiveTexture(Int32 slot, Texture2D tex)
+		{
+			throw new NotImplementedException();	
+		}
+
+        public virtual void SetBlendEquation(
+            BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb,
+            BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha
+            )
+		{
+			throw new NotImplementedException();	
+		}
+
+        public virtual void DrawPrimitives(
+            PrimitiveType primitiveType,
+            Int32 startVertex,
+            Int32 primitiveCount)
+		{
+			throw new NotImplementedException();	
+		}
+
+        public virtual void DrawIndexedPrimitives (
+            PrimitiveType primitiveType,
+            Int32 baseVertex,
+            Int32 minVertexIndex,
+            Int32 numVertices,
+            Int32 startIndex,
+            Int32 primitiveCount
+            )
+		{
+			throw new NotImplementedException();	
+		}
+        
+        public virtual void DrawUserPrimitives<T>(
+            PrimitiveType primitiveType, 
+            T[] vertexData,
+            Int32 vertexOffset,
+            Int32 primitiveCount,
+            VertexDeclaration vertexDeclaration)
+            where T : struct, IVertexType
+		{
+			throw new NotImplementedException();	
+		}
+        
+        public virtual void DrawUserIndexedPrimitives<T>(
+            PrimitiveType primitiveType,
+            T[] vertexData,
+            Int32 vertexOffset,
+            Int32 numVertices,
+            Int32[] indexData,
+            Int32 indexOffset,
+            Int32 primitiveCount,
+            VertexDeclaration vertexDeclaration) 
+            where T : struct, IVertexType
+		{
+			throw new NotImplementedException();	
+		}
+    }
+
+#endif
+

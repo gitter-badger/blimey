@@ -1,0 +1,17 @@
+﻿	public abstract class MultiTouchController
+	{
+		internal MultiTouchController(ICor engine)
+		{
+			this.engine = engine;
+		}
+
+		protected ICor engine;
+
+		public abstract IPanelSpecification PanelSpecification { get; }
+
+		public TouchCollection TouchCollection { get { return this.collection; } }
+		
+		protected TouchCollection collection = new TouchCollection();
+
+		internal abstract void Update(AppTime time);
+	}

@@ -1,0 +1,26 @@
+﻿	public interface IDisplayStatus
+	{
+		/// <summary>
+		/// Is the device running in fullscreen mode,
+		/// for things that don't support fullscreen mode this will always be
+		/// true.
+		/// </summary>
+		Boolean Fullscreen { get; }
+
+		/// <summary>
+		// What is the width of the frame buffer?
+		// On most devices this will be the same as the screen size.
+		// However on a PC or Mac the app could be running in windowed mode
+		// and not take up the whole screen.
+		/// </summary>
+		Int32 CurrentWidth { get; }
+
+		/// <summary>
+		/// What is the height of the frame buffer?
+		/// On most devices this will be the same as the screen size.
+		/// However on a PC or Mac the app could be running in windowed mode
+		/// and not take up the whole screen.
+		/// </summary>
+		Int32 CurrentHeight { get; }
+
+	}

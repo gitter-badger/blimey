@@ -1,0 +1,15 @@
+
+	/*
+	public interface ITexture
+	{
+		int Width { get; }
+		int Height { get; }
+	}*/
+
+    public abstract class Texture2D
+        : IResource
+		//, ITexture
+    {
+		public abstract int Width { get; } 
+		public abstract int Height { get; } 
+    }

@@ -1,0 +1,73 @@
+﻿	public class VertexDeclaration
+	{
+		VertexElement[] _elements;
+		Int32 _vertexStride;
+
+		public VertexDeclaration (params VertexElement[] elements)
+		{
+			if ((elements == null) || (elements.Length == 0)) {
+				throw new ArgumentNullException ("elements - NullNotAllowed");
+			}
+			else {
+				VertexElement[] elementArray = (VertexElement[])elements.Clone ();
+				this._elements = elementArray;
+				Int32 vertexStride = VertexElementValidator.GetVertexStride (elementArray);
+				this._vertexStride = vertexStride;
+				VertexElementValidator.Validate (vertexStride, this._elements);
+			}
+
+		}
+
+		public VertexDeclaration (Int32 vertexStride, params VertexElement[] elements)
+		{
+			if ((elements == null) || (elements.Length == 0)) {
+				throw new ArgumentNullException ("NullNotAllowed");
+			}
+			else {
+				VertexElement[] elementArray = (VertexElement[])elements.Clone ();
+				this._elements = elementArray;
+				this._vertexStride = vertexStride;
+				VertexElementValidator.Validate (vertexStride, elementArray);
+			}
+		}
+
+		internal static VertexDeclaration FromType (Type vertexType)
+		{
+			if (vertexType == null) {
+				throw new ArgumentNullException ("vertexType - NullNotAllowed");
+			}
+
+#if !NETFX_CORE
+			if (!vertexType.IsValueType) {
+				throw new ArgumentException (string.Format ("VertexTypeNotValueType"));
+			}
+#endif
+
+			IVertexType type = Activator.CreateInstance (vertexType) as IVertexType;
+
+			if (type == null) {
+				throw new ArgumentException (string.Format ("VertexTypeNotIVertexType"));
+			}
+
+
+			VertexDeclaration vertexDeclaration = type.VertexDeclaration;
+
+			if (vertexDeclaration == null) {
+				throw new InvalidOperationException ("VertexTypeNullDeclaration");
+			}
+
+			return vertexDeclaration;
+		}
+
+		public VertexElement[] GetVertexElements ()
+		{
+			return (VertexElement[])this._elements.Clone ();
+		}
+
+		// Properties
+		public Int32 VertexStride {
+			get {
+				return this._vertexStride;
+			}
+		}
+	}

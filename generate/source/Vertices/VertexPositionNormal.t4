@@ -1,0 +1,38 @@
+﻿	[StructLayout(LayoutKind.Sequential)]
+	public struct VertexPositionNormal
+		: IVertexType
+	{
+		public Vector3 Position;
+		public Vector3 Normal;
+
+		public VertexPositionNormal (Vector3 position, Vector3 normal)
+		{
+			this.Position = position;
+			this.Normal = normal;
+		}
+
+		readonly static VertexPositionNormal _default;
+		readonly static VertexDeclaration _vertexDeclaration;
+
+		static VertexPositionNormal ()
+		{
+			_vertexDeclaration = new VertexDeclaration
+			(
+				new VertexElement (0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+				new VertexElement (sizeof(Single) * 3, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0)
+			);
+			_default = new VertexPositionNormal (Vector3.Zero, Vector3.Zero);
+		}
+
+		public static IVertexType Default {
+			get {
+				return _default;
+			}
+		}
+		
+		public VertexDeclaration VertexDeclaration {
+			get {
+				return _vertexDeclaration; 
+			}
+		}
+	}

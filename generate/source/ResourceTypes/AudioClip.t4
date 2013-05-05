@@ -1,0 +1,8 @@
+    public abstract class AudioClip
+    {
+		public abstract void Play ();
+
+		public abstract void Stop ();
+
+		public abstract Boolean IsPlaying { get; }
+    }

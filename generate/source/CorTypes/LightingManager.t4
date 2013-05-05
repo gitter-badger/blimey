@@ -1,0 +1,37 @@
+﻿	public static class LightingManager
+	{
+		public static Vector3 ambientLightColour;
+
+		public static Vector3 dirLight0Direction;
+		public static Vector3 dirLight0DiffuseColour;
+		public static Vector3 dirLight0SpecularColour;
+
+		public static Vector3 dirLight1Direction;
+		public static Vector3 dirLight1DiffuseColour;
+		public static Vector3 dirLight1SpecularColour;
+
+		public static Vector3 dirLight2Direction;
+		public static Vector3 dirLight2DiffuseColour;
+		public static Vector3 dirLight2SpecularColour;
+
+		static LightingManager()
+		{
+			ambientLightColour = Rgba32.DarkGray.ToVector3();
+
+			dirLight0Direction = new Vector3(-0.3f, -0.9f, +0.3f); 
+			dirLight0Direction.Normalise();
+			dirLight0DiffuseColour = Rgba32.DarkGoldenrod.ToVector3();
+			dirLight0SpecularColour = Rgba32.Beige.ToVector3();
+
+			dirLight1Direction = new Vector3(0.3f, 0.1f, -0.3f);
+			dirLight1Direction.Normalise();
+			dirLight1DiffuseColour = Rgba32.DarkGoldenrod.ToVector3();
+			dirLight1SpecularColour = Rgba32.Beige.ToVector3();
+
+			dirLight2Direction = new Vector3( -0.7f, -0.3f, +0.1f);
+			dirLight2Direction.Normalise();
+			dirLight2DiffuseColour = Rgba32.DarkGoldenrod.ToVector3();
+			dirLight2SpecularColour = Rgba32.Beige.ToVector3();
+
+		}
+	}

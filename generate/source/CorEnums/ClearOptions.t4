@@ -1,0 +1,7 @@
+﻿	[Flags]
+	enum ClearOptions
+	{
+		DepthBuffer = 2,
+		Stencil = 4,
+		Target = 1
+	}

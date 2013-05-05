@@ -1,0 +1,44 @@
+﻿	[StructLayout(LayoutKind.Sequential)]
+	public struct VertexPositionNormalTextureColour
+		: IVertexType
+	{
+		public Vector3 Position;
+		public Vector3 Normal;
+		public Vector2 UV;
+		public Rgba32 Colour;
+
+		public VertexPositionNormalTextureColour (Vector3 position, Vector3 normal, Vector2 uv, Rgba32 color)
+		{
+			this.Position = position;
+			this.Normal = normal;
+			this.UV = uv;
+			this.Colour = color;
+		}
+
+		static VertexPositionNormalTextureColour ()
+		{
+			_vertexDeclaration = new VertexDeclaration
+			(
+				new VertexElement (0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+				new VertexElement (12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
+				new VertexElement (24, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
+				new VertexElement (32, VertexElementFormat.Colour, VertexElementUsage.Colour, 0)
+			);
+			_default = new VertexPositionNormalTextureColour (Vector3.Zero, Vector3.Zero, Vector2.Zero, Rgba32.White);
+		}
+
+		readonly static VertexPositionNormalTextureColour _default;
+		readonly static VertexDeclaration _vertexDeclaration;
+
+		public static IVertexType Default {
+			get {
+				return _default;
+			}
+		}
+
+		public VertexDeclaration VertexDeclaration { 
+			get { 
+				return _vertexDeclaration; 
+			} 
+		}
+	}

@@ -1,0 +1,26 @@
+    public abstract class InputManager
+        : IInputManager
+    {
+		public abstract void Update(AppTime time);
+		
+        public virtual Xbox360Gamepad GetXbox360Gamepad(PlayerIndex player)
+        {
+            return null;
+        }
+        
+        public virtual MultiTouchController GetMultiTouchController()
+        {
+            return null;
+        }
+        
+        public virtual PsmGamepad GetPsmGamepad()
+        {
+            return null;
+        }
+        
+        public virtual GenericGamepad GetGenericGamepad()
+        {
+            return null;
+        }
+    }
+
