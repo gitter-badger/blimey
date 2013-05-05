@@ -45,92 +45,18 @@ using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
 
-namespace Sungiant.Cor
+namespace Sungiant.Cor.BaseRuntime
 {
-	#region Interfaces
+	#region BaseRuntime
 
-<#@ include file="IApp.t4"#>
-<#@ include file="IAudioManager.t4"#>
-<#@ include file="ICor.t4"#>
-<#@ include file="IDisplayStatus.t4"#>
-<#@ include file="IGeometryBuffer.t4"#>
-<#@ include file="IGpuUtils.t4"#>
-<#@ include file="IGraphicsManager.t4"#>
-<#@ include file="IIndexBuffer.t4"#>
-<#@ include file="IInputManager.t4"#>
-<#@ include file="IPanelSpecification.t4"#>
-<#@ include file="IResource.t4"#>
-<#@ include file="IResourceManager.t4"#>
-<#@ include file="ISample.t4"#>
-<#@ include file="IScreenSpecificationBase.t4"#>
-<#@ include file="IShader.t4"#>
-<#@ include file="IShaderPass.t4"#>
-<#@ include file="ISystemManager.t4"#>
-<#@ include file="IVertexBuffer.t4"#>
-<#@ include file="IVertexType.t4"#>
-
-	#endregion
-
-	#region Enums
-
-<#@ include file="CorEnums/BlendFactor.t4"#>
-<#@ include file="CorEnums/BlendFunction.t4"#>
-<#@ include file="CorEnums/ButtonState.t4"#>
-<#@ include file="CorEnums/ClearOptions.t4"#>
-<#@ include file="CorEnums/DeviceOrientation.t4"#>
-<#@ include file="CorEnums/PanelType.t4"#>
-<#@ include file="CorEnums/PlayerIndex.t4"#>
-<#@ include file="CorEnums/PrimitiveType.t4"#>
-<#@ include file="CorEnums/ShaderType.t4"#>
-<#@ include file="CorEnums/TouchPhase.t4"#>
-<#@ include file="CorEnums/VertexElementFormat.t4"#>
-<#@ include file="CorEnums/VertexElementUsage.t4"#>
-
-	#endregion
-
-	#region Types
-
-<#@ include file="CorTypes/AppSettings.t4"#>
-<#@ include file="CorTypes/AppTime.t4"#>
-<#@ include file="CorTypes/GenericGamepad.t4"#>
-<#@ include file="CorTypes/LightingManager.t4"#>
-<#@ include file="CorTypes/MultitouchController.t4"#>
-<#@ include file="CorTypes/Touch.t4"#>
-<#@ include file="CorTypes/TouchCollection.t4"#>
-<#@ include file="CorTypes/TouchCollectionEnumerator.t4"#>
-<#@ include file="CorTypes/VertexDeclaration.t4"#>
-<#@ include file="CorTypes/VertexElement.t4"#>
-<#@ include file="CorTypes/Viewport.t4"#>
-<#@ include file="CorTypes/VitaController.t4"#>
-<#@ include file="CorTypes/Xbox360Controller.t4"#>
-
-	#endregion
-
-	#region Vertices
-
-<#@ include file="Vertices/VertexPosition.t4"#>
-<#@ include file="Vertices/VertexPositionColour.t4"#>
-<#@ include file="Vertices/VertexPositionNormal.t4"#>
-<#@ include file="Vertices/VertexPositionNormalColour.t4"#>
-<#@ include file="Vertices/VertexPositionNormalTexture.t4"#>
-<#@ include file="Vertices/VertexPositionNormalTextureColour.t4"#>
-<#@ include file="Vertices/VertexPositionTexture.t4"#>
-<#@ include file="Vertices/VertexPositionTextureColour.t4"#>
-
-	#endregion
-
-	#region Resources
-
-<#@ include file="ResourceTypes/AudioClip.t4"#>
-<#@ include file="ResourceTypes/Mesh.t4"#>
-<#@ include file="ResourceTypes/Texture2D.t4"#>
-
-	#endregion
-
-	#region Internal
-
-<#@ include file="Internal/PrimitiveHelper.t4"#>
-<#@ include file="Internal/VertexElementValidator.t4"#>
+<#@ include file="BaseRuntime/AudioManager.t4"#>
+<#@ include file="BaseRuntime/GraphicsManager.t4"#>
+<#@ include file="BaseRuntime/IndexBuffer.t4"#>
+<#@ include file="BaseRuntime/InputManager.t4"#>
+<#@ include file="BaseRuntime/ResourceManager.t4"#>
+<#@ include file="BaseRuntime/ScreenSpecification.t4"#>
+<#@ include file="BaseRuntime/SystemManager.t4"#>
+<#@ include file="BaseRuntime/VertexBuffer.t4"#>
 
 	#endregion
 }
