@@ -432,7 +432,7 @@ namespace Sungiant.Cor
 	public interface IShaderPass
 	{
 		string Name { get; }
-		void Activate ();
+		void Activate (VertexDeclaration vertexDeclaration);
 	}
 	public interface ISystemManager
 	{
