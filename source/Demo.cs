@@ -33,6 +33,7 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
+using Sungiant.Abacus;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Packed;
 using Sungiant.Cor;
