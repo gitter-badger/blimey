@@ -3,7 +3,7 @@
 		// used
 		Int32 VertexCount { get; }
 
-#if aot
+#if AOT
 		void SetData (VertexPosition[] data);
 		void SetData (VertexPositionColour[] data);
 		void SetData (VertexPositionNormal[] data);

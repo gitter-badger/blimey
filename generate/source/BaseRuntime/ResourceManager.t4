@@ -1,4 +1,4 @@
-#if !aot
+#if !AOT
 
 	public abstract class ResourceManager
 		: IResourceManager

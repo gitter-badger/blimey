@@ -51,7 +51,7 @@ namespace Sungiant.Cor.BaseRuntime
 		: IAudioManager
 	{
 	}
-#if !aot
+#if !AOT
     public abstract class GraphicsManager
         : IGraphicsManager
     {
@@ -244,7 +244,7 @@ namespace Sungiant.Cor.BaseRuntime
         }
     }
 
-#if !aot
+#if !AOT
 
 	public abstract class ResourceManager
 		: IResourceManager
@@ -390,7 +390,7 @@ namespace Sungiant.Cor.BaseRuntime
 		}
 	}
 
-#if !aot
+#if !AOT
 
 	public abstract class VertexBuffer
 		: IVertexBuffer

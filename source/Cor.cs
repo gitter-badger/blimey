@@ -252,7 +252,7 @@ namespace Sungiant.Cor
         // FROM SYSTEM RAM - NON-INDEXED ---------------------------------------
 
 
-#if aot
+#if AOT
 		void DrawUserPrimitives (PrimitiveType primitiveType, VertexPosition[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
 		void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionColour[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
 		void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionNormal[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
@@ -279,7 +279,7 @@ namespace Sungiant.Cor
         /// Draws indexed vertex data uploaded straight from RAM.
 		/// </summary>
 
-#if aot
+#if AOT
 		void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPosition[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
 		void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionColour[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
 		void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionNormal[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
@@ -459,7 +459,7 @@ namespace Sungiant.Cor
 		// used
 		Int32 VertexCount { get; }
 
-#if aot
+#if AOT
 		void SetData (VertexPosition[] data);
 		void SetData (VertexPositionColour[] data);
 		void SetData (VertexPositionNormal[] data);
