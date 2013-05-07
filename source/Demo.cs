@@ -176,7 +176,7 @@ namespace Sungiant.Cor.Demo
 
 			foreach (var effectPass in this.unlitEffect.Passes)
             {
-				effectPass.Activate();
+				effectPass.Activate(VertexPositionColour.Default.VertexDeclaration);
                 
                 this.engine.Graphics.DrawIndexedPrimitives (
                     PrimitiveType.TriangleList, 0, 0,
@@ -261,7 +261,7 @@ namespace Sungiant.Cor.Demo
 
             foreach (var effectPass in this.unlitEffect.Passes)
             {
-                effectPass.Activate ();
+				effectPass.Activate (CustomCube_PositionTexture.VertexDeclaration);
                 
                 this.engine.Graphics.DrawIndexedPrimitives (
                     PrimitiveType.TriangleList, 0, 0,
@@ -346,7 +346,7 @@ namespace Sungiant.Cor.Demo
 
             foreach (var effectPass in this.unlitEffect.Passes)
             {
-                effectPass.Activate ();
+				effectPass.Activate (CustomCylinder_PositionNormalTexture.VertexDeclaration);
                 
                 this.engine.Graphics.DrawIndexedPrimitives (
                     PrimitiveType.TriangleList, 0, 0,
