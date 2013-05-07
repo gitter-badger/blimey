@@ -36,6 +36,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Sungiant.Abacus.SinglePrecision;
+using System.IO;
 
 namespace Sungiant.Cor.MonoTouchRuntime
 {
@@ -71,15 +72,23 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		public static Int32 CreateVertexShader(string path)
 		{
 			Int32 vertShaderHandle;
+			string ext = Path.GetExtension(path);
+
+			if( ext != ".vsh" )
+			{
+				throw new Exception("Resource [" + path + "] should end with .vsh");
+			}
+
+			string filename = path.Substring(0, path.Length - ext.Length);
 
 			var vertShaderPathname =
 				MonoTouch.Foundation.NSBundle.MainBundle.PathForResource (
-					path,
+					filename,
 					"vsh" );
 
             if( vertShaderPathname == null )
             {
-                throw new Exception("Resource not found");
+                throw new Exception("Resource [" + path + "] not found");
             }
 
 
@@ -131,13 +140,25 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		{
 			Int32 fragShaderHandle;
 
-			// Create and compile fragment shader.
+			string ext = Path.GetExtension(path);
+			
+			if( ext != ".fsh" )
+			{
+				throw new Exception("Resource [" + path + "] should end with .fsh");
+			}
+			
+			string filename = path.Substring(0, path.Length - ext.Length);
+			
 			var fragShaderPathname =
 				MonoTouch.Foundation.NSBundle.MainBundle.PathForResource (
-					path,
+					filename,
 					"fsh" );
-
 			
+			if( fragShaderPathname == null )
+			{
+				throw new Exception("Resource [" + path + "] not found");
+			}
+
             Console.WriteLine ("[Cor.Resources] " + fragShaderPathname);
 
 
@@ -289,12 +310,12 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			
 			for(int i = 0; i < numActiveAttributes; ++i)
 			{
-				string name;
+				string name = string.Empty;
 				
 				int buffSize = 64;
 				int length = 0;
 				int size = 0;
-				OpenTK.Graphics.ES20.All type;
+				OpenTK.Graphics.ES20.All type = (OpenTK.Graphics.ES20.All) 0;
 				OpenTK.Graphics.ES20.GL.GetActiveAttrib(
 					prog,
 					i,

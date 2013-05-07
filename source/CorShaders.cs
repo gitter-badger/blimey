@@ -47,7 +47,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			{
 				Name = "Unlit",
 				PassNames = new List<string>() { "Main" },
-				Inputs = new List<ShaderInputDefinition>()
+				InputDefinitions = new List<ShaderInputDefinition>()
 				{
 					new ShaderInputDefinition()
 					{
@@ -74,7 +74,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 						Optional = true,
 					},
 				},
-				Variables = new List<ShaderVariableDefinition>()
+				VariableDefinitions = new List<ShaderVariableDefinition>()
 				{
 					new ShaderVariableDefinition()
 					{
@@ -105,7 +105,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 						DefaultValue = Matrix44.Identity,
 					},
 				},
-				ShaderVariantDefinitions = new List<ShaderVariantDefinition>()
+				VariantDefinitions = new List<ShaderVariantDefinition>()
 				{
 					new ShaderVariantDefinition()
 					{

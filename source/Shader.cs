@@ -75,7 +75,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				//variant.Variables[name].SetVariable<T>(name, value);
 			}
 			
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
 		}
 
 		public ShaderPass(ShaderPassDefinition definition)
@@ -86,6 +86,8 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 		public void Activate(VertexDeclaration vertexDeclaration)
 		{
+			if(BestVariants == null) return;
+
 			if (!BestVariants.ContainsKey (vertexDeclaration))
 			{
 				BestVariants[vertexDeclaration] = WorkOutBestVariantFor(vertexDeclaration);
@@ -110,11 +112,11 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		: IShader
 		, IDisposable
 	{
-		List<VertexElementUsage> requiredVertexElements;
-		List<VertexElementUsage> optionalVertexElements;
+		List<VertexElementUsage> requiredVertexElements { get; set; }
+		List<VertexElementUsage> optionalVertexElements { get; set; }
 
 		//int indexOfActiveVariant = 0;
-		HashSet<string> variantNames = new HashSet<string> ();
+		HashSet<String> variantNames { get; set; }
 
 		List<ShaderPass> passes { get; set; }
 
@@ -123,13 +125,18 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 		internal Shader (ShaderDefinition shaderDefinition)
 		{
+			this.requiredVertexElements = new List<VertexElementUsage>();
+			this.optionalVertexElements = new List<VertexElementUsage>();
+			this.variantNames = new HashSet<String>();
+			this.shaderDefinition = shaderDefinition;
+
 			CalculateRequiredInputs();
 			InitilisePasses ();
 		}
 		
 		void CalculateRequiredInputs()
 		{
-			foreach (var input in shaderDefinition.Inputs)
+			foreach (var input in shaderDefinition.InputDefinitions)
 			{
 				if( input.Optional )
 				{
@@ -150,7 +157,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			{
 				var passVariants = new List<OglesShaderDefinition>();
 				
-				foreach (var shaderVariantDefinition in shaderDefinition.ShaderVariantDefinitions)
+				foreach (var shaderVariantDefinition in shaderDefinition.VariantDefinitions)
 				{
 					foreach( var pass in shaderVariantDefinition.Passes )
 					{
@@ -178,7 +185,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		public void ResetVariables()
 		{
 			// the shader definition defines the default values for the variables
-			foreach (var variableDefinition in shaderDefinition.Variables)
+			foreach (var variableDefinition in shaderDefinition.VariableDefinitions)
 			{
 				string varName = variableDefinition.Name;
 				object value = variableDefinition.DefaultValue;
@@ -202,6 +209,10 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				else if( variableDefinition.Type == typeof(Vector4) )
 				{
 					this.SetVariable<Vector4>(varName, (Vector4) value);
+				} 
+				else if( variableDefinition.Type == typeof(Rgba32) )
+				{
+					this.SetVariable<Rgba32>(varName, (Rgba32) value);
 				}
 				else
 				{

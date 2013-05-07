@@ -82,32 +82,43 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		public List<OglesShaderDefinition> PassVariants { get; set; }
 	}
 
-	// Defines how to create the Cor.MonoTouchRuntime's implementation
-	// of IShader.
+	/// <summary>
+	/// Defines how to create the Cor.MonoTouchRuntime's implementation
+	/// of IShader.
+	/// </summary>
 	public class ShaderDefinition
 	{
-		// Defines a global name for this shader
+		/// <summary>
+		/// Defines a global name for this shader
+		/// </summary>
 		public string Name { get; set; }
 		
-		// Defines which passes this shader is made from 
-		// (ex: a toon shader is made for a cel-shading pass 
-		// followed by an edge detection pass)
+		/// Defines which passes this shader is made from 
+		/// (ex: a toon shader is made for a cel-shading pass 
+		/// followed by an edge detection pass)
+		/// </summary>
 		public List<String> PassNames { get; set; }
 		
-		// Lists all of the supported inputs into this shader and
-		// defines whether or not they are optional to an implementation.
-		public List<ShaderInputDefinition> Inputs { get; set; }
+		/// <summary>
+		/// Lists all of the supported inputs into this shader and
+		/// defines whether or not they are optional to an implementation.
+		/// </summary>
+		public List<ShaderInputDefinition> InputDefinitions { get; set; }
 		
-		// Defines all of the variables supported by this shader.  Every
-		// variant must support all of the variables.
-		public List<ShaderVariableDefinition> Variables { get; set; }
+		/// <summary>
+		/// Defines all of the variables supported by this shader.  Every
+		/// variant must support all of the variables.
+		/// </summary>
+		public List<ShaderVariableDefinition> VariableDefinitions { get; set; }
 		
-		// Defines the variants.  Done for optimisation, instead of having one
-		// massive shader that supports all the the Inputs and attempts to
-		// process them accordindly, we load slight variants of effectively 
-		// the same shader, then we select the most optimal variant to run
-		// based upon the VertexDeclaration the calling code is about to draw.
-		public List<ShaderVariantDefinition> ShaderVariantDefinitions { get; set; }
+		/// <summary>
+		/// Defines the variants.  Done for optimisation, instead of having one
+		/// massive shader that supports all the the Inputs and attempts to
+		/// process them accordindly, we load slight variants of effectively 
+		/// the same shader, then we select the most optimal variant to run
+		/// based upon the VertexDeclaration the calling code is about to draw.
+		/// </summary>
+		public List<ShaderVariantDefinition> VariantDefinitions { get; set; }
 	}
 
 }

@@ -141,7 +141,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		static void CheckInputCompatibility(List<OglesShaderInput> definedInputs, Dictionary<string, OpenTK.Graphics.ES20.All> actualAttributes )
 		{
 			// make sure that the shader we just loaded will work with this shader definition	
-			if( actualAttributes.Count != Inputs.Count )
+			if( actualAttributes.Count != definedInputs.Count )
 			{
 				throw new Exception("shader doesn't implement definition");
 			}
@@ -165,7 +165,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		internal OglesShader(OglesShaderDefinition definition)
 		{
 		
-			Variables = 
+			//Variables = 
 			programHandle = ShaderUtils.CreateShaderProgram ();
 			vertShaderHandle = ShaderUtils.CreateVertexShader(definition.VertexShaderPath);
 			fragShaderHandle = ShaderUtils.CreateFragmentShader(definition.PixelShaderPath);
@@ -187,17 +187,17 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			
 			// i think this part needs to be done dynamically in the Activate Fn to accomodate support
 			// for different input vert data structure that have a superset of the required verts
-			for(int i = 0; i < Inputs.Count; ++i )
-			{
-				OpenTK.Graphics.ES20.GL.BindAttribLocation(programHandle, i, definition.Inputs[i].Name);
+			//for(int i = 0; i < Inputs.Count; ++i )
+			//{
+			//	OpenTK.Graphics.ES20.GL.BindAttribLocation(programHandle, i, Inputs[i].Name);
 				
-				OpenTKHelper.CheckError();
-			}
+			//	OpenTKHelper.CheckError();
+			//}
 			
-			foreach (var variable in Variables)
-			{
-				variables[variable.NiceName] = new OglesShaderVariable(variable, programHandle);
-			}
+			//foreach (var variable in Variables)
+			//{
+			//	variables[variable.NiceName] = new OglesShaderVariable(variable, programHandle);
+			//}
 
 			#if DEBUG
 			ShaderUtils.ValidateProgram (programHandle);
