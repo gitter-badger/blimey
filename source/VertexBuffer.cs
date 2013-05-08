@@ -60,19 +60,19 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 		UInt32 bufferHandle;
 
-		OpenTK.Graphics.ES20.All type;
-		OpenTK.Graphics.ES20.All bufferUsage;
+		OpenTK.Graphics.ES20.BufferTarget type;
+		OpenTK.Graphics.ES20.BufferUsage bufferUsage;
 
 		public VertexBuffer (VertexDeclaration vd, Int32 vertexCount)
 		{
 			this.vertDecl = vd;
 			this.vertexCount = vertexCount;
 
-			this.type = (OpenTK.Graphics.ES20.All) OpenTK.Graphics.ES20.BufferObjects.ArrayBuffer;
+			this.type = OpenTK.Graphics.ES20.BufferTarget.ArrayBuffer;
 
-			this.bufferUsage = (OpenTK.Graphics.ES20.All) OpenTK.Graphics.ES20.BufferObjects.DynamicDraw;
+			this.bufferUsage = OpenTK.Graphics.ES20.BufferUsage.DynamicDraw;
 
-			OpenTK.Graphics.ES20.GL.GenBuffers(1, ref this.bufferHandle);
+			OpenTK.Graphics.ES20.GL.GenBuffers(1, out this.bufferHandle);
 			OpenTKHelper.CheckError();
 
 

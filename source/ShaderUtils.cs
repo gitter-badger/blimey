@@ -53,7 +53,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		{
 			public Int32 Index { get; set; }
 			public String Name { get; set; }
-			public OpenTK.Graphics.ES20.All Type { get; set; }
+			public OpenTK.Graphics.ES20.ActiveAttribType Type { get; set; }
 		}
 		
 		public static Int32 CreateShaderProgram()
@@ -96,7 +96,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 
 			ShaderUtils.CompileShader (
-				OpenTK.Graphics.ES20.All.VertexShader, 
+				OpenTK.Graphics.ES20.ShaderType.VertexShader, 
 				vertShaderPathname, 
 				out vertShaderHandle );
 
@@ -163,7 +163,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 
 			ShaderUtils.CompileShader (
-				OpenTK.Graphics.ES20.All.FragmentShader,
+				OpenTK.Graphics.ES20.ShaderType.FragmentShader,
 				fragShaderPathname,
 				out fragShaderHandle );
 
@@ -220,7 +220,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		}
 
 		public static void CompileShader (
-			OpenTK.Graphics.ES20.All type,
+			OpenTK.Graphics.ES20.ShaderType type,
 			String file,
 			out Int32 shaderHandle )
 		{
@@ -260,8 +260,8 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			Int32 logLength = 0;
 			OpenTK.Graphics.ES20.GL.GetShader (
 				shaderHandle,
-				OpenTK.Graphics.ES20.All.InfoLogLength,
-				ref logLength);
+				OpenTK.Graphics.ES20.ShaderParameter.InfoLogLength,
+				out logLength);
 
 			OpenTKHelper.CheckError();
             var infoLog = new System.Text.StringBuilder(logLength);
@@ -272,7 +272,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				OpenTK.Graphics.ES20.GL.GetShaderInfoLog (
 					shaderHandle,
 					logLength,
-                    ref temp,
+					out temp,
 					infoLog );
 
 				string log = infoLog.ToString();
@@ -286,8 +286,8 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 			OpenTK.Graphics.ES20.GL.GetShader (
 				shaderHandle,
-				OpenTK.Graphics.ES20.All.CompileStatus,
-				ref status );
+				OpenTK.Graphics.ES20.ShaderParameter.CompileStatus,
+				out status );
 
 			OpenTKHelper.CheckError();
 
@@ -306,30 +306,34 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			var result = new List<ShaderAttribute>();
 			
 			// gets the number of active vertex attributes
-			OpenTK.Graphics.ES20.GL.GetProgram(prog, OpenTK.Graphics.ES20.All.ActiveAttributes, ref numActiveAttributes);
+			OpenTK.Graphics.ES20.GL.GetProgram(prog, OpenTK.Graphics.ES20.ProgramParameter.ActiveAttributes, out numActiveAttributes);
 			
 			for(int i = 0; i < numActiveAttributes; ++i)
 			{
 				string name = string.Empty;
-				
-				int buffSize = 64;
+
+
+				var sb = new System.Text.StringBuilder ();
+
+				int buffSize = 0;
 				int length = 0;
 				int size = 0;
-				OpenTK.Graphics.ES20.All type = (OpenTK.Graphics.ES20.All) 0;
+				OpenTK.Graphics.ES20.ActiveAttribType type = OpenTK.Graphics.ES20.ActiveAttribType.Float;
 				OpenTK.Graphics.ES20.GL.GetActiveAttrib(
 					prog,
 					i,
 					64,
-					ref length,
-					ref size,
-					ref type,
-					name);
+					out length,
+					out size,
+					out type,
+					sb);
+
 					
 				result.Add(
 					new ShaderAttribute()
 					{
 						Index = i,
-						Name = name.Substring (0, length), 
+						Name = sb.ToString(),
 						Type = type
 					}
 				);
@@ -350,8 +354,8 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 			OpenTK.Graphics.ES20.GL.GetProgram (
 				prog,
-				OpenTK.Graphics.ES20.All.InfoLogLength,
-				ref logLength );
+				OpenTK.Graphics.ES20.ProgramParameter.InfoLogLength,
+				out logLength );
 
 			OpenTKHelper.CheckError();
 
@@ -362,7 +366,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				OpenTK.Graphics.ES20.GL.GetProgramInfoLog (
 					prog,
 					logLength,
-					ref logLength,
+					out logLength,
 					infoLog );
 
 				OpenTKHelper.CheckError();
@@ -374,8 +378,8 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 			OpenTK.Graphics.ES20.GL.GetProgram (
 				prog,
-				OpenTK.Graphics.ES20.All.LinkStatus,
-				ref status );
+				OpenTK.Graphics.ES20.ProgramParameter.LinkStatus,
+				out status );
 
 			OpenTKHelper.CheckError();
 
@@ -396,8 +400,8 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 			OpenTK.Graphics.ES20.GL.GetProgram (
 				programHandle,
-				OpenTK.Graphics.ES20.All.InfoLogLength,
-				ref logLength );
+				OpenTK.Graphics.ES20.ProgramParameter.InfoLogLength,
+				out logLength );
 
 			OpenTKHelper.CheckError();
 
@@ -408,7 +412,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				OpenTK.Graphics.ES20.GL.GetProgramInfoLog (
 					programHandle,
 					logLength,
-					ref logLength, infoLog );
+					out logLength, infoLog );
 
 				OpenTKHelper.CheckError();
 
@@ -418,8 +422,8 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			Int32 status = 0;
 
 			OpenTK.Graphics.ES20.GL.GetProgram (
-				programHandle, OpenTK.Graphics.ES20.All.LinkStatus,
-				ref status );
+				programHandle, OpenTK.Graphics.ES20.ProgramParameter.LinkStatus,
+				out status );
 
 			OpenTKHelper.CheckError();
 

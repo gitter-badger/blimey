@@ -58,7 +58,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			gpuUtils = new GpuUtils();
 			displayStatus = new DisplayStatus();
 
-			OpenTK.Graphics.ES20.GL.Enable((OpenTK.Graphics.ES20.All)OpenTK.Graphics.ES20.EnableCap.Blend);
+			OpenTK.Graphics.ES20.GL.Enable(OpenTK.Graphics.ES20.EnableCap.Blend);
 			OpenTKHelper.CheckError();
 
             // default this
@@ -75,10 +75,10 @@ namespace Sungiant.Cor.MonoTouchRuntime
                 BlendFunction.ReverseSubtract, BlendFactor.SourceAlpha, BlendFactor.One)
             */
 
-			OpenTK.Graphics.ES20.GL.Enable((OpenTK.Graphics.ES20.All)OpenTK.Graphics.ES20.EnableCap.CullFace);
+			OpenTK.Graphics.ES20.GL.Enable(OpenTK.Graphics.ES20.EnableCap.CullFace);
 			OpenTKHelper.CheckError();
 
-			OpenTK.Graphics.ES20.GL.Enable((OpenTK.Graphics.ES20.All)OpenTK.Graphics.ES20.EnableCap.DepthTest);
+			OpenTK.Graphics.ES20.GL.Enable(OpenTK.Graphics.ES20.EnableCap.DepthTest);
 			OpenTKHelper.CheckError();
 
 			OpenTK.Graphics.ES20.GL.DepthMask(true);
@@ -87,13 +87,13 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			OpenTK.Graphics.ES20.GL.DepthRange(0f, 1f);
 			OpenTKHelper.CheckError();
 
-			OpenTK.Graphics.ES20.GL.DepthFunc(OpenTK.Graphics.ES20.All.Lequal);
+			OpenTK.Graphics.ES20.GL.DepthFunc(OpenTK.Graphics.ES20.DepthFunction.Lequal);
 			OpenTKHelper.CheckError();
 
-			OpenTK.Graphics.ES20.GL.FrontFace(OpenTK.Graphics.ES20.All.Cw);
+			OpenTK.Graphics.ES20.GL.FrontFace(OpenTK.Graphics.ES20.FrontFaceDirection.Cw);
 			OpenTKHelper.CheckError();
 
-			OpenTK.Graphics.ES20.GL.CullFace(OpenTK.Graphics.ES20.All.Back);
+			OpenTK.Graphics.ES20.GL.CullFace(OpenTK.Graphics.ES20.CullFaceMode.Back);
 			OpenTKHelper.CheckError();
 
 
@@ -130,14 +130,14 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		public override void SetActiveTexture(Int32 slot, Texture2D tex)
 #endif
         {
-            OpenTK.Graphics.ES20.All oglTexSlot = EnumConverter.ToOpenTKTextureSlot(slot); 
+            OpenTK.Graphics.ES20.TextureUnit oglTexSlot = EnumConverter.ToOpenTKTextureSlot(slot); 
             OpenTK.Graphics.ES20.GL.ActiveTexture(oglTexSlot);
 
             var oglt0 = tex as OpenGLTextureWrapper;
             
             if( oglt0 != null )
             {
-                var textureTarget = OpenTK.Graphics.ES20.All.Texture2D;
+                var textureTarget = OpenTK.Graphics.ES20.TextureTarget.Texture2D;
                 
                 // we need to bind the texture object so that we can opperate on it.
                 OpenTK.Graphics.ES20.GL.BindTexture(textureTarget, oglt0.glTextureId);
@@ -160,7 +160,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 			var mask = OpenTK.Graphics.ES20.ClearBufferMask.ColorBufferBit;
 
-			OpenTK.Graphics.ES20.GL.Clear ( (Int32) mask );
+			OpenTK.Graphics.ES20.GL.Clear ( mask );
 
 			OpenTKHelper.CheckError();
 		}
@@ -175,7 +175,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 			var mask = OpenTK.Graphics.ES20.ClearBufferMask.DepthBufferBit;
 
-			OpenTK.Graphics.ES20.GL.Clear ( (Int32) mask );
+			OpenTK.Graphics.ES20.GL.Clear ( mask );
 
 			OpenTKHelper.CheckError();
 		}
@@ -259,10 +259,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
                 throw new NotImplementedException();
             }
 
-			var otkptype =  EnumConverter.ToOpenTK(primitiveType);
-
-			var otkpAllType = (OpenTK.Graphics.ES20.All) otkptype;
-
+			var otkpType =  EnumConverter.ToOpenTK(primitiveType);
 			//Int32 numVertsInPrim = numVertices / primitiveCount;
 
 			Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn(primitiveType);
@@ -273,9 +270,9 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			this.EnableVertAttribs( vertDecl, (IntPtr) 0 );
 
 			OpenTK.Graphics.ES20.GL.DrawElements (
-				otkpAllType,
+				otkpType,
 				count,
-				OpenTK.Graphics.ES20.All.UnsignedShort,
+				OpenTK.Graphics.ES20.DrawElementsType.UnsignedShort,
 				(System.IntPtr) 0 );
 
 			OpenTKHelper.CheckError();
@@ -343,10 +340,10 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			}
 
 			var glDrawMode = EnumConverter.ToOpenTK(primitiveType);
-			var glDrawModeAll = (OpenTK.Graphics.ES20.All) glDrawMode;
+			var glDrawModeAll = glDrawMode;
 
 
-			var bindTarget = (OpenTK.Graphics.ES20.All) OpenTK.Graphics.ES20.BufferObjects.ArrayBuffer;
+			var bindTarget = OpenTK.Graphics.ES20.BufferTarget.ArrayBuffer;
 
 			OpenTK.Graphics.ES20.GL.BindBuffer(bindTarget, 0);
 			OpenTKHelper.CheckError();
@@ -408,11 +405,9 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 				Int32 numComponentsInVertElem = 0;
 				Boolean vertElemNormalized = false;
-				OpenTK.Graphics.ES20.DataType glVertElemFormat;
+				OpenTK.Graphics.ES20.VertexAttribPointerType glVertElemFormat;
 
 				EnumConverter.ToOpenTK(vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
-
-				var type = (OpenTK.Graphics.ES20.All) glVertElemFormat;
 
 				if( counter != 0)
 				{
@@ -424,7 +419,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 											//         max vertex attributes supported - 1.
 					numComponentsInVertElem,// size - number of components specified in the vertex array for the
 											//        vertex attribute referenced by index.  Valid values are 1 - 4.
-					type,					// type - Data format, valid values are GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT,
+					glVertElemFormat,		// type - Data format, valid values are GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT,
 											//        GL_FLOAT, GL_FIXED, GL_HALF_FLOAT_OES*(Optional feature of es2)
 					vertElemNormalized,		// normalised - used to indicate whether the non-floating data format type should be normalised
 											//              or not when converted to floating point.
@@ -470,10 +465,10 @@ namespace Sungiant.Cor.MonoTouchRuntime
             OpenTKHelper.CheckError();
 
             OpenTK.Graphics.ES20.GL.BlendFuncSeparate(
-                EnumConverter.ToOpenTK(sourceRgb),
-                EnumConverter.ToOpenTK(destinationRgb),
-                EnumConverter.ToOpenTK(sourceAlpha),
-                EnumConverter.ToOpenTK(destinationAlpha) );
+                EnumConverter.ToOpenTKSrc(sourceRgb),
+                EnumConverter.ToOpenTKDest(destinationRgb),
+                EnumConverter.ToOpenTKSrc(sourceAlpha),
+                EnumConverter.ToOpenTKDest(destinationAlpha) );
             OpenTKHelper.CheckError();
 
         }

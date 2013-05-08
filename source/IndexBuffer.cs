@@ -45,19 +45,19 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		static Int32 resourceCounter;
 
 		Int32 indexCount;
-		OpenTK.Graphics.ES20.All type;
+		OpenTK.Graphics.ES20.BufferTarget type;
 		UInt32 bufferHandle;
-		OpenTK.Graphics.ES20.All bufferUsage;
+		OpenTK.Graphics.ES20.BufferUsage bufferUsage;
 
 		public IndexBuffer (Int32 indexCount)
 		{
 			this.indexCount = indexCount;
 
-			this.type = (OpenTK.Graphics.ES20.All) OpenTK.Graphics.ES20.BufferObjects.ElementArrayBuffer;
+			this.type = OpenTK.Graphics.ES20.BufferTarget.ElementArrayBuffer;
 
-			this.bufferUsage = (OpenTK.Graphics.ES20.All) OpenTK.Graphics.ES20.BufferObjects.DynamicDraw;
+			this.bufferUsage = OpenTK.Graphics.ES20.BufferUsage.DynamicDraw;
 
-			OpenTK.Graphics.ES20.GL.GenBuffers(1, ref this.bufferHandle);
+			OpenTK.Graphics.ES20.GL.GenBuffers(1, out this.bufferHandle);
             //try
             //{
 			OpenTKHelper.CheckError();

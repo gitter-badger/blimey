@@ -36,23 +36,28 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Packed;
+using System.Linq;
 
 namespace Sungiant.Cor.MonoTouchRuntime
 {
+	/// <summary>
+	/// Represents an Open GL ES shader input, all the data is read dynamically from
+	/// the shader at runtime, not from the ShaderInputDefinition.  This way we can compare the
+	/// two and check to see that we have what we are expecting.
+	/// </summary>
 	public class OglesShaderInput
 	{
-		ShaderInputDefinition definition;
 		int programHandle;
+		ShaderUtils.ShaderAttribute attribute;
 
-		public String Name { get { return definition.Name; } }
-		public Type Type { get { return definition.Type; } }
-		public VertexElementUsage Usage { get { return definition.Usage; } }
-		public Object DefaultValue { get { return definition.DefaultValue; } }
-		public Boolean Optional { get { return definition.Optional; } }
+		public String Name { get { return attribute.Name; } }
+		public Type Type { get { throw new NotImplementedException(); } }
+		//public VertexElementUsage Usage { get { return attribute.} }
+		//public Object DefaultValue { get; set; }
+		//public Boolean Optional { get; set; }
 
-		public OglesShaderInput(ShaderInputDefinition definition, int programHandle)
+		public OglesShaderInput(int programHandle, ShaderUtils.ShaderAttribute attribute)
 		{
-			this.definition = definition;
 			this.programHandle = programHandle;
 		}
 
@@ -64,8 +69,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 		int programHandle;
 
-		ShaderVariableDefinition definition;
-
+		/*
 		public String NiceName { get { return definition.NiceName; } }
 		public String Name { get { return definition.Name; } }
 		public Type Type { get { return definition.Type; } }
@@ -120,7 +124,9 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			{
 				throw new Exception("Incorrect type");
 			}
-		}
+
+
+		}*/
 	}
 
 	public class OglesShader
@@ -174,16 +180,13 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			ShaderUtils.AttachShader(programHandle, fragShaderHandle);
 			
 			ShaderUtils.LinkProgram (programHandle);
-			/*
+
 			
-			foreach( var input in definition.
-			
-			
-			Inputs = ShaderUtils.GetAttributes(programHandle)
-				.Select;
+			var attributes = ShaderUtils.GetAttributes(programHandle);
+
+			//Inputs = attributes.Select(x => new OglesShaderInput(programHandle, ));
 		
-			*/
-		
+
 			
 			// i think this part needs to be done dynamically in the Activate Fn to accomodate support
 			// for different input vert data structure that have a superset of the required verts

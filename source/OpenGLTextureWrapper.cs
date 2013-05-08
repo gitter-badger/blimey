@@ -152,30 +152,30 @@ namespace Sungiant.Cor.MonoTouchRuntime
             // the rows of pixels are assumed to be aligned to the value set for GL_UNPACK_ALIGNMENT.
             // By default, the value is 4, meaning that rows of pixels are assumed to begin
             // on 4-byte boundaries.  this is a global STATE.
-            OpenTK.Graphics.ES20.GL.PixelStore(OpenTK.Graphics.ES20.All.UnpackAlignment, 4);
+            OpenTK.Graphics.ES20.GL.PixelStore(OpenTK.Graphics.ES20.PixelStoreParameter.UnpackAlignment, 4);
             OpenTKHelper.CheckError();
 
             // the first sept in the application of texture is to create the
             // texture object.  this is a container object that holds the 
             // texture data.  this function returns a handle to a texture
             // object.
-            OpenTK.Graphics.ES20.GL.GenTextures(1, ref textureId);
+			OpenTK.Graphics.ES20.GL.GenTextures(1, out textureId);
             OpenTKHelper.CheckError();
 
             this.glTextureId = textureId;
 
             
-            var textureTarget = OpenTK.Graphics.ES20.All.Texture2D;
+            var textureTarget = OpenTK.Graphics.ES20.TextureTarget.Texture2D;
             
             
             // we need to bind the texture object so that we can opperate on it.
             OpenTK.Graphics.ES20.GL.BindTexture(textureTarget, textureId);
             OpenTKHelper.CheckError();
 
-            var internalFormat = (OpenTK.Graphics.ES20.All) OpenTK.Graphics.ES20.PixelFormat.Rgba;
+            var internalFormat = OpenTK.Graphics.ES20.PixelInternalFormat.Rgba;
+			var format = OpenTK.Graphics.ES20.PixelFormat.Rgba;
             
-            
-            var textureDataFormat = (OpenTK.Graphics.ES20.All) OpenTK.Graphics.ES20.All.UnsignedByte;
+            var textureDataFormat = OpenTK.Graphics.ES20.PixelType.UnsignedByte;
             
             
             
@@ -196,7 +196,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
                 // - GL_LUMINANCE_ALPHA
                 // - GL_LUMINANCE
                 // - GL_ALPHA
-                (int) internalFormat,
+                internalFormat,
                 
                 // the width of the image in pixels
                 width,
@@ -209,7 +209,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
                 
                 // the format of the incoming texture data, in opengl es this 
                 // has to be the same as the internal format
-                internalFormat,
+                format,
                 
                 // the type of the incoming pixel data, can be:
                 // - unsigned byte
@@ -228,11 +228,11 @@ namespace Sungiant.Cor.MonoTouchRuntime
             // sets the minification and maginfication filtering modes.  required
             // because we have not loaded a complete mipmap chain for the texture
             // so we must select a non mipmapped minification filter.
-            OpenTK.Graphics.ES20.GL.TexParameter(textureTarget, OpenTK.Graphics.ES20.All.TextureMinFilter, (int) OpenTK.Graphics.ES20.All.Nearest );
+            OpenTK.Graphics.ES20.GL.TexParameter(textureTarget, OpenTK.Graphics.ES20.TextureParameterName.TextureMinFilter, (int) OpenTK.Graphics.ES20.All.Nearest );
 
             OpenTKHelper.CheckError();
 
-            OpenTK.Graphics.ES20.GL.TexParameter(textureTarget, OpenTK.Graphics.ES20.All.TextureMagFilter, (int) OpenTK.Graphics.ES20.All.Nearest );
+			OpenTK.Graphics.ES20.GL.TexParameter(textureTarget, OpenTK.Graphics.ES20.TextureParameterName.TextureMagFilter, (int) OpenTK.Graphics.ES20.All.Nearest );
 
             OpenTKHelper.CheckError();
         }

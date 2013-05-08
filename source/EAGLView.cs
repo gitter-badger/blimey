@@ -136,20 +136,19 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			//
 			// Enable the depth buffer
 			//
-
-			OpenTK.Graphics.ES20.GL.GenRenderbuffers(1, ref _depthRenderbuffer);
+			OpenTK.Graphics.ES20.GL.GenRenderbuffers(1, out _depthRenderbuffer);
 			OpenTKHelper.CheckError();
 
-			OpenTK.Graphics.ES20.GL.BindRenderbuffer(OpenTK.Graphics.ES20.All.Renderbuffer, _depthRenderbuffer);
+			OpenTK.Graphics.ES20.GL.BindRenderbuffer(OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer, _depthRenderbuffer);
 			OpenTKHelper.CheckError();
 
-			OpenTK.Graphics.ES20.GL.RenderbufferStorage(OpenTK.Graphics.ES20.All.Renderbuffer, OpenTK.Graphics.ES20.All.DepthComponent16, Size.Width, Size.Height);
+			OpenTK.Graphics.ES20.GL.RenderbufferStorage(OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer, OpenTK.Graphics.ES20.RenderbufferInternalFormat.DepthComponent16, Size.Width, Size.Height);
 			OpenTKHelper.CheckError();
 
 			OpenTK.Graphics.ES20.GL.FramebufferRenderbuffer(
-				OpenTK.Graphics.ES20.All.Framebuffer,
-				OpenTK.Graphics.ES20.All.DepthAttachment,
-				OpenTK.Graphics.ES20.All.Renderbuffer,
+				OpenTK.Graphics.ES20.FramebufferTarget.Framebuffer,
+				OpenTK.Graphics.ES20.FramebufferSlot.DepthAttachment,
+				OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer,
 				_depthRenderbuffer);
 			OpenTKHelper.CheckError();
 

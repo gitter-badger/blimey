@@ -176,41 +176,41 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			return TouchPhase.Invalid;
 		}
 
-        public static OpenTK.Graphics.ES20.All ToOpenTKTextureSlot(Int32 slot)
+        public static OpenTK.Graphics.ES20.TextureUnit ToOpenTKTextureSlot(Int32 slot)
         {
             switch(slot)
             {
-                case 0: return OpenTK.Graphics.ES20.All.Texture0;
-                case 1: return OpenTK.Graphics.ES20.All.Texture1;
-                case 2: return OpenTK.Graphics.ES20.All.Texture2;
-                case 3: return  OpenTK.Graphics.ES20.All.Texture3;
-                case 4: return OpenTK.Graphics.ES20.All.Texture4;
-                case 5: return OpenTK.Graphics.ES20.All.Texture5;
-                case 6: return OpenTK.Graphics.ES20.All.Texture6;
-                case 7: return OpenTK.Graphics.ES20.All.Texture7;
-                case 8: return OpenTK.Graphics.ES20.All.Texture8;
-                case 9: return OpenTK.Graphics.ES20.All.Texture9;
-                case 10: return OpenTK.Graphics.ES20.All.Texture10;
-                case 11: return OpenTK.Graphics.ES20.All.Texture11;
-                case 12: return OpenTK.Graphics.ES20.All.Texture12;
-                case 13: return OpenTK.Graphics.ES20.All.Texture13;
-                case 14: return OpenTK.Graphics.ES20.All.Texture14;
-                case 15: return OpenTK.Graphics.ES20.All.Texture15;
-                case 16: return OpenTK.Graphics.ES20.All.Texture16;
-                case 17: return OpenTK.Graphics.ES20.All.Texture17;
-                case 18: return OpenTK.Graphics.ES20.All.Texture18;
-                case 19: return OpenTK.Graphics.ES20.All.Texture19;
-                case 20: return OpenTK.Graphics.ES20.All.Texture20;
-                case 21: return OpenTK.Graphics.ES20.All.Texture21;
-                case 22: return OpenTK.Graphics.ES20.All.Texture22;
-                case 23: return OpenTK.Graphics.ES20.All.Texture23;
-                case 24: return OpenTK.Graphics.ES20.All.Texture24;
-                case 25: return OpenTK.Graphics.ES20.All.Texture25;
-                case 26: return OpenTK.Graphics.ES20.All.Texture26;
-                case 27: return OpenTK.Graphics.ES20.All.Texture27;
-                case 28: return OpenTK.Graphics.ES20.All.Texture28;
-                case 29: return OpenTK.Graphics.ES20.All.Texture29;
-                case 30: return OpenTK.Graphics.ES20.All.Texture30;
+				case 0: return OpenTK.Graphics.ES20.TextureUnit.Texture0;
+				case 1: return OpenTK.Graphics.ES20.TextureUnit.Texture1;
+				case 2: return OpenTK.Graphics.ES20.TextureUnit.Texture2;
+				case 3: return  OpenTK.Graphics.ES20.TextureUnit.Texture3;
+				case 4: return OpenTK.Graphics.ES20.TextureUnit.Texture4;
+				case 5: return OpenTK.Graphics.ES20.TextureUnit.Texture5;
+				case 6: return OpenTK.Graphics.ES20.TextureUnit.Texture6;
+				case 7: return OpenTK.Graphics.ES20.TextureUnit.Texture7;
+				case 8: return OpenTK.Graphics.ES20.TextureUnit.Texture8;
+				case 9: return OpenTK.Graphics.ES20.TextureUnit.Texture9;
+				case 10: return OpenTK.Graphics.ES20.TextureUnit.Texture10;
+				case 11: return OpenTK.Graphics.ES20.TextureUnit.Texture11;
+				case 12: return OpenTK.Graphics.ES20.TextureUnit.Texture12;
+				case 13: return OpenTK.Graphics.ES20.TextureUnit.Texture13;
+				case 14: return OpenTK.Graphics.ES20.TextureUnit.Texture14;
+				case 15: return OpenTK.Graphics.ES20.TextureUnit.Texture15;
+				case 16: return OpenTK.Graphics.ES20.TextureUnit.Texture16;
+				case 17: return OpenTK.Graphics.ES20.TextureUnit.Texture17;
+				case 18: return OpenTK.Graphics.ES20.TextureUnit.Texture18;
+				case 19: return OpenTK.Graphics.ES20.TextureUnit.Texture19;
+				case 20: return OpenTK.Graphics.ES20.TextureUnit.Texture20;
+				case 21: return OpenTK.Graphics.ES20.TextureUnit.Texture21;
+				case 22: return OpenTK.Graphics.ES20.TextureUnit.Texture22;
+				case 23: return OpenTK.Graphics.ES20.TextureUnit.Texture23;
+				case 24: return OpenTK.Graphics.ES20.TextureUnit.Texture24;
+				case 25: return OpenTK.Graphics.ES20.TextureUnit.Texture25;
+				case 26: return OpenTK.Graphics.ES20.TextureUnit.Texture26;
+				case 27: return OpenTK.Graphics.ES20.TextureUnit.Texture27;
+				case 28: return OpenTK.Graphics.ES20.TextureUnit.Texture28;
+				case 29: return OpenTK.Graphics.ES20.TextureUnit.Texture29;
+				case 30: return OpenTK.Graphics.ES20.TextureUnit.Texture30;
             }
 
             throw new NotSupportedException();
@@ -219,65 +219,84 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 		public static void ToOpenTK (
 			VertexElementFormat blimey,
-			out OpenTK.Graphics.ES20.DataType dataFormat,
+			out OpenTK.Graphics.ES20.VertexAttribPointerType dataFormat,
 			out bool normalized,
 			out int size)
 		{
 			normalized = false;
 			size = 0;
-			dataFormat = OpenTK.Graphics.ES20.DataType.Float;
+			dataFormat = OpenTK.Graphics.ES20.VertexAttribPointerType.Float;
 
 			switch(blimey)
 			{
 				case VertexElementFormat.Single: 
-					dataFormat = OpenTK.Graphics.ES20.DataType.Float;
+				dataFormat = OpenTK.Graphics.ES20.VertexAttribPointerType.Float;
 					size = 1;
 					break;
 				case VertexElementFormat.Vector2: 
-					dataFormat = OpenTK.Graphics.ES20.DataType.Float; 
+				dataFormat = OpenTK.Graphics.ES20.VertexAttribPointerType.Float; 
 					size = 2;
 					break;
 				case VertexElementFormat.Vector3: 
-					dataFormat = OpenTK.Graphics.ES20.DataType.Float; 
+				dataFormat = OpenTK.Graphics.ES20.VertexAttribPointerType.Float; 
 					size = 3;
 					break;
 				case VertexElementFormat.Vector4: 
-					dataFormat = OpenTK.Graphics.ES20.DataType.Float; 
+				dataFormat = OpenTK.Graphics.ES20.VertexAttribPointerType.Float; 
 					size = 4;
 					break;
 				case VertexElementFormat.Colour: 
-					dataFormat = OpenTK.Graphics.ES20.DataType.UnsignedByte; 
+				dataFormat = OpenTK.Graphics.ES20.VertexAttribPointerType.UnsignedByte; 
 					normalized = true;
 					size = 4;
 					break;
 				case VertexElementFormat.Byte4: throw new Exception("?");
 				case VertexElementFormat.Short2: throw new Exception("?");
 				case VertexElementFormat.Short4: throw new Exception("?");
-				case VertexElementFormat.NormalizedShort2: throw new Exception("?");
-				case VertexElementFormat.NormalizedShort4: throw new Exception("?");
+				case VertexElementFormat.NormalisedShort2: throw new Exception("?");
+				case VertexElementFormat.NormalisedShort4: throw new Exception("?");
 				case VertexElementFormat.HalfVector2: throw new Exception("?");
 				case VertexElementFormat.HalfVector4: throw new Exception("?");
 			}
 		}
 
-        public static OpenTK.Graphics.ES20.All ToOpenTK(BlendFactor blimey)
+        public static OpenTK.Graphics.ES20.BlendingFactorSrc ToOpenTKSrc(BlendFactor blimey)
         {
             switch(blimey)
             {
-                case BlendFactor.Zero: return OpenTK.Graphics.ES20.All.Zero;
-                case BlendFactor.One: return OpenTK.Graphics.ES20.All.One;
-                case BlendFactor.SourceColour: return OpenTK.Graphics.ES20.All.SrcColor;
-                case BlendFactor.InverseSourceColour: return OpenTK.Graphics.ES20.All.OneMinusSrcColor;
-                case BlendFactor.SourceAlpha: return OpenTK.Graphics.ES20.All.SrcAlpha;
-                case BlendFactor.InverseSourceAlpha: return OpenTK.Graphics.ES20.All.OneMinusSrcAlpha;
-                case BlendFactor.DestinationAlpha: return OpenTK.Graphics.ES20.All.DstAlpha;
-                case BlendFactor.InverseDestinationAlpha: return OpenTK.Graphics.ES20.All.OneMinusDstAlpha;
-                case BlendFactor.DestinationColour: return OpenTK.Graphics.ES20.All.DstColor;
-                case BlendFactor.InverseDestinationColour: return OpenTK.Graphics.ES20.All.OneMinusDstColor;
+				case BlendFactor.Zero: return OpenTK.Graphics.ES20.BlendingFactorSrc.Zero;
+				case BlendFactor.One: return OpenTK.Graphics.ES20.BlendingFactorSrc.One;
+				case BlendFactor.SourceColour: return OpenTK.Graphics.ES20.BlendingFactorSrc.SrcColor;
+				case BlendFactor.InverseSourceColour: return OpenTK.Graphics.ES20.BlendingFactorSrc.OneMinusSrcColor;
+				case BlendFactor.SourceAlpha: return OpenTK.Graphics.ES20.BlendingFactorSrc.SrcAlpha;
+				case BlendFactor.InverseSourceAlpha: return OpenTK.Graphics.ES20.BlendingFactorSrc.OneMinusSrcAlpha;
+				case BlendFactor.DestinationAlpha: return OpenTK.Graphics.ES20.BlendingFactorSrc.DstAlpha;
+				case BlendFactor.InverseDestinationAlpha: return OpenTK.Graphics.ES20.BlendingFactorSrc.OneMinusDstAlpha;
+				case BlendFactor.DestinationColour: return OpenTK.Graphics.ES20.BlendingFactorSrc.DstColor;
+				case BlendFactor.InverseDestinationColour: return OpenTK.Graphics.ES20.BlendingFactorSrc.OneMinusDstColor;
             }
 
             throw new Exception();
         }
+
+		public static OpenTK.Graphics.ES20.BlendingFactorDest ToOpenTKDest(BlendFactor blimey)
+		{
+			switch(blimey)
+			{
+				case BlendFactor.Zero: return OpenTK.Graphics.ES20.BlendingFactorDest.Zero;
+				case BlendFactor.One: return OpenTK.Graphics.ES20.BlendingFactorDest.One;
+				case BlendFactor.SourceColour: return OpenTK.Graphics.ES20.BlendingFactorDest.SrcColor;
+				case BlendFactor.InverseSourceColour: return OpenTK.Graphics.ES20.BlendingFactorDest.OneMinusSrcColor;
+				case BlendFactor.SourceAlpha: return OpenTK.Graphics.ES20.BlendingFactorDest.SrcAlpha;
+				case BlendFactor.InverseSourceAlpha: return OpenTK.Graphics.ES20.BlendingFactorDest.OneMinusSrcAlpha;
+				case BlendFactor.DestinationAlpha: return OpenTK.Graphics.ES20.BlendingFactorDest.DstAlpha;
+				case BlendFactor.InverseDestinationAlpha: return OpenTK.Graphics.ES20.BlendingFactorDest.OneMinusDstAlpha;
+				case BlendFactor.DestinationColour: return OpenTK.Graphics.ES20.BlendingFactorDest.DstColor;
+				case BlendFactor.InverseDestinationColour: return OpenTK.Graphics.ES20.BlendingFactorDest.OneMinusDstColor;
+			}
+			
+			throw new Exception();
+		}
 
         public static BlendFactor ToCorDestinationBlendFactor (OpenTK.Graphics.ES20.All openTK)
         {
@@ -298,15 +317,15 @@ namespace Sungiant.Cor.MonoTouchRuntime
             throw new Exception();
         }
 
-        public static OpenTK.Graphics.ES20.All ToOpenTK(BlendFunction blimey)
+		public static OpenTK.Graphics.ES20.BlendEquationMode ToOpenTK(BlendFunction blimey)
         {
             switch(blimey)
             {
-                case BlendFunction.Add: return OpenTK.Graphics.ES20.All.FuncAdd;
-                case BlendFunction.Max: return OpenTK.Graphics.ES20.All.MaxExt;
-                case BlendFunction.Min: return OpenTK.Graphics.ES20.All.MinExt;
-                case BlendFunction.ReverseSubtract: return OpenTK.Graphics.ES20.All.FuncReverseSubtract;
-                case BlendFunction.Subtract: return OpenTK.Graphics.ES20.All.FuncSubtract;
+				case BlendFunction.Add: return OpenTK.Graphics.ES20.BlendEquationMode.FuncAdd;
+				case BlendFunction.Max: throw new NotSupportedException();
+				case BlendFunction.Min: throw new NotSupportedException();
+                case BlendFunction.ReverseSubtract: return OpenTK.Graphics.ES20.BlendEquationMode.FuncReverseSubtract;
+				case BlendFunction.Subtract: return OpenTK.Graphics.ES20.BlendEquationMode.FuncSubtract;
             }
             
             throw new Exception();

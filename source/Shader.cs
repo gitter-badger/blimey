@@ -41,31 +41,149 @@ using System.Collections.ObjectModel;
 
 namespace Sungiant.Cor.MonoTouchRuntime
 {
+	/// <summary>
+	/// Represents in individual pass of a Cor.Xios high level Shader object.
+	/// </summary>
 	public class ShaderPass
 		: IShaderPass
 		, IDisposable
 	{
+		/// <summary>
+		/// A collection of OpenGL shaders, all with slight variations in their
+		/// input parameters, that are suitable for rendering this ShaderPass object.
+		/// </summary>
 		List<OglesShader> Variants { get; set; }
 
+		/// <summary>
+		/// A nice name for the shader pass, for example: Main or Cel -> Outline.
+		/// </summary>
 		public string Name { get; private set; }
 
-		Dictionary<VertexDeclaration, OglesShader> BestVariants { get; set; }
+		/// <summary>
+		/// Whenever this ShaderPass object gets asked to activate itself whilst a VertexDeclaration it has not seen
+		/// before is active, the best matching shader pass variant is found and then stored in this map to fast
+		/// access.
+		/// </summary>
+		Dictionary<VertexDeclaration, OglesShader> BestVariantMap { get; set; }
 
-		OglesShader WorkOutBestVariantFor(VertexDeclaration vertexDeclaration)
+		static void Match (
+			VertexDeclaration vertexDeclaration, 
+		    OglesShader oglesShader,
+		    out int numMatchedVertElems,
+			out int numUnmatchedVertElems,
+			out int numMissingNonOptionalInputs
+		    )
 		{
-			//int bestMatchedInputCount = 0;
+			numMatchedVertElems = 0;
+			numUnmatchedVertElems = 0;
+			numMissingNonOptionalInputs = 0;
 
-			foreach (var variant in Variants)
+			var oglesShaderInputsUsed = new List<OglesShaderInput>();
+
+			var vertElems = vertexDeclaration.GetVertexElements();
+			/*
+			foreach(var vertElem in vertElems)
 			{
-				//int matchedInputCount = 0;
+				var usage = vertElem.VertexElementUsage;
+				var format = vertElem.VertexElementFormat;
 
-				foreach (var input in variant.Inputs)
+				// find all inputs that could match
+				var matchingInputs = oglesShader.Inputs.FindAll(
+					x => 
+					x.Usage == usage &&
+					x.Type == VertexElementFormatHelper.FromEnum(format));
+
+				// now make sure it's not been used already
+
+				while(matchingInputs.Count > 0)
 				{
-		
+					var potentialInput = matchingInputs[0];
+					
+					if( oglesShaderInputsUsed.Find(x => x == potentialInput) != null)
+					{
+						matchingInputs.RemoveAt(0);
+					}
+					else
+					{
+						oglesShaderInputsUsed.Add(potentialInput);
+					}
 				}
 			}
-			
-			throw new NotImplementedException();
+
+			numMatchedVertElems = oglesShaderInputsUsed.Count;
+
+			numUnmatchedVertElems = vertElems.Length - numMatchedVertElems;
+
+			numMissingNonOptionalInputs = 0;
+
+			foreach (var input in oglesShader.Inputs)
+			{
+				if(!oglesShaderInputsUsed.Contains(input) )
+				{
+					if( !input.Optional )
+					{
+						numMissingNonOptionalInputs++;
+					}
+				}
+
+			}
+			*/
+
+		}
+
+		/// <summary>
+		/// This function takes a VertexDeclaration and a collection of OpenGL shader passes and works out which
+		/// pass is the best fit for the VertexDeclaration.
+		/// </summary>
+		static OglesShader WorkOutBestVariantFor(VertexDeclaration vertexDeclaration, List<OglesShader> variants)
+		{
+			int best = 0;
+
+			int bestNumMatchedVertElems = 0;
+			int bestNumUnmatchedVertElems = 0;
+			int bestNumMissingNonOptionalInputs = 0;
+
+			for (int i = 0; i < variants.Count; ++i)
+			{
+				int numMatchedVertElems = 0;
+				int numUnmatchedVertElems = 0;
+				int numMissingNonOptionalInputs = 0;
+
+				Match(vertexDeclaration, variants[i], out numMatchedVertElems, out numUnmatchedVertElems, out numMissingNonOptionalInputs);
+
+				if( i == 0 )
+				{
+					bestNumMatchedVertElems = numMatchedVertElems;
+					bestNumUnmatchedVertElems = numUnmatchedVertElems;
+					bestNumMissingNonOptionalInputs = numMissingNonOptionalInputs;
+				}
+				else
+				{
+					if( 
+					    (
+							numMatchedVertElems > bestNumMatchedVertElems && 
+					   		bestNumMissingNonOptionalInputs == 0
+						)
+					    || 
+						(
+						 	numMatchedVertElems == bestNumMatchedVertElems && 
+					        bestNumMissingNonOptionalInputs == 0 &&
+					        numUnmatchedVertElems < bestNumUnmatchedVertElems 
+						)
+					  )
+					{
+						bestNumMatchedVertElems = numMatchedVertElems;
+						bestNumUnmatchedVertElems = numUnmatchedVertElems;
+						bestNumMissingNonOptionalInputs = numMissingNonOptionalInputs;
+						best = i;
+					}
+
+				}
+
+			}
+
+
+			return variants[best];
 		}
 
 		internal void SetVariable<T>(string name, T value)
@@ -78,23 +196,23 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			//throw new NotImplementedException();
 		}
 
-		public ShaderPass(ShaderPassDefinition definition)
+		public ShaderPass(string passName, List<ShaderVarientPassDefinition> passVariantDefinitions)
 		{
-			this.Name = definition.Name;
-			this.Variants = definition.PassVariants.Select (x => new OglesShader (x)).ToList();
+			this.Name = passName;
+			this.Variants = passVariantDefinitions.Select(y => y.Pass).Select (x => new OglesShader (x)).ToList();
+
+			this.BestVariantMap = new Dictionary<VertexDeclaration, OglesShader>();
 		}
 
 		public void Activate(VertexDeclaration vertexDeclaration)
 		{
-			if(BestVariants == null) return;
-
-			if (!BestVariants.ContainsKey (vertexDeclaration))
+			if (!BestVariantMap.ContainsKey (vertexDeclaration))
 			{
-				BestVariants[vertexDeclaration] = WorkOutBestVariantFor(vertexDeclaration);
+				BestVariantMap[vertexDeclaration] = WorkOutBestVariantFor(vertexDeclaration, Variants);
 			}
 
 			// select the correct shader pass variant and then activate it
-			BestVariants[vertexDeclaration].Activate ();
+			BestVariantMap[vertexDeclaration].Activate ();
 		}
 
 		public void Dispose()
@@ -107,81 +225,18 @@ namespace Sungiant.Cor.MonoTouchRuntime
 	}
 
 
-
+	/// <summary>
+	/// The Cor.Xios implementation of Cor's IShader interface.
+	/// </summary>
 	public class Shader
 		: IShader
 		, IDisposable
 	{
-		List<VertexElementUsage> requiredVertexElements { get; set; }
-		List<VertexElementUsage> optionalVertexElements { get; set; }
+		#region IShader
 
-		//int indexOfActiveVariant = 0;
-		HashSet<String> variantNames { get; set; }
-
-		List<ShaderPass> passes { get; set; }
-
-		ShaderDefinition shaderDefinition { get; set; }
-
-
-		internal Shader (ShaderDefinition shaderDefinition)
-		{
-			this.requiredVertexElements = new List<VertexElementUsage>();
-			this.optionalVertexElements = new List<VertexElementUsage>();
-			this.variantNames = new HashSet<String>();
-			this.shaderDefinition = shaderDefinition;
-
-			CalculateRequiredInputs();
-			InitilisePasses ();
-		}
-		
-		void CalculateRequiredInputs()
-		{
-			foreach (var input in shaderDefinition.InputDefinitions)
-			{
-				if( input.Optional )
-				{
-					optionalVertexElements.Add(input.Usage);
-				}
-				else
-				{
-					requiredVertexElements.Add(input.Usage);
-				}
-			}
-		}
-
-		void InitilisePasses()
-		{
-			passes = new List<ShaderPass> ();
-			
-			foreach (var passName in shaderDefinition.PassNames)
-			{
-				var passVariants = new List<OglesShaderDefinition>();
-				
-				foreach (var shaderVariantDefinition in shaderDefinition.VariantDefinitions)
-				{
-					foreach( var pass in shaderVariantDefinition.Passes )
-					{
-						if( passName == pass.Name)
-						{
-							passVariants.Add(pass.Pass);
-						}
-					}
-				}
-				
-				passes.Add(new ShaderPass( new ShaderPassDefinition() { Name = passName, PassVariants = passVariants } ));
-			}
-		}
-
-
-		public void Dispose()
-		{
-			foreach (var pass in passes)
-			{
-				pass.Dispose();
-			}
-		}
-
-		// resets all the shader's variables to their default values
+		/// <summary>
+		/// Resets all the shader's variables to their default values.
+		/// </summary>
 		public void ResetVariables()
 		{
 			// the shader definition defines the default values for the variables
@@ -189,7 +244,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			{
 				string varName = variableDefinition.Name;
 				object value = variableDefinition.DefaultValue;
-
+				
 				if( variableDefinition.Type == typeof(Matrix44) )
 				{
 					this.SetVariable<Matrix44>(varName, (Matrix44) value);
@@ -218,17 +273,21 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				{
 					throw new NotSupportedException();
 				}
-
+				
 			}
 		}
 		
-		// gets the value of a specified shader variable
+		/// <summary>
+		/// Gets the value of a specified shader variable.
+		/// </summary>
 		public T GetVariable<T>(string name)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		// gets the value of a specified shader variable
+		/// <summary>
+		/// Gets the value of a specified shader variable.
+		/// </summary>
 		public void SetVariable<T>(string name, T value)
 		{
 			foreach (var pass in passes)
@@ -237,9 +296,12 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			}
 		}
 		
-		// provides access to the individual passes in this shader.
-		// the calling code can itterate though these and apply them 
-		// to the graphics context before it makes a draw call.
+		
+		/// <summary>
+		/// Provides access to the individual passes in this shader.
+		/// the calling code can itterate though these and apply them 
+		///to the graphics context before it makes a draw call.
+		/// </summary>
 		public IShaderPass[] Passes
 		{
 			get
@@ -248,7 +310,9 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			}
 		}
 		
-		// defines which vertex elements are required by this shader
+		/// <summary>
+		/// Defines which vertex elements are required by this shader.
+		/// </summary>
 		public VertexElementUsage[] RequiredVertexElements
 		{
 			get
@@ -257,13 +321,111 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			}
 		}
 		
-		// defines which vertex elements are optionally used by this
-		// shader if they happen to be present
+		/// <summary>
+		/// Defines which vertex elements are optionally used by this
+		/// shader if they happen to be present.
+		/// </summary>
 		public VertexElementUsage[] OptionalVertexElements
 		{
 			get
 			{
 				return optionalVertexElements.ToArray();
+			}
+		}
+
+		#endregion
+
+		#region IDisposable
+
+		/// <summary>
+		/// Releases all resource used by the <see cref="Sungiant.Cor.MonoTouchRuntime.Shader"/> object.
+		/// </summary>
+		public void Dispose()
+		{
+			foreach (var pass in passes)
+			{
+				pass.Dispose();
+			}
+		}
+
+		#endregion
+
+
+		List<VertexElementUsage> requiredVertexElements = new List<VertexElementUsage>();
+		List<VertexElementUsage> optionalVertexElements = new List<VertexElementUsage>();
+
+
+		HashSet<String> variantNames = new HashSet<String>();
+
+
+		/// <summary>
+		/// The <see cref="ShaderPass"/> objects that need to each, in turn,  be individually activated and used to 
+		/// draw with to apply the effect of this containing <see cref="Shader"/> object.
+		/// </summary>
+		List<ShaderPass> passes = new List<ShaderPass>();
+
+		/// <summary>
+		/// Cached reference to the <see cref="ShaderDefinition"/> object used 
+		/// to create this <see cref="Shader"/> object.
+		/// </summary>
+		readonly ShaderDefinition shaderDefinition;
+
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Shader"/> class from a
+		/// <see cref="ShaderDefinition"/> object.
+		/// </summary>
+		internal Shader (ShaderDefinition shaderDefinition)
+		{
+			this.shaderDefinition = shaderDefinition;
+
+			CalculateRequiredInputs();
+			InitilisePasses ();
+		}
+
+		/// <summary>
+		/// Works out and caches a copy of which shader inputs are required/optional, needed as the 
+		/// <see cref="IShader"/> interface requires this information.
+		/// </summary>
+		void CalculateRequiredInputs()
+		{
+			foreach (var input in shaderDefinition.InputDefinitions)
+			{
+				if( input.Optional )
+				{
+					optionalVertexElements.Add(input.Usage);
+				}
+				else
+				{
+					requiredVertexElements.Add(input.Usage);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Triggers the creation of all of this <see cref="Shader"/> object's passes. 
+		/// </summary>
+		void InitilisePasses()
+		{
+			// For each shaderpass.
+			foreach (var definedPassName in shaderDefinition.PassNames)
+			{
+				// Find all of the variants that are defined in this shader object's definition
+				// that support the current shaderpass.
+				var passVariantDefinitions = new List<ShaderVarientPassDefinition>();
+
+				foreach (var shaderVariantDefinition in shaderDefinition.VariantDefinitions)
+				{
+					foreach( var pass in shaderVariantDefinition.Passes )
+					{
+						if( definedPassName == pass.Name)
+						{
+							passVariantDefinitions.Add(pass);
+						}
+					}
+				}
+				
+				passes.Add(new ShaderPass( definedPassName, passVariantDefinitions ));
 			}
 		}
 	}
