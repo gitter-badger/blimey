@@ -683,10 +683,36 @@ namespace Sungiant.Cor
 		Byte4,
 		Short2,
 		Short4,
-		NormalizedShort2,
-		NormalizedShort4,
+		NormalisedShort2,
+		NormalisedShort4,
 		HalfVector2,
 		HalfVector4
+	}
+
+	public static class VertexElementFormatHelper
+	{
+		public static Type FromEnum(VertexElementFormat format)
+		{
+			switch(format)
+			{
+				case VertexElementFormat.Single: return typeof(Single);
+				case VertexElementFormat.Vector2: return typeof(Vector2);
+				case VertexElementFormat.Vector3: return typeof(Vector3);
+				case VertexElementFormat.Vector4: return typeof(Vector4);
+				case VertexElementFormat.Colour: return typeof(Rgba32);
+				case VertexElementFormat.Byte4: return typeof(Byte4);
+				case VertexElementFormat.Short2: return typeof(Short2);
+				case VertexElementFormat.Short4: return typeof(Short4);
+				case VertexElementFormat.NormalisedShort2: return typeof(NormalisedShort2);
+				case VertexElementFormat.NormalisedShort4: return typeof(NormalisedShort4);
+				case VertexElementFormat.HalfVector2: return typeof(Sungiant.Abacus.HalfPrecision.Vector2);
+				case VertexElementFormat.HalfVector4: return typeof(Sungiant.Abacus.HalfPrecision.Vector4);
+
+				throw new NotSupportedException();
+			}
+
+			throw new NotSupportedException();
+		}
 	}
 	public enum VertexElementUsage
 	{
@@ -2067,10 +2093,10 @@ namespace Sungiant.Cor
 			case VertexElementFormat.Short4:
 				return 8;
 
-			case VertexElementFormat.NormalizedShort2:
+			case VertexElementFormat.NormalisedShort2:
 				return 4;
 
-			case VertexElementFormat.NormalizedShort4:
+			case VertexElementFormat.NormalisedShort4:
 				return 8;
 
 			case VertexElementFormat.HalfVector2:

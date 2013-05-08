@@ -27,10 +27,10 @@
 			case VertexElementFormat.Short4:
 				return 8;
 
-			case VertexElementFormat.NormalizedShort2:
+			case VertexElementFormat.NormalisedShort2:
 				return 4;
 
-			case VertexElementFormat.NormalizedShort4:
+			case VertexElementFormat.NormalisedShort4:
 				return 8;
 
 			case VertexElementFormat.HalfVector2:
