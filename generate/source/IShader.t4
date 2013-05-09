@@ -36,5 +36,10 @@
 		/// shader if they happen to be present.
 		/// </summary>
 		VertexElementUsage[] OptionalVertexElements { get; }
+
+		// <summary>
+		// The name of this shader.
+		// </summary>
+		string Name { get; }
 	}
 

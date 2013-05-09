@@ -427,6 +427,11 @@ namespace Sungiant.Cor
 		/// shader if they happen to be present.
 		/// </summary>
 		VertexElementUsage[] OptionalVertexElements { get; }
+
+		// <summary>
+		// The name of this shader.
+		// </summary>
+		string Name { get; }
 	}
 
 	public interface IShaderPass
@@ -707,13 +712,16 @@ namespace Sungiant.Cor
 				case VertexElementFormat.NormalisedShort4: return typeof(NormalisedShort4);
 				case VertexElementFormat.HalfVector2: return typeof(Sungiant.Abacus.HalfPrecision.Vector2);
 				case VertexElementFormat.HalfVector4: return typeof(Sungiant.Abacus.HalfPrecision.Vector4);
-
-				throw new NotSupportedException();
 			}
 
 			throw new NotSupportedException();
 		}
 	}
+
+	/// <summary>
+	/// Provides extra information about what a vertex shader input is used for.  It is purely informational and should
+	/// not be used as an identifier.
+	/// </summary>
 	public enum VertexElementUsage
 	{
 		Position,
