@@ -217,6 +217,48 @@ namespace Sungiant.Cor.MonoTouchRuntime
         }
 
 
+		public static Type ToType (OpenTK.Graphics.ES20.ActiveAttribType openTK)
+		{
+			switch(openTK)
+			{
+			case OpenTK.Graphics.ES20.ActiveAttribType.Float: return typeof(Single);
+			case OpenTK.Graphics.ES20.ActiveAttribType.FloatMat2: throw new NotSupportedException();
+			case OpenTK.Graphics.ES20.ActiveAttribType.FloatMat3: throw new NotSupportedException();
+			case OpenTK.Graphics.ES20.ActiveAttribType.FloatMat4: return typeof(Matrix44);
+			case OpenTK.Graphics.ES20.ActiveAttribType.FloatVec2: return typeof(Vector2);
+			case OpenTK.Graphics.ES20.ActiveAttribType.FloatVec3: return typeof(Vector3);
+			case OpenTK.Graphics.ES20.ActiveAttribType.FloatVec4: return typeof(Vector4);
+			}
+
+			throw new NotSupportedException();
+		}
+
+		public static Type ToType (OpenTK.Graphics.ES20.ActiveUniformType openTK)
+		{
+			switch(openTK)
+			{
+			case OpenTK.Graphics.ES20.ActiveUniformType.Bool: return typeof(Boolean);
+			case OpenTK.Graphics.ES20.ActiveUniformType.BoolVec2: throw new NotSupportedException();
+			case OpenTK.Graphics.ES20.ActiveUniformType.BoolVec3: throw new NotSupportedException();
+			case OpenTK.Graphics.ES20.ActiveUniformType.BoolVec4: throw new NotSupportedException();
+			case OpenTK.Graphics.ES20.ActiveUniformType.Float: return typeof(Single);
+			case OpenTK.Graphics.ES20.ActiveUniformType.FloatMat2: throw new NotSupportedException();
+			case OpenTK.Graphics.ES20.ActiveUniformType.FloatMat3: throw new NotSupportedException();
+			case OpenTK.Graphics.ES20.ActiveUniformType.FloatMat4: return typeof(Matrix44);
+			case OpenTK.Graphics.ES20.ActiveUniformType.FloatVec2: return typeof(Vector2);
+			case OpenTK.Graphics.ES20.ActiveUniformType.FloatVec3: return typeof(Vector3);
+			case OpenTK.Graphics.ES20.ActiveUniformType.FloatVec4: return typeof(Vector4);
+			case OpenTK.Graphics.ES20.ActiveUniformType.Int: return typeof(Boolean);
+			case OpenTK.Graphics.ES20.ActiveUniformType.IntVec2: throw new NotSupportedException();
+			case OpenTK.Graphics.ES20.ActiveUniformType.IntVec3: throw new NotSupportedException();
+			case OpenTK.Graphics.ES20.ActiveUniformType.IntVec4: throw new NotSupportedException();
+			case OpenTK.Graphics.ES20.ActiveUniformType.Sampler2D: throw new NotSupportedException();
+			case OpenTK.Graphics.ES20.ActiveUniformType.SamplerCube: throw new NotSupportedException();
+			}
+			
+			throw new NotSupportedException();
+		}
+
 		public static void ToOpenTK (
 			VertexElementFormat blimey,
 			out OpenTK.Graphics.ES20.VertexAttribPointerType dataFormat,

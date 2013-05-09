@@ -46,7 +46,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 	// the client data store and reduce the overall system memory consumed by the application.
 	//
 	public sealed class VertexBuffer
-#if aot
+#if AOT
         : IVertexBuffer
 #else
 		: BaseRuntime.VertexBuffer
@@ -139,7 +139,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			GC.SuppressFinalize(this);
 		}
 
-#if aot
+#if AOT
 		public void SetData (VertexPosition[] data) { SetDataHelper (data); }
 		public void SetData (VertexPositionColour[] data) { SetDataHelper (data); }
 		public void SetData (VertexPositionNormal[] data) { SetDataHelper (data); }
@@ -175,7 +175,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		}
 
 
-#if aot
+#if AOT
 		public Int32 VertexCount
 #else
 		public override Int32 VertexCount
@@ -187,7 +187,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			}
 		}
 
-#if aot
+#if AOT
 		public VertexDeclaration VertexDeclaration 
 #else
 		public override VertexDeclaration VertexDeclaration
@@ -200,7 +200,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		} 
 
 
-#if aot
+#if AOT
 		public void GetData<T> (T[] data) where T: struct, IVertexType { throw new System.NotSupportedException(); }
 		
 		public void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType { throw new System.NotSupportedException(); }

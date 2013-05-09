@@ -52,7 +52,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 					new ShaderInputDefinition()
 					{
 						Name = "a_vertPos",
-						Type = typeof(Vector3),
+						Type = typeof(Vector4),
 						Usage = VertexElementUsage.Position,
 						DefaultValue = Vector3.Zero,
 						Optional = false,
@@ -68,9 +68,9 @@ namespace Sungiant.Cor.MonoTouchRuntime
 					new ShaderInputDefinition()
 					{
 						Name = "a_vertColour",
-						Type = typeof(Rgba32),
+						Type = typeof(Vector4),
 						Usage = VertexElementUsage.Colour,
-						DefaultValue = Rgba32.White,
+						DefaultValue = new Vector4(Rgba32.White.ToVector3(), 1f),
 						Optional = true,
 					},
 				},
@@ -80,8 +80,8 @@ namespace Sungiant.Cor.MonoTouchRuntime
 					{
 						NiceName = "MaterialColour",
 						Name = "u_colour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
+						Type = typeof(Vector4),
+						DefaultValue = new Vector4(Rgba32.White.ToVector3(), 1f),
 					},
 					new ShaderVariableDefinition()
 					{
@@ -175,7 +175,11 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			};
 
 
-			return new Shader (parameter);
+			var s = new Shader (parameter);
+
+			Console.WriteLine(s);
+
+			return s;
 		}
 	}
 }

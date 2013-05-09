@@ -49,6 +49,13 @@ namespace Sungiant.Cor.MonoTouchRuntime
 	//
 	public static class ShaderUtils
 	{
+		public class ShaderUniform
+		{
+			public Int32 Index { get; set; }
+			public String Name { get; set; }
+			public OpenTK.Graphics.ES20.ActiveUniformType Type { get; set; }
+		}
+
 		public class ShaderAttribute
 		{
 			public Int32 Index { get; set; }
@@ -104,36 +111,6 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				throw new Exception("Failed to compile vertex shader program");
 
 			return vertShaderHandle;
-		}
-		
-		public static Type GetAttributeType(OpenTK.Graphics.ES20.All type)
-		{
-		
-			if( type == OpenTK.Graphics.ES20.All.Float )
-			{
-				return typeof(Single);
-			}
-			else if( type == OpenTK.Graphics.ES20.All.FloatVec2 )
-			{
-				return typeof(Vector2);
-			}
-			else if( type == OpenTK.Graphics.ES20.All.FloatVec3 )
-			{
-				return typeof(Vector3);
-			}
-			else if( type == OpenTK.Graphics.ES20.All.FloatVec4 )
-			{
-				return typeof(Vector4);
-			}
-			else if( type == OpenTK.Graphics.ES20.All.FloatMat4 )
-			{
-				return typeof(Matrix44);
-			}
-			else
-			{
-				throw new NotSupportedException();
-			}
-			
 		}
 
 		public static Int32 CreateFragmentShader(string path)
@@ -298,7 +275,47 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			}
 		}
 		
-		
+		public static List<ShaderUniform> GetUniforms (Int32 prog)
+		{
+			
+			int numActiveUniforms = 0;
+			
+			var result = new List<ShaderUniform>();
+
+			OpenTK.Graphics.ES20.GL.GetProgram(prog, OpenTK.Graphics.ES20.ProgramParameter.ActiveUniforms, out numActiveUniforms);
+
+			for(int i = 0; i < numActiveUniforms; ++i)
+			{
+				var sb = new System.Text.StringBuilder ();
+				
+				int buffSize = 0;
+				int length = 0;
+				int size = 0;
+				OpenTK.Graphics.ES20.ActiveUniformType type;
+
+				OpenTK.Graphics.ES20.GL.GetActiveUniform(
+					prog,
+					i,
+					64,
+					out length,
+					out size,
+					out type,
+					sb);
+				
+				
+				result.Add(
+					new ShaderUniform()
+					{
+					Index = i,
+					Name = sb.ToString(),
+					Type = type
+					}
+				);
+			}
+			
+			return result;
+		}
+
 		public static List<ShaderAttribute> GetAttributes (Int32 prog)
 		{
 			int numActiveAttributes = 0;
@@ -310,15 +327,12 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			
 			for(int i = 0; i < numActiveAttributes; ++i)
 			{
-				string name = string.Empty;
-
-
 				var sb = new System.Text.StringBuilder ();
 
 				int buffSize = 0;
 				int length = 0;
 				int size = 0;
-				OpenTK.Graphics.ES20.ActiveAttribType type = OpenTK.Graphics.ES20.ActiveAttribType.Float;
+				OpenTK.Graphics.ES20.ActiveAttribType type;
 				OpenTK.Graphics.ES20.GL.GetActiveAttrib(
 					prog,
 					i,

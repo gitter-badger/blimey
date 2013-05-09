@@ -190,7 +190,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		{
 			foreach (var variant in Variants)
 			{
-				//variant.Variables[name].SetVariable<T>(name, value);
+				//variant.Variables.Find(x => x.SetVariable<T>(name, value));
 			}
 			
 			//throw new NotImplementedException();
@@ -203,6 +203,23 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 			this.BestVariantMap = new Dictionary<VertexDeclaration, OglesShader>();
 		}
+
+		internal void ValidateInputs(List<ShaderInputDefinition> definitions)
+		{
+			foreach(var variant in this.Variants)
+			{
+				variant.ValidateInputs(definitions);
+			}
+		}
+
+		internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
+		{
+			foreach(var variant in this.Variants)
+			{
+				variant.ValidateVariables(definitions);
+			}
+		}
+
 
 		public void Activate(VertexDeclaration vertexDeclaration)
 		{
@@ -240,7 +257,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		public void ResetVariables()
 		{
 			// the shader definition defines the default values for the variables
-			foreach (var variableDefinition in shaderDefinition.VariableDefinitions)
+			foreach (var variableDefinition in cachedShaderDefinition.VariableDefinitions)
 			{
 				string varName = variableDefinition.Name;
 				object value = variableDefinition.DefaultValue;
@@ -317,6 +334,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		{
 			get
 			{
+				// todo: an array of vert elem usage doesn't uniquely identify anything...
 				return requiredVertexElements.ToArray();
 			}
 		}
@@ -329,9 +347,12 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		{
 			get
 			{
+				// todo: an array of vert elem usage doesn't uniquely identify anything...
 				return optionalVertexElements.ToArray();
 			}
 		}
+
+		public String Name { get; private set; }
 
 		#endregion
 
@@ -355,7 +376,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		List<VertexElementUsage> optionalVertexElements = new List<VertexElementUsage>();
 
 
-		HashSet<String> variantNames = new HashSet<String>();
+		//HashSet<String> variantNames = new HashSet<String>();
 
 
 		/// <summary>
@@ -368,7 +389,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		/// Cached reference to the <see cref="ShaderDefinition"/> object used 
 		/// to create this <see cref="Shader"/> object.
 		/// </summary>
-		readonly ShaderDefinition shaderDefinition;
+		readonly ShaderDefinition cachedShaderDefinition;
 
 
 		/// <summary>
@@ -377,17 +398,17 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		/// </summary>
 		internal Shader (ShaderDefinition shaderDefinition)
 		{
-			this.shaderDefinition = shaderDefinition;
-
-			CalculateRequiredInputs();
-			InitilisePasses ();
+			this.cachedShaderDefinition = shaderDefinition;
+			this.Name = shaderDefinition.Name;
+			CalculateRequiredInputs(shaderDefinition);
+			InitilisePasses (shaderDefinition);
 		}
 
 		/// <summary>
 		/// Works out and caches a copy of which shader inputs are required/optional, needed as the 
 		/// <see cref="IShader"/> interface requires this information.
 		/// </summary>
-		void CalculateRequiredInputs()
+		void CalculateRequiredInputs(ShaderDefinition shaderDefinition)
 		{
 			foreach (var input in shaderDefinition.InputDefinitions)
 			{
@@ -405,7 +426,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		/// <summary>
 		/// Triggers the creation of all of this <see cref="Shader"/> object's passes. 
 		/// </summary>
-		void InitilisePasses()
+		void InitilisePasses(ShaderDefinition shaderDefinition)
 		{
 			// For each shaderpass.
 			foreach (var definedPassName in shaderDefinition.PassNames)
@@ -425,7 +446,12 @@ namespace Sungiant.Cor.MonoTouchRuntime
 					}
 				}
 				
-				passes.Add(new ShaderPass( definedPassName, passVariantDefinitions ));
+				var shaderPass = new ShaderPass( definedPassName, passVariantDefinitions );
+
+				shaderPass.ValidateInputs(shaderDefinition.InputDefinitions);
+				shaderPass.ValidateVariables(shaderDefinition.VariableDefinitions);
+
+				passes.Add(shaderPass);
 			}
 		}
 	}

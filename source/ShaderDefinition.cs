@@ -75,12 +75,6 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		public string Name { get; set; }
 		public OglesShaderDefinition Pass { get; set; }
 	}
-	
-	//public class ShaderPassDefinition
-	//{
-	//	public string Name { get; set; }
-	//	public List<OglesShaderDefinition> PassVariants { get; set; }
-	//}
 
 	/// <summary>
 	/// Defines how to create Cor.Xios's implementation

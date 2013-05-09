@@ -47,86 +47,103 @@ namespace Sungiant.Cor.MonoTouchRuntime
 	/// </summary>
 	public class OglesShaderInput
 	{
-		int programHandle;
-		ShaderUtils.ShaderAttribute attribute;
+		int ProgramHandle { get; set; }
+		int AttributeLocation { get; set; }
 
-		public String Name { get { return attribute.Name; } }
-		public Type Type { get { throw new NotImplementedException(); } }
-		//public VertexElementUsage Usage { get { return attribute.} }
-		//public Object DefaultValue { get; set; }
-		//public Boolean Optional { get; set; }
+		public String Name { get; private set; }
+		public Type Type { get; private set; }
+		public VertexElementUsage Usage { get; private set; }
+		public Object DefaultValue { get; private set; }
+		public Boolean Optional { get; private set; }
 
-		public OglesShaderInput(int programHandle, ShaderUtils.ShaderAttribute attribute)
+		public OglesShaderInput(
+			int programHandle, ShaderUtils.ShaderAttribute attribute)
 		{
-			this.programHandle = programHandle;
+			this.ProgramHandle = programHandle;
+			this.AttributeLocation = attribute.Index;
+			this.Name = attribute.Name;
+			this.Type = EnumConverter.ToType(attribute.Type);
+
+			// Associates a generic vertex attribute index with a named attribute variable.
+			OpenTK.Graphics.ES20.GL.BindAttribLocation(programHandle, attribute.Index, attribute.Name);
+			
+			OpenTKHelper.CheckError();
+		}
+
+		internal void RegisterExtraInfo(ShaderInputDefinition definition)
+		{
+			Usage = definition.Usage;
+			DefaultValue = definition.DefaultValue;
+			Optional = definition.Optional;
 		}
 
 	}
 
 	public class OglesShaderVariable
 	{
-		int uniformLocation;
+		int ProgramHandle { get; set; }
+		int UniformLocation { get; set; }
 
-		int programHandle;
+		public String NiceName { get; private set; }
+		public String Name { get; private set; }
+		public Type Type { get; private set; }
+		public Object DefaultValue { get; private set; }
 
-		/*
-		public String NiceName { get { return definition.NiceName; } }
-		public String Name { get { return definition.Name; } }
-		public Type Type { get { return definition.Type; } }
-		public Object DefaultValue { get { return definition.DefaultValue; } }
-
-		public OglesShaderVariable(ShaderVariableDefinition definition, int programHandle)
+		public OglesShaderVariable(
+			int programHandle, ShaderUtils.ShaderUniform uniform)
 		{
-			this.definition = definition;
-			this.programHandle = programHandle;
+			this.ProgramHandle = programHandle;
 
-			uniformLocation = OpenTK.Graphics.ES20.GL.GetUniformLocation(programHandle, definition.Name);
-			OpenTKHelper.CheckError();
+			this.UniformLocation = uniform.Index;
+			this.Name = uniform.Name;
+			this.Type = EnumConverter.ToType(uniform.Type);
+		}
+		
+		internal void RegisterExtraInfo(ShaderVariableDefinition definition)
+		{
+			NiceName = definition.NiceName;
+			DefaultValue = definition.DefaultValue;
 		}
 
 		public void SetVariable<T>(string name, object value)
 		{
-			if (typeof(T) == definition.Type)
-			{
-				if( definition.Type == typeof(Matrix44) )
-				{
-					var castValue = (Matrix44) value;
-					OpenTK.Graphics.ES20.GL.UniformMatrix4( uniformLocation, 1, false, ref castValue.M11 );
-				}
-				else if( definition.Type == typeof(Single) )
-				{
-					var castValue = (Single) value;
-					OpenTK.Graphics.ES20.GL.Uniform1( uniformLocation, 1, ref castValue );
-				}
-				else if( definition.Type == typeof(Vector2) )
-				{
-					var castValue = (Vector2) value;
-					OpenTK.Graphics.ES20.GL.Uniform2( uniformLocation, 1, ref castValue.X );
-				}
-				else if( definition.Type == typeof(Vector3) )
-				{
-					var castValue = (Vector3) value;
-					OpenTK.Graphics.ES20.GL.Uniform3( uniformLocation, 1, ref castValue.X );
-				} 
-				else if( definition.Type == typeof(Vector4) )
-				{
-					var castValue = (Vector4) value;
-					OpenTK.Graphics.ES20.GL.Uniform4( uniformLocation, 1, ref castValue.X );
-				}
-				else
-				{
-					throw new Exception("Not supported");
-				}
+			Type t = typeof(T);
 
-				OpenTKHelper.CheckError();
+			if( t == typeof(Matrix44) )
+			{
+				var castValue = (Matrix44) value;
+				OpenTK.Graphics.ES20.GL.UniformMatrix4( UniformLocation, 1, false, ref castValue.M11 );
+			}
+			else if( t == typeof(Single) )
+			{
+				var castValue = (Single) value;
+				OpenTK.Graphics.ES20.GL.Uniform1( UniformLocation, 1, ref castValue );
+			}
+			else if( t == typeof(Vector2) )
+			{
+				var castValue = (Vector2) value;
+				OpenTK.Graphics.ES20.GL.Uniform2( UniformLocation, 1, ref castValue.X );
+			}
+			else if( t == typeof(Vector3) )
+			{
+				var castValue = (Vector3) value;
+				OpenTK.Graphics.ES20.GL.Uniform3( UniformLocation, 1, ref castValue.X );
+			} 
+			else if( t == typeof(Vector4) )
+			{
+				var castValue = (Vector4) value;
+				OpenTK.Graphics.ES20.GL.Uniform4( UniformLocation, 1, ref castValue.X );
 			}
 			else
 			{
-				throw new Exception("Incorrect type");
+				throw new Exception("Not supported");
 			}
 
+			OpenTKHelper.CheckError();
 
-		}*/
+
+
+		}
 	}
 
 	public class OglesShader
@@ -138,13 +155,52 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		Int32 programHandle;
 		Int32 fragShaderHandle;
 		Int32 vertShaderHandle;
+
+		string pixelShaderPath;
+		string vertexShaderPath;
+
+		internal void ValidateInputs(List<ShaderInputDefinition> definitions)
+		{
+			// Make sure that this shader implements all of the non-optional defined inputs.
+			var nonOptionalDefinitions = definitions.Where(y => !y.Optional).ToList();
+
+			foreach(var definition in nonOptionalDefinitions)
+			{
+				var find = Inputs.Find(x => x.Name == definition.Name && x.Type == definition.Type);
+
+				if( find == null )
+				{
+					throw new Exception("problem");
+				}
+			}
+
+			// Make sure that every implemented input is defined.
+			foreach(var input in Inputs)
+			{
+				var find = definitions.Find(x => x.Name == input.Name && x.Type == input.Type);
+
+				if( find == null )
+				{
+					throw new Exception("problem");
+				}
+				else
+				{
+					input.RegisterExtraInfo(find);
+				}
+			}
+		}
+
+		internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
+		{
+			
+		}
 		
 		static void CheckInputCompatibility(List<OglesShaderVariable> definedVariables )
 		{
 			throw new NotImplementedException();
 		}
 		
-		static void CheckInputCompatibility(List<OglesShaderInput> definedInputs, Dictionary<string, OpenTK.Graphics.ES20.All> actualAttributes )
+		static void CheckInputCompatibility(List<OglesShaderInput> definedInputs, Dictionary<string, OpenTK.Graphics.ES20.ActiveAttribType> actualAttributes )
 		{
 			// make sure that the shader we just loaded will work with this shader definition	
 			if( actualAttributes.Count != definedInputs.Count )
@@ -161,7 +217,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 					throw new Exception("shader doesn't implement definition - missing variable");
 				}
 				
-				if( item.Type != ShaderUtils.GetAttributeType( actualAttributes[key] ) )
+				if( item.Type != EnumConverter.ToType( actualAttributes[key] ) )
 				{
 					throw new Exception("shader doesn't implement definition - variable is of the wrong type");
 				}
@@ -170,11 +226,13 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		
 		internal OglesShader(OglesShaderDefinition definition)
 		{
-		
+			this.vertexShaderPath = definition.VertexShaderPath;
+			this.pixelShaderPath = definition.PixelShaderPath;
+			
 			//Variables = 
 			programHandle = ShaderUtils.CreateShaderProgram ();
-			vertShaderHandle = ShaderUtils.CreateVertexShader(definition.VertexShaderPath);
-			fragShaderHandle = ShaderUtils.CreateFragmentShader(definition.PixelShaderPath);
+			vertShaderHandle = ShaderUtils.CreateVertexShader(this.vertexShaderPath);
+			fragShaderHandle = ShaderUtils.CreateFragmentShader(this.pixelShaderPath);
 			
 			ShaderUtils.AttachShader(programHandle, vertShaderHandle);
 			ShaderUtils.AttachShader(programHandle, fragShaderHandle);
@@ -184,19 +242,17 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			
 			var attributes = ShaderUtils.GetAttributes(programHandle);
 
-			//Inputs = attributes.Select(x => new OglesShaderInput(programHandle, ));
-		
+			Inputs = attributes
+				.Select(x => new OglesShaderInput(programHandle, x))
+				.ToList();
 
+			var uniforms = ShaderUtils.GetUniforms(programHandle);
 			
-			// i think this part needs to be done dynamically in the Activate Fn to accomodate support
-			// for different input vert data structure that have a superset of the required verts
-			//for(int i = 0; i < Inputs.Count; ++i )
-			//{
-			//	OpenTK.Graphics.ES20.GL.BindAttribLocation(programHandle, i, Inputs[i].Name);
-				
-			//	OpenTKHelper.CheckError();
-			//}
-			
+			Variables = uniforms
+				.Where(y => y.Type != OpenTK.Graphics.ES20.ActiveUniformType.Sampler2D && y.Type != OpenTK.Graphics.ES20.ActiveUniformType.SamplerCube)
+				.Select(x => new OglesShaderVariable(programHandle, x))
+				.ToList();
+
 			//foreach (var variable in Variables)
 			//{
 			//	variables[variable.NiceName] = new OglesShaderVariable(variable, programHandle);

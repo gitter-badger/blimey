@@ -22,7 +22,7 @@
 // You are not allowed to specify a uniform/attribute/varying type in a function or a void.
 
 
-attribute vec4 a_Position;
+attribute vec4 a_vertPos;
 
 uniform mat4 u_WorldViewProj;
 uniform vec4 u_MaterialColour;
@@ -31,7 +31,7 @@ varying lowp vec4 v_tint;
 
 void main()
 {
-	gl_Position = u_WorldViewProj * a_Position;
+	gl_Position = u_WorldViewProj * a_vertPos;
 	
 	v_tint = u_MaterialColour;
 }

@@ -40,7 +40,7 @@ using System.IO;
 namespace Sungiant.Cor.MonoTouchRuntime
 {
 	public class ResourceManager
-#if aot
+#if AOT
 		: IResourceManager
 #else
 		: BaseRuntime.ResourceManager
@@ -50,7 +50,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		{
 		}
 
-#if aot
+#if AOT
 		public T Load<T>(string path) where T : IResource
 #else
 		public override T Load<T>(string path)
@@ -84,7 +84,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 
 		/*
-#if aot
+#if AOT
 		public IEffect GetShader(ShaderType shaderType, VertexDeclaration vertDecl)
 #else
 		public override IEffect GetShader(ShaderType shaderType, VertexDeclaration vertDecl)
