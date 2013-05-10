@@ -41,7 +41,7 @@ using System.Runtime.ConstrainedExecution;
 namespace Sungiant.Cor.MonoTouchRuntime
 {
 	public class GraphicsManager
-#if aot
+#if AOT
 		: IGraphicsManager
 #else
         : BaseRuntime.GraphicsManager
@@ -100,7 +100,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 		}
 
-#if aot
+#if AOT
 		public void Reset()
 #else
 		public override void Reset()
@@ -124,7 +124,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		}
 */
 
-#if aot
+#if AOT
         public void SetActiveTexture(Int32 slot, ITexture tex)
 #else
 		public override void SetActiveTexture(Int32 slot, Texture2D tex)
@@ -146,7 +146,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
         }
         
-#if aot
+#if AOT
 		public void ClearColourBuffer(Rgba32 col)
 #else
 		public override void ClearColourBuffer(Rgba32 col)
@@ -165,7 +165,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			OpenTKHelper.CheckError();
 		}
 
-#if aot
+#if AOT
         public void ClearDepthBuffer(Single val)
 #else
 		public override void ClearDepthBuffer(Single val)
@@ -180,7 +180,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			OpenTKHelper.CheckError();
 		}
 
-#if aot
+#if AOT
 		public IGpuUtils GpuUtils
 #else
         public override IGpuUtils GpuUtils
@@ -192,7 +192,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			}
 		}
 
-#if aot
+#if AOT
         public IGeometryBuffer CreateGeometryBuffer(
 #else
 		public override IGeometryBuffer CreateGeometryBuffer(
@@ -202,7 +202,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			return new GeometryBuffer(vertexDeclaration, vertexCount, indexCount);
 		}
 
-#if aot
+#if AOT
         public void SetActiveGeometryBuffer(IGeometryBuffer buffer)
 #else
 		public override void SetActiveGeometryBuffer(IGeometryBuffer buffer)
@@ -228,7 +228,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
             }
 		}
 
-#if aot
+#if AOT
         public IDisplayStatus DisplayStatus
 #else
 		public override IDisplayStatus DisplayStatus
@@ -240,7 +240,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			}
 		}
 
-#if aot
+#if AOT
         public void DrawIndexedPrimitives(
 #else
 		public override void DrawIndexedPrimitives(
@@ -281,7 +281,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 		}
 
-#if aot
+#if AOT
 		public void DrawUserPrimitives (PrimitiveType primitiveType, VertexPosition[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration ) { this.DrawUserPrimitivesHelper (primitiveType, vertexData, vertexOffset, primitiveCount, vertexDeclaration); }
 		public void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionColour[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration ) { this.DrawUserPrimitivesHelper (primitiveType, vertexData, vertexOffset, primitiveCount, vertexDeclaration); }
 		public void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionNormal[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration ) { this.DrawUserPrimitivesHelper (primitiveType, vertexData, vertexOffset, primitiveCount, vertexDeclaration); }
@@ -300,7 +300,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			int vertexOffset,
 			int primitiveCount,
 			VertexDeclaration vertexDeclaration)
-#if aot
+#if AOT
 			where T : struct, IVertexType
 #endif
 		{
@@ -450,7 +450,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			}
 		}
 
-#if aot
+#if AOT
 		public void SetBlendEquation(
 #else
         public override void SetBlendEquation(
@@ -473,7 +473,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
         }
 
-#if aot
+#if AOT
 		public void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPosition[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration) { this.DrawUserIndexedPrimitivesHelper(primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount, vertexDeclaration); }
 		public void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionColour[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration) { this.DrawUserIndexedPrimitivesHelper(primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount, vertexDeclaration); }
 		public void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionNormal[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration) { this.DrawUserIndexedPrimitivesHelper(primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount, vertexDeclaration); }
@@ -495,14 +495,14 @@ namespace Sungiant.Cor.MonoTouchRuntime
             Int32 indexOffset,                      // Offset (in indices) from the beginning of the index buffer to the first index to use.
             Int32 primitiveCount,                   // Number of primitives to render.
             VertexDeclaration vertexDeclaration)
-#if aot
+#if AOT
 			where T : struct, IVertexType
 #endif
         {
             throw new NotImplementedException();
         }
 
-#if aot
+#if AOT
         public void DrawPrimitives(
 #else
 		public override void DrawPrimitives(
