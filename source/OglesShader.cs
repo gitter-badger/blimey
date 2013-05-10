@@ -105,9 +105,9 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			DefaultValue = definition.DefaultValue;
 		}
 
-		public void SetVariable<T>(string name, object value)
+		public void Set(object value)
 		{
-			Type t = typeof(T);
+			Type t = value.GetType();
 
 			if( t == typeof(Matrix44) )
 			{
@@ -133,6 +133,15 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			{
 				var castValue = (Vector4) value;
 				OpenTK.Graphics.ES20.GL.Uniform4( UniformLocation, 1, ref castValue.X );
+			}
+			else if( t == typeof(Rgba32) )
+			{
+				var castValue = (Rgba32) value;
+
+				Vector4 vec4Value;
+				castValue.UnpackTo(out vec4Value);
+
+				OpenTK.Graphics.ES20.GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
 			}
 			else
 			{
@@ -177,7 +186,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			// Make sure that every implemented input is defined.
 			foreach(var input in Inputs)
 			{
-				var find = definitions.Find(x => x.Name == input.Name && x.Type == input.Type);
+				var find = definitions.Find(x => x.Name == input.Name && (x.Type == input.Type || (x.Type == typeof(Rgba32) && input.Type == typeof(Vector4))));
 
 				if( find == null )
 				{
@@ -192,10 +201,23 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 		internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
 		{
-			
+			// Make sure that every implemented input is defined.
+			foreach(var variable in Variables)
+			{
+				var find = definitions.Find(x => x.Name == variable.Name && (x.Type == variable.Type || (x.Type == typeof(Rgba32) && variable.Type == typeof(Vector4))));
+				
+				if( find == null )
+				{
+					throw new Exception("problem");
+				}
+				else
+				{
+					variable.RegisterExtraInfo(find);
+				}
+			}
 		}
-		
-		static void CheckInputCompatibility(List<OglesShaderVariable> definedVariables )
+		/*
+		static void CheckVariableCompatibility(List<OglesShaderVariable> definedVariables )
 		{
 			throw new NotImplementedException();
 		}
@@ -223,7 +245,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				}
 			}
 		}
-		
+		*/
 		internal OglesShader(OglesShaderDefinition definition)
 		{
 			this.vertexShaderPath = definition.VertexShaderPath;
@@ -253,10 +275,6 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				.Select(x => new OglesShaderVariable(programHandle, x))
 				.ToList();
 
-			//foreach (var variable in Variables)
-			//{
-			//	variables[variable.NiceName] = new OglesShaderVariable(variable, programHandle);
-			//}
 
 			#if DEBUG
 			ShaderUtils.ValidateProgram (programHandle);
@@ -272,11 +290,13 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		public void Activate()
 		{
 			OpenTK.Graphics.ES20.GL.UseProgram (programHandle);
+			OpenTKHelper.CheckError();
 		}
 		
 		public void Dispose()
 		{
 			ShaderUtils.DestroyShaderProgram(programHandle);
+			OpenTKHelper.CheckError();
 		}
 	}
 	

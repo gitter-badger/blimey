@@ -66,6 +66,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		/// </summary>
 		Dictionary<VertexDeclaration, OglesShader> BestVariantMap { get; set; }
 
+
 		static void Match (
 			VertexDeclaration vertexDeclaration, 
 		    OglesShader oglesShader,
@@ -81,7 +82,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			var oglesShaderInputsUsed = new List<OglesShaderInput>();
 
 			var vertElems = vertexDeclaration.GetVertexElements();
-			/*
+
 			foreach(var vertElem in vertElems)
 			{
 				var usage = vertElem.VertexElementUsage;
@@ -127,7 +128,6 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				}
 
 			}
-			*/
 
 		}
 
@@ -186,14 +186,22 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			return variants[best];
 		}
 
+		Dictionary<String, Object>	currentSettings = new Dictionary<String, Object>();
+
+
 		internal void SetVariable<T>(string name, T value)
 		{
-			foreach (var variant in Variants)
-			{
-				//variant.Variables.Find(x => x.SetVariable<T>(name, value));
-			}
+
+			currentSettings[name] = value; 
 			
-			//throw new NotImplementedException();
+
+			// todo: optimised doing this only on active variants, then maintain a cache of things that
+			// have not been done incase something changes in the future.
+			//foreach (var variant in Variants)
+			//{
+			//	variant.Activate();
+			//	variant.Variables.Find(x => x.NiceName == name).Set<T>(value);
+			//}
 		}
 
 		public ShaderPass(string passName, List<ShaderVarientPassDefinition> passVariantDefinitions)
@@ -227,9 +235,26 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			{
 				BestVariantMap[vertexDeclaration] = WorkOutBestVariantFor(vertexDeclaration, Variants);
 			}
-
+			var bestVariant = BestVariantMap[vertexDeclaration];
 			// select the correct shader pass variant and then activate it
-			BestVariantMap[vertexDeclaration].Activate ();
+			bestVariant.Activate ();
+
+			foreach (var setting in currentSettings)
+			{
+				var variable = bestVariant
+					.Variables
+					.Find(x => x.NiceName == setting.Key || x.Name == setting.Key);
+
+				if( variable == null )
+				{
+					Console.WriteLine("missing " + setting.Key);
+				}
+				else
+				{
+					variable.Set(setting.Value);
+				}
+			}
+
 		}
 
 		public void Dispose()
@@ -301,7 +326,8 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		{
 			throw new NotImplementedException ();
 		}
-		
+
+
 		/// <summary>
 		/// Gets the value of a specified shader variable.
 		/// </summary>
