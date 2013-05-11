@@ -44,9 +44,9 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		{
 			var ec = OpenTK.Graphics.ES20.GL.GetError();
 
-			if ((Int32) ec != 0)
+			if (ec != OpenTK.Graphics.ES20.ErrorCode.NoError)
 			{
-				throw new System.Exception( ((OpenTK.Graphics.ES20.ErrorCode) ec).ToString());
+				throw new Exception( ec.ToString());
 			}
 		}
 	}

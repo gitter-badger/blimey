@@ -31,146 +31,100 @@
 // │ TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE       │ \\
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
-
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.IO;
+using Sungiant.Abacus.SinglePrecision;
+using Sungiant.Abacus.Packed;
+using System.Linq;
 
 namespace Sungiant.Cor.MonoTouchRuntime
 {
-	public class ResourceManager
-#if AOT
-		: IResourceManager
-#else
-		: BaseRuntime.ResourceManager
-#endif
+	public class OglesShaderVariable
 	{
-		public ResourceManager()
+		int ProgramHandle { get; set; }
+		int UniformLocation { get; set; }
+		
+		public String NiceName { get; private set; }
+		public String Name { get; private set; }
+		public Type Type { get; private set; }
+		public Object DefaultValue { get; private set; }
+		
+		public OglesShaderVariable(
+			int programHandle, ShaderUtils.ShaderUniform uniform)
 		{
-		}
 
-#if AOT
-		public T Load<T>(string path) where T : IResource
-#else
-		public override T Load<T>(string path)
-#endif
-		{
-			if(!File.Exists(path))
-			{
-				throw new FileNotFoundException(path);
-			}
+			this.ProgramHandle = programHandle;
 
-			if(typeof(T) == typeof(Texture2D))
-			{
-				var tex = OglesTexture.CreateFromFile(path);
-				
-				return (T)(IResource) tex;
-			}
+			int uniformLocation = OpenTK.Graphics.ES20.GL.GetUniformLocation(programHandle, uniform.Name);
+
+			OpenTKHelper.CheckError();
+
 			
-			throw new NotImplementedException();
-		}
+			this.UniformLocation = uniformLocation;
+			this.Name = uniform.Name;
+			this.Type = EnumConverter.ToType(uniform.Type);
 
-		public override IShader LoadShader(ShaderType shaderType)
-		{
-			if (shaderType == ShaderType.Unlit)
-			{
-				return CorShaders.CreateUnlit();
-			}
+			Console.WriteLine(string.Format(
+				"    Caching Reference to Shader Variable: [Prog={0}, UniIndex={1}, UniLocation={2}, UniName={3}, UniType={4}]",
+				programHandle, uniform.Index, uniformLocation, uniform.Name, uniform.Type));
 
-			throw new NotImplementedException();
-		}
-
-
-
-		/*
-#if AOT
-		public IEffect GetShader(ShaderType shaderType, VertexDeclaration vertDecl)
-#else
-		public override IEffect GetShader(ShaderType shaderType, VertexDeclaration vertDecl)
-#endif
-		{
-			var vertElems = vertDecl.GetVertexElements();
-
-			var usage = new HashSet<VertexElementUsage>();
-
-			foreach (var elem in vertElems)
-			{
-				usage.Add(elem.VertexElementUsage);
-			}
-
-			switch(shaderType)
-			{
-				case ShaderType.Phong_VertexLit: return GetPhongVertexLitShaderFor(usage);
-				case ShaderType.Phong_PixelLit: return GetPhongPixelLitShaderFor(usage);
-				case ShaderType.Unlit: return GetUnlitShaderFor(usage);
-				default: return null;
-			}
-			
 		}
 		
-		IEffect GetPhongVertexLitShaderFor(HashSet<VertexElementUsage> usage)
+		internal void RegisterExtraInfo(ShaderVariableDefinition definition)
+		{
+			NiceName = definition.NiceName;
+			DefaultValue = definition.DefaultValue;
+		}
+		
+		public void Set(object value)
 		{
 
-            if (usage.Contains(VertexElementUsage.Position) &&
-                usage.Contains(VertexElementUsage.Normal) &&
-                usage.Contains(VertexElementUsage.TextureCoordinate))
-            {
-                return _phong_vertexLit_positionNormalTexture;
-            }
-
-
-			if ( usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Normal) )
+			Type t = value.GetType();
+			
+			if( t == typeof(Matrix44) )
 			{
-				return _phong_vertexLit_positionNormal;
-			}
+				var castValue = (Matrix44) value;
 
-			throw new Exception("No suitable shader for this vertDecl");
+				OpenTK.Graphics.ES20.GL.UniformMatrix4( UniformLocation, 1, false, ref castValue.M11 );
+			}
+			else if( t == typeof(Single) )
+			{
+				var castValue = (Single) value;
+				OpenTK.Graphics.ES20.GL.Uniform1( UniformLocation, 1, ref castValue );
+			}
+			else if( t == typeof(Vector2) )
+			{
+				var castValue = (Vector2) value;
+				OpenTK.Graphics.ES20.GL.Uniform2( UniformLocation, 1, ref castValue.X );
+			}
+			else if( t == typeof(Vector3) )
+			{
+				var castValue = (Vector3) value;
+				OpenTK.Graphics.ES20.GL.Uniform3( UniformLocation, 1, ref castValue.X );
+			} 
+			else if( t == typeof(Vector4) )
+			{
+				var castValue = (Vector4) value;
+				OpenTK.Graphics.ES20.GL.Uniform4( UniformLocation, 1, ref castValue.X );
+			}
+			else if( t == typeof(Rgba32) )
+			{
+				var castValue = (Rgba32) value;
+				
+				Vector4 vec4Value;
+				castValue.UnpackTo(out vec4Value);
+				
+				OpenTK.Graphics.ES20.GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
+			}
+			else
+			{
+				throw new Exception("Not supported");
+			}
+			
+			OpenTKHelper.CheckError();
+
 		}
-
-		IEffect GetPhongPixelLitShaderFor(HashSet<VertexElementUsage> usage)
-		{
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Normal))
-			{
-				return _phong_pixelLit_positionNormal;
-			}
-
-			return null;
-		}
-
-		IEffect GetUnlitShaderFor(HashSet<VertexElementUsage> usage)
-		{
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Colour) &&
-			    usage.Contains(VertexElementUsage.TextureCoordinate))
-			{
-                return _unlit_positionTextureColour;
-			}
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Colour))
-			{
-				return _unlit_positionColour;
-			}
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.TextureCoordinate))
-			{
-				return _unlit_positionTexture;
-			}
-
-			if (usage.Contains(VertexElementUsage.Position))
-			{
-				return _unlit_position;
-			}
-
-			throw new Exception("No suitable shader for this vertDecl");
-		}
-
-	*/
 	}
 }
+

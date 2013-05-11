@@ -52,7 +52,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 					new ShaderInputDefinition()
 					{
 						Name = "a_vertPos",
-						Type = typeof(Vector4),
+						Type = typeof(Vector3),
 						Usage = VertexElementUsage.Position,
 						DefaultValue = Vector3.Zero,
 						Optional = false,
@@ -109,13 +109,13 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				{
 					new ShaderVariantDefinition()
 					{
-						Name = "Unlit_Position",
-						Passes = new List<ShaderVarientPassDefinition>()
+						VariantName = "Unlit_Position",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
 						{
 							new ShaderVarientPassDefinition()
 							{
-								Name = "Main",
-								Pass = new OglesShaderDefinition()
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
 								{
 									VertexShaderPath = "Shaders/Unlit_Position.vsh",
 									PixelShaderPath = "Shaders/Unlit_Position.fsh",
@@ -125,13 +125,13 @@ namespace Sungiant.Cor.MonoTouchRuntime
 					},
 					new ShaderVariantDefinition()
 					{
-						Name = "Unlit_PositionTexture",
-						Passes = new List<ShaderVarientPassDefinition>()
+						VariantName = "Unlit_PositionTexture",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
 						{
 							new ShaderVarientPassDefinition()
 							{
-								Name = "Main",
-								Pass = new OglesShaderDefinition()
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
 								{
 									VertexShaderPath = "Shaders/Unlit_PositionTexture.vsh",
 									PixelShaderPath = "Shaders/Unlit_PositionTexture.fsh",
@@ -141,13 +141,13 @@ namespace Sungiant.Cor.MonoTouchRuntime
 					},
 					new ShaderVariantDefinition()
 					{
-						Name = "Unlit_PositionColour",
-						Passes = new List<ShaderVarientPassDefinition>()
+						VariantName = "Unlit_PositionColour",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
 						{
 							new ShaderVarientPassDefinition()
 							{
-								Name = "Main",
-								Pass = new OglesShaderDefinition()
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
 								{
 									VertexShaderPath = "Shaders/Unlit_PositionColour.vsh",
 									PixelShaderPath = "Shaders/Unlit_PositionColour.fsh",
@@ -157,13 +157,13 @@ namespace Sungiant.Cor.MonoTouchRuntime
 					},
 					new ShaderVariantDefinition()
 					{
-						Name = "Unlit_PositionTextureColour",
-						Passes = new List<ShaderVarientPassDefinition>()
+						VariantName = "Unlit_PositionTextureColour",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
 						{
 							new ShaderVarientPassDefinition()
 							{
-								Name = "Main",
-								Pass = new OglesShaderDefinition()
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
 								{
 									VertexShaderPath = "Shaders/Unlit_PositionTextureColour.vsh",
 									PixelShaderPath = "Shaders/Unlit_PositionTextureColour.fsh",

@@ -133,7 +133,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
             OpenTK.Graphics.ES20.TextureUnit oglTexSlot = EnumConverter.ToOpenTKTextureSlot(slot); 
             OpenTK.Graphics.ES20.GL.ActiveTexture(oglTexSlot);
 
-            var oglt0 = tex as OpenGLTextureWrapper;
+			var oglt0 = tex as OglesTexture;
             
             if( oglt0 != null )
             {

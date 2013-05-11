@@ -31,146 +31,56 @@
 // │ TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE       │ \\
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
-
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.IO;
+using Sungiant.Abacus.SinglePrecision;
+using Sungiant.Abacus.Packed;
+using System.Linq;
 
 namespace Sungiant.Cor.MonoTouchRuntime
 {
-	public class ResourceManager
-#if AOT
-		: IResourceManager
-#else
-		: BaseRuntime.ResourceManager
-#endif
+	/// <summary>
+	/// Represents an Open GL ES shader input, all the data is read dynamically from
+	/// the shader at runtime, not from the ShaderInputDefinition.  This way we can compare the
+	/// two and check to see that we have what we are expecting.
+	/// </summary>
+	public class OglesShaderInput
 	{
-		public ResourceManager()
+		int ProgramHandle { get; set; }
+		int AttributeLocation { get; set; }
+		
+		public String Name { get; private set; }
+		public Type Type { get; private set; }
+		public VertexElementUsage Usage { get; private set; }
+		public Object DefaultValue { get; private set; }
+		public Boolean Optional { get; private set; }
+		
+		public OglesShaderInput(
+			int programHandle, ShaderUtils.ShaderAttribute attribute)
 		{
-		}
+			Console.WriteLine(string.Format(
+				"    Binding Shader Input: [Prog={0}, AttIndex={1}, AttName={2}, AttType={3}]",
+			    programHandle, attribute.Index, attribute.Name, attribute.Type));
 
-#if AOT
-		public T Load<T>(string path) where T : IResource
-#else
-		public override T Load<T>(string path)
-#endif
-		{
-			if(!File.Exists(path))
-			{
-				throw new FileNotFoundException(path);
-			}
-
-			if(typeof(T) == typeof(Texture2D))
-			{
-				var tex = OglesTexture.CreateFromFile(path);
-				
-				return (T)(IResource) tex;
-			}
+			this.ProgramHandle = programHandle;
+			this.AttributeLocation = attribute.Index;
+			this.Name = attribute.Name;
+			this.Type = EnumConverter.ToType(attribute.Type);
 			
-			throw new NotImplementedException();
-		}
-
-		public override IShader LoadShader(ShaderType shaderType)
-		{
-			if (shaderType == ShaderType.Unlit)
-			{
-				return CorShaders.CreateUnlit();
-			}
-
-			throw new NotImplementedException();
-		}
-
-
-
-		/*
-#if AOT
-		public IEffect GetShader(ShaderType shaderType, VertexDeclaration vertDecl)
-#else
-		public override IEffect GetShader(ShaderType shaderType, VertexDeclaration vertDecl)
-#endif
-		{
-			var vertElems = vertDecl.GetVertexElements();
-
-			var usage = new HashSet<VertexElementUsage>();
-
-			foreach (var elem in vertElems)
-			{
-				usage.Add(elem.VertexElementUsage);
-			}
-
-			switch(shaderType)
-			{
-				case ShaderType.Phong_VertexLit: return GetPhongVertexLitShaderFor(usage);
-				case ShaderType.Phong_PixelLit: return GetPhongPixelLitShaderFor(usage);
-				case ShaderType.Unlit: return GetUnlitShaderFor(usage);
-				default: return null;
-			}
+			// Associates a generic vertex attribute index with a named attribute variable.
+			OpenTK.Graphics.ES20.GL.BindAttribLocation(programHandle, attribute.Index, attribute.Name);
 			
+			OpenTKHelper.CheckError();
 		}
 		
-		IEffect GetPhongVertexLitShaderFor(HashSet<VertexElementUsage> usage)
+		internal void RegisterExtraInfo(ShaderInputDefinition definition)
 		{
-
-            if (usage.Contains(VertexElementUsage.Position) &&
-                usage.Contains(VertexElementUsage.Normal) &&
-                usage.Contains(VertexElementUsage.TextureCoordinate))
-            {
-                return _phong_vertexLit_positionNormalTexture;
-            }
-
-
-			if ( usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Normal) )
-			{
-				return _phong_vertexLit_positionNormal;
-			}
-
-			throw new Exception("No suitable shader for this vertDecl");
+			Usage = definition.Usage;
+			DefaultValue = definition.DefaultValue;
+			Optional = definition.Optional;
 		}
-
-		IEffect GetPhongPixelLitShaderFor(HashSet<VertexElementUsage> usage)
-		{
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Normal))
-			{
-				return _phong_pixelLit_positionNormal;
-			}
-
-			return null;
-		}
-
-		IEffect GetUnlitShaderFor(HashSet<VertexElementUsage> usage)
-		{
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Colour) &&
-			    usage.Contains(VertexElementUsage.TextureCoordinate))
-			{
-                return _unlit_positionTextureColour;
-			}
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Colour))
-			{
-				return _unlit_positionColour;
-			}
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.TextureCoordinate))
-			{
-				return _unlit_positionTexture;
-			}
-
-			if (usage.Contains(VertexElementUsage.Position))
-			{
-				return _unlit_position;
-			}
-
-			throw new Exception("No suitable shader for this vertDecl");
-		}
-
-	*/
+		
 	}
 }
+

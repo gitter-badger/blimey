@@ -42,232 +42,6 @@ using System.Collections.ObjectModel;
 namespace Sungiant.Cor.MonoTouchRuntime
 {
 	/// <summary>
-	/// Represents in individual pass of a Cor.Xios high level Shader object.
-	/// </summary>
-	public class ShaderPass
-		: IShaderPass
-		, IDisposable
-	{
-		/// <summary>
-		/// A collection of OpenGL shaders, all with slight variations in their
-		/// input parameters, that are suitable for rendering this ShaderPass object.
-		/// </summary>
-		List<OglesShader> Variants { get; set; }
-
-		/// <summary>
-		/// A nice name for the shader pass, for example: Main or Cel -> Outline.
-		/// </summary>
-		public string Name { get; private set; }
-
-		/// <summary>
-		/// Whenever this ShaderPass object gets asked to activate itself whilst a VertexDeclaration it has not seen
-		/// before is active, the best matching shader pass variant is found and then stored in this map to fast
-		/// access.
-		/// </summary>
-		Dictionary<VertexDeclaration, OglesShader> BestVariantMap { get; set; }
-
-
-		static void Match (
-			VertexDeclaration vertexDeclaration, 
-		    OglesShader oglesShader,
-		    out int numMatchedVertElems,
-			out int numUnmatchedVertElems,
-			out int numMissingNonOptionalInputs
-		    )
-		{
-			numMatchedVertElems = 0;
-			numUnmatchedVertElems = 0;
-			numMissingNonOptionalInputs = 0;
-
-			var oglesShaderInputsUsed = new List<OglesShaderInput>();
-
-			var vertElems = vertexDeclaration.GetVertexElements();
-
-			foreach(var vertElem in vertElems)
-			{
-				var usage = vertElem.VertexElementUsage;
-				var format = vertElem.VertexElementFormat;
-
-				// find all inputs that could match
-				var matchingInputs = oglesShader.Inputs.FindAll(
-					x => 
-					x.Usage == usage &&
-					x.Type == VertexElementFormatHelper.FromEnum(format));
-
-				// now make sure it's not been used already
-
-				while(matchingInputs.Count > 0)
-				{
-					var potentialInput = matchingInputs[0];
-					
-					if( oglesShaderInputsUsed.Find(x => x == potentialInput) != null)
-					{
-						matchingInputs.RemoveAt(0);
-					}
-					else
-					{
-						oglesShaderInputsUsed.Add(potentialInput);
-					}
-				}
-			}
-
-			numMatchedVertElems = oglesShaderInputsUsed.Count;
-
-			numUnmatchedVertElems = vertElems.Length - numMatchedVertElems;
-
-			numMissingNonOptionalInputs = 0;
-
-			foreach (var input in oglesShader.Inputs)
-			{
-				if(!oglesShaderInputsUsed.Contains(input) )
-				{
-					if( !input.Optional )
-					{
-						numMissingNonOptionalInputs++;
-					}
-				}
-
-			}
-
-		}
-
-		/// <summary>
-		/// This function takes a VertexDeclaration and a collection of OpenGL shader passes and works out which
-		/// pass is the best fit for the VertexDeclaration.
-		/// </summary>
-		static OglesShader WorkOutBestVariantFor(VertexDeclaration vertexDeclaration, List<OglesShader> variants)
-		{
-			int best = 0;
-
-			int bestNumMatchedVertElems = 0;
-			int bestNumUnmatchedVertElems = 0;
-			int bestNumMissingNonOptionalInputs = 0;
-
-			for (int i = 0; i < variants.Count; ++i)
-			{
-				int numMatchedVertElems = 0;
-				int numUnmatchedVertElems = 0;
-				int numMissingNonOptionalInputs = 0;
-
-				Match(vertexDeclaration, variants[i], out numMatchedVertElems, out numUnmatchedVertElems, out numMissingNonOptionalInputs);
-
-				if( i == 0 )
-				{
-					bestNumMatchedVertElems = numMatchedVertElems;
-					bestNumUnmatchedVertElems = numUnmatchedVertElems;
-					bestNumMissingNonOptionalInputs = numMissingNonOptionalInputs;
-				}
-				else
-				{
-					if( 
-					    (
-							numMatchedVertElems > bestNumMatchedVertElems && 
-					   		bestNumMissingNonOptionalInputs == 0
-						)
-					    || 
-						(
-						 	numMatchedVertElems == bestNumMatchedVertElems && 
-					        bestNumMissingNonOptionalInputs == 0 &&
-					        numUnmatchedVertElems < bestNumUnmatchedVertElems 
-						)
-					  )
-					{
-						bestNumMatchedVertElems = numMatchedVertElems;
-						bestNumUnmatchedVertElems = numUnmatchedVertElems;
-						bestNumMissingNonOptionalInputs = numMissingNonOptionalInputs;
-						best = i;
-					}
-
-				}
-
-			}
-
-
-			return variants[best];
-		}
-
-		Dictionary<String, Object>	currentSettings = new Dictionary<String, Object>();
-
-
-		internal void SetVariable<T>(string name, T value)
-		{
-
-			currentSettings[name] = value; 
-			
-
-			// todo: optimised doing this only on active variants, then maintain a cache of things that
-			// have not been done incase something changes in the future.
-			//foreach (var variant in Variants)
-			//{
-			//	variant.Activate();
-			//	variant.Variables.Find(x => x.NiceName == name).Set<T>(value);
-			//}
-		}
-
-		public ShaderPass(string passName, List<ShaderVarientPassDefinition> passVariantDefinitions)
-		{
-			this.Name = passName;
-			this.Variants = passVariantDefinitions.Select(y => y.Pass).Select (x => new OglesShader (x)).ToList();
-
-			this.BestVariantMap = new Dictionary<VertexDeclaration, OglesShader>();
-		}
-
-		internal void ValidateInputs(List<ShaderInputDefinition> definitions)
-		{
-			foreach(var variant in this.Variants)
-			{
-				variant.ValidateInputs(definitions);
-			}
-		}
-
-		internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
-		{
-			foreach(var variant in this.Variants)
-			{
-				variant.ValidateVariables(definitions);
-			}
-		}
-
-
-		public void Activate(VertexDeclaration vertexDeclaration)
-		{
-			if (!BestVariantMap.ContainsKey (vertexDeclaration))
-			{
-				BestVariantMap[vertexDeclaration] = WorkOutBestVariantFor(vertexDeclaration, Variants);
-			}
-			var bestVariant = BestVariantMap[vertexDeclaration];
-			// select the correct shader pass variant and then activate it
-			bestVariant.Activate ();
-
-			foreach (var setting in currentSettings)
-			{
-				var variable = bestVariant
-					.Variables
-					.Find(x => x.NiceName == setting.Key || x.Name == setting.Key);
-
-				if( variable == null )
-				{
-					Console.WriteLine("missing " + setting.Key);
-				}
-				else
-				{
-					variable.Set(setting.Value);
-				}
-			}
-
-		}
-
-		public void Dispose()
-		{
-			foreach (var oglesShader in Variants)
-			{
-				oglesShader.Dispose ();
-			}
-		}
-	}
-
-
-	/// <summary>
 	/// The Cor.Xios implementation of Cor's IShader interface.
 	/// </summary>
 	public class Shader
@@ -424,6 +198,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		/// </summary>
 		internal Shader (ShaderDefinition shaderDefinition)
 		{
+			Console.WriteLine("Creaing Shader: " + shaderDefinition.Name);
 			this.cachedShaderDefinition = shaderDefinition;
 			this.Name = shaderDefinition.Name;
 			CalculateRequiredInputs(shaderDefinition);
@@ -454,25 +229,59 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		/// </summary>
 		void InitilisePasses(ShaderDefinition shaderDefinition)
 		{
-			// For each shaderpass.
+			// This function builds up an in memory object for each shader pass in this shader.
+			// The different shader varients are defined outside of the scope of a conceptual shader pass,
+			// therefore this function must traverse the shader definition and to create shader pass objects
+			// that only contain the varient data for that specific pass.
+
+
+			// For each named shader pass.
 			foreach (var definedPassName in shaderDefinition.PassNames)
 			{
+				
+				Console.WriteLine(" Preparing to initilising Shader Pass: " + definedPassName);
+				// 
+
+				// itterate over the defined pass names, ex: cel, outline...
+
+
+
+				//shaderDefinition.VariantDefinitions
+				//	.Select(x => x.PassDefinitions.Select(y => y.PassName == definedPassName))
+				//	.ToList();
+
 				// Find all of the variants that are defined in this shader object's definition
 				// that support the current shaderpass.
-				var passVariantDefinitions = new List<ShaderVarientPassDefinition>();
+				var passVariants___Name_AND_passVariantDefinition = new List<Tuple<string, ShaderVarientPassDefinition>>();
 
+				// itterate over every shader variant in the definition
 				foreach (var shaderVariantDefinition in shaderDefinition.VariantDefinitions)
 				{
-					foreach( var pass in shaderVariantDefinition.Passes )
-					{
-						if( definedPassName == pass.Name)
-						{
-							passVariantDefinitions.Add(pass);
-						}
-					}
+					// each shader varient has a name
+					string shaderVariantName = shaderVariantDefinition.VariantName;
+
+					// find the pass in the shader variant definition that corresponds to the pass we are
+					// currently trying to initilise.
+					var variantPassDefinition = 
+						shaderVariantDefinition.VariantPassDefinitions
+							.Find(x => x.PassName == definedPassName);
+
+
+					// now we have a Variant name, say: 
+					//   - Unlit_PositionTextureColour
+					// and a pass definition, say : 
+					//   - Main
+					//   - Shaders/Unlit_PositionTextureColour.vsh
+					//   - Shaders/Unlit_PositionTextureColour.fsh
+					//
+
+					passVariants___Name_AND_passVariantDefinition.Add(
+						new Tuple<string, ShaderVarientPassDefinition>(shaderVariantName, variantPassDefinition));
+
 				}
-				
-				var shaderPass = new ShaderPass( definedPassName, passVariantDefinitions );
+
+				// Create one shader pass for each defined pass name.
+				var shaderPass = new ShaderPass( definedPassName, passVariants___Name_AND_passVariantDefinition );
 
 				shaderPass.ValidateInputs(shaderDefinition.InputDefinitions);
 				shaderPass.ValidateVariables(shaderDefinition.VariableDefinitions);

@@ -45,7 +45,7 @@ using System.Drawing;
 
 namespace Sungiant.Cor.MonoTouchRuntime
 {
-    internal class OpenGLTextureWrapper
+	internal class OglesTexture
         : Texture2D
         //, IDisposable todo: IResource pattern for destroying stuff
     {
@@ -56,17 +56,17 @@ namespace Sungiant.Cor.MonoTouchRuntime
         int pixelsWide;
         int pixelsHigh;  
 
-        internal static OpenGLTextureWrapper CreateFromFile(string path)
+		internal static OglesTexture CreateFromFile(string path)
         {   
             var uiImage = UIImage.FromFile(path);
 
-			var texture = new OpenGLTextureWrapper(uiImage);
+			var texture = new OglesTexture(uiImage);
 
             return texture;
 
         }
 
-        private OpenGLTextureWrapper(UIImage uiImage)
+		private OglesTexture(UIImage uiImage)
         {
             this.uiImage = uiImage;
             IntPtr dataPointer = RequestImagePixelData(uiImage);
@@ -241,7 +241,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
         
         void DeleteTexture(Texture2D texture)
         {
-            int textureId = (texture as OpenGLTextureWrapper).glTextureId;
+			int textureId = (texture as OglesTexture).glTextureId;
             
             OpenTK.Graphics.ES20.GL.DeleteTextures(1, ref textureId);
         }

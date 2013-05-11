@@ -41,41 +41,6 @@ using System.Collections.ObjectModel;
 
 namespace Sungiant.Cor.MonoTouchRuntime
 {
-	public class OglesShaderDefinition
-	{
-		public string VertexShaderPath { get; set; }
-		public string PixelShaderPath { get; set; }
-	}
-
-	public class ShaderInputDefinition
-	{
-		public String Name { get; set; }
-		public Type Type { get; set; }
-		public VertexElementUsage Usage { get; set; }
-		public Object DefaultValue { get; set; }
-		public Boolean Optional { get; set; }
-	}
-	
-	public class ShaderVariableDefinition
-	{
-		public String NiceName { get; set; }
-		public String Name { get; set; }
-		public Type Type { get; set; }
-		public Object DefaultValue { get; set; }
-	}
-	
-	public class ShaderVariantDefinition
-	{
-		public string Name { get; set; }
-		public List<ShaderVarientPassDefinition> Passes { get; set; }
-	}
-	
-	public class ShaderVarientPassDefinition
-	{
-		public string Name { get; set; }
-		public OglesShaderDefinition Pass { get; set; }
-	}
-
 	/// <summary>
 	/// Defines how to create Cor.Xios's implementation
 	/// of IShader.

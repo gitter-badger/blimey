@@ -99,7 +99,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
             }
 
 
-            Console.WriteLine ("[Cor.Resources] " + vertShaderPathname);
+            //Console.WriteLine ("[Cor.Resources] " + vertShaderPathname);
 
 
 			ShaderUtils.CompileShader (
@@ -136,7 +136,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				throw new Exception("Resource [" + path + "] not found");
 			}
 
-            Console.WriteLine ("[Cor.Resources] " + fragShaderPathname);
+            //Console.WriteLine ("[Cor.Resources] " + fragShaderPathname);
 
 
 			ShaderUtils.CompileShader (
@@ -283,6 +283,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			var result = new List<ShaderUniform>();
 
 			OpenTK.Graphics.ES20.GL.GetProgram(prog, OpenTK.Graphics.ES20.ProgramParameter.ActiveUniforms, out numActiveUniforms);
+			OpenTKHelper.CheckError();
 
 			for(int i = 0; i < numActiveUniforms; ++i)
 			{
@@ -301,7 +302,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 					out size,
 					out type,
 					sb);
-				
+				OpenTKHelper.CheckError();
 				
 				result.Add(
 					new ShaderUniform()
@@ -324,7 +325,8 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			
 			// gets the number of active vertex attributes
 			OpenTK.Graphics.ES20.GL.GetProgram(prog, OpenTK.Graphics.ES20.ProgramParameter.ActiveAttributes, out numActiveAttributes);
-			
+			OpenTKHelper.CheckError();
+
 			for(int i = 0; i < numActiveAttributes; ++i)
 			{
 				var sb = new System.Text.StringBuilder ();
@@ -341,7 +343,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 					out size,
 					out type,
 					sb);
-
+				OpenTKHelper.CheckError();
 					
 				result.Add(
 					new ShaderAttribute()

@@ -31,146 +31,148 @@
 // │ TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE       │ \\
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
-
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.IO;
+using Sungiant.Abacus.SinglePrecision;
+using Sungiant.Abacus.Packed;
+using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace Sungiant.Cor.MonoTouchRuntime
 {
-	public class ResourceManager
-#if AOT
-		: IResourceManager
-#else
-		: BaseRuntime.ResourceManager
-#endif
+	public static class ShaderHelper
 	{
-		public ResourceManager()
+		/// <summary>
+		/// This function takes a VertexDeclaration and a collection of OpenGL shader passes and works out which
+		/// pass is the best fit for the VertexDeclaration.
+		/// </summary>
+		public static OglesShader WorkOutBestVariantFor(VertexDeclaration vertexDeclaration, IList<OglesShader> variants)
 		{
-		}
+			Console.WriteLine("Working out the best shader variant for: " + vertexDeclaration);
+			Console.WriteLine("Possible variants:");
 
-#if AOT
-		public T Load<T>(string path) where T : IResource
-#else
-		public override T Load<T>(string path)
-#endif
-		{
-			if(!File.Exists(path))
-			{
-				throw new FileNotFoundException(path);
-			}
+			int best = 0;
 
-			if(typeof(T) == typeof(Texture2D))
+			int bestNumMatchedVertElems = 0;
+			int bestNumUnmatchedVertElems = 0;
+			int bestNumMissingNonOptionalInputs = 0;
+
+			// foreach variant
+			for (int i = 0; i < variants.Count; ++i)
 			{
-				var tex = OglesTexture.CreateFromFile(path);
+
+				// work out how many vert inputs match
+				int numMatchedVertElems = 0;
+				int numUnmatchedVertElems = 0;
+				int numMissingNonOptionalInputs = 0;
 				
-				return (T)(IResource) tex;
+				Match(vertexDeclaration, variants[i], out numMatchedVertElems, out numUnmatchedVertElems, out numMissingNonOptionalInputs);
+
+				Console.WriteLine(" - " + variants[i]);
+
+				if( i == 0 )
+				{
+					bestNumMatchedVertElems = numMatchedVertElems;
+					bestNumUnmatchedVertElems = numUnmatchedVertElems;
+					bestNumMissingNonOptionalInputs = numMissingNonOptionalInputs;
+				}
+				else
+				{
+					if( 
+					   (
+						numMatchedVertElems > bestNumMatchedVertElems && 
+						bestNumMissingNonOptionalInputs == 0
+						)
+					   || 
+					   (
+						numMatchedVertElems == bestNumMatchedVertElems && 
+						bestNumMissingNonOptionalInputs == 0 &&
+						numUnmatchedVertElems < bestNumUnmatchedVertElems 
+						)
+					   )
+					{
+						bestNumMatchedVertElems = numMatchedVertElems;
+						bestNumUnmatchedVertElems = numUnmatchedVertElems;
+						bestNumMissingNonOptionalInputs = numMissingNonOptionalInputs;
+						best = i;
+					}
+					
+				}
+				
+			}
+
+			best = 2;
+			Console.WriteLine("Chosen variant: " + variants[best].VariantName);
+
+
+			return variants[best];
+		}
+
+		static void Match (
+			VertexDeclaration vertexDeclaration, 
+			OglesShader oglesShader,
+			out int numMatchedVertElems,
+			out int numUnmatchedVertElems,
+			out int numMissingNonOptionalInputs
+			)
+		{
+			numMatchedVertElems = 0;
+			numUnmatchedVertElems = 0;
+			numMissingNonOptionalInputs = 0;
+			
+			var oglesShaderInputsUsed = new List<OglesShaderInput>();
+			
+			var vertElems = vertexDeclaration.GetVertexElements();
+			
+			foreach(var vertElem in vertElems)
+			{
+				var usage = vertElem.VertexElementUsage;
+				var format = vertElem.VertexElementFormat;
+				
+				// find all inputs that could match
+				var matchingInputs = oglesShader.Inputs.FindAll(
+					x => 
+					x.Usage == usage &&
+					x.Type == VertexElementFormatHelper.FromEnum(format));
+				
+				// now make sure it's not been used already
+				
+				while(matchingInputs.Count > 0)
+				{
+					var potentialInput = matchingInputs[0];
+					
+					if( oglesShaderInputsUsed.Find(x => x == potentialInput) != null)
+					{
+						matchingInputs.RemoveAt(0);
+					}
+					else
+					{
+						oglesShaderInputsUsed.Add(potentialInput);
+					}
+				}
 			}
 			
-			throw new NotImplementedException();
-		}
-
-		public override IShader LoadShader(ShaderType shaderType)
-		{
-			if (shaderType == ShaderType.Unlit)
+			numMatchedVertElems = oglesShaderInputsUsed.Count;
+			
+			numUnmatchedVertElems = vertElems.Length - numMatchedVertElems;
+			
+			numMissingNonOptionalInputs = 0;
+			
+			foreach (var input in oglesShader.Inputs)
 			{
-				return CorShaders.CreateUnlit();
-			}
-
-			throw new NotImplementedException();
-		}
-
-
-
-		/*
-#if AOT
-		public IEffect GetShader(ShaderType shaderType, VertexDeclaration vertDecl)
-#else
-		public override IEffect GetShader(ShaderType shaderType, VertexDeclaration vertDecl)
-#endif
-		{
-			var vertElems = vertDecl.GetVertexElements();
-
-			var usage = new HashSet<VertexElementUsage>();
-
-			foreach (var elem in vertElems)
-			{
-				usage.Add(elem.VertexElementUsage);
-			}
-
-			switch(shaderType)
-			{
-				case ShaderType.Phong_VertexLit: return GetPhongVertexLitShaderFor(usage);
-				case ShaderType.Phong_PixelLit: return GetPhongPixelLitShaderFor(usage);
-				case ShaderType.Unlit: return GetUnlitShaderFor(usage);
-				default: return null;
+				if(!oglesShaderInputsUsed.Contains(input) )
+				{
+					if( !input.Optional )
+					{
+						numMissingNonOptionalInputs++;
+					}
+				}
+				
 			}
 			
 		}
-		
-		IEffect GetPhongVertexLitShaderFor(HashSet<VertexElementUsage> usage)
-		{
 
-            if (usage.Contains(VertexElementUsage.Position) &&
-                usage.Contains(VertexElementUsage.Normal) &&
-                usage.Contains(VertexElementUsage.TextureCoordinate))
-            {
-                return _phong_vertexLit_positionNormalTexture;
-            }
-
-
-			if ( usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Normal) )
-			{
-				return _phong_vertexLit_positionNormal;
-			}
-
-			throw new Exception("No suitable shader for this vertDecl");
-		}
-
-		IEffect GetPhongPixelLitShaderFor(HashSet<VertexElementUsage> usage)
-		{
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Normal))
-			{
-				return _phong_pixelLit_positionNormal;
-			}
-
-			return null;
-		}
-
-		IEffect GetUnlitShaderFor(HashSet<VertexElementUsage> usage)
-		{
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Colour) &&
-			    usage.Contains(VertexElementUsage.TextureCoordinate))
-			{
-                return _unlit_positionTextureColour;
-			}
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Colour))
-			{
-				return _unlit_positionColour;
-			}
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.TextureCoordinate))
-			{
-				return _unlit_positionTexture;
-			}
-
-			if (usage.Contains(VertexElementUsage.Position))
-			{
-				return _unlit_position;
-			}
-
-			throw new Exception("No suitable shader for this vertDecl");
-		}
-
-	*/
 	}
 }
+
