@@ -10,7 +10,7 @@ varying lowp vec4 v_tint;
 
 void main()
 {
-	gl_Position = u_world * u_view * u_proj * a_vertPos;
+	gl_Position = u_proj * u_view * u_world * a_vertPos;
 	
 	v_tint = a_vertColour * u_colour;
 }
