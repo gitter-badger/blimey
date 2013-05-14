@@ -125,7 +125,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 */
 
 #if AOT
-        public void SetActiveTexture(Int32 slot, ITexture tex)
+		public void SetActiveTexture(Int32 slot, Texture2D tex)
 #else
 		public override void SetActiveTexture(Int32 slot, Texture2D tex)
 #endif

@@ -70,8 +70,11 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			
 			throw new NotImplementedException();
 		}
-
+#if AOT
+		public IShader LoadShader(ShaderType shaderType)
+#else
 		public override IShader LoadShader(ShaderType shaderType)
+#endif
 		{
 			if (shaderType == ShaderType.Unlit)
 			{
