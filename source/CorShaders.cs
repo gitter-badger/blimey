@@ -74,6 +74,15 @@ namespace Sungiant.Cor.MonoTouchRuntime
 						Optional = true,
 					},
 				},
+				SamplerDefinitions = new List<ShaderSamplerDefinition>()
+				{
+					new ShaderSamplerDefinition()
+					{
+						NiceName = "TextureSampler",
+						Name = "s_tex0",
+						Optional = true,
+					}
+				},
 				VariableDefinitions = new List<ShaderVariableDefinition>()
 				{
 					new ShaderVariableDefinition()

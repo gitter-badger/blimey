@@ -32,12 +32,18 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		/// </summary>
 		Dictionary<VertexDeclaration, OglesShader> BestVariantMap { get; set; }
 
-		Dictionary<String, Object>	currentSettings = new Dictionary<String, Object>();
-		
+		Dictionary<String, Object>	currentVariables = new Dictionary<String, Object>();
+		Dictionary<String, Int32>	currentSamplerSlots = new Dictionary<String, Int32>();
+
 		
 		internal void SetVariable<T>(string name, T value)
 		{
-			currentSettings[name] = value; 
+			currentVariables[name] = value; 
+		}
+
+		internal void SetSamplerTarget(string name, Int32 textureSlot)
+		{
+			currentSamplerSlots[name] = textureSlot;
 		}
 		
 		public ShaderPass(string passName, List<Tuple<string, ShaderVarientPassDefinition>> passVariants___Name_AND_passVariantDefinition)
@@ -48,8 +54,25 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				passVariants___Name_AND_passVariantDefinition
 					.Select (x => new OglesShader (x.Item1, passName, x.Item2.PassDefinition))
 					.ToList();
-			
+
 			this.BestVariantMap = new Dictionary<VertexDeclaration, OglesShader>();
+		}
+
+		
+		internal void BindAttributes(IList<String> inputNames)
+		{
+			foreach (var variant in this.Variants)
+			{
+				variant.BindAttributes(inputNames);
+			}
+		}
+
+		internal void Link()
+		{
+			foreach (var variant in this.Variants)
+			{
+				variant.Link();
+			}
 		}
 		
 		internal void ValidateInputs(List<ShaderInputDefinition> definitions)
@@ -67,6 +90,14 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				variant.ValidateVariables(definitions);
 			}
 		}
+
+		internal void ValidateSamplers(List<ShaderSamplerDefinition> definitions)
+		{
+			foreach(var variant in this.Variants)
+			{
+				variant.ValidateSamplers(definitions);
+			}
+		}
 		
 		
 		public void Activate(VertexDeclaration vertexDeclaration)
@@ -79,21 +110,39 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			// select the correct shader pass variant and then activate it
 			bestVariant.Activate ();
 			
-			foreach (var key in currentSettings.Keys)
+			foreach (var key1 in currentVariables.Keys)
 			{
 				var variable = bestVariant
 					.Variables
-						.Find(x => x.NiceName == key || x.Name == key);
+					.Find(x => x.NiceName == key1 || x.Name == key1);
 				
 				if( variable == null )
 				{
-					Console.WriteLine("missing " + key);
+					Console.WriteLine("missing variable: " + key1);
 				}
 				else
 				{
-					var val = currentSettings[key];
+					var val = currentVariables[key1];
 					
 					variable.Set(val);
+				}
+			}
+
+			foreach (var key2 in currentSamplerSlots.Keys)
+			{
+				var sampler = bestVariant
+					.Samplers
+					.Find(x => x.NiceName == key2 || x.Name == key2);
+
+				if( sampler == null )
+				{
+					//Console.WriteLine("missing sampler: " + key2);
+				}
+				else
+				{
+					var slot = currentSamplerSlots[key2];
+
+					sampler.SetSlot(slot);
 				}
 			}
 			

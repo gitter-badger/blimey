@@ -45,6 +45,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 	{
 		public List<OglesShaderInput> Inputs { get; private set; }
 		public List<OglesShaderVariable> Variables { get; private set; }
+		public List<OglesShaderSampler> Samplers { get; private set; }
 
 		internal string VariantName { get { return variantName; }}
 		Int32 programHandle;
@@ -139,6 +140,39 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				}
 			}
 		}
+
+		internal void ValidateSamplers(List<ShaderSamplerDefinition> definitions)
+		{
+			Console.WriteLine(string.Format ("Pass: {1} => ValidateSamplers({0})", variantName, passName ));
+
+			var nonOptionalSamplers = definitions.Where(y => !y.Optional).ToList();
+
+			foreach(var definition in nonOptionalSamplers)
+			{
+				var find = this.Samplers.Find(x => x.Name == definition.Name);
+
+				if( find == null )
+				{
+					throw new Exception("problem");
+				}
+			}
+
+			// Make sure that every implemented input is defined.
+			foreach(var sampler in this.Samplers)
+			{
+				var find = definitions.Find(x => x.Name == sampler.Name);
+
+				if( find == null )
+				{
+					throw new Exception("problem");
+				}
+				else
+				{
+					sampler.RegisterExtraInfo(find);
+				}
+			}
+		}
+
 		/*
 		static void CheckVariableCompatibility(List<OglesShaderVariable> definedVariables )
 		{
@@ -171,7 +205,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		*/
 		internal OglesShader(String variantName, String passName, OglesShaderDefinition definition)
 		{
-			Console.WriteLine("  Creating Pass Variant: " + variantName);
+			Console.WriteLine ("  Creating Pass Variant: " + variantName);
 			this.variantName = variantName;
 			this.passName = passName;
 			this.vertexShaderPath = definition.VertexShaderPath;
@@ -179,13 +213,35 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			
 			//Variables = 
 			programHandle = ShaderUtils.CreateShaderProgram ();
-			vertShaderHandle = ShaderUtils.CreateVertexShader(this.vertexShaderPath);
-			fragShaderHandle = ShaderUtils.CreateFragmentShader(this.pixelShaderPath);
+			vertShaderHandle = ShaderUtils.CreateVertexShader (this.vertexShaderPath);
+			fragShaderHandle = ShaderUtils.CreateFragmentShader (this.pixelShaderPath);
 			
-			ShaderUtils.AttachShader(programHandle, vertShaderHandle);
-			ShaderUtils.AttachShader(programHandle, fragShaderHandle);
-			
-			ShaderUtils.LinkProgram (programHandle);
+			ShaderUtils.AttachShader (programHandle, vertShaderHandle);
+			ShaderUtils.AttachShader (programHandle, fragShaderHandle);
+
+		}
+
+		internal void BindAttributes(IList<String> orderedAttributes)
+		{
+			int index = 0;
+
+			foreach(var attName in orderedAttributes)
+			{
+				OpenTK.Graphics.ES20.GL.BindAttribLocation(programHandle, index, attName);
+				OpenTKHelper.CheckError();
+				bool success = ShaderUtils.LinkProgram (programHandle);
+				if (success)
+				{
+					index++;
+				}
+
+			}
+		}
+
+		internal void Link()
+		{
+			// bind atts here
+			//ShaderUtils.LinkProgram (programHandle);
 
 			Console.WriteLine("  Finishing linking");
 
@@ -194,16 +250,39 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 			Inputs = attributes
 				.Select(x => new OglesShaderInput(programHandle, x))
+				.OrderBy(y => y.AttributeLocation)
 				.ToList();
+			Console.Write("  Inputs : ");
+			foreach (var input in Inputs) {
+				Console.Write (input.Name + ", ");
+			}
+			Console.Write (Environment.NewLine);
 
 			Console.WriteLine("  Initilise Uniforms");
 			var uniforms = ShaderUtils.GetUniforms(programHandle);
-			
-			Variables = uniforms
-				.Where(y => y.Type != OpenTK.Graphics.ES20.ActiveUniformType.Sampler2D && y.Type != OpenTK.Graphics.ES20.ActiveUniformType.SamplerCube)
-				.Select(x => new OglesShaderVariable(programHandle, x))
-				.ToList();
 
+
+			Variables = uniforms
+				.Where(y => 
+				       y.Type != OpenTK.Graphics.ES20.ActiveUniformType.Sampler2D && 
+				       y.Type != OpenTK.Graphics.ES20.ActiveUniformType.SamplerCube)
+				.Select(x => new OglesShaderVariable(programHandle, x))
+				.OrderBy(z => z.UniformLocation)
+				.ToList();
+			Console.Write("  Variables : ");
+			foreach (var variable in Variables) {
+				Console.Write (variable.Name + ", ");
+			}
+			Console.Write (Environment.NewLine);
+
+			Console.WriteLine("  Initilise Samplers");
+			Samplers = uniforms
+				.Where(y => 
+				       y.Type == OpenTK.Graphics.ES20.ActiveUniformType.Sampler2D || 
+				       y.Type == OpenTK.Graphics.ES20.ActiveUniformType.SamplerCube)
+				.Select(x => new OglesShaderSampler(programHandle, x))
+				.OrderBy(z => z.UniformLocation)
+				.ToList();
 
 			#if DEBUG
 			ShaderUtils.ValidateProgram (programHandle);
@@ -216,10 +295,10 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			ShaderUtils.DeleteShader(programHandle, vertShaderHandle);
 		}
 		
-		public void Activate()
+		public void Activate ()
 		{
 			OpenTK.Graphics.ES20.GL.UseProgram (programHandle);
-			OpenTKHelper.CheckError();
+			OpenTKHelper.CheckError ();
 		}
 		
 		public void Dispose()

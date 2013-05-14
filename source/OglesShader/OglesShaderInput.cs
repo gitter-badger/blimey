@@ -48,7 +48,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 	public class OglesShaderInput
 	{
 		int ProgramHandle { get; set; }
-		int AttributeLocation { get; set; }
+		internal int AttributeLocation { get; private set; }
 		
 		public String Name { get; private set; }
 		public Type Type { get; private set; }
@@ -59,19 +59,20 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		public OglesShaderInput(
 			int programHandle, ShaderUtils.ShaderAttribute attribute)
 		{
+			int attLocation = OpenTK.Graphics.ES20.GL.GetAttribLocation(programHandle, attribute.Name);
+
+			OpenTKHelper.CheckError();
+
 			Console.WriteLine(string.Format(
-				"    Binding Shader Input: [Prog={0}, AttIndex={1}, AttName={2}, AttType={3}]",
-			    programHandle, attribute.Index, attribute.Name, attribute.Type));
+				"    Binding Shader Input: [Prog={0}, AttIndex={1}, AttLocation={4}, AttName={2}, AttType={3}]",
+				programHandle, attribute.Index, attribute.Name, attribute.Type, attLocation));
 
 			this.ProgramHandle = programHandle;
-			this.AttributeLocation = attribute.Index;
+			this.AttributeLocation = attLocation;
 			this.Name = attribute.Name;
 			this.Type = EnumConverter.ToType(attribute.Type);
 			
-			// Associates a generic vertex attribute index with a named attribute variable.
-			OpenTK.Graphics.ES20.GL.BindAttribLocation(programHandle, attribute.Index, attribute.Name);
-			
-			OpenTKHelper.CheckError();
+
 		}
 		
 		internal void RegisterExtraInfo(ShaderInputDefinition definition)

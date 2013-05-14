@@ -92,18 +92,10 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				
 			}
 		}
-		
-		/// <summary>
-		/// Gets the value of a specified shader variable.
-		/// </summary>
-		public T GetVariable<T>(string name)
-		{
-			throw new NotImplementedException ();
-		}
 
 
 		/// <summary>
-		/// Gets the value of a specified shader variable.
+		/// Sets the value of a specified shader variable.
 		/// </summary>
 		public void SetVariable<T>(string name, T value)
 		{
@@ -112,7 +104,19 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				pass.SetVariable<T>(name, value);
 			}
 		}
-		
+
+
+		/// <summary>
+		/// Sets the texture slot that a texture sampler should sample from.
+		/// </summary>
+		public void SetSamplerTarget(string name, Int32 textureSlot)
+		{
+			foreach (var pass in passes)
+			{
+				pass.SetSamplerTarget(name, textureSlot);
+			}
+		}
+
 		
 		/// <summary>
 		/// Provides access to the individual passes in this shader.
@@ -283,8 +287,11 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				// Create one shader pass for each defined pass name.
 				var shaderPass = new ShaderPass( definedPassName, passVariants___Name_AND_passVariantDefinition );
 
+				shaderPass.BindAttributes (shaderDefinition.InputDefinitions.Select(x => x.Name).ToList());
+				shaderPass.Link ();
 				shaderPass.ValidateInputs(shaderDefinition.InputDefinitions);
 				shaderPass.ValidateVariables(shaderDefinition.VariableDefinitions);
+				shaderPass.ValidateSamplers(shaderDefinition.SamplerDefinitions);
 
 				passes.Add(shaderPass);
 			}

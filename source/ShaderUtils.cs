@@ -359,8 +359,10 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		}
 		
 		
-		public static void LinkProgram (Int32 prog)
+		public static bool LinkProgram (Int32 prog)
 		{
+			bool retVal = true;
+
 			OpenTK.Graphics.ES20.GL.LinkProgram (prog);
 
 			OpenTKHelper.CheckError();
@@ -377,6 +379,9 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 			if (logLength > 0)
 			{
+				retVal = false;
+
+				/*
 				var infoLog = new System.Text.StringBuilder ();
 
 				OpenTK.Graphics.ES20.GL.GetProgramInfoLog (
@@ -384,6 +389,10 @@ namespace Sungiant.Cor.MonoTouchRuntime
 					logLength,
 					out logLength,
 					infoLog );
+				*/
+				var infoLog = string.Empty;
+				OpenTK.Graphics.ES20.GL.GetProgramInfoLog(prog, out infoLog);
+
 
 				OpenTKHelper.CheckError();
 
@@ -403,6 +412,8 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			{
 				throw new Exception(String.Format("Failed to link program: {0:x}", prog));
 			}
+
+			return retVal;
 
 		}
 

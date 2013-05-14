@@ -69,6 +69,9 @@ namespace Sungiant.Cor.MonoTouchRuntime
 		/// variant must support all of the variables.
 		/// </summary>
 		public List<ShaderVariableDefinition> VariableDefinitions { get; set; }
+
+		
+		public List<ShaderSamplerDefinition> SamplerDefinitions { get; set; }
 		
 		/// <summary>
 		/// Defines the variants.  Done for optimisation, instead of having one

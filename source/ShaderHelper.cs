@@ -61,13 +61,14 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			// foreach variant
 			for (int i = 0; i < variants.Count; ++i)
 			{
-
 				// work out how many vert inputs match
-				int numMatchedVertElems = 0;
-				int numUnmatchedVertElems = 0;
-				int numMissingNonOptionalInputs = 0;
+
 				
-				Match(vertexDeclaration, variants[i], out numMatchedVertElems, out numUnmatchedVertElems, out numMissingNonOptionalInputs);
+				var matchResult = CompareShaderInputs(vertexDeclaration, variants[i]);
+
+				int numMatchedVertElems = matchResult.NumMatchedInputs;
+				int numUnmatchedVertElems = matchResult.NumUnmatchedInputs;
+				int numMissingNonOptionalInputs = matchResult.NumUnmatchedRequiredInputs;
 
 				Console.WriteLine(" - " + variants[i]);
 
@@ -80,17 +81,17 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				else
 				{
 					if( 
-					   (
-						numMatchedVertElems > bestNumMatchedVertElems && 
-						bestNumMissingNonOptionalInputs == 0
+					    (
+							numMatchedVertElems > bestNumMatchedVertElems && 
+							bestNumMissingNonOptionalInputs == 0
 						)
-					   || 
-					   (
-						numMatchedVertElems == bestNumMatchedVertElems && 
-						bestNumMissingNonOptionalInputs == 0 &&
-						numUnmatchedVertElems < bestNumUnmatchedVertElems 
+					   	|| 
+					    (
+							numMatchedVertElems == bestNumMatchedVertElems && 
+							bestNumMissingNonOptionalInputs == 0 &&
+							numUnmatchedVertElems < bestNumUnmatchedVertElems 
 						)
-					   )
+					  )
 					{
 						bestNumMatchedVertElems = numMatchedVertElems;
 						bestNumUnmatchedVertElems = numUnmatchedVertElems;
@@ -102,39 +103,60 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				
 			}
 
-			best = 2;
+			//best = 2;
 			Console.WriteLine("Chosen variant: " + variants[best].VariantName);
-
 
 			return variants[best];
 		}
 
-		static void Match (
+		struct CompareShaderInputsResult
+		{
+			// the nume
+			public int NumMatchedInputs;
+			public int NumUnmatchedInputs;
+			public int NumUnmatchedRequiredInputs;
+		}
+
+		static CompareShaderInputsResult CompareShaderInputs (
 			VertexDeclaration vertexDeclaration, 
-			OglesShader oglesShader,
-			out int numMatchedVertElems,
-			out int numUnmatchedVertElems,
-			out int numMissingNonOptionalInputs
+			OglesShader oglesShader
 			)
 		{
-			numMatchedVertElems = 0;
-			numUnmatchedVertElems = 0;
-			numMissingNonOptionalInputs = 0;
+			var result = new CompareShaderInputsResult();
 			
 			var oglesShaderInputsUsed = new List<OglesShaderInput>();
 			
 			var vertElems = vertexDeclaration.GetVertexElements();
-			
+
+			// itterate over each input defined in the vert decl
 			foreach(var vertElem in vertElems)
 			{
 				var usage = vertElem.VertexElementUsage;
+
 				var format = vertElem.VertexElementFormat;
-				
+				/*
+
+				foreach( var input in oglesShader.Inputs )
+				{
+					// the vertDecl knows what each input's intended use is,
+					// so lets match up 
+					if( input.Usage == usage )
+					{
+						// intended use seems good
+					}
+				}
+
 				// find all inputs that could match
 				var matchingInputs = oglesShader.Inputs.FindAll(
 					x => 
-					x.Usage == usage &&
-					x.Type == VertexElementFormatHelper.FromEnum(format));
+
+						x.Usage == usage &&
+						(x.Type == VertexElementFormatHelper.FromEnum(format) || 
+						( (x.Type.GetType() == typeof(Vector4)) && (format == VertexElementFormat.Colour) ))
+
+				 );*/
+
+				var matchingInputs = oglesShader.Inputs.FindAll(x => x.Usage == usage);
 				
 				// now make sure it's not been used already
 				
@@ -153,11 +175,11 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				}
 			}
 			
-			numMatchedVertElems = oglesShaderInputsUsed.Count;
+			result.NumMatchedInputs = oglesShaderInputsUsed.Count;
 			
-			numUnmatchedVertElems = vertElems.Length - numMatchedVertElems;
+			result.NumUnmatchedInputs = vertElems.Length - result.NumMatchedInputs;
 			
-			numMissingNonOptionalInputs = 0;
+			result.NumUnmatchedRequiredInputs = 0;
 			
 			foreach (var input in oglesShader.Inputs)
 			{
@@ -165,12 +187,14 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				{
 					if( !input.Optional )
 					{
-						numMissingNonOptionalInputs++;
+						result.NumUnmatchedRequiredInputs++;
 					}
 				}
 				
 			}
-			
+
+			Console.WriteLine(string.Format("[{0}, {1}, {2}]", result.NumMatchedInputs, result.NumUnmatchedInputs, result.NumUnmatchedRequiredInputs));
+			return result;
 		}
 
 	}

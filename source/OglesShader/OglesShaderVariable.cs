@@ -43,7 +43,7 @@ namespace Sungiant.Cor.MonoTouchRuntime
 	public class OglesShaderVariable
 	{
 		int ProgramHandle { get; set; }
-		int UniformLocation { get; set; }
+		internal int UniformLocation { get; private set; }
 		
 		public String NiceName { get; private set; }
 		public String Name { get; private set; }
