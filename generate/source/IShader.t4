@@ -8,16 +8,16 @@
 		/// Resets all the shader's variables to their default values.
 		/// </summary>
 		void ResetVariables();
-
-		/// <summary>
-		/// Gets the value of a specified shader variable.
-		/// </summary>
-		T GetVariable<T>(string name);
 		
 		/// <summary>
-		/// Gets the value of a specified shader variable.
+		/// Sets the value of a specified shader variable.
 		/// </summary>
 		void SetVariable<T>(string name, T value);
+		
+		/// <summary>
+		/// Sets the texture slot that a texture sampler should sample from.
+		/// </summary>
+		void SetSamplerTarget(string name, Int32 textureSlot);
 
 		/// <summary>
 		/// Provides access to the individual passes in this shader.
