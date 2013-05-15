@@ -53,8 +53,11 @@
 		public override String ToString ()
 		{
 			return string.Format (
-				"{{Offset:{0} Format:{1} Usage:{2} UsageIndex:{3}}}",
-				new object[] { this.Offset, this.VertexElementFormat, this.VertexElementUsage, this.UsageIndex }
+				"[Offset:{0} Format:{1}, Usage:{2}, UsageIndex:{3}]",
+				this.Offset, 
+				this.VertexElementFormat, 
+				this.VertexElementUsage, 
+				this.UsageIndex
 			);
 		}
 
