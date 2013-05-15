@@ -399,16 +399,16 @@ namespace Sungiant.Cor
 		/// Resets all the shader's variables to their default values.
 		/// </summary>
 		void ResetVariables();
-
-		/// <summary>
-		/// Gets the value of a specified shader variable.
-		/// </summary>
-		T GetVariable<T>(string name);
 		
 		/// <summary>
-		/// Gets the value of a specified shader variable.
+		/// Sets the value of a specified shader variable.
 		/// </summary>
 		void SetVariable<T>(string name, T value);
+		
+		/// <summary>
+		/// Sets the texture slot that a texture sampler should sample from.
+		/// </summary>
+		void SetSamplerTarget(string name, Int32 textureSlot);
 
 		/// <summary>
 		/// Provides access to the individual passes in this shader.
@@ -712,16 +712,13 @@ namespace Sungiant.Cor
 				case VertexElementFormat.NormalisedShort4: return typeof(NormalisedShort4);
 				case VertexElementFormat.HalfVector2: return typeof(Sungiant.Abacus.HalfPrecision.Vector2);
 				case VertexElementFormat.HalfVector4: return typeof(Sungiant.Abacus.HalfPrecision.Vector4);
+
+				throw new NotSupportedException();
 			}
 
 			throw new NotSupportedException();
 		}
 	}
-
-	/// <summary>
-	/// Provides extra information about what a vertex shader input is used for.  It is purely informational and should
-	/// not be used as an identifier.
-	/// </summary>
 	public enum VertexElementUsage
 	{
 		Position,
@@ -1190,6 +1187,84 @@ namespace Sungiant.Cor
 
 		}
 
+		public Boolean Equals(VertexDeclaration other)
+		{
+			if( other == null)
+				return false;
+
+			return other == this;
+		}
+
+		public override int GetHashCode ()
+		{
+			int hash = _vertexStride.GetHashCode ();
+
+			foreach (var elm in _elements)
+			{
+				hash = hash ^ elm.GetHashCode ();
+			}
+
+			return hash;
+		}
+
+		public override Boolean Equals (object obj)
+		{
+			if( obj != null )
+			{
+				var other = obj as VertexDeclaration;
+
+				if( other != null )
+				{
+					return other == this;
+				}
+			}
+
+			return false;
+		}
+
+		public static Boolean operator != (VertexDeclaration one, VertexDeclaration other)
+		{
+			return !(one == other);
+		}
+
+		public static Boolean operator == (VertexDeclaration one, VertexDeclaration other)
+		{
+			if (one as object == null && other as object != null)
+				return false;
+
+			if (one as object != null && other as object == null)
+				return false;
+
+
+			if (one._vertexStride != other._vertexStride)
+				return false;
+
+			for(int i = 0; i < one._elements.Length; ++i)
+			{
+				if( one._elements[i] != other._elements[i] )
+					return false;
+			}
+
+			return true;
+		}
+
+		public override String ToString()
+		{
+			string s = string.Empty;
+
+			for(int i = 0; i < _elements.Length; ++i)
+			{
+				s += _elements[i];
+
+				if( i + 1 < _elements.Length )
+				{
+					s += ", "; 
+				}
+
+			}
+			return string.Format ("[VertexDeclaration: Elements={0}, Stride={1}]", s, _vertexStride);
+		}
+
 		public VertexDeclaration (Int32 vertexStride, params VertexElement[] elements)
 		{
 			if ((elements == null) || (elements.Length == 0)) {
@@ -1298,8 +1373,11 @@ namespace Sungiant.Cor
 		public override String ToString ()
 		{
 			return string.Format (
-				"{{Offset:{0} Format:{1} Usage:{2} UsageIndex:{3}}}",
-				new object[] { this.Offset, this.VertexElementFormat, this.VertexElementUsage, this.UsageIndex }
+				"[Offset:{0} Format:{1}, Usage:{2}, UsageIndex:{3}]",
+				this.Offset, 
+				this.VertexElementFormat, 
+				this.VertexElementUsage, 
+				this.UsageIndex
 			);
 		}
 
