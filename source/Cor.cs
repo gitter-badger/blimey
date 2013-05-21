@@ -1228,7 +1228,17 @@ namespace Sungiant.Cor
 		}
 
 		public static Boolean operator == (VertexDeclaration one, VertexDeclaration other)
-		{		
+		{
+			if ((object)one == null && (object)other == null)
+			{
+				return true;
+			}
+
+			if ((object)one == null || (object)other == null)
+			{
+				return false;
+			}
+
 			if (one._vertexStride != other._vertexStride)
 				return false;
 
