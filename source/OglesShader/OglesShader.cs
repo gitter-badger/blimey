@@ -128,7 +128,11 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			// Make sure that every implemented input is defined.
 			foreach(var variable in Variables)
 			{
-				var find = definitions.Find(x => x.Name == variable.Name && (x.Type == variable.Type || (x.Type == typeof(Rgba32) && variable.Type == typeof(Vector4))));
+				var find = definitions.Find(
+					x => 
+					x.Name == variable.Name //&& 
+					//(x.Type == variable.Type || (x.Type == typeof(Rgba32) && variable.Type == typeof(Vector4)))
+					);
 				
 				if( find == null )
 				{

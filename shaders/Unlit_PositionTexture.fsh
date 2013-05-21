@@ -1,4 +1,4 @@
-uniform sampler2D s_tex0;
+uniform mediump sampler2D s_tex0;
 
 varying mediump vec2 v_texCoord;
 varying mediump vec4 v_tint;

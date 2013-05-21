@@ -80,6 +80,14 @@ namespace Sungiant.Cor.MonoTouchRuntime
 			{
 				return CorShaders.CreateUnlit();
 			}
+			if (shaderType == ShaderType.VertexLit)
+			{
+				return CorShaders.CreatePhongVertexLit();
+			}
+			if (shaderType == ShaderType.PixelLit)
+			{
+				return CorShaders.CreatePhongPixelLit();
+			}
 
 			throw new NotImplementedException();
 		}

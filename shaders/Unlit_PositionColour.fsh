@@ -1,4 +1,4 @@
-varying lowp vec4 v_tint;
+varying mediump vec4 v_tint;
 
 void main()
 {

@@ -1,14 +1,14 @@
-attribute vec4 a_vertPos;
-attribute vec2 a_vertTexcoord;
-attribute vec4 a_vertColour;
+attribute mediump vec4 a_vertPos;
+attribute mediump vec2 a_vertTexcoord;
+attribute mediump vec4 a_vertColour;
 
-uniform mat4 u_world;
-uniform mat4 u_view;
-uniform mat4 u_proj;
-uniform vec4 u_colour;
+uniform mediump mat4 u_world;
+uniform mediump mat4 u_view;
+uniform mediump mat4 u_proj;
+uniform mediump vec4 u_colour;
 
-varying lowp vec2 v_texCoord;
-varying lowp vec4 v_tint;
+varying mediump vec2 v_texCoord;
+varying mediump vec4 v_tint;
 
 void main()
 {

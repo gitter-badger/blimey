@@ -65,6 +65,10 @@ namespace Sungiant.Cor.MonoTouchRuntime
 				{
 					this.SetVariable<Matrix44>(varName, (Matrix44) value);
 				}
+				else if( variableDefinition.Type == typeof(Int32) )
+				{
+					this.SetVariable<Single>(varName, (Int32) value);
+				}
 				else if( variableDefinition.Type == typeof(Single) )
 				{
 					this.SetVariable<Single>(varName, (Single) value);

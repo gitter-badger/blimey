@@ -88,6 +88,11 @@ namespace Sungiant.Cor.MonoTouchRuntime
 
 				OpenTK.Graphics.ES20.GL.UniformMatrix4( UniformLocation, 1, false, ref castValue.M11 );
 			}
+			else if( t == typeof(Int32) )
+			{
+				var castValue = (Int32) value;
+				OpenTK.Graphics.ES20.GL.Uniform1( UniformLocation, 1, ref castValue );
+			}
 			else if( t == typeof(Single) )
 			{
 				var castValue = (Single) value;
