@@ -75,7 +75,8 @@ namespace Sungiant.Cor.Demo
 
             this.LoadShape1();
             this.LoadShape2();
-            this.LoadShape3();
+			this.LoadShape3();
+			this.LoadShape4();
 		}
 
 		public Boolean Update(AppTime time)
@@ -89,11 +90,13 @@ namespace Sungiant.Cor.Demo
 
             Single delta = Sungiant.Abacus.RealMaths.Sin(time.Elapsed);
 
-            Matrix44.CreateFromAxisAngle(ref a, delta,  out this.rotation1);
+			Matrix44.CreateFromAxisAngle(ref a, delta,  out this.rotation1);
 
             Matrix44.CreateFromYawPitchRoll( delta, delta, delta, out this.rotation2);
 
             Matrix44.CreateFromYawPitchRoll( delta, delta, delta, out this.rotation3);
+			
+			Matrix44.CreateFromAxisAngle(ref a, delta,  out this.rotation4);
 
 			return false;
 		}
@@ -106,9 +109,10 @@ namespace Sungiant.Cor.Demo
 			if (this.shape1GeomBuffer == null)
 				return;
 						
-            this.RenderShape1();
+			this.RenderShape1();
             this.RenderShape2();
-            this.RenderShape3();
+			this.RenderShape3();
+			this.RenderShape4();
 
 		}
 
@@ -168,6 +172,7 @@ namespace Sungiant.Cor.Demo
             Matrix44 proj; Matrix44.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 1f, -1f, out proj);
             
 			// set the variable on the shader to our desired variables
+			//unlitEffect.ResetVariables ();
 			unlitEffect.ResetVariables ();
 			unlitEffect.SetVariable ("World", world);
 			unlitEffect.SetVariable ("View", view);
@@ -254,7 +259,7 @@ namespace Sungiant.Cor.Demo
 			unlitEffect.SetVariable ("View", view);
 			unlitEffect.SetVariable ("Projection", proj);
 			unlitEffect.SetVariable ("MaterialColour", Rgba32.White);
-			unlitEffect.SetVariable ("TextureSlot", 0);
+			unlitEffect.SetSamplerTarget ("TextureSampler", 0);
 
 			this.engine.Graphics.SetActiveTexture(0, this.shape2Texture);
 			
@@ -340,7 +345,7 @@ namespace Sungiant.Cor.Demo
 			unlitEffect.SetVariable ("View", view);
 			unlitEffect.SetVariable ("Projection", proj);
 			unlitEffect.SetVariable ("MaterialColour", Rgba32.White);
-			unlitEffect.SetVariable ("TextureSlot", 0);
+			unlitEffect.SetSamplerTarget ("TextureSampler", 0);
 
 			this.engine.Graphics.SetActiveTexture(0, this.shape3Texture);
 
@@ -357,94 +362,85 @@ namespace Sungiant.Cor.Demo
         }
 
         #endregion
+
+
+		#region shape4
+
+		IGeometryBuffer shape4GeomBuffer;
+		Int32 shape4VertCount;
+		Int32 shape4IndexCount;
+		Matrix44 rotation4;
+
+		void LoadShape4()
+		{
+			var vertBuffer = CustomShape_PositionColour.VertArray;
+
+			var indexBuffer = CustomShape_PositionColour.IndexArray;
+
+
+			this.shape4VertCount = vertBuffer.Length;
+			this.shape4IndexCount = indexBuffer.Length;
+
+			this.shape4GeomBuffer = engine.Graphics.CreateGeometryBuffer(
+				VertexPositionColour.Default.VertexDeclaration, this.shape4VertCount, this.shape4IndexCount);
+
+			if (this.shape4GeomBuffer != null)
+			{
+				this.shape4GeomBuffer.VertexBuffer.SetData(vertBuffer);
+				this.shape4GeomBuffer.IndexBuffer.SetData(indexBuffer);
+			}
+
+			// don't need these now as they live on the GPU
+			vertBuffer = null;
+			indexBuffer = null;
+		}
+
+		void RenderShape4()
+		{
+			this.engine.Graphics.GpuUtils.BeginEvent(Rgba32.Red, "Render Shape 4");
+
+			this.engine.Graphics.SetActiveGeometryBuffer(this.shape4GeomBuffer);
+
+			Matrix44 worldScale;
+			Matrix44.CreateScale(0.5f, out worldScale);
+
+			Matrix44 shape4Translation;
+			Matrix44.CreateTranslation(0.5f, -0.5f, 0f, out shape4Translation);
+
+			var world = worldScale * this.rotation4;
+			world = world * shape4Translation;
+
+			var a = Vector3.UnitZ; var b = Vector3.Forward; var c = Vector3.Up;
+			Matrix44 view; Matrix44.CreateLookAt(
+				ref a,
+				ref b,
+				ref c,
+				out view);
+
+			Matrix44 proj; Matrix44.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 1f, -1f, out proj);
+
+			// set the variable on the shader to our desired variables
+			unlitEffect.ResetVariables ();
+			unlitEffect.SetVariable ("World", world);
+			unlitEffect.SetVariable ("View", view);
+			unlitEffect.SetVariable ("Projection", proj);
+			unlitEffect.SetVariable ("MaterialColour", Rgba32.Green);
+
+			foreach (var effectPass in this.unlitEffect.Passes)
+			{
+				effectPass.Activate(VertexPositionColour.Default.VertexDeclaration);
+
+				this.engine.Graphics.DrawIndexedPrimitives (
+					PrimitiveType.TriangleList, 0, 0,
+					this.shape4VertCount, 0, this.shape4IndexCount / 3);
+			}
+
+			this.engine.Graphics.GpuUtils.EndEvent();
+		}
+
+		#endregion
 	}
 
-
-    public static class CustomCube
-    {
-        static Vector3[] normals;
-        static List<Int32> indexArray = new List<Int32>();
-        static List<VertexPositionTexture> vertArray = 
-            new List<VertexPositionTexture>();
-
-        public static VertexDeclaration VertexDeclaration { get {
-                return VertexPositionTexture.Default.VertexDeclaration; } }
-
-        static CustomCube()
-        {
-            // A cube has six faces, each one pointing in a different direction.
-            normals = new Vector3[]
-            {
-                new Vector3(0, 0, 1),
-                new Vector3(0, 0, -1),
-                new Vector3(1, 0, 0),
-                new Vector3(-1, 0, 0),
-                new Vector3(0, 1, 0),
-                new Vector3(0, -1, 0),
-            };
-
-            // Create each face in turn.
-            foreach (Vector3 normal in normals)
-            {
-                // Get two vectors perpendicular to the face normal and to each other.
-                Vector3 side1 = new Vector3(normal.Y, normal.Z, normal.X);
-                Vector3 side2;
-
-                Vector3 n = normal;
-                Vector3.Cross(ref n, ref side1, out side2);
-                
-                // Six indices (two triangles) per face.
-                AddIndex(CurrentVertex + 0);
-                AddIndex(CurrentVertex + 1);
-                AddIndex(CurrentVertex + 2);
-
-                AddIndex(CurrentVertex + 0);
-                AddIndex(CurrentVertex + 2);
-                AddIndex(CurrentVertex + 3);
-                
-                // Four vertices per face.
-                AddVertex((normal - side1 - side2) / 2, normal, new Vector2(0f, 0f));
-                AddVertex((normal - side1 + side2) / 2, normal, new Vector2(1f, 0f));
-                AddVertex((normal + side1 + side2) / 2, normal, new Vector2(1f, 1f));
-                AddVertex((normal + side1 - side2) / 2, normal, new Vector2(0f, 1f));
-            }
-        }
-
-        static int CurrentVertex
-        {
-            get { return vertArray.Count; }
-        }
-
-        static void AddVertex(Vector3 position, Vector3 normal, Vector2 texCoord)
-        {
-            vertArray.Add(new VertexPositionTexture(position, /*normal,*/ texCoord));
-        }
-
-        static void AddIndex(int index)
-        {
-            if (index > ushort.MaxValue)
-                throw new ArgumentOutOfRangeException("index");
-            
-            indexArray.Add((ushort)index);
-        }
-
-        public static VertexPositionTexture[] VertArray
-        {
-            get
-            {
-                return vertArray.ToArray();
-            }
-        }
-        
-        public static Int32[] IndexArray
-        {
-            get
-            {
-                return indexArray.ToArray();
-            }
-        }
-        
-    }
 
     public static class CustomCube_PositionTexture
     {
@@ -531,9 +527,8 @@ namespace Sungiant.Cor.Demo
         }
         
     }
-
-
-    public class CustomCylinder_PositionNormalTexture
+	
+    public static class CustomCylinder_PositionNormalTexture
     {
         const int tessellation = 9; // must be greater than 2
         const float height = 0.5f;
@@ -663,73 +658,6 @@ namespace Sungiant.Cor.Demo
 
     }
 
-
-    public static class CustomShape
-    {
-
-        public static VertexPositionColour[] VertArray
-        {
-            get
-            {
-                return new VertexPositionColour[]
-                {
-                    new VertexPositionColour( new Vector3(0.0f, 0.0f, 0.0f), RandomColours.GetNext() ),
-                    // Top
-                    new VertexPositionColour( new Vector3(-0.2f, 0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.2f, 0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.0f, 0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.0f, 1.0f, 0.0f), RandomColours.GetNext() ),
-                    // Bottom
-                    new VertexPositionColour( new Vector3(-0.2f, -0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.2f, -0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.0f, -0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.0f, -1.0f, 0.0f), RandomColours.GetNext() ),
-                    // Left
-                    new VertexPositionColour( new Vector3(-0.8f, -0.2f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(-0.8f, 0.2f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(-0.8f, 0.0f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(-1.0f, 0.0f, 0.0f), RandomColours.GetNext() ),
-                    // Right
-                    new VertexPositionColour( new Vector3(0.8f, -0.2f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.8f, 0.2f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.8f, 0.0f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(1.0f, 0.0f, 0.0f), RandomColours.GetNext() ),
-                };
-            }
-        }
-        
-        public static Int32[] IndexArray
-        {
-            get
-            {
-                return new Int32[] {
-                    // Top
-                    0, 1, 3,
-                    0, 3, 2,
-                    3, 1, 4,
-                    3, 4, 2,
-                    // Bottom
-                    0, 7, 5,
-                    0, 6, 7,
-                    7, 8, 5,
-                    7, 6, 8,
-                    // Left
-                    0, 9, 11,
-                    0, 11, 10,
-                    11, 9, 12,
-                    11, 12, 10,
-                    // Right
-                    0, 15, 13, 
-                    0, 14, 15,
-                    15, 16, 13,
-                    15, 14, 16
-                };
-            }
-        }
-
-    }
-
-
     public static class CustomShape_PositionColour
     {
 
@@ -795,8 +723,6 @@ namespace Sungiant.Cor.Demo
 
     }
 
-
-
     public static class RandomColours
     {
         static Random random = new Random();
@@ -815,7 +741,6 @@ namespace Sungiant.Cor.Demo
         }
 
     }
-
 
 }
 
