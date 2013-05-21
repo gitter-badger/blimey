@@ -333,7 +333,7 @@ namespace Sungiant.Cor
         // loop.  
 
         // An Xbox 360 gamepad
-	Xbox360Gamepad		    GetXbox360Gamepad(PlayerIndex player);
+        Xbox360Gamepad		    GetXbox360Gamepad(PlayerIndex player);
 
         // The virtual gamepad used by PlayStation Mobile, 
         // if you are running on Vita this will be the Vita itself.
@@ -341,11 +341,11 @@ namespace Sungiant.Cor
 
         // A generalised multitouch pad, which may or may
         // not have a screen.
-	MultiTouchController	GetMultiTouchController();
+        MultiTouchController	GetMultiTouchController();
 
         // A very basic gamepad, supported by most implementations
         // for platforms that have gamepads.
-	GenericGamepad			GetGenericGamepad();
+        GenericGamepad			GetGenericGamepad();
     }
 	// Specifies the attributes a panel,
 	// a panel could be a screen, a touch device, or both.
@@ -667,8 +667,8 @@ namespace Sungiant.Cor
 	public enum ShaderType
 	{
 		Unlit,
-		Gouraud,
-		Phong,
+		VertexLit,
+		PixelLit,
 		Toon
 	}
 	public enum TouchPhase
@@ -1228,14 +1228,7 @@ namespace Sungiant.Cor
 		}
 
 		public static Boolean operator == (VertexDeclaration one, VertexDeclaration other)
-		{
-			if (one as object == null && other as object != null)
-				return false;
-
-			if (one as object != null && other as object == null)
-				return false;
-
-
+		{		
 			if (one._vertexStride != other._vertexStride)
 				return false;
 
