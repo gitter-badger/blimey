@@ -710,10 +710,8 @@ namespace Sungiant.Cor
 				case VertexElementFormat.Short4: return typeof(Short4);
 				case VertexElementFormat.NormalisedShort2: return typeof(NormalisedShort2);
 				case VertexElementFormat.NormalisedShort4: return typeof(NormalisedShort4);
-				case VertexElementFormat.HalfVector2: return typeof(Sungiant.Abacus.HalfPrecision.Vector2);
-				case VertexElementFormat.HalfVector4: return typeof(Sungiant.Abacus.HalfPrecision.Vector4);
-
-				throw new NotSupportedException();
+				//case VertexElementFormat.HalfVector2: return typeof(Sungiant.Abacus.HalfPrecision.Vector2);
+				//case VertexElementFormat.HalfVector4: return typeof(Sungiant.Abacus.HalfPrecision.Vector4);
 			}
 
 			throw new NotSupportedException();
