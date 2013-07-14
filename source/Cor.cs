@@ -915,22 +915,22 @@ namespace Sungiant.Cor
 
 		static LightingManager()
 		{
-			ambientLightColour = Rgba32.DarkGray.ToVector3();
+			Rgba32.DarkGray.ToVector3(out ambientLightColour);
 
 			dirLight0Direction = new Vector3(-0.3f, -0.9f, +0.3f); 
-			dirLight0Direction.Normalise();
-			dirLight0DiffuseColour = Rgba32.DarkGoldenrod.ToVector3();
-			dirLight0SpecularColour = Rgba32.Beige.ToVector3();
+			Vector3.Normalise(ref dirLight0Direction, out dirLight0Direction);
+			Rgba32.DarkGoldenrod.ToVector3(out dirLight0DiffuseColour);
+			Rgba32.Beige.ToVector3(out dirLight0SpecularColour);
 
 			dirLight1Direction = new Vector3(0.3f, 0.1f, -0.3f);
-			dirLight1Direction.Normalise();
-			dirLight1DiffuseColour = Rgba32.DarkGoldenrod.ToVector3();
-			dirLight1SpecularColour = Rgba32.Beige.ToVector3();
+			Vector3.Normalise(ref dirLight1Direction, out dirLight1Direction);
+			Rgba32.DarkGoldenrod.ToVector3(out dirLight1DiffuseColour);
+			Rgba32.Beige.ToVector3(out dirLight1SpecularColour);
 
 			dirLight2Direction = new Vector3( -0.7f, -0.3f, +0.1f);
-			dirLight2Direction.Normalise();
-			dirLight2DiffuseColour = Rgba32.DarkGoldenrod.ToVector3();
-			dirLight2SpecularColour = Rgba32.Beige.ToVector3();
+			Vector3.Normalise(ref dirLight2Direction, out dirLight2Direction);
+			Rgba32.DarkGoldenrod.ToVector3(out dirLight2DiffuseColour);
+			Rgba32.Beige.ToVector3(out dirLight2SpecularColour);
 
 		}
 	}
