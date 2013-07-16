@@ -1,0 +1,119 @@
+﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// │ Blimey - Fast, efficient, high level engine built upon Cor & Abacus    │ \\
+// ├────────────────────────────────────────────────────────────────────────┤ \\
+// │ Brought to you by:                                                     │ \\
+// │          _________                    .__               __             │ \\
+// │         /   _____/__ __  ____    ____ |__|____    _____/  |_           │ \\
+// │         \_____  \|  |  \/    \  / ___\|  \__  \  /    \   __\          │ \\
+// │         /        \  |  /   |  \/ /_/  >  |/ __ \|   |  \  |            │ \\
+// │        /_______  /____/|___|  /\___  /|__(____  /___|  /__|            │ \\
+// │                \/           \//_____/         \/     \/                │ \\
+// │                                                                        │ \\
+// ├────────────────────────────────────────────────────────────────────────┤ \\
+// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// ├────────────────────────────────────────────────────────────────────────┤ \\
+// │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
+// │ a copy of this software and associated documentation files (the        │ \\
+// │ "Software"), to deal in the Software without restriction, including    │ \\
+// │ without limitation the rights to use, copy, modify, merge, publish,    │ \\
+// │ distribute, sublicense, and/or sellcopies of the Software, and to      │ \\
+// │ permit persons to whom the Software is furnished to do so, subject to  │ \\
+// │ the following conditions:                                              │ \\
+// │                                                                        │ \\
+// │ The above copyright notice and this permission notice shall be         │ \\
+// │ included in all copies or substantial portions of the Software.        │ \\
+// │                                                                        │ \\
+// │ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,        │ \\
+// │ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF     │ \\
+// │ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. │ \\
+// │ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY   │ \\
+// │ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,   │ \\
+// │ TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE       │ \\
+// │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
+// └────────────────────────────────────────────────────────────────────────┘ \\
+
+using System;
+using Sungiant.Abacus;using Sungiant.Abacus.Packed;using Sungiant.Abacus.SinglePrecision;
+using Sungiant.Cor;
+
+namespace Sungiant.Blimey
+{
+
+	//
+	// LOOK AT SUBJECT
+	//
+	// This behaviour has many applications, it is very simple.  You must set the Subject
+	// member variable and it will change its SceneObject's orientation to look at the subject.  
+	// Optionally you can set the LockToY member variable which will keep the SceneObjects
+	// Up Vector as (0,1,0).  This is good for billboard sprites.
+	//
+	public sealed class LookAtSubject
+		: Trait
+	{
+		#region SETTINGS (These are values that can be set per instance of this behaviour)
+
+		// The target that this behaviour will look at.
+		public Transform Subject = null;
+
+		// Do you want to fix the SceneObjects Up Vector to (0,1,0)
+		public Boolean LockToY = false;
+
+		#endregion
+
+
+		// UPDATE
+		// Override update so that every frame we can alter our parent SceneObject's orientation.
+		public override void OnUpdate(AppTime time)
+		{
+			// If the Subject has not been set then this behviour will just early
+			// out without making any changes to the 
+			if (Subject == null)
+				return;
+
+			// A vector going from our parent game object to our Subject
+			Vector3 lookAtVector = Subject.Position - this.Parent.Transform.Position;
+
+			// A direction from our parent game object to our Subject
+			Vector3.Normalise(ref lookAtVector, out lookAtVector);
+
+			// Build a new orientation matrix
+			Matrix44 newOrientation = Matrix44.Identity;
+
+			Vector3 t1;
+			Vector3.Normalise(ref lookAtVector, out t1);
+			newOrientation.Forward = t1;
+
+			if (LockToY) 
+            {
+				Vector3 t2 = Vector3.Up;
+				Vector3.Normalise(ref t2, out t2);
+				newOrientation.Up = t2;
+
+                Vector3 b = newOrientation.Backward;
+                Vector3 u = newOrientation.Up;
+
+                Vector3 r;
+                Vector3.Cross(ref b, ref u, out r);
+				Vector3.Normalise(ref r, out r);
+				newOrientation.Right = r;
+			}
+            else
+            {
+                Vector3 f = newOrientation.Forward;
+                Vector3 u = Vector3.Up;
+                Vector3 r;
+                Vector3.Cross(ref f, ref u, out r);
+				Vector3.Normalise(ref r, out r);
+                newOrientation.Right = r;
+
+                Vector3.Cross(ref r, ref f, out u);
+				Vector3.Normalise(ref u, out u);
+				newOrientation.Up = u;
+			}
+
+            Quaternion rotation;
+            Quaternion.CreateFromRotationMatrix(ref newOrientation, out rotation);
+            this.Parent.Transform.Rotation = rotation;
+		}
+	}
+}
