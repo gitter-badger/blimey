@@ -1,0 +1,59 @@
+﻿	internal class CameraManager
+	{
+		internal Camera GetActiveCamera(String RenderPass)
+		{ 
+			return _activeCameras[RenderPass].GetTrait<Camera> (); 
+		}
+
+		Dictionary<String, SceneObject> _defaultCameras = new Dictionary<String,SceneObject>();
+		Dictionary<String, SceneObject> _activeCameras = new Dictionary<String,SceneObject>();
+
+		internal void SetDefaultCamera(String RenderPass)
+		{
+			_activeCameras[RenderPass] = _defaultCameras[RenderPass];
+		}
+		
+		internal void SetMainCamera (String RenderPass, SceneObject go)
+		{
+			_activeCameras[RenderPass] = go;
+		}
+
+		internal CameraManager (Scene scene)
+		{
+			var settings = scene.Settings;
+
+			foreach (String renderPass in settings.RenderPasses)
+			{
+
+				var renderPassSettings = settings.GetRenderPassSettings(renderPass);
+
+				var go = scene.CreateSceneObject(renderPass + " Default Camera");
+
+				
+
+				var cam = go.AddTrait<Camera>();
+
+				if (renderPassSettings.CameraProjectionType == CameraProjectionType.Perspective)
+				{
+					go.Transform.Position = new Vector3(2, 1, 5);
+
+					var orbit = go.AddTrait<OrbitAroundSubject>();
+					orbit.CameraSubject = Transform.Origin;
+
+					var lookAtSub = go.AddTrait<LookAtSubject>();
+					lookAtSub.Subject = Transform.Origin;
+				}
+				else
+				{
+					cam.Projection = CameraProjectionType.Orthographic;
+
+					go.Transform.Position = new Vector3(0, 0, 0.5f);
+					go.Transform.LookAt(Vector3.Zero);
+				}
+
+			
+				_defaultCameras.Add(renderPass, go);
+				_activeCameras.Add(renderPass, go);
+			}
+		}
+	}

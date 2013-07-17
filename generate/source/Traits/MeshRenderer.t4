@@ -1,0 +1,53 @@
+﻿	//
+	// MESH RENDERER
+	//
+	// This behaviour takes a Sungiant.Blimey.Model and a Material, it then renders the models
+	// at location, scale and orientaion of the parent SceneObject's Transform.
+	//
+	public sealed class MeshRenderer
+		: Trait
+	{
+
+		public Mesh Mesh;
+		public Material Material;
+
+		internal override void Render (IGraphicsManager zGfx, Matrix44 zView, Matrix44 zProjection)
+		{
+			if (!Active)
+				return;
+
+			zGfx.GpuUtils.BeginEvent(Rgba32.Red, "MeshRenderer.Render");
+
+			// Set our vertex declaration, vertex buffer, and index buffer.
+			zGfx.SetActiveGeometryBuffer(Mesh.GeomBuffer);
+
+
+			// Get the material's shader and apply all of the settings
+			// it needs.
+			Material.CalibrateShader (
+				this.Parent.Transform.Location,
+				zView,
+				zProjection
+				);
+
+			Material.CalibrateGpu (zGfx);
+
+			var shader = Material.GetShader ();
+
+			if( shader != null)
+			{
+				foreach (var effectPass in shader.Passes)
+				{
+					effectPass.Activate (Mesh.GeomBuffer.VertexBuffer.VertexDeclaration);
+
+					zGfx.DrawIndexedPrimitives (
+						PrimitiveType.TriangleList, 0, 0,
+						Mesh.VertexCount, 0, Mesh.TriangleCount);
+				}
+			}
+
+			zGfx.GpuUtils.EndEvent();
+
+		}
+	}
+

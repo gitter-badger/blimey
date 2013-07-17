@@ -1,0 +1,26 @@
+﻿	internal class PotentialDoubleTapGesture
+		: PotentialGesture
+	{
+		internal PotentialDoubleTapGesture(
+			InputEventSystem inputEventSystem,
+			Int32[] touchIDs)
+			: base(inputEventSystem, GestureType.DoubleTap, touchIDs)
+		{
+
+		}
+
+		internal override Gesture Update(float dt, List<TouchTracker> touchTrackers)
+		{
+			var touchTracker = inputEventSystem.GetTouchTracker(touchIDs[0]);
+
+			if (touchTracker == null)
+			{
+				failedGesture = true;
+				return null;
+			}
+
+			failedGesture = true;
+			return null;
+		}
+	}
+

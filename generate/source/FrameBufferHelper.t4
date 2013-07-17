@@ -1,0 +1,30 @@
+﻿	internal class FrameBufferHelper
+	{
+		Rgba32 randomColour = Rgba32.CornflowerBlue;
+		Single colourChangeTime = 5.0f;
+		Single colourChangeTimer = 0.0f;
+
+		IGraphicsManager gfx;
+
+		internal FrameBufferHelper(IGraphicsManager gfx)
+		{
+			this.gfx = gfx;
+		}
+
+		internal void Update(AppTime time)
+		{
+			colourChangeTimer += time.Delta;
+
+			if (colourChangeTimer > colourChangeTime)
+			{
+				colourChangeTimer = 0.0f;
+				randomColour = RandomGenerator.Default.GetRandomColour();
+			}
+		}
+
+		internal void Clear()
+		{
+			gfx.ClearColourBuffer(randomColour);
+		}
+	}
+

@@ -1,0 +1,163 @@
+﻿	public class TouchTracker
+	{
+		const Int32 NumFramesPerTrackedTouch = 15;
+
+		Int32 trackCounter = -1;
+		Int32 id;
+		List<Touch> samples = new List<Touch>();
+		IScreenSpecification screenSpec;
+		IPanelSpecification panelSpec;
+		ICor engine;
+
+		internal TouchTracker(
+			ICor engine,
+			IScreenSpecification displayMode,
+			IPanelSpecification panelMode,
+			Int32 id )
+		{
+			this.engine = engine;
+			this.screenSpec = displayMode;
+			this.panelSpec = panelMode;
+			this.id = id;
+
+		}
+
+		internal void RegisterTouch(Touch t)
+		{
+			if( trackCounter == -1 )
+			{
+				this.samples.Add(t);
+			}
+			else
+			{
+				if( trackCounter % NumFramesPerTrackedTouch == 0 )
+				{
+					this.samples.Add(t);
+				}
+				else
+				{
+					this.samples[this.samples.Count -1] = t;
+				}
+			}
+
+
+			trackCounter++;
+
+		}
+
+		internal Touch LatestTouch { get { return this.samples.Last(); } }
+
+		internal Int32 TouchID { get { return this.id; } }
+
+		internal TouchPhase Phase { get { return samples.Last().Phase; } }
+
+		Vector2 GetPositionOfSampleAtIndex(int index, TouchPositionSpace space)
+		{
+			var pos = this.samples[index].Position;
+
+			var multiplier = Vector2.One;
+			switch (space)
+			{
+				case TouchPositionSpace.RealWorld:
+
+					if(engine.System.CurrentOrientation == DeviceOrientation.Default ||
+					   engine.System.CurrentOrientation == DeviceOrientation.Upsidedown)
+					{
+						multiplier = new Vector2(panelSpec.PanelPhysicalSize.X, panelSpec.PanelPhysicalSize.Y);
+					}
+					else
+					{
+						multiplier = new Vector2(panelSpec.PanelPhysicalSize.Y, panelSpec.PanelPhysicalSize.X);
+					}
+
+					break;
+
+				case TouchPositionSpace.Screen:
+
+					if (this.engine.System.CurrentOrientation == DeviceOrientation.Upsidedown )
+					{
+						pos.Y = - pos.Y;
+						pos.X = - pos.X;
+					}
+					else if (this.engine.System.CurrentOrientation == DeviceOrientation.Leftside )
+					{
+						Single temp = pos.X;
+						pos.X = -pos.Y;
+						pos.Y = temp;
+					}
+					else if(this.engine.System.CurrentOrientation == DeviceOrientation.Rightside )
+					{
+						Single temp = pos.X;
+						pos.X = pos.Y;
+						pos.Y = -temp;
+					}
+
+					Int32 w = this.engine.Graphics.DisplayStatus.CurrentWidth;
+					Int32 h = this.engine.Graphics.DisplayStatus.CurrentHeight;
+
+					//this.engine.System.GetEffectiveDisplaySize(ref w, ref h);
+
+					multiplier = new Vector2(w, h);
+
+					break;
+
+			}
+			pos *= multiplier;
+
+			return pos;
+		}
+
+		public Vector2 GetPosition(TouchPositionSpace space)
+		{
+			int numSamples = samples.Count;
+
+			var curPos = this.GetPositionOfSampleAtIndex(numSamples - 1, space);
+
+
+
+			return curPos;
+		}
+
+		public Vector2 GetVelocity(TouchPositionSpace space)
+		{
+			int numSamples = samples.Count;
+
+			if (numSamples > 1)
+			{
+				var currentTouch = this.samples[numSamples - 1];
+				var previousTouch = this.samples[numSamples - 2];
+
+				var currentPos = this.GetPositionOfSampleAtIndex(numSamples - 1, space);
+				var previousPos = this.GetPositionOfSampleAtIndex(numSamples - 2, space);
+
+				Single dt = currentTouch.Timestamp - previousTouch.Timestamp;
+
+				return (currentPos - previousPos) / dt;
+			}
+
+			
+
+			return Vector2.Zero;
+		}
+
+		public Single GetDistanceTraveled(TouchPositionSpace posType)
+		{
+			Single distance = 0f;
+
+			for (Int32 i = 0; i < samples.Count; ++i)
+			{
+				if (i > 0)
+				{
+					var currentPosition = this.GetPositionOfSampleAtIndex(i, posType);
+					var previousPosition = this.GetPositionOfSampleAtIndex(i - 1, posType);
+
+					Single mag = (currentPosition - previousPosition).Length();
+
+					distance += mag;
+				}
+			}
+
+			return distance;
+		}
+	}
+

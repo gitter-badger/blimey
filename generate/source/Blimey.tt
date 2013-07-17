@@ -1,0 +1,131 @@
+<#@ template debug="true" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// │ Blimey - Fast, efficient, high level engine built upon Cor & Abacus    │ \\
+// ├────────────────────────────────────────────────────────────────────────┤ \\
+// │ Brought to you by:                                                     │ \\
+// │          _________                    .__               __             │ \\
+// │         /   _____/__ __  ____    ____ |__|____    _____/  |_           │ \\
+// │         \_____  \|  |  \/    \  / ___\|  \__  \  /    \   __\          │ \\
+// │         /        \  |  /   |  \/ /_/  >  |/ __ \|   |  \  |            │ \\
+// │        /_______  /____/|___|  /\___  /|__(____  /___|  /__|            │ \\
+// │                \/           \//_____/         \/     \/                │ \\
+// │                                                                        │ \\
+// ├────────────────────────────────────────────────────────────────────────┤ \\
+// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// ├────────────────────────────────────────────────────────────────────────┤ \\
+// │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
+// │ a copy of this software and associated documentation files (the        │ \\
+// │ "Software"), to deal in the Software without restriction, including    │ \\
+// │ without limitation the rights to use, copy, modify, merge, publish,    │ \\
+// │ distribute, sublicense, and/or sellcopies of the Software, and to      │ \\
+// │ permit persons to whom the Software is furnished to do so, subject to  │ \\
+// │ the following conditions:                                              │ \\
+// │                                                                        │ \\
+// │ The above copyright notice and this permission notice shall be         │ \\
+// │ included in all copies or substantial portions of the Software.        │ \\
+// │                                                                        │ \\
+// │ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,        │ \\
+// │ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF     │ \\
+// │ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. │ \\
+// │ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY   │ \\
+// │ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,   │ \\
+// │ TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE       │ \\
+// │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
+// └────────────────────────────────────────────────────────────────────────┘ \\
+
+using System;
+using System.Runtime.InteropServices;
+using System.Globalization;
+using System.Collections;
+using System.Collections.Generic;
+
+using Sungiant.Abacus;
+using Sungiant.Abacus.Packed;
+using Sungiant.Abacus.SinglePrecision;
+using Sungiant.Abacus.Int32Precision;
+using System.Linq;
+using Sungiant.Cor;
+
+namespace Sungiant.Blimey
+{
+<#@ include file="BlimeyApp.t4"#>
+<#@ include file="BlimeyContext.t4"#>
+<#@ include file="BlimeyMathsHelper.t4"#>
+<#@ include file="CameraManager.t4"#>
+<#@ include file="FpsHelper.t4"#>
+<#@ include file="FrameBufferHelper.t4"#>
+<#@ include file="IBlimey.t4"#>
+<#@ include file="LoggingHelper.t4"#>
+<#@ include file="RandomGenerator.t4"#>
+<#@ include file="SceneManager.t4"#>
+<#@ include file="SceneRenderManager.t4"#>
+<#@ include file="Space.t4"#>
+<#@ include file="Teletype.t4"#>
+<#@ include file="Transform.t4"#>
+
+	#region DebugUtils
+
+<#@ include file="DebugUtils/DebugShapeRenderer.t4"#>
+<#@ include file="DebugUtils/GridRenderer.t4"#>
+
+	#endregion
+
+	#region Enums
+
+<#@ include file="Enums/CameraProjectionType.t4"#>
+<#@ include file="Enums/GestureType.t4"#>
+<#@ include file="Enums/TouchPositionSpace.t4"#>
+
+	#endregion
+
+	#region Gestures
+
+<#@ include file="Gestures/Gesture.t4"#>
+<#@ include file="Gestures/InputEventSystem.t4"#>
+<#@ include file="Gestures/PotentialDoubleTapGesture.t4"#>
+<#@ include file="Gestures/PotentialFlickGesture.t4"#>
+<#@ include file="Gestures/PotentialGesture.t4"#>
+<#@ include file="Gestures/PotentialTapGesture.t4"#>
+<#@ include file="Gestures/TouchTracker.t4"#>
+
+	#endregion
+
+	#region Primitives
+
+<#@ include file="Primitives/Billboard.t4"#>
+<#@ include file="Primitives/Cube.t4"#>
+<#@ include file="Primitives/Cylinder.t4"#>
+<#@ include file="Primitives/Primitive.t4"#>
+<#@ include file="Primitives/Sphere.t4"#>
+<#@ include file="Primitives/Teapot.t4"#>
+<#@ include file="Primitives/Torus.t4"#>
+
+	#endregion
+
+	#region Traits
+
+<#@ include file="Traits/Camera.t4"#>
+<#@ include file="Traits/ChaseSubject.t4"#>
+<#@ include file="Traits/FreeLocation.t4"#>
+<#@ include file="Traits/LookAtSubject.t4"#>
+<#@ include file="Traits/MeshRenderer.t4"#>
+<#@ include file="Traits/OrbitAroundSubject.t4"#>
+<#@ include file="Traits/PointLight.t4"#>
+<#@ include file="Traits/SlowRotate.t4"#>
+<#@ include file="Traits/SpotLight.t4"#>
+<#@ include file="Traits/Sprite.t4"#>
+
+	#endregion
+
+	#region Types
+
+<#@ include file="Types/BlendMode.t4"#>
+<#@ include file="Types/Material.t4"#>
+<#@ include file="Types/Scene.t4"#>
+<#@ include file="Types/SceneObject.t4"#>
+<#@ include file="Types/SceneSettings.t4"#>
+<#@ include file="Types/Trait.t4"#>
+
+	#endregion
+}

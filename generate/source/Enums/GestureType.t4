@@ -1,0 +1,12 @@
+﻿	public enum GestureType
+	{
+		Tap, // multiiple fingers
+		DoubleTap, // multiple fingers
+		Flick,
+		Drag,
+		DragUpdate,
+		DragComplete,
+		Pinch,
+		Pivot,
+	}
+
