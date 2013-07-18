@@ -1,0 +1,29 @@
+	public class DisplayStatus
+		: IDisplayStatus
+	{
+		public Boolean Fullscreen
+		{
+			get
+			{
+				// always fullscreen on iOS
+				return true;
+			}
+		}
+
+		public Int32 CurrentWidth
+		{
+			get
+			{
+				return (Int32) MonoTouch.UIKit.UIScreen.MainScreen.CurrentMode.Size.Width;
+			}
+		}
+
+		public Int32 CurrentHeight
+		{
+			get
+			{
+				return (Int32) MonoTouch.UIKit.UIScreen.MainScreen.CurrentMode.Size.Height;
+			}
+		}
+	}
+

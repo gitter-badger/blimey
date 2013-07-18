@@ -1,0 +1,151 @@
+	public class SystemManager
+        : ISystemManager
+	{
+		TouchScreen screen;
+
+		public SystemManager(TouchScreen screen)
+		{
+			this.screen = screen;
+
+			MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
+				MonoTouch.UIKit.UIApplication.DidEnterBackgroundNotification, this.DidEnterBackground );
+
+			MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
+				MonoTouch.UIKit.UIApplication.DidBecomeActiveNotification, this.DidBecomeActive );
+			
+			MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
+				MonoTouch.UIKit.UIApplication.DidReceiveMemoryWarningNotification, this.DidReceiveMemoryWarning );
+
+			MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
+				MonoTouch.UIKit.UIApplication.DidFinishLaunchingNotification, this.DidFinishLaunching );
+
+			MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
+				MonoTouch.UIKit.UIDevice.OrientationDidChangeNotification, this.OrientationDidChange );
+
+		}
+
+		public String OperatingSystem
+		{
+			get
+			{
+				return System.Environment.OSVersion.VersionString;
+			}
+		}
+
+		public void DidReceiveMemoryWarning(MonoTouch.Foundation.NSNotification ntf)
+		{
+			Console.WriteLine("[Cor.System] DidReceiveMemoryWarning");
+		}
+
+		public void DidBecomeActive(MonoTouch.Foundation.NSNotification ntf)
+		{
+			Console.WriteLine("[Cor.System] DidBecomeActive");
+		}
+
+		public void DidEnterBackground(MonoTouch.Foundation.NSNotification ntf)
+		{
+			Console.WriteLine("[Cor.System] DidEnterBackground");
+		}
+		
+		public void DidFinishLaunching(MonoTouch.Foundation.NSNotification ntf)
+		{
+			Console.WriteLine("[Cor.System] DidFinishLaunching");
+		}
+
+		public void OrientationDidChange(MonoTouch.Foundation.NSNotification ntf)
+		{
+			Console.WriteLine("[Cor.System] OrientationDidChange, CurrentOrientation: " + CurrentOrientation.ToString() 
+			                  + ", CurrentDisplaySize: " + CurrentDisplaySize.ToString());
+
+		}
+
+		public Point2 CurrentDisplaySize
+		{
+			get
+			{
+				Int32 w = ScreenSpecification.ScreenResolutionWidth;
+				Int32 h = ScreenSpecification.ScreenResolutionHeight;
+
+				GetEffectiveDisplaySize(ref w, ref h);
+
+				return new Point2(w, h);
+
+			}
+		}
+
+		void GetEffectiveDisplaySize(ref Int32 screenSpecWidth, ref Int32 screenSpecHeight)
+		{
+			if (this.CurrentOrientation == DeviceOrientation.Default ||
+			    this.CurrentOrientation == DeviceOrientation.Upsidedown )
+			{
+				return;
+			}
+			else
+			{
+				Int32 temp = screenSpecWidth;
+				screenSpecWidth = screenSpecHeight;
+				screenSpecHeight = temp;
+			}
+		}
+
+
+		public String DeviceName
+		{
+			get
+			{
+				return MonoTouch.UIKit.UIDevice.CurrentDevice.Name;
+			}
+		}
+
+		public String DeviceModel
+		{
+			get
+			{
+				return MonoTouch.UIKit.UIDevice.CurrentDevice.Model;
+			}
+		}
+
+		public String SystemName
+		{
+			get
+			{
+				return MonoTouch.UIKit.UIDevice.CurrentDevice.SystemName;
+			}
+		}
+
+		public String SystemVersion
+		{
+			get
+			{
+				return MonoTouch.UIKit.UIDevice.CurrentDevice.SystemVersion;
+			}
+		}
+
+		public DeviceOrientation CurrentOrientation
+		{
+			get
+			{
+				var monoTouchOrientation = MonoTouch.UIKit.UIDevice.CurrentDevice.Orientation;
+
+				return EnumConverter.ToCor(monoTouchOrientation);
+			}
+		}
+
+
+		public IScreenSpecification ScreenSpecification
+		{
+			get
+			{
+				return this.screen;
+			}
+		}
+
+		public IPanelSpecification PanelSpecification
+		{
+			get
+			{
+				return this.screen;
+			}
+		}
+	}
+
