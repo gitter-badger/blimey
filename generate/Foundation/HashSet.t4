@@ -26,18 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_CF || NETFX_CORE || MONOTOUCH
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Runtime.InteropServices;
-using System.Security;
-//using System.Security.Permissions;
-using System.Diagnostics;
-
 // HashSet is basically implemented as a reduction of Dictionary<K, V>
 
 namespace System.Collections.Generic {
@@ -795,4 +783,3 @@ namespace System.Collections.Generic {
 	}
 }
 
-#endif

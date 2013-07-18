@@ -31,13 +31,6 @@
 
 //#if NET_2_0 AJP
 
-#if WP7
-
-using System;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-
 namespace System.Diagnostics
 {
 	public class Stopwatch
@@ -133,4 +126,3 @@ namespace System.Diagnostics
 	}
 }
 
-#endif

@@ -1,10 +1,11 @@
 //
-// System.ICloneable.cs
+// System.Runtime.Serialization.ISerializable.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+//
 //
 
 //
@@ -30,20 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_CF || NETFX_CORE
+namespace System.Runtime.Serialization {
+		[System.Runtime.InteropServices.ComVisibleAttribute (true)]
 
-using System.Runtime.InteropServices;
-
-namespace System {
-	[ComVisible(true)]
-#if INSIDE_CORLIB
-	public
-#else
-	internal
-#endif
-	interface ICloneable {
-		object Clone ();
+	public interface ISerializable {
+		void GetObjectData (SerializationInfo info, StreamingContext context);
 	}
 }
 
-#endif

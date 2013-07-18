@@ -6,11 +6,6 @@
 //
 // Copyright (C) 2006 Novell, Inc.
 //
-
-using System.Diagnostics;
-using System.Threading;
-using NUnit.Framework;
-
 namespace MonoTests.System.Diagnostics
 {
 	[TestFixture]
