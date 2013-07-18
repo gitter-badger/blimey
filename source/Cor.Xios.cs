@@ -51,7 +51,7 @@ using MonoTouch.Foundation;
 using MonoTouch.CoreText;
 using MonoTouch.CoreGraphics;
 using System.Drawing;
-
+using System.Diagnostics;
 using System.Runtime.ConstrainedExecution;
 
 namespace Sungiant.Cor.Xios
