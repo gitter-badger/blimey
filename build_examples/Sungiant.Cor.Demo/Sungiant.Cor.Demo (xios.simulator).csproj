@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7B47A231-147A-4693-BCF5-75938ED142F9}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Sungiant.Cor.Demo</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>Sungiant.Cor.Demo_xios.ios</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+    <DefineConstants>XIOS;</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <MtouchLink>None</MtouchLink>
+    <ConsolePause>False</ConsolePause>
+    <DefineConstants>XIOS;DEBUG;</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="monotouch" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\source\Cor.Demo.cs">
+      <Link>Cor.Demo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\cor\build_examples\Sungiant.Cor\Sungiant.Cor %28xios.simulator%29.csproj">
+      <Project>{74D41A2C-DC81-4681-BD0C-0188D2B28D8F}</Project>
+      <Name>Sungiant.Cor (xios.simulator)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus %28xios.simulator%29.csproj">
+      <Project>{DE5491E6-4DF9-4AAA-9985-E7CD86905D42}</Project>
+      <Name>Sungiant.Abacus (xios.simulator)</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="..\..\..\submodules\cor.demo\assets\bg1.png">
+      <Link>Assets\bg1.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor.demo\assets\bg2.png">
+      <Link>Assets\bg2.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor.demo\assets\bg3.png">
+      <Link>Assets\bg3.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor.demo\assets\cvan01.png">
+      <Link>Assets\cvan01.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor.demo\assets\cvan02.png">
+      <Link>Assets\cvan02.png</Link>
+    </BundleResource>
+  </ItemGroup>
+</Project>
