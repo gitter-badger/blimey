@@ -39,7 +39,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\Sungiant.Abacus\Sungiant.Abacus %28net40%29.csproj">
+    <ProjectReference Include="..\..\..\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus %28net40%29.csproj">
       <Project>{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}</Project>
       <Name>Sungiant.Abacus (net40)</Name>
     </ProjectReference>
