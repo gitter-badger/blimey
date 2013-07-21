@@ -61,7 +61,6 @@ namespace Sungiant.Cor
 <#@ include file="IPanelSpecification.t4"#>
 <#@ include file="IResource.t4"#>
 <#@ include file="IResourceManager.t4"#>
-<#@ include file="ISample.t4"#>
 <#@ include file="IScreenSpecificationBase.t4"#>
 <#@ include file="IShader.t4"#>
 <#@ include file="IShaderPass.t4"#>
@@ -75,6 +74,7 @@ namespace Sungiant.Cor
 
 <#@ include file="CorEnums/BlendFactor.t4"#>
 <#@ include file="CorEnums/BlendFunction.t4"#>
+<#@ include file="CorEnums/CullMode.t4"#>
 <#@ include file="CorEnums/ButtonState.t4"#>
 <#@ include file="CorEnums/ClearOptions.t4"#>
 <#@ include file="CorEnums/DeviceOrientation.t4"#>

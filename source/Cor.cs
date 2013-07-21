@@ -57,7 +57,10 @@ namespace Sungiant.Cor
 	}
     public interface IAudioManager
     {
+    	// Sets the volume, between 0.0 - 1.0
+    	Single Volume { get; set; }
     }
+
 	/// <summary>
 	/// The Cor! framework provides a user's app access to Cor!
 	/// features via this interface.
@@ -177,6 +180,9 @@ namespace Sungiant.Cor
         // Clear functions
 		void ClearColourBuffer(Rgba32 color = new Rgba32());
 		void ClearDepthBuffer(Single depth = 1f);
+
+
+        void SetCullMode(CullMode cullMode);
      	
 		/// <summary>
         /// With the current design the only way you can create geom buffers is 
@@ -305,21 +311,18 @@ namespace Sungiant.Cor
 	}
 	public interface IIndexBuffer
 	{
-		void GetData(Int32[] data);
-
-		void GetData(Int16[] data, Int32 startIndex, Int32 elementCount);
-
-		void GetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount);
-
 		void SetData(Int32[] data);
-
-		void SetData(Int16[] data, Int32 startIndex, Int32 elementCount);
-
-		void SetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount);
 
 		Int32 IndexCount { get; }
 
+		//todo
+		//void SetData(Int16[] data, Int32 startIndex, Int32 elementCount);
+		//void SetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount);
+		//void GetData(Int32[] data);
+		//void GetData(Int16[] data, Int32 startIndex, Int32 elementCount);
+		//void GetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount);
 	}
+
     public interface IInputManager
     {
         // Depending on the implementation you are running against
@@ -367,11 +370,6 @@ namespace Sungiant.Cor
 
 		IShader LoadShader(ShaderType shaderType);
 	}
-
-    internal interface ISample
-    {
-    }
-
     public interface IScreenSpecification
     {
         // Screen is refers to the entire screen, not your frame
@@ -491,17 +489,12 @@ namespace Sungiant.Cor
 
 		VertexDeclaration VertexDeclaration { get; }
 
-
 		// not yet implemented
-		void GetData<T> (T[] data) where T: struct, IVertexType;
-
-		void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
-
-		void GetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
-
-		void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
-
-		void SetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
+		//void GetData<T> (T[] data) where T: struct, IVertexType;
+		//void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
+		//void GetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
+		//void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
+		//void SetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
 
 	}
 	public interface IVertexType
@@ -632,6 +625,13 @@ namespace Sungiant.Cor
         // Result = min( (Source Colour * Source Blend), (Destination Colour * Destination Blend) )
         Min
     }
+
+public enum CullMode
+{
+	None,
+	CW,
+	CCW,
+}
 
 	public enum ButtonState
 	{
@@ -2105,6 +2105,7 @@ namespace Sungiant.Cor
 	#region Resources
 
     public abstract class AudioClip
+        : IResource
     {
 		public abstract void Play ();
 
@@ -2126,20 +2127,13 @@ namespace Sungiant.Cor
 		public IGeometryBuffer GeomBuffer;
 	}
 
-	/*
-	public interface ITexture
-	{
-		int Width { get; }
-		int Height { get; }
-	}*/
-
     public abstract class Texture2D
         : IResource
-		//, ITexture
     {
 		public abstract int Width { get; } 
 		public abstract int Height { get; } 
     }
+
 
 	#endregion
 

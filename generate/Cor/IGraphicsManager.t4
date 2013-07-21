@@ -31,6 +31,9 @@
         // Clear functions
 		void ClearColourBuffer(Rgba32 color = new Rgba32());
 		void ClearDepthBuffer(Single depth = 1f);
+
+
+        void SetCullMode(CullMode cullMode);
      	
 		/// <summary>
         /// With the current design the only way you can create geom buffers is 

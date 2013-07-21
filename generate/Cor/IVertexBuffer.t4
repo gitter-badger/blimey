@@ -21,16 +21,11 @@
 
 		VertexDeclaration VertexDeclaration { get; }
 
-
 		// not yet implemented
-		void GetData<T> (T[] data) where T: struct, IVertexType;
-
-		void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
-
-		void GetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
-
-		void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
-
-		void SetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
+		//void GetData<T> (T[] data) where T: struct, IVertexType;
+		//void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
+		//void GetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
+		//void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
+		//void SetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
 
 	}
