@@ -9,11 +9,20 @@
 		/// </summary>
 		void ResetVariables();
 		
+#if AOT
+		void SetVariable(string name, Int32 value);
+		void SetVariable(string name, Single value);
+		void SetVariable(string name, Rgba32 value);
+		void SetVariable(string name, Matrix44 value);
+		void SetVariable(string name, Vector3 value);
+		void SetVariable(string name, Vector4 value);
+		void SetVariable(string name, Vector2 value);
+#else
 		/// <summary>
 		/// Sets the value of a specified shader variable.
 		/// </summary>
 		void SetVariable<T>(string name, T value);
-		
+#endif	
 		/// <summary>
 		/// Sets the texture slot that a texture sampler should sample from.
 		/// </summary>
