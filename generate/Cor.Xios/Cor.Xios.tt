@@ -60,7 +60,6 @@ namespace Sungiant.Cor.Xios
 {
 <#@ include file="AudioManager.t4"#>
 <#@ include file="Convert.t4"#>
-<#@ include file="CorShaders.t4"#>
 <#@ include file="DisplayStatus.t4"#>
 <#@ include file="EAGLView.t4"#>
 <#@ include file="Engine.t4"#>
@@ -100,6 +99,14 @@ namespace Sungiant.Cor.Xios
 <#@ include file="ShaderDefinition/ShaderVariableDefinition.t4"#>
 <#@ include file="ShaderDefinition/ShaderVariantDefinition.t4"#>
 <#@ include file="ShaderDefinition/ShaderVariantPassDefinition.t4"#>
+
+	#endregion
+
+	#region Shader Definitions
+
+<#@ include file="CorShaders/PhongPixelLit.t4"#>
+<#@ include file="CorShaders/PhongVertexLit.t4"#>
+<#@ include file="CorShaders/Unlit.t4"#>
 
 	#endregion
 }

@@ -78,7 +78,13 @@
 				Vector4 vec4Value;
 				castValue.UnpackTo(out vec4Value);
 				
-				OpenTK.Graphics.ES20.GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
+				// does this rgba value need to be packed in to a vector3 or a vector4
+				if( this.Type == typeof(Vector4) )
+					OpenTK.Graphics.ES20.GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
+				else if( this.Type == typeof(Vector3) )
+					OpenTK.Graphics.ES20.GL.Uniform3( UniformLocation, 1, ref vec4Value.X );
+				else
+					throw new Exception("Not supported");
 			}
 			else
 			{

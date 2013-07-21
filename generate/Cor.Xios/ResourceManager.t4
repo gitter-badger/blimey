@@ -28,14 +28,14 @@
 			{
 				return CorShaders.CreateUnlit();
 			}
-			if (shaderType == ShaderType.VertexLit)
+			if (shaderType == ShaderType.VertexLit || shaderType == ShaderType.PixelLit)
 			{
 				return CorShaders.CreatePhongVertexLit();
 			}
-			if (shaderType == ShaderType.PixelLit)
-			{
-				return CorShaders.CreatePhongPixelLit();
-			}
+			//if (shaderType == ShaderType.PixelLit)
+			//{
+			//	return CorShaders.CreatePhongPixelLit();
+			//}
 
 			throw new NotImplementedException();
 		}

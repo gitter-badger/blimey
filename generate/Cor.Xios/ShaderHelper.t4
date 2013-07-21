@@ -6,6 +6,9 @@
 		/// </summary>
 		public static OglesShader WorkOutBestVariantFor(VertexDeclaration vertexDeclaration, IList<OglesShader> variants)
 		{
+			Console.WriteLine("\n");
+			Console.WriteLine("\n");
+			Console.WriteLine("=====================================================================");
 			Console.WriteLine("Working out the best shader variant for: " + vertexDeclaration);
 			Console.WriteLine("Possible variants:");
 

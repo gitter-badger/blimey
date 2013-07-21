@@ -1,3 +1,6 @@
+	
+
+
 	/// <summary>
 	/// The Cor.Xios implementation of Cor's IShader interface.
 	/// </summary>
@@ -5,6 +8,9 @@
 		: IShader
 		, IDisposable
 	{
+		//static Dictionary<string, parp>
+
+
 		#region IShader
 
 		/// <summary>
@@ -20,31 +26,31 @@
 				
 				if( variableDefinition.Type == typeof(Matrix44) )
 				{
-					this.SetVariable<Matrix44>(varName, (Matrix44) value);
+					this.SetVariable(varName, (Matrix44) value);
 				}
 				else if( variableDefinition.Type == typeof(Int32) )
 				{
-					this.SetVariable<Single>(varName, (Int32) value);
+					this.SetVariable(varName, (Int32) value);
 				}
 				else if( variableDefinition.Type == typeof(Single) )
 				{
-					this.SetVariable<Single>(varName, (Single) value);
+					this.SetVariable(varName, (Single) value);
 				}
 				else if( variableDefinition.Type == typeof(Vector2) )
 				{
-					this.SetVariable<Vector2>(varName, (Vector2) value);
+					this.SetVariable(varName, (Vector2) value);
 				}
 				else if( variableDefinition.Type == typeof(Vector3) )
 				{
-					this.SetVariable<Vector3>(varName, (Vector3) value);
+					this.SetVariable(varName, (Vector3) value);
 				} 
 				else if( variableDefinition.Type == typeof(Vector4) )
 				{
-					this.SetVariable<Vector4>(varName, (Vector4) value);
+					this.SetVariable(varName, (Vector4) value);
 				} 
 				else if( variableDefinition.Type == typeof(Rgba32) )
 				{
-					this.SetVariable<Rgba32>(varName, (Rgba32) value);
+					this.SetVariable(varName, (Rgba32) value);
 				}
 				else
 				{
@@ -55,17 +61,20 @@
 		}
 
 
+#if AOT
+		public void SetVariable(string name, Int32 value) { passes.ForEach( x => x.SetVariable(name, value)); }
+		public void SetVariable(string name, Single value) { passes.ForEach( x => x.SetVariable(name, value)); }
+		public void SetVariable(string name, Rgba32 value) { passes.ForEach( x => x.SetVariable(name, value)); }
+		public void SetVariable(string name, Matrix44 value) { passes.ForEach( x => x.SetVariable(name, value)); }
+		public void SetVariable(string name, Vector3 value) { passes.ForEach( x => x.SetVariable(name, value)); }
+		public void SetVariable(string name, Vector4 value) { passes.ForEach( x => x.SetVariable(name, value)); }
+		public void SetVariable(string name, Vector2 value) { passes.ForEach( x => x.SetVariable(name, value)); }
+#else
 		/// <summary>
 		/// Sets the value of a specified shader variable.
 		/// </summary>
-		public void SetVariable<T>(string name, T value)
-		{
-			foreach (var pass in passes)
-			{
-				pass.SetVariable<T>(name, value);
-			}
-		}
-
+		public void SetVariable<T>(string name, T value) { passes.ForEach( x => x.SetVariable(name, value)); }
+#endif
 
 		/// <summary>
 		/// Sets the texture slot that a texture sampler should sample from.
@@ -163,11 +172,16 @@
 		/// </summary>
 		internal Shader (ShaderDefinition shaderDefinition)
 		{
-			Console.WriteLine("Creaing Shader: " + shaderDefinition.Name);
+			Console.WriteLine("\n");
+			Console.WriteLine("\n");
+			Console.WriteLine("=====================================================================");
+			Console.WriteLine("Creating Shader: " + shaderDefinition.Name);
 			this.cachedShaderDefinition = shaderDefinition;
 			this.Name = shaderDefinition.Name;
 			CalculateRequiredInputs(shaderDefinition);
 			InitilisePasses (shaderDefinition);
+
+			this.ResetVariables();
 		}
 
 		/// <summary>

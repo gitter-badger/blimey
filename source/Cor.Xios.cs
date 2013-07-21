@@ -622,647 +622,6 @@ namespace Sungiant.Cor.Xios
 */
 
 
-	public static class CorShaders
-	{	
-		public static IShader CreatePhongPixelLit()
-		{
-			var parameter = new ShaderDefinition()
-			{
-				Name = "PhongPixelLit",
-				PassNames = new List<string>() { "Main" },
-				InputDefinitions = new List<ShaderInputDefinition>()
-				{
-					new ShaderInputDefinition()
-					{
-						Name = "a_vertPos",
-						Type = typeof(Vector3),
-						Usage = VertexElementUsage.Position,
-						DefaultValue = Vector3.Zero,
-						Optional = false,
-					},
-					new ShaderInputDefinition()
-					{
-						Name = "a_vertNormal",
-						Type = typeof(Vector3),
-						Usage = VertexElementUsage.Normal,
-						DefaultValue = Vector3.Zero,
-						Optional = false,
-					},
-					new ShaderInputDefinition()
-					{
-						Name = "a_vertTexcoord",
-						Type = typeof(Vector2),
-						Usage = VertexElementUsage.TextureCoordinate,
-						DefaultValue = Vector2.Zero,
-						Optional = true,
-					},
-					new ShaderInputDefinition()
-					{
-						Name = "a_vertColour",
-						Type = typeof(Rgba32),
-						Usage = VertexElementUsage.Colour,
-						DefaultValue = Rgba32.White,
-						Optional = true,
-					},
-				},
-				SamplerDefinitions = new List<ShaderSamplerDefinition>()
-				{
-					new ShaderSamplerDefinition()
-					{
-						NiceName = "TextureSampler",
-						Name = "s_tex0",
-						Optional = true,
-					}
-				},
-				VariableDefinitions = new List<ShaderVariableDefinition>()
-				{
-					new ShaderVariableDefinition()
-					{
-						NiceName = "World",
-						Name = "u_world",
-						Type = typeof(Matrix44),
-						DefaultValue = Matrix44.Identity,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "View",
-						Name = "u_view",
-						Type = typeof(Matrix44),
-						DefaultValue = Matrix44.Identity,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "Projection",
-						Name = "u_proj",
-						Type = typeof(Matrix44),
-						DefaultValue = Matrix44.Identity,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "MaterialColour",
-						Name = "u_colour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "AmbientLightColour",
-						Name = "u_ambientLightColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "EmissiveColour",
-						Name = "u_emissiveColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "",
-						Name = "u_specularColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "SpecularPower",
-						Name = "u_specularPower",
-						Type = typeof(Single),
-						DefaultValue = 0,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "EyePosition",
-						Name = "u_eyePosition",
-						Type = typeof(Vector3),
-						DefaultValue = Vector3.Zero,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "FogEnabled",
-						Name = "u_fogEnabled",
-						Type = typeof(Single),
-						DefaultValue = 1,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "FogStart",
-						Name = "u_fogStart",
-						Type = typeof(Single),
-						DefaultValue = 100,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "FogEnd",
-						Name = "u_fogEnd",
-						Type = typeof(Single),
-						DefaultValue = 200,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "FogColour",
-						Name = "u_fogColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionalLight0Direction",
-						Name = "u_dirLight0Direction",
-						Type = typeof(Vector3),
-						DefaultValue = Vector3.Down,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionalLight0DiffuseColour",
-						Name = "u_dirLight0DiffuseColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.Red,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionLight0SpecularColour",
-						Name = "u_dirLight0SpecularColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.Salmon,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionalLight1Direction",
-						Name = "u_dirLight1Direction",
-						Type = typeof(Vector3),
-						DefaultValue = Vector3.Down,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionalLight1DiffuseColour",
-						Name = "u_dirLight1DiffuseColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.Red,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionLight1SpecularColour",
-						Name = "u_dirLight1SpecularColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.Salmon,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionalLight2Direction",
-						Name = "u_dirLight2Direction",
-						Type = typeof(Vector3),
-						DefaultValue = Vector3.Down,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionalLight2DiffuseColour",
-						Name = "u_dirLight2DiffuseColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.Red,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionLight2SpecularColour",
-						Name = "u_dirLight2SpecularColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.Salmon,
-					},
-				},
-				VariantDefinitions = new List<ShaderVariantDefinition>()
-				{
-					new ShaderVariantDefinition()
-					{
-						VariantName = "Phong_PixelLit_PositionNormal",
-						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
-						{
-							new ShaderVarientPassDefinition()
-							{
-								PassName = "Main",
-								PassDefinition = new OglesShaderDefinition()
-								{
-									VertexShaderPath = "Shaders/Phong_PixelLit_PositionNormal.vsh",
-									PixelShaderPath = "Shaders/Phong_PixelLit_PositionNormal.fsh",
-								},
-							},
-						},
-					},
-				},
-			};
-
-
-			var s = new Shader (parameter);
-
-			Console.WriteLine(s);
-
-			return s;
-		}
-
-		public static IShader CreatePhongVertexLit()
-		{
-			var parameter = new ShaderDefinition()
-			{
-				Name = "VertexPixelLit",
-				PassNames = new List<string>() { "Main" },
-				InputDefinitions = new List<ShaderInputDefinition>()
-				{
-					new ShaderInputDefinition()
-					{
-						Name = "a_vertPos",
-						Type = typeof(Vector3),
-						Usage = VertexElementUsage.Position,
-						DefaultValue = Vector3.Zero,
-						Optional = false,
-					},
-					new ShaderInputDefinition()
-					{
-						Name = "a_vertNormal",
-						Type = typeof(Vector3),
-						Usage = VertexElementUsage.Normal,
-						DefaultValue = Vector3.Zero,
-						Optional = false,
-					},
-					new ShaderInputDefinition()
-					{
-						Name = "a_vertTexcoord",
-						Type = typeof(Vector2),
-						Usage = VertexElementUsage.TextureCoordinate,
-						DefaultValue = Vector2.Zero,
-						Optional = true,
-					},
-					new ShaderInputDefinition()
-					{
-						Name = "a_vertColour",
-						Type = typeof(Rgba32),
-						Usage = VertexElementUsage.Colour,
-						DefaultValue = Rgba32.White,
-						Optional = true,
-					},
-				},
-				SamplerDefinitions = new List<ShaderSamplerDefinition>()
-				{
-					new ShaderSamplerDefinition()
-					{
-						NiceName = "TextureSampler",
-						Name = "s_tex0",
-						Optional = true,
-					}
-				},
-				VariableDefinitions = new List<ShaderVariableDefinition>()
-				{
-					new ShaderVariableDefinition()
-					{
-						NiceName = "World",
-						Name = "u_world",
-						Type = typeof(Matrix44),
-						DefaultValue = Matrix44.Identity,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "View",
-						Name = "u_view",
-						Type = typeof(Matrix44),
-						DefaultValue = Matrix44.Identity,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "Projection",
-						Name = "u_proj",
-						Type = typeof(Matrix44),
-						DefaultValue = Matrix44.Identity,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "MaterialColour",
-						Name = "u_colour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "AmbientLightColour",
-						Name = "u_ambientLightColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "EmissiveColour",
-						Name = "u_emissiveColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "",
-						Name = "u_specularColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "SpecularPower",
-						Name = "u_specularPower",
-						Type = typeof(Single),
-						DefaultValue = 0,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "EyePosition",
-						Name = "u_eyePosition",
-						Type = typeof(Vector3),
-						DefaultValue = Vector3.Zero,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "FogEnabled",
-						Name = "u_fogEnabled",
-						Type = typeof(Single),
-						DefaultValue = 1,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "FogStart",
-						Name = "u_fogStart",
-						Type = typeof(Single),
-						DefaultValue = 100,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "FogEnd",
-						Name = "u_fogEnd",
-						Type = typeof(Single),
-						DefaultValue = 200,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "FogColour",
-						Name = "u_fogColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionalLight0Direction",
-						Name = "u_dirLight0Direction",
-						Type = typeof(Vector3),
-						DefaultValue = Vector3.Down,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionalLight0DiffuseColour",
-						Name = "u_dirLight0DiffuseColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.Red,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionLight0SpecularColour",
-						Name = "u_dirLight0SpecularColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.Salmon,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionalLight1Direction",
-						Name = "u_dirLight1Direction",
-						Type = typeof(Vector3),
-						DefaultValue = Vector3.Down,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionalLight1DiffuseColour",
-						Name = "u_dirLight1DiffuseColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.Red,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionLight1SpecularColour",
-						Name = "u_dirLight1SpecularColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.Salmon,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionalLight2Direction",
-						Name = "u_dirLight2Direction",
-						Type = typeof(Vector3),
-						DefaultValue = Vector3.Down,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionalLight2DiffuseColour",
-						Name = "u_dirLight2DiffuseColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.Red,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "DirectionLight2SpecularColour",
-						Name = "u_dirLight2SpecularColour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.Salmon,
-					},
-				},
-				VariantDefinitions = new List<ShaderVariantDefinition>()
-				{
-					new ShaderVariantDefinition()
-					{
-						VariantName = "Phong_VertexLit_PositionNormal",
-						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
-						{
-							new ShaderVarientPassDefinition()
-							{
-								PassName = "Main",
-								PassDefinition = new OglesShaderDefinition()
-								{
-									VertexShaderPath = "Shaders/Phong_VertexLit_PositionNormal.vsh",
-									PixelShaderPath = "Shaders/Phong_VertexLit_PositionNormal.fsh",
-								},
-							},
-						},
-					},
-					new ShaderVariantDefinition()
-					{
-						VariantName = "Phong_VertexLit_PositionNormalTexture",
-						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
-						{
-							new ShaderVarientPassDefinition()
-							{
-								PassName = "Main",
-								PassDefinition = new OglesShaderDefinition()
-								{
-									VertexShaderPath = "Shaders/Phong_VertexLit_PositionNormalTexture.vsh",
-									PixelShaderPath = "Shaders/Phong_VertexLit_PositionNormalTexture.fsh",
-								},
-							},
-						},
-					},
-				},
-			};
-
-
-			var s = new Shader (parameter);
-
-			Console.WriteLine(s);
-
-			return s;
-		}
-
-		public static IShader CreateUnlit()
-		{
-			var parameter = new ShaderDefinition()
-			{
-				Name = "Unlit",
-				PassNames = new List<string>() { "Main" },
-				InputDefinitions = new List<ShaderInputDefinition>()
-				{
-					new ShaderInputDefinition()
-					{
-						Name = "a_vertPos",
-						Type = typeof(Vector3),
-						Usage = VertexElementUsage.Position,
-						DefaultValue = Vector3.Zero,
-						Optional = false,
-					},
-					new ShaderInputDefinition()
-					{
-						Name = "a_vertTexcoord",
-						Type = typeof(Vector2),
-						Usage = VertexElementUsage.TextureCoordinate,
-						DefaultValue = Vector2.Zero,
-						Optional = true,
-					},
-					new ShaderInputDefinition()
-					{
-						Name = "a_vertColour",
-						Type = typeof(Rgba32),
-						Usage = VertexElementUsage.Colour,
-						DefaultValue = Rgba32.White,
-						Optional = true,
-					},
-				},
-				SamplerDefinitions = new List<ShaderSamplerDefinition>()
-				{
-					new ShaderSamplerDefinition()
-					{
-						NiceName = "TextureSampler",
-						Name = "s_tex0",
-						Optional = true,
-					}
-				},
-				VariableDefinitions = new List<ShaderVariableDefinition>()
-				{
-					new ShaderVariableDefinition()
-					{
-						NiceName = "MaterialColour",
-						Name = "u_colour",
-						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "World",
-						Name = "u_world",
-						Type = typeof(Matrix44),
-						DefaultValue = Matrix44.Identity,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "View",
-						Name = "u_view",
-						Type = typeof(Matrix44),
-						DefaultValue = Matrix44.Identity,
-					},
-					new ShaderVariableDefinition()
-					{
-						NiceName = "Projection",
-						Name = "u_proj",
-						Type = typeof(Matrix44),
-						DefaultValue = Matrix44.Identity,
-					},
-				},
-				VariantDefinitions = new List<ShaderVariantDefinition>()
-				{
-					new ShaderVariantDefinition()
-					{
-						VariantName = "Unlit_Position",
-						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
-						{
-							new ShaderVarientPassDefinition()
-							{
-								PassName = "Main",
-								PassDefinition = new OglesShaderDefinition()
-								{
-									VertexShaderPath = "Shaders/Unlit_Position.vsh",
-									PixelShaderPath = "Shaders/Unlit_Position.fsh",
-								},
-							},
-						},
-					},
-					new ShaderVariantDefinition()
-					{
-						VariantName = "Unlit_PositionTexture",
-						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
-						{
-							new ShaderVarientPassDefinition()
-							{
-								PassName = "Main",
-								PassDefinition = new OglesShaderDefinition()
-								{
-									VertexShaderPath = "Shaders/Unlit_PositionTexture.vsh",
-									PixelShaderPath = "Shaders/Unlit_PositionTexture.fsh",
-								},
-							},
-						},
-					},
-					new ShaderVariantDefinition()
-					{
-						VariantName = "Unlit_PositionColour",
-						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
-						{
-							new ShaderVarientPassDefinition()
-							{
-								PassName = "Main",
-								PassDefinition = new OglesShaderDefinition()
-								{
-									VertexShaderPath = "Shaders/Unlit_PositionColour.vsh",
-									PixelShaderPath = "Shaders/Unlit_PositionColour.fsh",
-								},
-							},
-						},
-					},
-					new ShaderVariantDefinition()
-					{
-						VariantName = "Unlit_PositionTextureColour",
-						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
-						{
-							new ShaderVarientPassDefinition()
-							{
-								PassName = "Main",
-								PassDefinition = new OglesShaderDefinition()
-								{
-									VertexShaderPath = "Shaders/Unlit_PositionTextureColour.vsh",
-									PixelShaderPath = "Shaders/Unlit_PositionTextureColour.fsh",
-								},
-							},
-						},
-					},
-				},
-			};
-
-
-			var s = new Shader (parameter);
-
-			Console.WriteLine(s);
-
-			return s;
-		}
-	}
-
 	public class DisplayStatus
 		: IDisplayStatus
 	{
@@ -2786,20 +2145,20 @@ namespace Sungiant.Cor.Xios
 
 		public IShader LoadShader(ShaderType shaderType)
 		{
-			if (shaderType == ShaderType.Unlit)
-			{
+			//if (shaderType == ShaderType.Unlit)
+			//{
 				return CorShaders.CreateUnlit();
-			}
-			if (shaderType == ShaderType.VertexLit)
-			{
-				return CorShaders.CreatePhongVertexLit();
-			}
-			if (shaderType == ShaderType.PixelLit)
-			{
-				return CorShaders.CreatePhongPixelLit();
-			}
+			//}
+			//if (shaderType == ShaderType.VertexLit || shaderType == ShaderType.PixelLit)
+			//{
+			//	return CorShaders.CreatePhongVertexLit();
+			//}
+			//if (shaderType == ShaderType.PixelLit)
+			//{
+			//	return CorShaders.CreatePhongPixelLit();
+			//}
 
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
 		}
 
 
@@ -2895,6 +2254,9 @@ namespace Sungiant.Cor.Xios
 	*/
 	}
 
+	
+
+
 	/// <summary>
 	/// The Cor.Xios implementation of Cor's IShader interface.
 	/// </summary>
@@ -2902,6 +2264,9 @@ namespace Sungiant.Cor.Xios
 		: IShader
 		, IDisposable
 	{
+		//static Dictionary<string, parp>
+
+
 		#region IShader
 
 		/// <summary>
@@ -2917,31 +2282,31 @@ namespace Sungiant.Cor.Xios
 				
 				if( variableDefinition.Type == typeof(Matrix44) )
 				{
-					this.SetVariable<Matrix44>(varName, (Matrix44) value);
+					this.SetVariable(varName, (Matrix44) value);
 				}
 				else if( variableDefinition.Type == typeof(Int32) )
 				{
-					this.SetVariable<Single>(varName, (Int32) value);
+					this.SetVariable(varName, (Int32) value);
 				}
 				else if( variableDefinition.Type == typeof(Single) )
 				{
-					this.SetVariable<Single>(varName, (Single) value);
+					this.SetVariable(varName, (Single) value);
 				}
 				else if( variableDefinition.Type == typeof(Vector2) )
 				{
-					this.SetVariable<Vector2>(varName, (Vector2) value);
+					this.SetVariable(varName, (Vector2) value);
 				}
 				else if( variableDefinition.Type == typeof(Vector3) )
 				{
-					this.SetVariable<Vector3>(varName, (Vector3) value);
+					this.SetVariable(varName, (Vector3) value);
 				} 
 				else if( variableDefinition.Type == typeof(Vector4) )
 				{
-					this.SetVariable<Vector4>(varName, (Vector4) value);
+					this.SetVariable(varName, (Vector4) value);
 				} 
 				else if( variableDefinition.Type == typeof(Rgba32) )
 				{
-					this.SetVariable<Rgba32>(varName, (Rgba32) value);
+					this.SetVariable(varName, (Rgba32) value);
 				}
 				else
 				{
@@ -2952,17 +2317,20 @@ namespace Sungiant.Cor.Xios
 		}
 
 
+#if AOT
+		public void SetVariable(string name, Int32 value) { passes.ForEach( x => x.SetVariable(name, value)); }
+		public void SetVariable(string name, Single value) { passes.ForEach( x => x.SetVariable(name, value)); }
+		public void SetVariable(string name, Rgba32 value) { passes.ForEach( x => x.SetVariable(name, value)); }
+		public void SetVariable(string name, Matrix44 value) { passes.ForEach( x => x.SetVariable(name, value)); }
+		public void SetVariable(string name, Vector3 value) { passes.ForEach( x => x.SetVariable(name, value)); }
+		public void SetVariable(string name, Vector4 value) { passes.ForEach( x => x.SetVariable(name, value)); }
+		public void SetVariable(string name, Vector2 value) { passes.ForEach( x => x.SetVariable(name, value)); }
+#else
 		/// <summary>
 		/// Sets the value of a specified shader variable.
 		/// </summary>
-		public void SetVariable<T>(string name, T value)
-		{
-			foreach (var pass in passes)
-			{
-				pass.SetVariable<T>(name, value);
-			}
-		}
-
+		public void SetVariable<T>(string name, T value) { passes.ForEach( x => x.SetVariable(name, value)); }
+#endif
 
 		/// <summary>
 		/// Sets the texture slot that a texture sampler should sample from.
@@ -3060,11 +2428,16 @@ namespace Sungiant.Cor.Xios
 		/// </summary>
 		internal Shader (ShaderDefinition shaderDefinition)
 		{
-			Console.WriteLine("Creaing Shader: " + shaderDefinition.Name);
+			Console.WriteLine("\n");
+			Console.WriteLine("\n");
+			Console.WriteLine("=====================================================================");
+			Console.WriteLine("Creating Shader: " + shaderDefinition.Name);
 			this.cachedShaderDefinition = shaderDefinition;
 			this.Name = shaderDefinition.Name;
 			CalculateRequiredInputs(shaderDefinition);
 			InitilisePasses (shaderDefinition);
+
+			this.ResetVariables();
 		}
 
 		/// <summary>
@@ -3206,6 +2579,9 @@ namespace Sungiant.Cor.Xios
 		/// </summary>
 		public static OglesShader WorkOutBestVariantFor(VertexDeclaration vertexDeclaration, IList<OglesShader> variants)
 		{
+			Console.WriteLine("\n");
+			Console.WriteLine("\n");
+			Console.WriteLine("=====================================================================");
 			Console.WriteLine("Working out the best shader variant for: " + vertexDeclaration);
 			Console.WriteLine("Possible variants:");
 
@@ -3384,11 +2760,22 @@ namespace Sungiant.Cor.Xios
 		Dictionary<String, Object>	currentVariables = new Dictionary<String, Object>();
 		Dictionary<String, Int32>	currentSamplerSlots = new Dictionary<String, Int32>();
 
-		
+		Dictionary<String, bool> logHistory = new Dictionary<String, bool>();
+
+#if AOT
+		internal void SetVariable(string name, Int32 value) { currentVariables[name] = value; }
+		internal void SetVariable(string name, Single value) { currentVariables[name] = value; }
+		internal void SetVariable(string name, Rgba32 value) { currentVariables[name] = value; }
+		internal void SetVariable(string name, Matrix44 value) { currentVariables[name] = value; }
+		internal void SetVariable(string name, Vector3 value) { currentVariables[name] = value; }
+		internal void SetVariable(string name, Vector4 value) { currentVariables[name] = value; }
+		internal void SetVariable(string name, Vector2 value) { currentVariables[name] = value; }
+#else
 		internal void SetVariable<T>(string name, T value)
 		{
 			currentVariables[name] = value; 
 		}
+#endif
 
 		internal void SetSamplerTarget(string name, Int32 textureSlot)
 		{
@@ -3467,7 +2854,14 @@ namespace Sungiant.Cor.Xios
 				
 				if( variable == null )
 				{
-					Console.WriteLine("missing variable: " + key1);
+					string warning = "WARNING: missing variable: " + key1;
+
+					if( !logHistory.ContainsKey(warning) )
+					{
+						Console.WriteLine(warning);
+
+						logHistory.Add(warning, true);
+					}
 				}
 				else
 				{
@@ -4834,7 +4228,13 @@ namespace Sungiant.Cor.Xios
 				Vector4 vec4Value;
 				castValue.UnpackTo(out vec4Value);
 				
-				OpenTK.Graphics.ES20.GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
+				// does this rgba value need to be packed in to a vector3 or a vector4
+				if( this.Type == typeof(Vector4) )
+					OpenTK.Graphics.ES20.GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
+				else if( this.Type == typeof(Vector3) )
+					OpenTK.Graphics.ES20.GL.Uniform3( UniformLocation, 1, ref vec4Value.X );
+				else
+					throw new Exception("Not supported");
 			}
 			else
 			{
@@ -4896,6 +4296,657 @@ namespace Sungiant.Cor.Xios
 	{
 		public string PassName { get; set; }
 		public OglesShaderDefinition PassDefinition { get; set; }
+	}
+
+
+	#endregion
+
+	#region Shader Definitions
+
+	public static partial class CorShaders
+	{	
+		public static IShader CreatePhongPixelLit()
+		{
+			var parameter = new ShaderDefinition()
+			{
+				Name = "PhongPixelLit",
+				PassNames = new List<string>() { "Main" },
+				InputDefinitions = new List<ShaderInputDefinition>()
+				{
+					new ShaderInputDefinition()
+					{
+						Name = "a_vertPos",
+						Type = typeof(Vector3),
+						Usage = VertexElementUsage.Position,
+						DefaultValue = Vector3.Zero,
+						Optional = false,
+					},
+					new ShaderInputDefinition()
+					{
+						Name = "a_vertNormal",
+						Type = typeof(Vector3),
+						Usage = VertexElementUsage.Normal,
+						DefaultValue = Vector3.Zero,
+						Optional = false,
+					},
+					new ShaderInputDefinition()
+					{
+						Name = "a_vertTexcoord",
+						Type = typeof(Vector2),
+						Usage = VertexElementUsage.TextureCoordinate,
+						DefaultValue = Vector2.Zero,
+						Optional = true,
+					},
+					new ShaderInputDefinition()
+					{
+						Name = "a_vertColour",
+						Type = typeof(Rgba32),
+						Usage = VertexElementUsage.Colour,
+						DefaultValue = Rgba32.White,
+						Optional = true,
+					},
+				},
+				SamplerDefinitions = new List<ShaderSamplerDefinition>()
+				{
+					new ShaderSamplerDefinition()
+					{
+						NiceName = "TextureSampler",
+						Name = "s_tex0",
+						Optional = true,
+					}
+				},
+				VariableDefinitions = new List<ShaderVariableDefinition>()
+				{
+					new ShaderVariableDefinition()
+					{
+						NiceName = "World",
+						Name = "u_world",
+						Type = typeof(Matrix44),
+						DefaultValue = Matrix44.Identity,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "View",
+						Name = "u_view",
+						Type = typeof(Matrix44),
+						DefaultValue = Matrix44.Identity,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "Projection",
+						Name = "u_proj",
+						Type = typeof(Matrix44),
+						DefaultValue = Matrix44.Identity,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "MaterialColour",
+						Name = "u_colour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.White,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "AmbientLightColour",
+						Name = "u_ambientLightColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.White,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "EmissiveColour",
+						Name = "u_emissiveColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.White,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "",
+						Name = "u_specularColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.White,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "SpecularPower",
+						Name = "u_specularPower",
+						Type = typeof(Single),
+						DefaultValue = 0,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "EyePosition",
+						Name = "u_eyePosition",
+						Type = typeof(Vector3),
+						DefaultValue = Vector3.Zero,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "FogEnabled",
+						Name = "u_fogEnabled",
+						Type = typeof(Single),
+						DefaultValue = 1,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "FogStart",
+						Name = "u_fogStart",
+						Type = typeof(Single),
+						DefaultValue = 100,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "FogEnd",
+						Name = "u_fogEnd",
+						Type = typeof(Single),
+						DefaultValue = 200,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "FogColour",
+						Name = "u_fogColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.White,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionalLight0Direction",
+						Name = "u_dirLight0Direction",
+						Type = typeof(Vector3),
+						DefaultValue = Vector3.Down,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionalLight0DiffuseColour",
+						Name = "u_dirLight0DiffuseColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.Red,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionLight0SpecularColour",
+						Name = "u_dirLight0SpecularColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.Salmon,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionalLight1Direction",
+						Name = "u_dirLight1Direction",
+						Type = typeof(Vector3),
+						DefaultValue = Vector3.Down,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionalLight1DiffuseColour",
+						Name = "u_dirLight1DiffuseColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.Red,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionLight1SpecularColour",
+						Name = "u_dirLight1SpecularColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.Salmon,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionalLight2Direction",
+						Name = "u_dirLight2Direction",
+						Type = typeof(Vector3),
+						DefaultValue = Vector3.Down,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionalLight2DiffuseColour",
+						Name = "u_dirLight2DiffuseColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.Red,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionLight2SpecularColour",
+						Name = "u_dirLight2SpecularColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.Salmon,
+					},
+				},
+				VariantDefinitions = new List<ShaderVariantDefinition>()
+				{
+					new ShaderVariantDefinition()
+					{
+						VariantName = "Phong_PixelLit_PositionNormal",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/Phong_PixelLit_PositionNormal.vsh",
+									PixelShaderPath = "Shaders/Phong_PixelLit_PositionNormal.fsh",
+								},
+							},
+						},
+					},
+				},
+			};
+
+			var s = new Shader (parameter);
+
+			Console.WriteLine(s);
+
+			return s;
+		}
+	}
+
+	public static partial class CorShaders
+	{	
+		public static IShader CreatePhongVertexLit()
+		{
+			var parameter = new ShaderDefinition()
+			{
+				Name = "VertexPixelLit",
+				PassNames = new List<string>() { "Main" },
+				InputDefinitions = new List<ShaderInputDefinition>()
+				{
+					new ShaderInputDefinition()
+					{
+						Name = "a_vertPos",
+						Type = typeof(Vector3),
+						Usage = VertexElementUsage.Position,
+						DefaultValue = Vector3.Zero,
+						Optional = false,
+					},
+					new ShaderInputDefinition()
+					{
+						Name = "a_vertNormal",
+						Type = typeof(Vector3),
+						Usage = VertexElementUsage.Normal,
+						DefaultValue = Vector3.Zero,
+						Optional = false,
+					},
+					new ShaderInputDefinition()
+					{
+						Name = "a_vertTexcoord",
+						Type = typeof(Vector2),
+						Usage = VertexElementUsage.TextureCoordinate,
+						DefaultValue = Vector2.Zero,
+						Optional = true,
+					},
+					new ShaderInputDefinition()
+					{
+						Name = "a_vertColour",
+						Type = typeof(Rgba32),
+						Usage = VertexElementUsage.Colour,
+						DefaultValue = Rgba32.White,
+						Optional = true,
+					},
+				},
+				SamplerDefinitions = new List<ShaderSamplerDefinition>()
+				{
+					new ShaderSamplerDefinition()
+					{
+						NiceName = "TextureSampler",
+						Name = "s_tex0",
+						Optional = true,
+					}
+				},
+				VariableDefinitions = new List<ShaderVariableDefinition>()
+				{
+					new ShaderVariableDefinition()
+					{
+						NiceName = "World",
+						Name = "u_world",
+						Type = typeof(Matrix44),
+						DefaultValue = Matrix44.Identity,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "View",
+						Name = "u_view",
+						Type = typeof(Matrix44),
+						DefaultValue = Matrix44.Identity,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "Projection",
+						Name = "u_proj",
+						Type = typeof(Matrix44),
+						DefaultValue = Matrix44.Identity,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "MaterialColour",
+						Name = "u_colour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.White,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "AmbientLightColour",
+						Name = "u_ambientLightColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.White,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "EmissiveColour",
+						Name = "u_emissiveColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.White,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "",
+						Name = "u_specularColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.White,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "SpecularPower",
+						Name = "u_specularPower",
+						Type = typeof(Int32),
+						DefaultValue = 0,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "EyePosition",
+						Name = "u_eyePosition",
+						Type = typeof(Vector3),
+						DefaultValue = Vector3.Zero,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "FogEnabled",
+						Name = "u_fogEnabled",
+						Type = typeof(Int32),
+						DefaultValue = 1,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "FogStart",
+						Name = "u_fogStart",
+						Type = typeof(Int32),
+						DefaultValue = 100,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "FogEnd",
+						Name = "u_fogEnd",
+						Type = typeof(Int32),
+						DefaultValue = 200,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "FogColour",
+						Name = "u_fogColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.White,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionalLight0Direction",
+						Name = "u_dirLight0Direction",
+						Type = typeof(Vector3),
+						DefaultValue = Vector3.Down,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionalLight0DiffuseColour",
+						Name = "u_dirLight0DiffuseColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.Red,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionLight0SpecularColour",
+						Name = "u_dirLight0SpecularColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.Salmon,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionalLight1Direction",
+						Name = "u_dirLight1Direction",
+						Type = typeof(Vector3),
+						DefaultValue = Vector3.Down,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionalLight1DiffuseColour",
+						Name = "u_dirLight1DiffuseColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.Red,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionLight1SpecularColour",
+						Name = "u_dirLight1SpecularColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.Salmon,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionalLight2Direction",
+						Name = "u_dirLight2Direction",
+						Type = typeof(Vector3),
+						DefaultValue = Vector3.Down,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionalLight2DiffuseColour",
+						Name = "u_dirLight2DiffuseColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.Red,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "DirectionLight2SpecularColour",
+						Name = "u_dirLight2SpecularColour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.Salmon,
+					},
+				},
+				VariantDefinitions = new List<ShaderVariantDefinition>()
+				{
+					new ShaderVariantDefinition()
+					{
+						VariantName = "Phong_VertexLit_PositionNormal",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/Phong_VertexLit_PositionNormal.vsh",
+									PixelShaderPath = "Shaders/Phong_VertexLit_PositionNormal.fsh",
+								},
+							},
+						},
+					},
+					new ShaderVariantDefinition()
+					{
+						VariantName = "Phong_VertexLit_PositionNormalTexture",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/Phong_VertexLit_PositionNormalTexture.vsh",
+									PixelShaderPath = "Shaders/Phong_VertexLit_PositionNormalTexture.fsh",
+								},
+							},
+						},
+					},
+				},
+			};
+
+
+			var s = new Shader (parameter);
+
+			Console.WriteLine(s);
+
+			return s;
+		}
+	}
+
+	public static partial class CorShaders
+	{	
+		public static IShader CreateUnlit()
+		{
+			var parameter = new ShaderDefinition()
+			{
+				Name = "Unlit",
+				PassNames = new List<string>() { "Main" },
+				InputDefinitions = new List<ShaderInputDefinition>()
+				{
+					new ShaderInputDefinition()
+					{
+						Name = "a_vertPos",
+						Type = typeof(Vector3),
+						Usage = VertexElementUsage.Position,
+						DefaultValue = Vector3.Zero,
+						Optional = false,
+					},
+					new ShaderInputDefinition()
+					{
+						Name = "a_vertTexcoord",
+						Type = typeof(Vector2),
+						Usage = VertexElementUsage.TextureCoordinate,
+						DefaultValue = Vector2.Zero,
+						Optional = true,
+					},
+					new ShaderInputDefinition()
+					{
+						Name = "a_vertColour",
+						Type = typeof(Rgba32),
+						Usage = VertexElementUsage.Colour,
+						DefaultValue = Rgba32.White,
+						Optional = true,
+					},
+				},
+				SamplerDefinitions = new List<ShaderSamplerDefinition>()
+				{
+					new ShaderSamplerDefinition()
+					{
+						NiceName = "TextureSampler",
+						Name = "s_tex0",
+						Optional = true,
+					}
+				},
+				VariableDefinitions = new List<ShaderVariableDefinition>()
+				{
+					new ShaderVariableDefinition()
+					{
+						NiceName = "MaterialColour",
+						Name = "u_colour",
+						Type = typeof(Rgba32),
+						DefaultValue = Rgba32.White,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "World",
+						Name = "u_world",
+						Type = typeof(Matrix44),
+						DefaultValue = Matrix44.Identity,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "View",
+						Name = "u_view",
+						Type = typeof(Matrix44),
+						DefaultValue = Matrix44.Identity,
+					},
+					new ShaderVariableDefinition()
+					{
+						NiceName = "Projection",
+						Name = "u_proj",
+						Type = typeof(Matrix44),
+						DefaultValue = Matrix44.Identity,
+					},
+				},
+				VariantDefinitions = new List<ShaderVariantDefinition>()
+				{
+					new ShaderVariantDefinition()
+					{
+						VariantName = "Unlit_Position",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/Unlit_Position.vsh",
+									PixelShaderPath = "Shaders/Unlit_Position.fsh",
+								},
+							},
+						},
+					},
+					new ShaderVariantDefinition()
+					{
+						VariantName = "Unlit_PositionTexture",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/Unlit_PositionTexture.vsh",
+									PixelShaderPath = "Shaders/Unlit_PositionTexture.fsh",
+								},
+							},
+						},
+					},
+					new ShaderVariantDefinition()
+					{
+						VariantName = "Unlit_PositionColour",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/Unlit_PositionColour.vsh",
+									PixelShaderPath = "Shaders/Unlit_PositionColour.fsh",
+								},
+							},
+						},
+					},
+					new ShaderVariantDefinition()
+					{
+						VariantName = "Unlit_PositionTextureColour",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/Unlit_PositionTextureColour.vsh",
+									PixelShaderPath = "Shaders/Unlit_PositionTextureColour.fsh",
+								},
+							},
+						},
+					},
+				},
+			};
+
+
+			var s = new Shader (parameter);
+
+			Console.WriteLine(s);
+
+			return s;
+		}
 	}
 
 
