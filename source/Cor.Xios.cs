@@ -59,7 +59,7 @@ namespace Sungiant.Cor.Xios
     public class AudioManager
         : IAudioManager
     {
-
+    	public Single Volume { get; set; }
     }
 
 	public static class Vector2Converter
@@ -1189,9 +1189,6 @@ namespace Sungiant.Cor.Xios
                 BlendFunction.ReverseSubtract, BlendFactor.SourceAlpha, BlendFactor.One)
             */
 
-			OpenTK.Graphics.ES20.GL.Enable(OpenTK.Graphics.ES20.EnableCap.CullFace);
-			OpenTKHelper.CheckError();
-
 			OpenTK.Graphics.ES20.GL.Enable(OpenTK.Graphics.ES20.EnableCap.DepthTest);
 			OpenTKHelper.CheckError();
 
@@ -1204,11 +1201,47 @@ namespace Sungiant.Cor.Xios
 			OpenTK.Graphics.ES20.GL.DepthFunc(OpenTK.Graphics.ES20.DepthFunction.Lequal);
 			OpenTKHelper.CheckError();
 
-			OpenTK.Graphics.ES20.GL.FrontFace(OpenTK.Graphics.ES20.FrontFaceDirection.Cw);
-			OpenTKHelper.CheckError();
+			SetCullMode (CullMode.CW);
+		}
 
-			OpenTK.Graphics.ES20.GL.CullFace(OpenTK.Graphics.ES20.CullFaceMode.Back);
-			OpenTKHelper.CheckError();
+		CullMode? currentCullMode;
+
+		public void SetCullMode(CullMode cullMode)
+		{
+			if (!currentCullMode.HasValue || currentCullMode.Value != cullMode)
+			{
+				if (cullMode == CullMode.None)
+				{
+					OpenTK.Graphics.ES20.GL.Disable (OpenTK.Graphics.ES20.EnableCap.CullFace);
+					OpenTKHelper.CheckError ();
+
+				}
+				else
+				{
+					OpenTK.Graphics.ES20.GL.Enable(OpenTK.Graphics.ES20.EnableCap.CullFace);
+					OpenTKHelper.CheckError();
+
+					OpenTK.Graphics.ES20.GL.FrontFace(OpenTK.Graphics.ES20.FrontFaceDirection.Cw);
+					OpenTKHelper.CheckError();
+
+					if (cullMode == CullMode.CW)
+					{
+						OpenTK.Graphics.ES20.GL.CullFace (OpenTK.Graphics.ES20.CullFaceMode.Back);
+						OpenTKHelper.CheckError ();
+					}
+					else if (cullMode == CullMode.CCW)
+					{
+						OpenTK.Graphics.ES20.GL.CullFace (OpenTK.Graphics.ES20.CullFaceMode.Front);
+						OpenTKHelper.CheckError ();
+					}
+					else
+					{
+						throw new NotSupportedException();
+					}
+				}
+
+				currentCullMode = cullMode;
+			}
 		}
 
 		public void Reset()
@@ -2145,20 +2178,20 @@ namespace Sungiant.Cor.Xios
 
 		public IShader LoadShader(ShaderType shaderType)
 		{
-			//if (shaderType == ShaderType.Unlit)
-			//{
+			if (shaderType == ShaderType.Unlit)
+			{
 				return CorShaders.CreateUnlit();
-			//}
-			//if (shaderType == ShaderType.VertexLit || shaderType == ShaderType.PixelLit)
-			//{
-			//	return CorShaders.CreatePhongVertexLit();
-			//}
+			}
+			if (shaderType == ShaderType.VertexLit || shaderType == ShaderType.PixelLit)
+			{
+				return CorShaders.CreatePhongVertexLit();
+			}
 			//if (shaderType == ShaderType.PixelLit)
 			//{
 			//	return CorShaders.CreatePhongPixelLit();
 			//}
 
-			//throw new NotImplementedException();
+			throw new NotImplementedException();
 		}
 
 
