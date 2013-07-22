@@ -4143,7 +4143,9 @@ namespace Sungiant.Blimey
 
 			if (!String.IsNullOrWhiteSpace (this.DebugRender)) 
 			{
-				var halfScale = new Vector3(0.64f, 0.32f, 0);//this.Parent.Transform.Scale / 2f;
+				var halfScale = 
+                    //new Vector3(0.64f, 0.32f, 0);
+                    this.Parent.Transform.Scale / 2f;
 
 				// this is fucked.  shouldn't have to normalise here
 				var up = this.Parent.Transform.Up;
