@@ -63,6 +63,7 @@ namespace Sungiant.Cor.Demo
 		ICor engine;
 		
 		IShader unlitEffect;
+		IShader vertexLitEffect;
 
 		Rgba32 colour = Rgba32.DarkRed;
 		Single changeColourTime = 1f;
@@ -72,6 +73,7 @@ namespace Sungiant.Cor.Demo
 			this.engine = engine;
 			
 			this.unlitEffect = engine.Resources.LoadShader(ShaderType.Unlit);
+			this.vertexLitEffect = engine.Resources.LoadShader(ShaderType.VertexLit);
 
             this.LoadShape1();
             this.LoadShape2();
@@ -340,16 +342,16 @@ namespace Sungiant.Cor.Demo
             Matrix44 proj; Matrix44.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 1f, -1f, out proj);
             
 			// set the variable on the shader to our desired variables
-			unlitEffect.ResetVariables ();
-			unlitEffect.SetVariable ("World", world);
-			unlitEffect.SetVariable ("View", view);
-			unlitEffect.SetVariable ("Projection", proj);
-			unlitEffect.SetVariable ("MaterialColour", Rgba32.White);
-			unlitEffect.SetSamplerTarget ("TextureSampler", 0);
+			vertexLitEffect.ResetVariables ();
+			vertexLitEffect.SetVariable ("World", world);
+			vertexLitEffect.SetVariable ("View", view);
+			vertexLitEffect.SetVariable ("Projection", proj);
+			vertexLitEffect.SetVariable ("MaterialColour", Rgba32.White);
+			vertexLitEffect.SetSamplerTarget ("TextureSampler", 0);
 
 			this.engine.Graphics.SetActiveTexture(0, this.shape3Texture);
 
-            foreach (var effectPass in this.unlitEffect.Passes)
+            foreach (var effectPass in this.vertexLitEffect.Passes)
             {
 				effectPass.Activate (CustomCylinder_PositionNormalTexture.VertexDeclaration);
                 
