@@ -2178,113 +2178,21 @@ namespace Sungiant.Cor.Xios
 
 		public IShader LoadShader(ShaderType shaderType)
 		{
-			if (shaderType == ShaderType.Unlit)
-			{
+			//if (shaderType == ShaderType.Unlit)
+			//{
 				return CorShaders.CreateUnlit();
-			}
-			if (shaderType == ShaderType.VertexLit || shaderType == ShaderType.PixelLit)
-			{
-				return CorShaders.CreatePhongVertexLit();
-			}
+			//}
+			//if (shaderType == ShaderType.VertexLit || shaderType == ShaderType.PixelLit)
+			//{
+			//	return CorShaders.CreatePhongVertexLit();
+			//}
 			//if (shaderType == ShaderType.PixelLit)
 			//{
 			//	return CorShaders.CreatePhongPixelLit();
 			//}
 
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
 		}
-
-
-
-		/*
-#if AOT
-		public IEffect GetShader(ShaderType shaderType, VertexDeclaration vertDecl)
-#else
-		public override IEffect GetShader(ShaderType shaderType, VertexDeclaration vertDecl)
-#endif
-		{
-			var vertElems = vertDecl.GetVertexElements();
-
-			var usage = new HashSet<VertexElementUsage>();
-
-			foreach (var elem in vertElems)
-			{
-				usage.Add(elem.VertexElementUsage);
-			}
-
-			switch(shaderType)
-			{
-				case ShaderType.Phong_VertexLit: return GetPhongVertexLitShaderFor(usage);
-				case ShaderType.Phong_PixelLit: return GetPhongPixelLitShaderFor(usage);
-				case ShaderType.Unlit: return GetUnlitShaderFor(usage);
-				default: return null;
-			}
-			
-		}
-		
-		IEffect GetPhongVertexLitShaderFor(HashSet<VertexElementUsage> usage)
-		{
-
-            if (usage.Contains(VertexElementUsage.Position) &&
-                usage.Contains(VertexElementUsage.Normal) &&
-                usage.Contains(VertexElementUsage.TextureCoordinate))
-            {
-                return _phong_vertexLit_positionNormalTexture;
-            }
-
-
-			if ( usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Normal) )
-			{
-				return _phong_vertexLit_positionNormal;
-			}
-
-			throw new Exception("No suitable shader for this vertDecl");
-		}
-
-		IEffect GetPhongPixelLitShaderFor(HashSet<VertexElementUsage> usage)
-		{
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Normal))
-			{
-				return _phong_pixelLit_positionNormal;
-			}
-
-			return null;
-		}
-
-		IEffect GetUnlitShaderFor(HashSet<VertexElementUsage> usage)
-		{
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Colour) &&
-			    usage.Contains(VertexElementUsage.TextureCoordinate))
-			{
-                return _unlit_positionTextureColour;
-			}
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.Colour))
-			{
-				return _unlit_positionColour;
-			}
-
-			if (usage.Contains(VertexElementUsage.Position) &&
-			    usage.Contains(VertexElementUsage.TextureCoordinate))
-			{
-				return _unlit_positionTexture;
-			}
-
-			if (usage.Contains(VertexElementUsage.Position))
-			{
-				return _unlit_position;
-			}
-
-			throw new Exception("No suitable shader for this vertDecl");
-		}
-
-	*/
 	}
 
 	
