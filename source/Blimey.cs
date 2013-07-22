@@ -4143,35 +4143,38 @@ namespace Sungiant.Blimey
 
 			if (!String.IsNullOrWhiteSpace (this.DebugRender)) 
 			{
-				var halfScale = 
-                    //new Vector3(0.64f, 0.32f, 0);
-                    this.Parent.Transform.Scale / 2f;
+                var yScale = 
+                    this.Parent.Transform.Scale.Z / 2;
 
-				// this is fucked.  shouldn't have to normalise here
-				var up = this.Parent.Transform.Up;
-				Vector3.Normalise(ref up, out up);
+                // this is fucked.  shouldn't have to normalise here
+                var up = this.Parent.Transform.Location.Forward;
+                Vector3.Normalise(ref up, out up);
 
-				var right = this.Parent.Transform.Right;
-				Vector3.Normalise(ref right, out right);
+                var xScale = 
+                    this.Parent.Transform.Scale.X / 2;
 
-				var a =   up - right;
-				var b =   up + right;
-				var c = - up + right;
-				var d = - up - right;
+                // this is fucked.  shouldn't have to normalise here
+                var right = this.Parent.Transform.Location.Right;
+                Vector3.Normalise(ref right, out right);
 
-				a = this.Parent.Transform.Position + (a * halfScale);
-				b = this.Parent.Transform.Position + (b * halfScale);
-				c = this.Parent.Transform.Position + (c * halfScale);
-				d = this.Parent.Transform.Position + (d * halfScale);
+                var a =   (up * yScale) - (right * xScale);
+                var b =   (up * yScale) + (right * xScale);
+                var c = - (up * yScale) + (right * xScale);
+                var d = - (up * yScale) - (right * xScale);
 
-				this.Blimey.DebugShapeRenderer.AddQuad(
-					this.DebugRender,
-					a,
-					b,
-					c,
-					d,
-					Rgba32.Red
-					);
+                a = this.Parent.Transform.LocalPosition + a;
+                b = this.Parent.Transform.LocalPosition + b;
+                c = this.Parent.Transform.LocalPosition + c;
+                d = this.Parent.Transform.LocalPosition + d;
+
+                this.Blimey.DebugShapeRenderer.AddQuad(
+                    this.DebugRender,
+                    a,
+                    b,
+                    c,
+                    d,
+                    Rgba32.Red
+                    );
 			}
 
         }
