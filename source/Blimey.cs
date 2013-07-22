@@ -1609,7 +1609,11 @@ namespace Sungiant.Blimey
 
 			foreach (string pass in renderPasses)
 			{
-				materials[pass] = new Material(pass, shader);
+				var m = new Material(pass, shader);
+
+				m.BlendMode = BlendMode.Default;
+				materials[pass] = m;
+
 			}
 
 			// Create our unit sphere vertices
