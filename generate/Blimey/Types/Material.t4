@@ -23,6 +23,13 @@
 			shader.SetVariable ("World", world);
 			shader.SetVariable ("View", view);
 			shader.SetVariable ("Projection", proj);
+
+			int i = 0;
+			foreach(var key in t.Keys)
+			{			
+				shader.SetSamplerTarget (key, i);
+				i++;
+			}
 		}
 
 		internal IShader GetShader()
@@ -40,29 +47,9 @@
 			int i = 0;
 			foreach(var key in t.Keys)
 			{
-				
-				shader.SetVariable (key, i);
 				graphics.SetActiveTexture (i, t[key]);
-
 				i++;
-
 			}
-			/*
-			// this needs to be better, should have to set this every frame, only if it's changed.
-			if (materialSettings.ContainsKey("_tex0"))
-			{
-				var effectSetting = materialSettings["_tex0"];
-
-				if( effectSetting.Type == typeof(Texture2D) )
-				{
-					var tex = (effectSetting.Value as Texture2D);
-					// so we know which texture we want to use, we have the texture object,
-					// therefore it's in gpu memory however it might not be bound to a texture
-					// slot, therefore we should get request that cor! to binds it to a slot.
-					graphics.SetActiveTexture (0, tex.texture);
-				}
-			}*/
-
 		}
 
 		Dictionary<string, Texture2D> t = new Dictionary<string, Texture2D>();
@@ -91,8 +78,6 @@
 		public void SetTexture(string propertyName, Texture2D texture)
 		{
 			t[ propertyName ] = texture;
-
-			//shader.SetVariable (propertyName, texture);
 		}
 
 		public void SetTextureOffset(string propertyName, Vector2 offset)

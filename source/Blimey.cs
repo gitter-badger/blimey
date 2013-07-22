@@ -1861,15 +1861,14 @@ namespace Sungiant.Blimey
 			if( material == null )
 				return;
 
+			material.CalibrateGpu (zGfx);
+
 			// Update our effect with the matrices.
 			material.CalibrateShader (
 				Matrix44.Identity,
 				zView,
 				zProjection
 				);
-
-			
-			BlendMode.Apply (BlendMode.Default, zGfx);
 
 			var shader = material.GetShader ();
 
@@ -3839,8 +3838,16 @@ namespace Sungiant.Blimey
 		: Trait
 	{
 
-		public Mesh Mesh;
-		public Material Material;
+		public Mesh Mesh { get; set; }
+		public Material Material { get; set; }
+		public CullMode CullMode { get; set; }
+
+		public MeshRenderer()
+		{
+			this.Mesh = null;
+			this.Material = null;
+			this.CullMode = CullMode.CW;
+		}
 
 		internal override void Render (IGraphicsManager zGfx, Matrix44 zView, Matrix44 zProjection)
 		{
@@ -3849,9 +3856,12 @@ namespace Sungiant.Blimey
 
 			zGfx.GpuUtils.BeginEvent(Rgba32.Red, "MeshRenderer.Render");
 
+			zGfx.SetCullMode(this.CullMode);
+
+			Material.CalibrateGpu (zGfx);
+
 			// Set our vertex declaration, vertex buffer, and index buffer.
 			zGfx.SetActiveGeometryBuffer(Mesh.GeomBuffer);
-
 
 			// Get the material's shader and apply all of the settings
 			// it needs.
@@ -3861,8 +3871,7 @@ namespace Sungiant.Blimey
 				zProjection
 				);
 
-			Material.CalibrateGpu (zGfx);
-
+			
 			var shader = Material.GetShader ();
 
 			if( shader != null)
@@ -4479,6 +4488,13 @@ namespace Sungiant.Blimey
 			shader.SetVariable ("World", world);
 			shader.SetVariable ("View", view);
 			shader.SetVariable ("Projection", proj);
+
+			int i = 0;
+			foreach(var key in t.Keys)
+			{			
+				shader.SetSamplerTarget (key, i);
+				i++;
+			}
 		}
 
 		internal IShader GetShader()
@@ -4496,29 +4512,9 @@ namespace Sungiant.Blimey
 			int i = 0;
 			foreach(var key in t.Keys)
 			{
-				
-				shader.SetVariable (key, i);
 				graphics.SetActiveTexture (i, t[key]);
-
 				i++;
-
 			}
-			/*
-			// this needs to be better, should have to set this every frame, only if it's changed.
-			if (materialSettings.ContainsKey("_tex0"))
-			{
-				var effectSetting = materialSettings["_tex0"];
-
-				if( effectSetting.Type == typeof(Texture2D) )
-				{
-					var tex = (effectSetting.Value as Texture2D);
-					// so we know which texture we want to use, we have the texture object,
-					// therefore it's in gpu memory however it might not be bound to a texture
-					// slot, therefore we should get request that cor! to binds it to a slot.
-					graphics.SetActiveTexture (0, tex.texture);
-				}
-			}*/
-
 		}
 
 		Dictionary<string, Texture2D> t = new Dictionary<string, Texture2D>();
@@ -4547,8 +4543,6 @@ namespace Sungiant.Blimey
 		public void SetTexture(string propertyName, Texture2D texture)
 		{
 			t[ propertyName ] = texture;
-
-			//shader.SetVariable (propertyName, texture);
 		}
 
 		public void SetTextureOffset(string propertyName, Vector2 offset)

@@ -8,8 +8,16 @@
 		: Trait
 	{
 
-		public Mesh Mesh;
-		public Material Material;
+		public Mesh Mesh { get; set; }
+		public Material Material { get; set; }
+		public CullMode CullMode { get; set; }
+
+		public MeshRenderer()
+		{
+			this.Mesh = null;
+			this.Material = null;
+			this.CullMode = CullMode.CW;
+		}
 
 		internal override void Render (IGraphicsManager zGfx, Matrix44 zView, Matrix44 zProjection)
 		{
@@ -18,9 +26,12 @@
 
 			zGfx.GpuUtils.BeginEvent(Rgba32.Red, "MeshRenderer.Render");
 
+			zGfx.SetCullMode(this.CullMode);
+
+			Material.CalibrateGpu (zGfx);
+
 			// Set our vertex declaration, vertex buffer, and index buffer.
 			zGfx.SetActiveGeometryBuffer(Mesh.GeomBuffer);
-
 
 			// Get the material's shader and apply all of the settings
 			// it needs.
@@ -30,8 +41,7 @@
 				zProjection
 				);
 
-			Material.CalibrateGpu (zGfx);
-
+			
 			var shader = Material.GetShader ();
 
 			if( shader != null)

@@ -321,15 +321,14 @@
 			if( material == null )
 				return;
 
+			material.CalibrateGpu (zGfx);
+
 			// Update our effect with the matrices.
 			material.CalibrateShader (
 				Matrix44.Identity,
 				zView,
 				zProjection
 				);
-
-			
-			BlendMode.Apply (BlendMode.Default, zGfx);
 
 			var shader = material.GetShader ();
 
