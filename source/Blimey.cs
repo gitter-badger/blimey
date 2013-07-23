@@ -2041,10 +2041,12 @@ namespace Sungiant.Blimey
 		string renderPass;
 		DebugShapeRenderer debugRenderer;
 
-		public GridRenderer(DebugShapeRenderer debugRenderer, string renderPass)
+		public GridRenderer(DebugShapeRenderer debugRenderer, string renderPass, float gridSquareSize = 0.50f, int numberOfGridSquares = 10)
 		{
 			this.debugRenderer = debugRenderer;
 			this.renderPass = renderPass;
+            this.gridSquareSize = gridSquareSize;
+            this.numberOfGridSquares = numberOfGridSquares;
 		}
 
 		public void Update()
