@@ -2257,6 +2257,14 @@ namespace Sungiant.Cor.Xios
 			}
 		}
 
+		public void ResetSamplerTargets()
+		{
+			foreach (var samplerDefinition in cachedShaderDefinition.SamplerDefinitions)
+			{
+				this.SetSamplerTarget(samplerDefinition.Name, -1);
+			}
+		}
+
 
 #if AOT
 		public void SetVariable(string name, Int32 value) { passes.ForEach( x => x.SetVariable(name, value)); }
@@ -2362,6 +2370,7 @@ namespace Sungiant.Cor.Xios
 		/// </summary>
 		readonly ShaderDefinition cachedShaderDefinition;
 
+		public ShaderDefinition ShaderDefinition { get { return cachedShaderDefinition; } }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Shader"/> class from a
