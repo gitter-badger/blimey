@@ -397,6 +397,11 @@ namespace Sungiant.Cor
 		/// Resets all the shader's variables to their default values.
 		/// </summary>
 		void ResetVariables();
+
+		/// <summary>
+		/// Resets all the shader's samplers to null textures.
+		/// </summary>
+		void ResetSamplerTargets();
 		
 #if AOT
 		void SetVariable(string name, Int32 value);
