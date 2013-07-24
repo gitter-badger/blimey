@@ -1249,6 +1249,8 @@ namespace Sungiant.Cor.Xios
 			this.ClearDepthBuffer();
 			this.ClearColourBuffer();
 			this.SetActiveGeometryBuffer(null);
+
+			// todo, here we need to set all the texture slots to point to null
 			this.SetActiveTexture(0, null);
 		}
 
@@ -2257,11 +2259,14 @@ namespace Sungiant.Cor.Xios
 			}
 		}
 
+		/// <summary>
+		/// Resets all the shader's texture samplers point at texture slot 0.
+		/// </summary>
 		public void ResetSamplerTargets()
 		{
 			foreach (var samplerDefinition in cachedShaderDefinition.SamplerDefinitions)
 			{
-				this.SetSamplerTarget(samplerDefinition.Name, -1);
+				this.SetSamplerTarget(samplerDefinition.Name, 0);
 			}
 		}
 

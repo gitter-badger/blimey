@@ -89,6 +89,8 @@
 			this.ClearDepthBuffer();
 			this.ClearColourBuffer();
 			this.SetActiveGeometryBuffer(null);
+
+			// todo, here we need to set all the texture slots to point to null
 			this.SetActiveTexture(0, null);
 		}
 
