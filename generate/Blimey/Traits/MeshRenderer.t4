@@ -28,14 +28,14 @@
 
 			zGfx.SetCullMode(this.CullMode);
 
-			Material.CalibrateGpu (zGfx);
+			Material.UpdateGpuSettings (zGfx);
 
 			// Set our vertex declaration, vertex buffer, and index buffer.
 			zGfx.SetActiveGeometryBuffer(Mesh.GeomBuffer);
 
 			// Get the material's shader and apply all of the settings
 			// it needs.
-			Material.CalibrateShader (
+			Material.UpdateShaderVariables (
 				this.Parent.Transform.Location,
 				zView,
 				zProjection

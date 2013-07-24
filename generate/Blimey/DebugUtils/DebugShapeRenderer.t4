@@ -325,10 +325,10 @@
 			if( material == null )
 				return;
 
-			material.CalibrateGpu (zGfx);
+			material.UpdateGpuSettings (zGfx);
 
 			// Update our effect with the matrices.
-			material.CalibrateShader (
+			material.UpdateShaderVariables (
 				Matrix44.Identity,
 				zView,
 				zProjection

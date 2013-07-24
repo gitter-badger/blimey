@@ -1865,10 +1865,10 @@ namespace Sungiant.Blimey
 			if( material == null )
 				return;
 
-			material.CalibrateGpu (zGfx);
+			material.UpdateGpuSettings (zGfx);
 
 			// Update our effect with the matrices.
-			material.CalibrateShader (
+			material.UpdateShaderVariables (
 				Matrix44.Identity,
 				zView,
 				zProjection
@@ -3864,14 +3864,14 @@ namespace Sungiant.Blimey
 
 			zGfx.SetCullMode(this.CullMode);
 
-			Material.CalibrateGpu (zGfx);
+			Material.UpdateGpuSettings (zGfx);
 
 			// Set our vertex declaration, vertex buffer, and index buffer.
 			zGfx.SetActiveGeometryBuffer(Mesh.GeomBuffer);
 
 			// Get the material's shader and apply all of the settings
 			// it needs.
-			Material.CalibrateShader (
+			Material.UpdateShaderVariables (
 				this.Parent.Transform.Location,
 				zView,
 				zProjection
@@ -4478,8 +4478,7 @@ namespace Sungiant.Blimey
 	{
 		IShader shader;
 		string renderPass;
-		//Dictionary<string, EffectSettingsData> materialSettings = new Dictionary<string, EffectSettingsData>();
-
+		
 		public BlendMode BlendMode { get; set; }
 		public string RenderPass { get { return renderPass; } }
 
@@ -4491,17 +4490,69 @@ namespace Sungiant.Blimey
 			this.shader = shader;
 		}
 
-		internal void CalibrateShader(Matrix44 world, Matrix44 view, Matrix44 proj)
+		internal void UpdateShaderVariables(Matrix44 world, Matrix44 view, Matrix44 proj)
 		{
 			if(shader == null)
 				return;
+
+			// Right now we need to make sure that the shader variables are all set with this
+			// settings this material has defined.
+
+			// We don't know if the shader being used is exclusive to this material, or if it 
+			// is shared between many.
+
+			// Therefore to be 100% sure we could reset every variable on the shader to the defaults,
+			// then set the ones that this material knows about, thus avoiding running with shader settings
+			// that this material doesn't know about that are being changed by something else that
+			// shares the shader.  This would be bad, as it will likely involve setting the same variable multiple times
+
+			// So instead, as an optimisation, iterate over all settings that this material knows about,
+			// and ask the shader to change them, this compare those changes against a full list of
+			// all of the shader's variables, if any were missed by the material, then set them to
+			// their default values.
+
+			// Right now, just use the easy option and optimise later ;-D
+
+			shader.ResetVariables();
 
 			shader.SetVariable ("World", world);
 			shader.SetVariable ("View", view);
 			shader.SetVariable ("Projection", proj);
 
+			foreach(var propertyName in colourSettings.Keys)
+			{
+				shader.SetVariable (propertyName, colourSettings[propertyName]);
+			}
+
+			foreach(var propertyName in floatSettings.Keys)
+			{
+				shader.SetVariable (propertyName, floatSettings[propertyName]);
+			}
+
+			foreach(var propertyName in matrixSettings.Keys)
+			{
+				shader.SetVariable (propertyName, matrixSettings[propertyName]);
+			}
+
+			foreach(var propertyName in vectorSettings.Keys)
+			{
+				shader.SetVariable (propertyName, vectorSettings[propertyName]);
+			}
+
+			foreach(var propertyName in scaleSettings.Keys)
+			{
+				shader.SetVariable (propertyName, scaleSettings[propertyName]);
+			}
+
+			foreach(var propertyName in textureOffsetSettings.Keys)
+			{
+				shader.SetVariable (propertyName, textureOffsetSettings[propertyName]);
+			}
+
+			shader.ResetSamplerTargets();
+			
 			int i = 0;
-			foreach(var key in t.Keys)
+			foreach(var key in textureSamplerSettings.Keys)
 			{			
 				shader.SetSamplerTarget (key, i);
 				i++;
@@ -4516,54 +4567,64 @@ namespace Sungiant.Blimey
 		public Vector2 Tiling { get; set; }
 		public Vector2 Offset { get; set; }
 
-		internal void CalibrateGpu(IGraphicsManager graphics)
+		internal void UpdateGpuSettings(IGraphicsManager graphics)
 		{
+			// Update the render states on the gpu
 			BlendMode.Apply (this.BlendMode, graphics);
 
+			graphics.SetActiveTexture (0, null);
+
+			// Set the active textures on the gpu
 			int i = 0;
-			foreach(var key in t.Keys)
+			foreach(var key in textureSamplerSettings.Keys)
 			{
-				graphics.SetActiveTexture (i, t[key]);
+				graphics.SetActiveTexture (i, textureSamplerSettings[key]);
 				i++;
 			}
 		}
 
-		Dictionary<string, Texture2D> t = new Dictionary<string, Texture2D>();
-
-
+		Dictionary<string, Rgba32> colourSettings = new Dictionary<string, Rgba32>();
+		Dictionary<string, Single> floatSettings = new Dictionary<string, Single>();
+		Dictionary<string, Matrix44> matrixSettings = new Dictionary<string, Matrix44>();
+		Dictionary<string, Vector4> vectorSettings = new Dictionary<string, Vector4>();
+		Dictionary<string, Vector2> scaleSettings = new Dictionary<string, Vector2>();
+		Dictionary<string, Vector2> textureOffsetSettings = new Dictionary<string, Vector2>();
+		Dictionary<string, Texture2D> textureSamplerSettings = new Dictionary<string, Texture2D>();
+		
 		public void SetColour(string propertyName, Rgba32 colour)
 		{
-			shader.SetVariable (propertyName, colour);
+			colourSettings[propertyName] = colour; 
 		}
 
         public void SetFloat(string propertyName, Single value)
 		{
-			shader.SetVariable (propertyName, value);
+			floatSettings[propertyName] = value; 
 		}
 
 		public void SetMatrix(string propertyName, Matrix44 matrix)
 		{
-			shader.SetVariable (propertyName, matrix);
+			matrixSettings[propertyName] = matrix; 
 		}
 
 		public void SetVector(string propertyName, Vector4 vector)
 		{
-			shader.SetVariable (propertyName, vector);
-		}
-
-		public void SetTexture(string propertyName, Texture2D texture)
-		{
-			t[ propertyName ] = texture;
+			vectorSettings[propertyName] = vector; 
 		}
 
 		public void SetTextureOffset(string propertyName, Vector2 offset)
 		{
-			shader.SetVariable (propertyName, offset);
+			textureOffsetSettings[propertyName] = offset; 
 		}
 
 		public void SetTextureScale(string propertyName, Vector2 scale)
 		{
-			shader.SetVariable (propertyName, scale);
+			scaleSettings[propertyName] = scale; 
+		}
+
+
+		public void SetTexture(string propertyName, Texture2D texture)
+		{
+			textureSamplerSettings[propertyName] = texture;
 		}
 	}
 
