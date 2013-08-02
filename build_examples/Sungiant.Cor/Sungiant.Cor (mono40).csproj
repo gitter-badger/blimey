@@ -8,7 +8,7 @@
     <ProjectGuid>{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Sungiant.Cor</RootNamespace>
-    <AssemblyName>Sungiant.Cor</AssemblyName>
+    <AssemblyName>Sungiant.Cor_mono40</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,9 +39,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\..\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus %28net40%29.csproj">
+    <ProjectReference Include="..\..\..\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus %28mono40%29.csproj">
       <Project>{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}</Project>
-      <Name>Sungiant.Abacus (net40)</Name>
+      <Name>Sungiant.Abacus (mono40)</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
