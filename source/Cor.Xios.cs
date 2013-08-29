@@ -2178,11 +2178,20 @@ namespace Sungiant.Cor.Xios
 			throw new NotImplementedException();
 		}
 
+		Dictionary<ShaderType, IShader> shaderCache = new Dictionary<ShaderType, IShader>();
 		public IShader LoadShader(ShaderType shaderType)
 		{
+			if( !shaderCache.ContainsKey(shaderType) )
+			{
+				shaderCache[shaderType] = CorShaders.CreateUnlit();
+			}
+
+			return shaderCache[shaderType];
+
+
 			//if (shaderType == ShaderType.Unlit)
 			//{
-				return CorShaders.CreateUnlit();
+			//	return CorShaders.CreateUnlit();
 			//}
 			//if (shaderType == ShaderType.VertexLit || shaderType == ShaderType.PixelLit)
 			//{
