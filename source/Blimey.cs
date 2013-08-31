@@ -1613,6 +1613,7 @@ namespace Sungiant.Blimey
 
 				m.BlendMode = BlendMode.Default;
 				materials[pass] = m;
+				m.SetColour("MaterialColour", Rgba32.White);
 
 			}
 
