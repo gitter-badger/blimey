@@ -9,7 +9,6 @@
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>Sungiant.Blimey</RootNamespace>
-    <AssemblyName>Sungiant.Blimey_xios.device</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>True</DebugSymbols>
@@ -27,6 +26,7 @@
     <MtouchI18n />
     <MtouchArch>ARMv7, ARMv7s</MtouchArch>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <AssemblyName>Sungiant.Blimey_xios.device</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -38,6 +38,7 @@
     <CodesignKey>iPhone Developer</CodesignKey>
     <DefineConstants>XIOS;AOT;</DefineConstants>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <AssemblyName>Sungiant.Blimey_xios.device</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -50,6 +51,7 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
     <DefineConstants>monotouch;aot;</DefineConstants>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <AssemblyName>Sungiant.Blimey_xios.device</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -61,6 +63,21 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
     <DefineConstants>monotouch;aot;</DefineConstants>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <AssemblyName>Sungiant.Blimey_xios.device</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|mono40' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\mono40\Debug</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <AssemblyName>SungiantBlimeyxiosdevice</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|mono40' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\mono40\Release</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <AssemblyName>SungiantBlimeyxiosdevice</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
