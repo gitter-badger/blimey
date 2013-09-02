@@ -10,7 +10,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Sungiant.Cor.Xios</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>Sungiant.Cor.Xios_xios.simulator</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -22,6 +21,7 @@
     <MtouchLink>None</MtouchLink>
     <DefineConstants>XIOS;</DefineConstants>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <AssemblyName>Sungiant.Cor.Xios_xios.simulator</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>True</DebugSymbols>
@@ -36,6 +36,21 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <NoWarn>0414,0219,0649,0169</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AssemblyName>Sungiant.Cor.Xios_xios.simulator</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|mono40' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\mono40\Debug</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <AssemblyName>SungiantCorXiosxiossimulator</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|mono40' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\mono40\Release</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <AssemblyName>SungiantCorXiosxiossimulator</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
