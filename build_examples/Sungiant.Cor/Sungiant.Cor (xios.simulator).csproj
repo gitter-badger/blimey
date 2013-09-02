@@ -10,7 +10,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Sungiant.Cor</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>Sungiant.Cor_xios.simulator</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -21,6 +20,7 @@
     <ConsolePause>False</ConsolePause>
     <MtouchLink>None</MtouchLink>
     <DefineConstants>XIOS;</DefineConstants>
+    <AssemblyName>Sungiant.Cor_xios.simulator</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>True</DebugSymbols>
@@ -32,6 +32,19 @@
     <MtouchLink>None</MtouchLink>
     <ConsolePause>False</ConsolePause>
     <DefineConstants>XIOS;DEBUG;</DefineConstants>
+    <AssemblyName>Sungiant.Cor_xios.simulator</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|mono40' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\mono40\Debug</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <AssemblyName>SungiantCorxiossimulator</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|mono40' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\mono40\Release</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <AssemblyName>SungiantCorxiossimulator</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
