@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">iPhone</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{88551613-DC7E-4A2E-8498-A933CE990357}</ProjectGuid>
@@ -10,6 +10,32 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Sungiant.Cor.Xios</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>Sungiant.Cor.Xios</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+    <DefineConstants>XIOS;</DefineConstants>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <MtouchLink>None</MtouchLink>
+    <ConsolePause>False</ConsolePause>
+    <DefineConstants>XIOS;DEBUG;</DefineConstants>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <NoWarn>0414,0219,0649,0169</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>True</DebugSymbols>
@@ -27,7 +53,6 @@
     <MtouchI18n />
     <MtouchArch>ARMv7, ARMv7s</MtouchArch>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <AssemblyName>Sungiant.Cor.Xios_xios.device</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -39,7 +64,6 @@
     <CodesignKey>iPhone Developer</CodesignKey>
     <DefineConstants>XIOS;AOT;</DefineConstants>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <AssemblyName>Sungiant.Cor.Xios_xios.device</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -52,7 +76,6 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
     <DefineConstants>XIOS;AOT;</DefineConstants>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <AssemblyName>Sungiant.Cor.Xios_xios.device</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -64,19 +87,6 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
     <DefineConstants>XIOS;AOT;</DefineConstants>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <AssemblyName>Sungiant.Cor.Xios_xios.device</AssemblyName>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|mono40' ">
-    <Optimize>false</Optimize>
-    <OutputPath>bin\mono40\Debug</OutputPath>
-    <WarningLevel>4</WarningLevel>
-    <AssemblyName>SungiantCorXiosxiosdevice</AssemblyName>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|mono40' ">
-    <Optimize>false</Optimize>
-    <OutputPath>bin\mono40\Release</OutputPath>
-    <WarningLevel>4</WarningLevel>
-    <AssemblyName>SungiantCorXiosxiosdevice</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -94,16 +104,6 @@
     <Compile Include="..\..\source\Cor.Xios.cs">
       <Link>Cor.Xios.cs</Link>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\cor\build_examples\Sungiant.Cor\Sungiant.Cor %28xios.device%29.csproj">
-      <Project>{C8436444-EAAC-4B9A-A8E3-6F8494186F57}</Project>
-      <Name>Sungiant.Cor (xios.device)</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus %28xios.device%29.csproj">
-      <Project>{DE5491E6-4DF9-4BBB-9985-E7CD86905D41}</Project>
-      <Name>Sungiant.Abacus (xios.device)</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="..\..\shaders\Phong_PixelLit_PositionNormal.fsh">
@@ -148,5 +148,15 @@
     <BundleResource Include="..\..\shaders\Unlit_PositionTextureColour.vsh">
       <Link>Shaders\Unlit_PositionTextureColour.vsh</Link>
     </BundleResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\cor\build_examples\Sungiant.Cor\Sungiant.Cor %28xios%29.csproj">
+      <Project>{C8436444-EAAC-4B9A-A8E3-6F8494186F57}</Project>
+      <Name>Sungiant.Cor (xios)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus %28xios%29.csproj">
+      <Project>{DE5491E6-4DF9-4BBB-9985-E7CD86905D41}</Project>
+      <Name>Sungiant.Abacus (xios)</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
