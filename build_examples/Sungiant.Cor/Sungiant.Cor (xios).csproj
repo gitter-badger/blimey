@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">iPhone</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C8436444-EAAC-4B9A-A8E3-6F8494186F57}</ProjectGuid>
@@ -10,6 +10,28 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Sungiant.Cor</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>Sungiant.Cor</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+    <DefineConstants>XIOS;</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <MtouchLink>None</MtouchLink>
+    <ConsolePause>False</ConsolePause>
+    <DefineConstants>XIOS;DEBUG;</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>True</DebugSymbols>
@@ -26,7 +48,6 @@
     <IpaPackageName />
     <MtouchI18n />
     <MtouchArch>ARMv7, ARMv7s</MtouchArch>
-    <AssemblyName>Sungiant.Cor_xios.device</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -37,7 +58,6 @@
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
     <DefineConstants>XIOS;AOT;</DefineConstants>
-    <AssemblyName>Sungiant.Cor_xios.device</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -49,7 +69,6 @@
     <BuildIpa>True</BuildIpa>
     <CodesignKey>iPhone Distribution</CodesignKey>
     <DefineConstants>XIOS;AOT;</DefineConstants>
-    <AssemblyName>Sungiant.Cor_xios.device</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -60,19 +79,6 @@
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Distribution</CodesignKey>
     <DefineConstants>XIOS;AOT;</DefineConstants>
-    <AssemblyName>Sungiant.Cor_xios.device</AssemblyName>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|mono40' ">
-    <Optimize>false</Optimize>
-    <OutputPath>bin\mono40\Debug</OutputPath>
-    <WarningLevel>4</WarningLevel>
-    <AssemblyName>SungiantCorxiosdevice</AssemblyName>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|mono40' ">
-    <Optimize>false</Optimize>
-    <OutputPath>bin\mono40\Release</OutputPath>
-    <WarningLevel>4</WarningLevel>
-    <AssemblyName>SungiantCorxiosdevice</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -90,9 +96,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus %28xios.device%29.csproj">
+    <ProjectReference Include="..\..\..\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus %28xios%29.csproj">
       <Project>{DE5491E6-4DF9-4BBB-9985-E7CD86905D41}</Project>
-      <Name>Sungiant.Abacus (xios.device)</Name>
+      <Name>Sungiant.Abacus (xios)</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

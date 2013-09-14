@@ -57,8 +57,8 @@ using System.Runtime.CompilerServices;
 //[assembly: AssemblyDelaySign(false)]
 //[assembly: AssemblyKeyFile("")]
 
-[assembly: InternalsVisibleTo("Sungiant.Cor.Xios_xios.device")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Xios_xios.simulator")]
+[assembly: InternalsVisibleTo("Sungiant.Cor.Xios")]
 [assembly: InternalsVisibleTo("Sungiant.Cor.Xna4")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Psm_psm")]
+[assembly: InternalsVisibleTo("Sungiant.Cor.Psm")]
+[assembly: InternalsVisibleTo("Sungiant.Cor.MonoMac")]
 
