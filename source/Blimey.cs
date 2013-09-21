@@ -1160,8 +1160,11 @@ namespace Sungiant.Blimey
 			}
 			set
             {
+            	Quaternion q = value;
+				q.Normalise ();
+
                 Matrix44 mat;
-                Matrix44.CreateFromQuaternion(ref value, out mat);
+                Matrix44.CreateFromQuaternion(ref q, out mat);
 
                 Matrix44 r = WorldToLocal * mat;
 
@@ -3744,20 +3747,226 @@ namespace Sungiant.Blimey
 	public class ChaseSubject
 		: Trait
 	{
-		public ChaseSubject()
+        Transform subject;
+        Boolean dirty;
+        Vector3 desiredPositionOffset;
+        Vector3 velocity;
+        
+		// The target that this behaviour will chase.
+		public Transform Subject
 		{
-		}
-	}
+			get { return subject; }
+			set
+			{
+				subject = value;
 
-	public class FreeLocation
-		: Trait
-	{
-		public FreeLocation()
+				// When we set the subject we work out the current vector between us
+				// and the target, so that we always try to keep this seperation
+				// even if the subject moves.
+				// This vector is in world space.
+				desiredPositionOffset = 
+					this.Parent.Transform.Position -
+					subject.Position;
+
+	        	//Console.WriteLine(Parent.Name + ": ChaseSubject desiredPositionOffset=" + desiredPositionOffset);
+			}
+		}
+		
+    	public float Mass { get; set; }
+        public float Damping { get; set; }
+        public float Stiffness { get; set; }
+        public Boolean SpringEnabled { get; set; }
+
+        public override void OnEnable()
+        {
+        	this.ApplyDefaultSettings();
+        }
+
+ 		public void ApplyDefaultSettings()
+ 		{
+ 			this.ResetSpring();
+
+ 			// Mass of the camera body. 
+ 			// Heaver objects require stiffer springs with less 
+ 			// damping to move at the same rate as lighter objects.
+ 			this.Mass = 20.0f; 	
+ 			this.Damping = 40.0f; 
+ 			this.Stiffness = 2000.0f;
+ 			this.SpringEnabled = false;
+
+ 			this.velocity = Vector3.Zero;
+ 		}
+
+        /// Forces camera to be at desired position and to stop moving. The is useful
+        /// when the chased object is first created or after it has been teleported.
+        /// Failing to call this after a large change to the chased object's position
+        /// will result in the camera quickly flying across the world.
+        public void ResetSpring()
+        {
+            this.dirty = true;
+        }
+
+		public override void OnUpdate(AppTime time)
 		{
-		}
-	}
+			Vector3 previousPosition = this.Parent.Transform.Position;
 
-	//
+            Vector3 desiredPosition = Subject.Position + desiredPositionOffset;
+
+	        Vector3 stretch = previousPosition - desiredPosition;
+	        //Console.WriteLine(Parent.Name + ": ChaseSubject stretch=" + stretch + " - (" + previousPosition + " - " + desiredPosition + ")");
+
+            if (this.dirty || ! SpringEnabled)
+            {
+                this.dirty = false;
+
+                // Stop motion
+                this.velocity = Vector3.Zero;
+
+                // Force desired position
+                this.Parent.Transform.Position = desiredPosition;
+            }
+            else
+            {
+	            // Calculate spring force
+	            Vector3 force = -this.Stiffness * stretch - this.Damping * this.velocity;
+
+	            // Apply acceleration
+	            Vector3 acceleration = force / this.Mass;
+	            this.velocity += acceleration * time.Delta;
+
+	            // Apply velocity
+	            Vector3 deltaPosition = this.velocity * time.Delta;
+	            this.Parent.Transform.Position += deltaPosition;
+	        }
+		}
+	}    public class FreeTransform
+        : Trait
+    {
+        public FreeTransform()
+        {
+        }
+    }
+
+/*
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+
+
+namespace SunGiant.Framework.Ophelia.Cameras
+{
+
+    public class FreeCamInputs
+    {
+        public Vector3 mTranslation;
+        public Vector3 mRotation;
+        public float mTranslationSpeed; //in range 0-1
+        public float mRotationSpeedScale;
+        public bool mFixUp;
+    }
+
+    public class FreeCamBehavior
+        : Behavior
+    {
+
+        Vector3 oldPosition = Vector3.Zero;
+        KeyboardState currentKeyboardState = new KeyboardState();
+        GamePadState currentGamePadState = new GamePadState();
+
+        // inputs that come from the controller
+        FreeCamInputs mInputs;
+
+        // fre cam settings
+        float mTranslationSpeedStandard = 10.0f;
+        float mTranslationSpeedMaximum = 100.0f;
+        float mRotationSpeed = 45.0f; //30 degrees per second
+
+        public void WorkOutInputs()
+        {
+            currentKeyboardState = Keyboard.GetState();
+            currentGamePadState = GamePad.GetState(PlayerIndex.One);
+
+            FreeCamInputs input = new FreeCamInputs();
+
+            input.mTranslation = new Vector3(
+                currentGamePadState.ThumbSticks.Left.X,
+                0.0f,
+                -currentGamePadState.ThumbSticks.Left.Y
+                );
+
+            input.mRotation = new Vector3(
+                -currentGamePadState.ThumbSticks.Right.Y,
+                -currentGamePadState.ThumbSticks.Right.X,
+                0.0f
+                );
+
+            input.mTranslationSpeed = currentGamePadState.Triggers.Right;
+
+            input.mRotationSpeedScale = 1.0f;
+
+           input.mFixUp = currentKeyboardState.IsKeyDown(Keys.U);
+            SetInputs(input);
+        }
+
+        public void SetInputs(FreeCamInputs zIn) { mInputs = zIn; }
+
+
+        public void Reset()
+        {
+            //need to change this to that these values tie in with whatever the camera was looking at before
+            localPitch=0.0f;
+            localYaw = 0.0f;
+            localRoll = 0.0f;
+            oldPosition = Vector3.Zero;
+        }
+
+        float localPitch;
+        float localYaw;
+        float localRoll;
+
+        public void Apply(float zDt, CameraState zState, CameraState zPreviousCameraState)
+        {
+            WorkOutInputs();
+
+            float translationSpeed = mTranslationSpeedStandard
+                + mInputs.mTranslationSpeed *
+                (mTranslationSpeedMaximum - mTranslationSpeedStandard);
+
+            Vector3 translation = mInputs.mTranslation * translationSpeed * zDt;
+
+            Vector3 rotation =
+                mInputs.mRotation *
+                MathHelper.ToRadians(mRotationSpeed) *
+                mInputs.mRotationSpeedScale * zDt;
+
+            localPitch += rotation.X;
+            localYaw += rotation.Y;
+            localRoll += rotation.Z;
+
+            Quaternion rotationFromInputs = Quaternion.CreateFromYawPitchRoll(localYaw, localPitch, localRoll);
+
+            Quaternion currentOri = zState.Orientation;
+
+            zState.Orientation = Quaternion.Multiply( currentOri, rotationFromInputs);
+
+            float yTranslation = translation.Y;
+            translation.Y = 0.0f;
+
+            zState.Position += oldPosition + Vector3.Transform(translation, zState.Orientation) + new Vector3(0.0f, yTranslation, 0.0f);
+            zState.focusDistance = 3.0f;
+
+            //update the old position for next time
+            oldPosition = zState.Position;
+            mInputs = null;
+
+        }
+    }
+}*/	//
 	// LOOK AT SUBJECT
 	//
 	// This behaviour has many applications, it is very simple.  You must set the Subject

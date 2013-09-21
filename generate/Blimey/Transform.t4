@@ -142,8 +142,11 @@
 			}
 			set
             {
+            	Quaternion q = value;
+				q.Normalise ();
+
                 Matrix44 mat;
-                Matrix44.CreateFromQuaternion(ref value, out mat);
+                Matrix44.CreateFromQuaternion(ref q, out mat);
 
                 Matrix44 r = WorldToLocal * mat;
 

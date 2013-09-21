@@ -107,7 +107,7 @@ namespace Sungiant.Blimey
 
 <#@ include file="Traits/Camera.t4"#>
 <#@ include file="Traits/ChaseSubject.t4"#>
-<#@ include file="Traits/FreeLocation.t4"#>
+<#@ include file="Traits/FreeTransform.t4"#>
 <#@ include file="Traits/LookAtSubject.t4"#>
 <#@ include file="Traits/MeshRenderer.t4"#>
 <#@ include file="Traits/OrbitAroundSubject.t4"#>
