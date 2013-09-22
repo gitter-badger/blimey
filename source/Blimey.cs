@@ -4214,6 +4214,40 @@ namespace SunGiant.Framework.Ophelia.Cameras
             }
         }
     }
+
+    public struct SpriteConfiguration
+    {
+        static SpriteConfiguration sprConf;
+
+        static SpriteConfiguration()
+        {
+            Single piOver2;
+            RealMaths.Pi(out piOver2);
+            piOver2 /= 2;
+            Matrix44 rotation = Matrix44.Identity;
+            Matrix44.CreateRotationX(-piOver2, out rotation);
+            Quaternion q = Quaternion.CreateFrom(rotation);
+
+            sprConf = new SpriteConfiguration()
+            {
+                SpriteSpaceScale = 100f,
+                SpriteSpaceOrientation = q
+            };
+        }
+
+        public static SpriteConfiguration Default { get { } }
+
+        // Defines the number of units in world 
+        // space a sprite takes up, perhaps this should be a member of each
+        // sprite... Not sure yet...
+        // so as it stands if your sprite has width of 256 and heigh of 128 in 
+        // world space, it will occupy 2.56 x 1.28 units on the face of the
+        // plane it is defined to use.
+        public Single SpriteSpaceScale { get; set; }
+
+        public Quaternion SpriteSpaceOrientation { get; set; }
+
+    }
 	public class Sprite
 		: Trait
 	{
@@ -4231,17 +4265,25 @@ namespace SunGiant.Framework.Ophelia.Cameras
 		public static IShader UnlitShader { get { return unlitShader; } }
         static IShader unlitShader;
 
-        // Currently this shared constant defines the number of units in world 
-        // space a sprite takes up, perhaps this should be a member of each
-        // sprite... Not sure yet...
-        // so as it stands if your sprite has width of 256 and heigh of 128 in 
-        // world space, it will occupy 2.56 x 1.28 units on the face of the
-        // plane it is defined to use.
-        public const Single cSpriteSpaceScale = 100f;
+        // defines how to move from world space to sprite space.
+        Matrix44 spriteSpaceMatrix;
+        public Matrix44 SpriteSpaceMatrix { get { return spriteSpaceMatrix; } }
 
-        public readonly Matrix44 cSpriteSpaceMatrix;
-        public readonly Matrix44 cInverseSpriteSpaceMatrix;
+        // defines how to move from sprite space to world space.
+        Matrix44 inverseSpriteSpaceMatrix;
+        public Matrix44 InverseSpriteSpaceMatrix { get { return inverseSpriteSpaceMatrix; } }
 
+        SpriteConfiguration conf;
+
+        public SpriteConfiguration SpriteConfiguration
+        {
+            get { return conf; }
+            set
+            {
+                conf = value;
+                this.CalculateTransforms();
+            } 
+        } 
 
 
         // PRIVATES!
@@ -4297,31 +4339,22 @@ namespace SunGiant.Framework.Ophelia.Cameras
         //--------------------------------------------------------------------//
         public Sprite()
         {
+            SpriteConfiguration = SpriteConfiguration.Default;
+            desiredColour = Rgba32.White;
+            desiredScale = 1f;
+        }
+
+        void CalculateTransforms()
+        {
             Matrix44 scale;
-            Matrix44.CreateScale(cSpriteSpaceScale, out scale);
+            Matrix44.CreateScale(SpriteConfiguration.SpriteSpaceScale, out scale);
 
-			Single piOver2; RealMaths.Pi(out piOver2); piOver2 /= 2;
-            //piOver2 /= 2f;
-            Matrix44 rotation = Matrix44.Identity;
-            Matrix44.CreateRotationX(-piOver2, out rotation);
-
-            // yxz
-            //Matrix44.CreateFromYawPitchRoll(0, piOver2, -piOver2, out rotation);
+			Matrix44 rotation = Matrix44.CreateFrom(SpriteConfiguration.SpriteSpaceOrientation);
 
             // defines how to move from world space to sprite space.
-            cSpriteSpaceMatrix = rotation * scale;
+            spriteSpaceMatrix = rotation * scale;
 
-            Matrix44.Invert(ref cSpriteSpaceMatrix, out cInverseSpriteSpaceMatrix);
-
-            /*
-
-                Matrix44.CreateScale(1f / cSpriteSpaceScale, out a);
-                Matrix44.CreateRotationX(-piOver2, out b);
-
-            Matrix44 parp = a * b;
-
-            */
-            desiredScale = 1f;			desiredColour = Rgba32.White;
+            Matrix44.Invert(ref spriteSpaceMatrix, out inverseSpriteSpaceMatrix);
         }
 
 		public override void OnAwake()
@@ -4444,7 +4477,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
                 //--------------------------------------------------------------
                 // PT 3
                 // next use the inverse SpriteSpace matrix to transform the above into world space 
-                Matrix44 newLocation =  spriteSpaceLocalLocation * cInverseSpriteSpaceMatrix;
+                Matrix44 newLocation =  spriteSpaceLocalLocation * inverseSpriteSpaceMatrix;
 
 
                 //--------------------------------------------------------------
@@ -4463,7 +4496,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
                 // Apply the result to the parent Scene Object
 
 
-                this.Parent.Transform.LocalScale = ssLocalScale / cSpriteSpaceScale;//why not resultScale!
+                this.Parent.Transform.LocalScale = ssLocalScale / spriteSpaceScale;//why not resultScale!
                 this.Parent.Transform.LocalRotation = resultRot;
                 this.Parent.Transform.LocalPosition = resultPos;
 
