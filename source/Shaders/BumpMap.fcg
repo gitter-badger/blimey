@@ -1,0 +1,25 @@
+/* SCE CONFIDENTIAL
+ * PlayStation(R)Suite SDK 0.98.2
+ * Copyright (C) 2012 Sony Computer Entertainment Inc.
+ * All Rights Reserved.
+ */
+
+void main( 
+          float2 in v_TexCoord0           : TEXCOORD0,
+          float3 in v_LocalLightDirection : TEXCOORD1,
+
+          float4 out Color             : COLOR,
+          uniform sampler2D NormalMap  : TEXUNIT0,
+          uniform sampler2D ColorMap   : TEXUNIT1
+           )
+{
+    float3 L = normalize( v_LocalLightDirection );
+    float3 N = normalize( tex2D( NormalMap, v_TexCoord0 ).xyz * 2.0f - 0.5f );
+
+    float diffuse = max( 0, dot( L, N ) );
+    float3 color = tex2D( ColorMap, v_TexCoord0 ).xyz;
+    //    float3 color = float3( 1.0f, 1.0f, 1.0f );
+    Color.xyz = color * diffuse;
+    Color.w = 1.0f;
+
+}
