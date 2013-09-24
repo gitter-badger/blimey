@@ -32,8 +32,10 @@
 
 			var camUp = this.Parent.Transform.Up;
 
-			var camLook = this.Parent.Transform.Position + (100f * this.Parent.Transform.Forward);
-			Vector3.Normalise(ref camLook, out camLook);
+			var camLook = this.Parent.Transform.Forward;
+			
+			//var camLook = this.Parent.Transform.Position + (100f * this.Parent.Transform.Forward);
+			//Vector3.Normalise(ref camLook, out camLook);
 
 			if (this.Parent.Owner.Cor.System.CurrentOrientation == DeviceOrientation.Rightside)
 			{
@@ -65,8 +67,8 @@
                 if(TempWORKOUTANICERWAY)
                 {
                     Matrix44.CreateOrthographic(
-                        width / Sprite.cSpriteSpaceScale, 
-                        height / Sprite.cSpriteSpaceScale, 
+						width / SpriteConfiguration.Default.SpriteSpaceScale, 
+						height / SpriteConfiguration.Default.SpriteSpaceScale, 
                         1, -1, out _projection);
                 }
                 else

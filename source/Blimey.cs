@@ -3689,8 +3689,10 @@ namespace Sungiant.Blimey
 
 			var camUp = this.Parent.Transform.Up;
 
-			var camLook = this.Parent.Transform.Position + (100f * this.Parent.Transform.Forward);
-			Vector3.Normalise(ref camLook, out camLook);
+			var camLook = this.Parent.Transform.Forward;
+			
+			//var camLook = this.Parent.Transform.Position + (100f * this.Parent.Transform.Forward);
+			//Vector3.Normalise(ref camLook, out camLook);
 
 			if (this.Parent.Owner.Cor.System.CurrentOrientation == DeviceOrientation.Rightside)
 			{
@@ -3722,8 +3724,8 @@ namespace Sungiant.Blimey
                 if(TempWORKOUTANICERWAY)
                 {
                     Matrix44.CreateOrthographic(
-                        width / Sprite.cSpriteSpaceScale, 
-                        height / Sprite.cSpriteSpaceScale, 
+						width / SpriteConfiguration.Default.SpriteSpaceScale, 
+						height / SpriteConfiguration.Default.SpriteSpaceScale, 
                         1, -1, out _projection);
                 }
                 else
@@ -4226,7 +4228,9 @@ namespace SunGiant.Framework.Ophelia.Cameras
             piOver2 /= 2;
             Matrix44 rotation = Matrix44.Identity;
             Matrix44.CreateRotationX(-piOver2, out rotation);
-            Quaternion q = Quaternion.CreateFrom(rotation);
+            Quaternion q;
+            Quaternion.CreateFromRotationMatrix(ref rotation, out q);
+
 
             sprConf = new SpriteConfiguration()
             {
@@ -4235,7 +4239,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
             };
         }
 
-        public static SpriteConfiguration Default { get { } }
+        public static SpriteConfiguration Default { get { return sprConf; } }
 
         // Defines the number of units in world 
         // space a sprite takes up, perhaps this should be a member of each
@@ -4349,7 +4353,12 @@ namespace SunGiant.Framework.Ophelia.Cameras
             Matrix44 scale;
             Matrix44.CreateScale(SpriteConfiguration.SpriteSpaceScale, out scale);
 
-			Matrix44 rotation = Matrix44.CreateFrom(SpriteConfiguration.SpriteSpaceOrientation);
+            Quaternion q = SpriteConfiguration.SpriteSpaceOrientation;
+            Matrix44 rotation;
+            Matrix44.CreateFromQuaternion(
+                ref q,
+                out rotation);
+
 
             // defines how to move from world space to sprite space.
             spriteSpaceMatrix = rotation * scale;
@@ -4496,7 +4505,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
                 // Apply the result to the parent Scene Object
 
 
-                this.Parent.Transform.LocalScale = ssLocalScale / spriteSpaceScale;//why not resultScale!
+                this.Parent.Transform.LocalScale = ssLocalScale / this.conf.SpriteSpaceScale; //why not resultScale!
                 this.Parent.Transform.LocalRotation = resultRot;
                 this.Parent.Transform.LocalPosition = resultPos;
 
