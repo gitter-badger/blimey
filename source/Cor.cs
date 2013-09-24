@@ -807,6 +807,18 @@ public enum CullMode
 		}
 
 		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="Sungiant.Cor.AppTime"/>.
+		/// </summary>
+		public override string ToString ()
+		{
+			return string.Format (
+				"[AppTime: Delta={0}, Elapsed={1}, FrameNumber={2}]", 
+				Delta, 
+				Elapsed, 
+				FrameNumber);
+		}
+
+		/// <summary>
 		/// Gets the time in seconds since between this frame and the last.
 		/// </summary>
 		/// <value>The delta.</value>
