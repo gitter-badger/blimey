@@ -1,40 +1,19 @@
-# Build Folders
 [Bb]in/
 [Oo]bj/
-[Bb]in
-[Oo]bj
-
-# Tests
-test-results/
-*.userprefs
-TestResults
-
-# Build results
 [Dd]ebug/
 [Rr]elease/
-x64/
-*_i.c
-*_p.c
-*.ilk
+[Tt]est[Rr]esults
+[Tt]est-[Rr]esults/
+
+*.userprefs
+*.suo
+*.user
+*.sln.docstates
+*.userprefs
 *.meta
 *.obj
 *.pch
 *.pdb
-*.pgc
-*.pgd
-*.rsp
-*.sbr
-*.tlb
-*.tli
-*.tlh
 *.tmp
 *.log
-*.vspscc
-*.vssscc
-.builds
-
-# Others
-*.suo
-*.user
-*.sln.docstates
-.DS_Store
+*.pidb
