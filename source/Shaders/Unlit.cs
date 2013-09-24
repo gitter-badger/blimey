@@ -1,25 +1,37 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Cor;
+using System;
 
 namespace Sungiant.Cor.Xna4Runtime
 {
 
-	public class VertexLit_PositionNormal
+	public class Unlit
 		: IShader
 	{
-		Microsoft.Xna.Framework.Graphics.BasicEffect _xnaManagedEffect;
+        #region IShader
 
+		public void ResetVariables() {}
+        public void ResetSamplerTargets() { }
+        public void SetVariable<T>(string name, T value) { }
+        public void SetSamplerTarget(string name, Int32 textureSlot) { }
+        public IShaderPass[] Passes { get { return null; } }
+        public VertexElementUsage[] RequiredVertexElements { get { return null; } }
+        public VertexElementUsage[] OptionalVertexElements { get { return null; } }
+        public string Name { get { return "Unlit"; } }
+
+        #endregion
+
+		Microsoft.Xna.Framework.Graphics.BasicEffect _xnaManagedEffect;
 		IShaderPass[] _passArray;
 
-		public VertexLit_PositionNormal(Microsoft.Xna.Framework.Graphics.GraphicsDevice xnaGfxDevice)
+		public Unlit(Microsoft.Xna.Framework.Graphics.GraphicsDevice xnaGfxDevice)
 		{
 			_xnaManagedEffect = new Microsoft.Xna.Framework.Graphics.BasicEffect(xnaGfxDevice);
-			_xnaManagedEffect.EnableDefaultLighting();
-			_xnaManagedEffect.TextureEnabled = false;
-			_xnaManagedEffect.VertexColorEnabled = false;
-			_xnaManagedEffect.LightingEnabled = true;
+			_xnaManagedEffect.TextureEnabled = true;
+			_xnaManagedEffect.VertexColorEnabled = true;
+			_xnaManagedEffect.LightingEnabled = false;
 			_xnaManagedEffect.PreferPerPixelLighting = false;
 			_xnaManagedEffect.FogEnabled = false;
 
@@ -34,7 +46,8 @@ namespace Sungiant.Cor.Xna4Runtime
 
 		}
 
-        public IShaderPass[] Passes
+        /*
+		public IShaderPass[] Passes
 		{
 			get
 			{
@@ -48,7 +61,7 @@ namespace Sungiant.Cor.Xna4Runtime
 			{
 				if (param == "_world")
 				{
-					_xnaManagedEffect.World = ((Matrix44) settings[param].Value).ToXNA();
+					_xnaManagedEffect.World = ((Matrix44)settings[param].Value).ToXNA();
 					continue;
 				}
 
@@ -66,10 +79,11 @@ namespace Sungiant.Cor.Xna4Runtime
 
 				if (param == "_colour")
 				{
-					_xnaManagedEffect.DiffuseColor = ((Rgba32)settings[param].Value).ToXNA().ToVector3();
+					_xnaManagedEffect.DiffuseColor = ((Rgba)settings[param].Value).ToXNA().ToVector3();
 					continue;
 				}
 			}
 		}
+        */
 	}
 }

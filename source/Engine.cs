@@ -9,6 +9,13 @@ namespace Sungiant.Cor.Xna4Runtime
 	public class Engine
 		: ICor
 	{
+
+        readonly GraphicsManager graphics;
+		readonly ResourceManager resources;
+		readonly SystemManager system;
+        readonly InputManager input;
+        readonly AppSettings settings;
+
 		public Engine(
 			Microsoft.Xna.Framework.GraphicsDeviceManager gfxManager,
 			Microsoft.Xna.Framework.Content.ContentManager content,
@@ -16,30 +23,32 @@ namespace Sungiant.Cor.Xna4Runtime
 			IApp startGame
 			)
 		{
-			this.Settings = settings;
+			this.settings = settings;
 
 			this.App = startGame;
 
 			this.XnaGfxManager = gfxManager;
 
-			this.GraphicsManager = new GraphicsManager(this, gfxManager);
-			this.ResourceManager = new ResourceManager(this, gfxManager.GraphicsDevice, content);
-			this.SystemManager = new SystemManager(this, gfxManager);
-			this.InputManager = new InputManager(this);
+            this.graphics = new GraphicsManager(this, gfxManager);
+            this.resources = new ResourceManager(this, gfxManager.GraphicsDevice, content);
+            this.system = new SystemManager(this, gfxManager);
+            this.input = new InputManager(this);
 
 			this.App.Initilise(this);
 			
 		}
 
-		public IGraphicsManager GraphicsManager { get; private set; }
+        public IGraphicsManager Graphics { get { return graphics;  } }
 
-		public IResourceManager ResourceManager { get; private set; }
+        public IResourceManager Resources { get { return resources; } }
 
-		public IInputManager InputManager { get; private set; }
+        public IInputManager Input { get { return input; } }
 
-		public ISystemManager SystemManager { get; private set; }
+        public ISystemManager System { get { return system; } }
 
-		public AppSettings Settings { get; private set; }
+        public AppSettings Settings { get { return settings; } }
+
+        public IAudioManager Audio { get { return null; } }
 
 		private IApp App { get; set; }
 
@@ -47,7 +56,7 @@ namespace Sungiant.Cor.Xna4Runtime
 
 		public Boolean Update(AppTime time)
 		{
-			this.InputManager.Update(time);
+			this.input.Update(time);
 			var retVal = this.App.Update(time);
 
 			return retVal;

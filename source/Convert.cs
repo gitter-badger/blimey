@@ -148,8 +148,8 @@ namespace Sungiant.Cor.Xna4Runtime
 				case VertexElementFormat.Colour: return Microsoft.Xna.Framework.Graphics.VertexElementFormat.Color;
 				case VertexElementFormat.HalfVector2: return Microsoft.Xna.Framework.Graphics.VertexElementFormat.HalfVector2;
 				case VertexElementFormat.HalfVector4: return Microsoft.Xna.Framework.Graphics.VertexElementFormat.HalfVector4;
-				case VertexElementFormat.NormalizedShort2: return Microsoft.Xna.Framework.Graphics.VertexElementFormat.NormalizedShort2;
-				case VertexElementFormat.NormalizedShort4: return Microsoft.Xna.Framework.Graphics.VertexElementFormat.NormalizedShort4;
+				//case VertexElementFormat.NormalizedShort2: return Microsoft.Xna.Framework.Graphics.VertexElementFormat.NormalizedShort2;
+				//case VertexElementFormat.NormalizedShort4: return Microsoft.Xna.Framework.Graphics.VertexElementFormat.NormalizedShort4;
 				case VertexElementFormat.Short2: return Microsoft.Xna.Framework.Graphics.VertexElementFormat.Short2;
 				case VertexElementFormat.Short4: return Microsoft.Xna.Framework.Graphics.VertexElementFormat.Short4;
 				case VertexElementFormat.Single: return Microsoft.Xna.Framework.Graphics.VertexElementFormat.Single;
@@ -169,8 +169,8 @@ namespace Sungiant.Cor.Xna4Runtime
 				case Microsoft.Xna.Framework.Graphics.VertexElementFormat.Color: return VertexElementFormat.Colour;
 				case Microsoft.Xna.Framework.Graphics.VertexElementFormat.HalfVector2: return VertexElementFormat.HalfVector2;
 				case Microsoft.Xna.Framework.Graphics.VertexElementFormat.HalfVector4: return VertexElementFormat.HalfVector4;
-				case Microsoft.Xna.Framework.Graphics.VertexElementFormat.NormalizedShort2: return VertexElementFormat.NormalizedShort2;
-				case Microsoft.Xna.Framework.Graphics.VertexElementFormat.NormalizedShort4: return VertexElementFormat.NormalizedShort4;
+				//case Microsoft.Xna.Framework.Graphics.VertexElementFormat.NormalizedShort2: return VertexElementFormat.NormalizedShort2;
+				//case Microsoft.Xna.Framework.Graphics.VertexElementFormat.NormalizedShort4: return VertexElementFormat.NormalizedShort4;
 				case Microsoft.Xna.Framework.Graphics.VertexElementFormat.Short2: return VertexElementFormat.Short2;
 				case Microsoft.Xna.Framework.Graphics.VertexElementFormat.Short4: return VertexElementFormat.Short4;
 				case Microsoft.Xna.Framework.Graphics.VertexElementFormat.Single: return VertexElementFormat.Single;

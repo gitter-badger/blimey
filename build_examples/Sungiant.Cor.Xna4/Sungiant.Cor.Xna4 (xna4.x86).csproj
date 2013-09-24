@@ -67,8 +67,8 @@
     <Compile Include="..\..\source\Convert.cs">
       <Link>Convert.cs</Link>
     </Compile>
-    <Compile Include="..\..\source\EffectPassWrapper.cs">
-      <Link>EffectPassWrapper.cs</Link>
+    <Compile Include="..\..\source\ShaderPassWrapper.cs">
+      <Link>ShaderPassWrapper.cs</Link>
     </Compile>
     <Compile Include="..\..\source\GeometryBuffer.cs">
       <Link>GeometryBuffer.cs</Link>
@@ -106,23 +106,14 @@
     <Compile Include="..\..\source\XNAGame.cs">
       <Link>XNAGame.cs</Link>
     </Compile>
-    <Compile Include="..\..\source\Shaders\VertexLit_PositionNormal.cs">
-      <Link>Shaders\VertexLit_PositionNormal.cs</Link>
+    <Compile Include="..\..\source\Shaders\VertexLit.cs">
+      <Link>Shaders\VertexLit.cs</Link>
     </Compile>
-    <Compile Include="..\..\source\Shaders\PixelLit_PositionNormal.cs">
-      <Link>Shaders\PixelLit_PositionNormal.cs</Link>
+    <Compile Include="..\..\source\Shaders\PixelLit.cs">
+      <Link>Shaders\PixelLit.cs</Link>
     </Compile>
-    <Compile Include="..\..\source\Shaders\Unlit_Position.cs">
-      <Link>Shaders\Unlit_Position.cs</Link>
-    </Compile>
-    <Compile Include="..\..\source\Shaders\Unlit_PositionColour.cs">
-      <Link>Shaders\Unlit_PositionColour.cs</Link>
-    </Compile>
-    <Compile Include="..\..\source\Shaders\Unlit_PositionColourTexture.cs">
-      <Link>Shaders\Unlit_PositionColourTexture.cs</Link>
-    </Compile>
-    <Compile Include="..\..\source\Shaders\Unlit_PositionTexture.cs">
-      <Link>Shaders\Unlit_PositionTexture.cs</Link>
+    <Compile Include="..\..\source\Shaders\Unlit.cs">
+      <Link>Shaders\Unlit.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

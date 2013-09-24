@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sungiant.Cor;
+using Sungiant.Abacus.Int32Precision;
 
 namespace Sungiant.Cor.Xna4Runtime
 {
@@ -42,6 +43,20 @@ namespace Sungiant.Cor.Xna4Runtime
 			
 			mainDisplayPanel = new ScreenImplementation(engine, gfxManager.GraphicsDevice);
 		}
+
+        public Point2 CurrentDisplaySize
+        {
+            get
+            {
+                Int32 w = ScreenSpecification.ScreenResolutionWidth;
+                Int32 h = ScreenSpecification.ScreenResolutionHeight;
+
+                GetEffectiveDisplaySize(ref w, ref h);
+
+                return new Point2(w, h);
+
+            }
+        }
 
 		public String OperatingSystem { get { return System.Environment.OSVersion.Platform.ToString(); } }
 

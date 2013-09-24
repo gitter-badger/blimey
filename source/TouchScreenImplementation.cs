@@ -23,7 +23,7 @@ namespace Sungiant.Cor.Xna4Runtime
 			: base(engine)
 		{
 
-			this.screen = (engine.SystemManager as SystemManager).MainDisplayPanel;
+			this.screen = (engine.System as SystemManager).MainDisplayPanel;
 		}
 
 		public override IPanelSpecification PanelSpecification { get { return screen; } }
@@ -66,8 +66,8 @@ namespace Sungiant.Cor.Xna4Runtime
 				Int32 id = -42;
 				Vector2 pos = new Vector2(mouseState.X, mouseState.Y);
 
-				Int32 w = engine.GraphicsManager.DisplayStatus.CurrentWidth;
-				Int32 h = engine.GraphicsManager.DisplayStatus.CurrentHeight;
+				Int32 w = engine.Graphics.DisplayStatus.CurrentWidth;
+				Int32 h = engine.Graphics.DisplayStatus.CurrentHeight;
 
 				pos.X = pos.X / (Single)w;
 				pos.Y = pos.Y / (Single)h;

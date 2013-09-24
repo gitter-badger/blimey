@@ -90,13 +90,9 @@ namespace Sungiant.Cor.Xna4Runtime
 
 #if TARGET_XBOX
 				return PanelType.Screen; 
-#endif
-
-#if TARGET_WINDOWS_PHONE
+#elif TARGET_WINDOWS_PHONE
 				return PanelType.TouchScreen;
-#endif
-
-#if TARGET_WINDOWS
+#elif TARGET_WINDOWS || WINDOWS
 
 				if (engine.Settings.MouseGeneratesTouches)
 				{

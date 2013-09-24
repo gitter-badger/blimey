@@ -15,9 +15,16 @@ namespace Sungiant.Cor.Xna4Runtime
 			_xnaEffectPass = xnaEffectPass;
 		}
 
+        public string Name { get { throw new System.NotImplementedException(); } }
+        public void Activate(VertexDeclaration vertexDeclaration)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /*
 		public void Apply()
 		{
 			_xnaEffectPass.Apply();
-		}
+		}*/
 	}
 }

@@ -7,55 +7,21 @@ using System;
 namespace Sungiant.Cor.Xna4Runtime
 {
 
-	public class Unlit_Position
+	public class VertexLit
 		: IShader
 	{
-        public void ResetVariables()
-        {
+        #region IShader
 
-        }
+        public void ResetVariables() { }
+        public void ResetSamplerTargets() { }
+        public void SetVariable<T>(string name, T value) { }
+        public void SetSamplerTarget(string name, Int32 textureSlot) { }
+        public IShaderPass[] Passes { get { return null; } }
+        public VertexElementUsage[] RequiredVertexElements { get { return null; } }
+        public VertexElementUsage[] OptionalVertexElements { get { return null; } }
+        public string Name { get { return "VertexLit"; } }
 
-        public void ResetSamplerTargets()
-        {
-
-        }
-
-        public void SetVariable<T>(string name, T value)
-        {
-
-        }
-
-        public void SetSamplerTarget(string name, Int32 textureSlot)
-        {
-
-        }
-
-        public IShaderPass[] Passes
-        {
-            get
-            {
-                return _passArray;
-            }
-        }
-
-        public VertexElementUsage[] RequiredVertexElements
-        {
-            get
-            {
-                return new VertexElementUsage[] { VertexElementUsage.Position };
-            }
-        }
-
-        public VertexElementUsage[] OptionalVertexElements
-        {
-            get
-            {
-                return new VertexElementUsage[]{};
-            }
-        }
-
-        public string Name { get { return "Unlit_Position"; } }
-
+        #endregion
 
 
 
@@ -63,12 +29,13 @@ namespace Sungiant.Cor.Xna4Runtime
 
 		IShaderPass[] _passArray;
 
-		public Unlit_Position(Microsoft.Xna.Framework.Graphics.GraphicsDevice xnaGfxDevice)
+		public VertexLit(Microsoft.Xna.Framework.Graphics.GraphicsDevice xnaGfxDevice)
 		{
 			_xnaManagedEffect = new Microsoft.Xna.Framework.Graphics.BasicEffect(xnaGfxDevice);
+			_xnaManagedEffect.EnableDefaultLighting();
 			_xnaManagedEffect.TextureEnabled = false;
 			_xnaManagedEffect.VertexColorEnabled = false;
-			_xnaManagedEffect.LightingEnabled = false;
+			_xnaManagedEffect.LightingEnabled = true;
 			_xnaManagedEffect.PreferPerPixelLighting = false;
 			_xnaManagedEffect.FogEnabled = false;
 
@@ -82,8 +49,9 @@ namespace Sungiant.Cor.Xna4Runtime
 			}
 
 		}
+
         /*
-		public IShaderPass[] Passes
+        public IShaderPass[] Passes
 		{
 			get
 			{
@@ -91,13 +59,13 @@ namespace Sungiant.Cor.Xna4Runtime
 			}
 		}
 
-		public void Calibrate(Dictionary<string, ShaderSettingsData> settings)
+		public void Calibrate(Dictionary<string, EffectSettingsData> settings)
 		{
 			foreach (var param in settings.Keys)
 			{
 				if (param == "_world")
 				{
-					_xnaManagedEffect.World = ((Matrix44)settings[param].Value).ToXNA();
+					_xnaManagedEffect.World = ((Matrix44) settings[param].Value).ToXNA();
 					continue;
 				}
 
@@ -115,7 +83,7 @@ namespace Sungiant.Cor.Xna4Runtime
 
 				if (param == "_colour")
 				{
-					_xnaManagedEffect.DiffuseColor = ((Rgba)settings[param].Value).ToXNA().ToVector3();
+					_xnaManagedEffect.DiffuseColor = ((Rgba32)settings[param].Value).ToXNA().ToVector3();
 					continue;
 				}
 			}

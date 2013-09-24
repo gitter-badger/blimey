@@ -11,54 +11,38 @@ namespace Sungiant.Cor.Xna4Runtime
 		Microsoft.Xna.Framework.Content.ContentManager _content;
 
 
-        IShader _phong_positionNormal;
-        IShader _gouraud_positionNormal;
-        IShader _unlit_position;
-        IShader _unlit_positionTexture;
-        IShader _unlit_positionColour;
-        IShader _unlit_positionColourTexture;
+        IShader _pixelLit;
+        IShader _vertexLit;
+        IShader _unlit;
 
 		public ResourceManager(ICor engine, Microsoft.Xna.Framework.Graphics.GraphicsDevice gfxDevice, Microsoft.Xna.Framework.Content.ContentManager content)
 		{
 			_content = content;
 
-			_phong_positionNormal = new PixelLit_PositionNormal(gfxDevice);
-			_gouraud_positionNormal = new VertexLit_PositionNormal(gfxDevice);
-
-			_unlit_position = new Unlit_Position(gfxDevice);
-			_unlit_positionTexture = new Unlit_PositionTexture(gfxDevice);
-			_unlit_positionColour = new Unlit_PositionColour(gfxDevice);
-			_unlit_positionColourTexture = new Unlit_PositionColourTexture(gfxDevice);
-
+            _pixelLit = new PixelLit(gfxDevice);
+            _vertexLit = new VertexLit(gfxDevice);
+			_unlit = new Unlit(gfxDevice);
 		}
 
-		public T Load<T>(Uri uri) where T
+		public T Load<T>(String uri) where T
 			: IResource
 		{
 			return default(T);
 		}
 
-        public IShader GetShader(ShaderType shaderType, VertexDeclaration vertDecl)
+        public IShader LoadShader(ShaderType shaderType)
 		{
-			var vertElems = vertDecl.GetVertexElements();
-
-			var usage = new HashSet<VertexElementUsage>();
-
-			foreach (var elem in vertElems)
-			{
-				usage.Add(elem.VertexElementUsage);
-			}
-
 			switch(shaderType)
 			{
-				case ShaderType.VertexLit: return GetGouraudShaderFor(usage);
-				case ShaderType.PixelLit: return GetPhongShaderFor(usage);
-				case ShaderType.Unlit: return GetUnlitShaderFor(usage);
+                case ShaderType.VertexLit: return _vertexLit;
+                case ShaderType.PixelLit: return _pixelLit;
+				case ShaderType.Unlit: return _unlit;
 				default: return null;
 			}
 			
 		}
 
+        /*
 		IShader GetGouraudShaderFor(HashSet<VertexElementUsage> usage)
 		{
 			if ( usage.Contains(VertexElementUsage.Position) && usage.Contains(VertexElementUsage.Normal) )
@@ -107,6 +91,6 @@ namespace Sungiant.Cor.Xna4Runtime
 
 
 
-
+        */
 	}
 }

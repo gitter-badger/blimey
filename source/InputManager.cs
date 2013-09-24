@@ -8,8 +8,7 @@ namespace Sungiant.Cor.Xna4Runtime
 	{
 
 
-		public MultiTouchController GetTouchScreen() { return _touchScreen; }
-		public MultiTouchController GetRearTouchPanel() { return null; }
+		public MultiTouchController GetMultiTouchController() { return _touchScreen; }
         public PsmGamepad GetPsmGamepad() { return null; }
 		public GenericGamepad GetGenericGamepad(){ return _genericPad; }
 		

@@ -2,17 +2,31 @@ using System.Collections.Generic;
 using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Cor;
+using System;
 
 namespace Sungiant.Cor.Xna4Runtime
 {
 
-	public class PixelLit_PositionNormal
+	public class PixelLit
 		: IShader
 	{
+        #region IShader
+
+        public void ResetVariables() { }
+        public void ResetSamplerTargets() { }
+        public void SetVariable<T>(string name, T value) { }
+        public void SetSamplerTarget(string name, Int32 textureSlot) { }
+        public IShaderPass[] Passes { get { return null; } }
+        public VertexElementUsage[] RequiredVertexElements { get { return null; } }
+        public VertexElementUsage[] OptionalVertexElements { get { return null; } }
+        public string Name { get { return "PixelLit"; } }
+
+        #endregion
+
 		Microsoft.Xna.Framework.Graphics.BasicEffect _xnaManagedEffect;
 		IShaderPass[] _passArray;
 
-		public PixelLit_PositionNormal(Microsoft.Xna.Framework.Graphics.GraphicsDevice xnaGfxDevice)
+		public PixelLit(Microsoft.Xna.Framework.Graphics.GraphicsDevice xnaGfxDevice)
 		{
 			_xnaManagedEffect = new Microsoft.Xna.Framework.Graphics.BasicEffect(xnaGfxDevice);
 			_xnaManagedEffect.EnableDefaultLighting();
@@ -33,6 +47,7 @@ namespace Sungiant.Cor.Xna4Runtime
 
 		}
 
+        /*
 		public IShaderPass[] Passes
 		{
 			get
@@ -70,5 +85,6 @@ namespace Sungiant.Cor.Xna4Runtime
 				}
 			}
 		}
+        */
 	}
 }
