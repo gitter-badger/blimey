@@ -39,11 +39,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sungiant.Cor\Sungiant.Cor %28net40%29.csproj">
+    <ProjectReference Include="..\..\..\cor\build_examples\Sungiant.Cor\Sungiant.Cor %28net40%29.csproj">
       <Project>{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}</Project>
       <Name>Sungiant.Cor (net40)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sungiant.Abacus\Sungiant.Abacus %28net40%29.csproj">
+    <ProjectReference Include="..\..\..\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus %28net40%29.csproj">
       <Project>{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}</Project>
       <Name>Sungiant.Abacus (net40)</Name>
     </ProjectReference>
