@@ -24,12 +24,9 @@
 
 			foreach (String renderPass in settings.RenderPasses)
 			{
-
 				var renderPassSettings = settings.GetRenderPassSettings(renderPass);
 
-				var go = scene.CreateSceneObject(renderPass + " Default Camera");
-
-				
+				var go = scene.CreateSceneObject("RenderPass(" + renderPass + ") Provided Camera");
 
 				var cam = go.AddTrait<Camera>();
 

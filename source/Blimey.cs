@@ -495,12 +495,9 @@ namespace Sungiant.Blimey
 
 			foreach (String renderPass in settings.RenderPasses)
 			{
-
 				var renderPassSettings = settings.GetRenderPassSettings(renderPass);
 
-				var go = scene.CreateSceneObject(renderPass + " Default Camera");
-
-				
+				var go = scene.CreateSceneObject("RenderPass(" + renderPass + ") Provided Camera");
 
 				var cam = go.AddTrait<Camera>();
 
@@ -1163,14 +1160,21 @@ namespace Sungiant.Blimey
             	Quaternion q = value;
 				q.Normalise ();
 
-                Matrix44 mat;
-                Matrix44.CreateFromQuaternion(ref q, out mat);
+				if (WorldToLocal != Matrix44.Identity)
+				{
+					Matrix44 mat;
+					Matrix44.CreateFromQuaternion (ref q, out mat);
 
-                Matrix44 r = WorldToLocal * mat;
+					Matrix44 r = WorldToLocal * mat;
 
-                Quaternion newRot;
-                Quaternion.CreateFromRotationMatrix(ref r, out newRot);
-                LocalRotation = newRot; 
+					Quaternion newRot;
+					Quaternion.CreateFromRotationMatrix (ref r, out newRot);
+					LocalRotation = newRot; 
+				}
+				else
+				{
+					LocalRotation = q;
+				}
 			}
 		}
 
@@ -1208,7 +1212,7 @@ namespace Sungiant.Blimey
             set { _localRotation = BlimeyMathsHelper.EulerToQuaternion(value); } 
 		}
 
-		internal Matrix44 LocalLocation
+		public Matrix44 LocalLocation
         {
 			get
             {
@@ -1333,7 +1337,7 @@ namespace Sungiant.Blimey
 		// direction is perpendicular to worldUp
 		public void LookAt (Transform target)
 		{
-			LookAt (target.Position);
+			LookAt (target, Vector3.Up);
 		}
 
 		public void LookAt (Vector3 worldPosition)
@@ -1352,7 +1356,6 @@ namespace Sungiant.Blimey
 			Vector3.Normalise(ref lookAtVector, out lookAtVector);
 
 			Matrix44 newOrientation = Matrix44.Identity;
-			Vector3.Normalise(ref lookAtVector, out lookAtVector);
 
             newOrientation.Forward = lookAtVector;
 
@@ -1371,6 +1374,56 @@ namespace Sungiant.Blimey
             Quaternion.CreateFromRotationMatrix(ref newOrientation, out rotation);
 
             this.Rotation = rotation;
+
+            /*
+
+			// A vector going from our parent game object to our Subject
+			Vector3 lookAtVector = Subject.Position - this.Parent.Transform.Position;
+
+			// A direction from our parent game object to our Subject
+			Vector3.Normalise(ref lookAtVector, out lookAtVector);
+
+			// Build a new orientation matrix
+			Matrix44 newOrientation = Matrix44.Identity;
+
+			Vector3 t1;
+			Vector3.Normalise(ref lookAtVector, out t1);
+			newOrientation.Forward = t1;
+
+			if (LockToY) 
+            {
+				Vector3 t2 = Vector3.Up;
+				Vector3.Normalise(ref t2, out t2);
+				newOrientation.Up = t2;
+
+                Vector3 b = newOrientation.Backward;
+                Vector3 u = newOrientation.Up;
+
+                Vector3 r;
+                Vector3.Cross(ref b, ref u, out r);
+				Vector3.Normalise(ref r, out r);
+				newOrientation.Right = r;
+			}
+            else
+            {
+                Vector3 f = newOrientation.Forward;
+                Vector3 u = Vector3.Up;
+                Vector3 r;
+                Vector3.Cross(ref f, ref u, out r);
+				Vector3.Normalise(ref r, out r);
+                newOrientation.Right = r;
+
+                Vector3.Cross(ref r, ref f, out u);
+				Vector3.Normalise(ref u, out u);
+				newOrientation.Up = u;
+			}
+
+            Quaternion rotation;
+            Quaternion.CreateFromRotationMatrix(ref newOrientation, out rotation);
+            this.Parent.Transform.Rotation = rotation;
+		}
+
+            */
 		
 		}
 
@@ -3984,9 +4037,6 @@ namespace SunGiant.Framework.Ophelia.Cameras
 		// The target that this behaviour will look at.
 		public Transform Subject = null;
 
-		// Do you want to fix the SceneObjects Up Vector to (0,1,0)
-		public Boolean LockToY = false;
-
 		#endregion
 
 
@@ -3999,50 +4049,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
 			if (Subject == null)
 				return;
 
-			// A vector going from our parent game object to our Subject
-			Vector3 lookAtVector = Subject.Position - this.Parent.Transform.Position;
-
-			// A direction from our parent game object to our Subject
-			Vector3.Normalise(ref lookAtVector, out lookAtVector);
-
-			// Build a new orientation matrix
-			Matrix44 newOrientation = Matrix44.Identity;
-
-			Vector3 t1;
-			Vector3.Normalise(ref lookAtVector, out t1);
-			newOrientation.Forward = t1;
-
-			if (LockToY) 
-            {
-				Vector3 t2 = Vector3.Up;
-				Vector3.Normalise(ref t2, out t2);
-				newOrientation.Up = t2;
-
-                Vector3 b = newOrientation.Backward;
-                Vector3 u = newOrientation.Up;
-
-                Vector3 r;
-                Vector3.Cross(ref b, ref u, out r);
-				Vector3.Normalise(ref r, out r);
-				newOrientation.Right = r;
-			}
-            else
-            {
-                Vector3 f = newOrientation.Forward;
-                Vector3 u = Vector3.Up;
-                Vector3 r;
-                Vector3.Cross(ref f, ref u, out r);
-				Vector3.Normalise(ref r, out r);
-                newOrientation.Right = r;
-
-                Vector3.Cross(ref r, ref f, out u);
-				Vector3.Normalise(ref u, out u);
-				newOrientation.Up = u;
-			}
-
-            Quaternion rotation;
-            Quaternion.CreateFromRotationMatrix(ref newOrientation, out rotation);
-            this.Parent.Transform.Rotation = rotation;
+			this.Parent.Transform.LookAt(Subject);
 		}
 	}
 
@@ -5085,7 +5092,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
 		{
 			
 			if( this.GetTrait<T>() != null )
-				throw new Exception("This behaviour already exists on the gameobject");
+				throw new Exception("This Trait already exists on the gameobject");
 			
 			T behaviour = new T ();
 			behaviours.Add (behaviour);
@@ -5100,6 +5107,14 @@ namespace SunGiant.Framework.Ophelia.Cameras
 			
 			return behaviour;
 
+		}
+
+		public void RemoveTrait<T> ()
+			where T : Trait
+		{
+			Trait trait = behaviours.Find(x => x is T );
+			trait.OnDestroy();
+			behaviours.Remove(trait);
 		}
 
 		public T GetTrait<T> ()

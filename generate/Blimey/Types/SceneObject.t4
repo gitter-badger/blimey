@@ -70,7 +70,7 @@
 		{
 			
 			if( this.GetTrait<T>() != null )
-				throw new Exception("This behaviour already exists on the gameobject");
+				throw new Exception("This Trait already exists on the gameobject");
 			
 			T behaviour = new T ();
 			behaviours.Add (behaviour);
@@ -85,6 +85,14 @@
 			
 			return behaviour;
 
+		}
+
+		public void RemoveTrait<T> ()
+			where T : Trait
+		{
+			Trait trait = behaviours.Find(x => x is T );
+			trait.OnDestroy();
+			behaviours.Remove(trait);
 		}
 
 		public T GetTrait<T> ()

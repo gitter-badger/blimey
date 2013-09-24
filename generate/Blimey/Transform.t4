@@ -145,14 +145,21 @@
             	Quaternion q = value;
 				q.Normalise ();
 
-                Matrix44 mat;
-                Matrix44.CreateFromQuaternion(ref q, out mat);
+				if (WorldToLocal != Matrix44.Identity)
+				{
+					Matrix44 mat;
+					Matrix44.CreateFromQuaternion (ref q, out mat);
 
-                Matrix44 r = WorldToLocal * mat;
+					Matrix44 r = WorldToLocal * mat;
 
-                Quaternion newRot;
-                Quaternion.CreateFromRotationMatrix(ref r, out newRot);
-                LocalRotation = newRot; 
+					Quaternion newRot;
+					Quaternion.CreateFromRotationMatrix (ref r, out newRot);
+					LocalRotation = newRot; 
+				}
+				else
+				{
+					LocalRotation = q;
+				}
 			}
 		}
 
@@ -190,7 +197,7 @@
             set { _localRotation = BlimeyMathsHelper.EulerToQuaternion(value); } 
 		}
 
-		internal Matrix44 LocalLocation
+		public Matrix44 LocalLocation
         {
 			get
             {
@@ -315,7 +322,7 @@
 		// direction is perpendicular to worldUp
 		public void LookAt (Transform target)
 		{
-			LookAt (target.Position);
+			LookAt (target, Vector3.Up);
 		}
 
 		public void LookAt (Vector3 worldPosition)
@@ -334,7 +341,6 @@
 			Vector3.Normalise(ref lookAtVector, out lookAtVector);
 
 			Matrix44 newOrientation = Matrix44.Identity;
-			Vector3.Normalise(ref lookAtVector, out lookAtVector);
 
             newOrientation.Forward = lookAtVector;
 
@@ -353,6 +359,56 @@
             Quaternion.CreateFromRotationMatrix(ref newOrientation, out rotation);
 
             this.Rotation = rotation;
+
+            /*
+
+			// A vector going from our parent game object to our Subject
+			Vector3 lookAtVector = Subject.Position - this.Parent.Transform.Position;
+
+			// A direction from our parent game object to our Subject
+			Vector3.Normalise(ref lookAtVector, out lookAtVector);
+
+			// Build a new orientation matrix
+			Matrix44 newOrientation = Matrix44.Identity;
+
+			Vector3 t1;
+			Vector3.Normalise(ref lookAtVector, out t1);
+			newOrientation.Forward = t1;
+
+			if (LockToY) 
+            {
+				Vector3 t2 = Vector3.Up;
+				Vector3.Normalise(ref t2, out t2);
+				newOrientation.Up = t2;
+
+                Vector3 b = newOrientation.Backward;
+                Vector3 u = newOrientation.Up;
+
+                Vector3 r;
+                Vector3.Cross(ref b, ref u, out r);
+				Vector3.Normalise(ref r, out r);
+				newOrientation.Right = r;
+			}
+            else
+            {
+                Vector3 f = newOrientation.Forward;
+                Vector3 u = Vector3.Up;
+                Vector3 r;
+                Vector3.Cross(ref f, ref u, out r);
+				Vector3.Normalise(ref r, out r);
+                newOrientation.Right = r;
+
+                Vector3.Cross(ref r, ref f, out u);
+				Vector3.Normalise(ref u, out u);
+				newOrientation.Up = u;
+			}
+
+            Quaternion rotation;
+            Quaternion.CreateFromRotationMatrix(ref newOrientation, out rotation);
+            this.Parent.Transform.Rotation = rotation;
+		}
+
+            */
 		
 		}
 

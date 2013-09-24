@@ -1,0 +1,79 @@
+	/// <summary>
+	/// 
+	/// </summary>
+	[TestFixture]
+	public class TransformTests
+	{
+		// Takes two transforms and assets that all the 
+		void MakeSureWorldLocationsMatch(Transform a, Transform b)
+		{
+			MakeSureWorldLocationsMatch (new Transform[] { a, b });
+		}
+
+		void MakeSureWorldLocationsMatch(Transform a, Transform b, Transform c)
+		{
+			
+			MakeSureWorldLocationsMatch (new Transform[] { a, b, c });
+		}
+
+		void MakeSureWorldLocationsMatch(Transform[] transforms)
+		{
+			if( transforms.Length < 2 )
+				return;
+
+			Transform control = transforms [0];
+
+			for (int i = 1; i < transforms.Length; ++i)
+			{
+				Transform t = transforms [i];
+
+				Assert.That (t.Position, Is.EqualTo (control.Position));
+				Assert.That (t.Rotation, Is.EqualTo (control.Rotation));
+				Assert.That (t.Forward, Is.EqualTo (control.Forward));
+				Assert.That (t.Up, Is.EqualTo (control.Up));
+				Assert.That (t.Right, Is.EqualTo (control.Right));
+				Assert.That (t.EulerAngles, Is.EqualTo (control.EulerAngles));
+				Assert.That (t.Location, Is.EqualTo (control.Location));
+			}
+
+		}
+
+
+		[Test]
+		public void Test_ParentTranslation_i()
+		{
+			Transform t1 = new Transform ();
+
+			Transform t2 = new Transform ();
+			t2.Parent = t1;
+
+			Transform t3 = new Transform ();
+			t3.Parent = t2;
+
+			t1.Position = new Vector3 (10, 0, 0);
+
+			MakeSureWorldLocationsMatch (t1, t2, t3);
+
+		}
+		
+
+		[Test]
+		public void Test_ParentRotation_i()
+		{
+			Transform t1 = new Transform ();
+
+			Transform t2 = new Transform ();
+			t2.Parent = t1;
+
+			Transform t3 = new Transform ();
+			t3.Parent = t2;
+
+			Quaternion q; Quaternion.CreateFromYawPitchRoll (0.1f, 0.2f, 0.4f, out q);
+
+			t1.Rotation = q;
+
+			MakeSureWorldLocationsMatch (t1, t2, t3);
+
+		}
+
+	}

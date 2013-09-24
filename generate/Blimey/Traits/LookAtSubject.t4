@@ -14,9 +14,6 @@
 		// The target that this behaviour will look at.
 		public Transform Subject = null;
 
-		// Do you want to fix the SceneObjects Up Vector to (0,1,0)
-		public Boolean LockToY = false;
-
 		#endregion
 
 
@@ -29,50 +26,7 @@
 			if (Subject == null)
 				return;
 
-			// A vector going from our parent game object to our Subject
-			Vector3 lookAtVector = Subject.Position - this.Parent.Transform.Position;
-
-			// A direction from our parent game object to our Subject
-			Vector3.Normalise(ref lookAtVector, out lookAtVector);
-
-			// Build a new orientation matrix
-			Matrix44 newOrientation = Matrix44.Identity;
-
-			Vector3 t1;
-			Vector3.Normalise(ref lookAtVector, out t1);
-			newOrientation.Forward = t1;
-
-			if (LockToY) 
-            {
-				Vector3 t2 = Vector3.Up;
-				Vector3.Normalise(ref t2, out t2);
-				newOrientation.Up = t2;
-
-                Vector3 b = newOrientation.Backward;
-                Vector3 u = newOrientation.Up;
-
-                Vector3 r;
-                Vector3.Cross(ref b, ref u, out r);
-				Vector3.Normalise(ref r, out r);
-				newOrientation.Right = r;
-			}
-            else
-            {
-                Vector3 f = newOrientation.Forward;
-                Vector3 u = Vector3.Up;
-                Vector3 r;
-                Vector3.Cross(ref f, ref u, out r);
-				Vector3.Normalise(ref r, out r);
-                newOrientation.Right = r;
-
-                Vector3.Cross(ref r, ref f, out u);
-				Vector3.Normalise(ref u, out u);
-				newOrientation.Up = u;
-			}
-
-            Quaternion rotation;
-            Quaternion.CreateFromRotationMatrix(ref newOrientation, out rotation);
-            this.Parent.Transform.Rotation = rotation;
+			this.Parent.Transform.LookAt(Subject);
 		}
 	}
 
