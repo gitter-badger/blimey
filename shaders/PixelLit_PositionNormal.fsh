@@ -13,7 +13,6 @@ uniform mediump vec3 u_dirLight2Direction;
 uniform mediump vec3 u_dirLight2DiffuseColour;
 uniform mediump vec3 u_dirLight2SpecularColour;
 
-uniform mediump vec4 u_colour;
 uniform mediump vec3 u_ambientLightColour;
 uniform mediump vec3 u_emissiveColour;
 uniform mediump vec3 u_specularColour;
@@ -21,7 +20,7 @@ uniform mediump float u_specularPower;
 
 varying mediump vec4 v_positionWS;
 varying mediump vec3 v_normalWS;
-
+varying mediump vec4 v_tint;
 
 //-----------------------------------------------------------------------------
 // ComputePerPixelLights
@@ -57,7 +56,7 @@ void ComputePerPixelLights(in mediump vec3 E, in mediump vec3 N, out mediump vec
 	if (dt != 0.0)
 		specular += u_dirLight2SpecularColour * pow(max(0.0,dot(H,N)), u_specularPower);
 	
-	diffuse *= u_colour.rgb;
+	diffuse *= v_tint.rgb;
 	diffuse += u_emissiveColour;
 	specular *= u_specularColour;	
 	
@@ -75,10 +74,10 @@ void main()
 	mediump vec3 specularResult = vec3(0.0, 0.0, 0.0);
 	ComputePerPixelLights(E, N, diffuseResult, specularResult);
 
-	mediump vec4 diffuse = vec4(diffuseResult * u_colour.rgb, u_colour.a);
+	mediump vec4 diffuse = vec4(diffuseResult * v_tint.rgb, v_tint.a);
 	mediump vec4 colour = diffuse + vec4(specularResult.x, specularResult.y, specularResult.z, 0);
-	//colour.rgb = mix(colour.rgb, u_fogColour, v_positionWS);
+	
+	colour.rgb = mix(colour.rgb, u_fogColour, v_positionWS.w);
 	
 	gl_FragColor = colour;
-	
 }

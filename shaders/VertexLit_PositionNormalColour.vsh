@@ -1,6 +1,6 @@
 attribute mediump vec4 a_vertPos;
 attribute mediump vec3 a_vertNormal;
-attribute mediump vec2 a_vertTexcoord;
+attribute mediump vec4 a_vertColour;
 
 uniform mediump mat4 u_world;
 uniform mediump mat4 u_view;
@@ -34,7 +34,6 @@ uniform mediump vec3 u_fogColour;
 
 varying mediump vec4 v_diffuse;
 varying mediump vec4 v_specular;
-varying mediump vec2 v_texCoord;
 
 vec4 lit(in mediump float NdotL, in mediump float NdotH, in mediump float m)
 {
@@ -99,16 +98,10 @@ void ComputeFogFactor(in mediump float d, out mediump float fogFactor)
 void main()
 {
 	mediump vec4 pos_ws = u_world * a_vertPos;
-
-	v_texCoord = vec2(0.0,0.0);
 	mediump vec4 pos_vs = u_view * pos_ws;
 	mediump vec4 pos_ps = u_proj * pos_vs;
 
 	gl_Position = pos_ps;
-
-	v_texCoord = a_vertTexcoord;
-	v_diffuse = vec4(0.0, 0.0, 0.0, 0.0);
-	v_specular = vec4(0.0, 0.0, 0.0, 0.0);
 	
 	mediump vec4 temp = vec4(a_vertNormal.xyz, 0.0);
 	
@@ -126,16 +119,11 @@ void main()
 	ComputeLights(E, N, diffuse, specular);
 	ComputeFogFactor(length(posToEye), fogFactor);
 	
-	
-	v_diffuse = vec4(diffuse.rgb, u_colour.a);
-	
-	v_specular = vec4(specular, fogFactor);
-	
-	/*
+	v_diffuse	= vec4(diffuse.rgb, u_colour.a) * a_vertColour;
 	
 	v_specular = vec4(0.0, 0.0, 0.0, 0.0);
-	v_specular.xyz	= specular;
+	v_specular.xyz = specular;
 	v_specular.w = fogFactor;
-	*/
-	
+
+
 }

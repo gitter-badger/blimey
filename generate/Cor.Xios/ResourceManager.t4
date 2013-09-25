@@ -1,8 +1,15 @@
 	public class ResourceManager
 		: IResourceManager
 	{
+		Dictionary<ShaderType, IShader> shaderCache;
+
 		public ResourceManager()
 		{
+			shaderCache = new Dictionary<ShaderType, IShader>();
+
+			shaderCache[ShaderType.Unlit] = CorShaders.CreateUnlit();
+			shaderCache[ShaderType.VertexLit] = CorShaders.CreatePhongVertexLit();
+			shaderCache[ShaderType.PixelLit] = CorShaders.CreatePhongPixelLit();
 		}
 
 		public T Load<T>(string path) where T : IResource
@@ -22,31 +29,14 @@
 			throw new NotImplementedException();
 		}
 
-		Dictionary<ShaderType, IShader> shaderCache = new Dictionary<ShaderType, IShader>();
 		public IShader LoadShader(ShaderType shaderType)
 		{
 			if( !shaderCache.ContainsKey(shaderType) )
 			{
-				shaderCache[shaderType] = CorShaders.CreateUnlit();
+				throw new NotImplementedException();
 			}
 
 			return shaderCache[shaderType];
-
-
-			//if (shaderType == ShaderType.Unlit)
-			//{
-			//	return CorShaders.CreateUnlit();
-			//}
-			//if (shaderType == ShaderType.VertexLit || shaderType == ShaderType.PixelLit)
-			//{
-			//	return CorShaders.CreatePhongVertexLit();
-			//}
-			//if (shaderType == ShaderType.PixelLit)
-			//{
-			//	return CorShaders.CreatePhongPixelLit();
-			//}
-
-			//throw new NotImplementedException();
 		}
 	}
 

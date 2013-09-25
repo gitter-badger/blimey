@@ -2157,8 +2157,15 @@ namespace Sungiant.Cor.Xios
 	public class ResourceManager
 		: IResourceManager
 	{
+		Dictionary<ShaderType, IShader> shaderCache;
+
 		public ResourceManager()
 		{
+			shaderCache = new Dictionary<ShaderType, IShader>();
+
+			shaderCache[ShaderType.Unlit] = CorShaders.CreateUnlit();
+			shaderCache[ShaderType.VertexLit] = CorShaders.CreatePhongVertexLit();
+			shaderCache[ShaderType.PixelLit] = CorShaders.CreatePhongPixelLit();
 		}
 
 		public T Load<T>(string path) where T : IResource
@@ -2178,31 +2185,14 @@ namespace Sungiant.Cor.Xios
 			throw new NotImplementedException();
 		}
 
-		Dictionary<ShaderType, IShader> shaderCache = new Dictionary<ShaderType, IShader>();
 		public IShader LoadShader(ShaderType shaderType)
 		{
 			if( !shaderCache.ContainsKey(shaderType) )
 			{
-				shaderCache[shaderType] = CorShaders.CreateUnlit();
+				throw new NotImplementedException();
 			}
 
 			return shaderCache[shaderType];
-
-
-			//if (shaderType == ShaderType.Unlit)
-			//{
-			//	return CorShaders.CreateUnlit();
-			//}
-			//if (shaderType == ShaderType.VertexLit || shaderType == ShaderType.PixelLit)
-			//{
-			//	return CorShaders.CreatePhongVertexLit();
-			//}
-			//if (shaderType == ShaderType.PixelLit)
-			//{
-			//	return CorShaders.CreatePhongPixelLit();
-			//}
-
-			//throw new NotImplementedException();
 		}
 	}
 
@@ -4151,14 +4141,14 @@ namespace Sungiant.Cor.Xios
 		
 		public void Set(object value)
 		{
-
+			//todo this should be using convert turn the data into proper opengl es types.
 			Type t = value.GetType();
 			
 			if( t == typeof(Matrix44) )
 			{
 				var castValue = (Matrix44) value;
-
-				OpenTK.Graphics.ES20.GL.UniformMatrix4( UniformLocation, 1, false, ref castValue.M11 );
+				var otkValue = MatrixConverter.ToOpenTK(castValue);
+				OpenTK.Graphics.ES20.GL.UniformMatrix4( UniformLocation, false, ref otkValue );
 			}
 			else if( t == typeof(Int32) )
 			{
@@ -4273,7 +4263,7 @@ namespace Sungiant.Cor.Xios
 		{
 			var parameter = new ShaderDefinition()
 			{
-				Name = "PhongPixelLit",
+				Name = "PixelLit",
 				PassNames = new List<string>() { "Main" },
 				InputDefinitions = new List<ShaderInputDefinition>()
 				{
@@ -4375,7 +4365,7 @@ namespace Sungiant.Cor.Xios
 						NiceName = "SpecularPower",
 						Name = "u_specularPower",
 						Type = typeof(Single),
-						DefaultValue = 0,
+						DefaultValue = 0f,
 					},
 					new ShaderVariableDefinition()
 					{
@@ -4389,21 +4379,21 @@ namespace Sungiant.Cor.Xios
 						NiceName = "FogEnabled",
 						Name = "u_fogEnabled",
 						Type = typeof(Single),
-						DefaultValue = 1,
+						DefaultValue = 1f,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "FogStart",
 						Name = "u_fogStart",
 						Type = typeof(Single),
-						DefaultValue = 100,
+						DefaultValue = 100f,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "FogEnd",
 						Name = "u_fogEnd",
 						Type = typeof(Single),
-						DefaultValue = 200,
+						DefaultValue = 200f,
 					},
 					new ShaderVariableDefinition()
 					{
@@ -4480,7 +4470,7 @@ namespace Sungiant.Cor.Xios
 				{
 					new ShaderVariantDefinition()
 					{
-						VariantName = "Phong_PixelLit_PositionNormal",
+						VariantName = "PixelLit_PositionNormal",
 						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
 						{
 							new ShaderVarientPassDefinition()
@@ -4488,8 +4478,56 @@ namespace Sungiant.Cor.Xios
 								PassName = "Main",
 								PassDefinition = new OglesShaderDefinition()
 								{
-									VertexShaderPath = "Shaders/Phong_PixelLit_PositionNormal.vsh",
-									PixelShaderPath = "Shaders/Phong_PixelLit_PositionNormal.fsh",
+									VertexShaderPath = "Shaders/PixelLit_PositionNormal.vsh",
+									PixelShaderPath = "Shaders/PixelLit_PositionNormal.fsh",
+								},
+							},
+						},
+					},
+					new ShaderVariantDefinition()
+					{
+						VariantName = "PixelLit_PositionNormalTexture",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/PixelLit_PositionNormalTexture.vsh",
+									PixelShaderPath = "Shaders/PixelLit_PositionNormalTexture.fsh",
+								},
+							},
+						},
+					},
+					new ShaderVariantDefinition()
+					{
+						VariantName = "PixelLit_PositionNormalColour",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/PixelLit_PositionNormalColour.vsh",
+									PixelShaderPath = "Shaders/PixelLit_PositionNormalColour.fsh",
+								},
+							},
+						},
+					},
+					new ShaderVariantDefinition()
+					{
+						VariantName = "PixelLit_PositionNormalTextureColour",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/PixelLit_PositionNormalTextureColour.vsh",
+									PixelShaderPath = "Shaders/PixelLit_PositionNormalTextureColour.fsh",
 								},
 							},
 						},
@@ -4511,7 +4549,7 @@ namespace Sungiant.Cor.Xios
 		{
 			var parameter = new ShaderDefinition()
 			{
-				Name = "VertexPixelLit",
+				Name = "VertexLit",
 				PassNames = new List<string>() { "Main" },
 				InputDefinitions = new List<ShaderInputDefinition>()
 				{
@@ -4612,8 +4650,8 @@ namespace Sungiant.Cor.Xios
 					{
 						NiceName = "SpecularPower",
 						Name = "u_specularPower",
-						Type = typeof(Int32),
-						DefaultValue = 0,
+						Type = typeof(Single),
+						DefaultValue = 0f,
 					},
 					new ShaderVariableDefinition()
 					{
@@ -4626,22 +4664,22 @@ namespace Sungiant.Cor.Xios
 					{
 						NiceName = "FogEnabled",
 						Name = "u_fogEnabled",
-						Type = typeof(Int32),
-						DefaultValue = 1,
+						Type = typeof(Single),
+						DefaultValue = 1f,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "FogStart",
 						Name = "u_fogStart",
-						Type = typeof(Int32),
-						DefaultValue = 100,
+						Type = typeof(Single),
+						DefaultValue = 100f,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "FogEnd",
 						Name = "u_fogEnd",
-						Type = typeof(Int32),
-						DefaultValue = 200,
+						Type = typeof(Single),
+						DefaultValue = 200f,
 					},
 					new ShaderVariableDefinition()
 					{
@@ -4718,7 +4756,7 @@ namespace Sungiant.Cor.Xios
 				{
 					new ShaderVariantDefinition()
 					{
-						VariantName = "Phong_VertexLit_PositionNormal",
+						VariantName = "VertexLit_PositionNormal",
 						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
 						{
 							new ShaderVarientPassDefinition()
@@ -4726,15 +4764,15 @@ namespace Sungiant.Cor.Xios
 								PassName = "Main",
 								PassDefinition = new OglesShaderDefinition()
 								{
-									VertexShaderPath = "Shaders/Phong_VertexLit_PositionNormal.vsh",
-									PixelShaderPath = "Shaders/Phong_VertexLit_PositionNormal.fsh",
+									VertexShaderPath = "Shaders/VertexLit_PositionNormal.vsh",
+									PixelShaderPath = "Shaders/VertexLit_PositionNormal.fsh",
 								},
 							},
 						},
 					},
 					new ShaderVariantDefinition()
 					{
-						VariantName = "Phong_VertexLit_PositionNormalTexture",
+						VariantName = "VertexLit_PositionNormalTexture",
 						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
 						{
 							new ShaderVarientPassDefinition()
@@ -4742,8 +4780,40 @@ namespace Sungiant.Cor.Xios
 								PassName = "Main",
 								PassDefinition = new OglesShaderDefinition()
 								{
-									VertexShaderPath = "Shaders/Phong_VertexLit_PositionNormalTexture.vsh",
-									PixelShaderPath = "Shaders/Phong_VertexLit_PositionNormalTexture.fsh",
+									VertexShaderPath = "Shaders/VertexLit_PositionNormalTexture.vsh",
+									PixelShaderPath = "Shaders/VertexLit_PositionNormalTexture.fsh",
+								},
+							},
+						},
+					},
+					new ShaderVariantDefinition()
+					{
+						VariantName = "VertexLit_PositionNormalColour",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/VertexLit_PositionNormalColour.vsh",
+									PixelShaderPath = "Shaders/VertexLit_PositionNormalColour.fsh",
+								},
+							},
+						},
+					},
+					new ShaderVariantDefinition()
+					{
+						VariantName = "VertexLit_PositionNormalTextureColour",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/VertexLit_PositionNormalTextureColour.vsh",
+									PixelShaderPath = "Shaders/VertexLit_PositionNormalTextureColour.fsh",
 								},
 							},
 						},

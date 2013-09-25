@@ -4,7 +4,7 @@
 		{
 			var parameter = new ShaderDefinition()
 			{
-				Name = "PhongPixelLit",
+				Name = "PixelLit",
 				PassNames = new List<string>() { "Main" },
 				InputDefinitions = new List<ShaderInputDefinition>()
 				{
@@ -106,7 +106,7 @@
 						NiceName = "SpecularPower",
 						Name = "u_specularPower",
 						Type = typeof(Single),
-						DefaultValue = 0,
+						DefaultValue = 0f,
 					},
 					new ShaderVariableDefinition()
 					{
@@ -120,21 +120,21 @@
 						NiceName = "FogEnabled",
 						Name = "u_fogEnabled",
 						Type = typeof(Single),
-						DefaultValue = 1,
+						DefaultValue = 1f,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "FogStart",
 						Name = "u_fogStart",
 						Type = typeof(Single),
-						DefaultValue = 100,
+						DefaultValue = 100f,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "FogEnd",
 						Name = "u_fogEnd",
 						Type = typeof(Single),
-						DefaultValue = 200,
+						DefaultValue = 200f,
 					},
 					new ShaderVariableDefinition()
 					{
@@ -211,7 +211,7 @@
 				{
 					new ShaderVariantDefinition()
 					{
-						VariantName = "Phong_PixelLit_PositionNormal",
+						VariantName = "PixelLit_PositionNormal",
 						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
 						{
 							new ShaderVarientPassDefinition()
@@ -219,8 +219,56 @@
 								PassName = "Main",
 								PassDefinition = new OglesShaderDefinition()
 								{
-									VertexShaderPath = "Shaders/Phong_PixelLit_PositionNormal.vsh",
-									PixelShaderPath = "Shaders/Phong_PixelLit_PositionNormal.fsh",
+									VertexShaderPath = "Shaders/PixelLit_PositionNormal.vsh",
+									PixelShaderPath = "Shaders/PixelLit_PositionNormal.fsh",
+								},
+							},
+						},
+					},
+					new ShaderVariantDefinition()
+					{
+						VariantName = "PixelLit_PositionNormalTexture",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/PixelLit_PositionNormalTexture.vsh",
+									PixelShaderPath = "Shaders/PixelLit_PositionNormalTexture.fsh",
+								},
+							},
+						},
+					},
+					new ShaderVariantDefinition()
+					{
+						VariantName = "PixelLit_PositionNormalColour",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/PixelLit_PositionNormalColour.vsh",
+									PixelShaderPath = "Shaders/PixelLit_PositionNormalColour.fsh",
+								},
+							},
+						},
+					},
+					new ShaderVariantDefinition()
+					{
+						VariantName = "PixelLit_PositionNormalTextureColour",
+						VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+						{
+							new ShaderVarientPassDefinition()
+							{
+								PassName = "Main",
+								PassDefinition = new OglesShaderDefinition()
+								{
+									VertexShaderPath = "Shaders/PixelLit_PositionNormalTextureColour.vsh",
+									PixelShaderPath = "Shaders/PixelLit_PositionNormalTextureColour.fsh",
 								},
 							},
 						},

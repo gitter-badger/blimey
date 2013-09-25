@@ -37,14 +37,14 @@
 		
 		public void Set(object value)
 		{
-
+			//todo this should be using convert turn the data into proper opengl es types.
 			Type t = value.GetType();
 			
 			if( t == typeof(Matrix44) )
 			{
 				var castValue = (Matrix44) value;
-
-				OpenTK.Graphics.ES20.GL.UniformMatrix4( UniformLocation, 1, false, ref castValue.M11 );
+				var otkValue = MatrixConverter.ToOpenTK(castValue);
+				OpenTK.Graphics.ES20.GL.UniformMatrix4( UniformLocation, false, ref otkValue );
 			}
 			else if( t == typeof(Int32) )
 			{

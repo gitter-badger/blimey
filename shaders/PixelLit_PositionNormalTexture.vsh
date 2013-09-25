@@ -1,11 +1,13 @@
 attribute mediump vec4 a_vertPos;
 attribute mediump vec3 a_vertNormal;
+attribute mediump vec2 a_vertTexcoord;
 
 // UNIFORMS
 
 uniform mediump mat4 u_world;
 uniform mediump mat4 u_view;
 uniform mediump mat4 u_proj;
+uniform mediump vec4 u_colour;
 
 uniform mediump vec3 u_eyePosition;
 
@@ -16,6 +18,8 @@ uniform mediump float u_fogEnd;
 
 varying mediump vec4 v_positionWS;
 varying mediump vec3 v_normalWS;
+varying mediump vec2 v_texCoord;
+varying mediump vec4 v_tint;
 
 void ComputeFogFactor(in mediump float d, out mediump float fogFactor)
 {
@@ -46,4 +50,8 @@ void main()
 	temp = u_world * temp;
 	
 	v_normalWS = normalize(temp.xyz);
+	
+	v_texCoord = a_vertTexcoord;
+	
+	v_tint = u_colour;
 }

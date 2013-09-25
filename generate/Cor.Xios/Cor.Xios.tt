@@ -104,8 +104,8 @@ namespace Sungiant.Cor.Xios
 
 	#region Shader Definitions
 
-<#@ include file="CorShaders/PhongPixelLit.t4"#>
-<#@ include file="CorShaders/PhongVertexLit.t4"#>
+<#@ include file="CorShaders/PixelLit.t4"#>
+<#@ include file="CorShaders/VertexLit.t4"#>
 <#@ include file="CorShaders/Unlit.t4"#>
 
 	#endregion
