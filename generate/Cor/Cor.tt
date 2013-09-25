@@ -93,7 +93,6 @@ namespace Sungiant.Cor
 <#@ include file="CorTypes/AppSettings.t4"#>
 <#@ include file="CorTypes/AppTime.t4"#>
 <#@ include file="CorTypes/GenericGamepad.t4"#>
-<#@ include file="CorTypes/LightingManager.t4"#>
 <#@ include file="CorTypes/MultitouchController.t4"#>
 <#@ include file="CorTypes/Touch.t4"#>
 <#@ include file="CorTypes/TouchCollection.t4"#>

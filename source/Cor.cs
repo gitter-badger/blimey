@@ -817,7 +817,7 @@ public enum CullMode
 				Elapsed, 
 				FrameNumber);
 		}
-
+		
 		/// <summary>
 		/// Gets the time in seconds since between this frame and the last.
 		/// </summary>
@@ -920,43 +920,6 @@ public enum CullMode
 				if( vitaGamepad.Buttons.Select == ButtonState.Pressed) _option = ButtonState.Pressed;
 				if( vitaGamepad.Buttons.Start == ButtonState.Pressed) _pause = ButtonState.Pressed;
 			}
-
-		}
-	}
-	public static class LightingManager
-	{
-		public static Vector3 ambientLightColour;
-
-		public static Vector3 dirLight0Direction;
-		public static Vector3 dirLight0DiffuseColour;
-		public static Vector3 dirLight0SpecularColour;
-
-		public static Vector3 dirLight1Direction;
-		public static Vector3 dirLight1DiffuseColour;
-		public static Vector3 dirLight1SpecularColour;
-
-		public static Vector3 dirLight2Direction;
-		public static Vector3 dirLight2DiffuseColour;
-		public static Vector3 dirLight2SpecularColour;
-
-		static LightingManager()
-		{
-			Rgba32.DarkGray.ToVector3(out ambientLightColour);
-
-			dirLight0Direction = new Vector3(-0.3f, -0.9f, +0.3f); 
-			Vector3.Normalise(ref dirLight0Direction, out dirLight0Direction);
-			Rgba32.DarkGoldenrod.ToVector3(out dirLight0DiffuseColour);
-			Rgba32.Beige.ToVector3(out dirLight0SpecularColour);
-
-			dirLight1Direction = new Vector3(0.3f, 0.1f, -0.3f);
-			Vector3.Normalise(ref dirLight1Direction, out dirLight1Direction);
-			Rgba32.DarkGoldenrod.ToVector3(out dirLight1DiffuseColour);
-			Rgba32.Beige.ToVector3(out dirLight1SpecularColour);
-
-			dirLight2Direction = new Vector3( -0.7f, -0.3f, +0.1f);
-			Vector3.Normalise(ref dirLight2Direction, out dirLight2Direction);
-			Rgba32.DarkGoldenrod.ToVector3(out dirLight2DiffuseColour);
-			Rgba32.Beige.ToVector3(out dirLight2SpecularColour);
 
 		}
 	}
