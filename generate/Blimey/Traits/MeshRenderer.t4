@@ -33,6 +33,20 @@
 			// Set our vertex declaration, vertex buffer, and index buffer.
 			zGfx.SetActiveGeometryBuffer(Mesh.GeomBuffer);
 
+			Material.SetVector3( "AmbientLightColour", LightingManager.ambientLightColour );
+
+			Material.SetVector3( "DirLight0Direction", LightingManager.dirLight0Direction );
+			Material.SetVector3( "DirLight0DiffuseColour", LightingManager.dirLight0DiffuseColour );
+			Material.SetVector3( "DirLight0SpecularColour", LightingManager.dirLight0SpecularColour );
+			
+			Material.SetVector3( "DirLight1Direction", LightingManager.dirLight1Direction );
+			Material.SetVector3( "DirLight1DiffuseColour", LightingManager.dirLight1DiffuseColour );
+			Material.SetVector3( "DirLight1SpecularColour", LightingManager.dirLight1SpecularColour );
+			
+			Material.SetVector3( "DirLight2Direction", LightingManager.dirLight2Direction );
+			Material.SetVector3( "DirLight2DiffuseColour", LightingManager.dirLight2DiffuseColour );
+			Material.SetVector3( "DirLight2SpecularColour", LightingManager.dirLight2SpecularColour );
+
 			// Get the material's shader and apply all of the settings
 			// it needs.
 			Material.UpdateShaderVariables (
@@ -40,7 +54,6 @@
 				zView,
 				zProjection
 				);
-
 			
 			var shader = Material.GetShader ();
 

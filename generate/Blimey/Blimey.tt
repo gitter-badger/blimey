@@ -63,6 +63,7 @@ namespace Sungiant.Blimey
 <#@ include file="Space.t4"#>
 <#@ include file="Teletype.t4"#>
 <#@ include file="Transform.t4"#>
+<#@ include file="LightingManager.t4"#>
 
 	#region DebugUtils
 

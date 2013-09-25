@@ -1591,6 +1591,43 @@ namespace Sungiant.Blimey
 		}
 	}
 
+	public static class LightingManager
+	{
+		public static Vector3 ambientLightColour;
+
+		public static Vector3 dirLight0Direction;
+		public static Vector3 dirLight0DiffuseColour;
+		public static Vector3 dirLight0SpecularColour;
+
+		public static Vector3 dirLight1Direction;
+		public static Vector3 dirLight1DiffuseColour;
+		public static Vector3 dirLight1SpecularColour;
+
+		public static Vector3 dirLight2Direction;
+		public static Vector3 dirLight2DiffuseColour;
+		public static Vector3 dirLight2SpecularColour;
+
+		static LightingManager()
+		{
+			Rgba32.DarkGray.ToVector3(out ambientLightColour);
+
+			dirLight0Direction = new Vector3(-0.3f, -0.9f, +0.3f); 
+			Vector3.Normalise(ref dirLight0Direction, out dirLight0Direction);
+			Rgba32.DarkGoldenrod.ToVector3(out dirLight0DiffuseColour);
+			Rgba32.Beige.ToVector3(out dirLight0SpecularColour);
+
+			dirLight1Direction = new Vector3(0.3f, 0.1f, -0.3f);
+			Vector3.Normalise(ref dirLight1Direction, out dirLight1Direction);
+			Rgba32.DarkGoldenrod.ToVector3(out dirLight1DiffuseColour);
+			Rgba32.Beige.ToVector3(out dirLight1SpecularColour);
+
+			dirLight2Direction = new Vector3( -0.7f, -0.3f, +0.1f);
+			Vector3.Normalise(ref dirLight2Direction, out dirLight2Direction);
+			Rgba32.DarkGoldenrod.ToVector3(out dirLight2DiffuseColour);
+			Rgba32.Beige.ToVector3(out dirLight2SpecularColour);
+
+		}
+	}
 
 	#region DebugUtils
 
@@ -4088,6 +4125,20 @@ namespace SunGiant.Framework.Ophelia.Cameras
 			// Set our vertex declaration, vertex buffer, and index buffer.
 			zGfx.SetActiveGeometryBuffer(Mesh.GeomBuffer);
 
+			Material.SetVector3( "AmbientLightColour", LightingManager.ambientLightColour );
+
+			Material.SetVector3( "DirLight0Direction", LightingManager.dirLight0Direction );
+			Material.SetVector3( "DirLight0DiffuseColour", LightingManager.dirLight0DiffuseColour );
+			Material.SetVector3( "DirLight0SpecularColour", LightingManager.dirLight0SpecularColour );
+			
+			Material.SetVector3( "DirLight1Direction", LightingManager.dirLight1Direction );
+			Material.SetVector3( "DirLight1DiffuseColour", LightingManager.dirLight1DiffuseColour );
+			Material.SetVector3( "DirLight1SpecularColour", LightingManager.dirLight1SpecularColour );
+			
+			Material.SetVector3( "DirLight2Direction", LightingManager.dirLight2Direction );
+			Material.SetVector3( "DirLight2DiffuseColour", LightingManager.dirLight2DiffuseColour );
+			Material.SetVector3( "DirLight2SpecularColour", LightingManager.dirLight2SpecularColour );
+
 			// Get the material's shader and apply all of the settings
 			// it needs.
 			Material.UpdateShaderVariables (
@@ -4095,7 +4146,6 @@ namespace SunGiant.Framework.Ophelia.Cameras
 				zView,
 				zProjection
 				);
-
 			
 			var shader = Material.GetShader ();
 
@@ -4793,9 +4843,14 @@ namespace SunGiant.Framework.Ophelia.Cameras
 				shader.SetVariable (propertyName, matrixSettings[propertyName]);
 			}
 
-			foreach(var propertyName in vectorSettings.Keys)
+			foreach(var propertyName in vector3Settings.Keys)
 			{
-				shader.SetVariable (propertyName, vectorSettings[propertyName]);
+				shader.SetVariable (propertyName, vector3Settings[propertyName]);
+			}
+
+			foreach(var propertyName in vector4Settings.Keys)
+			{
+				shader.SetVariable (propertyName, vector4Settings[propertyName]);
 			}
 
 			foreach(var propertyName in scaleSettings.Keys)
@@ -4845,7 +4900,8 @@ namespace SunGiant.Framework.Ophelia.Cameras
 		Dictionary<string, Rgba32> colourSettings = new Dictionary<string, Rgba32>();
 		Dictionary<string, Single> floatSettings = new Dictionary<string, Single>();
 		Dictionary<string, Matrix44> matrixSettings = new Dictionary<string, Matrix44>();
-		Dictionary<string, Vector4> vectorSettings = new Dictionary<string, Vector4>();
+		Dictionary<string, Vector3> vector3Settings = new Dictionary<string, Vector3>();
+		Dictionary<string, Vector4> vector4Settings = new Dictionary<string, Vector4>();
 		Dictionary<string, Vector2> scaleSettings = new Dictionary<string, Vector2>();
 		Dictionary<string, Vector2> textureOffsetSettings = new Dictionary<string, Vector2>();
 		Dictionary<string, Texture2D> textureSamplerSettings = new Dictionary<string, Texture2D>();
@@ -4865,9 +4921,14 @@ namespace SunGiant.Framework.Ophelia.Cameras
 			matrixSettings[propertyName] = matrix; 
 		}
 
-		public void SetVector(string propertyName, Vector4 vector)
+		public void SetVector4(string propertyName, Vector4 vector)
 		{
-			vectorSettings[propertyName] = vector; 
+			vector4Settings[propertyName] = vector; 
+		}
+
+		public void SetVector3(string propertyName, Vector3 vector)
+		{
+			vector3Settings[propertyName] = vector; 
 		}
 
 		public void SetTextureOffset(string propertyName, Vector2 offset)

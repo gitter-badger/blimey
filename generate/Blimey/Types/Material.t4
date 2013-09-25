@@ -58,9 +58,14 @@
 				shader.SetVariable (propertyName, matrixSettings[propertyName]);
 			}
 
-			foreach(var propertyName in vectorSettings.Keys)
+			foreach(var propertyName in vector3Settings.Keys)
 			{
-				shader.SetVariable (propertyName, vectorSettings[propertyName]);
+				shader.SetVariable (propertyName, vector3Settings[propertyName]);
+			}
+
+			foreach(var propertyName in vector4Settings.Keys)
+			{
+				shader.SetVariable (propertyName, vector4Settings[propertyName]);
 			}
 
 			foreach(var propertyName in scaleSettings.Keys)
@@ -110,7 +115,8 @@
 		Dictionary<string, Rgba32> colourSettings = new Dictionary<string, Rgba32>();
 		Dictionary<string, Single> floatSettings = new Dictionary<string, Single>();
 		Dictionary<string, Matrix44> matrixSettings = new Dictionary<string, Matrix44>();
-		Dictionary<string, Vector4> vectorSettings = new Dictionary<string, Vector4>();
+		Dictionary<string, Vector3> vector3Settings = new Dictionary<string, Vector3>();
+		Dictionary<string, Vector4> vector4Settings = new Dictionary<string, Vector4>();
 		Dictionary<string, Vector2> scaleSettings = new Dictionary<string, Vector2>();
 		Dictionary<string, Vector2> textureOffsetSettings = new Dictionary<string, Vector2>();
 		Dictionary<string, Texture2D> textureSamplerSettings = new Dictionary<string, Texture2D>();
@@ -130,9 +136,14 @@
 			matrixSettings[propertyName] = matrix; 
 		}
 
-		public void SetVector(string propertyName, Vector4 vector)
+		public void SetVector4(string propertyName, Vector4 vector)
 		{
-			vectorSettings[propertyName] = vector; 
+			vector4Settings[propertyName] = vector; 
+		}
+
+		public void SetVector3(string propertyName, Vector3 vector)
+		{
+			vector3Settings[propertyName] = vector; 
 		}
 
 		public void SetTextureOffset(string propertyName, Vector2 offset)
