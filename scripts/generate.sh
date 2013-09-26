@@ -2,7 +2,12 @@
 
 startPath=`pwd`
 
-# Generate Cor.cs
 cd ../generate/Cor
+
+# tabs to spaces
+find ./ ! -type d ! -name _tmp_ -exec sh -c 'expand -t 4 {} > _tmp_ && mv _tmp_ {}' \;
+
+# Generate Cor.cs
 mono-t4 Cor.tt -o ../../source/Cor.cs
+
 cd $startPath
