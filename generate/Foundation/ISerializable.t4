@@ -32,10 +32,10 @@
 //
 
 namespace System.Runtime.Serialization {
-		[System.Runtime.InteropServices.ComVisibleAttribute (true)]
+        [System.Runtime.InteropServices.ComVisibleAttribute (true)]
 
-	public interface ISerializable {
-		void GetObjectData (SerializationInfo info, StreamingContext context);
-	}
+    public interface ISerializable {
+        void GetObjectData (SerializationInfo info, StreamingContext context);
+    }
 }
 

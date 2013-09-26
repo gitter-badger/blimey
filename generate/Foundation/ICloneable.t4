@@ -31,14 +31,14 @@
 //
 
 namespace System {
-	[ComVisible(true)]
+    [ComVisible(true)]
 #if INSIDE_CORLIB
-	public
+    public
 #else
-	internal
+    internal
 #endif
-	interface ICloneable {
-		object Clone ();
-	}
+    interface ICloneable {
+        object Clone ();
+    }
 }
 
