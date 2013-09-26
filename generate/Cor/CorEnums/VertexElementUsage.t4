@@ -1,16 +1,16 @@
-﻿	public enum VertexElementUsage
-	{
-		Position,
-		Colour,
-		TextureCoordinate,
-		Normal,
-		Binormal,
-		Tangent,
-		BlendIndices,
-		BlendWeight,
-		Depth,
-		Fog,
-		PointSize,
-		Sample,
-		TessellateFactor
-	}
+﻿    public enum VertexElementUsage
+    {
+        Position,
+        Colour,
+        TextureCoordinate,
+        Normal,
+        Binormal,
+        Tangent,
+        BlendIndices,
+        BlendWeight,
+        Depth,
+        Fog,
+        PointSize,
+        Sample,
+        TessellateFactor
+    }

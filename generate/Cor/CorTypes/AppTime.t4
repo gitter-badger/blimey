@@ -1,60 +1,60 @@
-﻿	/// <summary>
-	/// AppTime is a value provided by the Cor! Framework to
-	/// the user's app on a frame by frame basis via the app's update
-	/// loop.  It provides timing information via properties
-	/// relative to both the initisation of the app and the
-	/// current frame.
-	/// </summary>
-	public struct AppTime
-	{
-		Int64 frameNumber;
-		Single dt;
-		Single elapsed;
+﻿    /// <summary>
+    /// AppTime is a value provided by the Cor! Framework to
+    /// the user's app on a frame by frame basis via the app's update
+    /// loop.  It provides timing information via properties
+    /// relative to both the initisation of the app and the
+    /// current frame.
+    /// </summary>
+    public struct AppTime
+    {
+        Int64 frameNumber;
+        Single dt;
+        Single elapsed;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Sungiant.Cor.AppTime"/> struct.
-		/// Internal so it can only be instantiated by friend assemblies, namely the
-		/// platform specific Cor! Runtime frameworks.
-		/// </summary>
-		/// <param name="dt">Delta time.</param>
-		/// <param name="elapsed">Total elapsed time.</param>
-		/// <param name="frameNumber">Frame number.</param>
-		internal AppTime(Single dt, Single elapsed, Int64 frameNumber)
-		{
-			this.dt = dt;
-			this.elapsed = elapsed;
-			this.frameNumber = frameNumber;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Sungiant.Cor.AppTime"/> struct.
+        /// Internal so it can only be instantiated by friend assemblies, namely the
+        /// platform specific Cor! Runtime frameworks.
+        /// </summary>
+        /// <param name="dt">Delta time.</param>
+        /// <param name="elapsed">Total elapsed time.</param>
+        /// <param name="frameNumber">Frame number.</param>
+        internal AppTime(Single dt, Single elapsed, Int64 frameNumber)
+        {
+            this.dt = dt;
+            this.elapsed = elapsed;
+            this.frameNumber = frameNumber;
+        }
 
-		/// <summary>
-		/// Returns a <see cref="System.String"/> that represents the current <see cref="Sungiant.Cor.AppTime"/>.
-		/// </summary>
-		public override string ToString ()
-		{
-			return string.Format (
-				"[AppTime: Delta={0}, Elapsed={1}, FrameNumber={2}]", 
-				Delta, 
-				Elapsed, 
-				FrameNumber);
-		}
-		
-		/// <summary>
-		/// Gets the time in seconds since between this frame and the last.
-		/// </summary>
-		/// <value>The delta.</value>
-		public Single Delta { get { return dt; } }
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents the current <see cref="Sungiant.Cor.AppTime"/>.
+        /// </summary>
+        public override string ToString ()
+        {
+            return string.Format (
+                "[AppTime: Delta={0}, Elapsed={1}, FrameNumber={2}]", 
+                Delta, 
+                Elapsed, 
+                FrameNumber);
+        }
+        
+        /// <summary>
+        /// Gets the time in seconds since between this frame and the last.
+        /// </summary>
+        /// <value>The delta.</value>
+        public Single Delta { get { return dt; } }
 
-		/// <summary>
-		/// Gets the total time in seconds since the initilisation of the app.
-		/// </summary>
-		/// <value>The elapsed time.</value>
-		public Single Elapsed { get { return elapsed; } }
+        /// <summary>
+        /// Gets the total time in seconds since the initilisation of the app.
+        /// </summary>
+        /// <value>The elapsed time.</value>
+        public Single Elapsed { get { return elapsed; } }
 
-		
-		/// <summary>
-		/// Gets the index of the current frame, the first frame is given
-		/// the number zero, programmers count from zero.
-		/// </summary>
-		/// <value>The frame number.</value>
-		public Int64 FrameNumber { get { return frameNumber; } }
-	}
+        
+        /// <summary>
+        /// Gets the index of the current frame, the first frame is given
+        /// the number zero, programmers count from zero.
+        /// </summary>
+        /// <value>The frame number.</value>
+        public Int64 FrameNumber { get { return frameNumber; } }
+    }

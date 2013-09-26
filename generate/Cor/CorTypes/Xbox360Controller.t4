@@ -1,89 +1,89 @@
-﻿	public abstract class Xbox360Gamepad
-	{
-		public class GamePadButtons
-		{	
-			ButtonState _a = ButtonState.Released;
-			ButtonState _b = ButtonState.Released;
-			ButtonState _back = ButtonState.Released;
-			ButtonState _leftShoulder = ButtonState.Released;
-			ButtonState _leftStick = ButtonState.Released;
-			ButtonState _rightShoulder = ButtonState.Released;
-			ButtonState _rightStick = ButtonState.Released;
-			ButtonState _start = ButtonState.Released;
-			ButtonState _x = ButtonState.Released;
-			ButtonState _y = ButtonState.Released;
+﻿    public abstract class Xbox360Gamepad
+    {
+        public class GamePadButtons
+        {   
+            ButtonState _a = ButtonState.Released;
+            ButtonState _b = ButtonState.Released;
+            ButtonState _back = ButtonState.Released;
+            ButtonState _leftShoulder = ButtonState.Released;
+            ButtonState _leftStick = ButtonState.Released;
+            ButtonState _rightShoulder = ButtonState.Released;
+            ButtonState _rightStick = ButtonState.Released;
+            ButtonState _start = ButtonState.Released;
+            ButtonState _x = ButtonState.Released;
+            ButtonState _y = ButtonState.Released;
 
-			public ButtonState A { get { return _a; } internal set { _a = value; } }
-			public ButtonState B { get { return _b; } internal set { _b = value; } }
-			public ButtonState Back { get { return _back; } internal set { _back = value; } }
-			public ButtonState LeftShoulder { get { return _leftShoulder; } internal set { _leftShoulder = value; } }
-			public ButtonState LeftStick { get { return _leftStick; } internal set { _leftStick = value; } }
-			public ButtonState RightShoulder { get { return _rightShoulder; } internal set { _rightShoulder = value; } }
-			public ButtonState RightStick { get { return _rightStick; } internal set { _rightStick = value; } }
-			public ButtonState Start { get { return _start; } internal set { _start = value; } }
-			public ButtonState X { get { return _x; } internal set { _x = value; } }
-			public ButtonState Y { get { return _y; } internal set { _y = value; } }	
-		}
-		
-		public class GamePadDPad
-		{
-			ButtonState _down = ButtonState.Released;
-			ButtonState _left = ButtonState.Released;
-			ButtonState _right = ButtonState.Released;
-			ButtonState _up = ButtonState.Released;
+            public ButtonState A { get { return _a; } internal set { _a = value; } }
+            public ButtonState B { get { return _b; } internal set { _b = value; } }
+            public ButtonState Back { get { return _back; } internal set { _back = value; } }
+            public ButtonState LeftShoulder { get { return _leftShoulder; } internal set { _leftShoulder = value; } }
+            public ButtonState LeftStick { get { return _leftStick; } internal set { _leftStick = value; } }
+            public ButtonState RightShoulder { get { return _rightShoulder; } internal set { _rightShoulder = value; } }
+            public ButtonState RightStick { get { return _rightStick; } internal set { _rightStick = value; } }
+            public ButtonState Start { get { return _start; } internal set { _start = value; } }
+            public ButtonState X { get { return _x; } internal set { _x = value; } }
+            public ButtonState Y { get { return _y; } internal set { _y = value; } }    
+        }
+        
+        public class GamePadDPad
+        {
+            ButtonState _down = ButtonState.Released;
+            ButtonState _left = ButtonState.Released;
+            ButtonState _right = ButtonState.Released;
+            ButtonState _up = ButtonState.Released;
 
-			public ButtonState Down { get { return _down; } internal set { _down = value; } }
-			public ButtonState Left { get { return _left; } internal set { _left = value; } }
-			public ButtonState Right { get { return _right; } internal set { _right = value; } }
-			public ButtonState Up { get { return _up; } internal set { _up = value; } }
-		}
-	
-		public class GamePadThumbSticks
-		{
-			Vector2 _left = Vector2.Zero;
-			Vector2 _right = Vector2.Zero;
-			
-			public Vector2 Left { get { return _left; } }
-			public Vector2 Right { get { return _right; } }
-		}
-		
-		public class GamePadTriggers
-		{	
-			Single _left = 0f;
-			Single _right = 0f;
-			
-			public Single Left { get { return _left; } }
-			public Single Right { get { return _right; } }
-		}
-		
-		GamePadButtons _buttons = new GamePadButtons();
-		GamePadDPad _dpad = new GamePadDPad();
-		GamePadThumbSticks _thumbsticks = new GamePadThumbSticks();
-		GamePadTriggers _triggers = new GamePadTriggers();
-		
-		public GamePadButtons Buttons { get { return _buttons; } }
-		public GamePadDPad DPad { get { return _dpad; } }
-		public GamePadThumbSticks ThumbSticks { get { return _thumbsticks; } }
-		public GamePadTriggers Triggers { get { return _triggers; } }
+            public ButtonState Down { get { return _down; } internal set { _down = value; } }
+            public ButtonState Left { get { return _left; } internal set { _left = value; } }
+            public ButtonState Right { get { return _right; } internal set { _right = value; } }
+            public ButtonState Up { get { return _up; } internal set { _up = value; } }
+        }
+    
+        public class GamePadThumbSticks
+        {
+            Vector2 _left = Vector2.Zero;
+            Vector2 _right = Vector2.Zero;
+            
+            public Vector2 Left { get { return _left; } }
+            public Vector2 Right { get { return _right; } }
+        }
+        
+        public class GamePadTriggers
+        {   
+            Single _left = 0f;
+            Single _right = 0f;
+            
+            public Single Left { get { return _left; } }
+            public Single Right { get { return _right; } }
+        }
+        
+        GamePadButtons _buttons = new GamePadButtons();
+        GamePadDPad _dpad = new GamePadDPad();
+        GamePadThumbSticks _thumbsticks = new GamePadThumbSticks();
+        GamePadTriggers _triggers = new GamePadTriggers();
+        
+        public GamePadButtons Buttons { get { return _buttons; } }
+        public GamePadDPad DPad { get { return _dpad; } }
+        public GamePadThumbSticks ThumbSticks { get { return _thumbsticks; } }
+        public GamePadTriggers Triggers { get { return _triggers; } }
 
-		protected void Reset()
-		{
-			_dpad.Down = ButtonState.Released;
-			_dpad.Up = ButtonState.Released;
-			_dpad.Left = ButtonState.Released;
-			_dpad.Right = ButtonState.Released;
+        protected void Reset()
+        {
+            _dpad.Down = ButtonState.Released;
+            _dpad.Up = ButtonState.Released;
+            _dpad.Left = ButtonState.Released;
+            _dpad.Right = ButtonState.Released;
 
-			_buttons.A = ButtonState.Released;
-			_buttons.B = ButtonState.Released;
-			_buttons.X = ButtonState.Released;
-			_buttons.Y = ButtonState.Released;
-			_buttons.Start = ButtonState.Released;
-			_buttons.Back = ButtonState.Released;
-			_buttons.LeftShoulder = ButtonState.Released;
-			_buttons.RightShoulder = ButtonState.Released;
-			_buttons.LeftStick = ButtonState.Released;
-			_buttons.RightStick = ButtonState.Released;
-		}
-	}
+            _buttons.A = ButtonState.Released;
+            _buttons.B = ButtonState.Released;
+            _buttons.X = ButtonState.Released;
+            _buttons.Y = ButtonState.Released;
+            _buttons.Start = ButtonState.Released;
+            _buttons.Back = ButtonState.Released;
+            _buttons.LeftShoulder = ButtonState.Released;
+            _buttons.RightShoulder = ButtonState.Released;
+            _buttons.LeftStick = ButtonState.Released;
+            _buttons.RightStick = ButtonState.Released;
+        }
+    }
 
 

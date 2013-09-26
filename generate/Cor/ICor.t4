@@ -1,45 +1,45 @@
-﻿	/// <summary>
-	/// The Cor! framework provides a user's app access to Cor!
-	/// features via this interface.
-	/// </summary>
-	public interface ICor
-	{
-		/// <summary>
-		/// Provides access to Cor's audio manager.
-		/// </summary>
-		/// <value>The audio manager.</value>
+﻿    /// <summary>
+    /// The Cor! framework provides a user's app access to Cor!
+    /// features via this interface.
+    /// </summary>
+    public interface ICor
+    {
+        /// <summary>
+        /// Provides access to Cor's audio manager.
+        /// </summary>
+        /// <value>The audio manager.</value>
         IAudioManager Audio { get; }
 
-		/// <summary>
-		/// Provides access to Cor's graphics manager, which
-		/// provides an interface to working with the GPU.
-		/// </summary>
-		/// <value>The graphics manager.</value>
-		IGraphicsManager Graphics { get; }
+        /// <summary>
+        /// Provides access to Cor's graphics manager, which
+        /// provides an interface to working with the GPU.
+        /// </summary>
+        /// <value>The graphics manager.</value>
+        IGraphicsManager Graphics { get; }
 
-		/// <summary>
-		/// Provides access to Cor's resource manager.
-		/// </summary>
-		/// <value>The resource manager.</value>
-		IResourceManager Resources { get; }
+        /// <summary>
+        /// Provides access to Cor's resource manager.
+        /// </summary>
+        /// <value>The resource manager.</value>
+        IResourceManager Resources { get; }
 
-		/// <summary>
-		/// Provides access to Cor's input manager.
-		/// </summary>
-		/// <value>The input manager.</value>
-		IInputManager Input { get; }
+        /// <summary>
+        /// Provides access to Cor's input manager.
+        /// </summary>
+        /// <value>The input manager.</value>
+        IInputManager Input { get; }
 
-		/// <summary>
-		/// Provides access to Cor's system manager.
-		/// </summary>
-		/// <value>The system manager.</value>
-		ISystemManager System { get; }
+        /// <summary>
+        /// Provides access to Cor's system manager.
+        /// </summary>
+        /// <value>The system manager.</value>
+        ISystemManager System { get; }
 
-		/// <summary>
-		/// Gets a copy of the <see cref="Sungiant.Cor.AppSettings"/>
-		/// value used by the Cor! framework when initilising the app.
-		/// </summary>
-		/// <value>The app settings value.</value>
-		AppSettings Settings { get; }
+        /// <summary>
+        /// Gets a copy of the <see cref="Sungiant.Cor.AppSettings"/>
+        /// value used by the Cor! framework when initilising the app.
+        /// </summary>
+        /// <value>The app settings value.</value>
+        AppSettings Settings { get; }
 
-	}
+    }

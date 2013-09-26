@@ -1,42 +1,42 @@
-﻿	[StructLayout(LayoutKind.Sequential)]
-	public struct VertexPositionNormalTexture
-		: IVertexType
-	{
-		public Vector3 Position;
-		public Vector3 Normal;
-		public Vector2 UV;
+﻿    [StructLayout(LayoutKind.Sequential)]
+    public struct VertexPositionNormalTexture
+        : IVertexType
+    {
+        public Vector3 Position;
+        public Vector3 Normal;
+        public Vector2 UV;
 
-		public VertexPositionNormalTexture (Vector3 position, Vector3 normal, Vector2 uv)
-		{
-			this.Position = position;
-			this.Normal = normal;
-			this.UV = uv;
-		}
+        public VertexPositionNormalTexture (Vector3 position, Vector3 normal, Vector2 uv)
+        {
+            this.Position = position;
+            this.Normal = normal;
+            this.UV = uv;
+        }
 
-		readonly static VertexPositionNormalTexture _default;
-		readonly static VertexDeclaration _vertexDeclaration;
+        readonly static VertexPositionNormalTexture _default;
+        readonly static VertexDeclaration _vertexDeclaration;
 
-		static VertexPositionNormalTexture ()
-		{
-			_vertexDeclaration = new VertexDeclaration
-			(
-				new VertexElement (0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-				new VertexElement (12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
-				new VertexElement (24, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0)
-			);
+        static VertexPositionNormalTexture ()
+        {
+            _vertexDeclaration = new VertexDeclaration
+            (
+                new VertexElement (0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+                new VertexElement (12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
+                new VertexElement (24, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0)
+            );
 
-			_default = new VertexPositionNormalTexture (Vector3.Zero, Vector3.Zero, Vector2.Zero);
-		}
+            _default = new VertexPositionNormalTexture (Vector3.Zero, Vector3.Zero, Vector2.Zero);
+        }
 
-		public static IVertexType Default {
-			get {
-				return _default;
-			}
-		}
+        public static IVertexType Default {
+            get {
+                return _default;
+            }
+        }
 
-		public VertexDeclaration VertexDeclaration { 
-			get { 
-				return _vertexDeclaration; 
-			} 
-		}
-	}
+        public VertexDeclaration VertexDeclaration { 
+            get { 
+                return _vertexDeclaration; 
+            } 
+        }
+    }

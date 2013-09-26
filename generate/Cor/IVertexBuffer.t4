@@ -1,31 +1,31 @@
-﻿	public interface IVertexBuffer
-	{
-		// used
-		Int32 VertexCount { get; }
+﻿    public interface IVertexBuffer
+    {
+        // used
+        Int32 VertexCount { get; }
 
 #if AOT
-		void SetData (VertexPosition[] data);
-		void SetData (VertexPositionColour[] data);
-		void SetData (VertexPositionNormal[] data);
-		void SetData (VertexPositionNormalColour[] data);
-		void SetData (VertexPositionNormalTexture[] data);
-		void SetData (VertexPositionNormalTextureColour[] data);
-		void SetData (VertexPositionTexture[] data);
-		void SetData (VertexPositionTextureColour[] data);
+        void SetData (VertexPosition[] data);
+        void SetData (VertexPositionColour[] data);
+        void SetData (VertexPositionNormal[] data);
+        void SetData (VertexPositionNormalColour[] data);
+        void SetData (VertexPositionNormalTexture[] data);
+        void SetData (VertexPositionNormalTextureColour[] data);
+        void SetData (VertexPositionTexture[] data);
+        void SetData (VertexPositionTextureColour[] data);
 #else
-		void SetData<T> (T[] data) where T: struct, IVertexType;
+        void SetData<T> (T[] data) where T: struct, IVertexType;
 #endif
 
-		// Perhaps this would work everywhere
-		// void SetData(IVertexType[] data);
+        // Perhaps this would work everywhere
+        // void SetData(IVertexType[] data);
 
-		VertexDeclaration VertexDeclaration { get; }
+        VertexDeclaration VertexDeclaration { get; }
 
-		// not yet implemented
-		//void GetData<T> (T[] data) where T: struct, IVertexType;
-		//void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
-		//void GetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
-		//void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
-		//void SetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
+        // not yet implemented
+        //void GetData<T> (T[] data) where T: struct, IVertexType;
+        //void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
+        //void GetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
+        //void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
+        //void SetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
 
-	}
+    }

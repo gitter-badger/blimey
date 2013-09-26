@@ -11,7 +11,7 @@
         // loop.  
 
         // An Xbox 360 gamepad
-        Xbox360Gamepad		    GetXbox360Gamepad(PlayerIndex player);
+        Xbox360Gamepad          GetXbox360Gamepad(PlayerIndex player);
 
         // The virtual gamepad used by PlayStation Mobile, 
         // if you are running on Vita this will be the Vita itself.
@@ -19,9 +19,9 @@
 
         // A generalised multitouch pad, which may or may
         // not have a screen.
-        MultiTouchController	GetMultiTouchController();
+        MultiTouchController    GetMultiTouchController();
 
         // A very basic gamepad, supported by most implementations
         // for platforms that have gamepads.
-        GenericGamepad			GetGenericGamepad();
+        GenericGamepad          GetGenericGamepad();
     }

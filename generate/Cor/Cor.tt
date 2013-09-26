@@ -47,30 +47,30 @@ using Sungiant.Abacus.Int32Precision;
 
 namespace Sungiant.Cor
 {
-	#region Interfaces
+    #region Interfaces
 
-<#@ include file="IApp.t4"#>
-<#@ include file="IAudioManager.t4"#>
 <#@ include file="ICor.t4"#>
-<#@ include file="IDisplayStatus.t4"#>
-<#@ include file="IGeometryBuffer.t4"#>
-<#@ include file="IGpuUtils.t4"#>
+<#@ include file="IAudioManager.t4"#>
 <#@ include file="IGraphicsManager.t4"#>
-<#@ include file="IIndexBuffer.t4"#>
 <#@ include file="IInputManager.t4"#>
+<#@ include file="IResourceManager.t4"#>
+<#@ include file="ISystemManager.t4"#>
+<#@ include file="IApp.t4"#>
+<#@ include file="IDisplayStatus.t4"#>
+<#@ include file="IGpuUtils.t4"#>
 <#@ include file="IPanelSpecification.t4"#>
 <#@ include file="IResource.t4"#>
-<#@ include file="IResourceManager.t4"#>
 <#@ include file="IScreenSpecificationBase.t4"#>
-<#@ include file="IShader.t4"#>
-<#@ include file="IShaderPass.t4"#>
-<#@ include file="ISystemManager.t4"#>
+<#@ include file="IGeometryBuffer.t4"#>
 <#@ include file="IVertexBuffer.t4"#>
 <#@ include file="IVertexType.t4"#>
+<#@ include file="IIndexBuffer.t4"#>
+<#@ include file="IShader.t4"#>
+<#@ include file="IShaderPass.t4"#>
 
-	#endregion
+    #endregion
 
-	#region Enums
+    #region Enums
 
 <#@ include file="CorEnums/BlendFactor.t4"#>
 <#@ include file="CorEnums/BlendFunction.t4"#>
@@ -86,9 +86,9 @@ namespace Sungiant.Cor
 <#@ include file="CorEnums/VertexElementFormat.t4"#>
 <#@ include file="CorEnums/VertexElementUsage.t4"#>
 
-	#endregion
+    #endregion
 
-	#region Types
+    #region Types
 
 <#@ include file="CorTypes/AppSettings.t4"#>
 <#@ include file="CorTypes/AppTime.t4"#>
@@ -99,13 +99,13 @@ namespace Sungiant.Cor
 <#@ include file="CorTypes/TouchCollectionEnumerator.t4"#>
 <#@ include file="CorTypes/VertexDeclaration.t4"#>
 <#@ include file="CorTypes/VertexElement.t4"#>
-<#@ include file="CorTypes/Viewport.t4"#>
+//<#@ include file="CorTypes/Viewport.t4"#>
 <#@ include file="CorTypes/VitaController.t4"#>
 <#@ include file="CorTypes/Xbox360Controller.t4"#>
 
-	#endregion
+    #endregion
 
-	#region Vertices
+    #region Vertices
 
 <#@ include file="Vertices/VertexPosition.t4"#>
 <#@ include file="Vertices/VertexPositionColour.t4"#>
@@ -116,20 +116,20 @@ namespace Sungiant.Cor
 <#@ include file="Vertices/VertexPositionTexture.t4"#>
 <#@ include file="Vertices/VertexPositionTextureColour.t4"#>
 
-	#endregion
+    #endregion
 
-	#region Resources
+    #region Resources
 
 <#@ include file="ResourceTypes/AudioClip.t4"#>
 <#@ include file="ResourceTypes/Mesh.t4"#>
 <#@ include file="ResourceTypes/Texture2D.t4"#>
 
-	#endregion
+    #endregion
 
-	#region Internal
+    #region Internal
 
 <#@ include file="Internal/PrimitiveHelper.t4"#>
 <#@ include file="Internal/VertexElementValidator.t4"#>
 
-	#endregion
+    #endregion
 }

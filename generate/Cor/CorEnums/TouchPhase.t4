@@ -1,7 +1,7 @@
-﻿	public enum TouchPhase
-	{
-		Invalid = 0,
-		JustReleased = 1,
-		JustPressed = 2,
-		Active = 3,
-	}
+﻿    public enum TouchPhase
+    {
+        Invalid = 0,
+        JustReleased = 1,
+        JustPressed = 2,
+        Active = 3,
+    }

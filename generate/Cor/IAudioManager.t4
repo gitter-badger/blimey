@@ -1,6 +1,6 @@
     public interface IAudioManager
     {
-    	// Sets the volume, between 0.0 - 1.0
-    	Single Volume { get; set; }
+        // Sets the volume, between 0.0 - 1.0
+        Single Volume { get; set; }
     }
 

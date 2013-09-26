@@ -1,7 +1,7 @@
-	public enum ShaderType
-	{
-		Unlit,
-		VertexLit,
-		PixelLit,
-		Toon
-	}
+    public enum ShaderType
+    {
+        Unlit,
+        VertexLit,
+        PixelLit,
+        Toon
+    }

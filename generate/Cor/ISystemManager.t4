@@ -1,20 +1,20 @@
-﻿	public interface ISystemManager
-	{
-		Point2 CurrentDisplaySize { get; }
+﻿    public interface ISystemManager
+    {
+        Point2 CurrentDisplaySize { get; }
 
-		String OperatingSystem { get; }
+        String OperatingSystem { get; }
 
-		String DeviceName { get; }
+        String DeviceName { get; }
 
-		String DeviceModel { get; }
+        String DeviceModel { get; }
 
-		String SystemName { get; }
+        String SystemName { get; }
 
-		String SystemVersion { get; }
+        String SystemVersion { get; }
 
-		DeviceOrientation CurrentOrientation { get; }
+        DeviceOrientation CurrentOrientation { get; }
 
-		IScreenSpecification ScreenSpecification { get; }
+        IScreenSpecification ScreenSpecification { get; }
 
-		IPanelSpecification PanelSpecification { get; }
-	}
+        IPanelSpecification PanelSpecification { get; }
+    }

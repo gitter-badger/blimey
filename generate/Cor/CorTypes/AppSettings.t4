@@ -1,26 +1,26 @@
-﻿	/// <summary>
-	/// Defines the initial startup settings for the Cor! App
-	/// Framework.  These settings cannot be changed at runtime.
-	/// </summary>
-	public struct AppSettings
-	{
-		/// <summary>
-		/// Gets or sets a value indicating whether the mouse 
-		/// input device should generates touch event to simulate a
-		/// touch controller inside the Cor! framework.
-		/// </summary>
-		/// <value>
-		/// <c>true</c> if the mouse should generates touch 
-		/// events; otherwise, <c>false</c>.
-		/// </value>
-		public Boolean MouseGeneratesTouches { get; set; }
+﻿    /// <summary>
+    /// Defines the initial startup settings for the Cor! App
+    /// Framework.  These settings cannot be changed at runtime.
+    /// </summary>
+    public struct AppSettings
+    {
+        /// <summary>
+        /// Gets or sets a value indicating whether the mouse 
+        /// input device should generates touch event to simulate a
+        /// touch controller inside the Cor! framework.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if the mouse should generates touch 
+        /// events; otherwise, <c>false</c>.
+        /// </value>
+        public Boolean MouseGeneratesTouches { get; set; }
 
-		/// <summary>
-		/// Gets or sets a value indicating whether the app 
-		/// should be run in fullscreen mode inside the Cor! framework.
-		/// </summary>
-		/// <value>
-		/// <c>true</c> if fullscreen; otherwise, <c>false</c>.
-		/// </value>
-		public Boolean FullScreen { get; set; }
-	}
+        /// <summary>
+        /// Gets or sets a value indicating whether the app 
+        /// should be run in fullscreen mode inside the Cor! framework.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if fullscreen; otherwise, <c>false</c>.
+        /// </value>
+        public Boolean FullScreen { get; set; }
+    }

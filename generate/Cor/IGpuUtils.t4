@@ -1,8 +1,8 @@
-﻿	public interface IGpuUtils
-	{
-		Int32 BeginEvent(Rgba32 colour, String eventName);
-		Int32 EndEvent();
+﻿    public interface IGpuUtils
+    {
+        Int32 BeginEvent(Rgba32 colour, String eventName);
+        Int32 EndEvent();
 
-		void SetMarker(Rgba32 colour, String eventName);
-		void SetRegion(Rgba32 colour, String eventName);
-	}
+        void SetMarker(Rgba32 colour, String eventName);
+        void SetRegion(Rgba32 colour, String eventName);
+    }

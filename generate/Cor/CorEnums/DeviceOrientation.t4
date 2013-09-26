@@ -1,8 +1,8 @@
-﻿	public enum DeviceOrientation
-	{
-		Default,
-		Rightside,
-		Upsidedown,
-		Leftside,
-	}
+﻿    public enum DeviceOrientation
+    {
+        Default,
+        Rightside,
+        Upsidedown,
+        Leftside,
+    }
 

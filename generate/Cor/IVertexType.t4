@@ -1,7 +1,7 @@
-﻿	public interface IVertexType
-	{
-		// Properties
-		VertexDeclaration VertexDeclaration { get; }
+﻿    public interface IVertexType
+    {
+        // Properties
+        VertexDeclaration VertexDeclaration { get; }
 
-		//IntPtr GetAddress(Int32 elementIndex);
-	}
+        //IntPtr GetAddress(Int32 elementIndex);
+    }

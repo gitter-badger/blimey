@@ -1,42 +1,42 @@
-﻿	[StructLayout(LayoutKind.Sequential)]
-	public struct VertexPositionColour
-		: IVertexType
-	{
-		public Vector3 Position;
-		public Rgba32 Colour;
+﻿    [StructLayout(LayoutKind.Sequential)]
+    public struct VertexPositionColour
+        : IVertexType
+    {
+        public Vector3 Position;
+        public Rgba32 Colour;
 
-		public VertexPositionColour(Vector3 position, Rgba32 color)
-		{
-			this.Position = position;
-			this.Colour = color;
-		}
+        public VertexPositionColour(Vector3 position, Rgba32 color)
+        {
+            this.Position = position;
+            this.Colour = color;
+        }
 
-		static VertexPositionColour()
-		{
-			_vertexDeclaration = new VertexDeclaration
-			(
-				new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-				new VertexElement(12, VertexElementFormat.Colour, VertexElementUsage.Colour, 0)
-			);
-			_default = new VertexPositionColour(Vector3.Zero, Rgba32.Magenta);
-		}
+        static VertexPositionColour()
+        {
+            _vertexDeclaration = new VertexDeclaration
+            (
+                new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+                new VertexElement(12, VertexElementFormat.Colour, VertexElementUsage.Colour, 0)
+            );
+            _default = new VertexPositionColour(Vector3.Zero, Rgba32.Magenta);
+        }
 
-		readonly static VertexPositionColour _default;
-		readonly static VertexDeclaration _vertexDeclaration;
+        readonly static VertexPositionColour _default;
+        readonly static VertexDeclaration _vertexDeclaration;
 
-		public static IVertexType Default
-		{
-			get
-			{
-				return _default;
-			}
-		}
+        public static IVertexType Default
+        {
+            get
+            {
+                return _default;
+            }
+        }
 
-		public VertexDeclaration VertexDeclaration
-		{
-			get
-			{
-				return _vertexDeclaration;
-			}
-		}
-	}
+        public VertexDeclaration VertexDeclaration
+        {
+            get
+            {
+                return _vertexDeclaration;
+            }
+        }
+    }

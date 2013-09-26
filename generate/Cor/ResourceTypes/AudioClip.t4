@@ -1,9 +1,9 @@
     public abstract class AudioClip
         : IResource
     {
-		public abstract void Play ();
+        public abstract void Play ();
 
-		public abstract void Stop ();
+        public abstract void Stop ();
 
-		public abstract Boolean IsPlaying { get; }
+        public abstract Boolean IsPlaying { get; }
     }

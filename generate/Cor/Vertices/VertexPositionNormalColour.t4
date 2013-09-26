@@ -1,45 +1,45 @@
-﻿	[StructLayout(LayoutKind.Sequential)]
-	public struct VertexPositionNormalColour
-		: IVertexType
-	{
-		public Vector3 Position;
-		public Vector3 Normal;
-		public Rgba32 Colour;
+﻿    [StructLayout(LayoutKind.Sequential)]
+    public struct VertexPositionNormalColour
+        : IVertexType
+    {
+        public Vector3 Position;
+        public Vector3 Normal;
+        public Rgba32 Colour;
 
-		public VertexPositionNormalColour(Vector3 position, Vector3 normal, Rgba32 color)
-		{
-			this.Position = position;
-			this.Normal = normal;
-			this.Colour = color;
-		}
+        public VertexPositionNormalColour(Vector3 position, Vector3 normal, Rgba32 color)
+        {
+            this.Position = position;
+            this.Normal = normal;
+            this.Colour = color;
+        }
 
-		static VertexPositionNormalColour()
-		{
-			_vertexDeclaration = new VertexDeclaration
-			(
-				new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-				new VertexElement(12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
-				new VertexElement(24, VertexElementFormat.Colour, VertexElementUsage.Colour, 0)
-			);
-			_default = new VertexPositionNormalColour(Vector3.Zero, Vector3.Zero, Rgba32.White);
-		}
+        static VertexPositionNormalColour()
+        {
+            _vertexDeclaration = new VertexDeclaration
+            (
+                new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+                new VertexElement(12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
+                new VertexElement(24, VertexElementFormat.Colour, VertexElementUsage.Colour, 0)
+            );
+            _default = new VertexPositionNormalColour(Vector3.Zero, Vector3.Zero, Rgba32.White);
+        }
 
-		readonly static VertexPositionNormalColour _default;
-		readonly static VertexDeclaration _vertexDeclaration;
+        readonly static VertexPositionNormalColour _default;
+        readonly static VertexDeclaration _vertexDeclaration;
 
-		public static IVertexType Default
-		{
-			get
-			{
-				return _default;
-			}
-		}
+        public static IVertexType Default
+        {
+            get
+            {
+                return _default;
+            }
+        }
 
-		public VertexDeclaration VertexDeclaration
-		{
-			get
-			{
-				return _vertexDeclaration;
-			}
-		}
-	}
+        public VertexDeclaration VertexDeclaration
+        {
+            get
+            {
+                return _vertexDeclaration;
+            }
+        }
+    }

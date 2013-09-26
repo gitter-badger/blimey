@@ -1,14 +1,14 @@
-﻿	public interface IIndexBuffer
-	{
-		void SetData(Int32[] data);
+﻿    public interface IIndexBuffer
+    {
+        void SetData(Int32[] data);
 
-		Int32 IndexCount { get; }
+        Int32 IndexCount { get; }
 
-		//todo
-		//void SetData(Int16[] data, Int32 startIndex, Int32 elementCount);
-		//void SetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount);
-		//void GetData(Int32[] data);
-		//void GetData(Int16[] data, Int32 startIndex, Int32 elementCount);
-		//void GetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount);
-	}
+        //todo
+        //void SetData(Int16[] data, Int32 startIndex, Int32 elementCount);
+        //void SetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount);
+        //void GetData(Int32[] data);
+        //void GetData(Int16[] data, Int32 startIndex, Int32 elementCount);
+        //void GetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount);
+    }
 

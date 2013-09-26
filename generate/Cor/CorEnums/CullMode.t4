@@ -1,7 +1,7 @@
 public enum CullMode
 {
-	None,
-	CW,
-	CCW,
+    None,
+    CW,
+    CCW,
 }
 

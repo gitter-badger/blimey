@@ -1,7 +1,7 @@
     public abstract class Texture2D
         : IResource
     {
-		public abstract int Width { get; } 
-		public abstract int Height { get; } 
+        public abstract int Width { get; } 
+        public abstract int Height { get; } 
     }
 

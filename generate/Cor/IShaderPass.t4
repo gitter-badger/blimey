@@ -1,5 +1,5 @@
-﻿	public interface IShaderPass
-	{
-		string Name { get; }
-		void Activate (VertexDeclaration vertexDeclaration);
-	}
+﻿    public interface IShaderPass
+    {
+        string Name { get; }
+        void Activate (VertexDeclaration vertexDeclaration);
+    }

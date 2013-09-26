@@ -1,55 +1,55 @@
-﻿	internal class TouchCollectionEnumerator
-		: IEnumerator<Touch>
-	{
-		
-		List<Touch> touches;
+﻿    internal class TouchCollectionEnumerator
+        : IEnumerator<Touch>
+    {
+        
+        List<Touch> touches;
 
-		// Enumerators are positioned before the first element
-		// until the first MoveNext() call.
-		int position = -1;
+        // Enumerators are positioned before the first element
+        // until the first MoveNext() call.
+        int position = -1;
 
-		internal TouchCollectionEnumerator(List<Touch> touches)
-		{
-			this.touches = touches;
-		}
+        internal TouchCollectionEnumerator(List<Touch> touches)
+        {
+            this.touches = touches;
+        }
 
-		void IDisposable.Dispose()
-		{
+        void IDisposable.Dispose()
+        {
 
-		}
+        }
 
-		public bool MoveNext()
-		{
-			position++;
-			return (position < touches.Count);
-		}
+        public bool MoveNext()
+        {
+            position++;
+            return (position < touches.Count);
+        }
 
-		public void Reset()
-		{
-			position = -1;
-		}
+        public void Reset()
+        {
+            position = -1;
+        }
 
-		object IEnumerator.Current
-		{
-			get
-			{
-				return Current;
-			}
-		}
+        object IEnumerator.Current
+        {
+            get
+            {
+                return Current;
+            }
+        }
 
-		public Touch Current
-		{
-			get
-			{
-				try
-				{
-					return touches[position];
-				}
-				catch (IndexOutOfRangeException)
-				{
-					throw new InvalidOperationException();
-				}
-			}
-		}
-	}
+        public Touch Current
+        {
+            get
+            {
+                try
+                {
+                    return touches[position];
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
+    }
 
