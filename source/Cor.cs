@@ -631,13 +631,12 @@ namespace Sungiant.Cor
         Min
     }
 
-public enum CullMode
-{
-    None,
-    CW,
-    CCW,
-}
-
+    public enum CullMode
+    {
+        None,
+        CW,
+        CCW,
+    }
     public enum ButtonState
     {
         Released,
