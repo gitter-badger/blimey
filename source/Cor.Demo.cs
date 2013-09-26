@@ -41,86 +41,86 @@ using System.Collections.Generic;
 
 namespace Sungiant.Cor.Demo
 {
-	public static class Demo
-	{
-		public static IApp GetEntryPoint() { return basicApp; }
-		public static AppSettings GetAppSettings() { return appSettings; }
-		static IApp basicApp;
-		static AppSettings appSettings;
+    public static class Demo
+    {
+        public static IApp GetEntryPoint() { return basicApp; }
+        public static AppSettings GetAppSettings() { return appSettings; }
+        static IApp basicApp;
+        static AppSettings appSettings;
 
-		static Demo()
-		{
-			appSettings.FullScreen = true;
-			appSettings.MouseGeneratesTouches = true;
+        static Demo()
+        {
+            appSettings.FullScreen = true;
+            appSettings.MouseGeneratesTouches = true;
 
-			basicApp = new BasicApp();
-		}
-	}
+            basicApp = new BasicApp();
+        }
+    }
 
-	public class BasicApp
-		: IApp
-	{
-		ICor engine;
-		
-		IShader unlitEffect;
-		IShader vertexLitEffect;
+    public class BasicApp
+        : IApp
+    {
+        ICor engine;
+        
+        IShader unlitEffect;
+        IShader vertexLitEffect;
 
-		Rgba32 colour = Rgba32.DarkRed;
-		Single changeColourTime = 1f;
+        Rgba32 colour = Rgba32.DarkRed;
+        Single changeColourTime = 1f;
 
-		public void Initilise(ICor engine)
-		{
-			this.engine = engine;
-			
-			this.unlitEffect = engine.Resources.LoadShader(ShaderType.Unlit);
-			this.vertexLitEffect = engine.Resources.LoadShader(ShaderType.VertexLit);
+        public void Initilise(ICor engine)
+        {
+            this.engine = engine;
+            
+            this.unlitEffect = engine.Resources.LoadShader(ShaderType.Unlit);
+            this.vertexLitEffect = engine.Resources.LoadShader(ShaderType.VertexLit);
 
             this.LoadShape1();
             this.LoadShape2();
-			this.LoadShape3();
-			this.LoadShape4();
-		}
+            this.LoadShape3();
+            this.LoadShape4();
+        }
 
-		public Boolean Update(AppTime time)
-		{
-			if(time.Elapsed > changeColourTime)
-			{
-				changeColourTime += 1f;
-				colour = RandomColours.GetNext();
-			}
+        public Boolean Update(AppTime time)
+        {
+            if(time.Elapsed > changeColourTime)
+            {
+                changeColourTime += 1f;
+                colour = RandomColours.GetNext();
+            }
             Vector3 a = Vector3.Backward;
 
             Single delta = Sungiant.Abacus.RealMaths.Sin(time.Elapsed);
 
-			Matrix44.CreateFromAxisAngle(ref a, delta,  out this.rotation1);
+            Matrix44.CreateFromAxisAngle(ref a, delta,  out this.rotation1);
 
             Matrix44.CreateFromYawPitchRoll( delta, delta, delta, out this.rotation2);
 
             Matrix44.CreateFromYawPitchRoll( delta, delta, delta, out this.rotation3);
-			
-			Matrix44.CreateFromAxisAngle(ref a, delta,  out this.rotation4);
+            
+            Matrix44.CreateFromAxisAngle(ref a, delta,  out this.rotation4);
 
-			return false;
-		}
+            return false;
+        }
 
-		public void Render()
-		{
-			this.engine.Graphics.ClearColourBuffer(colour);
-			this.engine.Graphics.ClearDepthBuffer(1f);
+        public void Render()
+        {
+            this.engine.Graphics.ClearColourBuffer(colour);
+            this.engine.Graphics.ClearDepthBuffer(1f);
 
-			if (this.shape1GeomBuffer == null)
-				return;
-						
-			this.RenderShape1();
+            if (this.shape1GeomBuffer == null)
+                return;
+                        
+            this.RenderShape1();
             this.RenderShape2();
-			this.RenderShape3();
-			this.RenderShape4();
+            this.RenderShape3();
+            this.RenderShape4();
 
-		}
+        }
 
-		#region shape1
+        #region shape1
 
-		IGeometryBuffer shape1GeomBuffer;
+        IGeometryBuffer shape1GeomBuffer;
         Int32 shape1VertCount;
         Int32 shape1IndexCount;
         Matrix44 rotation1;
@@ -173,17 +173,17 @@ namespace Sungiant.Cor.Demo
             
             Matrix44 proj; Matrix44.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 1f, -1f, out proj);
             
-			// set the variable on the shader to our desired variables
-			//unlitEffect.ResetVariables ();
-			unlitEffect.ResetVariables ();
-			unlitEffect.SetVariable ("World", world);
-			unlitEffect.SetVariable ("View", view);
-			unlitEffect.SetVariable ("Projection", proj);
-			unlitEffect.SetVariable ("MaterialColour", Rgba32.White);
+            // set the variable on the shader to our desired variables
+            //unlitEffect.ResetVariables ();
+            unlitEffect.ResetVariables ();
+            unlitEffect.SetVariable ("World", world);
+            unlitEffect.SetVariable ("View", view);
+            unlitEffect.SetVariable ("Projection", proj);
+            unlitEffect.SetVariable ("MaterialColour", Rgba32.White);
 
-			foreach (var effectPass in this.unlitEffect.Passes)
+            foreach (var effectPass in this.unlitEffect.Passes)
             {
-				effectPass.Activate(VertexPositionColour.Default.VertexDeclaration);
+                effectPass.Activate(VertexPositionColour.Default.VertexDeclaration);
                 
                 this.engine.Graphics.DrawIndexedPrimitives (
                     PrimitiveType.TriangleList, 0, 0,
@@ -255,20 +255,20 @@ namespace Sungiant.Cor.Demo
             
             Matrix44 proj; Matrix44.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 1f, -1f, out proj);
             
-			// set the variable on the shader to our desired variables
-			unlitEffect.ResetVariables ();
-			unlitEffect.SetVariable ("World", world);
-			unlitEffect.SetVariable ("View", view);
-			unlitEffect.SetVariable ("Projection", proj);
-			unlitEffect.SetVariable ("MaterialColour", Rgba32.White);
-			unlitEffect.SetSamplerTarget ("TextureSampler", 0);
+            // set the variable on the shader to our desired variables
+            unlitEffect.ResetVariables ();
+            unlitEffect.SetVariable ("World", world);
+            unlitEffect.SetVariable ("View", view);
+            unlitEffect.SetVariable ("Projection", proj);
+            unlitEffect.SetVariable ("MaterialColour", Rgba32.White);
+            unlitEffect.SetSamplerTarget ("TextureSampler", 0);
 
-			this.engine.Graphics.SetActiveTexture(0, this.shape2Texture);
-			
+            this.engine.Graphics.SetActiveTexture(0, this.shape2Texture);
+            
 
             foreach (var effectPass in this.unlitEffect.Passes)
             {
-				effectPass.Activate (CustomCube_PositionTexture.VertexDeclaration);
+                effectPass.Activate (CustomCube_PositionTexture.VertexDeclaration);
                 
                 this.engine.Graphics.DrawIndexedPrimitives (
                     PrimitiveType.TriangleList, 0, 0,
@@ -341,19 +341,19 @@ namespace Sungiant.Cor.Demo
             
             Matrix44 proj; Matrix44.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 1f, -1f, out proj);
             
-			// set the variable on the shader to our desired variables
-			vertexLitEffect.ResetVariables ();
-			vertexLitEffect.SetVariable ("World", world);
-			vertexLitEffect.SetVariable ("View", view);
-			vertexLitEffect.SetVariable ("Projection", proj);
-			vertexLitEffect.SetVariable ("MaterialColour", Rgba32.White);
-			vertexLitEffect.SetSamplerTarget ("TextureSampler", 0);
+            // set the variable on the shader to our desired variables
+            vertexLitEffect.ResetVariables ();
+            vertexLitEffect.SetVariable ("World", world);
+            vertexLitEffect.SetVariable ("View", view);
+            vertexLitEffect.SetVariable ("Projection", proj);
+            vertexLitEffect.SetVariable ("MaterialColour", Rgba32.White);
+            vertexLitEffect.SetSamplerTarget ("TextureSampler", 0);
 
-			this.engine.Graphics.SetActiveTexture(0, this.shape3Texture);
+            this.engine.Graphics.SetActiveTexture(0, this.shape3Texture);
 
             foreach (var effectPass in this.vertexLitEffect.Passes)
             {
-				effectPass.Activate (CustomCylinder_PositionNormalTexture.VertexDeclaration);
+                effectPass.Activate (CustomCylinder_PositionNormalTexture.VertexDeclaration);
                 
                 this.engine.Graphics.DrawIndexedPrimitives (
                     PrimitiveType.TriangleList, 0, 0,
@@ -366,82 +366,82 @@ namespace Sungiant.Cor.Demo
         #endregion
 
 
-		#region shape4
+        #region shape4
 
-		IGeometryBuffer shape4GeomBuffer;
-		Int32 shape4VertCount;
-		Int32 shape4IndexCount;
-		Matrix44 rotation4;
+        IGeometryBuffer shape4GeomBuffer;
+        Int32 shape4VertCount;
+        Int32 shape4IndexCount;
+        Matrix44 rotation4;
 
-		void LoadShape4()
-		{
-			var vertBuffer = CustomShape_PositionColour.VertArray;
+        void LoadShape4()
+        {
+            var vertBuffer = CustomShape_PositionColour.VertArray;
 
-			var indexBuffer = CustomShape_PositionColour.IndexArray;
+            var indexBuffer = CustomShape_PositionColour.IndexArray;
 
 
-			this.shape4VertCount = vertBuffer.Length;
-			this.shape4IndexCount = indexBuffer.Length;
+            this.shape4VertCount = vertBuffer.Length;
+            this.shape4IndexCount = indexBuffer.Length;
 
-			this.shape4GeomBuffer = engine.Graphics.CreateGeometryBuffer(
-				VertexPositionColour.Default.VertexDeclaration, this.shape4VertCount, this.shape4IndexCount);
+            this.shape4GeomBuffer = engine.Graphics.CreateGeometryBuffer(
+                VertexPositionColour.Default.VertexDeclaration, this.shape4VertCount, this.shape4IndexCount);
 
-			if (this.shape4GeomBuffer != null)
-			{
-				this.shape4GeomBuffer.VertexBuffer.SetData(vertBuffer);
-				this.shape4GeomBuffer.IndexBuffer.SetData(indexBuffer);
-			}
+            if (this.shape4GeomBuffer != null)
+            {
+                this.shape4GeomBuffer.VertexBuffer.SetData(vertBuffer);
+                this.shape4GeomBuffer.IndexBuffer.SetData(indexBuffer);
+            }
 
-			// don't need these now as they live on the GPU
-			vertBuffer = null;
-			indexBuffer = null;
-		}
+            // don't need these now as they live on the GPU
+            vertBuffer = null;
+            indexBuffer = null;
+        }
 
-		void RenderShape4()
-		{
-			this.engine.Graphics.GpuUtils.BeginEvent(Rgba32.Red, "Render Shape 4");
+        void RenderShape4()
+        {
+            this.engine.Graphics.GpuUtils.BeginEvent(Rgba32.Red, "Render Shape 4");
 
-			this.engine.Graphics.SetActiveGeometryBuffer(this.shape4GeomBuffer);
+            this.engine.Graphics.SetActiveGeometryBuffer(this.shape4GeomBuffer);
 
-			Matrix44 worldScale;
-			Matrix44.CreateScale(0.5f, out worldScale);
+            Matrix44 worldScale;
+            Matrix44.CreateScale(0.5f, out worldScale);
 
-			Matrix44 shape4Translation;
-			Matrix44.CreateTranslation(0.5f, -0.5f, 0f, out shape4Translation);
+            Matrix44 shape4Translation;
+            Matrix44.CreateTranslation(0.5f, -0.5f, 0f, out shape4Translation);
 
-			var world = worldScale * this.rotation4;
-			world = world * shape4Translation;
+            var world = worldScale * this.rotation4;
+            world = world * shape4Translation;
 
-			var a = Vector3.UnitZ; var b = Vector3.Forward; var c = Vector3.Up;
-			Matrix44 view; Matrix44.CreateLookAt(
-				ref a,
-				ref b,
-				ref c,
-				out view);
+            var a = Vector3.UnitZ; var b = Vector3.Forward; var c = Vector3.Up;
+            Matrix44 view; Matrix44.CreateLookAt(
+                ref a,
+                ref b,
+                ref c,
+                out view);
 
-			Matrix44 proj; Matrix44.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 1f, -1f, out proj);
+            Matrix44 proj; Matrix44.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 1f, -1f, out proj);
 
-			// set the variable on the shader to our desired variables
-			unlitEffect.ResetVariables ();
-			unlitEffect.SetVariable ("World", world);
-			unlitEffect.SetVariable ("View", view);
-			unlitEffect.SetVariable ("Projection", proj);
-			unlitEffect.SetVariable ("MaterialColour", Rgba32.Green);
+            // set the variable on the shader to our desired variables
+            unlitEffect.ResetVariables ();
+            unlitEffect.SetVariable ("World", world);
+            unlitEffect.SetVariable ("View", view);
+            unlitEffect.SetVariable ("Projection", proj);
+            unlitEffect.SetVariable ("MaterialColour", Rgba32.Green);
 
-			foreach (var effectPass in this.unlitEffect.Passes)
-			{
-				effectPass.Activate(VertexPositionColour.Default.VertexDeclaration);
+            foreach (var effectPass in this.unlitEffect.Passes)
+            {
+                effectPass.Activate(VertexPositionColour.Default.VertexDeclaration);
 
-				this.engine.Graphics.DrawIndexedPrimitives (
-					PrimitiveType.TriangleList, 0, 0,
-					this.shape4VertCount, 0, this.shape4IndexCount / 3);
-			}
+                this.engine.Graphics.DrawIndexedPrimitives (
+                    PrimitiveType.TriangleList, 0, 0,
+                    this.shape4VertCount, 0, this.shape4IndexCount / 3);
+            }
 
-			this.engine.Graphics.GpuUtils.EndEvent();
-		}
+            this.engine.Graphics.GpuUtils.EndEvent();
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 
 
     public static class CustomCube_PositionTexture
@@ -529,7 +529,7 @@ namespace Sungiant.Cor.Demo
         }
         
     }
-	
+    
     public static class CustomCylinder_PositionNormalTexture
     {
         const int tessellation = 9; // must be greater than 2
