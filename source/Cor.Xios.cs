@@ -2518,7 +2518,7 @@ namespace Sungiant.Cor.Xios
 		/// <summary>
 		/// Defines the variants.  Done for optimisation, instead of having one
 		/// massive shader that supports all the the Inputs and attempts to
-		/// process them accordindly, we load slight variants of effectively 
+		/// process them accordingly, we load slight variants of effectively 
 		/// the same shader, then we select the most optimal variant to run
 		/// based upon the VertexDeclaration the calling code is about to draw.
 		/// </summary>
@@ -4122,7 +4122,9 @@ namespace Sungiant.Cor.Xios
 
 			OpenTKHelper.CheckError();
 
-			
+			if( uniformLocation == -1 )
+				throw new Exception();
+				
 			this.UniformLocation = uniformLocation;
 			this.Name = uniform.Name;
 			this.Type = EnumConverter.ToType(uniform.Type);
@@ -4342,20 +4344,20 @@ namespace Sungiant.Cor.Xios
 					new ShaderVariableDefinition()
 					{
 						NiceName = "AmbientLightColour",
-						Name = "u_ambientLightColour",
+						Name = "u_liAmbient",
 						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
+						DefaultValue = Rgba32.Gray,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "EmissiveColour",
 						Name = "u_emissiveColour",
 						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
+						DefaultValue = Rgba32.Black,
 					},
 					new ShaderVariableDefinition()
 					{
-						NiceName = "",
+						NiceName = "SpecularColour",
 						Name = "u_specularColour",
 						Type = typeof(Rgba32),
 						DefaultValue = Rgba32.White,
@@ -4365,7 +4367,7 @@ namespace Sungiant.Cor.Xios
 						NiceName = "SpecularPower",
 						Name = "u_specularPower",
 						Type = typeof(Single),
-						DefaultValue = 0f,
+						DefaultValue = 0.7f,
 					},
 					new ShaderVariableDefinition()
 					{
@@ -4393,75 +4395,75 @@ namespace Sungiant.Cor.Xios
 						NiceName = "FogEnd",
 						Name = "u_fogEnd",
 						Type = typeof(Single),
-						DefaultValue = 200f,
+						DefaultValue = 1000f,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "FogColour",
 						Name = "u_fogColour",
 						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
+						DefaultValue = Rgba32.Blue,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "DirectionalLight0Direction",
-						Name = "u_dirLight0Direction",
+						Name = "u_li0Dir",
 						Type = typeof(Vector3),
 						DefaultValue = Vector3.Down,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "DirectionalLight0DiffuseColour",
-						Name = "u_dirLight0DiffuseColour",
+						Name = "u_li0Diffuse",
 						Type = typeof(Rgba32),
 						DefaultValue = Rgba32.Red,
 					},
 					new ShaderVariableDefinition()
 					{
-						NiceName = "DirectionLight0SpecularColour",
-						Name = "u_dirLight0SpecularColour",
+						NiceName = "DirectionalLight0SpecularColour",
+						Name = "u_li0Spec",
 						Type = typeof(Rgba32),
 						DefaultValue = Rgba32.Salmon,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "DirectionalLight1Direction",
-						Name = "u_dirLight1Direction",
+						Name = "u_li1Dir",
 						Type = typeof(Vector3),
 						DefaultValue = Vector3.Down,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "DirectionalLight1DiffuseColour",
-						Name = "u_dirLight1DiffuseColour",
+						Name = "u_li1Diffuse",
 						Type = typeof(Rgba32),
 						DefaultValue = Rgba32.Red,
 					},
 					new ShaderVariableDefinition()
 					{
-						NiceName = "DirectionLight1SpecularColour",
-						Name = "u_dirLight1SpecularColour",
+						NiceName = "DirectionalLight1SpecularColour",
+						Name = "u_li1Spec",
 						Type = typeof(Rgba32),
 						DefaultValue = Rgba32.Salmon,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "DirectionalLight2Direction",
-						Name = "u_dirLight2Direction",
+						Name = "u_li2Dir",
 						Type = typeof(Vector3),
 						DefaultValue = Vector3.Down,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "DirectionalLight2DiffuseColour",
-						Name = "u_dirLight2DiffuseColour",
+						Name = "u_li2Diffuse",
 						Type = typeof(Rgba32),
 						DefaultValue = Rgba32.Red,
 					},
 					new ShaderVariableDefinition()
 					{
-						NiceName = "DirectionLight2SpecularColour",
-						Name = "u_dirLight2SpecularColour",
+						NiceName = "DirectionalLight2SpecularColour",
+						Name = "u_li2Spec",
 						Type = typeof(Rgba32),
 						DefaultValue = Rgba32.Salmon,
 					},
@@ -4628,20 +4630,20 @@ namespace Sungiant.Cor.Xios
 					new ShaderVariableDefinition()
 					{
 						NiceName = "AmbientLightColour",
-						Name = "u_ambientLightColour",
+						Name = "u_liAmbient",
 						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
+						DefaultValue = Rgba32.Gray,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "EmissiveColour",
 						Name = "u_emissiveColour",
 						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
+						DefaultValue = Rgba32.Black,
 					},
 					new ShaderVariableDefinition()
 					{
-						NiceName = "",
+						NiceName = "SpecularColour",
 						Name = "u_specularColour",
 						Type = typeof(Rgba32),
 						DefaultValue = Rgba32.White,
@@ -4651,7 +4653,7 @@ namespace Sungiant.Cor.Xios
 						NiceName = "SpecularPower",
 						Name = "u_specularPower",
 						Type = typeof(Single),
-						DefaultValue = 0f,
+						DefaultValue = 0.7f,
 					},
 					new ShaderVariableDefinition()
 					{
@@ -4679,75 +4681,75 @@ namespace Sungiant.Cor.Xios
 						NiceName = "FogEnd",
 						Name = "u_fogEnd",
 						Type = typeof(Single),
-						DefaultValue = 200f,
+						DefaultValue = 1000f,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "FogColour",
 						Name = "u_fogColour",
 						Type = typeof(Rgba32),
-						DefaultValue = Rgba32.White,
+						DefaultValue = Rgba32.Blue,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "DirectionalLight0Direction",
-						Name = "u_dirLight0Direction",
+						Name = "u_li0Dir",
 						Type = typeof(Vector3),
 						DefaultValue = Vector3.Down,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "DirectionalLight0DiffuseColour",
-						Name = "u_dirLight0DiffuseColour",
+						Name = "u_li0Diffuse",
 						Type = typeof(Rgba32),
 						DefaultValue = Rgba32.Red,
 					},
 					new ShaderVariableDefinition()
 					{
-						NiceName = "DirectionLight0SpecularColour",
-						Name = "u_dirLight0SpecularColour",
+						NiceName = "DirectionalLight0SpecularColour",
+						Name = "u_li0Spec",
 						Type = typeof(Rgba32),
 						DefaultValue = Rgba32.Salmon,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "DirectionalLight1Direction",
-						Name = "u_dirLight1Direction",
+						Name = "u_li1Dir",
 						Type = typeof(Vector3),
 						DefaultValue = Vector3.Down,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "DirectionalLight1DiffuseColour",
-						Name = "u_dirLight1DiffuseColour",
+						Name = "u_li1Diffuse",
 						Type = typeof(Rgba32),
 						DefaultValue = Rgba32.Red,
 					},
 					new ShaderVariableDefinition()
 					{
-						NiceName = "DirectionLight1SpecularColour",
-						Name = "u_dirLight1SpecularColour",
+						NiceName = "DirectionalLight1SpecularColour",
+						Name = "u_li1Spec",
 						Type = typeof(Rgba32),
 						DefaultValue = Rgba32.Salmon,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "DirectionalLight2Direction",
-						Name = "u_dirLight2Direction",
+						Name = "u_li2Dir",
 						Type = typeof(Vector3),
 						DefaultValue = Vector3.Down,
 					},
 					new ShaderVariableDefinition()
 					{
 						NiceName = "DirectionalLight2DiffuseColour",
-						Name = "u_dirLight2DiffuseColour",
+						Name = "u_li2Diffuse",
 						Type = typeof(Rgba32),
 						DefaultValue = Rgba32.Red,
 					},
 					new ShaderVariableDefinition()
 					{
-						NiceName = "DirectionLight2SpecularColour",
-						Name = "u_dirLight2SpecularColour",
+						NiceName = "DirectionalLight2SpecularColour",
+						Name = "u_li2Spec",
 						Type = typeof(Rgba32),
 						DefaultValue = Rgba32.Salmon,
 					},

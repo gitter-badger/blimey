@@ -33,7 +33,7 @@
 		/// <summary>
 		/// Defines the variants.  Done for optimisation, instead of having one
 		/// massive shader that supports all the the Inputs and attempts to
-		/// process them accordindly, we load slight variants of effectively 
+		/// process them accordingly, we load slight variants of effectively 
 		/// the same shader, then we select the most optimal variant to run
 		/// based upon the VertexDeclaration the calling code is about to draw.
 		/// </summary>

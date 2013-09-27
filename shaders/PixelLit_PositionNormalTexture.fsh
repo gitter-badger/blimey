@@ -1,19 +1,19 @@
 uniform mediump vec3 u_eyePosition;
 uniform mediump vec3 u_fogColour;
 
-uniform mediump vec3 u_dirLight0Direction;
-uniform mediump vec3 u_dirLight0DiffuseColour;
-uniform mediump vec3 u_dirLight0SpecularColour;
+uniform mediump vec3 u_li0Dir;
+uniform mediump vec3 u_li0Diffuse;
+uniform mediump vec3 u_li0Spec;
 
-uniform mediump vec3 u_dirLight1Direction;
-uniform mediump vec3 u_dirLight1DiffuseColour;
-uniform mediump vec3 u_dirLight1SpecularColour;
+uniform mediump vec3 u_li1Dir;
+uniform mediump vec3 u_li1Diffuse;
+uniform mediump vec3 u_li1Spec;
 
-uniform mediump vec3 u_dirLight2Direction;
-uniform mediump vec3 u_dirLight2DiffuseColour;
-uniform mediump vec3 u_dirLight2SpecularColour;
+uniform mediump vec3 u_li2Dir;
+uniform mediump vec3 u_li2Diffuse;
+uniform mediump vec3 u_li2Spec;
 
-uniform mediump vec3 u_ambientLightColour;
+uniform mediump vec3 u_liAmbient;
 uniform mediump vec3 u_emissiveColour;
 uniform mediump vec3 u_specularColour;
 uniform mediump float u_specularPower;
@@ -32,34 +32,33 @@ varying mediump vec2 v_texCoord;
 //-----------------------------------------------------------------------------
 void ComputePerPixelLights(in mediump vec3 E, in mediump vec3 N, out mediump vec3 diffuse, out mediump vec3 specular)
 {
-	diffuse = u_ambientLightColour;
+	diffuse = u_liAmbient;
 	specular = vec3(0.0, 0.0, 0.0);
 	
 	// Light0
-	mediump vec3 L = -u_dirLight0Direction;
+	mediump vec3 L = -u_li0Dir;
 	mediump vec3 H = normalize(E + L);
 	mediump float dt = max(0.0,dot(L,N));
-	diffuse += u_dirLight0DiffuseColour * dt;
+	diffuse += u_li0Diffuse * dt;
 	if (dt != 0.0)
-		specular += u_dirLight0SpecularColour * pow(max(0.0,dot(H,N)), u_specularPower);
+		specular += u_li0Spec * pow(max(0.0,dot(H,N)), u_specularPower);
 
 	// Light1
-	L = -u_dirLight1Direction;
+	L = -u_li1Dir;
 	H = normalize(E + L);
 	dt = max(0.0,dot(L,N));
-	diffuse += u_dirLight1DiffuseColour * dt;
+	diffuse += u_li1Diffuse * dt;
 	if (dt != 0.0)
-		specular += u_dirLight1SpecularColour * pow(max(0.0,dot(H,N)), u_specularPower);
+		specular += u_li1Spec * pow(max(0.0,dot(H,N)), u_specularPower);
 
 	// Light2
-	L = -u_dirLight2Direction;
+	L = -u_li2Dir;
 	H = normalize(E + L);
 	dt = max(0.0, dot(L,N));
-	diffuse += u_dirLight2DiffuseColour * dt;
+	diffuse += u_li2Diffuse * dt;
 	if (dt != 0.0)
-		specular += u_dirLight2SpecularColour * pow(max(0.0,dot(H,N)), u_specularPower);
+		specular += u_li2Spec * pow(max(0.0,dot(H,N)), u_specularPower);
 	
-	diffuse *= v_tint.rgb;
 	diffuse += u_emissiveColour;
 	specular *= u_specularColour;	
 	

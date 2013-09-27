@@ -10,19 +10,19 @@ uniform mediump vec3 u_eyePosition;
 uniform mediump vec3 u_emissiveColour;
 uniform mediump vec3 u_specularColour;
 
-uniform mediump vec3 u_dirLight0Direction;
-uniform mediump vec3 u_dirLight0DiffuseColour;
-uniform mediump vec3 u_dirLight0SpecularColour;
+uniform mediump vec3 u_li0Dir;
+uniform mediump vec3 u_li0Diffuse;
+uniform mediump vec3 u_li0Spec;
 
-uniform mediump vec3 u_dirLight1Direction;
-uniform mediump vec3 u_dirLight1DiffuseColour;
-uniform mediump vec3 u_dirLight1SpecularColour;
+uniform mediump vec3 u_li1Dir;
+uniform mediump vec3 u_li1Diffuse;
+uniform mediump vec3 u_li1Spec;
 
-uniform mediump vec3 u_dirLight2Direction;
-uniform mediump vec3 u_dirLight2DiffuseColour;
-uniform mediump vec3 u_dirLight2SpecularColour;
+uniform mediump vec3 u_li2Dir;
+uniform mediump vec3 u_li2Diffuse;
+uniform mediump vec3 u_li2Spec;
 
-uniform mediump vec3 u_ambientLightColour;
+uniform mediump vec3 u_liAmbient;
 uniform mediump float u_specularPower;
 
 uniform mediump float u_fogEnabled;
@@ -52,34 +52,32 @@ vec4 lit(in mediump float NdotL, in mediump float NdotH, in mediump float m)
 //-----------------------------------------------------------------------------
 void ComputeLights(in mediump vec3 E, in mediump vec3 N, out mediump vec3 diffuse, out mediump vec3 specular)
 {
-
-	diffuse = u_ambientLightColour;
+	diffuse = u_liAmbient;
 	specular = vec3(0.0, 0.0, 0.0);
 	
 	// Directional Light 0
-	mediump vec3 L = -u_dirLight0Direction;
+	mediump vec3 L = -u_li0Dir;
 	mediump vec3 H = normalize(E + L);
 	mediump vec2 ret = lit(dot(N, L), dot(N, H), u_specularPower).yz;
-	diffuse += u_dirLight0DiffuseColour * ret.x;
-	specular += u_dirLight0SpecularColour * ret.y;
+	diffuse += u_li0Diffuse * ret.x;
+	specular += u_li0Spec * ret.y;
 
 	// Directional Light 1
-	L = -u_dirLight1Direction;
+	L = -u_li1Dir;
 	H = normalize(E + L);
 	ret = lit(dot(N, L), dot(N, H), u_specularPower).yz;
-	diffuse += u_dirLight1DiffuseColour * ret.x;
-	specular += u_dirLight1SpecularColour * ret.y;
+	diffuse += u_li1Diffuse * ret.x;
+	specular += u_li1Spec * ret.y;
 	
 	// Directional Light 2
-	L = -u_dirLight2Direction;
+	L = -u_li2Dir;
 	H = normalize(E + L);
 	ret = lit(dot(N, L), dot(N, H), u_specularPower).yz;
-	diffuse += u_dirLight2DiffuseColour * ret.x;
-	specular += u_dirLight2SpecularColour * ret.y;
-
-	diffuse *= u_colour.rgb;
+	diffuse += u_li2Diffuse * ret.x;
+	specular += u_li2Spec * ret.y;
+	
 	diffuse	+= u_emissiveColour;
-	specular	*= u_specularColour;
+	specular *= u_specularColour;
 		
 	
 }
@@ -110,7 +108,7 @@ void main()
 	mediump vec3 posToEye = u_eyePosition - pos_ws.xyz;
 	mediump vec3 E = normalize(posToEye);
 	
-	mediump vec3 diffuse = u_ambientLightColour;
+	mediump vec3 diffuse = vec3(0.0, 0.0, 0.0);
 	mediump vec3 specular = vec3(0.0, 0.0, 0.0);
 	
 	mediump float fogFactor = 0.0;
@@ -118,7 +116,7 @@ void main()
 	ComputeLights(E, N, diffuse, specular);
 	ComputeFogFactor(length(posToEye), fogFactor);
 	
-	v_diffuse	= vec4(diffuse.rgb, u_colour.a);
+	v_diffuse = vec4(diffuse.rgb * u_colour.rgb, u_colour.a);
 	
 	v_specular = vec4(0.0, 0.0, 0.0, 0.0);
 	v_specular.xyz = specular;

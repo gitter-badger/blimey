@@ -97,7 +97,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Shaders\" />
     <Folder Include="shaders\" />
   </ItemGroup>
   <ItemGroup>

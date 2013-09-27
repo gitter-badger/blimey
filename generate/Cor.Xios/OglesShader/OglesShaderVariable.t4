@@ -18,7 +18,9 @@
 
 			OpenTKHelper.CheckError();
 
-			
+			if( uniformLocation == -1 )
+				throw new Exception();
+				
 			this.UniformLocation = uniformLocation;
 			this.Name = uniform.Name;
 			this.Type = EnumConverter.ToType(uniform.Type);
