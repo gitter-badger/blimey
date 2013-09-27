@@ -1,15 +1,15 @@
-﻿	public class SlowRotate
-		: Trait
-	{
-		public override void OnUpdate(AppTime time)
-		{
+﻿    public class SlowRotate
+        : Trait
+    {
+        public override void OnUpdate(AppTime time)
+        {
             Single x = time.Delta * RealMaths.ToRadians(10f);
 
             Quaternion rot;
 
-			Quaternion.CreateFromYawPitchRoll(x, 0, 0, out rot);
+            Quaternion.CreateFromYawPitchRoll(x, 0, 0, out rot);
 
             this.Parent.Transform.LocalRotation *= rot;
-		}
-	}
+        }
+    }
 

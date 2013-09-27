@@ -1,34 +1,34 @@
-﻿	//
-	// ORBIT AROUND SUBJECT
-	//
-	// This behaviour takes a Subject Transform and a Speed and uses to oribit it's parent SceneObject 
-	// around the Subject.  This radius of the orbit is the distance from the parent SceneObject
-	// to the Subject.  If this distance changes at runtime the orbit radius will also change.
-	//
-	public sealed class OrbitAroundSubject
-		: Trait
-	{
-		#region SETTINGS (These are values that can be set per instance of this behaviour)
-		public Transform CameraSubject = null;
-		public float Speed = 0.1f;
-		#endregion
+﻿    //
+    // ORBIT AROUND SUBJECT
+    //
+    // This behaviour takes a Subject Transform and a Speed and uses to oribit it's parent SceneObject 
+    // around the Subject.  This radius of the orbit is the distance from the parent SceneObject
+    // to the Subject.  If this distance changes at runtime the orbit radius will also change.
+    //
+    public sealed class OrbitAroundSubject
+        : Trait
+    {
+        #region SETTINGS (These are values that can be set per instance of this behaviour)
+        public Transform CameraSubject = null;
+        public float Speed = 0.1f;
+        #endregion
 
-		// UPDATE
-		// Override update so that every frame we move the parent SceneObjects transform a little.
-		public override void OnUpdate(AppTime time)
-		{
-			Vector3 offset = this.Parent.Transform.LocalPosition - CameraSubject.Position;
+        // UPDATE
+        // Override update so that every frame we move the parent SceneObjects transform a little.
+        public override void OnUpdate(AppTime time)
+        {
+            Vector3 offset = this.Parent.Transform.LocalPosition - CameraSubject.Position;
 
-			Matrix44 rotation;
+            Matrix44 rotation;
             Matrix44.CreateRotationY(Speed * time.Delta, out rotation);
 
             Vector3 offsetIn = offset;
 
             Vector3.Transform(ref offsetIn, ref rotation, out offset);
 
-			this.Parent.Transform.LocalPosition = offset + CameraSubject.Position;
+            this.Parent.Transform.LocalPosition = offset + CameraSubject.Position;
 
-		}
+        }
 
-	}
+    }
 

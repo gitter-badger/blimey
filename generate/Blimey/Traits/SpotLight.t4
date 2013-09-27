@@ -1,5 +1,5 @@
-﻿	public class SpotLight
-		: Trait
-	{
-	}
+﻿    public class SpotLight
+        : Trait
+    {
+    }
 

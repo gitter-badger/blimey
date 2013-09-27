@@ -156,7 +156,7 @@
 
                 Single piOver2;
                 RealMaths.Pi(out piOver2);
-				piOver2 /= 2;
+                piOver2 /= 2;
 
                 pitch = sign * piOver2;
 
@@ -212,8 +212,8 @@
             Boolean isVec2Ok = CheckThatAllComponentsAreValidNumbers(vec2);
             System.Diagnostics.Debug.Assert(isVec1Ok && isVec2Ok);
 
-			Vector3.Normalise(ref vec1, out vec1);
-			Vector3.Normalise(ref vec2, out vec2);
+            Vector3.Normalise(ref vec1, out vec1);
+            Vector3.Normalise(ref vec2, out vec2);
             Single dot;
             Vector3.Dot(ref vec1, ref vec2, out dot);
             dot = Clamp(dot, -1.0f, 1.0f);

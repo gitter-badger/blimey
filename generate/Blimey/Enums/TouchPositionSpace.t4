@@ -1,8 +1,8 @@
-﻿	public enum TouchPositionSpace
-	{
-		NormalisedEngine,
-		Screen,
-		RealWorld
+﻿    public enum TouchPositionSpace
+    {
+        NormalisedEngine,
+        Screen,
+        RealWorld
 
-	}
+    }
 

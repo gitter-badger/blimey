@@ -1,43 +1,43 @@
-﻿	//
-	// BEHAVIOUR
-	//
-	// A game object can exhibit a number of behaviours.  The behaviours are defined as children of
-	// this abstract class.
-	//
-	public abstract class Trait
-	{
-		protected ICor Cor { get; set; }
-		protected IBlimey Blimey { get; set; }
+﻿    //
+    // BEHAVIOUR
+    //
+    // A game object can exhibit a number of behaviours.  The behaviours are defined as children of
+    // this abstract class.
+    //
+    public abstract class Trait
+    {
+        protected ICor Cor { get; set; }
+        protected IBlimey Blimey { get; set; }
 
-		public SceneObject Parent { get; set; }
+        public SceneObject Parent { get; set; }
 
-		public Boolean Active { get; set; }
-	
-		// INTERNAL METHODS
-		// called after constructor and before awake
-		internal void Initilise (ICor cor, IBlimey blimey, SceneObject parent)
-		{
-			Cor = cor;
-			Blimey = blimey;
-			Parent = parent;
+        public Boolean Active { get; set; }
+    
+        // INTERNAL METHODS
+        // called after constructor and before awake
+        internal void Initilise (ICor cor, IBlimey blimey, SceneObject parent)
+        {
+            Cor = cor;
+            Blimey = blimey;
+            Parent = parent;
 
-			Active = true;
-		}
-		
-		// INTERNAL CALLBACKS
-		internal virtual void Render(IGraphicsManager zGfx, Matrix44 zView, Matrix44 zProjection) {}
+            Active = true;
+        }
+        
+        // INTERNAL CALLBACKS
+        internal virtual void Render(IGraphicsManager zGfx, Matrix44 zView, Matrix44 zProjection) {}
 
-		//TODO MAKE THESE ABSTRACT
+        //TODO MAKE THESE ABSTRACT
 
-		// PUBLIC CALLBACKS
-		public virtual void OnAwake () {}
-		
-		public virtual void OnUpdate (AppTime time) {}
-		
-		// Called when the Enabled state of the parent gameobject changes
-		public virtual void OnEnable() {}
-		public virtual void OnDisable() {}
-		
-		public virtual void OnDestroy () {}
-	}
+        // PUBLIC CALLBACKS
+        public virtual void OnAwake () {}
+        
+        public virtual void OnUpdate (AppTime time) {}
+        
+        // Called when the Enabled state of the parent gameobject changes
+        public virtual void OnEnable() {}
+        public virtual void OnDisable() {}
+        
+        public virtual void OnDestroy () {}
+    }
 

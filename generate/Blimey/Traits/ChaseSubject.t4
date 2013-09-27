@@ -1,55 +1,55 @@
-﻿	public class ChaseSubject
-		: Trait
-	{
+﻿    public class ChaseSubject
+        : Trait
+    {
         Transform subject;
         Boolean dirty;
         Vector3 desiredPositionOffset;
         Vector3 velocity;
         
-		// The target that this behaviour will chase.
-		public Transform Subject
-		{
-			get { return subject; }
-			set
-			{
-				subject = value;
+        // The target that this behaviour will chase.
+        public Transform Subject
+        {
+            get { return subject; }
+            set
+            {
+                subject = value;
 
-				// When we set the subject we work out the current vector between us
-				// and the target, so that we always try to keep this seperation
-				// even if the subject moves.
-				// This vector is in world space.
-				desiredPositionOffset = 
-					this.Parent.Transform.Position -
-					subject.Position;
+                // When we set the subject we work out the current vector between us
+                // and the target, so that we always try to keep this seperation
+                // even if the subject moves.
+                // This vector is in world space.
+                desiredPositionOffset = 
+                    this.Parent.Transform.Position -
+                    subject.Position;
 
-	        	//Console.WriteLine(Parent.Name + ": ChaseSubject desiredPositionOffset=" + desiredPositionOffset);
-			}
-		}
-		
-    	public float Mass { get; set; }
+                //Console.WriteLine(Parent.Name + ": ChaseSubject desiredPositionOffset=" + desiredPositionOffset);
+            }
+        }
+        
+        public float Mass { get; set; }
         public float Damping { get; set; }
         public float Stiffness { get; set; }
         public Boolean SpringEnabled { get; set; }
 
         public override void OnEnable()
         {
-        	this.ApplyDefaultSettings();
+            this.ApplyDefaultSettings();
         }
 
- 		public void ApplyDefaultSettings()
- 		{
- 			this.ResetSpring();
+        public void ApplyDefaultSettings()
+        {
+            this.ResetSpring();
 
- 			// Mass of the camera body. 
- 			// Heaver objects require stiffer springs with less 
- 			// damping to move at the same rate as lighter objects.
- 			this.Mass = 20.0f; 	
- 			this.Damping = 40.0f; 
- 			this.Stiffness = 2000.0f;
- 			this.SpringEnabled = false;
+            // Mass of the camera body. 
+            // Heaver objects require stiffer springs with less 
+            // damping to move at the same rate as lighter objects.
+            this.Mass = 20.0f;  
+            this.Damping = 40.0f; 
+            this.Stiffness = 2000.0f;
+            this.SpringEnabled = false;
 
- 			this.velocity = Vector3.Zero;
- 		}
+            this.velocity = Vector3.Zero;
+        }
 
         /// Forces camera to be at desired position and to stop moving. The is useful
         /// when the chased object is first created or after it has been teleported.
@@ -60,14 +60,14 @@
             this.dirty = true;
         }
 
-		public override void OnUpdate(AppTime time)
-		{
-			Vector3 previousPosition = this.Parent.Transform.Position;
+        public override void OnUpdate(AppTime time)
+        {
+            Vector3 previousPosition = this.Parent.Transform.Position;
 
             Vector3 desiredPosition = Subject.Position + desiredPositionOffset;
 
-	        Vector3 stretch = previousPosition - desiredPosition;
-	        //Console.WriteLine(Parent.Name + ": ChaseSubject stretch=" + stretch + " - (" + previousPosition + " - " + desiredPosition + ")");
+            Vector3 stretch = previousPosition - desiredPosition;
+            //Console.WriteLine(Parent.Name + ": ChaseSubject stretch=" + stretch + " - (" + previousPosition + " - " + desiredPosition + ")");
 
             if (this.dirty || ! SpringEnabled)
             {
@@ -81,16 +81,16 @@
             }
             else
             {
-	            // Calculate spring force
-	            Vector3 force = -this.Stiffness * stretch - this.Damping * this.velocity;
+                // Calculate spring force
+                Vector3 force = -this.Stiffness * stretch - this.Damping * this.velocity;
 
-	            // Apply acceleration
-	            Vector3 acceleration = force / this.Mass;
-	            this.velocity += acceleration * time.Delta;
+                // Apply acceleration
+                Vector3 acceleration = force / this.Mass;
+                this.velocity += acceleration * time.Delta;
 
-	            // Apply velocity
-	            Vector3 deltaPosition = this.velocity * time.Delta;
-	            this.Parent.Transform.Position += deltaPosition;
-	        }
-		}
-	}
+                // Apply velocity
+                Vector3 deltaPosition = this.velocity * time.Delta;
+                this.Parent.Transform.Position += deltaPosition;
+            }
+        }
+    }

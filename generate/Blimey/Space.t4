@@ -1,6 +1,6 @@
-﻿	public enum Space
-	{
-		World,
-		Self
-	}
+﻿    public enum Space
+    {
+        World,
+        Self
+    }
 

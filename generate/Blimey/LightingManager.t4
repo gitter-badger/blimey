@@ -1,37 +1,56 @@
-﻿	public static class LightingManager
-	{
-		public static Vector3 ambientLightColour;
+﻿    public static class LightingManager
+    {
+        public static Rgba32 ambientLightColour;
+        public static Rgba32 emissiveColour;
+        public static Rgba32 specularColour;
+        public static Single specularPower;
 
-		public static Vector3 dirLight0Direction;
-		public static Vector3 dirLight0DiffuseColour;
-		public static Vector3 dirLight0SpecularColour;
 
-		public static Vector3 dirLight1Direction;
-		public static Vector3 dirLight1DiffuseColour;
-		public static Vector3 dirLight1SpecularColour;
+        public static Boolean fogEnabled;
+        public static Single fogStart;
+        public static Single fogEnd;
+        public static Rgba32 fogColour;
+        
 
-		public static Vector3 dirLight2Direction;
-		public static Vector3 dirLight2DiffuseColour;
-		public static Vector3 dirLight2SpecularColour;
+        public static Vector3 dirLight0Direction;
+        public static Rgba32 dirLight0DiffuseColour;
+        public static Rgba32 dirLight0SpecularColour;
 
-		static LightingManager()
-		{
-			Rgba32.DarkGray.ToVector3(out ambientLightColour);
+        public static Vector3 dirLight1Direction;
+        public static Rgba32 dirLight1DiffuseColour;
+        public static Rgba32 dirLight1SpecularColour;
 
-			dirLight0Direction = new Vector3(-0.3f, -0.9f, +0.3f); 
-			Vector3.Normalise(ref dirLight0Direction, out dirLight0Direction);
-			Rgba32.DarkGoldenrod.ToVector3(out dirLight0DiffuseColour);
-			Rgba32.Beige.ToVector3(out dirLight0SpecularColour);
+        public static Vector3 dirLight2Direction;
+        public static Rgba32 dirLight2DiffuseColour;
+        public static Rgba32 dirLight2SpecularColour;
 
-			dirLight1Direction = new Vector3(0.3f, 0.1f, -0.3f);
-			Vector3.Normalise(ref dirLight1Direction, out dirLight1Direction);
-			Rgba32.DarkGoldenrod.ToVector3(out dirLight1DiffuseColour);
-			Rgba32.Beige.ToVector3(out dirLight1SpecularColour);
+        static LightingManager()
+        {
+            ambientLightColour = Rgba32.Black;
+            emissiveColour = Rgba32.DarkSlateGray;
+            specularColour = Rgba32.DarkGray;
+            specularPower = 2f;
 
-			dirLight2Direction = new Vector3( -0.7f, -0.3f, +0.1f);
-			Vector3.Normalise(ref dirLight2Direction, out dirLight2Direction);
-			Rgba32.DarkGoldenrod.ToVector3(out dirLight2DiffuseColour);
-			Rgba32.Beige.ToVector3(out dirLight2SpecularColour);
+            fogEnabled = true;
+            fogStart = 100f;
+            fogEnd = 1000f;
+            fogColour = Rgba32.BlueViolet;
 
-		}
-	}
+
+            dirLight0Direction = new Vector3(-0.3f, -0.9f, +0.3f); 
+            Vector3.Normalise(ref dirLight0Direction, out dirLight0Direction);
+            dirLight0DiffuseColour = Rgba32.DimGray;
+            dirLight0SpecularColour = Rgba32.DarkGreen;
+
+            dirLight1Direction = new Vector3(0.3f, 0.1f, -0.3f);
+            Vector3.Normalise(ref dirLight1Direction, out dirLight1Direction);
+            dirLight1DiffuseColour = Rgba32.DimGray;
+            dirLight1SpecularColour = Rgba32.DarkRed;
+
+            dirLight2Direction = new Vector3( -0.7f, -0.3f, +0.1f);
+            Vector3.Normalise(ref dirLight2Direction, out dirLight2Direction);
+            dirLight2DiffuseColour = Rgba32.DimGray;
+            dirLight2SpecularColour = Rgba32.DarkBlue;
+
+        }
+    }

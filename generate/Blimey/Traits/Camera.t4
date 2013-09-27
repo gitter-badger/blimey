@@ -1,91 +1,91 @@
-	public sealed class Camera
-		: Trait
-	{
-		public CameraProjectionType Projection = CameraProjectionType.Perspective;
+    public sealed class Camera
+        : Trait
+    {
+        public CameraProjectionType Projection = CameraProjectionType.Perspective;
 
-		// perspective settings
-		public Single FieldOfView = RealMaths.ToRadians(45.0f);
+        // perspective settings
+        public Single FieldOfView = RealMaths.ToRadians(45.0f);
 
-		// orthographic settings
-		public Single size = 100f;
+        // orthographic settings
+        public Single size = 100f;
 
-		// clipping planes
-		public Single NearPlaneDistance = 1.0f;
-		public Single FarPlaneDistance = 10000.0f;
+        // clipping planes
+        public Single NearPlaneDistance = 1.0f;
+        public Single FarPlaneDistance = 10000.0f;
 
-		public Matrix44 ViewMatrix44 { get { return _view; } }
+        public Matrix44 ViewMatrix44 { get { return _view; } }
 
-		public Matrix44 ProjectionMatrix44 { get { return _projection; } }
-		
-		Matrix44 _projection;
-		Matrix44 _view;
+        public Matrix44 ProjectionMatrix44 { get { return _projection; } }
+        
+        Matrix44 _projection;
+        Matrix44 _view;
 
-		// return this cameras bounding frustum
-		//public BoundingFrustum BoundingFrustum { get { return new BoundingFrustum (ViewMatrix44 * ProjectionMatrix44); } }
+        // return this cameras bounding frustum
+        //public BoundingFrustum BoundingFrustum { get { return new BoundingFrustum (ViewMatrix44 * ProjectionMatrix44); } }
 
 
         public bool TempWORKOUTANICERWAY = false;
 
-		// Allows the game component to update itself.
-		public override void OnUpdate (AppTime time)
-		{
+        // Allows the game component to update itself.
+        public override void OnUpdate (AppTime time)
+        {
 
-			var camUp = this.Parent.Transform.Up;
+            var camUp = this.Parent.Transform.Up;
 
-			var camLook = this.Parent.Transform.Forward;
-			
-			//var camLook = this.Parent.Transform.Position + (100f * this.Parent.Transform.Forward);
-			//Vector3.Normalise(ref camLook, out camLook);
+            var camLook = this.Parent.Transform.Forward;
+            
+            //var camLook = this.Parent.Transform.Position + (100f * this.Parent.Transform.Forward);
+            //Vector3.Normalise(ref camLook, out camLook);
 
-			if (this.Parent.Owner.Cor.System.CurrentOrientation == DeviceOrientation.Rightside)
-			{
-				Vector3.Cross(ref camLook, ref camUp, out camUp);
-			}
+            if (this.Parent.Owner.Cor.System.CurrentOrientation == DeviceOrientation.Rightside)
+            {
+                Vector3.Cross(ref camLook, ref camUp, out camUp);
+            }
 
-			if (this.Parent.Owner.Cor.System.CurrentOrientation == DeviceOrientation.Leftside)
-			{
-				Vector3.Cross(ref camUp, ref camLook, out camUp);
-			}
+            if (this.Parent.Owner.Cor.System.CurrentOrientation == DeviceOrientation.Leftside)
+            {
+                Vector3.Cross(ref camUp, ref camLook, out camUp);
+            }
 
-			if (this.Parent.Owner.Cor.System.CurrentOrientation == DeviceOrientation.Upsidedown)
-			{
-				camUp = -camUp;
-			}
+            if (this.Parent.Owner.Cor.System.CurrentOrientation == DeviceOrientation.Upsidedown)
+            {
+                camUp = -camUp;
+            }
 
-			Vector3 pos = this.Parent.Transform.Position;
-			Matrix44.CreateLookAt(
-				ref pos,
-				ref camLook,
-				ref camUp,
-				out _view);
+            Vector3 pos = this.Parent.Transform.Position;
+            Matrix44.CreateLookAt(
+                ref pos,
+                ref camLook,
+                ref camUp,
+                out _view);
 
-			Single width = (Single) this.Cor.System.CurrentDisplaySize.X;
-			Single height = (Single) this.Cor.System.CurrentDisplaySize.Y;
+            Single width = (Single) this.Cor.System.CurrentDisplaySize.X;
+            Single height = (Single) this.Cor.System.CurrentDisplaySize.Y;
 
-			if (Projection == CameraProjectionType.Orthographic)
-			{
+            if (Projection == CameraProjectionType.Orthographic)
+            {
                 if(TempWORKOUTANICERWAY)
                 {
                     Matrix44.CreateOrthographic(
-						width / SpriteConfiguration.Default.SpriteSpaceScale, 
-						height / SpriteConfiguration.Default.SpriteSpaceScale, 
+                        width / SpriteConfiguration.Default.SpriteSpaceScale, 
+                        height / SpriteConfiguration.Default.SpriteSpaceScale, 
                         1, -1, out _projection);
                 }
                 else
                 {
-				    Matrix44.CreateOrthographicOffCenter(
+                    Matrix44.CreateOrthographicOffCenter(
                         -0.5f, 0.5f, -0.5f, 0.5f, 0.5f * size, -0.5f * size, out _projection);
                 }
-			} 
-			else
-			{
-				Matrix44.CreatePerspectiveFieldOfView (
-					FieldOfView,
-					width / height, // aspect ratio
-					NearPlaneDistance,
-					FarPlaneDistance,
-					out _projection);
-			}
-		}
-	}
+            } 
+            else
+            {
+                Matrix44.CreatePerspectiveFieldOfView (
+                    FieldOfView,
+                    width / height, // aspect ratio
+                    NearPlaneDistance,
+                    FarPlaneDistance,
+                    out _projection);
+            }
+        }
+    }
 

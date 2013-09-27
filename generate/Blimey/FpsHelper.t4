@@ -1,39 +1,39 @@
-﻿	internal class FpsHelper
-	{
-		Single fps = 0;
-		TimeSpan sampleSpan;
-		Stopwatch stopwatch;
-		Int32 sampleFrames;
+﻿    internal class FpsHelper
+    {
+        Single fps = 0;
+        TimeSpan sampleSpan;
+        Stopwatch stopwatch;
+        Int32 sampleFrames;
 
-		internal Single Fps { get { return fps; } }
+        internal Single Fps { get { return fps; } }
 
-		internal FpsHelper()
-		{
-			sampleSpan = TimeSpan.FromSeconds(1);
-			fps = 0;
-			sampleFrames = 0;
-			stopwatch = Stopwatch.StartNew();
+        internal FpsHelper()
+        {
+            sampleSpan = TimeSpan.FromSeconds(1);
+            fps = 0;
+            sampleFrames = 0;
+            stopwatch = Stopwatch.StartNew();
 
-		}
+        }
 
-		internal void Update(AppTime time)
-		{
-			if (stopwatch.Elapsed > sampleSpan)
-			{
-				// Update FPS value and start next sampling period.
-				fps = (Single)sampleFrames / (Single)stopwatch.Elapsed.TotalSeconds;
+        internal void Update(AppTime time)
+        {
+            if (stopwatch.Elapsed > sampleSpan)
+            {
+                // Update FPS value and start next sampling period.
+                fps = (Single)sampleFrames / (Single)stopwatch.Elapsed.TotalSeconds;
 
-				stopwatch.Reset();
-				stopwatch.Start();
-				sampleFrames = 0;
-			}
+                stopwatch.Reset();
+                stopwatch.Start();
+                sampleFrames = 0;
+            }
 
-		}
+        }
 
-		internal void LogRender()
-		{
-			sampleFrames++;
-		}
+        internal void LogRender()
+        {
+            sampleFrames++;
+        }
 
-	}
+    }
 

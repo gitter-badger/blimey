@@ -1,36 +1,36 @@
-﻿	internal abstract class PotentialGesture
-	{
+﻿    internal abstract class PotentialGesture
+    {
 
-		// in meters
-		const float DISPLACEMENT_REQUIRED_FOR_DRAGS = 0.01f;
-		const float MAX_DISPLACEMENT_FOR_TAPS = 0.005f;
+        // in meters
+        const float DISPLACEMENT_REQUIRED_FOR_DRAGS = 0.01f;
+        const float MAX_DISPLACEMENT_FOR_TAPS = 0.005f;
 
-		protected InputEventSystem inputEventSystem;
+        protected InputEventSystem inputEventSystem;
 
-		static int PotentialGestureIDAssigner = 0;
+        static int PotentialGestureIDAssigner = 0;
 
-		internal PotentialGesture(
-			InputEventSystem inputEventSystem,
-			GestureType type, Int32[] touchIDs)
-		{
-			this.id = PotentialGestureIDAssigner;
-			this.inputEventSystem = inputEventSystem;
-			PotentialGestureIDAssigner++;
+        internal PotentialGesture(
+            InputEventSystem inputEventSystem,
+            GestureType type, Int32[] touchIDs)
+        {
+            this.id = PotentialGestureIDAssigner;
+            this.inputEventSystem = inputEventSystem;
+            PotentialGestureIDAssigner++;
 
-			this.type = type;
-			this.touchIDs = touchIDs;
-		}
+            this.type = type;
+            this.touchIDs = touchIDs;
+        }
 
-		internal abstract Gesture Update(Single dt, List<TouchTracker> touchTrackers);
+        internal abstract Gesture Update(Single dt, List<TouchTracker> touchTrackers);
 
-		internal bool Finished { get { return failedGesture || completedGesture; } }
+        internal bool Finished { get { return failedGesture || completedGesture; } }
 
-		protected bool failedGesture = false;
-		protected bool completedGesture = false;
+        protected bool failedGesture = false;
+        protected bool completedGesture = false;
 
-		protected Int32 id;
-		protected GestureType type;
-		protected Int32[] touchIDs;
+        protected Int32 id;
+        protected GestureType type;
+        protected Int32[] touchIDs;
 
-	}
+    }
 

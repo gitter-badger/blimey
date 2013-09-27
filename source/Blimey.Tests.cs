@@ -45,17 +45,17 @@ using System.Runtime.CompilerServices;
 namespace Sungiant.Blimey.Tests
 {
 
-	/// <summary>
-	/// 
-	/// </summary>
-	[TestFixture]
-	public class TransformTests
-	{
-		[Test]
-		public void TestTranslation()
-		{
-			
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    [TestFixture]
+    public class TransformTests
+    {
+        [Test]
+        public void TestTranslation()
+        {
+            
+        }
 
-	}
+    }
 }

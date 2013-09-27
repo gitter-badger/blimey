@@ -1,40 +1,40 @@
-﻿	internal class BlimeyContext
-		: IBlimey
-	{
-		ICor cor;
+﻿    internal class BlimeyContext
+        : IBlimey
+    {
+        ICor cor;
 
-		internal BlimeyContext(ICor cor, SceneSettings settings)
-		{
-			this.cor = cor;
+        internal BlimeyContext(ICor cor, SceneSettings settings)
+        {
+            this.cor = cor;
 
-			this.InputEventSystem = new InputEventSystem(this.cor);
-			this.DebugShapeRenderer = new DebugShapeRenderer(
-				this.cor,
-				settings.RenderPasses);
+            this.InputEventSystem = new InputEventSystem(this.cor);
+            this.DebugShapeRenderer = new DebugShapeRenderer(
+                this.cor,
+                settings.RenderPasses);
 
-		}
+        }
 
-		public InputEventSystem InputEventSystem { get; set; }
-		public DebugShapeRenderer DebugShapeRenderer { get; set; }
+        public InputEventSystem InputEventSystem { get; set; }
+        public DebugShapeRenderer DebugShapeRenderer { get; set; }
 
-		internal void PreUpdate (AppTime time)
-		{
-			this.DebugShapeRenderer.Update(time);
-			this.InputEventSystem.Update(time);
-		}
+        internal void PreUpdate (AppTime time)
+        {
+            this.DebugShapeRenderer.Update(time);
+            this.InputEventSystem.Update(time);
+        }
 
-		internal void PostUpdate(AppTime time)
-		{
-			
-		}
+        internal void PostUpdate(AppTime time)
+        {
+            
+        }
 
-		internal void PreRender()
-		{
-		}
+        internal void PreRender()
+        {
+        }
 
-		internal void PostRender()
-		{
-			
-		}
-	}
+        internal void PostRender()
+        {
+            
+        }
+    }
 

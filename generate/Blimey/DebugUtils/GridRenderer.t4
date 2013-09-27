@@ -1,53 +1,53 @@
-﻿	public class GridRenderer
-	{
-		public Rgba32 AxisColourX = Rgba32.Red; // going to the right of the screen
-		public Rgba32 AxisColourY = Rgba32.Green; // up
-		public Rgba32 AxisColourZ = Rgba32.Blue; // coming out of the screen
+﻿    public class GridRenderer
+    {
+        public Rgba32 AxisColourX = Rgba32.Red; // going to the right of the screen
+        public Rgba32 AxisColourY = Rgba32.Green; // up
+        public Rgba32 AxisColourZ = Rgba32.Blue; // coming out of the screen
 
-		float gridSquareSize = 0.50f;  // in meters
-		int numberOfGridSquares = 10;
+        float gridSquareSize = 0.50f;  // in meters
+        int numberOfGridSquares = 10;
 
-		Rgba32 gridColour = Rgba32.LightGray;
+        Rgba32 gridColour = Rgba32.LightGray;
 
         public bool ShowXZPlane = true;
         public bool ShowXYPlane = false;
         public bool ShowYZPlane = false;
 
-		string renderPass;
-		DebugShapeRenderer debugRenderer;
+        string renderPass;
+        DebugShapeRenderer debugRenderer;
 
-		public GridRenderer(DebugShapeRenderer debugRenderer, string renderPass, float gridSquareSize = 0.50f, int numberOfGridSquares = 10)
-		{
-			this.debugRenderer = debugRenderer;
-			this.renderPass = renderPass;
+        public GridRenderer(DebugShapeRenderer debugRenderer, string renderPass, float gridSquareSize = 0.50f, int numberOfGridSquares = 10)
+        {
+            this.debugRenderer = debugRenderer;
+            this.renderPass = renderPass;
             this.gridSquareSize = gridSquareSize;
             this.numberOfGridSquares = numberOfGridSquares;
-		}
+        }
 
-		public void Update()
-		{
-			float length = numberOfGridSquares * 2 * gridSquareSize;
-			float halfLength = length / 2;
+        public void Update()
+        {
+            float length = numberOfGridSquares * 2 * gridSquareSize;
+            float halfLength = length / 2;
 
             if( ShowXZPlane )
             {
-    			for (int i = 0; i < (numberOfGridSquares * 2 + 1); i++)
-    			{
-    				if (i * gridSquareSize - halfLength == 0)
-    					continue;
+                for (int i = 0; i < (numberOfGridSquares * 2 + 1); i++)
+                {
+                    if (i * gridSquareSize - halfLength == 0)
+                        continue;
 
-    				debugRenderer.AddLine(
-    					renderPass,
-    					new Vector3(-halfLength, 0.0f, i * gridSquareSize - halfLength),
-    					new Vector3(halfLength, 0.0f, i * gridSquareSize - halfLength),
-    					gridColour);
+                    debugRenderer.AddLine(
+                        renderPass,
+                        new Vector3(-halfLength, 0.0f, i * gridSquareSize - halfLength),
+                        new Vector3(halfLength, 0.0f, i * gridSquareSize - halfLength),
+                        gridColour);
 
-    				debugRenderer.AddLine(
-    					renderPass,
-    					new Vector3(i * gridSquareSize - halfLength, 0.0f, -halfLength),
-    					new Vector3(i * gridSquareSize - halfLength, 0.0f, halfLength),
-    					gridColour);
-    			}
+                    debugRenderer.AddLine(
+                        renderPass,
+                        new Vector3(i * gridSquareSize - halfLength, 0.0f, -halfLength),
+                        new Vector3(i * gridSquareSize - halfLength, 0.0f, halfLength),
+                        gridColour);
+                }
             }
 
             if( ShowXYPlane )
@@ -114,43 +114,43 @@
                 }
             }
 
-			debugRenderer.AddLine(
-					renderPass,
-				new Vector3(-numberOfGridSquares * gridSquareSize, 0, 0),
-				new Vector3(0, 0, 0),
-				Rgba32.White);
+            debugRenderer.AddLine(
+                    renderPass,
+                new Vector3(-numberOfGridSquares * gridSquareSize, 0, 0),
+                new Vector3(0, 0, 0),
+                Rgba32.White);
 
-			debugRenderer.AddLine(
-					renderPass,
-				new Vector3(0, -numberOfGridSquares * gridSquareSize, 0),
-				new Vector3(0, 0, 0),
-				Rgba32.White);
+            debugRenderer.AddLine(
+                    renderPass,
+                new Vector3(0, -numberOfGridSquares * gridSquareSize, 0),
+                new Vector3(0, 0, 0),
+                Rgba32.White);
 
-			debugRenderer.AddLine(
-					renderPass,
-				new Vector3(0, 0, -numberOfGridSquares * gridSquareSize),
-				new Vector3(0, 0, 0),
-				Rgba32.White);
+            debugRenderer.AddLine(
+                    renderPass,
+                new Vector3(0, 0, -numberOfGridSquares * gridSquareSize),
+                new Vector3(0, 0, 0),
+                Rgba32.White);
 
 
-			debugRenderer.AddLine(
-					renderPass,
-				new Vector3(0, 0, 0),
-				new Vector3(numberOfGridSquares * gridSquareSize, 0, 0),
-				AxisColourX);
+            debugRenderer.AddLine(
+                    renderPass,
+                new Vector3(0, 0, 0),
+                new Vector3(numberOfGridSquares * gridSquareSize, 0, 0),
+                AxisColourX);
 
-			debugRenderer.AddLine(
-					renderPass,
-				new Vector3(0, 0, 0),
-				new Vector3(0, numberOfGridSquares * gridSquareSize, 0),
-				AxisColourY);
+            debugRenderer.AddLine(
+                    renderPass,
+                new Vector3(0, 0, 0),
+                new Vector3(0, numberOfGridSquares * gridSquareSize, 0),
+                AxisColourY);
 
-			debugRenderer.AddLine(
-					renderPass,
-				new Vector3(0, 0, 0),
-				new Vector3(0, 0, numberOfGridSquares * gridSquareSize),
-				AxisColourZ);
+            debugRenderer.AddLine(
+                    renderPass,
+                new Vector3(0, 0, 0),
+                new Vector3(0, 0, numberOfGridSquares * gridSquareSize),
+                AxisColourZ);
 
-		}
-	}
+        }
+    }
 

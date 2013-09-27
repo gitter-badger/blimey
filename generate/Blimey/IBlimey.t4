@@ -1,7 +1,7 @@
-﻿	public interface IBlimey
-	{
-		InputEventSystem InputEventSystem { get; }
+﻿    public interface IBlimey
+    {
+        InputEventSystem InputEventSystem { get; }
 
-		DebugShapeRenderer DebugShapeRenderer { get; }
-	}
+        DebugShapeRenderer DebugShapeRenderer { get; }
+    }
 

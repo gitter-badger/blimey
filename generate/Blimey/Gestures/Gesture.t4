@@ -1,77 +1,77 @@
-﻿	public class Gesture
-	{
-		static int GestureIDAssigner = 0;
+﻿    public class Gesture
+    {
+        static int GestureIDAssigner = 0;
 
-		InputEventSystem inputEventSystem;
-		Int32 id;
-		GestureType type;
-		Int32[] touchIDs;
+        InputEventSystem inputEventSystem;
+        Int32 id;
+        GestureType type;
+        Int32[] touchIDs;
 
-		public Vector2 GetFinishingPosition(TouchPositionSpace space)
-		{
+        public Vector2 GetFinishingPosition(TouchPositionSpace space)
+        {
 
-			Vector2 averageFinishPos = Vector2.Zero ;
-			foreach (Int32 touchID in TouchIDs)
-			{
-				var tracker = inputEventSystem.GetTouchTracker(touchID);
+            Vector2 averageFinishPos = Vector2.Zero ;
+            foreach (Int32 touchID in TouchIDs)
+            {
+                var tracker = inputEventSystem.GetTouchTracker(touchID);
 
-				var p = tracker.GetPosition(space);
+                var p = tracker.GetPosition(space);
 
-				averageFinishPos += p;
-			}
+                averageFinishPos += p;
+            }
 
-			averageFinishPos /= TouchIDs.Length;
+            averageFinishPos /= TouchIDs.Length;
 
-			return averageFinishPos;  
-		}
+            return averageFinishPos;  
+        }
 
-		public Gesture(InputEventSystem inputEventSystem, GestureType type, Int32[] touchIDs)
-		{
-			this.inputEventSystem = inputEventSystem;
-			this.id = GestureIDAssigner;
-			GestureIDAssigner++;
-			this.type = type;
-			this.touchIDs = touchIDs;
-		}
+        public Gesture(InputEventSystem inputEventSystem, GestureType type, Int32[] touchIDs)
+        {
+            this.inputEventSystem = inputEventSystem;
+            this.id = GestureIDAssigner;
+            GestureIDAssigner++;
+            this.type = type;
+            this.touchIDs = touchIDs;
+        }
 
-		public Int32 ID
-		{
-			get
-			{
-				return this.id;
-			}
-		}
+        public Int32 ID
+        {
+            get
+            {
+                return this.id;
+            }
+        }
 
-		public GestureType Type
-		{
-			get
-			{
-				return this.type;
-			}
-		}
+        public GestureType Type
+        {
+            get
+            {
+                return this.type;
+            }
+        }
 
-		public Int32[] TouchIDs
-		{
-			get
-			{
-				return this.touchIDs;
-			}
-		}
+        public Int32[] TouchIDs
+        {
+            get
+            {
+                return this.touchIDs;
+            }
+        }
 
-		public List<TouchTracker> TouchTrackers
-		{
-			get
-			{
-				var tt = new List<TouchTracker>();
+        public List<TouchTracker> TouchTrackers
+        {
+            get
+            {
+                var tt = new List<TouchTracker>();
 
-				foreach (Int32 touchID in TouchIDs)
-				{
-					var tracker = inputEventSystem.GetTouchTracker(touchID);
-					tt.Add(tracker);
-				}
+                foreach (Int32 touchID in TouchIDs)
+                {
+                    var tracker = inputEventSystem.GetTouchTracker(touchID);
+                    tt.Add(tracker);
+                }
 
-				return tt;
-			}
-		}
-	}
+                return tt;
+            }
+        }
+    }
 

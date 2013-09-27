@@ -1,72 +1,72 @@
-﻿	internal class SceneManager
-	{
-		Scene activeScene;
-		ICor cor;
+﻿    internal class SceneManager
+    {
+        Scene activeScene;
+        ICor cor;
 
-		SceneRenderManager renderManager;
+        SceneRenderManager renderManager;
 
-		public event System.EventHandler SimulationStateChanged;
+        public event System.EventHandler SimulationStateChanged;
 
-		public Scene ActiveState { get { return activeScene; } }
+        public Scene ActiveState { get { return activeScene; } }
 
-		public SceneManager (ICor cor, Scene startScene)
-		{
-			this.cor = cor;
-			activeScene = startScene;
-			activeScene.Initialize(cor);
-			renderManager = new SceneRenderManager(cor);
+        public SceneManager (ICor cor, Scene startScene)
+        {
+            this.cor = cor;
+            activeScene = startScene;
+            activeScene.Initialize(cor);
+            renderManager = new SceneRenderManager(cor);
 
-		}
+        }
 
-		public Boolean Update(AppTime time)
-		{
-			Scene a = activeScene.RunUpdate (time);
+        public Boolean Update(AppTime time)
+        {
+            Scene a = activeScene.RunUpdate (time);
 
-			// If the active state returns a game state other than itself then we need to shut
-			// it down and start the returned state.  If a game state returns null then we need to
-			// shut the engine down.
+            // If the active state returns a game state other than itself then we need to shut
+            // it down and start the returned state.  If a game state returns null then we need to
+            // shut the engine down.
 
-			//quitting the game
-			if (a == null) 
-			{
-				activeScene.Uninitilise ();
-				return true;
-			} 
-			else if (a != activeScene) 
-			{
-				activeScene.Uninitilise ();
+            //quitting the game
+            if (a == null) 
+            {
+                activeScene.Uninitilise ();
+                return true;
+            } 
+            else if (a != activeScene) 
+            {
+                activeScene.Uninitilise ();
 
-				activeScene = a;
+                activeScene = a;
 
-				this.cor.Graphics.Reset();
+                this.cor.Graphics.Reset();
 
-				GC.Collect();
+                GC.Collect();
 
-				activeScene.Initialize (cor);
+                activeScene.Initialize (cor);
 
-				if (SimulationStateChanged != null)
-				{
-					SimulationStateChanged(this, System.EventArgs.Empty);
-				}
+                if (SimulationStateChanged != null)
+                {
+                    SimulationStateChanged(this, System.EventArgs.Empty);
+                }
 
-				this.Update(time);
+                this.Update(time);
 
-			}
+            }
 
-			return false;
+            return false;
 
-		}
+        }
 
-		public void Render()
-		{
-			if (activeScene != null && activeScene.Active)
-			{
-				renderManager.Render(activeScene);
-			}
-			else
-			{
-				Teletype.WriteLine("Beep");
-			}
-		}
-	}
+        public void Render()
+        {
+            if (activeScene != null && activeScene.Active)
+            {
+                renderManager.Render(activeScene);
+            }
+            else
+            {
+                Teletype.WriteLine("Beep");
+            }
+        }
+    }
 

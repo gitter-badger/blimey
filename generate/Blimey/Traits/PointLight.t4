@@ -1,5 +1,5 @@
-﻿	public class PointLight
-		: Trait
-	{
-	}
+﻿    public class PointLight
+        : Trait
+    {
+    }
 

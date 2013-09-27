@@ -82,9 +82,9 @@
         public Quaternion SpriteSpaceOrientation { get; set; }
 
     }
-	public class Sprite
-		: Trait
-	{
+    public class Sprite
+        : Trait
+    {
 
         SpriteMesh spriteMesh;
 
@@ -96,7 +96,7 @@
         //static BillboardPrimitive billboard;
 
         // they also share an unlit shader
-		public static IShader UnlitShader { get { return unlitShader; } }
+        public static IShader UnlitShader { get { return unlitShader; } }
         static IShader unlitShader;
 
         // defines how to move from world space to sprite space.
@@ -155,7 +155,7 @@
          * These are how the user defines the state of the sprite.           *
          * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		// defines the name of the renderpass to perform a debug render, if null or empty then ignored
+        // defines the name of the renderpass to perform a debug render, if null or empty then ignored
         public String DebugRender { get; set; }
         public Material Material { get { return meshRendererTrait.Material; } set { meshRendererTrait.Material = value; } }
 
@@ -196,8 +196,8 @@
             Matrix44.Invert(ref spriteSpaceMatrix, out inverseSpriteSpaceMatrix);
         }
 
-		public override void OnAwake()
-		{
+        public override void OnAwake()
+        {
             meshRendererTrait = this.Parent.GetTrait<MeshRenderer>();
 
             if(meshRendererTrait == null)
@@ -214,7 +214,7 @@
             {
                 unlitShader = this.Cor.Resources.LoadShader(
                     ShaderType.Unlit
-				);
+                );
             }
 
             var mat = new Material("Default", unlitShader);
@@ -222,15 +222,15 @@
             meshRendererTrait.Mesh = spriteMesh;
             meshRendererTrait.Material = mat;
 
-			ApplyChanges (true);
-		}
+            ApplyChanges (true);
+        }
 
         public override void OnUpdate(AppTime time)
         {
             ApplyChanges(false);
 
-			if (!String.IsNullOrWhiteSpace (this.DebugRender)) 
-			{
+            if (!String.IsNullOrWhiteSpace (this.DebugRender)) 
+            {
                 var yScale = 
                     this.Parent.Transform.Scale.Z / 2;
 
@@ -263,13 +263,13 @@
                     d,
                     Rgba32.Red
                     );
-			}
+            }
 
         }
 
 
         // Called when something has changed to update the sprite's state.
-		void ApplyChanges(bool forceApply)
+        void ApplyChanges(bool forceApply)
         {
             if( currentWidth != desiredWidth ||
                 currentHeight != desiredHeight ||
@@ -353,23 +353,23 @@
 
             if(currentTexture != desiredTexture || forceApply)
             {
-				currentTexture = desiredTexture;
+                currentTexture = desiredTexture;
 
                 if(meshRendererTrait.Material == null)
                 {
                     return;
                 }
 
-				// then we need to tell the shader which slot to look at
-				meshRendererTrait.Material.SetTexture("TextureSampler", desiredTexture);
+                // then we need to tell the shader which slot to look at
+                meshRendererTrait.Material.SetTexture("TextureSampler", desiredTexture);
 
-				// todo: this is all a bit hard coded, it would be good if Cor! had a way of requesting that
-				// a texture gets about to an unused slot, then reporting the slot number so we can use it.
+                // todo: this is all a bit hard coded, it would be good if Cor! had a way of requesting that
+                // a texture gets about to an unused slot, then reporting the slot number so we can use it.
 
 
             }
 
-			if(currentFlipHorizontal != desiredFlipHorizontal || forceApply)
+            if(currentFlipHorizontal != desiredFlipHorizontal || forceApply)
             {
                 currentFlipHorizontal = desiredFlipHorizontal;
             }
@@ -391,5 +391,5 @@
                 currentColour = desiredColour;
             }
         }
-	}
+    }
 

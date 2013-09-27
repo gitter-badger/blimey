@@ -1,84 +1,84 @@
-	internal class SceneRenderManager
-	{
-		ICor Castle { get; set; }
+    internal class SceneRenderManager
+    {
+        ICor Castle { get; set; }
 
-		internal SceneRenderManager(ICor cor)
-		{
-			this.Castle = cor;
-		}
+        internal SceneRenderManager(ICor cor)
+        {
+            this.Castle = cor;
+        }
 
-		internal void Render(Scene scene)
-		{
-			var sceneSettings = scene.Settings;
+        internal void Render(Scene scene)
+        {
+            var sceneSettings = scene.Settings;
 
-			// Clear the background colour if the scene settings want us to.
-			if (sceneSettings.StartByClearingBackBuffer)
-			{
-				this.Castle.Graphics.ClearColourBuffer(sceneSettings.BackgroundColour);
-			}
+            // Clear the background colour if the scene settings want us to.
+            if (sceneSettings.StartByClearingBackBuffer)
+            {
+                this.Castle.Graphics.ClearColourBuffer(sceneSettings.BackgroundColour);
+            }
 
-			foreach (string renderPass in sceneSettings.RenderPasses)
-			{
-				this.RenderPass(scene, renderPass);
-			}
-		}
+            foreach (string renderPass in sceneSettings.RenderPasses)
+            {
+                this.RenderPass(scene, renderPass);
+            }
+        }
 
-		List<MeshRenderer> GetMeshRenderersWithMaterials(Scene scene, string pass)
-		{
-			var list = new List<MeshRenderer>();
+        List<MeshRenderer> GetMeshRenderersWithMaterials(Scene scene, string pass)
+        {
+            var list = new List<MeshRenderer>();
 
-			foreach (var go in scene.SceneObjects)
-			{
-				var mr = go.GetTrait<MeshRenderer>();
+            foreach (var go in scene.SceneObjects)
+            {
+                var mr = go.GetTrait<MeshRenderer>();
 
-				if (mr == null)
-				{
-					continue;
-				}
+                if (mr == null)
+                {
+                    continue;
+                }
 
                 if (mr.Material == null)
                 {
                     continue;
                 }
 
-				// if the material is for this pass
-				if (mr.Material.RenderPass == pass)
-				{
-					list.Add(mr);
-				}
-			}
+                // if the material is for this pass
+                if (mr.Material.RenderPass == pass)
+                {
+                    list.Add(mr);
+                }
+            }
 
-			return list;
-		}
+            return list;
+        }
 
-		void RenderPass(Scene scene, string pass)
-		{
-			// init pass
-			var passSettings = scene.Settings.GetRenderPassSettings(pass);
+        void RenderPass(Scene scene, string pass)
+        {
+            // init pass
+            var passSettings = scene.Settings.GetRenderPassSettings(pass);
 
-			var gfxManager = this.Castle.Graphics;
+            var gfxManager = this.Castle.Graphics;
 
-			if (passSettings.ClearDepthBuffer)
-			{
-				gfxManager.ClearDepthBuffer();
-			}
+            if (passSettings.ClearDepthBuffer)
+            {
+                gfxManager.ClearDepthBuffer();
+            }
 
-			var cam = scene.CameraManager.GetActiveCamera(pass);
+            var cam = scene.CameraManager.GetActiveCamera(pass);
 
-			var meshRenderers = this.GetMeshRenderersWithMaterials(scene, pass);
+            var meshRenderers = this.GetMeshRenderersWithMaterials(scene, pass);
 
-			// TODO: big one
-			// we really need to group the mesh renderers by material
-			// and only make a new draw call when there are changes.
+            // TODO: big one
+            // we really need to group the mesh renderers by material
+            // and only make a new draw call when there are changes.
 
-			foreach (var mr in meshRenderers)
-			{
-				mr.Render(gfxManager, cam.ViewMatrix44, cam.ProjectionMatrix44);
-			}
+            foreach (var mr in meshRenderers)
+            {
+                mr.Render(gfxManager, cam.ViewMatrix44, cam.ProjectionMatrix44);
+            }
 
-			scene.Blimey.DebugShapeRenderer.Render(
-				gfxManager, pass, cam.ViewMatrix44, cam.ProjectionMatrix44);
+            scene.Blimey.DebugShapeRenderer.Render(
+                gfxManager, pass, cam.ViewMatrix44, cam.ProjectionMatrix44);
 
-		}
-	}
+        }
+    }
 

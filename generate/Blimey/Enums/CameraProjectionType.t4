@@ -1,6 +1,6 @@
-﻿	public enum CameraProjectionType
-	{
-		Perspective,
-		Orthographic,
-	}
+﻿    public enum CameraProjectionType
+    {
+        Perspective,
+        Orthographic,
+    }
 

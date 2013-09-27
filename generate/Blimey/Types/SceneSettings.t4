@@ -1,39 +1,39 @@
-﻿	public struct RenderPassSettings
-	{
-		public static readonly RenderPassSettings Default;
+﻿    public struct RenderPassSettings
+    {
+        public static readonly RenderPassSettings Default;
 
-		static RenderPassSettings()
-		{
-			Default.ClearDepthBuffer = false;
-			Default.FogEnabled = false;
-			Default.FogColour = Rgba32.CornflowerBlue;
-			Default.FogStart = 300.0f;
-			Default.FogEnd = 550.0f;
-			Default.EnableDefaultLighting = true;
-			Default.CameraProjectionType = CameraProjectionType.Perspective;
-		}
+        static RenderPassSettings()
+        {
+            Default.ClearDepthBuffer = false;
+            Default.FogEnabled = false;
+            Default.FogColour = Rgba32.CornflowerBlue;
+            Default.FogStart = 300.0f;
+            Default.FogEnd = 550.0f;
+            Default.EnableDefaultLighting = true;
+            Default.CameraProjectionType = CameraProjectionType.Perspective;
+        }
 
-		public Boolean ClearDepthBuffer;
-		public Boolean FogEnabled;
-		public Rgba32 FogColour;
-		public Single FogStart;
-		public Single FogEnd;
-		public Boolean EnableDefaultLighting;
-		public CameraProjectionType CameraProjectionType;
-	}
-	
-	//
-	// Game Scene Settings
-	// -------------------
-	// Game scene settings are used by the engine to detemine how
-	// to manage an associated scene.  For example the game scene 
-	// settings are used to define the render pass for the scene.
-	public class SceneSettings
-	{
+        public Boolean ClearDepthBuffer;
+        public Boolean FogEnabled;
+        public Rgba32 FogColour;
+        public Single FogStart;
+        public Single FogEnd;
+        public Boolean EnableDefaultLighting;
+        public CameraProjectionType CameraProjectionType;
+    }
+    
+    //
+    // Game Scene Settings
+    // -------------------
+    // Game scene settings are used by the engine to detemine how
+    // to manage an associated scene.  For example the game scene 
+    // settings are used to define the render pass for the scene.
+    public class SceneSettings
+    {
         Dictionary<String, RenderPassSettings> renderPassSettings;
         List<String> renderPassOrder;
-		Boolean startByClearingBackBuffer;
-		Rgba32 clearBackBufferColour;
+        Boolean startByClearingBackBuffer;
+        Rgba32 clearBackBufferColour;
 
         readonly static SceneSettings defaultSettings = new SceneSettings();
 
@@ -50,8 +50,8 @@
             defaultSettings.InitDefault();
         }
 
-		public SceneSettings()
-		{
+        public SceneSettings()
+        {
             renderPassSettings = new Dictionary<String, RenderPassSettings>();
             renderPassOrder = new List<String>();
             startByClearingBackBuffer = false;
@@ -60,69 +60,69 @@
 
         void InitDefault()
         {
-			/// BIG TODO, ADD AWAY TO MAKE RENDER PASSES SHARE THE SAME CAMERA!!!!!
-			/// SO DEBUG AND DEFAULT CAN USER THE SAME
-			AddRenderPass("Debug", RenderPassSettings.Default);
+            /// BIG TODO, ADD AWAY TO MAKE RENDER PASSES SHARE THE SAME CAMERA!!!!!
+            /// SO DEBUG AND DEFAULT CAN USER THE SAME
+            AddRenderPass("Debug", RenderPassSettings.Default);
 
-			var defaultPassSettings = RenderPassSettings.Default;
-			defaultPassSettings.EnableDefaultLighting = true;
-			defaultPassSettings.FogEnabled = true;
-			AddRenderPass("Default", defaultPassSettings);
+            var defaultPassSettings = RenderPassSettings.Default;
+            defaultPassSettings.EnableDefaultLighting = true;
+            defaultPassSettings.FogEnabled = true;
+            AddRenderPass("Default", defaultPassSettings);
 
-			var guiPassSettings = RenderPassSettings.Default;
-			guiPassSettings.ClearDepthBuffer = true;
-			guiPassSettings.CameraProjectionType = CameraProjectionType.Orthographic;
-			AddRenderPass("Gui", guiPassSettings);
-		}
+            var guiPassSettings = RenderPassSettings.Default;
+            guiPassSettings.ClearDepthBuffer = true;
+            guiPassSettings.CameraProjectionType = CameraProjectionType.Orthographic;
+            AddRenderPass("Gui", guiPassSettings);
+        }
 
-		public void AddRenderPass(String passID, RenderPassSettings settings)
-		{
-			if (renderPassOrder.Contains(passID))
-			{
-				throw new Exception("Can't have render passes with the same name");
-			}
+        public void AddRenderPass(String passID, RenderPassSettings settings)
+        {
+            if (renderPassOrder.Contains(passID))
+            {
+                throw new Exception("Can't have render passes with the same name");
+            }
 
-			renderPassOrder.Add(passID);
-			renderPassSettings.Add(passID, settings);
-		}
+            renderPassOrder.Add(passID);
+            renderPassSettings.Add(passID, settings);
+        }
 
-		public RenderPassSettings GetRenderPassSettings(String passName)
-		{
-			return renderPassSettings[passName];
-		}
+        public RenderPassSettings GetRenderPassSettings(String passName)
+        {
+            return renderPassSettings[passName];
+        }
 
-		public List<String> RenderPasses
-		{ 
-			get 
-			{ 
-				return renderPassOrder; 
-			} 
-		}
+        public List<String> RenderPasses
+        { 
+            get 
+            { 
+                return renderPassOrder; 
+            } 
+        }
 
-		// Debug Background Rgba
-		public bool StartByClearingBackBuffer
-		{ 
-			get 
-			{ 
-				return startByClearingBackBuffer; 
-			}
+        // Debug Background Rgba
+        public bool StartByClearingBackBuffer
+        { 
+            get 
+            { 
+                return startByClearingBackBuffer; 
+            }
             set
             {
                 startByClearingBackBuffer = value;
             }
-		}
+        }
 
-		public Rgba32 BackgroundColour 
-		{ 
-			get 
-			{ 
-				return clearBackBufferColour; 
-			} 
-			set 
-			{ 
-				startByClearingBackBuffer = true; 
-				clearBackBufferColour = value; 
-			} 
-		}	
-	}
+        public Rgba32 BackgroundColour 
+        { 
+            get 
+            { 
+                return clearBackBufferColour; 
+            } 
+            set 
+            { 
+                startByClearingBackBuffer = true; 
+                clearBackBufferColour = value; 
+            } 
+        }   
+    }
 

@@ -1,76 +1,90 @@
-﻿	//
-	// MESH RENDERER
-	//
-	// This behaviour takes a Sungiant.Blimey.Model and a Material, it then renders the models
-	// at location, scale and orientaion of the parent SceneObject's Transform.
-	//
-	public sealed class MeshRenderer
-		: Trait
-	{
+﻿    //
+    // MESH RENDERER
+    //
+    // This behaviour takes a Sungiant.Blimey.Model and a Material, it then renders the models
+    // at location, scale and orientaion of the parent SceneObject's Transform.
+    //
+    public sealed class MeshRenderer
+        : Trait
+    {
 
-		public Mesh Mesh { get; set; }
-		public Material Material { get; set; }
-		public CullMode CullMode { get; set; }
+        public Mesh Mesh { get; set; }
+        public Material Material { get; set; }
+        public CullMode CullMode { get; set; }
 
-		public MeshRenderer()
-		{
-			this.Mesh = null;
-			this.Material = null;
-			this.CullMode = CullMode.CW;
-		}
+        public MeshRenderer()
+        {
+            this.Mesh = null;
+            this.Material = null;
+            this.CullMode = CullMode.CW;
+        }
 
-		internal override void Render (IGraphicsManager zGfx, Matrix44 zView, Matrix44 zProjection)
-		{
-			if (!Active)
-				return;
+        internal override void Render (IGraphicsManager zGfx, Matrix44 zView, Matrix44 zProjection)
+        {
+            if (!Active)
+                return;
 
-			zGfx.GpuUtils.BeginEvent(Rgba32.Red, "MeshRenderer.Render");
+            zGfx.GpuUtils.BeginEvent(Rgba32.Red, "MeshRenderer.Render");
 
-			zGfx.SetCullMode(this.CullMode);
+            zGfx.SetCullMode(this.CullMode);
 
-			Material.UpdateGpuSettings (zGfx);
+            Material.UpdateGpuSettings (zGfx);
 
-			// Set our vertex declaration, vertex buffer, and index buffer.
-			zGfx.SetActiveGeometryBuffer(Mesh.GeomBuffer);
+            // Set our vertex declaration, vertex buffer, and index buffer.
+            zGfx.SetActiveGeometryBuffer(Mesh.GeomBuffer);
 
-			Material.SetVector3( "AmbientLightColour", LightingManager.ambientLightColour );
+            // The lighing manager right now just grabs the shader and tries to set
+            // all variables to do with lighting, without even knowing if the shader
+            // supports lighting.
+            Material.SetColour( "AmbientLightColour", LightingManager.ambientLightColour );
+            Material.SetColour( "EmissiveColour", LightingManager.emissiveColour );
+            Material.SetColour( "SpecularColour", LightingManager.specularColour );
+            Material.SetFloat( "SpecularPower", LightingManager.specularPower );
 
-			Material.SetVector3( "DirLight0Direction", LightingManager.dirLight0Direction );
-			Material.SetVector3( "DirLight0DiffuseColour", LightingManager.dirLight0DiffuseColour );
-			Material.SetVector3( "DirLight0SpecularColour", LightingManager.dirLight0SpecularColour );
-			
-			Material.SetVector3( "DirLight1Direction", LightingManager.dirLight1Direction );
-			Material.SetVector3( "DirLight1DiffuseColour", LightingManager.dirLight1DiffuseColour );
-			Material.SetVector3( "DirLight1SpecularColour", LightingManager.dirLight1SpecularColour );
-			
-			Material.SetVector3( "DirLight2Direction", LightingManager.dirLight2Direction );
-			Material.SetVector3( "DirLight2DiffuseColour", LightingManager.dirLight2DiffuseColour );
-			Material.SetVector3( "DirLight2SpecularColour", LightingManager.dirLight2SpecularColour );
+            
+            Material.SetFloat( "FogEnabled", LightingManager.fogEnabled ? 1f : 0f );
+            Material.SetFloat( "FogStart", LightingManager.fogStart );
+            Material.SetFloat( "FogEnd", LightingManager.fogEnd );
+            Material.SetColour( "FogColour", LightingManager.fogColour );
 
-			// Get the material's shader and apply all of the settings
-			// it needs.
-			Material.UpdateShaderVariables (
-				this.Parent.Transform.Location,
-				zView,
-				zProjection
-				);
-			
-			var shader = Material.GetShader ();
+            Material.SetVector3( "DirectionalLight0Direction", LightingManager.dirLight0Direction );
+            Material.SetColour( "DirectionalLight0DiffuseColour", LightingManager.dirLight0DiffuseColour );
+            Material.SetColour( "DirectionalLight0SpecularColour", LightingManager.dirLight0SpecularColour );
+            
+            Material.SetVector3( "DirectionalLight1Direction", LightingManager.dirLight1Direction );
+            Material.SetColour( "DirectionalLight1DiffuseColour", LightingManager.dirLight1DiffuseColour );
+            Material.SetColour( "DirectionalLight1SpecularColour", LightingManager.dirLight1SpecularColour );
+            
+            Material.SetVector3( "DirectionalLight2Direction", LightingManager.dirLight2Direction );
+            Material.SetColour( "DirectionalLight2DiffuseColour", LightingManager.dirLight2DiffuseColour );
+            Material.SetColour( "DirectionalLight2SpecularColour", LightingManager.dirLight2SpecularColour );
 
-			if( shader != null)
-			{
-				foreach (var effectPass in shader.Passes)
-				{
-					effectPass.Activate (Mesh.GeomBuffer.VertexBuffer.VertexDeclaration);
+            Material.SetVector3( "EyePosition", zView.Translation );
 
-					zGfx.DrawIndexedPrimitives (
-						PrimitiveType.TriangleList, 0, 0,
-						Mesh.VertexCount, 0, Mesh.TriangleCount);
-				}
-			}
+            // Get the material's shader and apply all of the settings
+            // it needs.
+            Material.UpdateShaderVariables (
+                this.Parent.Transform.Location,
+                zView,
+                zProjection
+                );
+            
+            var shader = Material.GetShader ();
 
-			zGfx.GpuUtils.EndEvent();
+            if( shader != null)
+            {
+                foreach (var effectPass in shader.Passes)
+                {
+                    effectPass.Activate (Mesh.GeomBuffer.VertexBuffer.VertexDeclaration);
 
-		}
-	}
+                    zGfx.DrawIndexedPrimitives (
+                        PrimitiveType.TriangleList, 0, 0,
+                        Mesh.VertexCount, 0, Mesh.TriangleCount);
+                }
+            }
+
+            zGfx.GpuUtils.EndEvent();
+
+        }
+    }
 

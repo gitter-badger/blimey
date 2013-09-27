@@ -65,22 +65,22 @@ namespace Sungiant.Blimey
 <#@ include file="Transform.t4"#>
 <#@ include file="LightingManager.t4"#>
 
-	#region DebugUtils
+    #region DebugUtils
 
 <#@ include file="DebugUtils/DebugShapeRenderer.t4"#>
 <#@ include file="DebugUtils/GridRenderer.t4"#>
 
-	#endregion
+    #endregion
 
-	#region Enums
+    #region Enums
 
 <#@ include file="Enums/CameraProjectionType.t4"#>
 <#@ include file="Enums/GestureType.t4"#>
 <#@ include file="Enums/TouchPositionSpace.t4"#>
 
-	#endregion
+    #endregion
 
-	#region Gestures
+    #region Gestures
 
 <#@ include file="Gestures/Gesture.t4"#>
 <#@ include file="Gestures/InputEventSystem.t4"#>
@@ -90,9 +90,9 @@ namespace Sungiant.Blimey
 <#@ include file="Gestures/PotentialTapGesture.t4"#>
 <#@ include file="Gestures/TouchTracker.t4"#>
 
-	#endregion
+    #endregion
 
-	#region Primitives
+    #region Primitives
 
 <#@ include file="Primitives/Billboard.t4"#>
 <#@ include file="Primitives/Cube.t4"#>
@@ -102,9 +102,9 @@ namespace Sungiant.Blimey
 <#@ include file="Primitives/Teapot.t4"#>
 <#@ include file="Primitives/Torus.t4"#>
 
-	#endregion
+    #endregion
 
-	#region Traits
+    #region Traits
 
 <#@ include file="Traits/Camera.t4"#>
 <#@ include file="Traits/ChaseSubject.t4"#>
@@ -117,9 +117,9 @@ namespace Sungiant.Blimey
 <#@ include file="Traits/SpotLight.t4"#>
 <#@ include file="Traits/Sprite.t4"#>
 
-	#endregion
+    #endregion
 
-	#region Types
+    #region Types
 
 <#@ include file="Types/BlendMode.t4"#>
 <#@ include file="Types/Material.t4"#>
@@ -128,5 +128,5 @@ namespace Sungiant.Blimey
 <#@ include file="Types/SceneSettings.t4"#>
 <#@ include file="Types/Trait.t4"#>
 
-	#endregion
+    #endregion
 }
