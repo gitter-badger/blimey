@@ -67,9 +67,6 @@
     <Compile Include="..\..\source\Convert.cs">
       <Link>Convert.cs</Link>
     </Compile>
-    <Compile Include="..\..\source\ShaderPassWrapper.cs">
-      <Link>ShaderPassWrapper.cs</Link>
-    </Compile>
     <Compile Include="..\..\source\GeometryBuffer.cs">
       <Link>GeometryBuffer.cs</Link>
     </Compile>
@@ -106,14 +103,8 @@
     <Compile Include="..\..\source\XNAGame.cs">
       <Link>XNAGame.cs</Link>
     </Compile>
-    <Compile Include="..\..\source\Shaders\VertexLit.cs">
-      <Link>Shaders\VertexLit.cs</Link>
-    </Compile>
-    <Compile Include="..\..\source\Shaders\PixelLit.cs">
-      <Link>Shaders\PixelLit.cs</Link>
-    </Compile>
-    <Compile Include="..\..\source\Shaders\Unlit.cs">
-      <Link>Shaders\Unlit.cs</Link>
+    <Compile Include="..\..\source\BasicEffectShaderAdapter.cs">
+      <Link>BasicEffectShaderAdapter.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

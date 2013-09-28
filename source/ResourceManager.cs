@@ -19,9 +19,9 @@ namespace Sungiant.Cor.Xna4Runtime
 		{
 			_content = content;
 
-            _pixelLit = new PixelLit(gfxDevice);
-            _vertexLit = new VertexLit(gfxDevice);
-			_unlit = new Unlit(gfxDevice);
+            _pixelLit = new BasicEffectShaderAdapter(gfxDevice, ShaderType.PixelLit);
+            _vertexLit = new BasicEffectShaderAdapter(gfxDevice, ShaderType.VertexLit);
+            _unlit = new BasicEffectShaderAdapter(gfxDevice, ShaderType.Unlit);
 		}
 
 		public T Load<T>(String uri) where T
