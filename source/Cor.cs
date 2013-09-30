@@ -96,6 +96,10 @@ namespace Sungiant.Cor
         Single Volume { get; set; }
     }
 
+    /// <summary>
+    /// This interface provides access to the gpu.  It's behaves as a state
+    /// machine, change settings, then call and draw function, rinse, repeat.
+    ///
     /// IGraphicsManager Todo List
     /// --------------------------
     /// - stencil buffers
@@ -103,10 +107,6 @@ namespace Sungiant.Cor
     ///   or ditch it, dropping support for Psm, but adding support for
     ///   independent Vert and Index buffers.
     /// - Work out a consistent way to deal with AOT limitations on Generics.
-
-    /// <summary>
-    /// This interface provides access to the gpu.  It's behaves as a state
-    /// machine, change settings, then call and draw function, rinse, repeat.
     /// </summary>
     public interface IGraphicsManager
     {
