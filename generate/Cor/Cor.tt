@@ -39,7 +39,6 @@ using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
-
 using Sungiant.Abacus;
 using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
@@ -47,9 +46,9 @@ using Sungiant.Abacus.Int32Precision;
 
 namespace Sungiant.Cor
 {
+<#@ include file="ICor.t4"#>
     #region Interfaces
 
-<#@ include file="ICor.t4"#>
 <#@ include file="IAudioManager.t4"#>
 <#@ include file="IGraphicsManager.t4"#>
 <#@ include file="IInputManager.t4"#>
@@ -67,7 +66,6 @@ namespace Sungiant.Cor
 <#@ include file="IIndexBuffer.t4"#>
 <#@ include file="IShader.t4"#>
 <#@ include file="IShaderPass.t4"#>
-
     #endregion
 
     #region Enums
@@ -85,7 +83,6 @@ namespace Sungiant.Cor
 <#@ include file="CorEnums/TouchPhase.t4"#>
 <#@ include file="CorEnums/VertexElementFormat.t4"#>
 <#@ include file="CorEnums/VertexElementUsage.t4"#>
-
     #endregion
 
     #region Types
@@ -101,7 +98,6 @@ namespace Sungiant.Cor
 <#@ include file="CorTypes/VertexElement.t4"#>
 <#@ include file="CorTypes/VitaController.t4"#>
 <#@ include file="CorTypes/Xbox360Controller.t4"#>
-
     #endregion
 
     #region Vertices
@@ -114,7 +110,6 @@ namespace Sungiant.Cor
 <#@ include file="Vertices/VertexPositionNormalTextureColour.t4"#>
 <#@ include file="Vertices/VertexPositionTexture.t4"#>
 <#@ include file="Vertices/VertexPositionTextureColour.t4"#>
-
     #endregion
 
     #region Resources
@@ -122,13 +117,11 @@ namespace Sungiant.Cor
 <#@ include file="ResourceTypes/AudioClip.t4"#>
 <#@ include file="ResourceTypes/Mesh.t4"#>
 <#@ include file="ResourceTypes/Texture2D.t4"#>
-
     #endregion
 
     #region Internal
 
 <#@ include file="Internal/PrimitiveHelper.t4"#>
 <#@ include file="Internal/VertexElementValidator.t4"#>
-
     #endregion
 }

@@ -37,7 +37,6 @@ using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
-
 using Sungiant.Abacus;
 using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
@@ -45,8 +44,6 @@ using Sungiant.Abacus.Int32Precision;
 
 namespace Sungiant.Cor
 {
-    #region Interfaces
-
     /// <summary>
     /// The Cor! framework provides a user's app access to Cor!
     /// features via this interface.
@@ -56,59 +53,60 @@ namespace Sungiant.Cor
         /// <summary>
         /// Provides access to Cor's audio manager.
         /// </summary>
-        /// <value>The audio manager.</value>
         IAudioManager Audio { get; }
 
         /// <summary>
         /// Provides access to Cor's graphics manager, which
         /// provides an interface to working with the GPU.
         /// </summary>
-        /// <value>The graphics manager.</value>
         IGraphicsManager Graphics { get; }
 
         /// <summary>
         /// Provides access to Cor's resource manager.
         /// </summary>
-        /// <value>The resource manager.</value>
         IResourceManager Resources { get; }
 
         /// <summary>
         /// Provides access to Cor's input manager.
         /// </summary>
-        /// <value>The input manager.</value>
         IInputManager Input { get; }
 
         /// <summary>
         /// Provides access to Cor's system manager.
         /// </summary>
-        /// <value>The system manager.</value>
         ISystemManager System { get; }
 
         /// <summary>
         /// Gets a copy of the <see cref="Sungiant.Cor.AppSettings"/>
         /// value used by the Cor! framework when initilising the app.
         /// </summary>
-        /// <value>The app settings value.</value>
         AppSettings Settings { get; }
-
     }
+
+    #region Interfaces
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public interface IAudioManager
     {
-        // Sets the volume, between 0.0 - 1.0
+        /// <summary>
+        /// Sets the volume, between 0.0 - 1.0
+        /// </summary>
         Single Volume { get; set; }
     }
 
-    /// <summary>
-    /// 
-    /// This interface provides access to the gpu.  It's behaves as a state
-    /// machine, change settings, then call and draw function, rinse, repeat.
-    ///
-    /// Todo: 
+    /// IGraphicsManager Todo List
+    /// --------------------------
     /// - stencil buffers
     /// - decided whether or not to stick with the geom-buffer abstraction
     ///   or ditch it, dropping support for Psm, but adding support for
     ///   independent Vert and Index buffers.
-    /// 
+    /// - Work out a consistent way to deal with AOT limitations on Generics.
+
+    /// <summary>
+    /// This interface provides access to the gpu.  It's behaves as a state
+    /// machine, change settings, then call and draw function, rinse, repeat.
     /// </summary>
     public interface IGraphicsManager
     {
@@ -128,23 +126,31 @@ namespace Sungiant.Cor
         /// </summary>
         void Reset();
 
-        // Clear functions
+        /// <summary>
+        /// Clears the colour buffer to the specified colour.
+        /// </summary>
         void ClearColourBuffer(Rgba32 color = new Rgba32());
+
+        /// <summary>
+        /// Clears the depth buffer to the specified depth.
+        /// </summary>
         void ClearDepthBuffer(Single depth = 1f);
 
-
+        /// <summary>
+        /// Sets the GPU's current culling mode to the value specified.
+        /// </summary>
         void SetCullMode(CullMode cullMode);
         
         /// <summary>
         /// With the current design the only way you can create geom buffers is 
         /// here.  This is to maintain consistency across platforms by bowing to
-        /// the quirks of PlayStation Mobile. Each IGeometryBuffer has vert data, 
-        /// and optionally index data.  Normally this data would be seperate, 
-        /// so you can upload one chunk of vert data, and, say, 5 sets of index 
-        /// data, then achive neat optimisations like switching on index data
-        /// whilst keeping the vert data the same, resulting in to define 
-        /// different shapes, saving on memory and context switching ( this is 
-        /// how the grass worked on Pure ).
+        /// the quirks of PlayStation Mobile. Each IGeometryBuffer has vert
+        /// data, and optionally index data.  Normally this data would be
+        /// seperate, so you can upload one chunk of vert data, and, say, 5 sets
+        /// of index data, then achive neat optimisations like switching on
+        /// index data whilst keeping the vert data the same, resulting in  
+        /// defining different shapes, saving on memory and context switching 
+        /// (this is how the grass worked on Pure).
         ///
         /// Right now I am endevouring to support PlayStation Mobile so vert and
         /// index buffers are combined into a single geom buffer.
@@ -173,154 +179,437 @@ namespace Sungiant.Cor
         /// Defines how we blend colours
         /// </summary>
         void SetBlendEquation(
-            BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb,
-            BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha
+            BlendFunction rgbBlendFunction, 
+            BlendFactor sourceRgb, 
+            BlendFactor destinationRgb,
+            BlendFunction alphaBlendFunction, 
+            BlendFactor sourceAlpha, 
+            BlendFactor destinationAlpha
             );
-
-
-        // FROM GRAM - NON-INDEXED ---------------------------------------------
 
         /// <summary>
         /// Renders a sequence of non-indexed geometric primitives of the 
         /// specified type from the active geometry buffer (which sits in GRAM).
+        ///
+        /// Info: From GRAM - Non-Indexed.
+        ///
+        /// Arguments:
+        ///   primitiveType  -> Describes the type of primitive to render.
+        ///   startVertex    -> Index of the first vertex to load. Beginning at 
+        ///                     startVertex, the correct number of vertices is 
+        ///                     read out of the vertex buffer.
+        ///   primitiveCount -> Number of primitives to render. The 
+        ///                     primitiveCount is the number of primitives as 
+        ///                     determined by the primitive type. If it is a 
+        ///                     line list, each primitive has two vertices. If 
+        ///                     it is a triangle list, each primitive has three 
+        ///                      vertices.
         /// </summary>
         void DrawPrimitives(
-            PrimitiveType primitiveType,            // Describes the type of primitive to render.
-            Int32 startVertex,                      // Index of the first vertex to load. Beginning at startVertex, the correct number of vertices is read out of the vertex buffer.
-            Int32 primitiveCount );                 // Number of primitives to render. The primitiveCount is the number of primitives as determined by the primitive type. If it is a line list, each primitive has two vertices. If it is a triangle list, each primitive has three vertices.
-
-
-        // FROM GRAM - INDEXED -------------------------------------------------
+            PrimitiveType primitiveType,            
+            Int32 startVertex,                      
+            Int32 primitiveCount );                 
 
         /// <summary>
         /// Renders a sequence of indexed geometric primitives of the 
         /// specified type from the active geometry buffer (which sits in GRAM).
+        ///
+        /// Info: From GRAM - Indexed.
+        ///
+        /// Arguments:
+        ///   primitiveType  -> Describes the type of primitive to render. 
+        ///                     PrimitiveType.PointList is not supported with 
+        ///                     this method.
+        ///   baseVertex     -> Offset to add to each vertex index in the index 
+        ///                     buffer.
+        ///   minVertexIndex -> Minimum vertex index for vertices used during 
+        ///                     the call. The minVertexIndex parameter and all 
+        ///                     of the indices in the index stream are relative 
+        ///                     to the baseVertex parameter.
+        ///   numVertices    -> Number of vertices used during the call. The 
+        ///                     first vertex is located at index: baseVertex + 
+        ///                     minVertexIndex.
+        ///   startIndex     -> Location in the index array at which to start 
+        ///                     reading vertices.
+        ///   primitiveCount -> Number of primitives to render. The number of 
+        ///                     vertices used is a function of primitiveCount 
+        ///                     and primitiveType.
         /// </summary>
         void DrawIndexedPrimitives (
-            PrimitiveType primitiveType,            // Describes the type of primitive to render. PrimitiveType.PointList is not supported with this method.
-            Int32 baseVertex,                       // . Offset to add to each vertex index in the index buffer.
-            Int32 minVertexIndex,                   // . Minimum vertex index for vertices used during the call. The minVertexIndex parameter and all of the indices in the index stream are relative to the baseVertex parameter.
-            Int32 numVertices,                      // Number of vertices used during the call. The first vertex is located at index: baseVertex + minVertexIndex.
-            Int32 startIndex,                       // . Location in the index array at which to start reading vertices.
-            Int32 primitiveCount                    // Number of primitives to render. The number of vertices used is a function of primitiveCount and primitiveType.
+            PrimitiveType primitiveType,
+            Int32 baseVertex,
+            Int32 minVertexIndex,
+            Int32 numVertices,
+            Int32 startIndex,
+            Int32 primitiveCount
             );
 
-        
-        // FROM SYSTEM RAM - NON-INDEXED ---------------------------------------
-
-
-#if AOT
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPosition[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionColour[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionNormal[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionNormalColour[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionNormalTexture[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionNormalTextureColour[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionTexture[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionTextureColour[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-#else
-        // Draws un-indexed vertex data uploaded straight from RAM.
+#if !AOT
+        /// <summary>
+        /// Draws un-indexed vertex data uploaded straight from RAM.
+        ///
+        /// Info: From System RAM - Non-Indexed
+        ///
+        /// Arguments:
+        /// primitiveType     -> Describes the type of primitive to render.
+        /// vertexData        -> The vertex data.
+        /// vertexOffset      -> Offset (in vertices) from the beginning of the 
+        ///                      buffer to start reading data.
+        /// primitiveCount    -> Number of primitives to render.
+        /// vertexDeclaration -> The vertex declaration, which defines 
+        ///                      per-vertex data.
         /// </summary>
         void DrawUserPrimitives <T> (
-            PrimitiveType primitiveType,            // Describes the type of primitive to render.
-            T[] vertexData,                         // The vertex data.
-            Int32 vertexOffset,                     // Offset (in vertices) from the beginning of the buffer to start reading data.
-            Int32 primitiveCount,                   // Number of primitives to render.
-            VertexDeclaration vertexDeclaration )   // The vertex declaration, which defines per-vertex data.
+            PrimitiveType primitiveType,
+            T[] vertexData,
+            Int32 vertexOffset,
+            Int32 primitiveCount,
+            VertexDeclaration vertexDeclaration )
             where T : struct, IVertexType;
-#endif
-
-        // FROM SYSTEM RAM - INDEXED -------------------------------------------
 
         /// <summary>
         /// Draws indexed vertex data uploaded straight from RAM.
+        ///
+        /// Info: From System RAM - Indexed
+        ///
+        /// Arguments:
+        /// primitiveType     -> Describes the type of primitive to render.
+        /// vertexData        -> The vertex data.
+        /// vertexOffset      -> Offset (in vertices) from the beginning of the 
+        ///                      vertex buffer to the first vertex to draw.
+        /// numVertices       -> Number of vertices to draw.
+        /// indexData         -> The index data.
+        /// indexOffset       -> Offset (in indices) from the beginning of the
+        ///                      index buffer to the first index to use.
+        /// primitiveCount    -> Number of primitives to render.
+        /// vertexDeclaration -> The vertex declaration, which defines 
+        ///                      per-vertex data.
         /// </summary>
-
-#if AOT
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPosition[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionColour[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionNormal[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionNormalColour[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionNormalTexture[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionNormalTextureColour[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionTexture[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionTextureColour[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-#else
         void DrawUserIndexedPrimitives <T> (
-            PrimitiveType primitiveType,            // Describes the type of primitive to render.
-            T[] vertexData,                         // The vertex data.
-            Int32 vertexOffset,                     // Offset (in vertices) from the beginning of the vertex buffer to the first vertex to draw.
-            Int32 numVertices,                      // Number of vertices to draw.
-            Int32[] indexData,                      // The index data.
-            Int32 indexOffset,                      // Offset (in indices) from the beginning of the index buffer to the first index to use.
-            Int32 primitiveCount,                   // Number of primitives to render.
+            PrimitiveType primitiveType,
+            T[] vertexData,
+            Int32 vertexOffset,
+            Int32 numVertices,
+            Int32[] indexData,
+            Int32 indexOffset,
+            Int32 primitiveCount,
             VertexDeclaration vertexDeclaration ) 
             where T : struct, IVertexType;
+#else
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPosition[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormal[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormalColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormalTexture[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormalTextureColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionTexture[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionTextureColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPosition[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormal[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormalColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormalTexture[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormalTextureColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionTexture[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionTextureColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
 #endif
-
-
     }
+
+    /// <summary>
+    /// Depending on the implementation you are running against
+    /// various input devices will be avaiable.  Those that are
+    /// not will be returned as NULL.  It is down to your app to
+    /// deal with only some of input devices being available.
+    /// For example, if you are running on iPad, the GetXbox360Gamepad
+    /// method will return NULL.  The way to make your app deal with
+    /// multiple platforms is to poll the input devices at bootup
+    /// and then query only those that are avaible in your update
+    /// loop.  
+    /// </summary>
     public interface IInputManager
     {
-        // Depending on the implementation you are running against
-        // various input devices will be avaiable.  Those that are
-        // not will be returned as NULL.  It is down to your app to
-        // deal with only some of input devices being available.
-        // For example, if you are running on iPad, the GetXbox360Gamepad
-        // method will return NULL.  The way to make your app deal with
-        // multiple platforms is to poll the input devices at bootup
-        // and then query only those that are avaible in your update
-        // loop.  
-
+        /// <summary>
         // An Xbox 360 gamepad
-        Xbox360Gamepad          GetXbox360Gamepad(PlayerIndex player);
+        /// </summary>
+        Xbox360Gamepad GetXbox360Gamepad(PlayerIndex player);
 
+        /// <summary>
         // The virtual gamepad used by PlayStation Mobile, 
         // if you are running on Vita this will be the Vita itself.
+        /// </summary>
         PsmGamepad GetPsmGamepad();
 
+        /// <summary>
         // A generalised multitouch pad, which may or may
         // not have a screen.
-        MultiTouchController    GetMultiTouchController();
+        /// </summary>
+        MultiTouchController GetMultiTouchController();
 
+        /// <summary>
         // A very basic gamepad, supported by most implementations
         // for platforms that have gamepads.
-        GenericGamepad          GetGenericGamepad();
+        /// </summary>
+        GenericGamepad GetGenericGamepad();
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public interface IResourceManager
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         T Load<T>(String path) where T : IResource;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         IShader LoadShader(ShaderType shaderType);
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public interface ISystemManager
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Point2 CurrentDisplaySize { get; }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         String OperatingSystem { get; }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         String DeviceName { get; }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         String DeviceModel { get; }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         String SystemName { get; }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         String SystemVersion { get; }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         DeviceOrientation CurrentOrientation { get; }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         IScreenSpecification ScreenSpecification { get; }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         IPanelSpecification PanelSpecification { get; }
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public interface IApp
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         void Initilise(ICor cor);
 
+        /// <summary>
+        /// todo
+        /// </summary>
         Boolean Update(AppTime time);
 
+        /// <summary>
+        /// todo
+        /// </summary>
         void Render();
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public interface IDisplayStatus
     {
         /// <summary>
@@ -345,104 +634,289 @@ namespace Sungiant.Cor
         /// and not take up the whole screen.
         /// </summary>
         Int32 CurrentHeight { get; }
-
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public interface IGpuUtils
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Int32 BeginEvent(Rgba32 colour, String eventName);
+            
+        /// <summary>
+        /// todo
+        /// </summary>
         Int32 EndEvent();
 
+        /// <summary>
+        /// todo
+        /// </summary>
         void SetMarker(Rgba32 colour, String eventName);
+
+        /// <summary>
+        /// todo
+        /// </summary>
         void SetRegion(Rgba32 colour, String eventName);
     }
-    // Specifies the attributes a panel,
-    // a panel could be a screen, a touch device, or both.
+
+    /// <summary>
+    /// Specifies the attributes a panel,
+    /// a panel could be a screen, a touch device, or both.
+    /// </summary>
     public interface IPanelSpecification
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Vector2 PanelPhysicalSize { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
         Single PanelPhysicalAspectRatio { get; }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         PanelType PanelType { get; }
     }
-    // objects that Cor's! resource manager can load
-    // and track.
+
+    /// <summary>
+    /// objects that Cor's! resource manager can load
+    /// and track.
+    /// </summary>
     public interface IResource
     {
     }
+
+    /// <summary>
+    /// Screen refers to the entire screen, not your frame
+    /// buffer.  So if you had a monitor with a resolution of
+    /// 1024x768 and a window with size 640x360 this would
+    /// return 1024x768.
+    /// </summary>
     public interface IScreenSpecification
     {
-        // Screen is refers to the entire screen, not your frame
-        // buffer.  So if you had a monitor with a resolution of
-        // 1024x768 and a window with size 640x360 this would
-        // return 1024x768.
-
-        // Defines the total width of the screen in question in pixels.
+        /// <summary>
+        /// Defines the total width of the screen in question in pixels.
+        /// </summary>
         Int32 ScreenResolutionWidth { get; }
 
-        // Defines the total height of the screen in question in pixels.
+        /// <summary>
+        /// Defines the total height of the screen in question in pixels.
+        /// </summary>
         Int32 ScreenResolutionHeight { get; }
 
-        // This is just the ratio of the width / and height from the
-        // two functions above.
+        /// <summary>
+        /// This is just the ratio of the width / and height from the
+        /// two functions above.
+        /// </summary>
         Single ScreenResolutionAspectRatio { get; }
     }
+    /// <summary>
+    /// todo
+    /// </summary>
     public interface IGeometryBuffer
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         IVertexBuffer VertexBuffer { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
         IIndexBuffer IndexBuffer { get; }
     }
 
-
+    /// <summary>
+    /// todo
+    /// </summary>
     public interface IVertexBuffer
     {
-        // used
+        /// <summary>
+        /// todo
+        /// </summary>
         Int32 VertexCount { get; }
 
-#if AOT
-        void SetData (VertexPosition[] data);
-        void SetData (VertexPositionColour[] data);
-        void SetData (VertexPositionNormal[] data);
-        void SetData (VertexPositionNormalColour[] data);
-        void SetData (VertexPositionNormalTexture[] data);
-        void SetData (VertexPositionNormalTextureColour[] data);
-        void SetData (VertexPositionTexture[] data);
-        void SetData (VertexPositionTextureColour[] data);
-#else
-        void SetData<T> (T[] data) where T: struct, IVertexType;
-#endif
-
-        // Perhaps this would work everywhere
-        // void SetData(IVertexType[] data);
-
+        /// <summary>
+        /// todo
+        /// </summary>
         VertexDeclaration VertexDeclaration { get; }
 
-        // not yet implemented
-        //void GetData<T> (T[] data) where T: struct, IVertexType;
-        //void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
-        //void GetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
-        //void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
-        //void SetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
+#if !AOT
+        /// <summary>
+        /// todo
+        /// </summary>
+        void SetData<T> (T[] data) where T: struct, IVertexType;
 
+        /// <summary>
+        /// todo
+        /// </summary>
+        //void GetData<T> (T[] data) where T: struct, IVertexType;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        //void SetData<T> (
+        //    T[] data,
+        //    Int32 startIndex,
+        //    Int32 elementCount)
+        //    where T: struct, IVertexType;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        //void GetData<T> (
+        //    T[] data,
+        //    Int32 startIndex,
+        //    Int32 elementCount)
+        //    where T: struct, IVertexType;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        //void SetData<T> (
+        //    Int32 offsetInBytes, 
+        //    T[] data, 
+        //    Int32 startIndex, 
+        //    Int32 elementCount, 
+        //    Int32 vertexStride) 
+        //    where T: struct, IVertexType;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        //void GetData<T> (
+        //    Int32 offsetInBytes, 
+        //    T[] data, 
+        //    Int32 startIndex, 
+        //    Int32 elementCount, 
+        //    Int32 vertexStride) 
+        //    where T: struct, IVertexType;
+#else
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPosition[] data);
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPositionColour[] data);
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPositionNormal[] data);
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPositionNormalColour[] data);
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPositionNormalTexture[] data);
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPositionNormalTextureColour[] data);
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPositionTexture[] data);
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPositionTextureColour[] data);
+#endif
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public interface IVertexType
     {
-        // Properties
+        /// <summary>
+        /// todo
+        /// </summary>
         VertexDeclaration VertexDeclaration { get; }
 
-        //IntPtr GetAddress(Int32 elementIndex);
+        /// <summary>
+        /// todo
+        /// </summary>
+        /// IntPtr GetAddress(Int32 elementIndex);
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public interface IIndexBuffer
     {
-        void SetData(Int32[] data);
-
+        /// <summary>
+        /// todo
+        /// </summary>
         Int32 IndexCount { get; }
 
-        //todo
-        //void SetData(Int16[] data, Int32 startIndex, Int32 elementCount);
-        //void SetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount);
+        /// <summary>
+        /// todo
+        /// </summary>
+        void SetData(Int32[] data);
+
+        /// <summary>
+        /// todo
+        /// </summary>
         //void GetData(Int32[] data);
-        //void GetData(Int16[] data, Int32 startIndex, Int32 elementCount);
-        //void GetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount);
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        //void SetData(
+        //    Int16[] data, 
+        //    Int32 startIndex, 
+        //    Int32 elementCount);
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        //void GetData(
+        //    Int16[] data, 
+        //    Int32 startIndex, 
+        //    Int32 elementCount);
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        //void GetData(
+        //    Int32 offsetInBytes, 
+        //    Int16[] data, 
+        //    Int32 startIndex, 
+        //    Int32 elementCount);
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        //void SetData(
+        //    Int32 offsetInBytes, 
+        //    Int16[] data, 
+        //    Int32 startIndex, 
+        //    Int32 elementCount);
     }
 
     /// <summary>
@@ -460,25 +934,11 @@ namespace Sungiant.Cor
         /// Resets all the shader's samplers to null textures.
         /// </summary>
         void ResetSamplerTargets();
-        
-#if AOT
-        void SetVariable(string name, Int32 value);
-        void SetVariable(string name, Single value);
-        void SetVariable(string name, Rgba32 value);
-        void SetVariable(string name, Matrix44 value);
-        void SetVariable(string name, Vector3 value);
-        void SetVariable(string name, Vector4 value);
-        void SetVariable(string name, Vector2 value);
-#else
-        /// <summary>
-        /// Sets the value of a specified shader variable.
-        /// </summary>
-        void SetVariable<T>(string name, T value);
-#endif  
+  
         /// <summary>
         /// Sets the texture slot that a texture sampler should sample from.
         /// </summary>
-        void SetSamplerTarget(string name, Int32 textureSlot);
+        void SetSamplerTarget(String name, Int32 textureSlot);
 
         /// <summary>
         /// Provides access to the individual passes in this shader.
@@ -498,15 +958,67 @@ namespace Sungiant.Cor
         /// </summary>
         VertexElementUsage[] OptionalVertexElements { get; }
 
-        // <summary>
-        // The name of this shader.
-        // </summary>
-        string Name { get; }
+        /// <summary>
+        /// The name of this shader.
+        /// </summary>
+        String Name { get; }
+
+#if !AOT
+        /// <summary>
+        /// Sets the value of a specified shader variable.
+        /// </summary>
+        void SetVariable<T>(String name, T value);
+#else
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void SetVariable(String name, Int32 value);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void SetVariable(String name, Single value);
+
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void SetVariable(String name, Rgba32 value);
+
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void SetVariable(String name, Matrix44 value);
+
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void SetVariable(String name, Vector3 value);
+
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void SetVariable(String name, Vector4 value);
+
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void SetVariable(String name, Vector2 value);
+#endif
     }
 
+    /// <summary>
+    /// todo
+    /// </summary>
     public interface IShaderPass
     {
-        string Name { get; }
+        /// <summary>
+        /// todo
+        /// </summary>
+        String Name { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
         void Activate (VertexDeclaration vertexDeclaration);
     }
 
@@ -514,236 +1026,554 @@ namespace Sungiant.Cor
 
     #region Enums
 
-    //               ogles2.0
-    // 
-    // factor        | s | d |
-    // ------------------------------------
-    // zero          | o | o |
-    // one           | o | o |
-    // src-col       | o | o |
-    // inv-src-col   | o | o |
-    // src-a         | o | o |
-    // inv-src-a     | o | o |
-    // dest-a        | o | o |
-    // inv-dest-a    | o | o |
-    // dest-col      | o | o |
-    // inv-dest-col  | o | o |
-    // src-a-sat     | o | x |  <-- ignore for now
-
-    // xna deals with the following as one colour...
-
-    // const-col     | o | o |  <-- ignore for now
-    // inv-const-col | o | o |  <-- ignore for now
-    // const-a       | o | o |  <-- ignore for now
-    // inv-const-a   | o | o |  <-- ignore for now
-
-
-    // Defines colour blending factors.
+    /// <summary>
+    /// Defines colour blending factors.
+    ///               ogles2.0
+    /// 
+    /// factor        | s | d |
+    /// ------------------------------------
+    /// zero          | o | o |
+    /// one           | o | o |
+    /// src-col       | o | o |
+    /// inv-src-col   | o | o |
+    /// src-a         | o | o |
+    /// inv-src-a     | o | o |
+    /// dest-a        | o | o |
+    /// inv-dest-a    | o | o |
+    /// dest-col      | o | o |
+    /// inv-dest-col  | o | o |
+    /// src-a-sat     | o | x |  -- ignore for now
+    ///
+    /// xna deals with the following as one colour...
+    ///
+    /// const-col     | o | o |  -- ignore for now
+    /// inv-const-col | o | o |  -- ignore for now
+    /// const-a       | o | o |  -- ignore for now
+    /// inv-const-a   | o | o |  -- ignore for now
+    /// </summary>
     public enum BlendFactor
     {
-        // Each component of the colour is multiplied by (0, 0, 0, 0).
+        /// <summary>
+        /// Each component of the colour is multiplied by (0, 0, 0, 0).
+        /// </summary>
         Zero,
 
-        // Each component of the colour is multiplied by (1, 1, 1, 1).
+        /// <summary>
+        /// Each component of the colour is multiplied by (1, 1, 1, 1).
+        /// </summary>
         One,
 
-        // Each component of the colour is multiplied by the source colour.
-        // This can be represented as (Rs, Gs, Bs, As), where R, G, B, and A 
-        // respectively stand for the red, green, blue, and alpha source values.
+        /// <summary>
+        /// Each component of the colour is multiplied by the source colour.
+        /// This can be represented as (Rs, Gs, Bs, As), where R, G, B, and A 
+        /// respectively stand for the red, green, blue, and alpha source 
+        /// values.
+        /// </summary>
         SourceColour,
 
-        // Each component of the colour is multiplied by the inverse of the 
-        // source colour. This can be represented as
-        // (1 − Rs, 1 − Gs, 1 − Bs, 1 − As) where R, G, B, and A respectively 
-        // stand for the red, green, blue, and alpha destination values.
+        /// <summary>
+        /// Each component of the colour is multiplied by the inverse of the 
+        /// source colour. This can be represented as
+        /// (1 − Rs, 1 − Gs, 1 − Bs, 1 − As) where R, G, B, and A respectively 
+        /// stand for the red, green, blue, and alpha destination values.
+        /// </summary>
         InverseSourceColour,
 
-        // Each component of the colour is multiplied by the alpha value of the 
-        // source. This can be represented as (As, As, As, As), where As is the 
-        // alpha source value.
+        /// <summary>
+        /// Each component of the colour is multiplied by the alpha value of the 
+        /// source. This can be represented as (As, As, As, As), where As is the 
+        /// alpha source value.
+        /// </summary>
         SourceAlpha,
 
-        // Each component of the colour is multiplied by the inverse of the alpha
-        // value of the source. This can be represented as 
-        // (1 − As, 1 − As, 1 − As, 1 − As), where As is the alpha destination 
-        // value.
+        /// <summary>
+        /// Each component of the colour is multiplied by the inverse of the 
+        /// alpha value of the source. This can be represented as 
+        /// (1 − As, 1 − As, 1 − As, 1 − As), where As is the alpha destination 
+        /// value.
+        /// </summary>
         InverseSourceAlpha,
 
-        // Each component of the colour is multiplied by the alpha value of the 
-        // destination. This can be represented as (Ad, Ad, Ad, Ad), where Ad is
-        // the destination alpha value.
+        /// <summary>
+        /// Each component of the colour is multiplied by the alpha value of the 
+        /// destination. This can be represented as (Ad, Ad, Ad, Ad), where Ad 
+        /// is the destination alpha value.
+        /// </summary>
         DestinationAlpha,
 
-        // Each component of the colour is multiplied by the inverse of the alpha
-        // value of the destination. This can be represented as
-        // (1 − Ad, 1 − Ad, 1 − Ad, 1 − Ad), where Ad is the alpha destination 
-        // value.
+        /// <summary>
+        /// Each component of the colour is multiplied by the inverse of the 
+        /// alpha value of the destination. This can be represented as
+        /// (1 − Ad, 1 − Ad, 1 − Ad, 1 − Ad), where Ad is the alpha destination 
+        /// value.
+        /// </summary>
         InverseDestinationAlpha,
 
-        // Each component colour is multiplied by the destination colour. This can
-        // be represented as (Rd, Gd, Bd, Ad), where R, G, B, and A respectively
-        // stand for red, green, blue, and alpha destination values.
+        /// <summary>
+        /// Each component colour is multiplied by the destination colour. This 
+        /// can be represented as (Rd, Gd, Bd, Ad), where R, G, B, and A 
+        /// respectively stand for red, green, blue, and alpha destination 
+        /// values.
+        /// </summary>
         DestinationColour,
 
-        // Each component of the colour is multiplied by the inverse of the 
-        // destination colour. This can be represented as 
-        // (1 − Rd, 1 − Gd, 1 − Bd, 1 − Ad), where Rd, Gd, Bd, and Ad 
-        // respectively stand for the red, green, blue, and alpha destination 
-        // values.
+        /// <summary>
+        /// Each component of the colour is multiplied by the inverse of the 
+        /// destination colour. This can be represented as 
+        /// (1 − Rd, 1 − Gd, 1 − Bd, 1 − Ad), where Rd, Gd, Bd, and Ad 
+        /// respectively stand for the red, green, blue, and alpha destination 
+        /// values.
+        /// </summary>
         InverseDestinationColour,
 
-        // Each component of the colour is multiplied by either the alpha of the 
-        // source colour, or the inverse of the alpha of the source colour, 
-        // whichever is greater. This can be represented as (f, f, f, 1), 
-        // where f = min(A, 1 − Ad).
+        /// <summary>
+        /// Each component of the colour is multiplied by either the alpha of  
+        /// the source colour, or the inverse of the alpha of the source colour, 
+        /// whichever is greater. This can be represented as (f, f, f, 1), 
+        /// where f = min(A, 1 − Ad).
+        /// </summary>
         //SourceAlphaSaturation,
 
-        // Each component of the colour is multiplied by a constant set in 
-        // BlendFactor.
+        /// <summary>
+        /// Each component of the colour is multiplied by a constant set in 
+        /// BlendFactor.
+        /// </summary>
         //ConstantColour,
 
-        // Each component of the colour is multiplied by the inverse of a 
-        // constant set in BlendFactor.
+        /// <summary>
+        /// Each component of the colour is multiplied by the inverse of a 
+        /// constant set in BlendFactor.
+        /// </summary>
         //InverseConstantColour,
-
     }
 
+    /// <summary>
+    /// todo
+    /// </summary>
     public enum BlendFunction
     {
-        // The result is the destination added to the source.
-        // Result = (Source Colour * Source Blend) + (Destination Colour * Destination Blend)
+        /// <summary>
+        /// The result is the destination added to the source.
+        /// Result = (Source Colour * Source Blend) + 
+        ///          (Destination Colour * Destination Blend)
+        /// </summary>
         Add,
 
-        // The result is the destination subtracted from the source.
-        // Result = (Source Colour * Source Blend) − (Destination Colour * Destination Blend)
+        /// <summary>
+        /// The result is the destination subtracted from the source.
+        /// Result = (Source Colour * Source Blend) − 
+        ///          (Destination Colour * Destination Blend)
+        /// </summary>
         Subtract,
 
-        // The result is the source subtracted from the destination.
-        // Result = (Destination Colour * Destination Blend) − (Source Colour * Source Blend)
+        /// <summary>
+        /// The result is the source subtracted from the destination.
+        /// Result = (Destination Colour * Destination Blend) − 
+        ///          (Source Colour * Source Blend)
+        /// </summary>
         ReverseSubtract,
 
-        // The result is the maximum of the source and destination.
-        // Result = max( (Source Colour * Source Blend), (Destination Colour * Destination Blend) )
+        /// <summary>
+        /// The result is the maximum of the source and destination.
+        /// Result = max( (Source Colour * Source Blend), 
+        ///               (Destination Colour * Destination Blend) )
+        /// </summary>
         Max,
 
-        // The result is the minimum of the source and destination.
-        // Result = min( (Source Colour * Source Blend), (Destination Colour * Destination Blend) )
+        /// <summary>
+        /// The result is the minimum of the source and destination.
+        /// Result = min( (Source Colour * Source Blend), 
+        ///               (Destination Colour * Destination Blend) )
+        /// </summary>
         Min
     }
 
+    /// <summary>
+    /// todo
+    /// </summary>
     public enum CullMode
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         None,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         CW,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         CCW,
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public enum ButtonState
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Released,
+
+        /// <summary>
+        /// todo
+        /// </summary>
         Pressed,
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     [Flags]
     enum ClearOptions
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         DepthBuffer = 2,
+
+        /// <summary>
+        /// todo
+        /// </summary>
         Stencil = 4,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Target = 1
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>    
     public enum DeviceOrientation
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Default,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Rightside,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Upsidedown,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Leftside,
     }
 
+    /// <summary>
+    /// todo
+    /// </summary>
     public enum PanelType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Screen,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Touch,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         TouchScreen
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public enum PlayerIndex
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         One,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Two,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Three,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Four,
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public enum PrimitiveType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         TriangleList = 0,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         TriangleStrip = 1,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         LineList = 2,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         LineStrip = 3
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public enum ShaderType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Unlit,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         VertexLit,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         PixelLit,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Toon
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public enum TouchPhase
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Invalid = 0,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         JustReleased = 1,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         JustPressed = 2,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Active = 3,
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public enum VertexElementFormat
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Single,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Vector2,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Vector3,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Vector4,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Colour,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Byte4,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Short2,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Short4,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         NormalisedShort2,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         NormalisedShort4,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         HalfVector2,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         HalfVector4
     }
 
+    /// <summary>
+    /// todo
+    /// </summary>
     public static class VertexElementFormatHelper
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public static Type FromEnum(VertexElementFormat format)
         {
             switch(format)
             {
-                case VertexElementFormat.Single: return typeof(Single);
-                case VertexElementFormat.Vector2: return typeof(Vector2);
-                case VertexElementFormat.Vector3: return typeof(Vector3);
-                case VertexElementFormat.Vector4: return typeof(Vector4);
-                case VertexElementFormat.Colour: return typeof(Rgba32);
-                case VertexElementFormat.Byte4: return typeof(Byte4);
-                case VertexElementFormat.Short2: return typeof(Short2);
-                case VertexElementFormat.Short4: return typeof(Short4);
-                case VertexElementFormat.NormalisedShort2: return typeof(NormalisedShort2);
-                case VertexElementFormat.NormalisedShort4: return typeof(NormalisedShort4);
-                //case VertexElementFormat.HalfVector2: return typeof(Sungiant.Abacus.HalfPrecision.Vector2);
-                //case VertexElementFormat.HalfVector4: return typeof(Sungiant.Abacus.HalfPrecision.Vector4);
+                case VertexElementFormat.Single: 
+                    return typeof(Single);
+                case VertexElementFormat.Vector2: 
+                    return typeof(Vector2);
+                case VertexElementFormat.Vector3: 
+                    return typeof(Vector3);
+                case VertexElementFormat.Vector4: 
+                    return typeof(Vector4);
+                case VertexElementFormat.Colour: 
+                    return typeof(Rgba32);
+                case VertexElementFormat.Byte4: 
+                    return typeof(Byte4);
+                case VertexElementFormat.Short2: 
+                    return typeof(Short2);
+                case VertexElementFormat.Short4: 
+                    return typeof(Short4);
+                case VertexElementFormat.NormalisedShort2: 
+                    return typeof(NormalisedShort2);
+                case VertexElementFormat.NormalisedShort4: 
+                    return typeof(NormalisedShort4);
+                //case VertexElementFormat.HalfVector2: 
+                //    return typeof(Sungiant.Abacus.HalfPrecision.Vector2);
+                //case VertexElementFormat.HalfVector4: 
+                //    return typeof(Sungiant.Abacus.HalfPrecision.Vector4);
             }
 
             throw new NotSupportedException();
         }
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public enum VertexElementUsage
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Position,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Colour,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         TextureCoordinate,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Normal,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Binormal,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Tangent,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         BlendIndices,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         BlendWeight,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Depth,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Fog,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         PointSize,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Sample,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         TessellateFactor
     }
 
@@ -777,6 +1607,7 @@ namespace Sungiant.Cor
         /// </value>
         public Boolean FullScreen { get; set; }
     }
+
     /// <summary>
     /// AppTime is a value provided by the Cor! Framework to
     /// the user's app on a frame by frame basis via the app's update
@@ -791,9 +1622,9 @@ namespace Sungiant.Cor
         Single elapsed;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Sungiant.Cor.AppTime"/> struct.
-        /// Internal so it can only be instantiated by friend assemblies, namely the
-        /// platform specific Cor! Runtime frameworks.
+        /// Initializes a new instance of the <see cref="Sungiant.Cor.AppTime"/>
+        /// struct.  Internal so it can only be instantiated by friend 
+        /// assemblies, namely the platform specific Cor! Runtime frameworks.
         /// </summary>
         /// <param name="dt">Delta time.</param>
         /// <param name="elapsed">Total elapsed time.</param>
@@ -806,7 +1637,8 @@ namespace Sungiant.Cor
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current <see cref="Sungiant.Cor.AppTime"/>.
+        /// Returns a <see cref="System.String"/> that represents the current 
+        /// <see cref="Sungiant.Cor.AppTime"/>.
         /// </summary>
         public override string ToString ()
         {
@@ -837,39 +1669,127 @@ namespace Sungiant.Cor
         /// <value>The frame number.</value>
         public Int64 FrameNumber { get { return frameNumber; } }
     }
+    /// <summary>
+    /// todo
+    /// </summary>
     public class GenericGamepad
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         IInputManager _inputManager;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         ButtonState _down;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         ButtonState _left;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         ButtonState _right;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         ButtonState _up;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         ButtonState _north;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         ButtonState _south;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         ButtonState _east;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         ButtonState _west;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         ButtonState _option;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         ButtonState _pause;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public ButtonState Down { get { return _down; } }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public ButtonState Left { get { return _left; } }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public ButtonState Right { get { return _right; } }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public ButtonState Up { get { return _up; } }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public ButtonState North { get { return _north; } }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public ButtonState South { get { return _south; } }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public ButtonState East { get { return _east; } }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public ButtonState West { get { return _west; } }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public ButtonState Option { get { return _option; } }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public ButtonState Pause { get { return _pause; } }
 
-
+        /// <summary>
+        /// todo
+        /// </summary>
         public GenericGamepad(IInputManager inputManager)
         {
             _inputManager = inputManager;
         }
 
-
+        /// <summary>
+        /// todo
+        /// </summary>
         internal void Reset()
         {
             _down = ButtonState.Released;
@@ -884,120 +1804,194 @@ namespace Sungiant.Cor
             _pause = ButtonState.Released;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         internal void Update(AppTime time)
         {
             this.Reset();
 
-            var xbox360Gamepad = _inputManager.GetXbox360Gamepad(PlayerIndex.One);
+            var xbox360Gamepad = _inputManager.GetXbox360Gamepad(
+                PlayerIndex.One);
+
             var vitaGamepad = _inputManager.GetPsmGamepad();
 
             if( xbox360Gamepad != null )
             {
-                if( xbox360Gamepad.DPad.Down == ButtonState.Pressed) _down = ButtonState.Pressed;
-                if( xbox360Gamepad.DPad.Left == ButtonState.Pressed) _left = ButtonState.Pressed;
-                if( xbox360Gamepad.DPad.Right == ButtonState.Pressed) _right = ButtonState.Pressed;
-                if( xbox360Gamepad.DPad.Up == ButtonState.Pressed) _up = ButtonState.Pressed;
-                if( xbox360Gamepad.Buttons.Y == ButtonState.Pressed) _north = ButtonState.Pressed;
-                if( xbox360Gamepad.Buttons.A == ButtonState.Pressed) _south = ButtonState.Pressed;
-                if( xbox360Gamepad.Buttons.B == ButtonState.Pressed) _east = ButtonState.Pressed;
-                if( xbox360Gamepad.Buttons.X == ButtonState.Pressed) _west = ButtonState.Pressed;
-                if( xbox360Gamepad.Buttons.Back == ButtonState.Pressed) _option = ButtonState.Pressed;
-                if( xbox360Gamepad.Buttons.Start == ButtonState.Pressed) _pause = ButtonState.Pressed;
-            }
+                if( xbox360Gamepad.DPad.Down == ButtonState.Pressed) 
+                    _down = ButtonState.Pressed;
 
+                if( xbox360Gamepad.DPad.Left == ButtonState.Pressed) 
+                    _left = ButtonState.Pressed;
+
+                if( xbox360Gamepad.DPad.Right == ButtonState.Pressed) 
+                    _right = ButtonState.Pressed;
+
+                if( xbox360Gamepad.DPad.Up == ButtonState.Pressed) 
+                    _up = ButtonState.Pressed;
+
+                if( xbox360Gamepad.Buttons.Y == ButtonState.Pressed) 
+                    _north = ButtonState.Pressed;
+
+                if( xbox360Gamepad.Buttons.A == ButtonState.Pressed) 
+                    _south = ButtonState.Pressed;
+
+                if( xbox360Gamepad.Buttons.B == ButtonState.Pressed) 
+                    _east = ButtonState.Pressed;
+
+                if( xbox360Gamepad.Buttons.X == ButtonState.Pressed) 
+                    _west = ButtonState.Pressed;
+
+                if( xbox360Gamepad.Buttons.Back == ButtonState.Pressed) 
+                    _option = ButtonState.Pressed;
+
+                if( xbox360Gamepad.Buttons.Start == ButtonState.Pressed) 
+                    _pause = ButtonState.Pressed;
+            }
 
             if( vitaGamepad != null )
             {
-                if( vitaGamepad.DPad.Down == ButtonState.Pressed) _down = ButtonState.Pressed;
-                if( vitaGamepad.DPad.Left == ButtonState.Pressed) _left = ButtonState.Pressed;
-                if( vitaGamepad.DPad.Right == ButtonState.Pressed) _right = ButtonState.Pressed;
-                if( vitaGamepad.DPad.Up == ButtonState.Pressed) _up = ButtonState.Pressed;
-                if( vitaGamepad.Buttons.Triangle == ButtonState.Pressed) _north = ButtonState.Pressed;
-                if( vitaGamepad.Buttons.Cross == ButtonState.Pressed) _south = ButtonState.Pressed;
-                if( vitaGamepad.Buttons.Circle == ButtonState.Pressed) _east = ButtonState.Pressed;
-                if( vitaGamepad.Buttons.Square == ButtonState.Pressed) _west = ButtonState.Pressed;
-                if( vitaGamepad.Buttons.Select == ButtonState.Pressed) _option = ButtonState.Pressed;
-                if( vitaGamepad.Buttons.Start == ButtonState.Pressed) _pause = ButtonState.Pressed;
-            }
+                if( vitaGamepad.DPad.Down == ButtonState.Pressed) 
+                    _down = ButtonState.Pressed;
+                
+                if( vitaGamepad.DPad.Left == ButtonState.Pressed) 
+                    _left = ButtonState.Pressed;
+                
+                if( vitaGamepad.DPad.Right == ButtonState.Pressed) 
+                    _right = ButtonState.Pressed;
+                
+                if( vitaGamepad.DPad.Up == ButtonState.Pressed) 
+                    _up = ButtonState.Pressed;
+                
+                if( vitaGamepad.Buttons.Triangle == ButtonState.Pressed) 
+                    _north = ButtonState.Pressed;
+                
+                if( vitaGamepad.Buttons.Cross == ButtonState.Pressed) 
+                    _south = ButtonState.Pressed;
+                
+                if( vitaGamepad.Buttons.Circle == ButtonState.Pressed) 
+                    _east = ButtonState.Pressed;
+                
+                if( vitaGamepad.Buttons.Square == ButtonState.Pressed) 
+                    _west = ButtonState.Pressed;
+                
+                if( vitaGamepad.Buttons.Select == ButtonState.Pressed) 
+                    _option = ButtonState.Pressed;
 
+                if( vitaGamepad.Buttons.Start == ButtonState.Pressed) 
+                    _pause = ButtonState.Pressed;
+            }
         }
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public abstract class MultiTouchController
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         internal MultiTouchController(ICor engine)
         {
             this.engine = engine;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         protected ICor engine;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public abstract IPanelSpecification PanelSpecification { get; }
 
-        public TouchCollection TouchCollection { get { return this.collection; } }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public TouchCollection TouchCollection 
+        { 
+            get { return this.collection; } 
+        }
         
+        /// <summary>
+        /// todo
+        /// </summary>
         protected TouchCollection collection = new TouchCollection();
 
+        /// <summary>
+        /// todo
+        /// </summary>
         internal abstract void Update(AppTime time);
     }
-    // A touch in a single frame definition of a finger on the screen
+
+    /// <summary>
+    /// A touch in a single frame definition of a finger on the screen.
+    /// </summary>
     public struct Touch
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Int32 id;
 
-        // The position of a touch ranges between -0.5 and 0.5 in both X and Y
+        /// <summary>
+        /// The position of a touch ranges between -0.5 and 0.5 in both X and Y
+        /// </summary>
         Vector2 normalisedEngineSpacePosition;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         TouchPhase phase;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         Int64 frameNumber;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         Single timestamp;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         static Touch invalidTouch;
 
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int32 ID { get { return id; } }
 
-        public Int32 ID
-        {
-            get
-            {
-                return id;
-            }
-        }
-
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector2 Position
         {
-            get
-            {
-                return normalisedEngineSpacePosition;
-            }
+            get { return normalisedEngineSpacePosition; }
         }
 
-        public TouchPhase Phase
-        {
-            get
-            {
-                return phase;
-            }
-        }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public TouchPhase Phase { get { return phase; } }
 
-        public Int64 FrameNumber
-        {
-            get
-            {
-                return frameNumber;
-            }
-        }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int64 FrameNumber { get { return frameNumber; } }
 
-        public Single Timestamp
-        {
-            get
-            {
-                return timestamp;
-            }
-        }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Single Timestamp { get { return timestamp; } }
 
-
-
+        /// <summary>
+        /// todo
+        /// </summary>
         public Touch(
             Int32 id,
             Vector2 normalisedEngineSpacePosition,
@@ -1005,14 +1999,20 @@ namespace Sungiant.Cor
             Int64 frame,
             Single timestamp)
         {
-            if( normalisedEngineSpacePosition.X > 0.5f || normalisedEngineSpacePosition.X < -0.5f )
+            if( normalisedEngineSpacePosition.X > 0.5f || 
+                normalisedEngineSpacePosition.X < -0.5f )
             {
-                throw new Exception("Touch has a bad X coordinate: " + normalisedEngineSpacePosition.X);
+                throw new Exception(
+                    "Touch has a bad X coordinate: " + 
+                    normalisedEngineSpacePosition.X);
             }
 
-            if( normalisedEngineSpacePosition.Y > 0.5f || normalisedEngineSpacePosition.X < -0.5f )
+            if( normalisedEngineSpacePosition.Y > 0.5f || 
+                normalisedEngineSpacePosition.X < -0.5f )
             {
-                throw new Exception("Touch has a bad Y coordinate: " + normalisedEngineSpacePosition.Y);
+                throw new Exception(
+                    "Touch has a bad Y coordinate: " + 
+                    normalisedEngineSpacePosition.Y);
             }
 
             this.id = id;
@@ -1022,64 +2022,119 @@ namespace Sungiant.Cor
             this.timestamp = timestamp;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         static Touch()
         {
-            invalidTouch = new Touch(-1, Vector2.Zero, TouchPhase.Invalid, -1, 0f);
+            invalidTouch = new Touch(
+                -1, 
+                Vector2.Zero, 
+                TouchPhase.Invalid, 
+                -1, 
+                0f);
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public static Touch Invalid { get { return invalidTouch; } }
-
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public class TouchCollection
         : IEnumerable<Touch>
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         List<Touch> touchBuffer = new List<Touch>();
 
+        /// <summary>
+        /// todo
+        /// </summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         IEnumerator<Touch> IEnumerable<Touch>.GetEnumerator()
         {
             return GetEnumerator();
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         internal void ClearBuffer()
         {
             this.touchBuffer.Clear();
         }
 
-        internal void RegisterTouch(Int32 id, Vector2 normalisedEngineSpacePosition, TouchPhase phase, Int64 frameNum, Single timestamp)
+        /// <summary>
+        /// todo
+        /// </summary>
+        internal void RegisterTouch(
+            Int32 id, 
+            Vector2 normalisedEngineSpacePosition, 
+            TouchPhase phase, 
+            Int64 frameNum, 
+            Single timestamp)
         {
-            bool die = false;
-            if( normalisedEngineSpacePosition.X > 0.5f || normalisedEngineSpacePosition.X < -0.5f )
+            Boolean die = false;
+
+            if( normalisedEngineSpacePosition.X > 0.5f || 
+                normalisedEngineSpacePosition.X < -0.5f )
             {
-                Console.WriteLine("Touch has a bad X coordinate: " + normalisedEngineSpacePosition.X);
+                Console.WriteLine(
+                    "Touch has a bad X coordinate: " + 
+                    normalisedEngineSpacePosition.X);
+
                 die = true;
             }
             
-            if( normalisedEngineSpacePosition.Y > 0.5f || normalisedEngineSpacePosition.X < -0.5f )
+            if( normalisedEngineSpacePosition.Y > 0.5f || 
+                normalisedEngineSpacePosition.X < -0.5f )
             {
-                Console.WriteLine("Touch has a bad Y coordinate: " + normalisedEngineSpacePosition.Y);
+                Console.WriteLine(
+                    "Touch has a bad Y coordinate: " + 
+                    normalisedEngineSpacePosition.Y);
+
                 die = true;
             }
+
             if (die)
             {
                 Console.WriteLine("Discarding Bad Touch");
                 return;
             }
 
-            var touch = new Touch(id, normalisedEngineSpacePosition, phase, frameNum, timestamp);
+            var touch = new Touch(
+                id, 
+                normalisedEngineSpacePosition, 
+                phase, 
+                frameNum, 
+                timestamp);
 
             this.touchBuffer.Add(touch);
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public IEnumerator<Touch> GetEnumerator()
         {
             return new TouchCollectionEnumerator(this.touchBuffer);
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public int TouchCount
         {
             get
@@ -1088,6 +2143,9 @@ namespace Sungiant.Cor
             }
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public Touch GetTouchFromTouchID(int zTouchID)
         {
             foreach (var touch in touchBuffer)
@@ -1095,41 +2153,67 @@ namespace Sungiant.Cor
                 if (touch.ID == zTouchID) return touch;
             }
 
-            //System.Diagnostics.Debug.WriteLine("The touch requested no longer exists.");
+            //System.Diagnostics.Debug.WriteLine(
+            //    "The touch requested no longer exists.");
+
             return Touch.Invalid;
         }
-    }    internal class TouchCollectionEnumerator
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    internal class TouchCollectionEnumerator
         : IEnumerator<Touch>
     {
-        
+        /// <summary>
+        /// todo
+        /// </summary>
         List<Touch> touches;
 
-        // Enumerators are positioned before the first element
-        // until the first MoveNext() call.
-        int position = -1;
+        /// <summary>
+        /// Enumerators are positioned before the first element
+        /// until the first MoveNext() call.
+        /// </summary>
+        Int32 position = -1;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         internal TouchCollectionEnumerator(List<Touch> touches)
         {
             this.touches = touches;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         void IDisposable.Dispose()
         {
 
         }
 
-        public bool MoveNext()
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Boolean MoveNext()
         {
             position++;
             return (position < touches.Count);
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public void Reset()
         {
             position = -1;
         }
 
-        object IEnumerator.Current
+        /// <summary>
+        /// todo
+        /// </summary>
+        Object IEnumerator.Current
         {
             get
             {
@@ -1137,6 +2221,9 @@ namespace Sungiant.Cor
             }
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public Touch Current
         {
             get
@@ -1153,26 +2240,49 @@ namespace Sungiant.Cor
         }
     }
 
+    /// <summary>
+    /// todo
+    /// </summary>
     public class VertexDeclaration
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         VertexElement[] _elements;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Int32 _vertexStride;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public VertexDeclaration (params VertexElement[] elements)
         {
-            if ((elements == null) || (elements.Length == 0)) {
+            if ((elements == null) || (elements.Length == 0))
+            {
                 throw new ArgumentNullException ("elements - NullNotAllowed");
             }
-            else {
-                VertexElement[] elementArray = (VertexElement[])elements.Clone ();
+            else
+            {
+                VertexElement[] elementArray = 
+                    (VertexElement[]) elements.Clone ();
+
                 this._elements = elementArray;
-                Int32 vertexStride = VertexElementValidator.GetVertexStride (elementArray);
+
+                Int32 vertexStride = 
+                    VertexElementValidator.GetVertexStride (elementArray);
+
                 this._vertexStride = vertexStride;
+
                 VertexElementValidator.Validate (vertexStride, this._elements);
             }
-
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public Boolean Equals(VertexDeclaration other)
         {
             if( other == null)
@@ -1181,6 +2291,9 @@ namespace Sungiant.Cor
             return other == this;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public override int GetHashCode ()
         {
             int hash = _vertexStride.GetHashCode ();
@@ -1193,6 +2306,9 @@ namespace Sungiant.Cor
             return hash;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public override Boolean Equals (object obj)
         {
             if( obj != null )
@@ -1208,12 +2324,20 @@ namespace Sungiant.Cor
             return false;
         }
 
-        public static Boolean operator != (VertexDeclaration one, VertexDeclaration other)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public static Boolean operator != 
+            (VertexDeclaration one, VertexDeclaration other)
         {
             return !(one == other);
         }
 
-        public static Boolean operator == (VertexDeclaration one, VertexDeclaration other)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public static Boolean operator == 
+            (VertexDeclaration one, VertexDeclaration other)
         {
             if ((object)one == null && (object)other == null)
             {
@@ -1237,6 +2361,9 @@ namespace Sungiant.Cor
             return true;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public override String ToString()
         {
             string s = string.Empty;
@@ -1251,107 +2378,160 @@ namespace Sungiant.Cor
                 }
 
             }
-            return string.Format ("[VertexDeclaration: Elements={0}, Stride={1}]", s, _vertexStride);
+
+            return string.Format (
+                "[VertexDeclaration: Elements={0}, Stride={1}]", 
+                s, 
+                _vertexStride);
         }
 
-        public VertexDeclaration (Int32 vertexStride, params VertexElement[] elements)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexDeclaration (
+            Int32 vertexStride, 
+            params VertexElement[] elements)
         {
-            if ((elements == null) || (elements.Length == 0)) {
+            if ((elements == null) || (elements.Length == 0))
+            {
                 throw new ArgumentNullException ("NullNotAllowed");
             }
-            else {
-                VertexElement[] elementArray = (VertexElement[])elements.Clone ();
+            else
+            {
+                VertexElement[] elementArray = 
+                    (VertexElement[])elements.Clone ();
+
                 this._elements = elementArray;
+                
                 this._vertexStride = vertexStride;
+                
                 VertexElementValidator.Validate (vertexStride, elementArray);
             }
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         internal static VertexDeclaration FromType (Type vertexType)
         {
-            if (vertexType == null) {
-                throw new ArgumentNullException ("vertexType - NullNotAllowed");
+            if (vertexType == null)
+            {
+                throw new ArgumentNullException (
+                    "vertexType - NullNotAllowed");
             }
 
 #if !NETFX_CORE
-            if (!vertexType.IsValueType) {
-                throw new ArgumentException (string.Format ("VertexTypeNotValueType"));
+            if (!vertexType.IsValueType)
+            {
+                throw new ArgumentException (
+                    String.Format ("VertexTypeNotValueType"));
             }
 #endif
 
-            IVertexType type = Activator.CreateInstance (vertexType) as IVertexType;
+            IVertexType type = 
+                Activator.CreateInstance (vertexType) as IVertexType;
 
-            if (type == null) {
-                throw new ArgumentException (string.Format ("VertexTypeNotIVertexType"));
+            if (type == null)
+            {
+                throw new ArgumentException (
+                    String.Format ("VertexTypeNotIVertexType"));
             }
-
 
             VertexDeclaration vertexDeclaration = type.VertexDeclaration;
 
-            if (vertexDeclaration == null) {
-                throw new InvalidOperationException ("VertexTypeNullDeclaration");
+            if (vertexDeclaration == null)
+            {
+                throw new InvalidOperationException (
+                    "VertexTypeNullDeclaration");
             }
 
             return vertexDeclaration;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public VertexElement[] GetVertexElements ()
         {
             return (VertexElement[])this._elements.Clone ();
         }
 
-        // Properties
-        public Int32 VertexStride {
-            get {
-                return this._vertexStride;
-            }
-        }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int32 VertexStride { get { return this._vertexStride; } }
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct VertexElement
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         internal int _offset;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         internal VertexElementFormat _format;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         internal VertexElementUsage _usage;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         internal int _usageIndex;
 
-        public int Offset {
-            get {
-                return this._offset;
-            }
-            set {
-                this._offset = value;
-            }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public int Offset
+        {
+            get { return this._offset; }
+            set { this._offset = value; }
         }
 
-        public VertexElementFormat VertexElementFormat {
-            get {
-                return this._format;
-            }
-            set {
-                this._format = value;
-            }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexElementFormat VertexElementFormat
+        {
+            get { return this._format; }
+            set { this._format = value; }
         }
 
-        public VertexElementUsage VertexElementUsage {
-            get {
-                return this._usage;
-            }
-            set {
-                this._usage = value;
-            }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexElementUsage VertexElementUsage
+        {
+            get{ return this._usage; }
+            set { this._usage = value; }
         }
 
-        public int UsageIndex {
-            get {
-                return this._usageIndex;
-            }
-            set {
-                this._usageIndex = value;
-            }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public int UsageIndex
+        {
+            get { return this._usageIndex; }
+            set { this._usageIndex = value; }
         }
 
-        public VertexElement (int offset, VertexElementFormat elementFormat, VertexElementUsage elementUsage, int usageIndex)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexElement (
+            int offset, 
+            VertexElementFormat elementFormat, 
+            VertexElementUsage elementUsage, 
+            int usageIndex)
         {
             this._offset = offset;
             this._usageIndex = usageIndex;
@@ -1359,6 +2539,9 @@ namespace Sungiant.Cor
             this._usage = elementUsage;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public override String ToString ()
         {
             return string.Format (
@@ -1370,88 +2553,300 @@ namespace Sungiant.Cor
             );
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public override Int32 GetHashCode ()
         {
             return base.GetHashCode ();
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public override Boolean Equals (object obj)
         {
-            if (obj == null) {
+            if (obj == null)
+            {
                 return false;
             }
-            if (obj.GetType () != base.GetType ()) {
+            
+            if (obj.GetType () != base.GetType ())
+            {
                 return false;
             }
+            
             return (this == ((VertexElement)obj));
         }
 
-        public static Boolean operator == (VertexElement left, VertexElement right)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public static Boolean operator == 
+            (VertexElement left, VertexElement right)
         {
-            return ((((left._offset == right._offset) && (left._usageIndex == right._usageIndex)) && (left._usage == right._usage)) && (left._format == right._format));
+            return 
+                (left._offset == right._offset) && 
+                (left._usageIndex == right._usageIndex) && 
+                (left._usage == right._usage) && 
+                (left._format == right._format);
         }
 
-        public static Boolean operator != (VertexElement left, VertexElement right)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public static Boolean operator != 
+            (VertexElement left, VertexElement right)
         {
             return !(left == right);
         }
     }
+
+
+    /// <summary>
+    /// todo
+    /// </summary>
     public abstract class PsmGamepad
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public class GamePadButtons
         {   
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _triangle = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _square = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _circle = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _cross = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _leftShoulder = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _rightShoulder = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _start = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _select = ButtonState.Released;
 
-            public ButtonState Triangle { get { return _triangle; } internal set { _triangle = value; } }
-            public ButtonState Square { get { return _square; } internal set { _square = value; } }
-            public ButtonState Circle { get { return _circle; } internal set { _circle = value; } }
-            public ButtonState Cross { get { return _cross; } internal set { _cross = value; } }
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Triangle 
+            { 
+                get { return _triangle; } 
+                internal set { _triangle = value; } 
+            }
             
-            public ButtonState Start { get { return _start; } internal set { _start = value; } }
-            public ButtonState Select { get { return _select; } internal set { _select = value; } } 
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Square 
+            { 
+                get { return _square; } 
+                internal set { _square = value; } 
+            }
             
-            public ButtonState LeftShoulder { get { return _leftShoulder; } internal set { _leftShoulder = value; } }
-            public ButtonState RightShoulder { get { return _rightShoulder; } internal set { _rightShoulder = value; } }
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Circle 
+            { 
+                get { return _circle; } 
+                internal set { _circle = value; } 
+            }
             
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Cross 
+            { 
+                get { return _cross; } 
+                internal set { _cross = value; } 
+            }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Start 
+            { 
+                get { return _start; } 
+                internal set { _start = value; } 
+            }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Select 
+            { 
+                get { return _select; } 
+                internal set { _select = value; } 
+            } 
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState LeftShoulder 
+            { 
+                get { return _leftShoulder; } 
+                internal set { _leftShoulder = value; } 
+            }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState RightShoulder 
+            { 
+                get { return _rightShoulder; } 
+                internal set { _rightShoulder = value; } 
+            }
         }
         
+        /// <summary>
+        /// todo
+        /// </summary>
         public class GamePadDPad
         {
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _down = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _left = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _right = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _up = ButtonState.Released;
 
-            public ButtonState Down { get { return _down; } internal set { _down = value; } }
-            public ButtonState Left { get { return _left; } internal set { _left = value; } }
-            public ButtonState Right { get { return _right; } internal set { _right = value; } }
-            public ButtonState Up { get { return _up; } internal set { _up = value; } }
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Down 
+            { 
+                get { return _down; } 
+                internal set { _down = value; } 
+            }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Left 
+            { 
+                get { return _left; } 
+                internal set { _left = value; } 
+            }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Right 
+            { 
+                get { return _right; } 
+                internal set { _right = value; } 
+            }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Up 
+            { 
+                get { return _up; } 
+                internal set { _up = value; } 
+            }
         }
     
+        /// <summary>
+        /// todo
+        /// </summary>
         public class GamePadThumbSticks
         {
+            /// <summary>
+            /// todo
+            /// </summary>
             Vector2 _left = Vector2.Zero;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             Vector2 _right = Vector2.Zero;
             
+            /// <summary>
+            /// todo
+            /// </summary>
             public Vector2 Left { get { return _left; } }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             public Vector2 Right { get { return _right; } }
         }
         
+        /// <summary>
+        /// todo
+        /// </summary>
         GamePadButtons _buttons = new GamePadButtons();
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         GamePadDPad _dpad = new GamePadDPad();
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         GamePadThumbSticks _thumbsticks = new GamePadThumbSticks();
         
+        /// <summary>
+        /// todo
+        /// </summary>
         public GamePadButtons Buttons { get { return _buttons; } }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public GamePadDPad DPad { get { return _dpad; } }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public GamePadThumbSticks ThumbSticks { get { return _thumbsticks; } }
         
+        /// <summary>
+        /// todo
+        /// </summary>
         protected void Reset()
         {
             _dpad.Down = ButtonState.Released;
@@ -1469,74 +2864,314 @@ namespace Sungiant.Cor
             _buttons.RightShoulder = ButtonState.Released;
         }
     }
+    /// <summary>
+    /// todo
+    /// </summary>
     public abstract class Xbox360Gamepad
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public class GamePadButtons
         {   
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _a = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _b = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _back = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _leftShoulder = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _leftStick = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _rightShoulder = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _rightStick = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _start = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _x = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _y = ButtonState.Released;
 
-            public ButtonState A { get { return _a; } internal set { _a = value; } }
-            public ButtonState B { get { return _b; } internal set { _b = value; } }
-            public ButtonState Back { get { return _back; } internal set { _back = value; } }
-            public ButtonState LeftShoulder { get { return _leftShoulder; } internal set { _leftShoulder = value; } }
-            public ButtonState LeftStick { get { return _leftStick; } internal set { _leftStick = value; } }
-            public ButtonState RightShoulder { get { return _rightShoulder; } internal set { _rightShoulder = value; } }
-            public ButtonState RightStick { get { return _rightStick; } internal set { _rightStick = value; } }
-            public ButtonState Start { get { return _start; } internal set { _start = value; } }
-            public ButtonState X { get { return _x; } internal set { _x = value; } }
-            public ButtonState Y { get { return _y; } internal set { _y = value; } }    
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState A 
+            { 
+                get { return _a; } 
+                internal set { _a = value; } 
+            }
+
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState B 
+            { 
+                get { return _b; } 
+                internal set { _b = value; } 
+            }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Back 
+            { 
+                get { return _back; } 
+                internal set { _back = value; } 
+            }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState LeftShoulder 
+            { 
+                get { return _leftShoulder; } 
+                internal set { _leftShoulder = value; } 
+            }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState LeftStick 
+            { 
+                get { return _leftStick; } 
+                internal set { _leftStick = value; } 
+            }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState RightShoulder 
+            { 
+                get { return _rightShoulder; } 
+                internal set { _rightShoulder = value; } 
+            }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState RightStick 
+            { 
+                get { return _rightStick; } 
+                internal set { _rightStick = value; } 
+            }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Start 
+            { 
+                get { return _start; } 
+                internal set { _start = value; } 
+            }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState X 
+            { 
+                get { return _x; } 
+                internal set { _x = value; } 
+            }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Y 
+            { 
+                get { return _y; } 
+                internal set { _y = value; } 
+            }    
         }
         
+        /// <summary>
+        /// todo
+        /// </summary>
         public class GamePadDPad
         {
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _down = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _left = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _right = ButtonState.Released;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             ButtonState _up = ButtonState.Released;
 
-            public ButtonState Down { get { return _down; } internal set { _down = value; } }
-            public ButtonState Left { get { return _left; } internal set { _left = value; } }
-            public ButtonState Right { get { return _right; } internal set { _right = value; } }
-            public ButtonState Up { get { return _up; } internal set { _up = value; } }
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Down
+            { 
+                get { return _down; } 
+                internal set { _down = value; } 
+            }
+
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Left 
+            { 
+                get { return _left; } 
+                internal set { _left = value; } 
+            }
+
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Right 
+            { 
+                get { return _right; } 
+                internal set { _right = value; } 
+            }
+
+            /// <summary>
+            /// todo
+            /// </summary>
+            public ButtonState Up 
+            { 
+                get { return _up; } 
+                internal set { _up = value; } 
+            }
         }
     
+        /// <summary>
+        /// todo
+        /// </summary>
         public class GamePadThumbSticks
         {
+            /// <summary>
+            /// todo
+            /// </summary>
             Vector2 _left = Vector2.Zero;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             Vector2 _right = Vector2.Zero;
             
+            /// <summary>
+            /// todo
+            /// </summary>
             public Vector2 Left { get { return _left; } }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             public Vector2 Right { get { return _right; } }
         }
         
+        /// <summary>
+        /// todo
+        /// </summary>
         public class GamePadTriggers
         {   
+            /// <summary>
+            /// todo
+            /// </summary>
             Single _left = 0f;
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             Single _right = 0f;
             
+            /// <summary>
+            /// todo
+            /// </summary>
             public Single Left { get { return _left; } }
+            
+            /// <summary>
+            /// todo
+            /// </summary>
             public Single Right { get { return _right; } }
         }
         
+        /// <summary>
+        /// todo
+        /// </summary>
         GamePadButtons _buttons = new GamePadButtons();
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         GamePadDPad _dpad = new GamePadDPad();
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         GamePadThumbSticks _thumbsticks = new GamePadThumbSticks();
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         GamePadTriggers _triggers = new GamePadTriggers();
         
+        /// <summary>
+        /// todo
+        /// </summary>
         public GamePadButtons Buttons { get { return _buttons; } }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public GamePadDPad DPad { get { return _dpad; } }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public GamePadThumbSticks ThumbSticks { get { return _thumbsticks; } }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public GamePadTriggers Triggers { get { return _triggers; } }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         protected void Reset()
         {
             _dpad.Down = ButtonState.Released;
@@ -1557,35 +3192,59 @@ namespace Sungiant.Cor
         }
     }
 
-
-
     #endregion
 
     #region Vertices
 
+    /// <summary>
+    /// todo
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct VertexPosition
         : IVertexType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Position;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public VertexPosition(Vector3 position)
         {
             this.Position = position;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         static VertexPosition()
         {
-            _vertexDeclaration = new VertexDeclaration
-            (
-                new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0)
-            );
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement(
+                    0, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Position, 
+                    0)
+                );
+
             _default = new VertexPosition(Vector3.Zero);
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexPosition _default;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexDeclaration _vertexDeclaration;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public static IVertexType Default
         {
             get
@@ -1594,6 +3253,9 @@ namespace Sungiant.Cor
             }
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public VertexDeclaration VertexDeclaration
         {
             get
@@ -1602,32 +3264,71 @@ namespace Sungiant.Cor
             }
         }
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct VertexPositionColour
         : IVertexType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Position;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Rgba32 Colour;
 
-        public VertexPositionColour(Vector3 position, Rgba32 color)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexPositionColour(
+            Vector3 position, 
+            Rgba32 color)
         {
             this.Position = position;
             this.Colour = color;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         static VertexPositionColour()
         {
-            _vertexDeclaration = new VertexDeclaration
-            (
-                new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                new VertexElement(12, VertexElementFormat.Colour, VertexElementUsage.Colour, 0)
-            );
-            _default = new VertexPositionColour(Vector3.Zero, Rgba32.Magenta);
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement(
+                    0, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Position, 
+                    0),
+                new VertexElement(
+                    12, 
+                    VertexElementFormat.Colour, 
+                    VertexElementUsage.Colour, 
+                    0)
+                );
+
+            _default = new VertexPositionColour(
+                Vector3.Zero, 
+                Rgba32.Magenta);
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexPositionColour _default;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexDeclaration _vertexDeclaration;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public static IVertexType Default
         {
             get
@@ -1636,6 +3337,9 @@ namespace Sungiant.Cor
             }
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public VertexDeclaration VertexDeclaration
         {
             get
@@ -1644,73 +3348,168 @@ namespace Sungiant.Cor
             }
         }
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct VertexPositionNormal
         : IVertexType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Position;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Normal;
 
-        public VertexPositionNormal (Vector3 position, Vector3 normal)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexPositionNormal (
+            Vector3 position, 
+            Vector3 normal)
         {
             this.Position = position;
             this.Normal = normal;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexPositionNormal _default;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexDeclaration _vertexDeclaration;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         static VertexPositionNormal ()
         {
-            _vertexDeclaration = new VertexDeclaration
-            (
-                new VertexElement (0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                new VertexElement (sizeof(Single) * 3, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0)
-            );
-            _default = new VertexPositionNormal (Vector3.Zero, Vector3.Zero);
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Position, 
+                    0),
+                new VertexElement (
+                    sizeof(Single) * 3, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Normal, 
+                    0)
+                );
+
+            _default = new VertexPositionNormal (
+                Vector3.Zero, 
+                Vector3.Zero);
         }
 
-        public static IVertexType Default {
-            get {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public static IVertexType Default
+        {
+            get
+            {
                 return _default;
             }
         }
         
-        public VertexDeclaration VertexDeclaration {
-            get {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
+        {
+            get
+            {
                 return _vertexDeclaration; 
             }
         }
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct VertexPositionNormalColour
         : IVertexType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Position;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Normal;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Rgba32 Colour;
 
-        public VertexPositionNormalColour(Vector3 position, Vector3 normal, Rgba32 color)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexPositionNormalColour(
+            Vector3 position, 
+            Vector3 normal, 
+            Rgba32 color)
         {
             this.Position = position;
             this.Normal = normal;
             this.Colour = color;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         static VertexPositionNormalColour()
         {
-            _vertexDeclaration = new VertexDeclaration
-            (
-                new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                new VertexElement(12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
-                new VertexElement(24, VertexElementFormat.Colour, VertexElementUsage.Colour, 0)
-            );
-            _default = new VertexPositionNormalColour(Vector3.Zero, Vector3.Zero, Rgba32.White);
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement(
+                    0, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Position, 
+                    0),
+                new VertexElement(
+                    12, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Normal, 
+                    0),
+                new VertexElement(
+                    24, 
+                    VertexElementFormat.Colour, 
+                    VertexElementUsage.Colour, 
+                    0)
+                );
+
+            _default = new VertexPositionNormalColour(
+                Vector3.Zero, 
+                Vector3.Zero, 
+                Rgba32.White);
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexPositionNormalColour _default;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexDeclaration _vertexDeclaration;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public static IVertexType Default
         {
             get
@@ -1719,6 +3518,9 @@ namespace Sungiant.Cor
             }
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public VertexDeclaration VertexDeclaration
         {
             get
@@ -1727,58 +3529,139 @@ namespace Sungiant.Cor
             }
         }
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct VertexPositionNormalTexture
         : IVertexType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Position;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Normal;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector2 UV;
 
-        public VertexPositionNormalTexture (Vector3 position, Vector3 normal, Vector2 uv)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexPositionNormalTexture (
+            Vector3 position, 
+            Vector3 normal, 
+            Vector2 uv)
         {
             this.Position = position;
             this.Normal = normal;
             this.UV = uv;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexPositionNormalTexture _default;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexDeclaration _vertexDeclaration;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         static VertexPositionNormalTexture ()
         {
-            _vertexDeclaration = new VertexDeclaration
-            (
-                new VertexElement (0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                new VertexElement (12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
-                new VertexElement (24, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0)
-            );
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Position, 
+                    0),
+                new VertexElement (
+                    12, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Normal, 
+                    0),
+                new VertexElement (
+                    24, 
+                    VertexElementFormat.Vector2, 
+                    VertexElementUsage.TextureCoordinate, 
+                    0)
+                );
 
-            _default = new VertexPositionNormalTexture (Vector3.Zero, Vector3.Zero, Vector2.Zero);
+            _default = new VertexPositionNormalTexture (
+                Vector3.Zero, 
+                Vector3.Zero, 
+                Vector2.Zero);
         }
 
-        public static IVertexType Default {
-            get {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public static IVertexType Default
+        {
+            get
+            {
                 return _default;
             }
         }
 
-        public VertexDeclaration VertexDeclaration { 
-            get { 
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
+        { 
+            get
+            { 
                 return _vertexDeclaration; 
             } 
         }
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct VertexPositionNormalTextureColour
         : IVertexType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Position;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Normal;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector2 UV;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Rgba32 Colour;
 
-        public VertexPositionNormalTextureColour (Vector3 position, Vector3 normal, Vector2 uv, Rgba32 color)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexPositionNormalTextureColour (
+            Vector3 position, 
+            Vector3 normal, 
+            Vector2 uv, 
+            Rgba32 color)
         {
             this.Position = position;
             this.Normal = normal;
@@ -1786,108 +3669,250 @@ namespace Sungiant.Cor
             this.Colour = color;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         static VertexPositionNormalTextureColour ()
         {
-            _vertexDeclaration = new VertexDeclaration
-            (
-                new VertexElement (0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                new VertexElement (12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
-                new VertexElement (24, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
-                new VertexElement (32, VertexElementFormat.Colour, VertexElementUsage.Colour, 0)
-            );
-            _default = new VertexPositionNormalTextureColour (Vector3.Zero, Vector3.Zero, Vector2.Zero, Rgba32.White);
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Position, 
+                    0),
+                new VertexElement (
+                    12, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Normal, 
+                    0),
+                new VertexElement (
+                    24, 
+                    VertexElementFormat.Vector2, 
+                    VertexElementUsage.TextureCoordinate, 
+                    0),
+                new VertexElement (
+                    32, 
+                    VertexElementFormat.Colour, 
+                    VertexElementUsage.Colour, 
+                    0)
+                );
+
+            _default = new VertexPositionNormalTextureColour (
+                Vector3.Zero, 
+                Vector3.Zero, 
+                Vector2.Zero, 
+                Rgba32.White);
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexPositionNormalTextureColour _default;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexDeclaration _vertexDeclaration;
 
-        public static IVertexType Default {
-            get {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public static IVertexType Default
+        {
+            get
+            {
                 return _default;
             }
         }
 
-        public VertexDeclaration VertexDeclaration { 
-            get { 
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
+        { 
+            get
+            { 
                 return _vertexDeclaration; 
             } 
         }
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct VertexPositionTexture
         : IVertexType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Position;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector2 UV;
         
-        public VertexPositionTexture (Vector3 position, Vector2 uv)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexPositionTexture (
+            Vector3 position, 
+            Vector2 uv)
         {
             this.Position = position;
             this.UV = uv;
         }
         
+        /// <summary>
+        /// todo
+        /// </summary>
         static VertexPositionTexture ()
         {
-            _vertexDeclaration = new VertexDeclaration
-                (
-                    new VertexElement (0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                    new VertexElement (12, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0)
-                    );
-            _default = new VertexPositionTexture (Vector3.Zero, Vector2.Zero);
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Position, 
+                    0),
+                new VertexElement (
+                    12, 
+                    VertexElementFormat.Vector2, 
+                    VertexElementUsage.TextureCoordinate, 
+                    0)
+                );
+
+            _default = new VertexPositionTexture (
+                Vector3.Zero, 
+                Vector2.Zero);
         }
         
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexPositionTexture _default;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexDeclaration _vertexDeclaration;
         
-        public static IVertexType Default {
-            get {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public static IVertexType Default
+        {
+            get
+            {
                 return _default;
             }
         }
         
-        public VertexDeclaration VertexDeclaration { 
-            get { 
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
+        { 
+            get
+            { 
                 return _vertexDeclaration; 
             } 
         }
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct VertexPositionTextureColour
         : IVertexType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Position;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector2 UV;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Rgba32 Colour;
         
-        public VertexPositionTextureColour (Vector3 position, Vector2 uv, Rgba32 color)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexPositionTextureColour (
+            Vector3 position, 
+            Vector2 uv, 
+            Rgba32 color)
         {
             this.Position = position;
             this.UV = uv;
             this.Colour = color;
         }
         
+        /// <summary>
+        /// todo
+        /// </summary>
         static VertexPositionTextureColour ()
         {
-            _vertexDeclaration = new VertexDeclaration
-                (
-                    new VertexElement (0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                    new VertexElement (12, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
-                    new VertexElement (20, VertexElementFormat.Colour, VertexElementUsage.Colour, 0)
-                    );
-            _default = new VertexPositionTextureColour (Vector3.Zero, Vector2.Zero, Rgba32.White);
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Position, 
+                    0),
+                new VertexElement (
+                    12, 
+                    VertexElementFormat.Vector2, 
+                    VertexElementUsage.TextureCoordinate, 
+                    0),
+                new VertexElement (
+                    20, 
+                    VertexElementFormat.Colour, 
+                    VertexElementUsage.Colour, 
+                    0)
+                );
+
+            _default = new VertexPositionTextureColour (
+                Vector3.Zero, 
+                Vector2.Zero, 
+                Rgba32.White);
         }
         
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexPositionTextureColour _default;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexDeclaration _vertexDeclaration;
         
-        public static IVertexType Default {
-            get {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public static IVertexType Default
+        {
+            get
+            {
                 return _default;
             }
         }
         
-        public VertexDeclaration VertexDeclaration { 
-            get { 
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
+        { 
+            get
+            { 
                 return _vertexDeclaration; 
             } 
         }
@@ -1897,58 +3922,111 @@ namespace Sungiant.Cor
 
     #region Resources
 
+    /// <summary>
+    /// todo
+    /// </summary>
     public abstract class AudioClip
         : IResource
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public abstract void Play ();
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public abstract void Stop ();
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public abstract Boolean IsPlaying { get; }
     }
-    // Each model part represents a piece of geometry that uses one
-    // single effect. Multiple parts are needed for models that use
-    // more than one effect.
+    /// <summary>
+    /// Each model part represents a piece of geometry that uses one
+    /// single effect. Multiple parts are needed for models that use
+    /// more than one effect.
+    /// </summary>
     public abstract class Mesh
         : IResource
     {
-        public int TriangleCount;
-        public int VertexCount;
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int32 TriangleCount;
 
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int32 VertexCount;
+
+        /// <summary>
+        /// todo
+        /// </summary>
         public abstract VertexDeclaration VertDecl { get; }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public IGeometryBuffer GeomBuffer;
     }
 
+    /// <summary>
+    /// todo
+    /// </summary>
     public abstract class Texture2D
         : IResource
     {
-        public abstract int Width { get; } 
-        public abstract int Height { get; } 
-    }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public abstract Int32 Width { get; } 
 
+        /// <summary>
+        /// todo
+        /// </summary>
+        public abstract Int32 Height { get; } 
+    }
 
     #endregion
 
     #region Internal
 
+    /// <summary>
+    /// todo
+    /// </summary>
     public static class PrimitiveHelper
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public static Int32 NumVertsIn(PrimitiveType type)
         {
             switch(type)
             {
-                case PrimitiveType.TriangleList: return 3;
-                case PrimitiveType.TriangleStrip: throw new NotImplementedException();
-                case PrimitiveType.LineList: return 2;
-                case PrimitiveType.LineStrip: throw new NotImplementedException();
-                default: throw new NotImplementedException();   
+                case PrimitiveType.TriangleList: 
+                    return 3;
+                case PrimitiveType.TriangleStrip: 
+                    throw new NotImplementedException();
+                case PrimitiveType.LineList: 
+                    return 2;
+                case PrimitiveType.LineStrip: 
+                    throw new NotImplementedException();
+                default: 
+                    throw new NotImplementedException();   
             }
-            
         }
     }
+
+    /// <summary>
+    /// todo
+    /// </summary>    
     internal static class VertexElementValidator
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         internal static Int32 GetTypeSize (VertexElementFormat format)
         {
             switch (format) {
@@ -1991,75 +4069,113 @@ namespace Sungiant.Cor
             return 0;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         internal static int GetVertexStride (VertexElement[] elements)
         {
             Int32 num2 = 0;
-            for (Int32 i = 0; i < elements.Length; i++) {
-                Int32 num3 = elements [i].Offset + GetTypeSize (elements [i].VertexElementFormat);
-                if (num2 < num3) {
+
+            for (Int32 i = 0; i < elements.Length; i++)
+            {
+                Int32 num3 = elements [i].Offset + 
+                    GetTypeSize (elements [i].VertexElementFormat);
+                if (num2 < num3)
+                {
                     num2 = num3;
                 }
             }
+
             return num2;
         }
 
-        // checks that an effect supports the given vert decl
-        internal static void Validate(IShader effect, VertexDeclaration vertexDeclaration)
+        /// <summary>
+        /// checks that an effect supports the given vert decl
+        /// </summary>
+        internal static void Validate(
+            IShader effect, 
+            VertexDeclaration vertexDeclaration)
         {
             throw new NotImplementedException ();
         }
 
-
-        internal static void Validate (int vertexStride, VertexElement[] elements)
+        /// <summary>
+        /// todo
+        /// </summary>
+        internal static void Validate (
+            int vertexStride, 
+            VertexElement[] elements)
         {
-            if (vertexStride <= 0) {
+            if (vertexStride <= 0)
+            {
                 throw new ArgumentOutOfRangeException ("vertexStride");
             }
             
-            if ((vertexStride & 3) != 0) {
-                throw new ArgumentException ("VertexElementOffsetNotMultipleFour");
+            if ((vertexStride & 3) != 0)
+            {
+                throw new ArgumentException (
+                    "VertexElementOffsetNotMultipleFour");
             }
             
             Int32[] numArray = new Int32[vertexStride];
             
-            
-            for (Int32 i = 0; i < vertexStride; i++) {
+            for (Int32 i = 0; i < vertexStride; i++)
+            {
                 numArray [i] = -1;
             }
             
-            
-            for (Int32 j = 0; j < elements.Length; j++) {
+            for (Int32 j = 0; j < elements.Length; j++)
+            {
                 Int32 offset = elements [j].Offset;
                 
                 Int32 typeSize = GetTypeSize (elements [j].VertexElementFormat);
                 
-                
-                if ((elements [j].VertexElementUsage < VertexElementUsage.Position) || (elements [j].VertexElementUsage > VertexElementUsage.TessellateFactor)) {
-                    throw new ArgumentException (String.Format ("FrameworkResources.VertexElementBadUsage"));
+                if (
+                    (elements [j].VertexElementUsage < 
+                     VertexElementUsage.Position ) || 
+                    (elements [j].VertexElementUsage > 
+                     VertexElementUsage.TessellateFactor)
+                    ) 
+                {
+                    throw new ArgumentException (
+                        String.Format (
+                            "FrameworkResources.VertexElementBadUsage"));
                 }
                 
-                
-                if ((offset < 0) || ((offset + typeSize) > vertexStride)) {
-                    throw new ArgumentException (String.Format ("FrameworkResources.VertexElementOutsideStride"));
+                if ((offset < 0) || ((offset + typeSize) > vertexStride))
+                {
+                    throw new ArgumentException (
+                        String.Format (
+                            "FrameworkResources.VertexElementOutsideStride"));
                 }
                 
-                
-                if ((offset & 3) != 0) {
-                    throw new ArgumentException ("VertexElementOffsetNotMultipleFour");
+                if ((offset & 3) != 0)
+                {
+                    throw new ArgumentException (
+                        "VertexElementOffsetNotMultipleFour");
                 }
                 
-                
-                for (Int32 k = 0; k < j; k++) {
-                    if ((elements [j].VertexElementUsage == elements [k].VertexElementUsage) && (elements [j].UsageIndex == elements [k].UsageIndex)) {
-                        throw new ArgumentException (String.Format ("DuplicateVertexElement"));
+                for (Int32 k = 0; k < j; k++)
+                {
+                    if (
+                        (elements [j].VertexElementUsage == 
+                         elements [k].VertexElementUsage) && 
+                        (elements [j].UsageIndex == 
+                         elements [k].UsageIndex))
+                    {
+                        throw new ArgumentException (
+                            String.Format ("DuplicateVertexElement"));
                     }
                 }
 
-
-                for (Int32 m = offset; m < (offset + typeSize); m++) {
-                    if (numArray [m] >= 0) {
-                        throw new ArgumentException (String.Format ("VertexElementsOverlap"));
+                for (Int32 m = offset; m < (offset + typeSize); m++)
+                {
+                    if (numArray [m] >= 0)
+                    {
+                        throw new ArgumentException (
+                            String.Format ("VertexElementsOverlap"));
                     }
+
                     numArray [m] = j;
                 }
             }

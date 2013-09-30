@@ -1,8 +1,26 @@
-﻿    public enum DeviceOrientation
+﻿    /// <summary>
+    /// todo
+    /// </summary>    
+    public enum DeviceOrientation
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Default,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Rightside,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Upsidedown,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Leftside,
     }
 

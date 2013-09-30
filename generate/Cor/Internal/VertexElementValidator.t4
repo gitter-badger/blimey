@@ -1,5 +1,11 @@
-﻿    internal static class VertexElementValidator
+﻿    /// <summary>
+    /// todo
+    /// </summary>    
+    internal static class VertexElementValidator
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         internal static Int32 GetTypeSize (VertexElementFormat format)
         {
             switch (format) {
@@ -42,77 +48,116 @@
             return 0;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         internal static int GetVertexStride (VertexElement[] elements)
         {
             Int32 num2 = 0;
-            for (Int32 i = 0; i < elements.Length; i++) {
-                Int32 num3 = elements [i].Offset + GetTypeSize (elements [i].VertexElementFormat);
-                if (num2 < num3) {
+
+            for (Int32 i = 0; i < elements.Length; i++)
+            {
+                Int32 num3 = elements [i].Offset + 
+                    GetTypeSize (elements [i].VertexElementFormat);
+                if (num2 < num3)
+                {
                     num2 = num3;
                 }
             }
+
             return num2;
         }
 
-        // checks that an effect supports the given vert decl
-        internal static void Validate(IShader effect, VertexDeclaration vertexDeclaration)
+        /// <summary>
+        /// checks that an effect supports the given vert decl
+        /// </summary>
+        internal static void Validate(
+            IShader effect, 
+            VertexDeclaration vertexDeclaration)
         {
             throw new NotImplementedException ();
         }
 
-
-        internal static void Validate (int vertexStride, VertexElement[] elements)
+        /// <summary>
+        /// todo
+        /// </summary>
+        internal static void Validate (
+            int vertexStride, 
+            VertexElement[] elements)
         {
-            if (vertexStride <= 0) {
+            if (vertexStride <= 0)
+            {
                 throw new ArgumentOutOfRangeException ("vertexStride");
             }
             
-            if ((vertexStride & 3) != 0) {
-                throw new ArgumentException ("VertexElementOffsetNotMultipleFour");
+            if ((vertexStride & 3) != 0)
+            {
+                throw new ArgumentException (
+                    "VertexElementOffsetNotMultipleFour");
             }
             
             Int32[] numArray = new Int32[vertexStride];
             
-            
-            for (Int32 i = 0; i < vertexStride; i++) {
+            for (Int32 i = 0; i < vertexStride; i++)
+            {
                 numArray [i] = -1;
             }
             
-            
-            for (Int32 j = 0; j < elements.Length; j++) {
+            for (Int32 j = 0; j < elements.Length; j++)
+            {
                 Int32 offset = elements [j].Offset;
                 
                 Int32 typeSize = GetTypeSize (elements [j].VertexElementFormat);
                 
-                
-                if ((elements [j].VertexElementUsage < VertexElementUsage.Position) || (elements [j].VertexElementUsage > VertexElementUsage.TessellateFactor)) {
-                    throw new ArgumentException (String.Format ("FrameworkResources.VertexElementBadUsage"));
+                if (
+                    (elements [j].VertexElementUsage < 
+                     VertexElementUsage.Position ) || 
+                    (elements [j].VertexElementUsage > 
+                     VertexElementUsage.TessellateFactor)
+                    ) 
+                {
+                    throw new ArgumentException (
+                        String.Format (
+                            "FrameworkResources.VertexElementBadUsage"));
                 }
                 
-                
-                if ((offset < 0) || ((offset + typeSize) > vertexStride)) {
-                    throw new ArgumentException (String.Format ("FrameworkResources.VertexElementOutsideStride"));
+                if ((offset < 0) || ((offset + typeSize) > vertexStride))
+                {
+                    throw new ArgumentException (
+                        String.Format (
+                            "FrameworkResources.VertexElementOutsideStride"));
                 }
                 
-                
-                if ((offset & 3) != 0) {
-                    throw new ArgumentException ("VertexElementOffsetNotMultipleFour");
+                if ((offset & 3) != 0)
+                {
+                    throw new ArgumentException (
+                        "VertexElementOffsetNotMultipleFour");
                 }
                 
-                
-                for (Int32 k = 0; k < j; k++) {
-                    if ((elements [j].VertexElementUsage == elements [k].VertexElementUsage) && (elements [j].UsageIndex == elements [k].UsageIndex)) {
-                        throw new ArgumentException (String.Format ("DuplicateVertexElement"));
+                for (Int32 k = 0; k < j; k++)
+                {
+                    if (
+                        (elements [j].VertexElementUsage == 
+                         elements [k].VertexElementUsage) && 
+                        (elements [j].UsageIndex == 
+                         elements [k].UsageIndex))
+                    {
+                        throw new ArgumentException (
+                            String.Format ("DuplicateVertexElement"));
                     }
                 }
 
-
-                for (Int32 m = offset; m < (offset + typeSize); m++) {
-                    if (numArray [m] >= 0) {
-                        throw new ArgumentException (String.Format ("VertexElementsOverlap"));
+                for (Int32 m = offset; m < (offset + typeSize); m++)
+                {
+                    if (numArray [m] >= 0)
+                    {
+                        throw new ArgumentException (
+                            String.Format ("VertexElementsOverlap"));
                     }
+
                     numArray [m] = j;
                 }
             }
         }
     }
+

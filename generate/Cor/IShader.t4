@@ -13,25 +13,11 @@
         /// Resets all the shader's samplers to null textures.
         /// </summary>
         void ResetSamplerTargets();
-        
-#if AOT
-        void SetVariable(string name, Int32 value);
-        void SetVariable(string name, Single value);
-        void SetVariable(string name, Rgba32 value);
-        void SetVariable(string name, Matrix44 value);
-        void SetVariable(string name, Vector3 value);
-        void SetVariable(string name, Vector4 value);
-        void SetVariable(string name, Vector2 value);
-#else
-        /// <summary>
-        /// Sets the value of a specified shader variable.
-        /// </summary>
-        void SetVariable<T>(string name, T value);
-#endif  
+  
         /// <summary>
         /// Sets the texture slot that a texture sampler should sample from.
         /// </summary>
-        void SetSamplerTarget(string name, Int32 textureSlot);
+        void SetSamplerTarget(String name, Int32 textureSlot);
 
         /// <summary>
         /// Provides access to the individual passes in this shader.
@@ -51,9 +37,51 @@
         /// </summary>
         VertexElementUsage[] OptionalVertexElements { get; }
 
-        // <summary>
-        // The name of this shader.
-        // </summary>
-        string Name { get; }
+        /// <summary>
+        /// The name of this shader.
+        /// </summary>
+        String Name { get; }
+
+#if !AOT
+        /// <summary>
+        /// Sets the value of a specified shader variable.
+        /// </summary>
+        void SetVariable<T>(String name, T value);
+#else
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void SetVariable(String name, Int32 value);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void SetVariable(String name, Single value);
+
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void SetVariable(String name, Rgba32 value);
+
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void SetVariable(String name, Matrix44 value);
+
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void SetVariable(String name, Vector3 value);
+
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void SetVariable(String name, Vector4 value);
+
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void SetVariable(String name, Vector2 value);
+#endif
     }
 

@@ -1,31 +1,116 @@
-﻿    public interface IVertexBuffer
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IVertexBuffer
     {
-        // used
+        /// <summary>
+        /// todo
+        /// </summary>
         Int32 VertexCount { get; }
 
-#if AOT
-        void SetData (VertexPosition[] data);
-        void SetData (VertexPositionColour[] data);
-        void SetData (VertexPositionNormal[] data);
-        void SetData (VertexPositionNormalColour[] data);
-        void SetData (VertexPositionNormalTexture[] data);
-        void SetData (VertexPositionNormalTextureColour[] data);
-        void SetData (VertexPositionTexture[] data);
-        void SetData (VertexPositionTextureColour[] data);
-#else
-        void SetData<T> (T[] data) where T: struct, IVertexType;
-#endif
-
-        // Perhaps this would work everywhere
-        // void SetData(IVertexType[] data);
-
+        /// <summary>
+        /// todo
+        /// </summary>
         VertexDeclaration VertexDeclaration { get; }
 
-        // not yet implemented
-        //void GetData<T> (T[] data) where T: struct, IVertexType;
-        //void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
-        //void GetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
-        //void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
-        //void SetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType;
+#if !AOT
+        /// <summary>
+        /// todo
+        /// </summary>
+        void SetData<T> (T[] data) where T: struct, IVertexType;
 
+        /// <summary>
+        /// todo
+        /// </summary>
+        //void GetData<T> (T[] data) where T: struct, IVertexType;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        //void SetData<T> (
+        //    T[] data,
+        //    Int32 startIndex,
+        //    Int32 elementCount)
+        //    where T: struct, IVertexType;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        //void GetData<T> (
+        //    T[] data,
+        //    Int32 startIndex,
+        //    Int32 elementCount)
+        //    where T: struct, IVertexType;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        //void SetData<T> (
+        //    Int32 offsetInBytes, 
+        //    T[] data, 
+        //    Int32 startIndex, 
+        //    Int32 elementCount, 
+        //    Int32 vertexStride) 
+        //    where T: struct, IVertexType;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        //void GetData<T> (
+        //    Int32 offsetInBytes, 
+        //    T[] data, 
+        //    Int32 startIndex, 
+        //    Int32 elementCount, 
+        //    Int32 vertexStride) 
+        //    where T: struct, IVertexType;
+#else
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPosition[] data);
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPositionColour[] data);
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPositionNormal[] data);
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPositionNormalColour[] data);
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPositionNormalTexture[] data);
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPositionNormalTextureColour[] data);
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPositionTexture[] data);
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        void SetData (VertexPositionTextureColour[] data);
+#endif
     }
+

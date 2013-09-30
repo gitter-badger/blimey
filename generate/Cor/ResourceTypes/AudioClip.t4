@@ -1,9 +1,21 @@
+    /// <summary>
+    /// todo
+    /// </summary>
     public abstract class AudioClip
         : IResource
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public abstract void Play ();
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public abstract void Stop ();
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public abstract Boolean IsPlaying { get; }
     }

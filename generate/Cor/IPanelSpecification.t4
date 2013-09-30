@@ -1,9 +1,22 @@
-﻿    // Specifies the attributes a panel,
-    // a panel could be a screen, a touch device, or both.
+﻿    /// <summary>
+    /// Specifies the attributes a panel,
+    /// a panel could be a screen, a touch device, or both.
+    /// </summary>
     public interface IPanelSpecification
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Vector2 PanelPhysicalSize { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
         Single PanelPhysicalAspectRatio { get; }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         PanelType PanelType { get; }
     }
+

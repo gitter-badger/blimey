@@ -1,62 +1,69 @@
-﻿    // A touch in a single frame definition of a finger on the screen
+﻿    /// <summary>
+    /// A touch in a single frame definition of a finger on the screen.
+    /// </summary>
     public struct Touch
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Int32 id;
 
-        // The position of a touch ranges between -0.5 and 0.5 in both X and Y
+        /// <summary>
+        /// The position of a touch ranges between -0.5 and 0.5 in both X and Y
+        /// </summary>
         Vector2 normalisedEngineSpacePosition;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         TouchPhase phase;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         Int64 frameNumber;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         Single timestamp;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         static Touch invalidTouch;
 
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int32 ID { get { return id; } }
 
-        public Int32 ID
-        {
-            get
-            {
-                return id;
-            }
-        }
-
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector2 Position
         {
-            get
-            {
-                return normalisedEngineSpacePosition;
-            }
+            get { return normalisedEngineSpacePosition; }
         }
 
-        public TouchPhase Phase
-        {
-            get
-            {
-                return phase;
-            }
-        }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public TouchPhase Phase { get { return phase; } }
 
-        public Int64 FrameNumber
-        {
-            get
-            {
-                return frameNumber;
-            }
-        }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int64 FrameNumber { get { return frameNumber; } }
 
-        public Single Timestamp
-        {
-            get
-            {
-                return timestamp;
-            }
-        }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Single Timestamp { get { return timestamp; } }
 
-
-
+        /// <summary>
+        /// todo
+        /// </summary>
         public Touch(
             Int32 id,
             Vector2 normalisedEngineSpacePosition,
@@ -64,14 +71,20 @@
             Int64 frame,
             Single timestamp)
         {
-            if( normalisedEngineSpacePosition.X > 0.5f || normalisedEngineSpacePosition.X < -0.5f )
+            if( normalisedEngineSpacePosition.X > 0.5f || 
+                normalisedEngineSpacePosition.X < -0.5f )
             {
-                throw new Exception("Touch has a bad X coordinate: " + normalisedEngineSpacePosition.X);
+                throw new Exception(
+                    "Touch has a bad X coordinate: " + 
+                    normalisedEngineSpacePosition.X);
             }
 
-            if( normalisedEngineSpacePosition.Y > 0.5f || normalisedEngineSpacePosition.X < -0.5f )
+            if( normalisedEngineSpacePosition.Y > 0.5f || 
+                normalisedEngineSpacePosition.X < -0.5f )
             {
-                throw new Exception("Touch has a bad Y coordinate: " + normalisedEngineSpacePosition.Y);
+                throw new Exception(
+                    "Touch has a bad Y coordinate: " + 
+                    normalisedEngineSpacePosition.Y);
             }
 
             this.id = id;
@@ -81,11 +94,22 @@
             this.timestamp = timestamp;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         static Touch()
         {
-            invalidTouch = new Touch(-1, Vector2.Zero, TouchPhase.Invalid, -1, 0f);
+            invalidTouch = new Touch(
+                -1, 
+                Vector2.Zero, 
+                TouchPhase.Invalid, 
+                -1, 
+                0f);
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public static Touch Invalid { get { return invalidTouch; } }
-
     }
+

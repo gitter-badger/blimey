@@ -1,23 +1,41 @@
+    /// <summary>
+    /// todo
+    /// </summary>
     public enum BlendFunction
     {
-        // The result is the destination added to the source.
-        // Result = (Source Colour * Source Blend) + (Destination Colour * Destination Blend)
+        /// <summary>
+        /// The result is the destination added to the source.
+        /// Result = (Source Colour * Source Blend) + 
+        ///          (Destination Colour * Destination Blend)
+        /// </summary>
         Add,
 
-        // The result is the destination subtracted from the source.
-        // Result = (Source Colour * Source Blend) − (Destination Colour * Destination Blend)
+        /// <summary>
+        /// The result is the destination subtracted from the source.
+        /// Result = (Source Colour * Source Blend) − 
+        ///          (Destination Colour * Destination Blend)
+        /// </summary>
         Subtract,
 
-        // The result is the source subtracted from the destination.
-        // Result = (Destination Colour * Destination Blend) − (Source Colour * Source Blend)
+        /// <summary>
+        /// The result is the source subtracted from the destination.
+        /// Result = (Destination Colour * Destination Blend) − 
+        ///          (Source Colour * Source Blend)
+        /// </summary>
         ReverseSubtract,
 
-        // The result is the maximum of the source and destination.
-        // Result = max( (Source Colour * Source Blend), (Destination Colour * Destination Blend) )
+        /// <summary>
+        /// The result is the maximum of the source and destination.
+        /// Result = max( (Source Colour * Source Blend), 
+        ///               (Destination Colour * Destination Blend) )
+        /// </summary>
         Max,
 
-        // The result is the minimum of the source and destination.
-        // Result = min( (Source Colour * Source Blend), (Destination Colour * Destination Blend) )
+        /// <summary>
+        /// The result is the minimum of the source and destination.
+        /// Result = min( (Source Colour * Source Blend), 
+        ///               (Destination Colour * Destination Blend) )
+        /// </summary>
         Min
     }
 

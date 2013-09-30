@@ -1,6 +1,11 @@
+    /// <summary>
+    /// todo
+    /// </summary>
     public interface IAudioManager
     {
-        // Sets the volume, between 0.0 - 1.0
+        /// <summary>
+        /// Sets the volume, between 0.0 - 1.0
+        /// </summary>
         Single Volume { get; set; }
     }
 

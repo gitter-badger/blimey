@@ -1,7 +1,16 @@
-﻿    public interface IVertexType
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IVertexType
     {
-        // Properties
+        /// <summary>
+        /// todo
+        /// </summary>
         VertexDeclaration VertexDeclaration { get; }
 
-        //IntPtr GetAddress(Int32 elementIndex);
+        /// <summary>
+        /// todo
+        /// </summary>
+        /// IntPtr GetAddress(Int32 elementIndex);
     }
+

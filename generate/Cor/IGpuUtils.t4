@@ -1,8 +1,26 @@
-﻿    public interface IGpuUtils
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IGpuUtils
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Int32 BeginEvent(Rgba32 colour, String eventName);
+            
+        /// <summary>
+        /// todo
+        /// </summary>
         Int32 EndEvent();
 
+        /// <summary>
+        /// todo
+        /// </summary>
         void SetMarker(Rgba32 colour, String eventName);
+
+        /// <summary>
+        /// todo
+        /// </summary>
         void SetRegion(Rgba32 colour, String eventName);
     }
+

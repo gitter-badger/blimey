@@ -1,32 +1,80 @@
-﻿    [StructLayout(LayoutKind.Sequential)]
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public struct VertexPositionNormalColour
         : IVertexType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Position;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Normal;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Rgba32 Colour;
 
-        public VertexPositionNormalColour(Vector3 position, Vector3 normal, Rgba32 color)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexPositionNormalColour(
+            Vector3 position, 
+            Vector3 normal, 
+            Rgba32 color)
         {
             this.Position = position;
             this.Normal = normal;
             this.Colour = color;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         static VertexPositionNormalColour()
         {
-            _vertexDeclaration = new VertexDeclaration
-            (
-                new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                new VertexElement(12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
-                new VertexElement(24, VertexElementFormat.Colour, VertexElementUsage.Colour, 0)
-            );
-            _default = new VertexPositionNormalColour(Vector3.Zero, Vector3.Zero, Rgba32.White);
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement(
+                    0, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Position, 
+                    0),
+                new VertexElement(
+                    12, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Normal, 
+                    0),
+                new VertexElement(
+                    24, 
+                    VertexElementFormat.Colour, 
+                    VertexElementUsage.Colour, 
+                    0)
+                );
+
+            _default = new VertexPositionNormalColour(
+                Vector3.Zero, 
+                Vector3.Zero, 
+                Rgba32.White);
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexPositionNormalColour _default;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexDeclaration _vertexDeclaration;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public static IVertexType Default
         {
             get
@@ -35,6 +83,9 @@
             }
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public VertexDeclaration VertexDeclaration
         {
             get
@@ -43,3 +94,4 @@
             }
         }
     }
+

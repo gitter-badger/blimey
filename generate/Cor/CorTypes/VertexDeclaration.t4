@@ -1,23 +1,46 @@
-﻿    public class VertexDeclaration
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    public class VertexDeclaration
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         VertexElement[] _elements;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Int32 _vertexStride;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public VertexDeclaration (params VertexElement[] elements)
         {
-            if ((elements == null) || (elements.Length == 0)) {
+            if ((elements == null) || (elements.Length == 0))
+            {
                 throw new ArgumentNullException ("elements - NullNotAllowed");
             }
-            else {
-                VertexElement[] elementArray = (VertexElement[])elements.Clone ();
+            else
+            {
+                VertexElement[] elementArray = 
+                    (VertexElement[]) elements.Clone ();
+
                 this._elements = elementArray;
-                Int32 vertexStride = VertexElementValidator.GetVertexStride (elementArray);
+
+                Int32 vertexStride = 
+                    VertexElementValidator.GetVertexStride (elementArray);
+
                 this._vertexStride = vertexStride;
+
                 VertexElementValidator.Validate (vertexStride, this._elements);
             }
-
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public Boolean Equals(VertexDeclaration other)
         {
             if( other == null)
@@ -26,6 +49,9 @@
             return other == this;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public override int GetHashCode ()
         {
             int hash = _vertexStride.GetHashCode ();
@@ -38,6 +64,9 @@
             return hash;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public override Boolean Equals (object obj)
         {
             if( obj != null )
@@ -53,12 +82,20 @@
             return false;
         }
 
-        public static Boolean operator != (VertexDeclaration one, VertexDeclaration other)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public static Boolean operator != 
+            (VertexDeclaration one, VertexDeclaration other)
         {
             return !(one == other);
         }
 
-        public static Boolean operator == (VertexDeclaration one, VertexDeclaration other)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public static Boolean operator == 
+            (VertexDeclaration one, VertexDeclaration other)
         {
             if ((object)one == null && (object)other == null)
             {
@@ -82,6 +119,9 @@
             return true;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public override String ToString()
         {
             string s = string.Empty;
@@ -96,59 +136,87 @@
                 }
 
             }
-            return string.Format ("[VertexDeclaration: Elements={0}, Stride={1}]", s, _vertexStride);
+
+            return string.Format (
+                "[VertexDeclaration: Elements={0}, Stride={1}]", 
+                s, 
+                _vertexStride);
         }
 
-        public VertexDeclaration (Int32 vertexStride, params VertexElement[] elements)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexDeclaration (
+            Int32 vertexStride, 
+            params VertexElement[] elements)
         {
-            if ((elements == null) || (elements.Length == 0)) {
+            if ((elements == null) || (elements.Length == 0))
+            {
                 throw new ArgumentNullException ("NullNotAllowed");
             }
-            else {
-                VertexElement[] elementArray = (VertexElement[])elements.Clone ();
+            else
+            {
+                VertexElement[] elementArray = 
+                    (VertexElement[])elements.Clone ();
+
                 this._elements = elementArray;
+                
                 this._vertexStride = vertexStride;
+                
                 VertexElementValidator.Validate (vertexStride, elementArray);
             }
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         internal static VertexDeclaration FromType (Type vertexType)
         {
-            if (vertexType == null) {
-                throw new ArgumentNullException ("vertexType - NullNotAllowed");
+            if (vertexType == null)
+            {
+                throw new ArgumentNullException (
+                    "vertexType - NullNotAllowed");
             }
 
 #if !NETFX_CORE
-            if (!vertexType.IsValueType) {
-                throw new ArgumentException (string.Format ("VertexTypeNotValueType"));
+            if (!vertexType.IsValueType)
+            {
+                throw new ArgumentException (
+                    String.Format ("VertexTypeNotValueType"));
             }
 #endif
 
-            IVertexType type = Activator.CreateInstance (vertexType) as IVertexType;
+            IVertexType type = 
+                Activator.CreateInstance (vertexType) as IVertexType;
 
-            if (type == null) {
-                throw new ArgumentException (string.Format ("VertexTypeNotIVertexType"));
+            if (type == null)
+            {
+                throw new ArgumentException (
+                    String.Format ("VertexTypeNotIVertexType"));
             }
-
 
             VertexDeclaration vertexDeclaration = type.VertexDeclaration;
 
-            if (vertexDeclaration == null) {
-                throw new InvalidOperationException ("VertexTypeNullDeclaration");
+            if (vertexDeclaration == null)
+            {
+                throw new InvalidOperationException (
+                    "VertexTypeNullDeclaration");
             }
 
             return vertexDeclaration;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public VertexElement[] GetVertexElements ()
         {
             return (VertexElement[])this._elements.Clone ();
         }
 
-        // Properties
-        public Int32 VertexStride {
-            get {
-                return this._vertexStride;
-            }
-        }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int32 VertexStride { get { return this._vertexStride; } }
     }
+

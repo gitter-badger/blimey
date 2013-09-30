@@ -1,6 +1,16 @@
-﻿    public interface IResourceManager
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IResourceManager
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         T Load<T>(String path) where T : IResource;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         IShader LoadShader(ShaderType shaderType);
     }
+

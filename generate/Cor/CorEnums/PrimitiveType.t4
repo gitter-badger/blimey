@@ -1,7 +1,26 @@
-﻿    public enum PrimitiveType
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    public enum PrimitiveType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         TriangleList = 0,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         TriangleStrip = 1,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         LineList = 2,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         LineStrip = 3
     }
+

@@ -1,7 +1,17 @@
+    /// <summary>
+    /// todo
+    /// </summary>
     public abstract class Texture2D
         : IResource
     {
-        public abstract int Width { get; } 
-        public abstract int Height { get; } 
+        /// <summary>
+        /// todo
+        /// </summary>
+        public abstract Int32 Width { get; } 
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public abstract Int32 Height { get; } 
     }
 

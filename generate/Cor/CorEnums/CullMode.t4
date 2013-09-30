@@ -1,6 +1,21 @@
+    /// <summary>
+    /// todo
+    /// </summary>
     public enum CullMode
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         None,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         CW,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         CCW,
     }
+

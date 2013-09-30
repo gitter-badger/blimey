@@ -1,29 +1,67 @@
-﻿    [StructLayout(LayoutKind.Sequential)]
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public struct VertexPositionColour
         : IVertexType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public Vector3 Position;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         public Rgba32 Colour;
 
-        public VertexPositionColour(Vector3 position, Rgba32 color)
+        /// <summary>
+        /// todo
+        /// </summary>
+        public VertexPositionColour(
+            Vector3 position, 
+            Rgba32 color)
         {
             this.Position = position;
             this.Colour = color;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         static VertexPositionColour()
         {
-            _vertexDeclaration = new VertexDeclaration
-            (
-                new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                new VertexElement(12, VertexElementFormat.Colour, VertexElementUsage.Colour, 0)
-            );
-            _default = new VertexPositionColour(Vector3.Zero, Rgba32.Magenta);
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement(
+                    0, 
+                    VertexElementFormat.Vector3, 
+                    VertexElementUsage.Position, 
+                    0),
+                new VertexElement(
+                    12, 
+                    VertexElementFormat.Colour, 
+                    VertexElementUsage.Colour, 
+                    0)
+                );
+
+            _default = new VertexPositionColour(
+                Vector3.Zero, 
+                Rgba32.Magenta);
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexPositionColour _default;
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         readonly static VertexDeclaration _vertexDeclaration;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public static IVertexType Default
         {
             get
@@ -32,6 +70,9 @@
             }
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public VertexDeclaration VertexDeclaration
         {
             get
@@ -40,3 +81,4 @@
             }
         }
     }
+

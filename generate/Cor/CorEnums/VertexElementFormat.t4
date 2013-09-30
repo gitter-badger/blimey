@@ -1,39 +1,108 @@
-﻿    public enum VertexElementFormat
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    public enum VertexElementFormat
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Single,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Vector2,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Vector3,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Vector4,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Colour,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Byte4,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Short2,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Short4,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         NormalisedShort2,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         NormalisedShort4,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         HalfVector2,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         HalfVector4
     }
 
+    /// <summary>
+    /// todo
+    /// </summary>
     public static class VertexElementFormatHelper
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         public static Type FromEnum(VertexElementFormat format)
         {
             switch(format)
             {
-                case VertexElementFormat.Single: return typeof(Single);
-                case VertexElementFormat.Vector2: return typeof(Vector2);
-                case VertexElementFormat.Vector3: return typeof(Vector3);
-                case VertexElementFormat.Vector4: return typeof(Vector4);
-                case VertexElementFormat.Colour: return typeof(Rgba32);
-                case VertexElementFormat.Byte4: return typeof(Byte4);
-                case VertexElementFormat.Short2: return typeof(Short2);
-                case VertexElementFormat.Short4: return typeof(Short4);
-                case VertexElementFormat.NormalisedShort2: return typeof(NormalisedShort2);
-                case VertexElementFormat.NormalisedShort4: return typeof(NormalisedShort4);
-                //case VertexElementFormat.HalfVector2: return typeof(Sungiant.Abacus.HalfPrecision.Vector2);
-                //case VertexElementFormat.HalfVector4: return typeof(Sungiant.Abacus.HalfPrecision.Vector4);
+                case VertexElementFormat.Single: 
+                    return typeof(Single);
+                case VertexElementFormat.Vector2: 
+                    return typeof(Vector2);
+                case VertexElementFormat.Vector3: 
+                    return typeof(Vector3);
+                case VertexElementFormat.Vector4: 
+                    return typeof(Vector4);
+                case VertexElementFormat.Colour: 
+                    return typeof(Rgba32);
+                case VertexElementFormat.Byte4: 
+                    return typeof(Byte4);
+                case VertexElementFormat.Short2: 
+                    return typeof(Short2);
+                case VertexElementFormat.Short4: 
+                    return typeof(Short4);
+                case VertexElementFormat.NormalisedShort2: 
+                    return typeof(NormalisedShort2);
+                case VertexElementFormat.NormalisedShort4: 
+                    return typeof(NormalisedShort4);
+                //case VertexElementFormat.HalfVector2: 
+                //    return typeof(Sungiant.Abacus.HalfPrecision.Vector2);
+                //case VertexElementFormat.HalfVector4: 
+                //    return typeof(Sungiant.Abacus.HalfPrecision.Vector4);
             }
 
             throw new NotSupportedException();
         }
     }
+

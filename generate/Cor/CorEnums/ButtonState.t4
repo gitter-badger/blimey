@@ -1,5 +1,16 @@
-﻿    public enum ButtonState
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    public enum ButtonState
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Released,
+
+        /// <summary>
+        /// todo
+        /// </summary>
         Pressed,
     }
+

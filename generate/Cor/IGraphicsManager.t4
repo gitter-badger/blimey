@@ -1,14 +1,14 @@
-﻿    /// <summary>
-    /// 
-    /// This interface provides access to the gpu.  It's behaves as a state
-    /// machine, change settings, then call and draw function, rinse, repeat.
-    ///
-    /// Todo: 
+﻿    /// IGraphicsManager Todo List
+    /// --------------------------
     /// - stencil buffers
     /// - decided whether or not to stick with the geom-buffer abstraction
     ///   or ditch it, dropping support for Psm, but adding support for
     ///   independent Vert and Index buffers.
-    /// 
+    /// - Work out a consistent way to deal with AOT limitations on Generics.
+
+    /// <summary>
+    /// This interface provides access to the gpu.  It's behaves as a state
+    /// machine, change settings, then call and draw function, rinse, repeat.
     /// </summary>
     public interface IGraphicsManager
     {
@@ -28,23 +28,31 @@
         /// </summary>
         void Reset();
 
-        // Clear functions
+        /// <summary>
+        /// Clears the colour buffer to the specified colour.
+        /// </summary>
         void ClearColourBuffer(Rgba32 color = new Rgba32());
+
+        /// <summary>
+        /// Clears the depth buffer to the specified depth.
+        /// </summary>
         void ClearDepthBuffer(Single depth = 1f);
 
-
+        /// <summary>
+        /// Sets the GPU's current culling mode to the value specified.
+        /// </summary>
         void SetCullMode(CullMode cullMode);
         
         /// <summary>
         /// With the current design the only way you can create geom buffers is 
         /// here.  This is to maintain consistency across platforms by bowing to
-        /// the quirks of PlayStation Mobile. Each IGeometryBuffer has vert data, 
-        /// and optionally index data.  Normally this data would be seperate, 
-        /// so you can upload one chunk of vert data, and, say, 5 sets of index 
-        /// data, then achive neat optimisations like switching on index data
-        /// whilst keeping the vert data the same, resulting in to define 
-        /// different shapes, saving on memory and context switching ( this is 
-        /// how the grass worked on Pure ).
+        /// the quirks of PlayStation Mobile. Each IGeometryBuffer has vert
+        /// data, and optionally index data.  Normally this data would be
+        /// seperate, so you can upload one chunk of vert data, and, say, 5 sets
+        /// of index data, then achive neat optimisations like switching on
+        /// index data whilst keeping the vert data the same, resulting in  
+        /// defining different shapes, saving on memory and context switching 
+        /// (this is how the grass worked on Pure).
         ///
         /// Right now I am endevouring to support PlayStation Mobile so vert and
         /// index buffers are combined into a single geom buffer.
@@ -73,90 +81,306 @@
         /// Defines how we blend colours
         /// </summary>
         void SetBlendEquation(
-            BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb,
-            BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha
+            BlendFunction rgbBlendFunction, 
+            BlendFactor sourceRgb, 
+            BlendFactor destinationRgb,
+            BlendFunction alphaBlendFunction, 
+            BlendFactor sourceAlpha, 
+            BlendFactor destinationAlpha
             );
-
-
-        // FROM GRAM - NON-INDEXED ---------------------------------------------
 
         /// <summary>
         /// Renders a sequence of non-indexed geometric primitives of the 
         /// specified type from the active geometry buffer (which sits in GRAM).
+        ///
+        /// Info: From GRAM - Non-Indexed.
+        ///
+        /// Arguments:
+        ///   primitiveType  -> Describes the type of primitive to render.
+        ///   startVertex    -> Index of the first vertex to load. Beginning at 
+        ///                     startVertex, the correct number of vertices is 
+        ///                     read out of the vertex buffer.
+        ///   primitiveCount -> Number of primitives to render. The 
+        ///                     primitiveCount is the number of primitives as 
+        ///                     determined by the primitive type. If it is a 
+        ///                     line list, each primitive has two vertices. If 
+        ///                     it is a triangle list, each primitive has three 
+        ///                      vertices.
         /// </summary>
         void DrawPrimitives(
-            PrimitiveType primitiveType,            // Describes the type of primitive to render.
-            Int32 startVertex,                      // Index of the first vertex to load. Beginning at startVertex, the correct number of vertices is read out of the vertex buffer.
-            Int32 primitiveCount );                 // Number of primitives to render. The primitiveCount is the number of primitives as determined by the primitive type. If it is a line list, each primitive has two vertices. If it is a triangle list, each primitive has three vertices.
-
-
-        // FROM GRAM - INDEXED -------------------------------------------------
+            PrimitiveType primitiveType,            
+            Int32 startVertex,                      
+            Int32 primitiveCount );                 
 
         /// <summary>
         /// Renders a sequence of indexed geometric primitives of the 
         /// specified type from the active geometry buffer (which sits in GRAM).
+        ///
+        /// Info: From GRAM - Indexed.
+        ///
+        /// Arguments:
+        ///   primitiveType  -> Describes the type of primitive to render. 
+        ///                     PrimitiveType.PointList is not supported with 
+        ///                     this method.
+        ///   baseVertex     -> Offset to add to each vertex index in the index 
+        ///                     buffer.
+        ///   minVertexIndex -> Minimum vertex index for vertices used during 
+        ///                     the call. The minVertexIndex parameter and all 
+        ///                     of the indices in the index stream are relative 
+        ///                     to the baseVertex parameter.
+        ///   numVertices    -> Number of vertices used during the call. The 
+        ///                     first vertex is located at index: baseVertex + 
+        ///                     minVertexIndex.
+        ///   startIndex     -> Location in the index array at which to start 
+        ///                     reading vertices.
+        ///   primitiveCount -> Number of primitives to render. The number of 
+        ///                     vertices used is a function of primitiveCount 
+        ///                     and primitiveType.
         /// </summary>
         void DrawIndexedPrimitives (
-            PrimitiveType primitiveType,            // Describes the type of primitive to render. PrimitiveType.PointList is not supported with this method.
-            Int32 baseVertex,                       // . Offset to add to each vertex index in the index buffer.
-            Int32 minVertexIndex,                   // . Minimum vertex index for vertices used during the call. The minVertexIndex parameter and all of the indices in the index stream are relative to the baseVertex parameter.
-            Int32 numVertices,                      // Number of vertices used during the call. The first vertex is located at index: baseVertex + minVertexIndex.
-            Int32 startIndex,                       // . Location in the index array at which to start reading vertices.
-            Int32 primitiveCount                    // Number of primitives to render. The number of vertices used is a function of primitiveCount and primitiveType.
+            PrimitiveType primitiveType,
+            Int32 baseVertex,
+            Int32 minVertexIndex,
+            Int32 numVertices,
+            Int32 startIndex,
+            Int32 primitiveCount
             );
 
-        
-        // FROM SYSTEM RAM - NON-INDEXED ---------------------------------------
-
-
-#if AOT
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPosition[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionColour[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionNormal[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionNormalColour[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionNormalTexture[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionNormalTextureColour[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionTexture[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-        void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionTextureColour[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration );
-#else
-        // Draws un-indexed vertex data uploaded straight from RAM.
+#if !AOT
+        /// <summary>
+        /// Draws un-indexed vertex data uploaded straight from RAM.
+        ///
+        /// Info: From System RAM - Non-Indexed
+        ///
+        /// Arguments:
+        /// primitiveType     -> Describes the type of primitive to render.
+        /// vertexData        -> The vertex data.
+        /// vertexOffset      -> Offset (in vertices) from the beginning of the 
+        ///                      buffer to start reading data.
+        /// primitiveCount    -> Number of primitives to render.
+        /// vertexDeclaration -> The vertex declaration, which defines 
+        ///                      per-vertex data.
         /// </summary>
         void DrawUserPrimitives <T> (
-            PrimitiveType primitiveType,            // Describes the type of primitive to render.
-            T[] vertexData,                         // The vertex data.
-            Int32 vertexOffset,                     // Offset (in vertices) from the beginning of the buffer to start reading data.
-            Int32 primitiveCount,                   // Number of primitives to render.
-            VertexDeclaration vertexDeclaration )   // The vertex declaration, which defines per-vertex data.
+            PrimitiveType primitiveType,
+            T[] vertexData,
+            Int32 vertexOffset,
+            Int32 primitiveCount,
+            VertexDeclaration vertexDeclaration )
             where T : struct, IVertexType;
-#endif
-
-        // FROM SYSTEM RAM - INDEXED -------------------------------------------
 
         /// <summary>
         /// Draws indexed vertex data uploaded straight from RAM.
+        ///
+        /// Info: From System RAM - Indexed
+        ///
+        /// Arguments:
+        /// primitiveType     -> Describes the type of primitive to render.
+        /// vertexData        -> The vertex data.
+        /// vertexOffset      -> Offset (in vertices) from the beginning of the 
+        ///                      vertex buffer to the first vertex to draw.
+        /// numVertices       -> Number of vertices to draw.
+        /// indexData         -> The index data.
+        /// indexOffset       -> Offset (in indices) from the beginning of the
+        ///                      index buffer to the first index to use.
+        /// primitiveCount    -> Number of primitives to render.
+        /// vertexDeclaration -> The vertex declaration, which defines 
+        ///                      per-vertex data.
         /// </summary>
-
-#if AOT
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPosition[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionColour[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionNormal[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionNormalColour[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionNormalTexture[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionNormalTextureColour[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionTexture[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-        void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionTextureColour[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration);
-#else
         void DrawUserIndexedPrimitives <T> (
-            PrimitiveType primitiveType,            // Describes the type of primitive to render.
-            T[] vertexData,                         // The vertex data.
-            Int32 vertexOffset,                     // Offset (in vertices) from the beginning of the vertex buffer to the first vertex to draw.
-            Int32 numVertices,                      // Number of vertices to draw.
-            Int32[] indexData,                      // The index data.
-            Int32 indexOffset,                      // Offset (in indices) from the beginning of the index buffer to the first index to use.
-            Int32 primitiveCount,                   // Number of primitives to render.
+            PrimitiveType primitiveType,
+            T[] vertexData,
+            Int32 vertexOffset,
+            Int32 numVertices,
+            Int32[] indexData,
+            Int32 indexOffset,
+            Int32 primitiveCount,
             VertexDeclaration vertexDeclaration ) 
             where T : struct, IVertexType;
+#else
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPosition[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormal[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormalColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormalTexture[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormalTextureColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionTexture[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionTextureColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration );
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPosition[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormal[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormalColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormalTexture[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionNormalTextureColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionTexture[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
+        
+        /// <summary>
+        /// TODO: REFACTOR THIS! There must be a better way for AOT.
+        /// </summary>
+        void DrawUserIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            VertexPositionTextureColour[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount, 
+            VertexDeclaration vertexDeclaration);
 #endif
-
-
     }
+

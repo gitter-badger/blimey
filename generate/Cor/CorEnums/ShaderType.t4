@@ -1,7 +1,26 @@
+    /// <summary>
+    /// todo
+    /// </summary>
     public enum ShaderType
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         Unlit,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         VertexLit,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         PixelLit,
+        
+        /// <summary>
+        /// todo
+        /// </summary>
         Toon
     }
+

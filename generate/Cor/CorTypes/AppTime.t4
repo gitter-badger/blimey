@@ -12,9 +12,9 @@
         Single elapsed;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Sungiant.Cor.AppTime"/> struct.
-        /// Internal so it can only be instantiated by friend assemblies, namely the
-        /// platform specific Cor! Runtime frameworks.
+        /// Initializes a new instance of the <see cref="Sungiant.Cor.AppTime"/>
+        /// struct.  Internal so it can only be instantiated by friend 
+        /// assemblies, namely the platform specific Cor! Runtime frameworks.
         /// </summary>
         /// <param name="dt">Delta time.</param>
         /// <param name="elapsed">Total elapsed time.</param>
@@ -27,7 +27,8 @@
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current <see cref="Sungiant.Cor.AppTime"/>.
+        /// Returns a <see cref="System.String"/> that represents the current 
+        /// <see cref="Sungiant.Cor.AppTime"/>.
         /// </summary>
         public override string ToString ()
         {

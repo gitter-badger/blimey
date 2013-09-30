@@ -1,5 +1,16 @@
-﻿    public interface IShaderPass
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IShaderPass
     {
-        string Name { get; }
+        /// <summary>
+        /// todo
+        /// </summary>
+        String Name { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
         void Activate (VertexDeclaration vertexDeclaration);
     }
+

@@ -1,35 +1,57 @@
-﻿    internal class TouchCollectionEnumerator
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    internal class TouchCollectionEnumerator
         : IEnumerator<Touch>
     {
-        
+        /// <summary>
+        /// todo
+        /// </summary>
         List<Touch> touches;
 
-        // Enumerators are positioned before the first element
-        // until the first MoveNext() call.
-        int position = -1;
+        /// <summary>
+        /// Enumerators are positioned before the first element
+        /// until the first MoveNext() call.
+        /// </summary>
+        Int32 position = -1;
 
+        /// <summary>
+        /// todo
+        /// </summary>
         internal TouchCollectionEnumerator(List<Touch> touches)
         {
             this.touches = touches;
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         void IDisposable.Dispose()
         {
 
         }
 
-        public bool MoveNext()
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Boolean MoveNext()
         {
             position++;
             return (position < touches.Count);
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public void Reset()
         {
             position = -1;
         }
 
-        object IEnumerator.Current
+        /// <summary>
+        /// todo
+        /// </summary>
+        Object IEnumerator.Current
         {
             get
             {
@@ -37,6 +59,9 @@
             }
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public Touch Current
         {
             get

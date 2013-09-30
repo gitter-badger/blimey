@@ -1,53 +1,97 @@
-﻿    public class TouchCollection
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    public class TouchCollection
         : IEnumerable<Touch>
     {
+        /// <summary>
+        /// todo
+        /// </summary>
         List<Touch> touchBuffer = new List<Touch>();
 
+        /// <summary>
+        /// todo
+        /// </summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         IEnumerator<Touch> IEnumerable<Touch>.GetEnumerator()
         {
             return GetEnumerator();
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         internal void ClearBuffer()
         {
             this.touchBuffer.Clear();
         }
 
-        internal void RegisterTouch(Int32 id, Vector2 normalisedEngineSpacePosition, TouchPhase phase, Int64 frameNum, Single timestamp)
+        /// <summary>
+        /// todo
+        /// </summary>
+        internal void RegisterTouch(
+            Int32 id, 
+            Vector2 normalisedEngineSpacePosition, 
+            TouchPhase phase, 
+            Int64 frameNum, 
+            Single timestamp)
         {
-            bool die = false;
-            if( normalisedEngineSpacePosition.X > 0.5f || normalisedEngineSpacePosition.X < -0.5f )
+            Boolean die = false;
+
+            if( normalisedEngineSpacePosition.X > 0.5f || 
+                normalisedEngineSpacePosition.X < -0.5f )
             {
-                Console.WriteLine("Touch has a bad X coordinate: " + normalisedEngineSpacePosition.X);
+                Console.WriteLine(
+                    "Touch has a bad X coordinate: " + 
+                    normalisedEngineSpacePosition.X);
+
                 die = true;
             }
             
-            if( normalisedEngineSpacePosition.Y > 0.5f || normalisedEngineSpacePosition.X < -0.5f )
+            if( normalisedEngineSpacePosition.Y > 0.5f || 
+                normalisedEngineSpacePosition.X < -0.5f )
             {
-                Console.WriteLine("Touch has a bad Y coordinate: " + normalisedEngineSpacePosition.Y);
+                Console.WriteLine(
+                    "Touch has a bad Y coordinate: " + 
+                    normalisedEngineSpacePosition.Y);
+
                 die = true;
             }
+
             if (die)
             {
                 Console.WriteLine("Discarding Bad Touch");
                 return;
             }
 
-            var touch = new Touch(id, normalisedEngineSpacePosition, phase, frameNum, timestamp);
+            var touch = new Touch(
+                id, 
+                normalisedEngineSpacePosition, 
+                phase, 
+                frameNum, 
+                timestamp);
 
             this.touchBuffer.Add(touch);
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public IEnumerator<Touch> GetEnumerator()
         {
             return new TouchCollectionEnumerator(this.touchBuffer);
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public int TouchCount
         {
             get
@@ -56,6 +100,9 @@
             }
         }
 
+        /// <summary>
+        /// todo
+        /// </summary>
         public Touch GetTouchFromTouchID(int zTouchID)
         {
             foreach (var touch in touchBuffer)
@@ -63,7 +110,10 @@
                 if (touch.ID == zTouchID) return touch;
             }
 
-            //System.Diagnostics.Debug.WriteLine("The touch requested no longer exists.");
+            //System.Diagnostics.Debug.WriteLine(
+            //    "The touch requested no longer exists.");
+
             return Touch.Invalid;
         }
     }
+
