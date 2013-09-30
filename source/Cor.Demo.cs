@@ -73,7 +73,7 @@ namespace Sungiant.Cor.Demo
             this.engine = engine;
             
             this.unlitEffect = engine.Resources.LoadShader(ShaderType.Unlit);
-            this.vertexLitEffect = engine.Resources.LoadShader(ShaderType.VertexLit);
+            this.vertexLitEffect = engine.Resources.LoadShader(ShaderType.PixelLit);
 
             this.LoadShape1();
             this.LoadShape2();
