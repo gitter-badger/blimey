@@ -1,7 +1,7 @@
 <#@ template debug="true" hostspecific="false" language="C#" #>
 <#@ output extension=".cs" #>
 // ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor.Xios: Xamarin iOS implementation of the Cor App Engine             │ \\
+// │ Cor! Xamarin iOS Platform Implementation                               │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Brought to you by:                                                     │ \\
 // │          _________                    .__               __             │ \\
@@ -35,26 +35,24 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
-using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.IO;
-using System.Collections.ObjectModel;
-
-using Sungiant.Abacus;
-using Sungiant.Abacus.Packed;
-using Sungiant.Abacus.SinglePrecision;
-using Sungiant.Abacus.Int32Precision;
-
+using System.Drawing;
+using System.Diagnostics;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
 using System.Linq;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using MonoTouch.CoreText;
 using MonoTouch.CoreGraphics;
-using System.Drawing;
-using System.Diagnostics;
-using System.Runtime.ConstrainedExecution;
+using Sungiant.Abacus;
+using Sungiant.Abacus.Packed;
+using Sungiant.Abacus.SinglePrecision;
+using Sungiant.Abacus.Int32Precision;
 
 namespace Sungiant.Cor.Xios
 {
