@@ -1,36 +1,36 @@
-	public class InputManager
+    public class InputManager
         : IInputManager
-	{
-		TouchScreen touchScreen;
+    {
+        TouchScreen touchScreen;
 
-		public InputManager(ICor engine, TouchScreen touchScreen)
-		{
-			this.touchScreen = touchScreen;
-		}
-
-        public MultiTouchController GetMultiTouchController()
-		{
-			return this.touchScreen;
+        public InputManager(ICor engine, TouchScreen touchScreen)
+        {
+            this.touchScreen = touchScreen;
         }
 
-		public virtual Xbox360Gamepad GetXbox360Gamepad(PlayerIndex player)
-		{
-			return null;
-		}
+        public MultiTouchController GetMultiTouchController()
+        {
+            return this.touchScreen;
+        }
 
-		public virtual PsmGamepad GetPsmGamepad()
-		{
-			return null;
-		}
+        public virtual Xbox360Gamepad GetXbox360Gamepad(PlayerIndex player)
+        {
+            return null;
+        }
 
-		public virtual GenericGamepad GetGenericGamepad()
-		{
-			return null;
-		}
+        public virtual PsmGamepad GetPsmGamepad()
+        {
+            return null;
+        }
 
-		public void Update(AppTime time)
-		{
-			this.touchScreen.Update(time);
-		}
-	}
+        public virtual GenericGamepad GetGenericGamepad()
+        {
+            return null;
+        }
+
+        public void Update(AppTime time)
+        {
+            this.touchScreen.Update(time);
+        }
+    }
 

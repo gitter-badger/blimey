@@ -1,4 +1,4 @@
-	internal class OglesTexture
+    internal class OglesTexture
         : Texture2D
         //, IDisposable todo: IResource pattern for destroying stuff
     {
@@ -9,17 +9,17 @@
         int pixelsWide;
         int pixelsHigh;  
 
-		internal static OglesTexture CreateFromFile(string path)
+        internal static OglesTexture CreateFromFile(string path)
         {   
             var uiImage = UIImage.FromFile(path);
 
-			var texture = new OglesTexture(uiImage);
+            var texture = new OglesTexture(uiImage);
 
             return texture;
 
         }
 
-		private OglesTexture(UIImage uiImage)
+        private OglesTexture(UIImage uiImage)
         {
             this.uiImage = uiImage;
             IntPtr dataPointer = RequestImagePixelData(uiImage);
@@ -35,7 +35,7 @@
             
             CGBitmapContext ctxt = CreateRgbaBitmapContext (inImage.CGImage);
             
-			var rect = new RectangleF (0, 0, imageSize.Width, imageSize.Height);
+            var rect = new RectangleF (0, 0, imageSize.Width, imageSize.Height);
             
             ctxt.DrawImage (rect, inImage.CGImage);
             var data = ctxt.Data;
@@ -50,8 +50,8 @@
 
             using (var colorSpace = CGColorSpace.CreateDeviceRGB())
             {
-				var bitmapBytesPerRow = pixelsWide * 4;
-				var bitmapByteCount = bitmapBytesPerRow * pixelsHigh;
+                var bitmapBytesPerRow = pixelsWide * 4;
+                var bitmapByteCount = bitmapBytesPerRow * pixelsHigh;
                 var bitmapData = Marshal.AllocHGlobal (bitmapByteCount);
 
                 if (bitmapData == IntPtr.Zero)
@@ -86,7 +86,7 @@
                 return pixelsWide;
             }
         }
-		public override int Height
+        public override int Height
         {
             get
             {
@@ -112,7 +112,7 @@
             // texture object.  this is a container object that holds the 
             // texture data.  this function returns a handle to a texture
             // object.
-			OpenTK.Graphics.ES20.GL.GenTextures(1, out textureId);
+            OpenTK.Graphics.ES20.GL.GenTextures(1, out textureId);
             OpenTKHelper.CheckError();
 
             this.glTextureId = textureId;
@@ -126,7 +126,7 @@
             OpenTKHelper.CheckError();
 
             var internalFormat = OpenTK.Graphics.ES20.PixelInternalFormat.Rgba;
-			var format = OpenTK.Graphics.ES20.PixelFormat.Rgba;
+            var format = OpenTK.Graphics.ES20.PixelFormat.Rgba;
             
             var textureDataFormat = OpenTK.Graphics.ES20.PixelType.UnsignedByte;
             
@@ -185,7 +185,7 @@
 
             OpenTKHelper.CheckError();
 
-			OpenTK.Graphics.ES20.GL.TexParameter(textureTarget, OpenTK.Graphics.ES20.TextureParameterName.TextureMagFilter, (int) OpenTK.Graphics.ES20.All.Nearest );
+            OpenTK.Graphics.ES20.GL.TexParameter(textureTarget, OpenTK.Graphics.ES20.TextureParameterName.TextureMagFilter, (int) OpenTK.Graphics.ES20.All.Nearest );
 
             OpenTKHelper.CheckError();
         }
@@ -194,7 +194,7 @@
         
         void DeleteTexture(Texture2D texture)
         {
-			int textureId = (texture as OglesTexture).glTextureId;
+            int textureId = (texture as OglesTexture).glTextureId;
             
             OpenTK.Graphics.ES20.GL.DeleteTextures(1, ref textureId);
         }

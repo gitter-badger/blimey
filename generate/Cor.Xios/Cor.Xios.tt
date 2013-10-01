@@ -82,7 +82,7 @@ namespace Sungiant.Cor.Xios
 <#@ include file="TouchScreen.t4"#>
 <#@ include file="VertexBuffer.t4"#>
 
-	#region OpenGL ES Shaders
+    #region OpenGL ES Shaders
 
 <#@ include file="OglesShader/OglesShader.t4"#>
 <#@ include file="OglesShader/OglesShaderDefinition.t4"#>
@@ -90,9 +90,9 @@ namespace Sungiant.Cor.Xios
 <#@ include file="OglesShader/OglesShaderSampler.t4"#>
 <#@ include file="OglesShader/OglesShaderVariable.t4"#>
 
-	#endregion
+    #endregion
 
-	#region Shader Definitions
+    #region Shader Definitions
 
 <#@ include file="ShaderDefinition/ShaderInputDefinition.t4"#>
 <#@ include file="ShaderDefinition/ShaderSamplerDefinition.t4"#>
@@ -100,13 +100,13 @@ namespace Sungiant.Cor.Xios
 <#@ include file="ShaderDefinition/ShaderVariantDefinition.t4"#>
 <#@ include file="ShaderDefinition/ShaderVariantPassDefinition.t4"#>
 
-	#endregion
+    #endregion
 
-	#region Shader Definitions
+    #region Shader Definitions
 
 <#@ include file="CorShaders/PixelLit.t4"#>
 <#@ include file="CorShaders/VertexLit.t4"#>
 <#@ include file="CorShaders/Unlit.t4"#>
 
-	#endregion
+    #endregion
 }

@@ -1,161 +1,161 @@
-	//
-	// After the buffer object data store has been initialized or updated using
-	// the glBufferData or the glBufferSubData FN, the client data store is no longer
-	// needed and can be realeased.  For static geometry, applications can free
-	// the client data store and reduce the overall system memory consumed by the application.
-	//
-	public sealed class VertexBuffer
+    //
+    // After the buffer object data store has been initialized or updated using
+    // the glBufferData or the glBufferSubData FN, the client data store is no longer
+    // needed and can be realeased.  For static geometry, applications can free
+    // the client data store and reduce the overall system memory consumed by the application.
+    //
+    public sealed class VertexBuffer
         : IVertexBuffer
-		, IDisposable
-	{
-		Int32 resourceCounter;
-		VertexDeclaration vertDecl;
+        , IDisposable
+    {
+        Int32 resourceCounter;
+        VertexDeclaration vertDecl;
 
-		Int32 vertexCount;
+        Int32 vertexCount;
 
-		UInt32 bufferHandle;
+        UInt32 bufferHandle;
 
-		OpenTK.Graphics.ES20.BufferTarget type;
-		OpenTK.Graphics.ES20.BufferUsage bufferUsage;
+        OpenTK.Graphics.ES20.BufferTarget type;
+        OpenTK.Graphics.ES20.BufferUsage bufferUsage;
 
-		public VertexBuffer (VertexDeclaration vd, Int32 vertexCount)
-		{
-			this.vertDecl = vd;
-			this.vertexCount = vertexCount;
+        public VertexBuffer (VertexDeclaration vd, Int32 vertexCount)
+        {
+            this.vertDecl = vd;
+            this.vertexCount = vertexCount;
 
-			this.type = OpenTK.Graphics.ES20.BufferTarget.ArrayBuffer;
+            this.type = OpenTK.Graphics.ES20.BufferTarget.ArrayBuffer;
 
-			this.bufferUsage = OpenTK.Graphics.ES20.BufferUsage.DynamicDraw;
+            this.bufferUsage = OpenTK.Graphics.ES20.BufferUsage.DynamicDraw;
 
-			OpenTK.Graphics.ES20.GL.GenBuffers(1, out this.bufferHandle);
-			OpenTKHelper.CheckError();
+            OpenTK.Graphics.ES20.GL.GenBuffers(1, out this.bufferHandle);
+            OpenTKHelper.CheckError();
 
 
-			if( this.bufferHandle == 0 )
-			{
-				throw new Exception("Failed to generate vert buffer.");
-			}
-			
+            if( this.bufferHandle == 0 )
+            {
+                throw new Exception("Failed to generate vert buffer.");
+            }
+            
 
-			this.Activate();
+            this.Activate();
 
-			// glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
-			// be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
-			// then content of data are copied to the allocated data store.  The contents of the buffer object data
-			// store can be initialized or updated using the glBufferSubData FN
-			OpenTK.Graphics.ES20.GL.BufferData(
-				this.type,
-				(System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
-				(System.IntPtr) null,
-				this.bufferUsage);
+            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
+            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
+            // then content of data are copied to the allocated data store.  The contents of the buffer object data
+            // store can be initialized or updated using the glBufferSubData FN
+            OpenTK.Graphics.ES20.GL.BufferData(
+                this.type,
+                (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
+                (System.IntPtr) null,
+                this.bufferUsage);
 
-			OpenTKHelper.CheckError();
+            OpenTKHelper.CheckError();
 
-			resourceCounter++;
+            resourceCounter++;
 
-		}
+        }
 
-		internal void Activate()
-		{
-			OpenTK.Graphics.ES20.GL.BindBuffer(this.type, this.bufferHandle);
-			OpenTKHelper.CheckError();
-		}
+        internal void Activate()
+        {
+            OpenTK.Graphics.ES20.GL.BindBuffer(this.type, this.bufferHandle);
+            OpenTKHelper.CheckError();
+        }
 
-		internal void Deactivate()
-		{
-			OpenTK.Graphics.ES20.GL.BindBuffer(this.type, 0);
-			OpenTKHelper.CheckError();
-		}
+        internal void Deactivate()
+        {
+            OpenTK.Graphics.ES20.GL.BindBuffer(this.type, 0);
+            OpenTKHelper.CheckError();
+        }
 
-		~VertexBuffer()
-		{
-			CleanUpNativeResources();
-		}
+        ~VertexBuffer()
+        {
+            CleanUpNativeResources();
+        }
 
-		void CleanUpManagedResources()
-		{
+        void CleanUpManagedResources()
+        {
 
-		}
+        }
 
-		void CleanUpNativeResources()
-		{
-			OpenTK.Graphics.ES20.GL.DeleteBuffers(1, ref this.bufferHandle);
-			OpenTKHelper.CheckError();
+        void CleanUpNativeResources()
+        {
+            OpenTK.Graphics.ES20.GL.DeleteBuffers(1, ref this.bufferHandle);
+            OpenTKHelper.CheckError();
 
-			bufferHandle = 0;
+            bufferHandle = 0;
 
-			resourceCounter--;
-		}
+            resourceCounter--;
+        }
 
-		public void Dispose()
-		{
-			CleanUpManagedResources();
-			CleanUpNativeResources();
-			GC.SuppressFinalize(this);
-		}
+        public void Dispose()
+        {
+            CleanUpManagedResources();
+            CleanUpNativeResources();
+            GC.SuppressFinalize(this);
+        }
 
 #if AOT
-		public void SetData (VertexPosition[] data) { SetDataHelper (data); }
-		public void SetData (VertexPositionColour[] data) { SetDataHelper (data); }
-		public void SetData (VertexPositionNormal[] data) { SetDataHelper (data); }
-		public void SetData (VertexPositionNormalColour[] data) { SetDataHelper (data); }
-		public void SetData (VertexPositionNormalTexture[] data) { SetDataHelper (data); }
-		public void SetData (VertexPositionNormalTextureColour[] data) { SetDataHelper (data); }
-		public void SetData (VertexPositionTexture[] data) { SetDataHelper (data); }
-		public void SetData (VertexPositionTextureColour[] data) { SetDataHelper (data); }
+        public void SetData (VertexPosition[] data) { SetDataHelper (data); }
+        public void SetData (VertexPositionColour[] data) { SetDataHelper (data); }
+        public void SetData (VertexPositionNormal[] data) { SetDataHelper (data); }
+        public void SetData (VertexPositionNormalColour[] data) { SetDataHelper (data); }
+        public void SetData (VertexPositionNormalTexture[] data) { SetDataHelper (data); }
+        public void SetData (VertexPositionNormalTextureColour[] data) { SetDataHelper (data); }
+        public void SetData (VertexPositionTexture[] data) { SetDataHelper (data); }
+        public void SetData (VertexPositionTextureColour[] data) { SetDataHelper (data); }
 
-		void SetDataHelper<T> (T[] data)
+        void SetDataHelper<T> (T[] data)
 #else
-		public void SetData<T> (T[] data)
+        public void SetData<T> (T[] data)
 #endif
-			where T: struct, IVertexType
-		{
-			if( data.Length != vertexCount )
-			{
-				throw new Exception("?");
-			}
-			
-			this.Activate();
+            where T: struct, IVertexType
+        {
+            if( data.Length != vertexCount )
+            {
+                throw new Exception("?");
+            }
+            
+            this.Activate();
 
-			// glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
-			// be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
-			// then content of data are copied to the allocated data store.  The contents of the buffer object data
-			// store can be initialized or updated using the glBufferSubData FN
-			OpenTK.Graphics.ES20.GL.BufferSubData(
-				this.type,
-				(System.IntPtr) 0,
-				(System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
-				data);
+            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
+            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
+            // then content of data are copied to the allocated data store.  The contents of the buffer object data
+            // store can be initialized or updated using the glBufferSubData FN
+            OpenTK.Graphics.ES20.GL.BufferSubData(
+                this.type,
+                (System.IntPtr) 0,
+                (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
+                data);
 
-			OpenTKHelper.CheckError();
-		}
+            OpenTKHelper.CheckError();
+        }
 
 
-		public Int32 VertexCount
-		{
-			get
-			{
-				return this.vertexCount;
-			}
-		}
+        public Int32 VertexCount
+        {
+            get
+            {
+                return this.vertexCount;
+            }
+        }
 
-		public VertexDeclaration VertexDeclaration 
-		{
-			get
-			{
-				return this.vertDecl;
-			}
-		} 
+        public VertexDeclaration VertexDeclaration 
+        {
+            get
+            {
+                return this.vertDecl;
+            }
+        } 
 
-		public void GetData<T> (T[] data) where T: struct, IVertexType { throw new System.NotSupportedException(); }
-		
-		public void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType { throw new System.NotSupportedException(); }
-		
-		public void GetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType { throw new System.NotSupportedException(); }
-		
-		public void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType { throw new System.NotSupportedException(); }
-		
-		public void SetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        public void GetData<T> (T[] data) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void GetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void SetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType { throw new System.NotSupportedException(); }
 
-	}
+    }
 

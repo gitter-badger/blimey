@@ -1,159 +1,159 @@
-	public sealed class IndexBuffer
+    public sealed class IndexBuffer
         : IIndexBuffer
-		, IDisposable
-	{
-		static Int32 resourceCounter;
+        , IDisposable
+    {
+        static Int32 resourceCounter;
 
-		Int32 indexCount;
-		OpenTK.Graphics.ES20.BufferTarget type;
-		UInt32 bufferHandle;
-		OpenTK.Graphics.ES20.BufferUsage bufferUsage;
+        Int32 indexCount;
+        OpenTK.Graphics.ES20.BufferTarget type;
+        UInt32 bufferHandle;
+        OpenTK.Graphics.ES20.BufferUsage bufferUsage;
 
-		public IndexBuffer (Int32 indexCount)
-		{
-			this.indexCount = indexCount;
+        public IndexBuffer (Int32 indexCount)
+        {
+            this.indexCount = indexCount;
 
-			this.type = OpenTK.Graphics.ES20.BufferTarget.ElementArrayBuffer;
+            this.type = OpenTK.Graphics.ES20.BufferTarget.ElementArrayBuffer;
 
-			this.bufferUsage = OpenTK.Graphics.ES20.BufferUsage.DynamicDraw;
+            this.bufferUsage = OpenTK.Graphics.ES20.BufferUsage.DynamicDraw;
 
-			OpenTK.Graphics.ES20.GL.GenBuffers(1, out this.bufferHandle);
+            OpenTK.Graphics.ES20.GL.GenBuffers(1, out this.bufferHandle);
             //try
             //{
-			OpenTKHelper.CheckError();
+            OpenTKHelper.CheckError();
             //}
             //catch
             //{
                 //todo: why is this firing?
             //}
 
-			if( this.bufferHandle == 0 )
-			{
-				throw new Exception("Failed to generate vert buffer.");
-			}
+            if( this.bufferHandle == 0 )
+            {
+                throw new Exception("Failed to generate vert buffer.");
+            }
 
-			this.Activate();
+            this.Activate();
 
-			// glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
-			// be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
-			// then content of data are copied to the allocated data store.  The contents of the buffer object data
-			// store can be initialized or updated using the glBufferSubData FN
-			OpenTK.Graphics.ES20.GL.BufferData(
-				this.type,
-				(System.IntPtr) (sizeof(UInt16) * this.indexCount),
-				(System.IntPtr) null,
-				this.bufferUsage);
+            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
+            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
+            // then content of data are copied to the allocated data store.  The contents of the buffer object data
+            // store can be initialized or updated using the glBufferSubData FN
+            OpenTK.Graphics.ES20.GL.BufferData(
+                this.type,
+                (System.IntPtr) (sizeof(UInt16) * this.indexCount),
+                (System.IntPtr) null,
+                this.bufferUsage);
 
-			OpenTKHelper.CheckError();
+            OpenTKHelper.CheckError();
 
-			resourceCounter++;
+            resourceCounter++;
 
-		}
+        }
 
-		~IndexBuffer()
-		{
-			CleanUpNativeResources();
-		}
+        ~IndexBuffer()
+        {
+            CleanUpNativeResources();
+        }
 
-		void CleanUpManagedResources()
-		{
+        void CleanUpManagedResources()
+        {
 
-		}
+        }
 
-		void CleanUpNativeResources()
-		{
-			OpenTK.Graphics.ES20.GL.DeleteBuffers(1, ref this.bufferHandle);
-			OpenTKHelper.CheckError();
+        void CleanUpNativeResources()
+        {
+            OpenTK.Graphics.ES20.GL.DeleteBuffers(1, ref this.bufferHandle);
+            OpenTKHelper.CheckError();
 
-			bufferHandle = 0;
+            bufferHandle = 0;
 
-			resourceCounter--;
-		}
+            resourceCounter--;
+        }
 
-		public void Dispose()
-		{
-			CleanUpManagedResources();
-			CleanUpNativeResources();
-			GC.SuppressFinalize(this);
-		}
+        public void Dispose()
+        {
+            CleanUpManagedResources();
+            CleanUpNativeResources();
+            GC.SuppressFinalize(this);
+        }
 
-		internal void Activate()
-		{
-			OpenTK.Graphics.ES20.GL.BindBuffer(this.type, this.bufferHandle);
-			OpenTKHelper.CheckError();
-		}
+        internal void Activate()
+        {
+            OpenTK.Graphics.ES20.GL.BindBuffer(this.type, this.bufferHandle);
+            OpenTKHelper.CheckError();
+        }
 
-		internal void Deactivate()
-		{
-			OpenTK.Graphics.ES20.GL.BindBuffer(this.type, 0);
-			OpenTKHelper.CheckError();
-		}
+        internal void Deactivate()
+        {
+            OpenTK.Graphics.ES20.GL.BindBuffer(this.type, 0);
+            OpenTKHelper.CheckError();
+        }
 
 
-		public void SetData (Int32[] data)
-		{
+        public void SetData (Int32[] data)
+        {
 
-			if( data.Length != indexCount )
-			{
-				throw new Exception("?");
-			}
+            if( data.Length != indexCount )
+            {
+                throw new Exception("?");
+            }
 
-			UInt16[] udata = new UInt16[data.Length];
+            UInt16[] udata = new UInt16[data.Length];
 
-			for(Int32 i = 0; i < data.Length; ++i)
-			{
-				udata[i] = (UInt16) data[i];
-			}
-			
-			this.Activate();
+            for(Int32 i = 0; i < data.Length; ++i)
+            {
+                udata[i] = (UInt16) data[i];
+            }
+            
+            this.Activate();
 
-			// glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
-			// be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
-			// then content of data are copied to the allocated data store.  The contents of the buffer object data
-			// store can be initialized or updated using the glBufferSubData FN
-			OpenTK.Graphics.ES20.GL.BufferSubData(
-				this.type,
-				(System.IntPtr) 0,
-				(System.IntPtr) (sizeof(UInt16) * this.indexCount),
-				udata);
+            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
+            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
+            // then content of data are copied to the allocated data store.  The contents of the buffer object data
+            // store can be initialized or updated using the glBufferSubData FN
+            OpenTK.Graphics.ES20.GL.BufferSubData(
+                this.type,
+                (System.IntPtr) 0,
+                (System.IntPtr) (sizeof(UInt16) * this.indexCount),
+                udata);
 
-			udata = null;
+            udata = null;
 
-			OpenTKHelper.CheckError();
-		}
+            OpenTKHelper.CheckError();
+        }
 
-		public int IndexCount
-		{
-			get
-			{
-				return indexCount;
-			}
-		}
+        public int IndexCount
+        {
+            get
+            {
+                return indexCount;
+            }
+        }
 
-		public void GetData(Int32[] data)
-		{
-			throw new NotImplementedException();	
-		}
+        public void GetData(Int32[] data)
+        {
+            throw new NotImplementedException();    
+        }
 
-		public void GetData(Int16[] data, Int32 startIndex, Int32 elementCount)
-		{
-			throw new NotImplementedException();	
-		}
+        public void GetData(Int16[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
 
-		public void GetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount)
-		{
-			throw new NotImplementedException();	
-		}
+        public void GetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
 
-		public void SetData(Int16[] data, Int32 startIndex, Int32 elementCount)
-		{
-			throw new NotImplementedException();	
-		}
+        public void SetData(Int16[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
 
-		public void SetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount)
-		{
-			throw new NotImplementedException();	
-		}
+        public void SetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
 
-	}
+    }
 
