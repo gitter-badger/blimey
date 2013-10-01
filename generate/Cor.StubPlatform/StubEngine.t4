@@ -1,0 +1,40 @@
+    public class StubEngine
+        : ICor
+    {
+        IAudioManager audio;
+        IGraphicsManager graphics;
+        IResourceManager resources;
+        IInputManager input;
+        ISystemManager system;
+        AppSettings settings;
+
+        public StubEngine(AppSettings settings)
+        {
+            Console.WriteLine(
+                "StubEngine -> ()");
+            
+            this.audio = new StubAudioManager();
+            this.graphics = new StubGraphicsManager();
+            this.resources = new StubResourceManager();
+            this.input = new StubInputManager();
+            this.system = new StubSystemManager();
+            this.settings = settings;
+        }
+
+        #region ICor
+
+        public IAudioManager Audio { get { return this.audio; } }
+
+        public IGraphicsManager Graphics { get { return this.graphics; } }
+
+        public IResourceManager Resources { get { return this.resources; } }
+
+        public IInputManager Input { get { return this.input; } }
+
+        public ISystemManager System { get { return this.system; } }
+
+        public AppSettings Settings { get { return this.settings; } }
+
+        #endregion
+    }
+

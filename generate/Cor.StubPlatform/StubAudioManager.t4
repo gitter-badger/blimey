@@ -1,0 +1,30 @@
+    public class StubAudioManager
+        : IAudioManager
+    {
+        public Single volume = 1f;
+
+        public Single Volume
+        { 
+            get { return this.volume; }
+            set
+            {
+                this.volume = value;
+
+                Console.WriteLine(
+                    "StubAudioManager -> Setting Volume:" + value);
+            } 
+        }
+
+        #region IAudioManager
+
+        public StubAudioManager()
+        {
+            Console.WriteLine(
+                "StubAudioManager -> ()");
+
+            this.volume = 1f;
+        }
+
+        #endregion
+    }
+
