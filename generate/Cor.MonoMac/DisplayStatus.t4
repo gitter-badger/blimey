@@ -1,0 +1,19 @@
+    public class DisplayStatus
+        : IDisplayStatus
+    {
+        public DisplayStatus()
+        {
+            Console.WriteLine(
+                "DisplayStatus -> ()");
+        }
+
+        #region IDisplayStatus
+
+        public Boolean Fullscreen { get { return true; } }
+
+        public Int32 CurrentWidth { get { return 800; } }
+
+        public Int32 CurrentHeight { get { return 600; } }
+
+        #endregion
+    }
