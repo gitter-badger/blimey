@@ -1,0 +1,24 @@
+    public class ResourceManager
+        : IResourceManager
+    {
+        public ResourceManager()
+        {
+            Console.WriteLine(
+                "ResourceManager -> ()");
+        }
+
+        #region IResourceManager
+
+        public T Load<T>(String path) where T : IResource
+        {
+            return default(T);
+        }
+
+        public IShader LoadShader(ShaderType shaderType)
+        {
+            return null;
+        }
+
+        #endregion
+    }
+

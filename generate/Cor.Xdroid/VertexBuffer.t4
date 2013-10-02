@@ -1,0 +1,29 @@
+    public class VertexBuffer
+        : IVertexBuffer
+    {
+        public VertexBuffer()
+        {
+            Console.WriteLine(
+                "VertexBuffer -> ()");
+        }
+
+        #region IVertexBuffer
+
+        public Int32 VertexCount { get { return 0; } }
+
+        public VertexDeclaration VertexDeclaration 
+        { 
+            get { return null; }
+        }
+
+        public void SetData<T> (T[] data) 
+            where T: 
+                struct, 
+                IVertexType
+        {
+
+        }
+
+        #endregion
+    }
+
