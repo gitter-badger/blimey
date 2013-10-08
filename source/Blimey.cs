@@ -3826,9 +3826,11 @@ namespace Sungiant.Blimey
             }
 
             Vector3 pos = this.Parent.Transform.Position;
+            Vector3 target = pos + (camLook * FarPlaneDistance);
+            
             Matrix44.CreateLookAt(
                 ref pos,
-                ref camLook,
+                ref target,
                 ref camUp,
                 out _view);
 
