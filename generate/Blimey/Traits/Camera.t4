@@ -23,34 +23,14 @@
         // return this cameras bounding frustum
         //public BoundingFrustum BoundingFrustum { get { return new BoundingFrustum (ViewMatrix44 * ProjectionMatrix44); } }
 
-
         public bool TempWORKOUTANICERWAY = false;
 
         // Allows the game component to update itself.
         public override void OnUpdate (AppTime time)
         {
-
             var camUp = this.Parent.Transform.Up;
 
             var camLook = this.Parent.Transform.Forward;
-            
-            //var camLook = this.Parent.Transform.Position + (100f * this.Parent.Transform.Forward);
-            //Vector3.Normalise(ref camLook, out camLook);
-
-            if (this.Parent.Owner.Cor.System.CurrentOrientation == DeviceOrientation.Rightside)
-            {
-                Vector3.Cross(ref camLook, ref camUp, out camUp);
-            }
-
-            if (this.Parent.Owner.Cor.System.CurrentOrientation == DeviceOrientation.Leftside)
-            {
-                Vector3.Cross(ref camUp, ref camLook, out camUp);
-            }
-
-            if (this.Parent.Owner.Cor.System.CurrentOrientation == DeviceOrientation.Upsidedown)
-            {
-                camUp = -camUp;
-            }
 
             Vector3 pos = this.Parent.Transform.Position;
             Vector3 target = pos + (camLook * FarPlaneDistance);
