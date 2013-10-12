@@ -85,8 +85,8 @@
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/Unlit_Position.vsh",
-                                    PixelShaderPath = "Shaders/Unlit_Position.fsh",
+                                    VertexShaderPath = "shaders/Unlit_Position.vsh",
+                                    PixelShaderPath = "shaders/Unlit_Position.fsh",
                                 },
                             },
                         },
@@ -101,8 +101,8 @@
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/Unlit_PositionTexture.vsh",
-                                    PixelShaderPath = "Shaders/Unlit_PositionTexture.fsh",
+                                    VertexShaderPath = "shaders/Unlit_PositionTexture.vsh",
+                                    PixelShaderPath = "shaders/Unlit_PositionTexture.fsh",
                                 },
                             },
                         },
@@ -117,8 +117,8 @@
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/Unlit_PositionColour.vsh",
-                                    PixelShaderPath = "Shaders/Unlit_PositionColour.fsh",
+                                    VertexShaderPath = "shaders/Unlit_PositionColour.vsh",
+                                    PixelShaderPath = "shaders/Unlit_PositionColour.fsh",
                                 },
                             },
                         },
@@ -133,8 +133,8 @@
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/Unlit_PositionTextureColour.vsh",
-                                    PixelShaderPath = "Shaders/Unlit_PositionTextureColour.fsh",
+                                    VertexShaderPath = "shaders/Unlit_PositionTextureColour.vsh",
+                                    PixelShaderPath = "shaders/Unlit_PositionTextureColour.fsh",
                                 },
                             },
                         },

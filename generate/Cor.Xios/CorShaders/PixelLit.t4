@@ -219,8 +219,8 @@
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/PixelLit_PositionNormal.vsh",
-                                    PixelShaderPath = "Shaders/PixelLit_PositionNormal.fsh",
+                                    VertexShaderPath = "shaders/PixelLit_PositionNormal.vsh",
+                                    PixelShaderPath = "shaders/PixelLit_PositionNormal.fsh",
                                 },
                             },
                         },
@@ -235,8 +235,8 @@
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/PixelLit_PositionNormalTexture.vsh",
-                                    PixelShaderPath = "Shaders/PixelLit_PositionNormalTexture.fsh",
+                                    VertexShaderPath = "shaders/PixelLit_PositionNormalTexture.vsh",
+                                    PixelShaderPath = "shaders/PixelLit_PositionNormalTexture.fsh",
                                 },
                             },
                         },
@@ -251,8 +251,8 @@
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/PixelLit_PositionNormalColour.vsh",
-                                    PixelShaderPath = "Shaders/PixelLit_PositionNormalColour.fsh",
+                                    VertexShaderPath = "shaders/PixelLit_PositionNormalColour.vsh",
+                                    PixelShaderPath = "shaders/PixelLit_PositionNormalColour.fsh",
                                 },
                             },
                         },
@@ -267,8 +267,8 @@
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/PixelLit_PositionNormalTextureColour.vsh",
-                                    PixelShaderPath = "Shaders/PixelLit_PositionNormalTextureColour.fsh",
+                                    VertexShaderPath = "shaders/PixelLit_PositionNormalTextureColour.vsh",
+                                    PixelShaderPath = "shaders/PixelLit_PositionNormalTextureColour.fsh",
                                 },
                             },
                         },

@@ -4478,8 +4478,8 @@ namespace Sungiant.Cor.Xios
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/PixelLit_PositionNormal.vsh",
-                                    PixelShaderPath = "Shaders/PixelLit_PositionNormal.fsh",
+                                    VertexShaderPath = "shaders/PixelLit_PositionNormal.vsh",
+                                    PixelShaderPath = "shaders/PixelLit_PositionNormal.fsh",
                                 },
                             },
                         },
@@ -4494,8 +4494,8 @@ namespace Sungiant.Cor.Xios
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/PixelLit_PositionNormalTexture.vsh",
-                                    PixelShaderPath = "Shaders/PixelLit_PositionNormalTexture.fsh",
+                                    VertexShaderPath = "shaders/PixelLit_PositionNormalTexture.vsh",
+                                    PixelShaderPath = "shaders/PixelLit_PositionNormalTexture.fsh",
                                 },
                             },
                         },
@@ -4510,8 +4510,8 @@ namespace Sungiant.Cor.Xios
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/PixelLit_PositionNormalColour.vsh",
-                                    PixelShaderPath = "Shaders/PixelLit_PositionNormalColour.fsh",
+                                    VertexShaderPath = "shaders/PixelLit_PositionNormalColour.vsh",
+                                    PixelShaderPath = "shaders/PixelLit_PositionNormalColour.fsh",
                                 },
                             },
                         },
@@ -4526,8 +4526,8 @@ namespace Sungiant.Cor.Xios
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/PixelLit_PositionNormalTextureColour.vsh",
-                                    PixelShaderPath = "Shaders/PixelLit_PositionNormalTextureColour.fsh",
+                                    VertexShaderPath = "shaders/PixelLit_PositionNormalTextureColour.vsh",
+                                    PixelShaderPath = "shaders/PixelLit_PositionNormalTextureColour.fsh",
                                 },
                             },
                         },
@@ -4764,8 +4764,8 @@ namespace Sungiant.Cor.Xios
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/VertexLit_PositionNormal.vsh",
-                                    PixelShaderPath = "Shaders/VertexLit_PositionNormal.fsh",
+                                    VertexShaderPath = "shaders/VertexLit_PositionNormal.vsh",
+                                    PixelShaderPath = "shaders/VertexLit_PositionNormal.fsh",
                                 },
                             },
                         },
@@ -4780,8 +4780,8 @@ namespace Sungiant.Cor.Xios
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/VertexLit_PositionNormalTexture.vsh",
-                                    PixelShaderPath = "Shaders/VertexLit_PositionNormalTexture.fsh",
+                                    VertexShaderPath = "shaders/VertexLit_PositionNormalTexture.vsh",
+                                    PixelShaderPath = "shaders/VertexLit_PositionNormalTexture.fsh",
                                 },
                             },
                         },
@@ -4796,8 +4796,8 @@ namespace Sungiant.Cor.Xios
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/VertexLit_PositionNormalColour.vsh",
-                                    PixelShaderPath = "Shaders/VertexLit_PositionNormalColour.fsh",
+                                    VertexShaderPath = "shaders/VertexLit_PositionNormalColour.vsh",
+                                    PixelShaderPath = "shaders/VertexLit_PositionNormalColour.fsh",
                                 },
                             },
                         },
@@ -4812,8 +4812,8 @@ namespace Sungiant.Cor.Xios
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/VertexLit_PositionNormalTextureColour.vsh",
-                                    PixelShaderPath = "Shaders/VertexLit_PositionNormalTextureColour.fsh",
+                                    VertexShaderPath = "shaders/VertexLit_PositionNormalTextureColour.vsh",
+                                    PixelShaderPath = "shaders/VertexLit_PositionNormalTextureColour.fsh",
                                 },
                             },
                         },
@@ -4917,8 +4917,8 @@ namespace Sungiant.Cor.Xios
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/Unlit_Position.vsh",
-                                    PixelShaderPath = "Shaders/Unlit_Position.fsh",
+                                    VertexShaderPath = "shaders/Unlit_Position.vsh",
+                                    PixelShaderPath = "shaders/Unlit_Position.fsh",
                                 },
                             },
                         },
@@ -4933,8 +4933,8 @@ namespace Sungiant.Cor.Xios
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/Unlit_PositionTexture.vsh",
-                                    PixelShaderPath = "Shaders/Unlit_PositionTexture.fsh",
+                                    VertexShaderPath = "shaders/Unlit_PositionTexture.vsh",
+                                    PixelShaderPath = "shaders/Unlit_PositionTexture.fsh",
                                 },
                             },
                         },
@@ -4949,8 +4949,8 @@ namespace Sungiant.Cor.Xios
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/Unlit_PositionColour.vsh",
-                                    PixelShaderPath = "Shaders/Unlit_PositionColour.fsh",
+                                    VertexShaderPath = "shaders/Unlit_PositionColour.vsh",
+                                    PixelShaderPath = "shaders/Unlit_PositionColour.fsh",
                                 },
                             },
                         },
@@ -4965,8 +4965,8 @@ namespace Sungiant.Cor.Xios
                                 PassName = "Main",
                                 PassDefinition = new OglesShaderDefinition()
                                 {
-                                    VertexShaderPath = "Shaders/Unlit_PositionTextureColour.vsh",
-                                    PixelShaderPath = "Shaders/Unlit_PositionTextureColour.fsh",
+                                    VertexShaderPath = "shaders/Unlit_PositionTextureColour.vsh",
+                                    PixelShaderPath = "shaders/Unlit_PositionTextureColour.fsh",
                                 },
                             },
                         },
