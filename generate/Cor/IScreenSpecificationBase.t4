@@ -7,12 +7,14 @@
     public interface IScreenSpecification
     {
         /// <summary>
-        /// Defines the total width of the screen in question in pixels.
+        /// Defines the total width of the screen in question in pixels when
+        /// the device is in it's default orientation.
         /// </summary>
         Int32 ScreenResolutionWidth { get; }
 
         /// <summary>
-        /// Defines the total height of the screen in question in pixels.
+        /// Defines the total height of the screen in question in pixels when
+        /// the device is in it's default orientation.
         /// </summary>
         Int32 ScreenResolutionHeight { get; }
 

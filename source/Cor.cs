@@ -620,18 +620,22 @@ namespace Sungiant.Cor
         Boolean Fullscreen { get; }
 
         /// <summary>
-        // What is the width of the frame buffer?
+        // Returns the current width of the frame buffer.
         // On most devices this will be the same as the screen size.
         // However on a PC or Mac the app could be running in windowed mode
-        // and not take up the whole screen.
+        // and not take up the whole screen.  Or the screen could be a phone
+        // where the screen res is 320x480, however at the current time it
+        // is actually 480x320.
         /// </summary>
         Int32 CurrentWidth { get; }
 
         /// <summary>
-        /// What is the height of the frame buffer?
+        // Returns the current height of the frame buffer.
         /// On most devices this will be the same as the screen size.
         /// However on a PC or Mac the app could be running in windowed mode
-        /// and not take up the whole screen.
+        /// and not take up the whole screen.  Or the screen could be a phone
+        // where the screen res is 320x480, however at the current time it
+        // is actually 480x320.
         /// </summary>
         Int32 CurrentHeight { get; }
     }
@@ -701,12 +705,14 @@ namespace Sungiant.Cor
     public interface IScreenSpecification
     {
         /// <summary>
-        /// Defines the total width of the screen in question in pixels.
+        /// Defines the total width of the screen in question in pixels when
+        /// the device is in it's default orientation.
         /// </summary>
         Int32 ScreenResolutionWidth { get; }
 
         /// <summary>
-        /// Defines the total height of the screen in question in pixels.
+        /// Defines the total height of the screen in question in pixels when
+        /// the device is in it's default orientation.
         /// </summary>
         Int32 ScreenResolutionHeight { get; }
 
