@@ -118,9 +118,11 @@
                 case MonoTouch.UIKit.UIDeviceOrientation.LandscapeRight: return DeviceOrientation.Rightside;
                 case MonoTouch.UIKit.UIDeviceOrientation.Portrait: return DeviceOrientation.Default;
                 case MonoTouch.UIKit.UIDeviceOrientation.PortraitUpsideDown: return DeviceOrientation.Upsidedown;
+            
+                default:
+                    Console.WriteLine ("WARNING: Unknown device orientaton: " + monoTouch);
+                    return DeviceOrientation.Default;
             }
-
-            return Sungiant.Cor.DeviceOrientation.Default;
         }
 
         public static TouchPhase ToCorPrimitiveType(MonoTouch.UIKit.UITouchPhase phase)
