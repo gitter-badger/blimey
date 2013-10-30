@@ -52,7 +52,7 @@ using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
 
-namespace Sungiant.Cor.Xios
+namespace Sungiant.Cor.Platform.Xios
 {
     public class AudioManager
         : IAudioManager

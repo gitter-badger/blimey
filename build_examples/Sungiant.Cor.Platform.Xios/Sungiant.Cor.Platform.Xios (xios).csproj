@@ -103,8 +103,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\source\Cor.Xios.cs">
-      <Link>Cor.Xios.cs</Link>
+    <Compile Include="..\..\source\Cor.Platform.Xios.cs">
+      <Link>Cor.Platform.Xios.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
