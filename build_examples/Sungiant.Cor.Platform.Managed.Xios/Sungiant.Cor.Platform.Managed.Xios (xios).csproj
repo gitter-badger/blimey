@@ -8,7 +8,7 @@
     <ProjectGuid>{88551613-DC7E-4A2E-8498-A933CE990357}</ProjectGuid>
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <RootNamespace>Sungiant.Cor.Xios</RootNamespace>
+    <RootNamespace>Sungiant.Cor.Platform.Managed.Xios</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>Sungiant.Cor.Xios</AssemblyName>
   </PropertyGroup>
@@ -103,8 +103,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\source\Cor.Platform.Xios.cs">
-      <Link>Cor.Platform.Xios.cs</Link>
+    <Compile Include="..\..\source\Cor.Platform.Managed.Xios.cs">
+      <Link>Cor.Platform.Managed.Xios.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
