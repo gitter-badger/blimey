@@ -1,7 +1,7 @@
 using System;
 using Sungiant.Cor;
 
-namespace Sungiant.Cor.Xna4Runtime
+namespace Sungiant.Cor.Platform.Managed.Xna4
 {
 	/// <summary>
 	/// This is a game component that implements IUpdateable.

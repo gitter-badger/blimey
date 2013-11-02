@@ -3,7 +3,7 @@ using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Cor;
 
-namespace Sungiant.Cor.Xna4Runtime
+namespace Sungiant.Cor.Platform.Managed.Xna4
 {
 	internal class DisplayStatus
 		: IDisplayStatus

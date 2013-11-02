@@ -5,7 +5,7 @@ using System.Text;
 using Sungiant.Cor;
 using Sungiant.Abacus.Int32Precision;
 
-namespace Sungiant.Cor.Xna4Runtime
+namespace Sungiant.Cor.Platform.Managed.Xna4
 {
 
 	public class SystemManager

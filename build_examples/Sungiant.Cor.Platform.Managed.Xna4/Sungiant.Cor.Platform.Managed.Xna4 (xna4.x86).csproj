@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sungiant.Cor.Xna4</RootNamespace>
-    <AssemblyName>Sungiant.Cor.Xna4</AssemblyName>
+    <RootNamespace>Sungiant.Cor.Platform.Managed.Xna4</RootNamespace>
+    <AssemblyName>Sungiant.Cor.Platform.Managed.Xna4</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>

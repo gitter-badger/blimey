@@ -5,7 +5,7 @@ using Sungiant.Cor;
 using System;
 using System.Linq;
 
-namespace Sungiant.Cor.Xna4Runtime
+namespace Sungiant.Cor.Platform.Managed.Xna4
 {
 	public class BasicEffectShaderAdapter
 		: IShader

@@ -2,7 +2,7 @@ using Sungiant.Cor;
 
 
 
-namespace Sungiant.Cor.Xna4Runtime
+namespace Sungiant.Cor.Platform.Managed.Xna4
 {
 	public class VertexBufferWrapper
 		: IVertexBuffer

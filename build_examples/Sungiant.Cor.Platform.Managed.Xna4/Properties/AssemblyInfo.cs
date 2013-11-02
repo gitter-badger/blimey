@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Sungiant.Cor.Xna4")]
-[assembly: AssemblyProduct("Sungiant.Cor.Xna4")]
+[assembly: AssemblyTitle("Sungiant.Cor.Platform.Managed.Xna4")]
+[assembly: AssemblyProduct("Sungiant.Cor.Platform.Managed.Xna4")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]

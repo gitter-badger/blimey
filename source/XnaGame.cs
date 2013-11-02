@@ -1,7 +1,7 @@
 using System;
 using Sungiant.Cor;
 
-namespace Sungiant.Cor.Xna4Runtime
+namespace Sungiant.Cor.Platform.Managed.Xna4
 {
 #if !WP7
 	public class Xna4App
