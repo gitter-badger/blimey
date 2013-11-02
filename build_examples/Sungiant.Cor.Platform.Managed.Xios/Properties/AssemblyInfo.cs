@@ -36,7 +36,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Sungiant.Cor.Platform.Xios")]
+[assembly: AssemblyTitle("Sungiant.Cor.Platform.Managed.Xios")]
 [assembly: ComVisible(false)]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
