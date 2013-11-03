@@ -2,7 +2,7 @@
 
 startPath=`pwd`
 
-cd ../generate/Cor.Platform.Xios
+cd ../generate/Cor.Platform.Managed.Xios
 
 # tabs to spaces
 find ./ ! -type d ! -name _tmp_ -exec sh -c 'expand -t 4 {} > _tmp_ && mv _tmp_ {}' \;

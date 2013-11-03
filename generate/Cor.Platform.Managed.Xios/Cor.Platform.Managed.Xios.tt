@@ -79,6 +79,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 <#@ include file="SystemManager.t4"#>
 <#@ include file="TouchScreen.t4"#>
 <#@ include file="VertexBuffer.t4"#>
+<#@ include file="CorAppEngine.t4"#>
 
     #region OpenGL ES Shaders
 
