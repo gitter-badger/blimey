@@ -39,10 +39,19 @@ using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Drawing;
+using System.Diagnostics;
+
 using Sungiant.Abacus;
 using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
+
+using MonoMac.Foundation;
+using MonoMac.AppKit;
+using MonoMac.CoreVideo;
+using MonoMac.CoreGraphics;
 
 namespace Sungiant.Cor.Platform.Managed.MonoMac
 {
@@ -58,4 +67,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 <#@ include file="GeometryBuffer.t4"#>
 <#@ include file="SystemManager.t4"#>
 <#@ include file="VertexBuffer.t4"#>
+<#@ include file="MonoMacApp.t4"#>
+<#@ include file="OpenGLView.t4"#>
+<#@ include file="MacGameNSWindow.t4"#>
 }

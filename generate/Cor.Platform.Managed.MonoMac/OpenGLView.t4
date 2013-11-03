@@ -1,0 +1,83 @@
+    public class OpenGLView 
+        : global::MonoMac.OpenGL.MonoMacGameView
+    {
+        Rectangle clientBounds;
+        NSTrackingArea _trackingArea;
+        bool _needsToResetElapsedTime = false;
+
+        public OpenGLView(AppSettings settings, IApp entryPoint, RectangleF frame) 
+            : base (frame)
+        {
+            this.AutoresizingMask = 
+                global::MonoMac.AppKit.NSViewResizingMask.HeightSizable | 
+                global::MonoMac.AppKit.NSViewResizingMask.MaxXMargin | 
+                global::MonoMac.AppKit.NSViewResizingMask.MinYMargin | 
+                global::MonoMac.AppKit.NSViewResizingMask.WidthSizable;
+            
+            RectangleF rect = NSScreen.MainScreen.Frame;
+            
+            clientBounds = new Rectangle (0,0,(int)rect.Width,(int)rect.Height);
+        }
+
+        [Export("initWithFrame:")]
+        public OpenGLView () 
+            : base (NSScreen.MainScreen.Frame)
+        {
+            this.AutoresizingMask = 
+                global::MonoMac.AppKit.NSViewResizingMask.HeightSizable |
+                global::MonoMac.AppKit.NSViewResizingMask.MaxXMargin |
+                global::MonoMac.AppKit.NSViewResizingMask.MinYMargin |
+                global::MonoMac.AppKit.NSViewResizingMask.WidthSizable;
+
+            RectangleF rect = NSScreen.MainScreen.Frame;
+            clientBounds = new Rectangle (0,0,(int)rect.Width,(int)rect.Height);
+        }
+
+        public void StartRunLoop(double updateRate)
+        {
+            Run(updateRate);
+        }
+
+        public void ResetElapsedTime ()
+        {
+            _needsToResetElapsedTime = true;
+        }
+
+        protected override void OnRenderFrame (global::MonoMac.OpenGL.FrameEventArgs e)
+        {
+            base.OnRenderFrame (e);
+            // tick
+        }
+
+        public override bool AcceptsFirstResponder ()
+        {
+            return true;
+        }
+
+        public override bool BecomeFirstResponder ()
+        {
+            return true;
+        }
+
+        public override void ViewWillMoveToWindow (NSWindow newWindow)
+        {
+            if (_trackingArea != null)
+                RemoveTrackingArea(_trackingArea);
+
+            _trackingArea = new NSTrackingArea(
+                Frame,
+                NSTrackingAreaOptions.MouseMoved | 
+                NSTrackingAreaOptions.MouseEnteredAndExited |
+                NSTrackingAreaOptions.EnabledDuringMouseDrag |
+                NSTrackingAreaOptions.ActiveWhenFirstResponder |
+                NSTrackingAreaOptions.InVisibleRect |
+                NSTrackingAreaOptions.CursorUpdate,
+                this,
+                new NSDictionary()
+            );
+
+            AddTrackingArea(_trackingArea);
+
+        }
+    }
+

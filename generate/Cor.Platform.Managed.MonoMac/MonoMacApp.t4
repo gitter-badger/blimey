@@ -1,0 +1,109 @@
+    public class MonoMacApp
+        : IDisposable
+    {
+        MacGameNSWindow _mainWindow;
+        OpenGLView _gameWindow;
+        readonly AppSettings settings;
+        readonly IApp entryPoint;
+
+        public MonoMacApp(AppSettings settings, IApp entryPoint)
+        {
+            this.settings = settings;
+            this.entryPoint = entryPoint;
+        }
+
+        private void InitializeMainWindow()
+        {
+            RectangleF frame = new RectangleF(
+                0, 0,
+                800,
+                600);
+
+            _mainWindow = new MacGameNSWindow(
+                frame, NSWindowStyle.Titled | NSWindowStyle.Closable | NSWindowStyle.Miniaturizable,
+                NSBackingStore.Buffered, true);
+
+            _mainWindow.WindowController = new NSWindowController(_mainWindow);
+            _mainWindow.Delegate = new MainWindowDelegate(this);
+
+            _mainWindow.IsOpaque = true;
+            _mainWindow.EnableCursorRects();
+            _mainWindow.AcceptsMouseMovedEvents = false;
+            _mainWindow.Center();
+
+            _gameWindow = new OpenGLView(this.settings, this.entryPoint, frame);
+
+            //Window = _gameWindow;
+            _mainWindow.ContentView.AddSubview(_gameWindow);
+        }
+
+        public void Run()
+        {
+            InitializeMainWindow();
+        }
+
+        public void Dispose()
+        {
+            // No need to dispose _gameWindow or _mainWindow.  They will be released by the
+            // nearest NSAutoreleasePool.
+        }
+
+        private float GetTitleBarHeight()
+        {
+            RectangleF contentRect = NSWindow.ContentRectFor(
+                _mainWindow.Frame, _mainWindow.StyleMask);
+
+            return _mainWindow.Frame.Height - contentRect.Height;
+        }
+
+        private class MainWindowDelegate 
+            : NSWindowDelegate
+        {
+            private readonly MonoMacApp _owner;
+
+            public MainWindowDelegate(MonoMacApp owner)
+            {
+                if (owner == null)
+                    throw new ArgumentNullException("owner");
+                _owner = owner;
+            }
+
+            public override void DidBecomeKey(NSNotification notification)
+            {
+                //if (!IsMouseVisible)
+                //    _gameWindow.HideCursor();
+                //_owner.IsActive = true;
+            }
+
+            public override void DidResignKey(NSNotification notification)
+            {
+                //if (!IsMouseVisible)
+                //    _gameWindow.UnHideCursor();
+                //_owner.IsActive = false;
+            }
+
+            public override void DidBecomeMain(NSNotification notification)
+            {
+                //if (!IsMouseVisible)
+                //    _gameWindow.HideCursor();
+            }
+
+            public override void DidResignMain(NSNotification notification)
+            {
+                //if (!IsMouseVisible)
+                //    _gameWindow.UnHideCursor();
+            }
+
+            public override void WillClose(NSNotification notification)
+            {
+                //NSApplication.SharedApplication.BeginInvokeOnMainThread(() =>
+                //    _owner.State = MonoMacApp.RunState.Exited);
+            }
+
+            public override bool ShouldZoom (NSWindow window, RectangleF newFrame)
+            {
+                return true;
+            }
+        }
+    }
+

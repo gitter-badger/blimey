@@ -6,9 +6,11 @@
     <ProductVersion>12.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D61A79CF-39FB-45F2-A72D-714BE42FBFD6}</ProjectGuid>
+    <ProjectTypeGuids>{948B3504-5B70-4649-8FE4-BDE1FB46EC69};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>Sungiant.Cor.MonoMac</RootNamespace>
     <AssemblyName>Sungiant.Cor.MonoMac</AssemblyName>
+    <SuppressXamMacUpsell>True</SuppressXamMacUpsell>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -19,6 +21,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <EnableCodeSigning>false</EnableCodeSigning>
+    <CreatePackage>false</CreatePackage>
+    <EnablePackageSigning>false</EnablePackageSigning>
+    <IncludeMonoRuntime>false</IncludeMonoRuntime>
+    <UseSGen>false</UseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -27,9 +34,20 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <EnableCodeSigning>false</EnableCodeSigning>
+    <CreatePackage>false</CreatePackage>
+    <EnablePackageSigning>false</EnablePackageSigning>
+    <IncludeMonoRuntime>false</IncludeMonoRuntime>
+    <UseSGen>false</UseSGen>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="MonoMac, Version=0.0.0.0, Culture=neutral">
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -39,13 +57,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\..\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus %28mono40%29.csproj">
-      <Project>{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}</Project>
-      <Name>Sungiant.Abacus (mono40)</Name>
+    <ProjectReference Include="..\..\..\cor\build_examples\Sungiant.Cor\Sungiant.Cor %28monomac%29.csproj">
+      <Project>{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}</Project>
+      <Name>Sungiant.Cor (monomac)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\cor\build_examples\Sungiant.Cor\Sungiant.Cor %28mono40%29.csproj">
-      <Project>{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}</Project>
-      <Name>Sungiant.Cor (mono40)</Name>
+    <ProjectReference Include="..\..\..\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus %28monomac%29.csproj">
+      <Project>{97195993-2B6B-434B-8F2C-BD0A4BCDC70A}</Project>
+      <Name>Sungiant.Abacus (monomac)</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

@@ -37,10 +37,19 @@ using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Drawing;
+using System.Diagnostics;
+
 using Sungiant.Abacus;
 using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
+
+using MonoMac.Foundation;
+using MonoMac.AppKit;
+using MonoMac.CoreVideo;
+using MonoMac.CoreGraphics;
 
 namespace Sungiant.Cor.Platform.Managed.MonoMac
 {
@@ -538,6 +547,221 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
 
         #endregion
+    }
+
+    public class MonoMacApp
+        : IDisposable
+    {
+        MacGameNSWindow _mainWindow;
+        OpenGLView _gameWindow;
+        readonly AppSettings settings;
+        readonly IApp entryPoint;
+
+        public MonoMacApp(AppSettings settings, IApp entryPoint)
+        {
+            this.settings = settings;
+            this.entryPoint = entryPoint;
+        }
+
+        private void InitializeMainWindow()
+        {
+            RectangleF frame = new RectangleF(
+                0, 0,
+                800,
+                600);
+
+            _mainWindow = new MacGameNSWindow(
+                frame, NSWindowStyle.Titled | NSWindowStyle.Closable | NSWindowStyle.Miniaturizable,
+                NSBackingStore.Buffered, true);
+
+            _mainWindow.WindowController = new NSWindowController(_mainWindow);
+            _mainWindow.Delegate = new MainWindowDelegate(this);
+
+            _mainWindow.IsOpaque = true;
+            _mainWindow.EnableCursorRects();
+            _mainWindow.AcceptsMouseMovedEvents = false;
+            _mainWindow.Center();
+
+            _gameWindow = new OpenGLView(this.settings, this.entryPoint, frame);
+
+            //Window = _gameWindow;
+            _mainWindow.ContentView.AddSubview(_gameWindow);
+        }
+
+        public void Run()
+        {
+            InitializeMainWindow();
+        }
+
+        public void Dispose()
+        {
+            // No need to dispose _gameWindow or _mainWindow.  They will be released by the
+            // nearest NSAutoreleasePool.
+        }
+
+        private float GetTitleBarHeight()
+        {
+            RectangleF contentRect = NSWindow.ContentRectFor(
+                _mainWindow.Frame, _mainWindow.StyleMask);
+
+            return _mainWindow.Frame.Height - contentRect.Height;
+        }
+
+        private class MainWindowDelegate 
+            : NSWindowDelegate
+        {
+            private readonly MonoMacApp _owner;
+
+            public MainWindowDelegate(MonoMacApp owner)
+            {
+                if (owner == null)
+                    throw new ArgumentNullException("owner");
+                _owner = owner;
+            }
+
+            public override void DidBecomeKey(NSNotification notification)
+            {
+                //if (!IsMouseVisible)
+                //    _gameWindow.HideCursor();
+                //_owner.IsActive = true;
+            }
+
+            public override void DidResignKey(NSNotification notification)
+            {
+                //if (!IsMouseVisible)
+                //    _gameWindow.UnHideCursor();
+                //_owner.IsActive = false;
+            }
+
+            public override void DidBecomeMain(NSNotification notification)
+            {
+                //if (!IsMouseVisible)
+                //    _gameWindow.HideCursor();
+            }
+
+            public override void DidResignMain(NSNotification notification)
+            {
+                //if (!IsMouseVisible)
+                //    _gameWindow.UnHideCursor();
+            }
+
+            public override void WillClose(NSNotification notification)
+            {
+                //NSApplication.SharedApplication.BeginInvokeOnMainThread(() =>
+                //    _owner.State = MonoMacApp.RunState.Exited);
+            }
+
+            public override bool ShouldZoom (NSWindow window, RectangleF newFrame)
+            {
+                return true;
+            }
+        }
+    }
+
+    public class OpenGLView 
+        : global::MonoMac.OpenGL.MonoMacGameView
+    {
+        Rectangle clientBounds;
+        NSTrackingArea _trackingArea;
+        bool _needsToResetElapsedTime = false;
+
+        public OpenGLView(AppSettings settings, IApp entryPoint, RectangleF frame) 
+            : base (frame)
+        {
+            this.AutoresizingMask = 
+                global::MonoMac.AppKit.NSViewResizingMask.HeightSizable | 
+                global::MonoMac.AppKit.NSViewResizingMask.MaxXMargin | 
+                global::MonoMac.AppKit.NSViewResizingMask.MinYMargin | 
+                global::MonoMac.AppKit.NSViewResizingMask.WidthSizable;
+            
+            RectangleF rect = NSScreen.MainScreen.Frame;
+            
+            clientBounds = new Rectangle (0,0,(int)rect.Width,(int)rect.Height);
+        }
+
+        [Export("initWithFrame:")]
+        public OpenGLView () 
+            : base (NSScreen.MainScreen.Frame)
+        {
+            this.AutoresizingMask = 
+                global::MonoMac.AppKit.NSViewResizingMask.HeightSizable |
+                global::MonoMac.AppKit.NSViewResizingMask.MaxXMargin |
+                global::MonoMac.AppKit.NSViewResizingMask.MinYMargin |
+                global::MonoMac.AppKit.NSViewResizingMask.WidthSizable;
+
+            RectangleF rect = NSScreen.MainScreen.Frame;
+            clientBounds = new Rectangle (0,0,(int)rect.Width,(int)rect.Height);
+        }
+
+        public void StartRunLoop(double updateRate)
+        {
+            Run(updateRate);
+        }
+
+        public void ResetElapsedTime ()
+        {
+            _needsToResetElapsedTime = true;
+        }
+
+        protected override void OnRenderFrame (global::MonoMac.OpenGL.FrameEventArgs e)
+        {
+            base.OnRenderFrame (e);
+            // tick
+        }
+
+        public override bool AcceptsFirstResponder ()
+        {
+            return true;
+        }
+
+        public override bool BecomeFirstResponder ()
+        {
+            return true;
+        }
+
+        public override void ViewWillMoveToWindow (NSWindow newWindow)
+        {
+            if (_trackingArea != null)
+                RemoveTrackingArea(_trackingArea);
+
+            _trackingArea = new NSTrackingArea(
+                Frame,
+                NSTrackingAreaOptions.MouseMoved | 
+                NSTrackingAreaOptions.MouseEnteredAndExited |
+                NSTrackingAreaOptions.EnabledDuringMouseDrag |
+                NSTrackingAreaOptions.ActiveWhenFirstResponder |
+                NSTrackingAreaOptions.InVisibleRect |
+                NSTrackingAreaOptions.CursorUpdate,
+                this,
+                new NSDictionary()
+            );
+
+            AddTrackingArea(_trackingArea);
+
+        }
+    }
+
+    public class MacGameNSWindow 
+        : NSWindow
+    {
+        [Export ("initWithContentRect:styleMask:backing:defer:")]
+        public MacGameNSWindow (
+            RectangleF rect, 
+            NSWindowStyle style, 
+            NSBackingStore backing, 
+            Boolean defer)
+            : base (rect, style, backing, defer)
+        {
+
+        }
+
+        public override Boolean CanBecomeKeyWindow
+        {
+            get
+            {
+                return true;
+            }
+        }
     }
 
 }
