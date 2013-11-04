@@ -4,24 +4,23 @@
         Rectangle clientBounds;
         NSTrackingArea _trackingArea;
         bool _needsToResetElapsedTime = false;
-
+        Scene scene;
+        
         public OpenGLView(AppSettings settings, IApp entryPoint, RectangleF frame) 
             : base (frame)
         {
-            this.AutoresizingMask = 
-                global::MonoMac.AppKit.NSViewResizingMask.HeightSizable | 
-                global::MonoMac.AppKit.NSViewResizingMask.MaxXMargin | 
-                global::MonoMac.AppKit.NSViewResizingMask.MinYMargin | 
-                global::MonoMac.AppKit.NSViewResizingMask.WidthSizable;
-            
-            RectangleF rect = NSScreen.MainScreen.Frame;
-            
-            clientBounds = new Rectangle (0,0,(int)rect.Width,(int)rect.Height);
+            Init();
         }
 
         [Export("initWithFrame:")]
         public OpenGLView () 
             : base (NSScreen.MainScreen.Frame)
+        {
+            Init();
+        }
+
+
+        void Init()
         {
             this.AutoresizingMask = 
                 global::MonoMac.AppKit.NSViewResizingMask.HeightSizable |
@@ -31,7 +30,68 @@
 
             RectangleF rect = NSScreen.MainScreen.Frame;
             clientBounds = new Rectangle (0,0,(int)rect.Width,(int)rect.Height);
+
+            scene = new Scene();
+            
+            Resize += delegate {
+                scene.ResizeGLScene(Bounds);    
+            };
+            
+            Load += loader;
+            
+            UpdateFrame += delegate(object src, global::MonoMac.OpenGL.FrameEventArgs fea) {
+                Console.WriteLine("update " + fea.Time);    
+            };
+            
+            RenderFrame += delegate(object src, global::MonoMac.OpenGL.FrameEventArgs fea) {
+                scene.DrawGLScene();
+            };
+            
         }
+        
+        void loader (object src, EventArgs fea)
+        {
+            //Console.WriteLine("load ");   
+            InitGL();
+            UpdateView();
+            
+        }
+        
+        // All Setup For OpenGL Goes Here
+        bool InitGL ()
+        {
+            // Enables Smooth Shading  
+            global::MonoMac.OpenGL.GL.ShadeModel (global::MonoMac.OpenGL.ShadingModel.Smooth);
+            // Set background color to black     
+            global::MonoMac.OpenGL.GL.ClearColor (Color.Black);
+
+            // Setup Depth Testing
+
+            // Depth Buffer setup
+            global::MonoMac.OpenGL.GL.ClearDepth (1.0);
+            // Enables Depth testing
+            global::MonoMac.OpenGL.GL.Enable (global::MonoMac.OpenGL.EnableCap.DepthTest);
+            // The type of depth testing to do
+            global::MonoMac.OpenGL.GL.DepthFunc (global::MonoMac.OpenGL.DepthFunction.Lequal);
+
+            // Really Nice Perspective Calculations
+            global::MonoMac.OpenGL.GL.Hint (global::MonoMac.OpenGL.HintTarget.PerspectiveCorrectionHint, global::MonoMac.OpenGL.HintMode.Nicest);
+            
+            return true;
+        }
+        
+        //[Export("toggleFullScreen:")]
+        void toggleFullScreen (NSObject sender)
+        {
+            if (WindowState == global::MonoMac.OpenGL.WindowState.Fullscreen)
+                WindowState = global::MonoMac.OpenGL.WindowState.Normal;
+            else
+                WindowState = global::MonoMac.OpenGL.WindowState.Fullscreen;
+        }
+
+
+
+
 
         public void StartRunLoop(double updateRate)
         {
@@ -51,6 +111,7 @@
 
         public override bool AcceptsFirstResponder ()
         {
+            // We want this view to be able to receive key events
             return true;
         }
 
@@ -79,5 +140,7 @@
             AddTrackingArea(_trackingArea);
 
         }
+
+
     }
 

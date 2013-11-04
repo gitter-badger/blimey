@@ -70,4 +70,5 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 <#@ include file="MonoMacApp.t4"#>
 <#@ include file="OpenGLView.t4"#>
 <#@ include file="MacGameNSWindow.t4"#>
+<#@ include file="Scene.t4"#>
 }

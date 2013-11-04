@@ -2,7 +2,7 @@
         : IDisposable
     {
         MacGameNSWindow _mainWindow;
-        OpenGLView _gameWindow;
+        OpenGLView openGLView;
         readonly AppSettings settings;
         readonly IApp entryPoint;
 
@@ -20,8 +20,10 @@
                 600);
 
             _mainWindow = new MacGameNSWindow(
-                frame, NSWindowStyle.Titled | NSWindowStyle.Closable | NSWindowStyle.Miniaturizable,
-                NSBackingStore.Buffered, true);
+                frame,
+                NSWindowStyle.Titled | NSWindowStyle.Closable | NSWindowStyle.Miniaturizable,
+                NSBackingStore.Buffered,
+                true);
 
             _mainWindow.WindowController = new NSWindowController(_mainWindow);
             _mainWindow.Delegate = new MainWindowDelegate(this);
@@ -31,10 +33,13 @@
             _mainWindow.AcceptsMouseMovedEvents = false;
             _mainWindow.Center();
 
-            _gameWindow = new OpenGLView(this.settings, this.entryPoint, frame);
+            openGLView = new OpenGLView(this.settings, this.entryPoint, frame);
 
-            //Window = _gameWindow;
-            _mainWindow.ContentView.AddSubview(_gameWindow);
+            _mainWindow.ContentView.AddSubview(openGLView);
+
+            _mainWindow.MakeKeyAndOrderFront(_mainWindow);
+            
+            openGLView.StartRunLoop(1f / 60f);
         }
 
         public void Run()
@@ -44,7 +49,7 @@
 
         public void Dispose()
         {
-            // No need to dispose _gameWindow or _mainWindow.  They will be released by the
+            // No need to dispose openGLView or _mainWindow.  They will be released by the
             // nearest NSAutoreleasePool.
         }
 
@@ -66,38 +71,6 @@
                 if (owner == null)
                     throw new ArgumentNullException("owner");
                 _owner = owner;
-            }
-
-            public override void DidBecomeKey(NSNotification notification)
-            {
-                //if (!IsMouseVisible)
-                //    _gameWindow.HideCursor();
-                //_owner.IsActive = true;
-            }
-
-            public override void DidResignKey(NSNotification notification)
-            {
-                //if (!IsMouseVisible)
-                //    _gameWindow.UnHideCursor();
-                //_owner.IsActive = false;
-            }
-
-            public override void DidBecomeMain(NSNotification notification)
-            {
-                //if (!IsMouseVisible)
-                //    _gameWindow.HideCursor();
-            }
-
-            public override void DidResignMain(NSNotification notification)
-            {
-                //if (!IsMouseVisible)
-                //    _gameWindow.UnHideCursor();
-            }
-
-            public override void WillClose(NSNotification notification)
-            {
-                //NSApplication.SharedApplication.BeginInvokeOnMainThread(() =>
-                //    _owner.State = MonoMacApp.RunState.Exited);
             }
 
             public override bool ShouldZoom (NSWindow window, RectangleF newFrame)
