@@ -1367,7 +1367,6 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             Int32 primitiveCount                    // Number of primitives to render. The number of vertices used is a function of primitiveCount and primitiveType.
             )
         {
-
             if( baseVertex != 0 || minVertexIndex != 0 || startIndex != 0 )
             {
                 throw new NotImplementedException();
@@ -1395,20 +1394,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
         }
 
-#if AOT
-        public void DrawUserPrimitives (PrimitiveType primitiveType, VertexPosition[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration ) { this.DrawUserPrimitivesHelper (primitiveType, vertexData, vertexOffset, primitiveCount, vertexDeclaration); }
-        public void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionColour[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration ) { this.DrawUserPrimitivesHelper (primitiveType, vertexData, vertexOffset, primitiveCount, vertexDeclaration); }
-        public void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionNormal[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration ) { this.DrawUserPrimitivesHelper (primitiveType, vertexData, vertexOffset, primitiveCount, vertexDeclaration); }
-        public void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionNormalColour[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration ) { this.DrawUserPrimitivesHelper (primitiveType, vertexData, vertexOffset, primitiveCount, vertexDeclaration); }
-        public void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionNormalTexture[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration ) { this.DrawUserPrimitivesHelper (primitiveType, vertexData, vertexOffset, primitiveCount, vertexDeclaration); }
-        public void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionNormalTextureColour[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration ) { this.DrawUserPrimitivesHelper (primitiveType, vertexData, vertexOffset, primitiveCount, vertexDeclaration); }
-        public void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionTexture[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration ) { this.DrawUserPrimitivesHelper (primitiveType, vertexData, vertexOffset, primitiveCount, vertexDeclaration); }
-        public void DrawUserPrimitives (PrimitiveType primitiveType, VertexPositionTextureColour[] vertexData, Int32 vertexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration ) { this.DrawUserPrimitivesHelper (primitiveType, vertexData, vertexOffset, primitiveCount, vertexDeclaration); }
-
-        void DrawUserPrimitivesHelper<T>(
-#else
         public void DrawUserPrimitives<T>(
-#endif
             PrimitiveType primitiveType,
             T[] vertexData,
             int vertexOffset,
@@ -1581,20 +1567,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
         }
 
-#if AOT
-        public void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPosition[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration) { this.DrawUserIndexedPrimitivesHelper(primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount, vertexDeclaration); }
-        public void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionColour[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration) { this.DrawUserIndexedPrimitivesHelper(primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount, vertexDeclaration); }
-        public void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionNormal[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration) { this.DrawUserIndexedPrimitivesHelper(primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount, vertexDeclaration); }
-        public void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionNormalColour[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration) { this.DrawUserIndexedPrimitivesHelper(primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount, vertexDeclaration); }
-        public void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionNormalTexture[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration) { this.DrawUserIndexedPrimitivesHelper(primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount, vertexDeclaration); }
-        public void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionNormalTextureColour[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration) { this.DrawUserIndexedPrimitivesHelper(primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount, vertexDeclaration); }
-        public void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionTexture[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration) { this.DrawUserIndexedPrimitivesHelper(primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount, vertexDeclaration); }
-        public void DrawUserIndexedPrimitives (PrimitiveType primitiveType, VertexPositionTextureColour[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration) { this.DrawUserIndexedPrimitivesHelper(primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount, vertexDeclaration); }
-
-        void DrawUserIndexedPrimitivesHelper<T>(
-#else
         public void DrawUserIndexedPrimitives<T>(
-#endif
             PrimitiveType primitiveType,            // Describes the type of primitive to render.
             T[] vertexData,                         // The vertex data.
             Int32 vertexOffset,                     // Offset (in vertices) from the beginning of the vertex buffer to the first vertex to draw.
@@ -3677,20 +3650,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             GC.SuppressFinalize(this);
         }
 
-#if AOT
-        public void SetData (VertexPosition[] data) { SetDataHelper (data); }
-        public void SetData (VertexPositionColour[] data) { SetDataHelper (data); }
-        public void SetData (VertexPositionNormal[] data) { SetDataHelper (data); }
-        public void SetData (VertexPositionNormalColour[] data) { SetDataHelper (data); }
-        public void SetData (VertexPositionNormalTexture[] data) { SetDataHelper (data); }
-        public void SetData (VertexPositionNormalTextureColour[] data) { SetDataHelper (data); }
-        public void SetData (VertexPositionTexture[] data) { SetDataHelper (data); }
-        public void SetData (VertexPositionTextureColour[] data) { SetDataHelper (data); }
-
-        void SetDataHelper<T> (T[] data)
-#else
         public void SetData<T> (T[] data)
-#endif
             where T: struct, IVertexType
         {
             if( data.Length != vertexCount )

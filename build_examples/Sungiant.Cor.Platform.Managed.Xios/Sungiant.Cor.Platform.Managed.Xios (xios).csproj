@@ -10,7 +10,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Sungiant.Cor.Platform.Managed.Xios</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>Sungiant.Cor.Xios</AssemblyName>
+    <AssemblyName>Sungiant.Cor.Platform.Managed.Xios</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>

@@ -94,20 +94,7 @@
             GC.SuppressFinalize(this);
         }
 
-#if AOT
-        public void SetData (VertexPosition[] data) { SetDataHelper (data); }
-        public void SetData (VertexPositionColour[] data) { SetDataHelper (data); }
-        public void SetData (VertexPositionNormal[] data) { SetDataHelper (data); }
-        public void SetData (VertexPositionNormalColour[] data) { SetDataHelper (data); }
-        public void SetData (VertexPositionNormalTexture[] data) { SetDataHelper (data); }
-        public void SetData (VertexPositionNormalTextureColour[] data) { SetDataHelper (data); }
-        public void SetData (VertexPositionTexture[] data) { SetDataHelper (data); }
-        public void SetData (VertexPositionTextureColour[] data) { SetDataHelper (data); }
-
-        void SetDataHelper<T> (T[] data)
-#else
         public void SetData<T> (T[] data)
-#endif
             where T: struct, IVertexType
         {
             if( data.Length != vertexCount )
