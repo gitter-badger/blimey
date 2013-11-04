@@ -41,7 +41,7 @@ using Sungiant.Abacus;
 using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
-
+using System.Runtime.CompilerServices;
 
 public static class NativeBindings
 {
@@ -80,6 +80,16 @@ public static class NativeBindings
 
 	[DllImport ("__Internal")]
 	public static extern void VertexBuffer_Create ();
+}
+
+public static class ManagedBindings
+{
+	[MethodImplAttribute(MethodImplOptions.InternalCall)]
+	public extern static string BootstrapApp (String settings, String entryPoint)
+	{
+		// use reflection to find the right
+		// Settings & IApp
+	}
 }
 
 namespace Sungiant.Cor.Platform.Native.Linux
