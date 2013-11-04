@@ -42,9 +42,49 @@ using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
 
+
+public static class NativeBindings
+{
+	[DllImport ("__Internal")]
+	public static extern void Engine_Create ();
+
+	[DllImport ("__Internal")]
+	public static extern void AudioManager_Create ();
+
+	[DllImport ("__Internal")]
+	public static extern void GraphicsManager_Create ();
+
+	[DllImport ("__Internal")]
+	public static extern void ResourceManager_Create ();
+
+	[DllImport ("__Internal")]
+	public static extern void InputManager_Create ();
+
+	[DllImport ("__Internal")]
+	public static extern void SystemManager_Create ();
+
+	[DllImport ("__Internal")]
+	public static extern void DisplayStatus_Create ();
+
+	[DllImport ("__Internal")]
+	public static extern void IndexBuffer_Create ();
+
+	[DllImport ("__Internal")]
+	public static extern void PanelSpecification_Create ();
+
+	[DllImport ("__Internal")]
+	public static extern void ScreenSpecification_Create ();
+
+	[DllImport ("__Internal")]
+	public static extern void GeometryBuffer_Create ();
+
+	[DllImport ("__Internal")]
+	public static extern void VertexBuffer_Create ();
+}
+
 namespace Sungiant.Cor.Platform.Native.Linux
 {
-    public class StubEngine
+    public class NativeEngineBinding
         : ICor
     {
         IAudioManager audio;
@@ -54,16 +94,15 @@ namespace Sungiant.Cor.Platform.Native.Linux
         ISystemManager system;
         AppSettings settings;
 
-        public StubEngine(AppSettings settings)
+        public NativeEngineBinding(AppSettings settings)
         {
-            Console.WriteLine(
-                "StubEngine -> ()");
+			NativeBindings.Engine_Create();
             
-            this.audio = new StubAudioManager();
-            this.graphics = new StubGraphicsManager();
-            this.resources = new StubResourceManager();
-            this.input = new StubInputManager();
-            this.system = new StubSystemManager();
+            this.audio = new NativeAudioManagerBinding();
+            this.graphics = new NativeGraphicsManagerBinding();
+            this.resources = new NativeResourceManagerBinding();
+            this.input = new NativeInputManagerBinding();
+            this.system = new NativeSystemManagerBinding();
             this.settings = settings;
         }
 
@@ -84,7 +123,7 @@ namespace Sungiant.Cor.Platform.Native.Linux
         #endregion
     }
 
-    public class StubAudioManager
+    public class NativeAudioManagerBinding
         : IAudioManager
     {
         public Single volume = 1f;
@@ -103,10 +142,9 @@ namespace Sungiant.Cor.Platform.Native.Linux
 
         #region IAudioManager
 
-        public StubAudioManager()
+        public NativeAudioManagerBinding()
         {
-            Console.WriteLine(
-                "StubAudioManager -> ()");
+			NativeBindings.AudioManager_Create();
 
             this.volume = 1f;
         }
@@ -114,17 +152,16 @@ namespace Sungiant.Cor.Platform.Native.Linux
         #endregion
     }
 
-    public class StubGraphicsManager
+    public class NativeGraphicsManagerBinding
         : IGraphicsManager
     {
         IDisplayStatus displayStatus;
 
-        public StubGraphicsManager()
-        {
-            Console.WriteLine(
-                "StubGraphicsManager -> ()");
+        public NativeGraphicsManagerBinding()
+		{
+			NativeBindings.GraphicsManager_Create();
 
-            this.displayStatus = new StubDisplayStatus();
+            this.displayStatus = new NativeDisplayStatusBinding();
         }
 
         #region IGraphicsManager
@@ -158,7 +195,7 @@ namespace Sungiant.Cor.Platform.Native.Linux
             Int32 vertexCount,
             Int32 indexCount )
         {
-            return new StubGeometryBuffer(vertexDeclaration, vertexCount, indexCount);
+            return new NativeGeometryBufferBinding(vertexDeclaration, vertexCount, indexCount);
         }
 
         public void SetActiveGeometryBuffer(IGeometryBuffer buffer)
@@ -231,13 +268,12 @@ namespace Sungiant.Cor.Platform.Native.Linux
         #endregion
     }
 
-    public class StubDisplayStatus
+    public class NativeDisplayStatusBinding
         : IDisplayStatus
     {
-        public StubDisplayStatus()
-        {
-            Console.WriteLine(
-                "StubDisplayStatus -> ()");
+        public NativeDisplayStatusBinding()
+		{
+			NativeBindings.DisplayStatus_Create();
         }
 
         #region IDisplayStatus
@@ -249,15 +285,16 @@ namespace Sungiant.Cor.Platform.Native.Linux
         public Int32 CurrentHeight { get { return 600; } }
 
         #endregion
-    }    public class StubIndexBuffer
+    }
+
+	public class NativeIndexBufferBinding
         : IIndexBuffer
     {
         UInt16[] data;
 
-        public StubIndexBuffer()
-        {
-            Console.WriteLine(
-                "StubIndexBuffer -> ()");
+        public NativeIndexBufferBinding()
+		{
+			NativeBindings.IndexBuffer_Create();
         }
 
         static internal UInt16[] ConvertToUnsigned (Int32[] indexBuffer)
@@ -283,13 +320,13 @@ namespace Sungiant.Cor.Platform.Native.Linux
 
         #endregion
     }
-    public class StubInputManager
+
+    public class NativeInputManagerBinding
         : IInputManager
     {
-        public StubInputManager()
-        {
-            Console.WriteLine(
-                "StubInputManager -> ()");
+        public NativeInputManagerBinding()
+		{
+			NativeBindings.InputManager_Create();
         }
 
         #region IInputManager
@@ -317,13 +354,12 @@ namespace Sungiant.Cor.Platform.Native.Linux
         #endregion
     }
 
-    public class StubResourceManager
+    public class NativeResourceManagerBinding
         : IResourceManager
     {
-        public StubResourceManager()
-        {
-            Console.WriteLine(
-                "StubResourceManager -> ()");
+        public NativeResourceManagerBinding()
+		{
+			NativeBindings.ResourceManager_Create();
         }
 
         #region IResourceManager
@@ -341,13 +377,12 @@ namespace Sungiant.Cor.Platform.Native.Linux
         #endregion
     }
 
-    public class StubPanelSpecification
+    public class NativePanelSpecificationBinding
         : IPanelSpecification
     {
-        public StubPanelSpecification()
-        {
-            Console.WriteLine(
-                "StubPanelSpecification -> ()");
+        public NativePanelSpecificationBinding()
+		{
+			NativeBindings.PanelSpecification_Create();
         }
 
         #region IPanelSpecification
@@ -367,16 +402,15 @@ namespace Sungiant.Cor.Platform.Native.Linux
         #endregion
     }
 
-    public class StubScreenSpecification
+    public class NativeScreenSpecificationBinding
         : IScreenSpecification
     {
         Int32 width = 800;
         Int32 height = 600;
 
-        public StubScreenSpecification()
+        public NativeScreenSpecificationBinding()
         {
-            Console.WriteLine(
-                "StubScreenSpecification -> ()");
+			NativeBindings.ScreenSpecification_Create();
         }
 
         #region IScreenSpecification
@@ -404,22 +438,21 @@ namespace Sungiant.Cor.Platform.Native.Linux
         #endregion
     }
 
-    public class StubGeometryBuffer
+    public class NativeGeometryBufferBinding
         : IGeometryBuffer
     {
         IVertexBuffer vertexBuffer;
         IIndexBuffer indexBuffer;
 
-        public StubGeometryBuffer(
+        public NativeGeometryBufferBinding(
             VertexDeclaration vertexDeclaration,
             Int32 vertexCount,
             Int32 indexCount )
         {
-            Console.WriteLine(
-                "StubGeometryBuffer -> ()");
+			NativeBindings.GeometryBuffer_Create();
 
-            this.vertexBuffer = new StubVertexBuffer();
-            this.indexBuffer = new StubIndexBuffer();
+            this.vertexBuffer = new NativeVertexBufferBinding();
+            this.indexBuffer = new NativeIndexBufferBinding();
         }
 
         #region IGeometryBuffer
@@ -436,19 +469,18 @@ namespace Sungiant.Cor.Platform.Native.Linux
 
         #endregion
     }
-    public class StubSystemManager
+    public class NativeSystemManagerBinding
         : ISystemManager
     {
         readonly IScreenSpecification screen;
         readonly IPanelSpecification panel;
 
-        public StubSystemManager()
+        public NativeSystemManagerBinding()
         {
-            Console.WriteLine(
-                "StubSystemManager -> ()");
+			NativeBindings.SystemManager_Create();
 
-            screen = new StubScreenSpecification();
-            panel = new StubPanelSpecification();
+            screen = new NativeScreenSpecificationBinding();
+            panel = new NativePanelSpecificationBinding();
         }
 
         void GetEffectiveDisplaySize(
@@ -511,13 +543,12 @@ namespace Sungiant.Cor.Platform.Native.Linux
         #endregion
     }
 
-    public class StubVertexBuffer
+    public class NativeVertexBufferBinding
         : IVertexBuffer
     {
-        public StubVertexBuffer()
+        public NativeVertexBufferBinding()
         {
-            Console.WriteLine(
-                "StubVertexBuffer -> ()");
+			NativeBindings.VertexBuffer_Create();
         }
 
         #region IVertexBuffer
