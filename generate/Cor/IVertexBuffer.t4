@@ -13,7 +13,6 @@
         /// </summary>
         VertexDeclaration VertexDeclaration { get; }
 
-#if !AOT
         /// <summary>
         /// todo
         /// </summary>
@@ -63,54 +62,5 @@
         //    Int32 elementCount, 
         //    Int32 vertexStride) 
         //    where T: struct, IVertexType;
-#else
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPosition[] data);
-
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPositionColour[] data);
-
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPositionNormal[] data);
-
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPositionNormalColour[] data);
-
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPositionNormalTexture[] data);
-
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPositionNormalTextureColour[] data);
-
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPositionTexture[] data);
-
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPositionTextureColour[] data);
-#endif
     }
 

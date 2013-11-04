@@ -244,7 +244,6 @@ namespace Sungiant.Cor
             Int32 primitiveCount
             );
 
-#if !AOT
         /// <summary>
         /// Draws un-indexed vertex data uploaded straight from RAM.
         ///
@@ -295,191 +294,6 @@ namespace Sungiant.Cor
             Int32 primitiveCount,
             VertexDeclaration vertexDeclaration ) 
             where T : struct, IVertexType;
-#else
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPosition[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration );
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPositionColour[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration );
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPositionNormal[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration );
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPositionNormalColour[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration );
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPositionNormalTexture[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration );
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPositionNormalTextureColour[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration );
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPositionTexture[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration );
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPositionTextureColour[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration );
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserIndexedPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPosition[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 numVertices, 
-            Int32[] indexData, 
-            Int32 indexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration);
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserIndexedPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPositionColour[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 numVertices, 
-            Int32[] indexData, 
-            Int32 indexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration);
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserIndexedPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPositionNormal[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 numVertices, 
-            Int32[] indexData, 
-            Int32 indexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration);
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserIndexedPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPositionNormalColour[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 numVertices, 
-            Int32[] indexData, 
-            Int32 indexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration);
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserIndexedPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPositionNormalTexture[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 numVertices, 
-            Int32[] indexData, 
-            Int32 indexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration);
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserIndexedPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPositionNormalTextureColour[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 numVertices, 
-            Int32[] indexData, 
-            Int32 indexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration);
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserIndexedPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPositionTexture[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 numVertices, 
-            Int32[] indexData, 
-            Int32 indexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration);
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void DrawUserIndexedPrimitives (
-            PrimitiveType primitiveType, 
-            VertexPositionTextureColour[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 numVertices, 
-            Int32[] indexData, 
-            Int32 indexOffset, 
-            Int32 primitiveCount, 
-            VertexDeclaration vertexDeclaration);
-#endif
     }
 
     /// <summary>
@@ -753,7 +567,6 @@ namespace Sungiant.Cor
         /// </summary>
         VertexDeclaration VertexDeclaration { get; }
 
-#if !AOT
         /// <summary>
         /// todo
         /// </summary>
@@ -803,55 +616,6 @@ namespace Sungiant.Cor
         //    Int32 elementCount, 
         //    Int32 vertexStride) 
         //    where T: struct, IVertexType;
-#else
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPosition[] data);
-
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPositionColour[] data);
-
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPositionNormal[] data);
-
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPositionNormalColour[] data);
-
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPositionNormalTexture[] data);
-
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPositionNormalTextureColour[] data);
-
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPositionTexture[] data);
-
-        /// <summary>
-        /// Defines which vertex elements are optionally used by this
-        /// shader if they happen to be present.
-        /// </summary>
-        void SetData (VertexPositionTextureColour[] data);
-#endif
     }
 
     /// <summary>
