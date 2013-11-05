@@ -1,7 +1,7 @@
     public class MonoMacApp
         : IDisposable
     {
-        MacGameNSWindow _mainWindow;
+        MacGameNSWindow mainWindow;
         OpenGLView openGLView;
         readonly AppSettings settings;
         readonly IApp entryPoint;
@@ -12,34 +12,34 @@
             this.entryPoint = entryPoint;
         }
 
-        private void InitializeMainWindow()
+        void InitializeMainWindow()
         {
             RectangleF frame = new RectangleF(
                 0, 0,
                 800,
                 600);
 
-            _mainWindow = new MacGameNSWindow(
+            mainWindow = new MacGameNSWindow(
                 frame,
                 NSWindowStyle.Titled | NSWindowStyle.Closable | NSWindowStyle.Miniaturizable,
                 NSBackingStore.Buffered,
                 true);
 
-            _mainWindow.WindowController = new NSWindowController(_mainWindow);
-            _mainWindow.Delegate = new MainWindowDelegate(this);
+            mainWindow.WindowController = new NSWindowController(mainWindow);
+            mainWindow.Delegate = new MainWindowDelegate(this);
 
-            _mainWindow.IsOpaque = true;
-            _mainWindow.EnableCursorRects();
-            _mainWindow.AcceptsMouseMovedEvents = false;
-            _mainWindow.Center();
+            mainWindow.IsOpaque = true;
+            mainWindow.EnableCursorRects();
+            mainWindow.AcceptsMouseMovedEvents = false;
+            mainWindow.Center();
 
             openGLView = new OpenGLView(this.settings, this.entryPoint, frame);
 
-            _mainWindow.ContentView.AddSubview(openGLView);
+            mainWindow.ContentView.AddSubview(openGLView);
 
-            _mainWindow.MakeKeyAndOrderFront(_mainWindow);
+            mainWindow.MakeKeyAndOrderFront(mainWindow);
             
-            openGLView.StartRunLoop(1f / 60f);
+            openGLView.StartRunLoop(60f);
         }
 
         public void Run()
@@ -49,34 +49,16 @@
 
         public void Dispose()
         {
-            // No need to dispose openGLView or _mainWindow.  They will be released by the
+            // No need to dispose openGLView or mainWindow.  They will be released by the
             // nearest NSAutoreleasePool.
         }
 
-        private float GetTitleBarHeight()
+        float GetTitleBarHeight()
         {
             RectangleF contentRect = NSWindow.ContentRectFor(
-                _mainWindow.Frame, _mainWindow.StyleMask);
+                mainWindow.Frame, mainWindow.StyleMask);
 
-            return _mainWindow.Frame.Height - contentRect.Height;
-        }
-
-        private class MainWindowDelegate 
-            : NSWindowDelegate
-        {
-            private readonly MonoMacApp _owner;
-
-            public MainWindowDelegate(MonoMacApp owner)
-            {
-                if (owner == null)
-                    throw new ArgumentNullException("owner");
-                _owner = owner;
-            }
-
-            public override bool ShouldZoom (NSWindow window, RectangleF newFrame)
-            {
-                return true;
-            }
+            return mainWindow.Frame.Height - contentRect.Height;
         }
     }
 

@@ -552,8 +552,8 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     public class MonoMacApp
         : IDisposable
     {
-        MacGameNSWindow _mainWindow;
-        OpenGLView _gameWindow;
+        MacGameNSWindow mainWindow;
+        OpenGLView openGLView;
         readonly AppSettings settings;
         readonly IApp entryPoint;
 
@@ -563,33 +563,34 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             this.entryPoint = entryPoint;
         }
 
-        private void InitializeMainWindow()
+        void InitializeMainWindow()
         {
             RectangleF frame = new RectangleF(
                 0, 0,
                 800,
                 600);
 
-            _mainWindow = new MacGameNSWindow(
+            mainWindow = new MacGameNSWindow(
                 frame,
                 NSWindowStyle.Titled | NSWindowStyle.Closable | NSWindowStyle.Miniaturizable,
                 NSBackingStore.Buffered,
                 true);
 
-            _mainWindow.WindowController = new NSWindowController(_mainWindow);
-            _mainWindow.Delegate = new MainWindowDelegate(this);
+            mainWindow.WindowController = new NSWindowController(mainWindow);
+            mainWindow.Delegate = new MainWindowDelegate(this);
 
-            _mainWindow.IsOpaque = true;
-            _mainWindow.EnableCursorRects();
-            _mainWindow.AcceptsMouseMovedEvents = false;
-            _mainWindow.Center();
+            mainWindow.IsOpaque = true;
+            mainWindow.EnableCursorRects();
+            mainWindow.AcceptsMouseMovedEvents = false;
+            mainWindow.Center();
 
-            _gameWindow = new OpenGLView(this.settings, this.entryPoint, frame);
+            openGLView = new OpenGLView(this.settings, this.entryPoint, frame);
 
-            _mainWindow.ContentView.AddSubview(_gameWindow);
+            mainWindow.ContentView.AddSubview(openGLView);
 
-            _mainWindow.MakeKeyAndOrderFront(_mainWindow);
-            _gameWindow.StartRunLoop(1f / 60f);
+            mainWindow.MakeKeyAndOrderFront(mainWindow);
+            
+            openGLView.StartRunLoop(60f);
         }
 
         public void Run()
@@ -599,34 +600,16 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public void Dispose()
         {
-            // No need to dispose _gameWindow or _mainWindow.  They will be released by the
+            // No need to dispose openGLView or mainWindow.  They will be released by the
             // nearest NSAutoreleasePool.
         }
 
-        private float GetTitleBarHeight()
+        float GetTitleBarHeight()
         {
             RectangleF contentRect = NSWindow.ContentRectFor(
-                _mainWindow.Frame, _mainWindow.StyleMask);
+                mainWindow.Frame, mainWindow.StyleMask);
 
-            return _mainWindow.Frame.Height - contentRect.Height;
-        }
-
-        private class MainWindowDelegate 
-            : NSWindowDelegate
-        {
-            private readonly MonoMacApp _owner;
-
-            public MainWindowDelegate(MonoMacApp owner)
-            {
-                if (owner == null)
-                    throw new ArgumentNullException("owner");
-                _owner = owner;
-            }
-
-            public override bool ShouldZoom (NSWindow window, RectangleF newFrame)
-            {
-                return true;
-            }
+            return mainWindow.Frame.Height - contentRect.Height;
         }
     }
 
@@ -634,7 +617,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         : global::MonoMac.OpenGL.MonoMacGameView
     {
         Rectangle clientBounds;
-        NSTrackingArea _trackingArea;
+        NSTrackingArea trackingArea;
         bool _needsToResetElapsedTime = false;
         Scene scene;
         
@@ -754,10 +737,10 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public override void ViewWillMoveToWindow (NSWindow newWindow)
         {
-            if (_trackingArea != null)
-                RemoveTrackingArea(_trackingArea);
+            if (trackingArea != null)
+                RemoveTrackingArea(trackingArea);
 
-            _trackingArea = new NSTrackingArea(
+            trackingArea = new NSTrackingArea(
                 Frame,
                 NSTrackingAreaOptions.MouseMoved | 
                 NSTrackingAreaOptions.MouseEnteredAndExited |
@@ -769,7 +752,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 new NSDictionary()
             );
 
-            AddTrackingArea(_trackingArea);
+            AddTrackingArea(trackingArea);
 
         }
 
@@ -796,6 +779,24 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             {
                 return true;
             }
+        }
+    }
+
+    class MainWindowDelegate 
+        : NSWindowDelegate
+    {
+        private readonly MonoMacApp owner;
+
+        public MainWindowDelegate(MonoMacApp owner)
+        {
+            if (owner == null)
+                throw new ArgumentNullException("owner");
+            this.owner = owner;
+        }
+
+        public override bool ShouldZoom (NSWindow window, RectangleF newFrame)
+        {
+            return true;
         }
     }
 

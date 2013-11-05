@@ -2,7 +2,7 @@
         : global::MonoMac.OpenGL.MonoMacGameView
     {
         Rectangle clientBounds;
-        NSTrackingArea _trackingArea;
+        NSTrackingArea trackingArea;
         bool _needsToResetElapsedTime = false;
         Scene scene;
         
@@ -122,10 +122,10 @@
 
         public override void ViewWillMoveToWindow (NSWindow newWindow)
         {
-            if (_trackingArea != null)
-                RemoveTrackingArea(_trackingArea);
+            if (trackingArea != null)
+                RemoveTrackingArea(trackingArea);
 
-            _trackingArea = new NSTrackingArea(
+            trackingArea = new NSTrackingArea(
                 Frame,
                 NSTrackingAreaOptions.MouseMoved | 
                 NSTrackingAreaOptions.MouseEnteredAndExited |
@@ -137,7 +137,7 @@
                 new NSDictionary()
             );
 
-            AddTrackingArea(_trackingArea);
+            AddTrackingArea(trackingArea);
 
         }
 
