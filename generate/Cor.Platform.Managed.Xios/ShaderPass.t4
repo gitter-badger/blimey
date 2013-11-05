@@ -28,20 +28,10 @@
 
         Dictionary<String, bool> logHistory = new Dictionary<String, bool>();
 
-#if AOT
-        internal void SetVariable(string name, Int32 value) { currentVariables[name] = value; }
-        internal void SetVariable(string name, Single value) { currentVariables[name] = value; }
-        internal void SetVariable(string name, Rgba32 value) { currentVariables[name] = value; }
-        internal void SetVariable(string name, Matrix44 value) { currentVariables[name] = value; }
-        internal void SetVariable(string name, Vector3 value) { currentVariables[name] = value; }
-        internal void SetVariable(string name, Vector4 value) { currentVariables[name] = value; }
-        internal void SetVariable(string name, Vector2 value) { currentVariables[name] = value; }
-#else
         internal void SetVariable<T>(string name, T value)
         {
             currentVariables[name] = value; 
         }
-#endif
 
         internal void SetSamplerTarget(string name, Int32 textureSlot)
         {

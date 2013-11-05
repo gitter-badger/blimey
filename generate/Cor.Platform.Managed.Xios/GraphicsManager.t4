@@ -7,6 +7,8 @@
 
         GeometryBuffer currentGeomBuffer;
 
+        CullMode? currentCullMode;
+
         public GraphicsManager(OpenTK.Graphics.IGraphicsContext gfxContext)
         {
             gpuUtils = new GpuUtils();
@@ -43,8 +45,6 @@
 
             SetCullMode (CullMode.CW);
         }
-
-        CullMode? currentCullMode;
 
         public void SetCullMode(CullMode cullMode)
         {

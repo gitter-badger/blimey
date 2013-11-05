@@ -668,6 +668,8 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
         MonoTouch.CoreAnimation.CADisplayLink displayLink;
 
+        uint _depthRenderbuffer;
+
         Dictionary<Int32, iOSTouchState> touchState = new Dictionary<int, iOSTouchState>();
 
         public System.Boolean IsAnimating 
@@ -733,8 +735,6 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         {
             eaglLayer.Opaque = true;
         }
-
-        uint _depthRenderbuffer;
 
         protected override void CreateFrameBuffer()
         {
@@ -1167,6 +1167,8 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
         GeometryBuffer currentGeomBuffer;
 
+        CullMode? currentCullMode;
+
         public GraphicsManager(OpenTK.Graphics.IGraphicsContext gfxContext)
         {
             gpuUtils = new GpuUtils();
@@ -1203,8 +1205,6 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
             SetCullMode (CullMode.CW);
         }
-
-        CullMode? currentCullMode;
 
         public void SetCullMode(CullMode cullMode)
         {
@@ -2169,9 +2169,6 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         }
     }
 
-    
-
-
     /// <summary>
     /// The Cor.Xios implementation of Cor's IShader interface.
     /// </summary>
@@ -2242,21 +2239,13 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             }
         }
 
-
-#if AOT
-        public void SetVariable(string name, Int32 value) { passes.ForEach( x => x.SetVariable(name, value)); }
-        public void SetVariable(string name, Single value) { passes.ForEach( x => x.SetVariable(name, value)); }
-        public void SetVariable(string name, Rgba32 value) { passes.ForEach( x => x.SetVariable(name, value)); }
-        public void SetVariable(string name, Matrix44 value) { passes.ForEach( x => x.SetVariable(name, value)); }
-        public void SetVariable(string name, Vector3 value) { passes.ForEach( x => x.SetVariable(name, value)); }
-        public void SetVariable(string name, Vector4 value) { passes.ForEach( x => x.SetVariable(name, value)); }
-        public void SetVariable(string name, Vector2 value) { passes.ForEach( x => x.SetVariable(name, value)); }
-#else
         /// <summary>
         /// Sets the value of a specified shader variable.
         /// </summary>
-        public void SetVariable<T>(string name, T value) { passes.ForEach( x => x.SetVariable(name, value)); }
-#endif
+        public void SetVariable<T>(string name, T value)
+        {
+            passes.ForEach( x => x.SetVariable(name, value));
+        }
 
         /// <summary>
         /// Sets the texture slot that a texture sampler should sample from.
@@ -2330,9 +2319,6 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
         List<VertexElementUsage> requiredVertexElements = new List<VertexElementUsage>();
         List<VertexElementUsage> optionalVertexElements = new List<VertexElementUsage>();
-
-
-        //HashSet<String> variantNames = new HashSet<String>();
 
 
         /// <summary>
@@ -2689,20 +2675,10 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
         Dictionary<String, bool> logHistory = new Dictionary<String, bool>();
 
-#if AOT
-        internal void SetVariable(string name, Int32 value) { currentVariables[name] = value; }
-        internal void SetVariable(string name, Single value) { currentVariables[name] = value; }
-        internal void SetVariable(string name, Rgba32 value) { currentVariables[name] = value; }
-        internal void SetVariable(string name, Matrix44 value) { currentVariables[name] = value; }
-        internal void SetVariable(string name, Vector3 value) { currentVariables[name] = value; }
-        internal void SetVariable(string name, Vector4 value) { currentVariables[name] = value; }
-        internal void SetVariable(string name, Vector2 value) { currentVariables[name] = value; }
-#else
         internal void SetVariable<T>(string name, T value)
         {
             currentVariables[name] = value; 
         }
-#endif
 
         internal void SetSamplerTarget(string name, Int32 textureSlot)
         {

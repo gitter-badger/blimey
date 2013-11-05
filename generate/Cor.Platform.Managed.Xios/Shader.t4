@@ -1,6 +1,3 @@
-    
-
-
     /// <summary>
     /// The Cor.Xios implementation of Cor's IShader interface.
     /// </summary>
@@ -71,21 +68,13 @@
             }
         }
 
-
-#if AOT
-        public void SetVariable(string name, Int32 value) { passes.ForEach( x => x.SetVariable(name, value)); }
-        public void SetVariable(string name, Single value) { passes.ForEach( x => x.SetVariable(name, value)); }
-        public void SetVariable(string name, Rgba32 value) { passes.ForEach( x => x.SetVariable(name, value)); }
-        public void SetVariable(string name, Matrix44 value) { passes.ForEach( x => x.SetVariable(name, value)); }
-        public void SetVariable(string name, Vector3 value) { passes.ForEach( x => x.SetVariable(name, value)); }
-        public void SetVariable(string name, Vector4 value) { passes.ForEach( x => x.SetVariable(name, value)); }
-        public void SetVariable(string name, Vector2 value) { passes.ForEach( x => x.SetVariable(name, value)); }
-#else
         /// <summary>
         /// Sets the value of a specified shader variable.
         /// </summary>
-        public void SetVariable<T>(string name, T value) { passes.ForEach( x => x.SetVariable(name, value)); }
-#endif
+        public void SetVariable<T>(string name, T value)
+        {
+            passes.ForEach( x => x.SetVariable(name, value));
+        }
 
         /// <summary>
         /// Sets the texture slot that a texture sampler should sample from.
@@ -159,9 +148,6 @@
 
         List<VertexElementUsage> requiredVertexElements = new List<VertexElementUsage>();
         List<VertexElementUsage> optionalVertexElements = new List<VertexElementUsage>();
-
-
-        //HashSet<String> variantNames = new HashSet<String>();
 
 
         /// <summary>
