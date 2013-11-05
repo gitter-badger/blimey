@@ -1,0 +1,14 @@
+    public static class OpenGLHelper
+    {
+        [Conditional("DEBUG")]
+        public static void CheckError()
+        {
+            var ec = global::MonoMac.OpenGL.GL.GetError();
+
+            if (ec != global::MonoMac.OpenGL.ErrorCode.NoError)
+            {
+                throw new Exception( ec.ToString());
+            }
+        }
+    }
+

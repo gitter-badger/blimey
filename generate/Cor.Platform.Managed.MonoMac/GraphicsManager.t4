@@ -19,17 +19,38 @@
 
         public void Reset()
         {
-            
+            this.ClearDepthBuffer();
+            this.ClearColourBuffer();
+            this.SetActiveGeometryBuffer(null);
+
+            // todo, here we need to set all the texture slots to point to null
+            this.SetActiveTexture(0, null);
         }
 
-        public void ClearColourBuffer(Rgba32 color = new Rgba32())
+        public void ClearColourBuffer(Rgba32 col = new Rgba32())
         {
-            
+            Vector4 c;
+
+            col.UnpackTo(out c);
+
+            global::MonoMac.OpenGL.GL.ClearColor (c.X, c.Y, c.Z, c.W);
+
+            var mask = global::MonoMac.OpenGL.ClearBufferMask.ColorBufferBit;
+
+            global::MonoMac.OpenGL.GL.Clear ( mask );
+
+            OpenGLHelper.CheckError();
         }
 
-        public void ClearDepthBuffer(Single depth = 1f)
+        public void ClearDepthBuffer(Single val = 1)
         {
-            
+            global::MonoMac.OpenGL.GL.ClearDepth(val);
+
+            var mask = global::MonoMac.OpenGL.ClearBufferMask.DepthBufferBit;
+
+            global::MonoMac.OpenGL.GL.Clear ( mask );
+
+            OpenGLHelper.CheckError();
         }
 
         public void SetCullMode(CullMode cullMode)
@@ -64,7 +85,17 @@
             BlendFactor destinationAlpha
             )
         {
-            
+            global::MonoMac.OpenGL.GL.BlendEquationSeparate(
+                EnumConverter.ToOpenGL(rgbBlendFunction),
+                EnumConverter.ToOpenGL(alphaBlendFunction) );
+            OpenGLHelper.CheckError();
+
+            global::MonoMac.OpenGL.GL.BlendFuncSeparate(
+                EnumConverter.ToOpenGLSrc(sourceRgb),
+                EnumConverter.ToOpenGLDest(destinationRgb),
+                EnumConverter.ToOpenGLSrc(sourceAlpha),
+                EnumConverter.ToOpenGLDest(destinationAlpha) );
+            OpenGLHelper.CheckError();
         }
 
         public void DrawPrimitives(
