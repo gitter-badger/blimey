@@ -1,14 +1,15 @@
     public class StubEngine
         : ICor
     {
-        IAudioManager audio;
-        IGraphicsManager graphics;
-        IResourceManager resources;
-        IInputManager input;
-        ISystemManager system;
-        AppSettings settings;
+        readonly IAudioManager audio;
+        readonly IGraphicsManager graphics;
+        readonly IResourceManager resources;
+        readonly IInputManager input;
+        readonly ISystemManager system;
+        readonly AppSettings settings;
+        readonly IApp app;
 
-        public StubEngine(AppSettings settings)
+        public StubEngine(IApp app, AppSettings settings)
         {
             Console.WriteLine(
                 "StubEngine -> ()");
@@ -19,6 +20,8 @@
             this.input = new StubInputManager();
             this.system = new StubSystemManager();
             this.settings = settings;
+            this.app = app;
+            this.app.Initilise(this);
         }
 
         #region ICor

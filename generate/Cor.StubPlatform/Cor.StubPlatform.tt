@@ -58,4 +58,6 @@ namespace Sungiant.Cor.StubPlatform
 <#@ include file="StubGeometryBuffer.t4"#>
 <#@ include file="StubSystemManager.t4"#>
 <#@ include file="StubVertexBuffer.t4"#>
+<#@ include file="StubGpuUtils.t4"#>
+<#@ include file="StubShader.t4"#>
 }

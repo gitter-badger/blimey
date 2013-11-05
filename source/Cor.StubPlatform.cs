@@ -47,14 +47,15 @@ namespace Sungiant.Cor.StubPlatform
     public class StubEngine
         : ICor
     {
-        IAudioManager audio;
-        IGraphicsManager graphics;
-        IResourceManager resources;
-        IInputManager input;
-        ISystemManager system;
-        AppSettings settings;
+        readonly IAudioManager audio;
+        readonly IGraphicsManager graphics;
+        readonly IResourceManager resources;
+        readonly IInputManager input;
+        readonly ISystemManager system;
+        readonly AppSettings settings;
+        readonly IApp app;
 
-        public StubEngine(AppSettings settings)
+        public StubEngine(IApp app, AppSettings settings)
         {
             Console.WriteLine(
                 "StubEngine -> ()");
@@ -65,6 +66,8 @@ namespace Sungiant.Cor.StubPlatform
             this.input = new StubInputManager();
             this.system = new StubSystemManager();
             this.settings = settings;
+            this.app = app;
+            this.app.Initilise(this);
         }
 
         #region ICor
@@ -117,7 +120,8 @@ namespace Sungiant.Cor.StubPlatform
     public class StubGraphicsManager
         : IGraphicsManager
     {
-        IDisplayStatus displayStatus;
+        readonly IDisplayStatus displayStatus;
+        readonly IGpuUtils gpuUtils;
 
         public StubGraphicsManager()
         {
@@ -125,13 +129,14 @@ namespace Sungiant.Cor.StubPlatform
                 "StubGraphicsManager -> ()");
 
             this.displayStatus = new StubDisplayStatus();
+            this.gpuUtils = new StubGpuUtils();
         }
 
         #region IGraphicsManager
 
         public IDisplayStatus DisplayStatus { get { return this.displayStatus; } }
 
-        public IGpuUtils GpuUtils { get { return null; } }
+        public IGpuUtils GpuUtils { get { return this.gpuUtils; } }
 
         public void Reset()
         {
@@ -320,6 +325,8 @@ namespace Sungiant.Cor.StubPlatform
     public class StubResourceManager
         : IResourceManager
     {
+        readonly StubShader stubShader = new StubShader();
+
         public StubResourceManager()
         {
             Console.WriteLine(
@@ -335,7 +342,7 @@ namespace Sungiant.Cor.StubPlatform
 
         public IShader LoadShader(ShaderType shaderType)
         {
-            return null;
+            return stubShader;
         }
 
         #endregion
@@ -533,6 +540,79 @@ namespace Sungiant.Cor.StubPlatform
             where T: 
                 struct, 
                 IVertexType
+        {
+
+        }
+
+        #endregion
+    }
+
+    public class StubGpuUtils
+        : IGpuUtils
+    {
+        public StubGpuUtils()
+        {
+            Console.WriteLine(
+                "StubGpuUtils -> ()");
+        }
+
+        #region IGpuUtils
+
+        public Int32 BeginEvent(Rgba32 colour, String eventName)
+        {
+            return 0;
+        }
+
+        public Int32 EndEvent()
+        {
+            return 0;
+        }
+
+        public void SetMarker(Rgba32 colour, String eventName)
+        {
+
+        }
+
+        public void SetRegion(Rgba32 colour, String eventName)
+        {
+
+        }
+
+        #endregion
+    }
+    public class StubShader
+        : IShader
+    {
+        IShaderPass[] passes = new IShaderPass[0];
+        VertexElementUsage[] requiredVertexElements = new VertexElementUsage[0];
+        VertexElementUsage[] optionalVertexElements = new VertexElementUsage[0];
+
+        #region IShader
+
+        public void ResetVariables()
+        {
+            
+        }
+
+        public void ResetSamplerTargets()
+        {
+            
+        }
+
+        public void SetSamplerTarget(String name, Int32 textureSlot)
+        {
+
+        }
+
+        public IShaderPass[] Passes { get { return passes; } }
+
+        public VertexElementUsage[] RequiredVertexElements { get { return requiredVertexElements; } }
+
+        public VertexElementUsage[] OptionalVertexElements { get { return optionalVertexElements; } }
+
+        public String Name { get { return "StubShader"; } }
+
+        public void SetVariable<T>(String name, T value)
         {
 
         }

@@ -1,6 +1,8 @@
     public class StubResourceManager
         : IResourceManager
     {
+        readonly StubShader stubShader = new StubShader();
+
         public StubResourceManager()
         {
             Console.WriteLine(
@@ -16,7 +18,7 @@
 
         public IShader LoadShader(ShaderType shaderType)
         {
-            return null;
+            return stubShader;
         }
 
         #endregion
