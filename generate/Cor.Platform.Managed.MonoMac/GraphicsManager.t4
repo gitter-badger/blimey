@@ -1,7 +1,8 @@
     public class GraphicsManager
         : IGraphicsManager
     {
-        IDisplayStatus displayStatus;
+        readonly IDisplayStatus displayStatus;
+        readonly IGpuUtils gpuUtils;
 
         public GraphicsManager()
         {
@@ -9,13 +10,14 @@
                 "GraphicsManager -> ()");
 
             this.displayStatus = new DisplayStatus();
+            this.gpuUtils = new MonoMacGpuUtils();
         }
 
         #region IGraphicsManager
 
         public IDisplayStatus DisplayStatus { get { return this.displayStatus; } }
 
-        public IGpuUtils GpuUtils { get { return null; } }
+        public IGpuUtils GpuUtils { get { return this.gpuUtils; } }
 
         public void Reset()
         {

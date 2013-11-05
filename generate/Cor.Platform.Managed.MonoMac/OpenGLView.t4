@@ -4,24 +4,27 @@
         Rectangle clientBounds;
         NSTrackingArea trackingArea;
         bool _needsToResetElapsedTime = false;
-        Scene scene;
+        //Scene scene;
+
+        Engine gameEngine;
+        Stopwatch timer = new Stopwatch();
+        Single elapsedTime;
+        Int64 frameCounter = -1;
+        TimeSpan previousTimeSpan;
+        Int32 frameInterval;
+
+        uint _depthRenderbuffer;
+
+        readonly AppSettings settings;
+        readonly IApp entryPoint;
+
         
         public OpenGLView(AppSettings settings, IApp entryPoint, RectangleF frame) 
             : base (frame)
         {
-            Init();
-        }
+            this.settings = settings;
+            this.entryPoint = entryPoint;
 
-        [Export("initWithFrame:")]
-        public OpenGLView () 
-            : base (NSScreen.MainScreen.Frame)
-        {
-            Init();
-        }
-
-
-        void Init()
-        {
             this.AutoresizingMask = 
                 global::MonoMac.AppKit.NSViewResizingMask.HeightSizable |
                 global::MonoMac.AppKit.NSViewResizingMask.MaxXMargin |
@@ -31,29 +34,55 @@
             RectangleF rect = NSScreen.MainScreen.Frame;
             clientBounds = new Rectangle (0,0,(int)rect.Width,(int)rect.Height);
 
-            scene = new Scene();
+
             
             Resize += delegate {
-                scene.ResizeGLScene(Bounds);    
+                //scene.ResizeGLScene(Bounds);    
             };
             
-            Load += loader;
+            Load += OnLoad;
             
             UpdateFrame += delegate(object src, global::MonoMac.OpenGL.FrameEventArgs fea) {
-                Console.WriteLine("update " + fea.Time);    
+
+                Single dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
+                previousTimeSpan = timer.Elapsed;
+                
+                if (dt > 0.5f)
+                {
+                    dt = 0.0f;
+                }
+
+                elapsedTime += dt;
+
+                var appTime = new AppTime(dt, elapsedTime, ++frameCounter);
+
+                gameEngine.Update(appTime);   
             };
             
             RenderFrame += delegate(object src, global::MonoMac.OpenGL.FrameEventArgs fea) {
-                scene.DrawGLScene();
+
+                gameEngine.Render();
             };
             
         }
         
-        void loader (object src, EventArgs fea)
+        void OnLoad (object src, EventArgs fea)
         {
+            //CreateFrameBuffer();
+            //scene = new Scene();
+
+            gameEngine = new Engine(
+                this.settings,
+                this.entryPoint
+                //this, 
+                //this.GraphicsContext, 
+                //this.touchState
+                );
+            timer.Start();
+
             //Console.WriteLine("load ");   
-            InitGL();
-            UpdateView();
+            //InitGL();
+            //UpdateView();
             
         }
         
@@ -89,9 +118,33 @@
                 WindowState = global::MonoMac.OpenGL.WindowState.Fullscreen;
         }
 
+        void CreateFrameBuffer()
+        {
+            //
+            // Enable the depth buffer
+            //
+            global::MonoMac.OpenGL.GL.GenRenderbuffers(1, out _depthRenderbuffer);
+            OpenGLHelper.CheckError();
 
+            global::MonoMac.OpenGL.GL.BindRenderbuffer(
+                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer, 
+                _depthRenderbuffer);
+            OpenGLHelper.CheckError();
 
+            global::MonoMac.OpenGL.GL.RenderbufferStorage(
+                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer, 
+                global::MonoMac.OpenGL.RenderbufferStorage.DepthComponent16, 
+                Size.Width, Size.Height);
+            OpenGLHelper.CheckError();
 
+            global::MonoMac.OpenGL.GL.FramebufferRenderbuffer(
+                global::MonoMac.OpenGL.FramebufferTarget.Framebuffer,
+                global::MonoMac.OpenGL.FramebufferAttachment.DepthAttachment,
+                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer,
+                _depthRenderbuffer);
+            OpenGLHelper.CheckError();
+
+        }
 
         public void StartRunLoop(double updateRate)
         {

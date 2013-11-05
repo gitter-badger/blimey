@@ -1,14 +1,17 @@
     public class Engine
         : ICor
     {
-        IAudioManager audio;
-        IGraphicsManager graphics;
-        IResourceManager resources;
-        IInputManager input;
-        ISystemManager system;
-        AppSettings settings;
+        readonly IAudioManager audio;
+        readonly IGraphicsManager graphics;
+        readonly IResourceManager resources;
+        readonly IInputManager input;
+        readonly ISystemManager system;
+        readonly AppSettings settings;
+        readonly IApp app;
 
-        public Engine(AppSettings settings)
+        public Engine(
+            AppSettings settings,
+            IApp app)
         {
             Console.WriteLine(
                 "Engine -> ()");
@@ -19,6 +22,8 @@
             this.input = new InputManager();
             this.system = new SystemManager();
             this.settings = settings;
+            this.app = app;
+            this.app.Initilise(this);
         }
 
         #region ICor
@@ -36,5 +41,16 @@
         public AppSettings Settings { get { return this.settings; } }
 
         #endregion
+
+
+        internal Boolean Update(AppTime time)
+        {
+            return app.Update(time);
+        }
+
+        internal void Render()
+        {
+            app.Render();
+        }
     }
 

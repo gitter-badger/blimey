@@ -56,14 +56,17 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     public class Engine
         : ICor
     {
-        IAudioManager audio;
-        IGraphicsManager graphics;
-        IResourceManager resources;
-        IInputManager input;
-        ISystemManager system;
-        AppSettings settings;
+        readonly IAudioManager audio;
+        readonly IGraphicsManager graphics;
+        readonly IResourceManager resources;
+        readonly IInputManager input;
+        readonly ISystemManager system;
+        readonly AppSettings settings;
+        readonly IApp app;
 
-        public Engine(AppSettings settings)
+        public Engine(
+            AppSettings settings,
+            IApp app)
         {
             Console.WriteLine(
                 "Engine -> ()");
@@ -74,6 +77,8 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             this.input = new InputManager();
             this.system = new SystemManager();
             this.settings = settings;
+            this.app = app;
+            this.app.Initilise(this);
         }
 
         #region ICor
@@ -91,6 +96,17 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         public AppSettings Settings { get { return this.settings; } }
 
         #endregion
+
+
+        internal Boolean Update(AppTime time)
+        {
+            return app.Update(time);
+        }
+
+        internal void Render()
+        {
+            app.Render();
+        }
     }
 
     public class AudioManager
@@ -126,7 +142,8 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     public class GraphicsManager
         : IGraphicsManager
     {
-        IDisplayStatus displayStatus;
+        readonly IDisplayStatus displayStatus;
+        readonly IGpuUtils gpuUtils;
 
         public GraphicsManager()
         {
@@ -134,13 +151,14 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 "GraphicsManager -> ()");
 
             this.displayStatus = new DisplayStatus();
+            this.gpuUtils = new MonoMacGpuUtils();
         }
 
         #region IGraphicsManager
 
         public IDisplayStatus DisplayStatus { get { return this.displayStatus; } }
 
-        public IGpuUtils GpuUtils { get { return null; } }
+        public IGpuUtils GpuUtils { get { return this.gpuUtils; } }
 
         public void Reset()
         {
@@ -360,6 +378,8 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     public class ResourceManager
         : IResourceManager
     {
+        readonly IShader tempStubShader = new StubShader();
+        
         public ResourceManager()
         {
             Console.WriteLine(
@@ -375,7 +395,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public IShader LoadShader(ShaderType shaderType)
         {
-            return null;
+            return tempStubShader;
         }
 
         #endregion
@@ -650,24 +670,27 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         Rectangle clientBounds;
         NSTrackingArea trackingArea;
         bool _needsToResetElapsedTime = false;
-        Scene scene;
+        //Scene scene;
+
+        Engine gameEngine;
+        Stopwatch timer = new Stopwatch();
+        Single elapsedTime;
+        Int64 frameCounter = -1;
+        TimeSpan previousTimeSpan;
+        Int32 frameInterval;
+
+        uint _depthRenderbuffer;
+
+        readonly AppSettings settings;
+        readonly IApp entryPoint;
+
         
         public OpenGLView(AppSettings settings, IApp entryPoint, RectangleF frame) 
             : base (frame)
         {
-            Init();
-        }
+            this.settings = settings;
+            this.entryPoint = entryPoint;
 
-        [Export("initWithFrame:")]
-        public OpenGLView () 
-            : base (NSScreen.MainScreen.Frame)
-        {
-            Init();
-        }
-
-
-        void Init()
-        {
             this.AutoresizingMask = 
                 global::MonoMac.AppKit.NSViewResizingMask.HeightSizable |
                 global::MonoMac.AppKit.NSViewResizingMask.MaxXMargin |
@@ -677,29 +700,55 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             RectangleF rect = NSScreen.MainScreen.Frame;
             clientBounds = new Rectangle (0,0,(int)rect.Width,(int)rect.Height);
 
-            scene = new Scene();
+
             
             Resize += delegate {
-                scene.ResizeGLScene(Bounds);    
+                //scene.ResizeGLScene(Bounds);    
             };
             
-            Load += loader;
+            Load += OnLoad;
             
             UpdateFrame += delegate(object src, global::MonoMac.OpenGL.FrameEventArgs fea) {
-                Console.WriteLine("update " + fea.Time);    
+
+                Single dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
+                previousTimeSpan = timer.Elapsed;
+                
+                if (dt > 0.5f)
+                {
+                    dt = 0.0f;
+                }
+
+                elapsedTime += dt;
+
+                var appTime = new AppTime(dt, elapsedTime, ++frameCounter);
+
+                gameEngine.Update(appTime);   
             };
             
             RenderFrame += delegate(object src, global::MonoMac.OpenGL.FrameEventArgs fea) {
-                scene.DrawGLScene();
+
+                gameEngine.Render();
             };
             
         }
         
-        void loader (object src, EventArgs fea)
+        void OnLoad (object src, EventArgs fea)
         {
+            //CreateFrameBuffer();
+            //scene = new Scene();
+
+            gameEngine = new Engine(
+                this.settings,
+                this.entryPoint
+                //this, 
+                //this.GraphicsContext, 
+                //this.touchState
+                );
+            timer.Start();
+
             //Console.WriteLine("load ");   
-            InitGL();
-            UpdateView();
+            //InitGL();
+            //UpdateView();
             
         }
         
@@ -735,9 +784,33 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 WindowState = global::MonoMac.OpenGL.WindowState.Fullscreen;
         }
 
+        void CreateFrameBuffer()
+        {
+            //
+            // Enable the depth buffer
+            //
+            global::MonoMac.OpenGL.GL.GenRenderbuffers(1, out _depthRenderbuffer);
+            OpenGLHelper.CheckError();
 
+            global::MonoMac.OpenGL.GL.BindRenderbuffer(
+                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer, 
+                _depthRenderbuffer);
+            OpenGLHelper.CheckError();
 
+            global::MonoMac.OpenGL.GL.RenderbufferStorage(
+                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer, 
+                global::MonoMac.OpenGL.RenderbufferStorage.DepthComponent16, 
+                Size.Width, Size.Height);
+            OpenGLHelper.CheckError();
 
+            global::MonoMac.OpenGL.GL.FramebufferRenderbuffer(
+                global::MonoMac.OpenGL.FramebufferTarget.Framebuffer,
+                global::MonoMac.OpenGL.FramebufferAttachment.DepthAttachment,
+                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer,
+                _depthRenderbuffer);
+            OpenGLHelper.CheckError();
+
+        }
 
         public void StartRunLoop(double updateRate)
         {
@@ -1206,150 +1279,75 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
 
-    public class Scene
+    public class MonoMacGpuUtils
+        : IGpuUtils
     {
-
-        float rtri; // Angle For The Triangle ( NEW )
-        float rquad;    // Angle For The Quad     ( NEW )
-
-        public Scene () : base()
+        public MonoMacGpuUtils()
         {
         }
 
-        // Resize And Initialize The GL Window 
-        //      - See also the method in the MyOpenGLView Constructor about the NSView.NSViewGlobalFrameDidChangeNotification
-        public void ResizeGLScene (RectangleF bounds)
+        #region IGpuUtils
+
+        public Int32 BeginEvent(Rgba32 colour, String eventName)
         {
-            // Reset The Current Viewport
-            global::MonoMac.OpenGL.GL.Viewport (0, 0, (int)bounds.Size.Width, (int)bounds.Size.Height);
-            // Select The Projection Matrix
-            global::MonoMac.OpenGL.GL.MatrixMode (global::MonoMac.OpenGL.MatrixMode.Projection);
-            // Reset The Projection Matrix
-            global::MonoMac.OpenGL.GL.LoadIdentity ();
-
-            // Set perspective here - Calculate The Aspect Ratio Of The Window
-            Perspective (45, bounds.Size.Width / bounds.Size.Height, 0.1, 100);
-
-            // Select The Modelview Matrix
-            global::MonoMac.OpenGL.GL.MatrixMode (global::MonoMac.OpenGL.MatrixMode.Modelview);
-            // Reset The Modelview Matrix
-            global::MonoMac.OpenGL.GL.LoadIdentity ();
+            return 0;
         }
 
-        // This creates a symmetric frustum.
-        // It converts to 6 params (l, r, b, t, n, f) for glFrustum()
-        // from given 4 params (fovy, aspect, near, far)
-        public static void Perspective (double fovY, double aspectRatio, double front, double back)
+        public Int32 EndEvent()
         {
-            const
-            double DEG2RAD = Math.PI / 180 ; 
-
-            // tangent of half fovY
-            double tangent = Math.Tan (fovY / 2 * DEG2RAD);
-
-            // half height of near plane
-            double height = front * tangent;
-
-            // half width of near plane
-            double width = height * aspectRatio;
-
-            // params: left, right, bottom, top, near, far
-            global::MonoMac.OpenGL.GL.Frustum (-width, width, -height, height, front, back);
+            return 0;
         }
 
-        // This method renders our scene.
-        // The main thing to note is that we've factored the drawing code out of the NSView subclass so that
-        // the full-screen and non-fullscreen views share the same states for rendering 
-        public bool DrawGLScene ()
+        public void SetMarker(Rgba32 colour, String eventName)
         {
-            // Clear The Screen And The Depth Buffer
-            global::MonoMac.OpenGL.GL.Clear (global::MonoMac.OpenGL.ClearBufferMask.ColorBufferBit | global::MonoMac.OpenGL.ClearBufferMask.DepthBufferBit);
-            // Reset The Current Modelview Matrix
-            global::MonoMac.OpenGL.GL.LoadIdentity ();
 
-            global::MonoMac.OpenGL.GL.Translate (-1.5f, 0.0f, -6.0f);
-            // Move Left 1.5 Units And Into The Screen 6.0
-            global::MonoMac.OpenGL.GL.Rotate (rtri, 0.0f, 1.0f, 0.0f);
-            // Rotate The Triangle On The Y axis
-            global::MonoMac.OpenGL.GL.Begin (global::MonoMac.OpenGL.BeginMode.Triangles);     // Start drawing the Pyramid
-
-            global::MonoMac.OpenGL.GL.Color3 (1.0f, 0.0f, 0.0f);           // Red
-            global::MonoMac.OpenGL.GL.Vertex3 (0.0f, 1.0f, 0.0f);          // Top Of Triangle (Front)
-            global::MonoMac.OpenGL.GL.Color3 (0.0f, 1.0f, 0.0f);           // Green
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, -1.0f, 1.0f);            // Left Of Triangle (Front)
-            global::MonoMac.OpenGL.GL.Color3 (0.0f, 0.0f, 1.0f);           // Blue
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, -1.0f, 1.0f);         // Right Of Triangle (Front)
-
-            global::MonoMac.OpenGL.GL.Color3 (1.0f, 0.0f, 0.0f);           // Red
-            global::MonoMac.OpenGL.GL.Vertex3 (0.0f, 1.0f, 0.0f);          // Top Of Triangle (Right)
-            global::MonoMac.OpenGL.GL.Color3 (0.0f, 0.0f, 1.0f);           // Blue
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, -1.0f, 1.0f);         // Left Of Triangle (Right)
-            global::MonoMac.OpenGL.GL.Color3 (0.0f, 1.0f, 0.0f);           // Green
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, -1.0f, -1.0f);            // Right Of Triangle (Right)
-
-            global::MonoMac.OpenGL.GL.Color3 (1.0f, 0.0f, 0.0f);           // Red
-            global::MonoMac.OpenGL.GL.Vertex3 (0.0f, 1.0f, 0.0f);          // Top Of Triangle (Back)
-            global::MonoMac.OpenGL.GL.Color3 (0.0f, 1.0f, 0.0f);           // Green
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, -1.0f, -1.0f);            // Left Of Triangle (Back)
-            global::MonoMac.OpenGL.GL.Color3 (0.0f, 0.0f, 1.0f);           // Blue
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, -1.0f, -1.0f);           // Right Of Triangle (Back)         
-
-            global::MonoMac.OpenGL.GL.Color3 (1.0f, 0.0f, 0.0f);           // Red
-            global::MonoMac.OpenGL.GL.Vertex3 (0.0f, 1.0f, 0.0f);          // Top Of Triangle (Left)
-            global::MonoMac.OpenGL.GL.Color3 (0.0f, 0.0f, 1.0f);           // Blue
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, -1.0f, -1.0f);           // Left Of Triangle (Left)
-            global::MonoMac.OpenGL.GL.Color3 (0.0f, 1.0f, 0.0f);           // Green
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, -1.0f, 1.0f);            // Right Of Triangle (Left)
-
-            global::MonoMac.OpenGL.GL.End ();                      // Finished Drawing The Pyramid
-
-            // Reset The Current Modelview Matrix
-            global::MonoMac.OpenGL.GL.LoadIdentity ();
-
-            global::MonoMac.OpenGL.GL.Translate (1.5f, 0.0f, -7.0f);           // Move Right 1.5 Units And Into The Screen 7.0
-            global::MonoMac.OpenGL.GL.Rotate (rquad, 1.0f, 0.0f, 0.0f);            // Rotate The Quad On The X axis ( NEW )   
-            global::MonoMac.OpenGL.GL.Begin (global::MonoMac.OpenGL.BeginMode.Quads);             // Start Drawing Cube
-            global::MonoMac.OpenGL.GL.Color3 (0.0f, 1.0f, 0.0f);           // Set The Color To Green
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, 1.0f, -1.0f);         // Top Right Of The Quad (Top)
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, 1.0f, -1.0f);        // Top Left Of The Quad (Top)
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, 1.0f, 1.0f);         // Bottom Left Of The Quad (Top)
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, 1.0f, 1.0f);          // Bottom Right Of The Quad (Top)                        
-
-            global::MonoMac.OpenGL.GL.Color3 (1.0f, 0.5f, 0.0f);           // Set The Color To Orange
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, -1.0f, 1.0f);         // Top Right Of The Quad (Bottom)
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, -1.0f, 1.0f);        // Top Left Of The Quad (Bottom)
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, -1.0f, -1.0f);       // Bottom Left Of The Quad (Bottom)
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, -1.0f, -1.0f);        // Bottom Right Of The Quad (Bottom)
-
-            global::MonoMac.OpenGL.GL.Color3 (1.0f, 0.0f, 0.0f);           // Set The Color To Red
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, 1.0f, 1.0f);          // Top Right Of The Quad (Front)
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, 1.0f, 1.0f);         // Top Left Of The Quad (Front)
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, -1.0f, 1.0f);            // Bottom Left Of The Quad (Front)
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, -1.0f, 1.0f);         // Bottom Right Of The Quad (Front) 
-
-            global::MonoMac.OpenGL.GL.Color3 (1.0f, 1.0f, 0.0f);           // Set The Color To Yellow
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, -1.0f, -1.0f);        // Bottom Left Of The Quad (Back)
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, -1.0f, -1.0f);       // Bottom Right Of The Quad (Back)
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, 1.0f, -1.0f);        // Top Right Of The Quad (Back)
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, 1.0f, -1.0f);     // Top Left Of The Quad (Back)
-
-            global::MonoMac.OpenGL.GL.Color3 (0.0f, 0.0f, 1.0f);           // Set The Color To Blue
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, 1.0f, 1.0f);         // Top Right Of The Quad (Left)
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, 1.0f, -1.0f);            // Top Left Of The Quad (Left)
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, -1.0f, -1.0f);           // Bottom Left Of The Quad (Left)
-            global::MonoMac.OpenGL.GL.Vertex3 (-1.0f, -1.0f, 1.0f);            // Bottom Right Of The Quad (Left)
-
-            global::MonoMac.OpenGL.GL.Color3 (1.0f, 0.0f, 1.0f);           // Set The Color To Violet
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, 1.0f, -1.0f);         // Top Right Of The Quad (Right)
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, 1.0f, 1.0f);          // Top Left Of The Quad (Right)
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, -1.0f, 1.0f);         // Bottom Left Of The Quad (Right)
-            global::MonoMac.OpenGL.GL.Vertex3 (1.0f, -1.0f, -1.0f);            // Bottom Right Of The Quad (Right)         
-
-            global::MonoMac.OpenGL.GL.End ();              // Done Drawing the Cube
-
-            rtri += 0.2f;               // Increase The Rotation Variable For The Triangle
-            rquad -= 0.15f;             // Decrease The Rotation Variable For The Quad 
-            return true;
         }
 
-    }}
+        public void SetRegion(Rgba32 colour, String eventName)
+        {
+
+        }
+
+        #endregion
+    }
+    public class StubShader
+        : IShader
+    {
+        IShaderPass[] passes = new IShaderPass[0];
+        VertexElementUsage[] requiredVertexElements = new VertexElementUsage[0];
+        VertexElementUsage[] optionalVertexElements = new VertexElementUsage[0];
+
+        #region IShader
+
+        public void ResetVariables()
+        {
+            
+        }
+
+        public void ResetSamplerTargets()
+        {
+            
+        }
+
+        public void SetSamplerTarget(String name, Int32 textureSlot)
+        {
+
+        }
+
+        public IShaderPass[] Passes { get { return passes; } }
+
+        public VertexElementUsage[] RequiredVertexElements { get { return requiredVertexElements; } }
+
+        public VertexElementUsage[] OptionalVertexElements { get { return optionalVertexElements; } }
+
+        public String Name { get { return "StubShader"; } }
+
+        public void SetVariable<T>(String name, T value)
+        {
+
+        }
+
+        #endregion
+    }
+
+}

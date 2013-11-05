@@ -73,5 +73,6 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 <#@ include file="MainWindowDelegate.t4"#>
 <#@ include file="OpenGLHelper.t4"#>
 <#@ include file="Convert.t4"#>
-<#@ include file="Scene.t4"#>
+<#@ include file="MonoMacGpuUtils.t4"#>
+<#@ include file="StubShader.t4"#>
 }
