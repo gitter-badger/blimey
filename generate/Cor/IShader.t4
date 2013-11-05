@@ -42,46 +42,9 @@
         /// </summary>
         String Name { get; }
 
-#if !AOT
         /// <summary>
         /// Sets the value of a specified shader variable.
         /// </summary>
         void SetVariable<T>(String name, T value);
-#else
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void SetVariable(String name, Int32 value);
-        
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void SetVariable(String name, Single value);
-
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void SetVariable(String name, Rgba32 value);
-
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void SetVariable(String name, Matrix44 value);
-
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void SetVariable(String name, Vector3 value);
-
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void SetVariable(String name, Vector4 value);
-
-        /// <summary>
-        /// TODO: REFACTOR THIS! There must be a better way for AOT.
-        /// </summary>
-        void SetVariable(String name, Vector2 value);
-#endif
     }
 
