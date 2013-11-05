@@ -213,7 +213,7 @@ namespace Sungiant.Cor.Demo
             this.shape2VertCount = vertBuffer.Length;
             this.shape2IndexCount = indexBuffer.Length;
             
-            this.shape2Texture = engine.Resources.Load<Texture2D>("Assets/cvan01.png");
+            this.shape2Texture = engine.Resources.Load<Texture2D>("assets/cvan01.png");
             
             this.shape2GeomBuffer = engine.Graphics.CreateGeometryBuffer(
                 CustomCube_PositionTexture.VertexDeclaration, 
@@ -299,7 +299,7 @@ namespace Sungiant.Cor.Demo
             this.shape3IndexCount = indexBuffer.Length;
             
             
-            this.shape3Texture = engine.Resources.Load<Texture2D>("Assets/bg1.png");
+            this.shape3Texture = engine.Resources.Load<Texture2D>("assets/bg1.png");
             
             this.shape3GeomBuffer = engine.Graphics.CreateGeometryBuffer(
                 CustomCylinder_PositionNormalTexture.VertexDeclaration, 
