@@ -2,6 +2,10 @@
 
 #include <iostream>
 #include <stdio.h>
+
+#include <mono/jit/jit.h> //AssemblyWrapper
+#include <mono/metadata/assembly.h> //AssemblyWrapper
+#include <mono/metadata/debug-helpers.h> //AssemblyWrapper
 //----------------------------------------------------------------------------//
 // Configuration
 //----------------------------------------------------------------------------//
@@ -220,5 +224,60 @@ public:
 
     void Setup();
 };
+
+// A class that wraps up a given assembly life-cycle and provides a method
+// to invoke functions within the assembly
+class cAssemblyWrapper
+{
+protected:
+	cAssemblyWrapper( std::string assemblyName )
+	{
+	   	MonoDomain *domain = mono_jit_init( "SOMEDOMAINNAME" ); //TODO:Pull this out
+
+	    m_assembly = mono_domain_assembly_open( domain, assemblyName.c_str() );
+	}
+	
+	~cAssemblyWrapper( )
+	{
+		mono_assembly_close( m_assembly );
+	}
+	
+	void InvokeMethodOnAssembly( std::string nameSpace, 
+	std::string className,
+	std::string methodName, 
+	void** args )
+	{
+		MonoImage* monoImage = mono_assembly_get_image( m_assembly );
+	    MonoClass* monoClass = mono_class_from_name(monoImage, nameSpace.c_str(), className.c_str());
+	    MonoMethodDesc* mono_method_desc = mono_method_desc_new( ( className + "::" + methodName ).c_str(), false);
+	    MonoMethod* fooMethod = mono_method_desc_search_in_class( mono_method_desc, monoClass );
+    
+	    mono_runtime_invoke (fooMethod, NULL, args, NULL);
+	}
+	
+private:
+	MonoAssembly*   m_assembly;	
+};
+
+// An implementation of the assembly wrapper that will be used to invoke methods within
+// the linux binding dll
+class cLinuxBindingAssemblyWrapper :
+	cAssemblyWrapper
+{
+public:
+	cLinuxBindingAssemblyWrapper( ) : cAssemblyWrapper( "LINUXBINDINGDLLNAME" )
+	{
+	}
+};
+
+int main()
+{
+	cLinuxBindingAssemblyWrapper* linuxBindingDLL = new cLinuxBindingAssemblyWrapper();
+	
+	//do some stuff with the dll
+	
+	delete linuxBindingDLL;
+	return 0;
+}
 
 

@@ -19,6 +19,21 @@
     <CompileTarget>StaticLibrary</CompileTarget>
     <DefineSymbols>DEBUG MONODEVELOP</DefineSymbols>
     <SourceDirectory>.</SourceDirectory>
+    <Includes>
+      <Includes>
+        <Include>/usr/include/mono-2.0</Include>
+      </Includes>
+    </Includes>
+    <LibPaths>
+      <LibPaths>
+        <LibPath>/usr/lib</LibPath>
+      </LibPaths>
+    </LibPaths>
+    <Libs>
+      <Libs>
+        <Lib>mono-2.0</Lib>
+      </Libs>
+    </Libs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release</OutputPath>
