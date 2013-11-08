@@ -4,6 +4,9 @@
         readonly IDisplayStatus displayStatus;
         readonly IGpuUtils gpuUtils;
 
+        GeometryBuffer currentGeomBuffer;
+        CullMode? currentCullMode;
+
         public GraphicsManager()
         {
             Console.WriteLine(
@@ -11,7 +14,58 @@
 
             this.displayStatus = new DisplayStatus();
             this.gpuUtils = new MonoMacGpuUtils();
+
+            global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.Blend);
+            OpenGLHelper.CheckError();
+
+            this.SetBlendEquation(
+                BlendFunction.Add, BlendFactor.SourceAlpha, BlendFactor.InverseSourceAlpha,
+                BlendFunction.Add, BlendFactor.One, BlendFactor.InverseSourceAlpha);
+
+            global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.DepthTest);
+            OpenGLHelper.CheckError();
+
+            global::MonoMac.OpenGL.GL.DepthMask(true);
+            OpenGLHelper.CheckError();
+
+            global::MonoMac.OpenGL.GL.DepthRange(0f, 1f);
+            OpenGLHelper.CheckError();
+
+            global::MonoMac.OpenGL.GL.DepthFunc(global::MonoMac.OpenGL.DepthFunction.Lequal);
+            OpenGLHelper.CheckError();
+
+            SetCullMode (CullMode.CW);
         }
+
+        [ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
+        static IntPtr Add (IntPtr pointer, int offset)
+        {
+            unsafe
+            {
+                return (IntPtr) (unchecked (((byte *) pointer) + offset));
+            }
+        }
+
+        [ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
+        static IntPtr Subtract (IntPtr pointer, int offset)
+        {
+            unsafe
+            {
+                return (IntPtr) (unchecked (((byte *) pointer) - offset));
+            }
+        }
+
+        void DisableVertAttribs(VertexDeclaration vertDecl)
+        {
+            var vertElems = vertDecl.GetVertexElements();
+
+            for(int i = 0; i < vertElems.Length; ++i)
+            {
+                global::MonoMac.OpenGL.GL.DisableVertexAttribArray(i);
+                OpenGLHelper.CheckError();
+            }
+        }
+
 
         #region IGraphicsManager
 
@@ -57,7 +111,40 @@
 
         public void SetCullMode(CullMode cullMode)
         {
-            
+            if (!currentCullMode.HasValue || currentCullMode.Value != cullMode)
+            {
+                if (cullMode == CullMode.None)
+                {
+                    global::MonoMac.OpenGL.GL.Disable (global::MonoMac.OpenGL.EnableCap.CullFace);
+                    OpenGLHelper.CheckError ();
+
+                }
+                else
+                {
+                    global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.CullFace);
+                    OpenGLHelper.CheckError();
+
+                    global::MonoMac.OpenGL.GL.FrontFace(global::MonoMac.OpenGL.FrontFaceDirection.Cw);
+                    OpenGLHelper.CheckError();
+
+                    if (cullMode == CullMode.CW)
+                    {
+                        global::MonoMac.OpenGL.GL.CullFace (global::MonoMac.OpenGL.CullFaceMode.Back);
+                        OpenGLHelper.CheckError ();
+                    }
+                    else if (cullMode == CullMode.CCW)
+                    {
+                        global::MonoMac.OpenGL.GL.CullFace (global::MonoMac.OpenGL.CullFaceMode.Front);
+                        OpenGLHelper.CheckError ();
+                    }
+                    else
+                    {
+                        throw new NotSupportedException();
+                    }
+                }
+
+                currentCullMode = cullMode;
+            }
         }
 
         public IGeometryBuffer CreateGeometryBuffer (
@@ -70,12 +157,42 @@
 
         public void SetActiveGeometryBuffer(IGeometryBuffer buffer)
         {
-            
+            var temp = buffer as GeometryBuffer;
+
+            if( temp != this.currentGeomBuffer )
+            {
+                if( this.currentGeomBuffer != null )
+                {
+                    this.currentGeomBuffer.Deactivate();
+
+                    this.currentGeomBuffer = null;
+                }
+
+                if( temp != null )
+                {
+                    temp.Activate();
+                }
+                
+                this.currentGeomBuffer = temp;
+            }
         }
 
         public void SetActiveTexture(Int32 slot, Texture2D tex)
         {
+            global::MonoMac.OpenGL.TextureUnit oglTexSlot = EnumConverter.ToOpenGLTextureSlot(slot); 
+            global::MonoMac.OpenGL.GL.ActiveTexture(oglTexSlot);
+
+            var oglt0 = tex as OpenGLTexture;
             
+            if( oglt0 != null )
+            {
+                var textureTarget = global::MonoMac.OpenGL.TextureTarget.Texture2D;
+                
+                // we need to bind the texture object so that we can opperate on it.
+                global::MonoMac.OpenGL.GL.BindTexture(textureTarget, oglt0.glTextureId);
+                OpenGLHelper.CheckError();
+            }
+
         }
 
         public void SetBlendEquation(

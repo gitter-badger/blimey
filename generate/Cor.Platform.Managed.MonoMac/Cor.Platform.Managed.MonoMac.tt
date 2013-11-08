@@ -35,13 +35,15 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
-using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Drawing;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Runtime.ConstrainedExecution;
 
 using Sungiant.Abacus;
 using Sungiant.Abacus.Packed;
@@ -52,6 +54,9 @@ using MonoMac.Foundation;
 using MonoMac.AppKit;
 using MonoMac.CoreVideo;
 using MonoMac.CoreGraphics;
+using MonoMac.CoreImage;
+using MonoMac.ImageIO;
+using MonoMac.ImageKit;
 
 namespace Sungiant.Cor.Platform.Managed.MonoMac
 {
@@ -75,4 +80,5 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 <#@ include file="Convert.t4"#>
 <#@ include file="MonoMacGpuUtils.t4"#>
 <#@ include file="StubShader.t4"#>
+<#@ include file="OpenGLTexture.t4"#>
 }

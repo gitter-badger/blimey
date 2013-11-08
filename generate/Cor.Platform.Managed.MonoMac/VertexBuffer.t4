@@ -1,29 +1,138 @@
-    public class VertexBuffer
+    public sealed class VertexBuffer
         : IVertexBuffer
+        , IDisposable
     {
-        public VertexBuffer()
+        Int32 resourceCounter;
+        VertexDeclaration vertDecl;
+
+        Int32 vertexCount;
+
+        UInt32 bufferHandle;
+
+        global::MonoMac.OpenGL.BufferTarget type;
+        global::MonoMac.OpenGL.BufferUsageHint bufferUsage;
+
+        public VertexBuffer (VertexDeclaration vd, Int32 vertexCount)
         {
-            Console.WriteLine(
-                "VertexBuffer -> ()");
+            this.vertDecl = vd;
+            this.vertexCount = vertexCount;
+
+            this.type = global::MonoMac.OpenGL.BufferTarget.ArrayBuffer;
+
+            this.bufferUsage = global::MonoMac.OpenGL.BufferUsageHint.DynamicDraw;
+
+            global::MonoMac.OpenGL.GL.GenBuffers(1, out this.bufferHandle);
+            OpenGLHelper.CheckError();
+
+
+            if( this.bufferHandle == 0 )
+            {
+                throw new Exception("Failed to generate vert buffer.");
+            }
+            
+
+            this.Activate();
+
+            global::MonoMac.OpenGL.GL.BufferData(
+                this.type,
+                (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
+                (System.IntPtr) null,
+                this.bufferUsage);
+
+            OpenGLHelper.CheckError();
+
+            resourceCounter++;
+
         }
 
-        #region IVertexBuffer
+        internal void Activate()
+        {
+            global::MonoMac.OpenGL.GL.BindBuffer(this.type, this.bufferHandle);
+            OpenGLHelper.CheckError();
+        }
 
-        public Int32 VertexCount { get { return 0; } }
+        internal void Deactivate()
+        {
+            global::MonoMac.OpenGL.GL.BindBuffer(this.type, 0);
+            OpenGLHelper.CheckError();
+        }
+
+        ~VertexBuffer()
+        {
+            CleanUpNativeResources();
+        }
+
+        void CleanUpManagedResources()
+        {
+
+        }
+
+        void CleanUpNativeResources()
+        {
+            global::MonoMac.OpenGL.GL.DeleteBuffers(1, ref this.bufferHandle);
+            OpenGLHelper.CheckError();
+
+            bufferHandle = 0;
+
+            resourceCounter--;
+        }
+
+        public void Dispose()
+        {
+            CleanUpManagedResources();
+            CleanUpNativeResources();
+            GC.SuppressFinalize(this);
+        }
+
+        public void SetData<T> (T[] data)
+            where T: struct, IVertexType
+        {
+            if( data.Length != vertexCount )
+            {
+                throw new Exception("?");
+            }
+            
+            this.Activate();
+
+            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
+            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
+            // then content of data are copied to the allocated data store.  The contents of the buffer object data
+            // store can be initialized or updated using the glBufferSubData FN
+            global::MonoMac.OpenGL.GL.BufferSubData(
+                this.type,
+                (System.IntPtr) 0,
+                (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
+                data);
+
+            OpenGLHelper.CheckError();
+        }
+
+
+        public Int32 VertexCount
+        {
+            get
+            {
+                return this.vertexCount;
+            }
+        }
 
         public VertexDeclaration VertexDeclaration 
-        { 
-            get { return null; }
-        }
-
-        public void SetData<T> (T[] data) 
-            where T: 
-                struct, 
-                IVertexType
         {
+            get
+            {
+                return this.vertDecl;
+            }
+        } 
 
-        }
+        public void GetData<T> (T[] data) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void GetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void SetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType { throw new System.NotSupportedException(); }
 
-        #endregion
     }
 

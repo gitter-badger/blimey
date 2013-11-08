@@ -1,32 +1,47 @@
     public class GeometryBuffer
         : IGeometryBuffer
     {
-        IVertexBuffer vertexBuffer;
-        IIndexBuffer indexBuffer;
-
-        public GeometryBuffer(
-            VertexDeclaration vertexDeclaration,
-            Int32 vertexCount,
-            Int32 indexCount )
+        IndexBuffer _iBuf;
+        VertexBuffer _vBuf;
+        
+        public GeometryBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount, Int32 indexCount)
         {
-            Console.WriteLine(
-                "GeometryBuffer -> ()");
 
-            this.vertexBuffer = new VertexBuffer();
-            this.indexBuffer = new IndexBuffer();
+            if(vertexCount == 0)
+            {
+                throw new Exception("A geometry buffer must have verts");
+            }
+
+            if( indexCount != 0 )
+            {
+                _iBuf = new IndexBuffer(indexCount);
+            }
+
+            _vBuf = new VertexBuffer(vertexDeclaration, vertexCount);
+
         }
 
-        #region IGeometryBuffer
-
-        public IVertexBuffer VertexBuffer
+        internal void Activate()
         {
-            get { return this.vertexBuffer; }
+            _vBuf.Activate();
+
+            if( _iBuf != null )
+                _iBuf.Activate();
         }
 
-        public IIndexBuffer IndexBuffer
+        internal void Deactivate()
         {
-            get { return this.indexBuffer; }
+            _vBuf.Deactivate();
+
+            if( _iBuf != null )
+                _iBuf.Deactivate();
         }
 
-        #endregion
+
+        
+        public IVertexBuffer VertexBuffer { get { return _vBuf; } }
+        public IIndexBuffer IndexBuffer { get { return _iBuf; } }
+
+        internal VertexBuffer OpenTKVertexBuffer { get { return _vBuf; } }
     }
+

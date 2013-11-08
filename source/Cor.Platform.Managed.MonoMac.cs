@@ -33,13 +33,15 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
-using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Drawing;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Runtime.ConstrainedExecution;
 
 using Sungiant.Abacus;
 using Sungiant.Abacus.Packed;
@@ -50,6 +52,9 @@ using MonoMac.Foundation;
 using MonoMac.AppKit;
 using MonoMac.CoreVideo;
 using MonoMac.CoreGraphics;
+using MonoMac.CoreImage;
+using MonoMac.ImageIO;
+using MonoMac.ImageKit;
 
 namespace Sungiant.Cor.Platform.Managed.MonoMac
 {
@@ -145,6 +150,9 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         readonly IDisplayStatus displayStatus;
         readonly IGpuUtils gpuUtils;
 
+        GeometryBuffer currentGeomBuffer;
+        CullMode? currentCullMode;
+
         public GraphicsManager()
         {
             Console.WriteLine(
@@ -152,7 +160,58 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             this.displayStatus = new DisplayStatus();
             this.gpuUtils = new MonoMacGpuUtils();
+
+            global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.Blend);
+            OpenGLHelper.CheckError();
+
+            this.SetBlendEquation(
+                BlendFunction.Add, BlendFactor.SourceAlpha, BlendFactor.InverseSourceAlpha,
+                BlendFunction.Add, BlendFactor.One, BlendFactor.InverseSourceAlpha);
+
+            global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.DepthTest);
+            OpenGLHelper.CheckError();
+
+            global::MonoMac.OpenGL.GL.DepthMask(true);
+            OpenGLHelper.CheckError();
+
+            global::MonoMac.OpenGL.GL.DepthRange(0f, 1f);
+            OpenGLHelper.CheckError();
+
+            global::MonoMac.OpenGL.GL.DepthFunc(global::MonoMac.OpenGL.DepthFunction.Lequal);
+            OpenGLHelper.CheckError();
+
+            SetCullMode (CullMode.CW);
         }
+
+        [ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
+        static IntPtr Add (IntPtr pointer, int offset)
+        {
+            unsafe
+            {
+                return (IntPtr) (unchecked (((byte *) pointer) + offset));
+            }
+        }
+
+        [ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
+        static IntPtr Subtract (IntPtr pointer, int offset)
+        {
+            unsafe
+            {
+                return (IntPtr) (unchecked (((byte *) pointer) - offset));
+            }
+        }
+
+        void DisableVertAttribs(VertexDeclaration vertDecl)
+        {
+            var vertElems = vertDecl.GetVertexElements();
+
+            for(int i = 0; i < vertElems.Length; ++i)
+            {
+                global::MonoMac.OpenGL.GL.DisableVertexAttribArray(i);
+                OpenGLHelper.CheckError();
+            }
+        }
+
 
         #region IGraphicsManager
 
@@ -198,7 +257,40 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public void SetCullMode(CullMode cullMode)
         {
-            
+            if (!currentCullMode.HasValue || currentCullMode.Value != cullMode)
+            {
+                if (cullMode == CullMode.None)
+                {
+                    global::MonoMac.OpenGL.GL.Disable (global::MonoMac.OpenGL.EnableCap.CullFace);
+                    OpenGLHelper.CheckError ();
+
+                }
+                else
+                {
+                    global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.CullFace);
+                    OpenGLHelper.CheckError();
+
+                    global::MonoMac.OpenGL.GL.FrontFace(global::MonoMac.OpenGL.FrontFaceDirection.Cw);
+                    OpenGLHelper.CheckError();
+
+                    if (cullMode == CullMode.CW)
+                    {
+                        global::MonoMac.OpenGL.GL.CullFace (global::MonoMac.OpenGL.CullFaceMode.Back);
+                        OpenGLHelper.CheckError ();
+                    }
+                    else if (cullMode == CullMode.CCW)
+                    {
+                        global::MonoMac.OpenGL.GL.CullFace (global::MonoMac.OpenGL.CullFaceMode.Front);
+                        OpenGLHelper.CheckError ();
+                    }
+                    else
+                    {
+                        throw new NotSupportedException();
+                    }
+                }
+
+                currentCullMode = cullMode;
+            }
         }
 
         public IGeometryBuffer CreateGeometryBuffer (
@@ -211,12 +303,42 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public void SetActiveGeometryBuffer(IGeometryBuffer buffer)
         {
-            
+            var temp = buffer as GeometryBuffer;
+
+            if( temp != this.currentGeomBuffer )
+            {
+                if( this.currentGeomBuffer != null )
+                {
+                    this.currentGeomBuffer.Deactivate();
+
+                    this.currentGeomBuffer = null;
+                }
+
+                if( temp != null )
+                {
+                    temp.Activate();
+                }
+                
+                this.currentGeomBuffer = temp;
+            }
         }
 
         public void SetActiveTexture(Int32 slot, Texture2D tex)
         {
+            global::MonoMac.OpenGL.TextureUnit oglTexSlot = EnumConverter.ToOpenGLTextureSlot(slot); 
+            global::MonoMac.OpenGL.GL.ActiveTexture(oglTexSlot);
+
+            var oglt0 = tex as OpenGLTexture;
             
+            if( oglt0 != null )
+            {
+                var textureTarget = global::MonoMac.OpenGL.TextureTarget.Texture2D;
+                
+                // we need to bind the texture object so that we can opperate on it.
+                global::MonoMac.OpenGL.GL.BindTexture(textureTarget, oglt0.glTextureId);
+                OpenGLHelper.CheckError();
+            }
+
         }
 
         public void SetBlendEquation(
@@ -307,40 +429,155 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         public Int32 CurrentHeight { get { return 600; } }
 
         #endregion
-    }    public class IndexBuffer
+    }    public sealed class IndexBuffer
         : IIndexBuffer
+        , IDisposable
     {
-        UInt16[] data;
+        static Int32 resourceCounter;
 
-        public IndexBuffer()
+        Int32 indexCount;
+        global::MonoMac.OpenGL.BufferTarget type;
+        UInt32 bufferHandle;
+        global::MonoMac.OpenGL.BufferUsageHint bufferUsage;
+
+        public IndexBuffer (Int32 indexCount)
         {
-            Console.WriteLine(
-                "IndexBuffer -> ()");
+            this.indexCount = indexCount;
+
+            this.type = global::MonoMac.OpenGL.BufferTarget.ElementArrayBuffer;
+
+            this.bufferUsage = global::MonoMac.OpenGL.BufferUsageHint.DynamicDraw;
+
+            global::MonoMac.OpenGL.GL.GenBuffers(1, out this.bufferHandle);
+            
+            OpenGLHelper.CheckError();
+
+            if( this.bufferHandle == 0 )
+            {
+                throw new Exception("Failed to generate vert buffer.");
+            }
+
+            this.Activate();
+
+            global::MonoMac.OpenGL.GL.BufferData(
+                this.type,
+                (System.IntPtr) (sizeof(UInt16) * this.indexCount),
+                (System.IntPtr) null,
+                this.bufferUsage);
+
+            OpenGLHelper.CheckError();
+
+            resourceCounter++;
+
         }
 
-        static internal UInt16[] ConvertToUnsigned (Int32[] indexBuffer)
-        {   
-            UInt16[] udata = new UInt16[indexBuffer.Length];
+        ~IndexBuffer()
+        {
+            CleanUpNativeResources();
+        }
 
-            for(Int32 i = 0; i < indexBuffer.Length; ++i)
+        void CleanUpManagedResources()
+        {
+
+        }
+
+        void CleanUpNativeResources()
+        {
+            global::MonoMac.OpenGL.GL.DeleteBuffers(1, ref this.bufferHandle);
+            OpenGLHelper.CheckError();
+
+            bufferHandle = 0;
+
+            resourceCounter--;
+        }
+
+        public void Dispose()
+        {
+            CleanUpManagedResources();
+            CleanUpNativeResources();
+            GC.SuppressFinalize(this);
+        }
+
+        internal void Activate()
+        {
+            global::MonoMac.OpenGL.GL.BindBuffer(this.type, this.bufferHandle);
+            OpenGLHelper.CheckError();
+        }
+
+        internal void Deactivate()
+        {
+            global::MonoMac.OpenGL.GL.BindBuffer(this.type, 0);
+            OpenGLHelper.CheckError();
+        }
+
+
+        public void SetData (Int32[] data)
+        {
+
+            if( data.Length != indexCount )
             {
-                udata[i] = (UInt16) indexBuffer[i];
+                throw new Exception("?");
+            }
+
+            UInt16[] udata = new UInt16[data.Length];
+
+            for(Int32 i = 0; i < data.Length; ++i)
+            {
+                udata[i] = (UInt16) data[i];
             }
             
-            return udata;
+            this.Activate();
+
+            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
+            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
+            // then content of data are copied to the allocated data store.  The contents of the buffer object data
+            // store can be initialized or updated using the glBufferSubData FN
+            global::MonoMac.OpenGL.GL.BufferSubData(
+                this.type,
+                (System.IntPtr) 0,
+                (System.IntPtr) (sizeof(UInt16) * this.indexCount),
+                udata);
+
+            udata = null;
+
+            OpenGLHelper.CheckError();
         }
 
-        #region IIndexBuffer
-
-        public Int32 IndexCount { get { return this.data.Length; } }
-
-        public void SetData(Int32[] data)
+        public int IndexCount
         {
-            this.data = ConvertToUnsigned(data);
+            get
+            {
+                return indexCount;
+            }
         }
 
-        #endregion
+        public void GetData(Int32[] data)
+        {
+            throw new NotImplementedException();    
+        }
+
+        public void GetData(Int16[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
+
+        public void GetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
+
+        public void SetData(Int16[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
+
+        public void SetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
+
     }
+
     public class InputManager
         : IInputManager
     {
@@ -467,35 +704,50 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     public class GeometryBuffer
         : IGeometryBuffer
     {
-        IVertexBuffer vertexBuffer;
-        IIndexBuffer indexBuffer;
-
-        public GeometryBuffer(
-            VertexDeclaration vertexDeclaration,
-            Int32 vertexCount,
-            Int32 indexCount )
+        IndexBuffer _iBuf;
+        VertexBuffer _vBuf;
+        
+        public GeometryBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount, Int32 indexCount)
         {
-            Console.WriteLine(
-                "GeometryBuffer -> ()");
 
-            this.vertexBuffer = new VertexBuffer();
-            this.indexBuffer = new IndexBuffer();
+            if(vertexCount == 0)
+            {
+                throw new Exception("A geometry buffer must have verts");
+            }
+
+            if( indexCount != 0 )
+            {
+                _iBuf = new IndexBuffer(indexCount);
+            }
+
+            _vBuf = new VertexBuffer(vertexDeclaration, vertexCount);
+
         }
 
-        #region IGeometryBuffer
-
-        public IVertexBuffer VertexBuffer
+        internal void Activate()
         {
-            get { return this.vertexBuffer; }
+            _vBuf.Activate();
+
+            if( _iBuf != null )
+                _iBuf.Activate();
         }
 
-        public IIndexBuffer IndexBuffer
+        internal void Deactivate()
         {
-            get { return this.indexBuffer; }
+            _vBuf.Deactivate();
+
+            if( _iBuf != null )
+                _iBuf.Deactivate();
         }
 
-        #endregion
+
+        
+        public IVertexBuffer VertexBuffer { get { return _vBuf; } }
+        public IIndexBuffer IndexBuffer { get { return _iBuf; } }
+
+        internal VertexBuffer OpenTKVertexBuffer { get { return _vBuf; } }
     }
+
     public class SystemManager
         : ISystemManager
     {
@@ -571,33 +823,142 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         #endregion
     }
 
-    public class VertexBuffer
+    public sealed class VertexBuffer
         : IVertexBuffer
+        , IDisposable
     {
-        public VertexBuffer()
+        Int32 resourceCounter;
+        VertexDeclaration vertDecl;
+
+        Int32 vertexCount;
+
+        UInt32 bufferHandle;
+
+        global::MonoMac.OpenGL.BufferTarget type;
+        global::MonoMac.OpenGL.BufferUsageHint bufferUsage;
+
+        public VertexBuffer (VertexDeclaration vd, Int32 vertexCount)
         {
-            Console.WriteLine(
-                "VertexBuffer -> ()");
+            this.vertDecl = vd;
+            this.vertexCount = vertexCount;
+
+            this.type = global::MonoMac.OpenGL.BufferTarget.ArrayBuffer;
+
+            this.bufferUsage = global::MonoMac.OpenGL.BufferUsageHint.DynamicDraw;
+
+            global::MonoMac.OpenGL.GL.GenBuffers(1, out this.bufferHandle);
+            OpenGLHelper.CheckError();
+
+
+            if( this.bufferHandle == 0 )
+            {
+                throw new Exception("Failed to generate vert buffer.");
+            }
+            
+
+            this.Activate();
+
+            global::MonoMac.OpenGL.GL.BufferData(
+                this.type,
+                (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
+                (System.IntPtr) null,
+                this.bufferUsage);
+
+            OpenGLHelper.CheckError();
+
+            resourceCounter++;
+
         }
 
-        #region IVertexBuffer
+        internal void Activate()
+        {
+            global::MonoMac.OpenGL.GL.BindBuffer(this.type, this.bufferHandle);
+            OpenGLHelper.CheckError();
+        }
 
-        public Int32 VertexCount { get { return 0; } }
+        internal void Deactivate()
+        {
+            global::MonoMac.OpenGL.GL.BindBuffer(this.type, 0);
+            OpenGLHelper.CheckError();
+        }
+
+        ~VertexBuffer()
+        {
+            CleanUpNativeResources();
+        }
+
+        void CleanUpManagedResources()
+        {
+
+        }
+
+        void CleanUpNativeResources()
+        {
+            global::MonoMac.OpenGL.GL.DeleteBuffers(1, ref this.bufferHandle);
+            OpenGLHelper.CheckError();
+
+            bufferHandle = 0;
+
+            resourceCounter--;
+        }
+
+        public void Dispose()
+        {
+            CleanUpManagedResources();
+            CleanUpNativeResources();
+            GC.SuppressFinalize(this);
+        }
+
+        public void SetData<T> (T[] data)
+            where T: struct, IVertexType
+        {
+            if( data.Length != vertexCount )
+            {
+                throw new Exception("?");
+            }
+            
+            this.Activate();
+
+            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
+            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
+            // then content of data are copied to the allocated data store.  The contents of the buffer object data
+            // store can be initialized or updated using the glBufferSubData FN
+            global::MonoMac.OpenGL.GL.BufferSubData(
+                this.type,
+                (System.IntPtr) 0,
+                (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
+                data);
+
+            OpenGLHelper.CheckError();
+        }
+
+
+        public Int32 VertexCount
+        {
+            get
+            {
+                return this.vertexCount;
+            }
+        }
 
         public VertexDeclaration VertexDeclaration 
-        { 
-            get { return null; }
-        }
-
-        public void SetData<T> (T[] data) 
-            where T: 
-                struct, 
-                IVertexType
         {
+            get
+            {
+                return this.vertDecl;
+            }
+        } 
 
-        }
+        public void GetData<T> (T[] data) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void GetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void SetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType { throw new System.NotSupportedException(); }
 
-        #endregion
     }
 
     public class MonoMacApp
@@ -1348,6 +1709,205 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
 
         #endregion
+    }
+
+    internal class OpenGLTexture
+        : Texture2D
+    {
+        public int glTextureId {get; private set;}
+
+        NSImage nsImage;
+
+        int pixelsWide;
+        int pixelsHigh;  
+
+        internal static OpenGLTexture CreateFromFile(string path)
+        {   
+            using(var fStream = new FileStream(path, FileMode.Open))
+            {
+                var nsImage = NSImage.FromStream( fStream );
+    
+                var texture = new OpenGLTexture(nsImage);
+    
+                return texture;
+            }
+        }
+
+        private OpenGLTexture(NSImage nsImage)
+        {
+            this.nsImage = nsImage;
+            IntPtr dataPointer = RequestImagePixelData(nsImage);
+
+            CreateTexture2D((int)nsImage.Size.Width, (int)nsImage.Size.Height, dataPointer);
+        }
+
+
+        //Store pixel data as an ARGB Bitmap
+        IntPtr RequestImagePixelData (NSImage inImage)
+        {
+            var imageSize = inImage.Size;
+            
+            CGBitmapContext ctxt = CreateRgbaBitmapContext (inImage.CGImage);
+            
+            var rect = new RectangleF (0, 0, imageSize.Width, imageSize.Height);
+            
+            ctxt.DrawImage (rect, inImage.CGImage);
+            var data = ctxt.Data;
+            
+            return data;
+        }
+
+        CGBitmapContext CreateRgbaBitmapContext (CGImage inImage)
+        {
+            pixelsWide = inImage.Width;
+            pixelsHigh = inImage.Height;
+
+            using (var colorSpace = CGColorSpace.CreateDeviceRGB())
+            {
+                var bitmapBytesPerRow = pixelsWide * 4;
+                var bitmapByteCount = bitmapBytesPerRow * pixelsHigh;
+                var bitmapData = Marshal.AllocHGlobal (bitmapByteCount);
+
+                if (bitmapData == IntPtr.Zero)
+                {
+                    throw new Exception ("Memory not allocated.");
+                }
+                
+                var context = new CGBitmapContext (
+                    bitmapData, 
+                    pixelsWide, 
+                    pixelsHigh, 
+                    8,
+                    bitmapBytesPerRow, 
+                    colorSpace, 
+                    CGImageAlphaInfo.PremultipliedLast);
+
+                if (context == null)
+                {
+                    throw new Exception ("Context not created");
+                }
+
+                return context;
+            }
+        }
+        
+
+
+        public override int Width
+        {
+            get
+            {
+                return pixelsWide;
+            }
+        }
+        public override int Height
+        {
+            get
+            {
+                return pixelsHigh;
+            }
+        }
+
+        
+        void CreateTexture2D(int width, int height, IntPtr pixelDataRgba32)
+        {
+            int textureId = -1;
+            
+            
+            // this sets the unpack alignment.  which is used when reading pixels
+            // in the fragment shader.  when the textue data is uploaded via glTexImage2d,
+            // the rows of pixels are assumed to be aligned to the value set for GL_UNPACK_ALIGNMENT.
+            // By default, the value is 4, meaning that rows of pixels are assumed to begin
+            // on 4-byte boundaries.  this is a global STATE.
+            global::MonoMac.OpenGL.GL.PixelStore(global::MonoMac.OpenGL.PixelStoreParameter.UnpackAlignment, 4);
+            OpenGLHelper.CheckError();
+
+            // the first sept in the application of texture is to create the
+            // texture object.  this is a container object that holds the 
+            // texture data.  this function returns a handle to a texture
+            // object.
+            global::MonoMac.OpenGL.GL.GenTextures(1, out textureId);
+            OpenGLHelper.CheckError();
+
+            this.glTextureId = textureId;
+
+            var textureTarget = global::MonoMac.OpenGL.TextureTarget.Texture2D;            
+            
+            // we need to bind the texture object so that we can opperate on it.
+            global::MonoMac.OpenGL.GL.BindTexture(textureTarget, textureId);
+            OpenGLHelper.CheckError();
+
+            var internalFormat = global::MonoMac.OpenGL.PixelInternalFormat.Rgba;
+            var format = global::MonoMac.OpenGL.PixelFormat.Rgba;
+            
+            var textureDataFormat = global::MonoMac.OpenGL.PixelType.UnsignedByte;
+            
+            // now use the bound texture object to load the image data.
+            global::MonoMac.OpenGL.GL.TexImage2D(
+                
+                // specifies the texture target, either GL_TEXTURE_2D or one of the cubemap face targets.
+                textureTarget,
+                
+                // specifies which mip level to load.  the base level is
+                // specified by 0 following by an increasing level for each
+                // successive mipmap.
+                0,
+                
+                // internal format for the texture storage, can be:
+                // - GL_RGBA
+                // - GL_RGB
+                // - GL_LUMINANCE_ALPHA
+                // - GL_LUMINANCE
+                // - GL_ALPHA
+                internalFormat,
+                
+                // the width of the image in pixels
+                width,
+                
+                // the height of the image in pixels
+                height,
+                
+                // boarder - set to zero, only here for compatibility with OpenGL desktop
+                0,
+                
+                // the format of the incoming texture data, in opengl es this 
+                // has to be the same as the internal format
+                format,
+                
+                // the type of the incoming pixel data, can be:
+                // - unsigned byte
+                // - unsigned short 4444
+                // - unsigned short 5551
+                // - unsigned short 565
+                textureDataFormat, // this refers to each individual channel
+                
+                
+                pixelDataRgba32
+                
+                );
+
+            OpenGLHelper.CheckError();
+
+            // sets the minification and maginfication filtering modes.  required
+            // because we have not loaded a complete mipmap chain for the texture
+            // so we must select a non mipmapped minification filter.
+            global::MonoMac.OpenGL.GL.TexParameter(textureTarget, global::MonoMac.OpenGL.TextureParameterName.TextureMinFilter, (int) global::MonoMac.OpenGL.All.Nearest );
+
+            OpenGLHelper.CheckError();
+
+            global::MonoMac.OpenGL.GL.TexParameter(textureTarget, global::MonoMac.OpenGL.TextureParameterName.TextureMagFilter, (int) global::MonoMac.OpenGL.All.Nearest );
+
+            OpenGLHelper.CheckError();
+        }
+        
+        
+        
+        void DeleteTexture(Texture2D texture)
+        {
+            int textureId = (texture as OpenGLTexture).glTextureId;
+            
+            global::MonoMac.OpenGL.GL.DeleteTextures(1, ref textureId);
+        }
     }
 
 }
