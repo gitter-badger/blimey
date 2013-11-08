@@ -80,5 +80,38 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 <#@ include file="Convert.t4"#>
 <#@ include file="MonoMacGpuUtils.t4"#>
 <#@ include file="StubShader.t4"#>
+<#@ include file="Shader.t4"#>
+<#@ include file="ShaderDefinition.t4"#>
+<#@ include file="ShaderHelper.t4"#>
+<#@ include file="ShaderPass.t4"#>
+<#@ include file="ShaderUtils.t4"#>
 <#@ include file="OpenGLTexture.t4"#>
+
+    #region OpenGL ES Shaders
+
+<#@ include file="OpenGLShader/OpenGLShader.t4"#>
+<#@ include file="OpenGLShader/OpenGLShaderDefinition.t4"#>
+<#@ include file="OpenGLShader/OpenGLShaderInput.t4"#>
+<#@ include file="OpenGLShader/OpenGLShaderSampler.t4"#>
+<#@ include file="OpenGLShader/OpenGLShaderVariable.t4"#>
+
+    #endregion
+
+    #region Shader Definitions
+
+<#@ include file="ShaderDefinition/ShaderInputDefinition.t4"#>
+<#@ include file="ShaderDefinition/ShaderSamplerDefinition.t4"#>
+<#@ include file="ShaderDefinition/ShaderVariableDefinition.t4"#>
+<#@ include file="ShaderDefinition/ShaderVariantDefinition.t4"#>
+<#@ include file="ShaderDefinition/ShaderVariantPassDefinition.t4"#>
+
+    #endregion
+
+    #region Shader Definitions
+
+<#@ include file="CorShaders/PixelLit.t4"#>
+<#@ include file="CorShaders/VertexLit.t4"#>
+<#@ include file="CorShaders/Unlit.t4"#>
+
+    #endregion
 }

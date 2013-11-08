@@ -615,17 +615,18 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     public class ResourceManager
         : IResourceManager
     {
-        readonly IShader tempStubShader = new StubShader();
-        
+        Dictionary<ShaderType, IShader> shaderCache;
+
         public ResourceManager()
         {
-            Console.WriteLine(
-                "ResourceManager -> ()");
+            shaderCache = new Dictionary<ShaderType, IShader>();
+
+            shaderCache[ShaderType.Unlit] = CorShaders.CreateUnlit();
+            shaderCache[ShaderType.VertexLit] = CorShaders.CreatePhongVertexLit();
+            shaderCache[ShaderType.PixelLit] = CorShaders.CreatePhongPixelLit();
         }
 
-        #region IResourceManager
-
-        public T Load<T>(String path) where T : IResource
+        public T Load<T>(string path) where T : IResource
         {
             if(!File.Exists(path))
             {
@@ -644,10 +645,13 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public IShader LoadShader(ShaderType shaderType)
         {
-            return tempStubShader;
-        }
+            if( !shaderCache.ContainsKey(shaderType) )
+            {
+                throw new NotImplementedException();
+            }
 
-        #endregion
+            return shaderCache[shaderType];
+        }
     }
 
     public class PanelSpecification
@@ -1723,6 +1727,1060 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         #endregion
     }
 
+    /// <summary>
+    /// The Cor.Xios implementation of Cor's IShader interface.
+    /// </summary>
+    public class Shader
+        : IShader
+        , IDisposable
+    {
+        //static Dictionary<string, parp>
+
+
+        #region IShader
+
+        /// <summary>
+        /// Resets all the shader's variables to their default values.
+        /// </summary>
+        public void ResetVariables()
+        {
+            // the shader definition defines the default values for the variables
+            foreach (var variableDefinition in cachedShaderDefinition.VariableDefinitions)
+            {
+                string varName = variableDefinition.Name;
+                object value = variableDefinition.DefaultValue;
+                
+                if( variableDefinition.Type == typeof(Matrix44) )
+                {
+                    this.SetVariable(varName, (Matrix44) value);
+                }
+                else if( variableDefinition.Type == typeof(Int32) )
+                {
+                    this.SetVariable(varName, (Int32) value);
+                }
+                else if( variableDefinition.Type == typeof(Single) )
+                {
+                    this.SetVariable(varName, (Single) value);
+                }
+                else if( variableDefinition.Type == typeof(Vector2) )
+                {
+                    this.SetVariable(varName, (Vector2) value);
+                }
+                else if( variableDefinition.Type == typeof(Vector3) )
+                {
+                    this.SetVariable(varName, (Vector3) value);
+                } 
+                else if( variableDefinition.Type == typeof(Vector4) )
+                {
+                    this.SetVariable(varName, (Vector4) value);
+                } 
+                else if( variableDefinition.Type == typeof(Rgba32) )
+                {
+                    this.SetVariable(varName, (Rgba32) value);
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+                
+            }
+        }
+
+        /// <summary>
+        /// Resets all the shader's texture samplers point at texture slot 0.
+        /// </summary>
+        public void ResetSamplerTargets()
+        {
+            foreach (var samplerDefinition in cachedShaderDefinition.SamplerDefinitions)
+            {
+                this.SetSamplerTarget(samplerDefinition.Name, 0);
+            }
+        }
+
+        /// <summary>
+        /// Sets the value of a specified shader variable.
+        /// </summary>
+        public void SetVariable<T>(string name, T value)
+        {
+            passes.ForEach( x => x.SetVariable(name, value));
+        }
+
+        /// <summary>
+        /// Sets the texture slot that a texture sampler should sample from.
+        /// </summary>
+        public void SetSamplerTarget(string name, Int32 textureSlot)
+        {
+            foreach (var pass in passes)
+            {
+                pass.SetSamplerTarget(name, textureSlot);
+            }
+        }
+
+        
+        /// <summary>
+        /// Provides access to the individual passes in this shader.
+        /// the calling code can itterate though these and apply them 
+        ///to the graphics context before it makes a draw call.
+        /// </summary>
+        public IShaderPass[] Passes
+        {
+            get
+            {
+                return passes.ToArray();
+            }
+        }
+        
+        /// <summary>
+        /// Defines which vertex elements are required by this shader.
+        /// </summary>
+        public VertexElementUsage[] RequiredVertexElements
+        {
+            get
+            {
+                // todo: an array of vert elem usage doesn't uniquely identify anything...
+                return requiredVertexElements.ToArray();
+            }
+        }
+        
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        public VertexElementUsage[] OptionalVertexElements
+        {
+            get
+            {
+                // todo: an array of vert elem usage doesn't uniquely identify anything...
+                return optionalVertexElements.ToArray();
+            }
+        }
+
+        public String Name { get; private set; }
+
+        #endregion
+
+        #region IDisposable
+
+        /// <summary>
+        /// Releases all resource used by the <see cref="Sungiant.Cor.MonoTouchRuntime.Shader"/> object.
+        /// </summary>
+        public void Dispose()
+        {
+            foreach (var pass in passes)
+            {
+                pass.Dispose();
+            }
+        }
+
+        #endregion
+
+
+        List<VertexElementUsage> requiredVertexElements = new List<VertexElementUsage>();
+        List<VertexElementUsage> optionalVertexElements = new List<VertexElementUsage>();
+
+
+        /// <summary>
+        /// The <see cref="ShaderPass"/> objects that need to each, in turn,  be individually activated and used to 
+        /// draw with to apply the effect of this containing <see cref="Shader"/> object.
+        /// </summary>
+        List<ShaderPass> passes = new List<ShaderPass>();
+
+        /// <summary>
+        /// Cached reference to the <see cref="ShaderDefinition"/> object used 
+        /// to create this <see cref="Shader"/> object.
+        /// </summary>
+        readonly ShaderDefinition cachedShaderDefinition;
+
+        public ShaderDefinition ShaderDefinition { get { return cachedShaderDefinition; } }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Shader"/> class from a
+        /// <see cref="ShaderDefinition"/> object.
+        /// </summary>
+        internal Shader (ShaderDefinition shaderDefinition)
+        {
+            Console.WriteLine("\n");
+            Console.WriteLine("\n");
+            Console.WriteLine("=====================================================================");
+            Console.WriteLine("Creating Shader: " + shaderDefinition.Name);
+            this.cachedShaderDefinition = shaderDefinition;
+            this.Name = shaderDefinition.Name;
+            CalculateRequiredInputs(shaderDefinition);
+            InitilisePasses (shaderDefinition);
+
+            this.ResetVariables();
+        }
+
+        /// <summary>
+        /// Works out and caches a copy of which shader inputs are required/optional, needed as the 
+        /// <see cref="IShader"/> interface requires this information.
+        /// </summary>
+        void CalculateRequiredInputs(ShaderDefinition shaderDefinition)
+        {
+            foreach (var input in shaderDefinition.InputDefinitions)
+            {
+                if( input.Optional )
+                {
+                    optionalVertexElements.Add(input.Usage);
+                }
+                else
+                {
+                    requiredVertexElements.Add(input.Usage);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Triggers the creation of all of this <see cref="Shader"/> object's passes. 
+        /// </summary>
+        void InitilisePasses(ShaderDefinition shaderDefinition)
+        {
+            // This function builds up an in memory object for each shader pass in this shader.
+            // The different shader varients are defined outside of the scope of a conceptual shader pass,
+            // therefore this function must traverse the shader definition and to create shader pass objects
+            // that only contain the varient data for that specific pass.
+
+
+            // For each named shader pass.
+            foreach (var definedPassName in shaderDefinition.PassNames)
+            {
+                
+                Console.WriteLine(" Preparing to initilising Shader Pass: " + definedPassName);
+                // 
+
+                // itterate over the defined pass names, ex: cel, outline...
+
+
+
+                //shaderDefinition.VariantDefinitions
+                //  .Select(x => x.PassDefinitions.Select(y => y.PassName == definedPassName))
+                //  .ToList();
+
+                // Find all of the variants that are defined in this shader object's definition
+                // that support the current shaderpass.
+                var passVariants___Name_AND_passVariantDefinition = new List<Tuple<string, ShaderVarientPassDefinition>>();
+
+                // itterate over every shader variant in the definition
+                foreach (var shaderVariantDefinition in shaderDefinition.VariantDefinitions)
+                {
+                    // each shader varient has a name
+                    string shaderVariantName = shaderVariantDefinition.VariantName;
+
+                    // find the pass in the shader variant definition that corresponds to the pass we are
+                    // currently trying to initilise.
+                    var variantPassDefinition = 
+                        shaderVariantDefinition.VariantPassDefinitions
+                            .Find(x => x.PassName == definedPassName);
+
+
+                    // now we have a Variant name, say: 
+                    //   - Unlit_PositionTextureColour
+                    // and a pass definition, say : 
+                    //   - Main
+                    //   - Shaders/Unlit_PositionTextureColour.vsh
+                    //   - Shaders/Unlit_PositionTextureColour.fsh
+                    //
+
+                    passVariants___Name_AND_passVariantDefinition.Add(
+                        new Tuple<string, ShaderVarientPassDefinition>(shaderVariantName, variantPassDefinition));
+
+                }
+
+                // Create one shader pass for each defined pass name.
+                var shaderPass = new ShaderPass( definedPassName, passVariants___Name_AND_passVariantDefinition );
+
+                shaderPass.BindAttributes (shaderDefinition.InputDefinitions.Select(x => x.Name).ToList());
+                shaderPass.Link ();
+                shaderPass.ValidateInputs(shaderDefinition.InputDefinitions);
+                shaderPass.ValidateVariables(shaderDefinition.VariableDefinitions);
+                shaderPass.ValidateSamplers(shaderDefinition.SamplerDefinitions);
+
+                passes.Add(shaderPass);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Defines how to create Cor.Xios's implementation
+    /// of IShader.
+    /// </summary>
+    public class ShaderDefinition
+    {
+        /// <summary>
+        /// Defines a global name for this shader
+        /// </summary>
+        public string Name { get; set; }
+        
+        /// Defines which passes this shader is made from 
+        /// (ex: a toon shader is made for a cel-shading pass 
+        /// followed by an edge detection pass)
+        /// </summary>
+        public List<String> PassNames { get; set; }
+        
+        /// <summary>
+        /// Lists all of the supported inputs into this shader and
+        /// defines whether or not they are optional to an implementation.
+        /// </summary>
+        public List<ShaderInputDefinition> InputDefinitions { get; set; }
+        
+        /// <summary>
+        /// Defines all of the variables supported by this shader.  Every
+        /// variant must support all of the variables.
+        /// </summary>
+        public List<ShaderVariableDefinition> VariableDefinitions { get; set; }
+
+        
+        public List<ShaderSamplerDefinition> SamplerDefinitions { get; set; }
+        
+        /// <summary>
+        /// Defines the variants.  Done for optimisation, instead of having one
+        /// massive shader that supports all the the Inputs and attempts to
+        /// process them accordingly, we load slight variants of effectively 
+        /// the same shader, then we select the most optimal variant to run
+        /// based upon the VertexDeclaration the calling code is about to draw.
+        /// </summary>
+        public List<ShaderVariantDefinition> VariantDefinitions { get; set; }
+    }
+
+    public static class ShaderHelper
+    {
+        /// <summary>
+        /// This function takes a VertexDeclaration and a collection of OpenGL shader passes and works out which
+        /// pass is the best fit for the VertexDeclaration.
+        /// </summary>
+        public static OpenGLShader WorkOutBestVariantFor(VertexDeclaration vertexDeclaration, IList<OpenGLShader> variants)
+        {
+            Console.WriteLine("\n");
+            Console.WriteLine("\n");
+            Console.WriteLine("=====================================================================");
+            Console.WriteLine("Working out the best shader variant for: " + vertexDeclaration);
+            Console.WriteLine("Possible variants:");
+
+            int best = 0;
+
+            int bestNumMatchedVertElems = 0;
+            int bestNumUnmatchedVertElems = 0;
+            int bestNumMissingNonOptionalInputs = 0;
+
+            // foreach variant
+            for (int i = 0; i < variants.Count; ++i)
+            {
+                // work out how many vert inputs match
+
+                
+                var matchResult = CompareShaderInputs(vertexDeclaration, variants[i]);
+
+                int numMatchedVertElems = matchResult.NumMatchedInputs;
+                int numUnmatchedVertElems = matchResult.NumUnmatchedInputs;
+                int numMissingNonOptionalInputs = matchResult.NumUnmatchedRequiredInputs;
+
+                Console.WriteLine(" - " + variants[i]);
+
+                if( i == 0 )
+                {
+                    bestNumMatchedVertElems = numMatchedVertElems;
+                    bestNumUnmatchedVertElems = numUnmatchedVertElems;
+                    bestNumMissingNonOptionalInputs = numMissingNonOptionalInputs;
+                }
+                else
+                {
+                    if( 
+                        (
+                            numMatchedVertElems > bestNumMatchedVertElems && 
+                            bestNumMissingNonOptionalInputs == 0
+                        )
+                        || 
+                        (
+                            numMatchedVertElems == bestNumMatchedVertElems && 
+                            bestNumMissingNonOptionalInputs == 0 &&
+                            numUnmatchedVertElems < bestNumUnmatchedVertElems 
+                        )
+                      )
+                    {
+                        bestNumMatchedVertElems = numMatchedVertElems;
+                        bestNumUnmatchedVertElems = numUnmatchedVertElems;
+                        bestNumMissingNonOptionalInputs = numMissingNonOptionalInputs;
+                        best = i;
+                    }
+                    
+                }
+                
+            }
+
+            //best = 2;
+            Console.WriteLine("Chosen variant: " + variants[best].VariantName);
+
+            return variants[best];
+        }
+
+        struct CompareShaderInputsResult
+        {
+            // the nume
+            public int NumMatchedInputs;
+            public int NumUnmatchedInputs;
+            public int NumUnmatchedRequiredInputs;
+        }
+
+        static CompareShaderInputsResult CompareShaderInputs (
+            VertexDeclaration vertexDeclaration, 
+            OpenGLShader oglesShader
+            )
+        {
+            var result = new CompareShaderInputsResult();
+            
+            var oglesShaderInputsUsed = new List<OpenGLShaderInput>();
+            
+            var vertElems = vertexDeclaration.GetVertexElements();
+
+            // itterate over each input defined in the vert decl
+            foreach(var vertElem in vertElems)
+            {
+                var usage = vertElem.VertexElementUsage;
+
+                var format = vertElem.VertexElementFormat;
+                /*
+
+                foreach( var input in oglesShader.Inputs )
+                {
+                    // the vertDecl knows what each input's intended use is,
+                    // so lets match up 
+                    if( input.Usage == usage )
+                    {
+                        // intended use seems good
+                    }
+                }
+
+                // find all inputs that could match
+                var matchingInputs = oglesShader.Inputs.FindAll(
+                    x => 
+
+                        x.Usage == usage &&
+                        (x.Type == VertexElementFormatHelper.FromEnum(format) || 
+                        ( (x.Type.GetType() == typeof(Vector4)) && (format == VertexElementFormat.Colour) ))
+
+                 );*/
+
+                var matchingInputs = oglesShader.Inputs.FindAll(x => x.Usage == usage);
+                
+                // now make sure it's not been used already
+                
+                while(matchingInputs.Count > 0)
+                {
+                    var potentialInput = matchingInputs[0];
+                    
+                    if( oglesShaderInputsUsed.Find(x => x == potentialInput) != null)
+                    {
+                        matchingInputs.RemoveAt(0);
+                    }
+                    else
+                    {
+                        oglesShaderInputsUsed.Add(potentialInput);
+                    }
+                }
+            }
+            
+            result.NumMatchedInputs = oglesShaderInputsUsed.Count;
+            
+            result.NumUnmatchedInputs = vertElems.Length - result.NumMatchedInputs;
+            
+            result.NumUnmatchedRequiredInputs = 0;
+            
+            foreach (var input in oglesShader.Inputs)
+            {
+                if(!oglesShaderInputsUsed.Contains(input) )
+                {
+                    if( !input.Optional )
+                    {
+                        result.NumUnmatchedRequiredInputs++;
+                    }
+                }
+                
+            }
+
+            Console.WriteLine(string.Format("[{0}, {1}, {2}]", result.NumMatchedInputs, result.NumUnmatchedInputs, result.NumUnmatchedRequiredInputs));
+            return result;
+        }
+
+    }
+
+    /// <summary>
+    /// Represents in individual pass of a Cor.Xios high level Shader object.
+    /// </summary>
+    public class ShaderPass
+        : IShaderPass
+        , IDisposable
+    {
+        /// <summary>
+        /// A collection of OpenGL shaders, all with slight variations in their
+        /// input parameters, that are suitable for rendering this ShaderPass object.
+        /// </summary>
+        List<OpenGLShader> Variants { get; set; }
+        
+        /// <summary>
+        /// A nice name for the shader pass, for example: Main or Cel -> Outline.
+        /// </summary>
+        public string Name { get; private set; }
+        
+        /// <summary>
+        /// Whenever this ShaderPass object gets asked to activate itself whilst a VertexDeclaration it has not seen
+        /// before is active, the best matching shader pass variant is found and then stored in this map to fast
+        /// access.
+        /// </summary>
+        Dictionary<VertexDeclaration, OpenGLShader> BestVariantMap { get; set; }
+
+        Dictionary<String, Object>  currentVariables = new Dictionary<String, Object>();
+        Dictionary<String, Int32>   currentSamplerSlots = new Dictionary<String, Int32>();
+
+        Dictionary<String, bool> logHistory = new Dictionary<String, bool>();
+
+        internal void SetVariable<T>(string name, T value)
+        {
+            currentVariables[name] = value; 
+        }
+
+        internal void SetSamplerTarget(string name, Int32 textureSlot)
+        {
+            currentSamplerSlots[name] = textureSlot;
+        }
+        
+        public ShaderPass(string passName, List<Tuple<string, ShaderVarientPassDefinition>> passVariants___Name_AND_passVariantDefinition)
+        {
+            Console.WriteLine("Creating ShaderPass: " + passName);
+            this.Name = passName;
+            this.Variants = 
+                passVariants___Name_AND_passVariantDefinition
+                    .Select (x => new OpenGLShader (x.Item1, passName, x.Item2.PassDefinition))
+                    .ToList();
+
+            this.BestVariantMap = new Dictionary<VertexDeclaration, OpenGLShader>();
+        }
+
+        
+        internal void BindAttributes(IList<String> inputNames)
+        {
+            foreach (var variant in this.Variants)
+            {
+                variant.BindAttributes(inputNames);
+            }
+        }
+
+        internal void Link()
+        {
+            foreach (var variant in this.Variants)
+            {
+                variant.Link();
+            }
+        }
+        
+        internal void ValidateInputs(List<ShaderInputDefinition> definitions)
+        {
+            foreach(var variant in this.Variants)
+            {
+                variant.ValidateInputs(definitions);
+            }
+        }
+        
+        internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
+        {
+            foreach(var variant in this.Variants)
+            {
+                variant.ValidateVariables(definitions);
+            }
+        }
+
+        internal void ValidateSamplers(List<ShaderSamplerDefinition> definitions)
+        {
+            foreach(var variant in this.Variants)
+            {
+                variant.ValidateSamplers(definitions);
+            }
+        }
+        
+        
+        public void Activate(VertexDeclaration vertexDeclaration)
+        {
+            if (!BestVariantMap.ContainsKey (vertexDeclaration))
+            {
+                BestVariantMap[vertexDeclaration] = ShaderHelper.WorkOutBestVariantFor(vertexDeclaration, Variants);
+            }
+            var bestVariant = BestVariantMap[vertexDeclaration];
+            // select the correct shader pass variant and then activate it
+            bestVariant.Activate ();
+            
+            foreach (var key1 in currentVariables.Keys)
+            {
+                var variable = bestVariant
+                    .Variables
+                    .Find(x => x.NiceName == key1 || x.Name == key1);
+                
+                if( variable == null )
+                {
+                    string warning = "WARNING: missing variable: " + key1;
+
+                    if( !logHistory.ContainsKey(warning) )
+                    {
+                        Console.WriteLine(warning);
+
+                        logHistory.Add(warning, true);
+                    }
+                }
+                else
+                {
+                    var val = currentVariables[key1];
+                    
+                    variable.Set(val);
+                }
+            }
+
+            foreach (var key2 in currentSamplerSlots.Keys)
+            {
+                var sampler = bestVariant
+                    .Samplers
+                    .Find(x => x.NiceName == key2 || x.Name == key2);
+
+                if( sampler == null )
+                {
+                    //Console.WriteLine("missing sampler: " + key2);
+                }
+                else
+                {
+                    var slot = currentSamplerSlots[key2];
+
+                    sampler.SetSlot(slot);
+                }
+            }
+            
+        }
+        
+        public void Dispose()
+        {
+            foreach (var oglesShader in Variants)
+            {
+                oglesShader.Dispose ();
+            }
+        }
+    }
+    
+    //
+    // Shader Utils
+    // ------------
+    // Static class to help with open tk's horrible shader system.
+    //
+    public static class ShaderUtils
+    {
+        public class ShaderUniform
+        {
+            public Int32 Index { get; set; }
+            public String Name { get; set; }
+            public global::MonoMac.OpenGL.ActiveUniformType Type { get; set; }
+        }
+
+        public class ShaderAttribute
+        {
+            public Int32 Index { get; set; }
+            public String Name { get; set; }
+            public global::MonoMac.OpenGL.ActiveAttribType Type { get; set; }
+        }
+        
+        public static Int32 CreateShaderProgram()
+        {
+            // Create shader program.
+            Int32 programHandle = global::MonoMac.OpenGL.GL.CreateProgram ();
+
+            if( programHandle == 0 )
+                throw new Exception("Failed to create shader program");
+
+            OpenGLHelper.CheckError();
+
+            return programHandle;
+        }
+
+        public static Int32 CreateVertexShader(string path)
+        {
+            Int32 vertShaderHandle;
+            string ext = Path.GetExtension(path);
+
+            if( ext != ".vsh" )
+            {
+                throw new Exception("Resource [" + path + "] should end with .vsh");
+            }
+
+            string filename = path.Substring(0, path.Length - ext.Length);
+
+            var vertShaderPathname =
+                global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (
+                    filename,
+                    "vsh" );
+
+            if( vertShaderPathname == null )
+            {
+                throw new Exception("Resource [" + path + "] not found");
+            }
+
+
+            //Console.WriteLine ("[Cor.Resources] " + vertShaderPathname);
+
+
+            ShaderUtils.CompileShader (
+                global::MonoMac.OpenGL.ShaderType.VertexShader, 
+                vertShaderPathname, 
+                out vertShaderHandle );
+
+            if( vertShaderHandle == 0 )
+                throw new Exception("Failed to compile vertex shader program");
+
+            return vertShaderHandle;
+        }
+
+        public static Int32 CreateFragmentShader(string path)
+        {
+            Int32 fragShaderHandle;
+
+            string ext = Path.GetExtension(path);
+            
+            if( ext != ".fsh" )
+            {
+                throw new Exception("Resource [" + path + "] should end with .fsh");
+            }
+            
+            string filename = path.Substring(0, path.Length - ext.Length);
+            
+            var fragShaderPathname =
+                global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (
+                    filename,
+                    "fsh" );
+            
+            if( fragShaderPathname == null )
+            {
+                throw new Exception("Resource [" + path + "] not found");
+            }
+
+            //Console.WriteLine ("[Cor.Resources] " + fragShaderPathname);
+
+
+            ShaderUtils.CompileShader (
+                global::MonoMac.OpenGL.ShaderType.FragmentShader,
+                fragShaderPathname,
+                out fragShaderHandle );
+
+            if( fragShaderHandle == 0 )
+                throw new Exception("Failed to compile fragment shader program");
+
+
+            return fragShaderHandle;
+        }
+
+        public static void AttachShader(
+            Int32 programHandle,
+            Int32 shaderHandle)
+        {
+            if (shaderHandle != 0)
+            {
+                // Attach vertex shader to program.
+                global::MonoMac.OpenGL.GL.AttachShader (programHandle, shaderHandle);
+                OpenGLHelper.CheckError();
+            }
+        }
+
+        public static void DetachShader(
+            Int32 programHandle,
+            Int32 shaderHandle )
+        {
+            if (shaderHandle != 0)
+            {
+                global::MonoMac.OpenGL.GL.DetachShader (programHandle, shaderHandle);
+                OpenGLHelper.CheckError();
+            }
+        }
+
+        public static void DeleteShader(
+            Int32 programHandle,
+            Int32 shaderHandle )
+        {
+            if (shaderHandle != 0)
+            {
+                global::MonoMac.OpenGL.GL.DeleteShader (shaderHandle);
+                shaderHandle = 0;
+                OpenGLHelper.CheckError();
+            }
+        }
+        
+        public static void DestroyShaderProgram (Int32 programHandle)
+        {
+            if (programHandle != 0)
+            {
+                global::MonoMac.OpenGL.GL.DeleteProgram (1, new int[]{ programHandle } );
+                programHandle = 0;
+                OpenGLHelper.CheckError();
+            }
+        }
+
+        public static void CompileShader (
+            global::MonoMac.OpenGL.ShaderType type,
+            String file,
+            out Int32 shaderHandle )
+        {
+            String src = string.Empty;
+
+            try
+            {
+                // Get the data from the text file
+                src = System.IO.File.ReadAllText (file);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                shaderHandle = 0;
+                return;
+            }
+
+            // Create an empty vertex shader object
+            shaderHandle = global::MonoMac.OpenGL.GL.CreateShader (type);
+
+            OpenGLHelper.CheckError();
+
+            // Replace the source code in the vertex shader object
+            global::MonoMac.OpenGL.GL.ShaderSource (
+                shaderHandle,
+                src);
+                //1,
+                //new String[] { src },
+                //(Int32[]) null );
+
+            OpenGLHelper.CheckError();
+
+            global::MonoMac.OpenGL.GL.CompileShader (shaderHandle);
+
+            OpenGLHelper.CheckError();
+            
+#if DEBUG
+            Int32 logLength = 0;
+            global::MonoMac.OpenGL.GL.GetShader (
+                shaderHandle,
+                global::MonoMac.OpenGL.ShaderParameter.InfoLogLength,
+                out logLength);
+
+            OpenGLHelper.CheckError();
+            var infoLog = new System.Text.StringBuilder(logLength);
+
+            if (logLength > 0)
+            {
+                int temp = 0;
+                global::MonoMac.OpenGL.GL.GetShaderInfoLog (
+                    shaderHandle,
+                    logLength,
+                    out temp,
+                    infoLog );
+
+                string log = infoLog.ToString();
+
+                Console.WriteLine(file);
+                Console.WriteLine (log);
+                Console.WriteLine(type);
+            }
+#endif
+            Int32 status = 0;
+
+            global::MonoMac.OpenGL.GL.GetShader (
+                shaderHandle,
+                global::MonoMac.OpenGL.ShaderParameter.CompileStatus,
+                out status );
+
+            OpenGLHelper.CheckError();
+
+            if (status == 0)
+            {
+                global::MonoMac.OpenGL.GL.DeleteShader (shaderHandle);
+                throw new Exception ("Failed to compile " + type.ToString());
+            }
+        }
+        
+        public static List<ShaderUniform> GetUniforms (Int32 prog)
+        {
+            
+            int numActiveUniforms = 0;
+            
+            var result = new List<ShaderUniform>();
+
+            global::MonoMac.OpenGL.GL.GetProgram(prog, global::MonoMac.OpenGL.ProgramParameter.ActiveUniforms, out numActiveUniforms);
+            OpenGLHelper.CheckError();
+
+            for(int i = 0; i < numActiveUniforms; ++i)
+            {
+                var sb = new System.Text.StringBuilder ();
+                
+                int buffSize = 0;
+                int length = 0;
+                int size = 0;
+                global::MonoMac.OpenGL.ActiveUniformType type;
+
+                global::MonoMac.OpenGL.GL.GetActiveUniform(
+                    prog,
+                    i,
+                    64,
+                    out length,
+                    out size,
+                    out type,
+                    sb);
+                OpenGLHelper.CheckError();
+                
+                result.Add(
+                    new ShaderUniform()
+                    {
+                    Index = i,
+                    Name = sb.ToString(),
+                    Type = type
+                    }
+                );
+            }
+            
+            return result;
+        }
+
+        public static List<ShaderAttribute> GetAttributes (Int32 prog)
+        {
+            int numActiveAttributes = 0;
+            
+            var result = new List<ShaderAttribute>();
+            
+            // gets the number of active vertex attributes
+            global::MonoMac.OpenGL.GL.GetProgram(prog, global::MonoMac.OpenGL.ProgramParameter.ActiveAttributes, out numActiveAttributes);
+            OpenGLHelper.CheckError();
+
+            for(int i = 0; i < numActiveAttributes; ++i)
+            {
+                var sb = new System.Text.StringBuilder ();
+
+                int buffSize = 0;
+                int length = 0;
+                int size = 0;
+                global::MonoMac.OpenGL.ActiveAttribType type;
+                global::MonoMac.OpenGL.GL.GetActiveAttrib(
+                    prog,
+                    i,
+                    64,
+                    out length,
+                    out size,
+                    out type,
+                    sb);
+                OpenGLHelper.CheckError();
+                    
+                result.Add(
+                    new ShaderAttribute()
+                    {
+                        Index = i,
+                        Name = sb.ToString(),
+                        Type = type
+                    }
+                );
+            }
+            
+            return result;
+        }
+        
+        
+        public static bool LinkProgram (Int32 prog)
+        {
+            bool retVal = true;
+
+            global::MonoMac.OpenGL.GL.LinkProgram (prog);
+
+            OpenGLHelper.CheckError();
+            
+#if DEBUG
+            Int32 logLength = 0;
+
+            global::MonoMac.OpenGL.GL.GetProgram (
+                prog,
+                global::MonoMac.OpenGL.ProgramParameter.InfoLogLength,
+                out logLength );
+
+            OpenGLHelper.CheckError();
+
+            if (logLength > 0)
+            {
+                retVal = false;
+
+                /*
+                var infoLog = new System.Text.StringBuilder ();
+
+                global::MonoMac.OpenGL.GL.GetProgramInfoLog (
+                    prog,
+                    logLength,
+                    out logLength,
+                    infoLog );
+                */
+                var infoLog = string.Empty;
+                global::MonoMac.OpenGL.GL.GetProgramInfoLog(prog, out infoLog);
+
+
+                OpenGLHelper.CheckError();
+
+                Console.WriteLine (string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
+            }
+#endif
+            Int32 status = 0;
+
+            global::MonoMac.OpenGL.GL.GetProgram (
+                prog,
+                global::MonoMac.OpenGL.ProgramParameter.LinkStatus,
+                out status );
+
+            OpenGLHelper.CheckError();
+
+            if (status == 0)
+            {
+                throw new Exception(String.Format("Failed to link program: {0:x}", prog));
+            }
+
+            return retVal;
+
+        }
+
+        public static void ValidateProgram (Int32 programHandle)
+        {
+            global::MonoMac.OpenGL.GL.ValidateProgram (programHandle);
+
+            OpenGLHelper.CheckError();
+            
+            Int32 logLength = 0;
+
+            global::MonoMac.OpenGL.GL.GetProgram (
+                programHandle,
+                global::MonoMac.OpenGL.ProgramParameter.InfoLogLength,
+                out logLength );
+
+            OpenGLHelper.CheckError();
+
+            if (logLength > 0)
+            {
+                var infoLog = new System.Text.StringBuilder ();
+
+                global::MonoMac.OpenGL.GL.GetProgramInfoLog (
+                    programHandle,
+                    logLength,
+                    out logLength, infoLog );
+
+                OpenGLHelper.CheckError();
+
+                Console.WriteLine (string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
+            }
+            
+            Int32 status = 0;
+
+            global::MonoMac.OpenGL.GL.GetProgram (
+                programHandle, global::MonoMac.OpenGL.ProgramParameter.LinkStatus,
+                out status );
+
+            OpenGLHelper.CheckError();
+
+            if (status == 0)
+            {
+                throw new Exception (String.Format("Failed to validate program {0:x}", programHandle));
+            }
+        }
+    }
+
     internal class OpenGLTexture
         : Texture2D
     {
@@ -1922,4 +2980,1249 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
 
+
+    #region OpenGL ES Shaders
+
+    public class OpenGLShader
+        : IDisposable
+    {
+        public List<OpenGLShaderInput> Inputs { get; private set; }
+        public List<OpenGLShaderVariable> Variables { get; private set; }
+        public List<OpenGLShaderSampler> Samplers { get; private set; }
+
+        internal string VariantName { get { return variantName; }}
+        Int32 programHandle;
+        Int32 fragShaderHandle;
+        Int32 vertShaderHandle;
+
+        // for debugging
+        string variantName;
+        string passName;
+
+        string pixelShaderPath;
+        string vertexShaderPath;
+
+        public override string ToString ()
+        {
+            //string a = Inputs.Select(x => x.Name).Join(", ");
+            //string b = Variables.Select(x => x.Name).Join(", ");
+
+            string a = string.Empty;
+
+            for(int i = 0; i < Inputs.Count; ++i)
+            { 
+                a += Inputs[i].Name; if( i + 1 < Inputs.Count ) { a += ", "; } 
+            }
+
+            string b = string.Empty;
+            for(int i = 0; i < Variables.Count; ++i)
+            { 
+                b += Variables[i].Name; if( i + 1 < Variables.Count ) { b += ", "; } 
+            }
+
+            return string.Format (
+                "[OpenGLShader: Variant {0}, Pass {1}: Inputs: [{2}], Variables: [{3}]]", 
+                variantName, 
+                passName, 
+                a, 
+                b);
+        }
+
+        internal void ValidateInputs(List<ShaderInputDefinition> definitions)
+        {
+            Console.WriteLine(string.Format ("Pass: {1} => ValidateInputs({0})", variantName, passName ));
+
+            // Make sure that this shader implements all of the non-optional defined inputs.
+            var nonOptionalDefinitions = definitions.Where(y => !y.Optional).ToList();
+
+            foreach(var definition in nonOptionalDefinitions)
+            {
+                var find = Inputs.Find(x => x.Name == definition.Name/* && x.Type == definition.Type */);
+
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+            }
+
+            // Make sure that every implemented input is defined.
+            foreach(var input in Inputs)
+            {
+                var find = definitions.Find(x => x.Name == input.Name 
+                    /*&& (x.Type == input.Type || (x.Type == typeof(Rgba32) && input.Type == typeof(Vector4)))*/
+                    );
+
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+                else
+                {
+                    input.RegisterExtraInfo(find);
+                }
+            }
+        }
+
+        internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
+        {
+            Console.WriteLine(string.Format ("Pass: {1} => ValidateVariables({0})", variantName, passName ));
+
+
+            // Make sure that every implemented input is defined.
+            foreach(var variable in Variables)
+            {
+                var find = definitions.Find(
+                    x => 
+                    x.Name == variable.Name //&& 
+                    //(x.Type == variable.Type || (x.Type == typeof(Rgba32) && variable.Type == typeof(Vector4)))
+                    );
+                
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+                else
+                {
+                    variable.RegisterExtraInfo(find);
+                }
+            }
+        }
+
+        internal void ValidateSamplers(List<ShaderSamplerDefinition> definitions)
+        {
+            Console.WriteLine(string.Format ("Pass: {1} => ValidateSamplers({0})", variantName, passName ));
+
+            var nonOptionalSamplers = definitions.Where(y => !y.Optional).ToList();
+
+            foreach(var definition in nonOptionalSamplers)
+            {
+                var find = this.Samplers.Find(x => x.Name == definition.Name);
+
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+            }
+
+            // Make sure that every implemented input is defined.
+            foreach(var sampler in this.Samplers)
+            {
+                var find = definitions.Find(x => x.Name == sampler.Name);
+
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+                else
+                {
+                    sampler.RegisterExtraInfo(find);
+                }
+            }
+        }
+
+        /*
+        static void CheckVariableCompatibility(List<OpenGLShaderVariable> definedVariables )
+        {
+            throw new NotImplementedException();
+        }
+        
+        static void CheckInputCompatibility(List<OpenGLShaderInput> definedInputs, Dictionary<string, global::MonoMac.OpenGL.ActiveAttribType> actualAttributes )
+        {
+            // make sure that the shader we just loaded will work with this shader definition   
+            if( actualAttributes.Count != definedInputs.Count )
+            {
+                throw new Exception("shader doesn't implement definition");
+            }
+        
+            foreach( var key in actualAttributes.Keys )
+            {
+                var item = definedInputs.Find(x => x.Name == key);
+                
+                if( item == null )
+                {
+                    throw new Exception("shader doesn't implement definition - missing variable");
+                }
+                
+                if( item.Type != EnumConverter.ToType( actualAttributes[key] ) )
+                {
+                    throw new Exception("shader doesn't implement definition - variable is of the wrong type");
+                }
+            }
+        }
+        */
+        internal OpenGLShader(String variantName, String passName, OpenGLShaderDefinition definition)
+        {
+            Console.WriteLine ("  Creating Pass Variant: " + variantName);
+            this.variantName = variantName;
+            this.passName = passName;
+            this.vertexShaderPath = definition.VertexShaderPath;
+            this.pixelShaderPath = definition.PixelShaderPath;
+            
+            //Variables = 
+            programHandle = ShaderUtils.CreateShaderProgram ();
+            vertShaderHandle = ShaderUtils.CreateVertexShader (this.vertexShaderPath);
+            fragShaderHandle = ShaderUtils.CreateFragmentShader (this.pixelShaderPath);
+            
+            ShaderUtils.AttachShader (programHandle, vertShaderHandle);
+            ShaderUtils.AttachShader (programHandle, fragShaderHandle);
+
+        }
+
+        internal void BindAttributes(IList<String> orderedAttributes)
+        {
+            int index = 0;
+
+            foreach(var attName in orderedAttributes)
+            {
+                global::MonoMac.OpenGL.GL.BindAttribLocation(programHandle, index, attName);
+                OpenGLHelper.CheckError();
+                bool success = ShaderUtils.LinkProgram (programHandle);
+                if (success)
+                {
+                    index++;
+                }
+
+            }
+        }
+
+        internal void Link()
+        {
+            // bind atts here
+            //ShaderUtils.LinkProgram (programHandle);
+
+            Console.WriteLine("  Finishing linking");
+
+            Console.WriteLine("  Initilise Attributes");
+            var attributes = ShaderUtils.GetAttributes(programHandle);
+
+            Inputs = attributes
+                .Select(x => new OpenGLShaderInput(programHandle, x))
+                .OrderBy(y => y.AttributeLocation)
+                .ToList();
+            Console.Write("  Inputs : ");
+            foreach (var input in Inputs) {
+                Console.Write (input.Name + ", ");
+            }
+            Console.Write (Environment.NewLine);
+
+            Console.WriteLine("  Initilise Uniforms");
+            var uniforms = ShaderUtils.GetUniforms(programHandle);
+
+
+            Variables = uniforms
+                .Where(y => 
+                       y.Type != global::MonoMac.OpenGL.ActiveUniformType.Sampler2D && 
+                       y.Type != global::MonoMac.OpenGL.ActiveUniformType.SamplerCube)
+                .Select(x => new OpenGLShaderVariable(programHandle, x))
+                .OrderBy(z => z.UniformLocation)
+                .ToList();
+            Console.Write("  Variables : ");
+            foreach (var variable in Variables) {
+                Console.Write (variable.Name + ", ");
+            }
+            Console.Write (Environment.NewLine);
+
+            Console.WriteLine("  Initilise Samplers");
+            Samplers = uniforms
+                .Where(y => 
+                       y.Type == global::MonoMac.OpenGL.ActiveUniformType.Sampler2D || 
+                       y.Type == global::MonoMac.OpenGL.ActiveUniformType.SamplerCube)
+                .Select(x => new OpenGLShaderSampler(programHandle, x))
+                .OrderBy(z => z.UniformLocation)
+                .ToList();
+
+            #if DEBUG
+            ShaderUtils.ValidateProgram (programHandle);
+            #endif
+            
+            ShaderUtils.DetachShader(programHandle, fragShaderHandle);
+            ShaderUtils.DetachShader(programHandle, vertShaderHandle);
+            
+            ShaderUtils.DeleteShader(programHandle, fragShaderHandle);
+            ShaderUtils.DeleteShader(programHandle, vertShaderHandle);
+        }
+        
+        public void Activate ()
+        {
+            global::MonoMac.OpenGL.GL.UseProgram (programHandle);
+            OpenGLHelper.CheckError ();
+        }
+        
+        public void Dispose()
+        {
+            ShaderUtils.DestroyShaderProgram(programHandle);
+            OpenGLHelper.CheckError();
+        }
+    }
+    
+    public class OpenGLShaderDefinition
+    {
+        public string VertexShaderPath { get; set; }
+        public string PixelShaderPath { get; set; }
+    }
+
+    /// <summary>
+    /// Represents an Open GL ES shader input, all the data is read dynamically from
+    /// the shader at runtime, not from the ShaderInputDefinition.  This way we can compare the
+    /// two and check to see that we have what we are expecting.
+    /// </summary>
+    public class OpenGLShaderInput
+    {
+        int ProgramHandle { get; set; }
+        internal int AttributeLocation { get; private set; }
+        
+        public String Name { get; private set; }
+        public Type Type { get; private set; }
+        public VertexElementUsage Usage { get; private set; }
+        public Object DefaultValue { get; private set; }
+        public Boolean Optional { get; private set; }
+        
+        public OpenGLShaderInput(
+            int programHandle, ShaderUtils.ShaderAttribute attribute)
+        {
+            int attLocation = global::MonoMac.OpenGL.GL.GetAttribLocation(programHandle, attribute.Name);
+
+            OpenGLHelper.CheckError();
+
+            Console.WriteLine(string.Format(
+                "    Binding Shader Input: [Prog={0}, AttIndex={1}, AttLocation={4}, AttName={2}, AttType={3}]",
+                programHandle, attribute.Index, attribute.Name, attribute.Type, attLocation));
+
+            this.ProgramHandle = programHandle;
+            this.AttributeLocation = attLocation;
+            this.Name = attribute.Name;
+            this.Type = EnumConverter.ToType(attribute.Type);
+            
+
+        }
+        
+        internal void RegisterExtraInfo(ShaderInputDefinition definition)
+        {
+            Usage = definition.Usage;
+            DefaultValue = definition.DefaultValue;
+            Optional = definition.Optional;
+        }   
+    }
+
+    public class OpenGLShaderSampler
+    {
+        int ProgramHandle { get; set; }
+        internal int UniformLocation { get; private set; }
+
+        public String NiceName { get; set; }
+        public String Name { get; set; }
+
+        public OpenGLShaderSampler(
+            int programHandle, ShaderUtils.ShaderUniform uniform )
+        {
+            this.ProgramHandle = programHandle;
+
+            int uniformLocation = global::MonoMac.OpenGL.GL.GetUniformLocation(programHandle, uniform.Name);
+
+            OpenGLHelper.CheckError();
+
+
+            this.UniformLocation = uniformLocation;
+            this.Name = uniform.Name;
+        }
+
+        internal void RegisterExtraInfo(ShaderSamplerDefinition definition)
+        {
+            NiceName = definition.NiceName;
+        }
+
+        public void SetSlot(Int32 slot)
+        {
+            // set the sampler texture unit to 0
+            global::MonoMac.OpenGL.GL.Uniform1( this.UniformLocation, slot );
+            OpenGLHelper.CheckError();
+        }
+
+    }
+
+    public class OpenGLShaderVariable
+    {
+        int ProgramHandle { get; set; }
+        internal int UniformLocation { get; private set; }
+        
+        public String NiceName { get; private set; }
+        public String Name { get; private set; }
+        public Type Type { get; private set; }
+        public Object DefaultValue { get; private set; }
+        
+        public OpenGLShaderVariable(
+            int programHandle, ShaderUtils.ShaderUniform uniform)
+        {
+
+            this.ProgramHandle = programHandle;
+
+            int uniformLocation = global::MonoMac.OpenGL.GL.GetUniformLocation(programHandle, uniform.Name);
+
+            OpenGLHelper.CheckError();
+
+            if( uniformLocation == -1 )
+                throw new Exception();
+                
+            this.UniformLocation = uniformLocation;
+            this.Name = uniform.Name;
+            this.Type = EnumConverter.ToType(uniform.Type);
+
+            Console.WriteLine(string.Format(
+                "    Caching Reference to Shader Variable: [Prog={0}, UniIndex={1}, UniLocation={2}, UniName={3}, UniType={4}]",
+                programHandle, uniform.Index, uniformLocation, uniform.Name, uniform.Type));
+
+        }
+        
+        internal void RegisterExtraInfo(ShaderVariableDefinition definition)
+        {
+            NiceName = definition.NiceName;
+            DefaultValue = definition.DefaultValue;
+        }
+        
+        public void Set(object value)
+        {
+            //todo this should be using convert turn the data into proper opengl es types.
+            Type t = value.GetType();
+            
+            if( t == typeof(Matrix44) )
+            {
+                var castValue = (Matrix44) value;
+                var otkValue = MatrixConverter.ToOpenGL(castValue);
+                global::MonoMac.OpenGL.GL.UniformMatrix4( UniformLocation, false, ref otkValue );
+            }
+            else if( t == typeof(Int32) )
+            {
+                var castValue = (Int32) value;
+                global::MonoMac.OpenGL.GL.Uniform1( UniformLocation, 1, ref castValue );
+            }
+            else if( t == typeof(Single) )
+            {
+                var castValue = (Single) value;
+                global::MonoMac.OpenGL.GL.Uniform1( UniformLocation, 1, ref castValue );
+            }
+            else if( t == typeof(Vector2) )
+            {
+                var castValue = (Vector2) value;
+                global::MonoMac.OpenGL.GL.Uniform2( UniformLocation, 1, ref castValue.X );
+            }
+            else if( t == typeof(Vector3) )
+            {
+                var castValue = (Vector3) value;
+                global::MonoMac.OpenGL.GL.Uniform3( UniformLocation, 1, ref castValue.X );
+            } 
+            else if( t == typeof(Vector4) )
+            {
+                var castValue = (Vector4) value;
+                global::MonoMac.OpenGL.GL.Uniform4( UniformLocation, 1, ref castValue.X );
+            }
+            else if( t == typeof(Rgba32) )
+            {
+                var castValue = (Rgba32) value;
+                
+                Vector4 vec4Value;
+                castValue.UnpackTo(out vec4Value);
+                
+                // does this rgba value need to be packed in to a vector3 or a vector4
+                if( this.Type == typeof(Vector4) )
+                    global::MonoMac.OpenGL.GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
+                else if( this.Type == typeof(Vector3) )
+                    global::MonoMac.OpenGL.GL.Uniform3( UniformLocation, 1, ref vec4Value.X );
+                else
+                    throw new Exception("Not supported");
+            }
+            else
+            {
+                throw new Exception("Not supported");
+            }
+            
+            OpenGLHelper.CheckError();
+
+        }
+    }
+
+
+    #endregion
+
+    #region Shader Definitions
+
+    public class ShaderInputDefinition
+    {
+        public String Name { get; set; }
+        public Type Type { get; set; }
+        public VertexElementUsage Usage { get; set; }
+        public Object DefaultValue { get; set; }
+        public Boolean Optional { get; set; }
+    }
+
+    public class ShaderSamplerDefinition
+    {
+        public String NiceName { get; set; }
+        public String Name { get; set; }
+        public Boolean Optional { get; set; }
+    }
+
+    public class ShaderVariableDefinition
+    {
+        public String NiceName { get; set; }
+
+        String name;
+        public String Name
+        { 
+            get { return name; }
+            set { 
+                if (value.Length > 16)
+                    name = value.Substring (0, 16);
+                else
+                    name = value;
+            }
+        }
+        public Type Type { get; set; }
+        public Object DefaultValue { get; set; }
+    }
+
+    public class ShaderVariantDefinition
+    {
+        public string VariantName { get; set; }
+        public List<ShaderVarientPassDefinition> VariantPassDefinitions { get; set; }
+    }
+
+    public class ShaderVarientPassDefinition
+    {
+        public string PassName { get; set; }
+        public OpenGLShaderDefinition PassDefinition { get; set; }
+    }
+
+
+    #endregion
+
+    #region Shader Definitions
+
+    public static partial class CorShaders
+    {   
+        public static IShader CreatePhongPixelLit()
+        {
+            var parameter = new ShaderDefinition()
+            {
+                Name = "PixelLit",
+                PassNames = new List<string>() { "Main" },
+                InputDefinitions = new List<ShaderInputDefinition>()
+                {
+                    new ShaderInputDefinition()
+                    {
+                        Name = "a_vertPos",
+                        Type = typeof(Vector3),
+                        Usage = VertexElementUsage.Position,
+                        DefaultValue = Vector3.Zero,
+                        Optional = false,
+                    },
+                    new ShaderInputDefinition()
+                    {
+                        Name = "a_vertNormal",
+                        Type = typeof(Vector3),
+                        Usage = VertexElementUsage.Normal,
+                        DefaultValue = Vector3.Zero,
+                        Optional = false,
+                    },
+                    new ShaderInputDefinition()
+                    {
+                        Name = "a_vertTexcoord",
+                        Type = typeof(Vector2),
+                        Usage = VertexElementUsage.TextureCoordinate,
+                        DefaultValue = Vector2.Zero,
+                        Optional = true,
+                    },
+                    new ShaderInputDefinition()
+                    {
+                        Name = "a_vertColour",
+                        Type = typeof(Rgba32),
+                        Usage = VertexElementUsage.Colour,
+                        DefaultValue = Rgba32.White,
+                        Optional = true,
+                    },
+                },
+                SamplerDefinitions = new List<ShaderSamplerDefinition>()
+                {
+                    new ShaderSamplerDefinition()
+                    {
+                        NiceName = "TextureSampler",
+                        Name = "s_tex0",
+                        Optional = true,
+                    }
+                },
+                VariableDefinitions = new List<ShaderVariableDefinition>()
+                {
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "World",
+                        Name = "u_world",
+                        Type = typeof(Matrix44),
+                        DefaultValue = Matrix44.Identity,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "View",
+                        Name = "u_view",
+                        Type = typeof(Matrix44),
+                        DefaultValue = Matrix44.Identity,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "Projection",
+                        Name = "u_proj",
+                        Type = typeof(Matrix44),
+                        DefaultValue = Matrix44.Identity,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "MaterialColour",
+                        Name = "u_colour",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.White,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "AmbientLightColour",
+                        Name = "u_liAmbient",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Gray,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "EmissiveColour",
+                        Name = "u_emissiveColour",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Black,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "SpecularColour",
+                        Name = "u_specularColour",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.White,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "SpecularPower",
+                        Name = "u_specularPower",
+                        Type = typeof(Single),
+                        DefaultValue = 0.7f,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "EyePosition",
+                        Name = "u_eyePosition",
+                        Type = typeof(Vector3),
+                        DefaultValue = Vector3.Zero,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "FogEnabled",
+                        Name = "u_fogEnabled",
+                        Type = typeof(Single),
+                        DefaultValue = 1f,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "FogStart",
+                        Name = "u_fogStart",
+                        Type = typeof(Single),
+                        DefaultValue = 100f,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "FogEnd",
+                        Name = "u_fogEnd",
+                        Type = typeof(Single),
+                        DefaultValue = 1000f,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "FogColour",
+                        Name = "u_fogColour",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Blue,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight0Direction",
+                        Name = "u_li0Dir",
+                        Type = typeof(Vector3),
+                        DefaultValue = Vector3.Down,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight0DiffuseColour",
+                        Name = "u_li0Diffuse",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Red,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight0SpecularColour",
+                        Name = "u_li0Spec",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Salmon,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight1Direction",
+                        Name = "u_li1Dir",
+                        Type = typeof(Vector3),
+                        DefaultValue = Vector3.Down,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight1DiffuseColour",
+                        Name = "u_li1Diffuse",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Red,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight1SpecularColour",
+                        Name = "u_li1Spec",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Salmon,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight2Direction",
+                        Name = "u_li2Dir",
+                        Type = typeof(Vector3),
+                        DefaultValue = Vector3.Down,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight2DiffuseColour",
+                        Name = "u_li2Diffuse",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Red,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight2SpecularColour",
+                        Name = "u_li2Spec",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Salmon,
+                    },
+                },
+                VariantDefinitions = new List<ShaderVariantDefinition>()
+                {
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "PixelLit_PositionNormal",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/PixelLit_PositionNormal.vsh",
+                                    PixelShaderPath = "shaders/PixelLit_PositionNormal.fsh",
+                                },
+                            },
+                        },
+                    },
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "PixelLit_PositionNormalTexture",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/PixelLit_PositionNormalTexture.vsh",
+                                    PixelShaderPath = "shaders/PixelLit_PositionNormalTexture.fsh",
+                                },
+                            },
+                        },
+                    },
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "PixelLit_PositionNormalColour",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/PixelLit_PositionNormalColour.vsh",
+                                    PixelShaderPath = "shaders/PixelLit_PositionNormalColour.fsh",
+                                },
+                            },
+                        },
+                    },
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "PixelLit_PositionNormalTextureColour",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/PixelLit_PositionNormalTextureColour.vsh",
+                                    PixelShaderPath = "shaders/PixelLit_PositionNormalTextureColour.fsh",
+                                },
+                            },
+                        },
+                    },
+                },
+            };
+
+            var s = new Shader (parameter);
+
+            Console.WriteLine(s);
+
+            return s;
+        }
+    }
+
+    public static partial class CorShaders
+    {   
+        public static IShader CreatePhongVertexLit()
+        {
+            var parameter = new ShaderDefinition()
+            {
+                Name = "VertexLit",
+                PassNames = new List<string>() { "Main" },
+                InputDefinitions = new List<ShaderInputDefinition>()
+                {
+                    new ShaderInputDefinition()
+                    {
+                        Name = "a_vertPos",
+                        Type = typeof(Vector3),
+                        Usage = VertexElementUsage.Position,
+                        DefaultValue = Vector3.Zero,
+                        Optional = false,
+                    },
+                    new ShaderInputDefinition()
+                    {
+                        Name = "a_vertNormal",
+                        Type = typeof(Vector3),
+                        Usage = VertexElementUsage.Normal,
+                        DefaultValue = Vector3.Zero,
+                        Optional = false,
+                    },
+                    new ShaderInputDefinition()
+                    {
+                        Name = "a_vertTexcoord",
+                        Type = typeof(Vector2),
+                        Usage = VertexElementUsage.TextureCoordinate,
+                        DefaultValue = Vector2.Zero,
+                        Optional = true,
+                    },
+                    new ShaderInputDefinition()
+                    {
+                        Name = "a_vertColour",
+                        Type = typeof(Rgba32),
+                        Usage = VertexElementUsage.Colour,
+                        DefaultValue = Rgba32.White,
+                        Optional = true,
+                    },
+                },
+                SamplerDefinitions = new List<ShaderSamplerDefinition>()
+                {
+                    new ShaderSamplerDefinition()
+                    {
+                        NiceName = "TextureSampler",
+                        Name = "s_tex0",
+                        Optional = true,
+                    }
+                },
+                VariableDefinitions = new List<ShaderVariableDefinition>()
+                {
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "World",
+                        Name = "u_world",
+                        Type = typeof(Matrix44),
+                        DefaultValue = Matrix44.Identity,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "View",
+                        Name = "u_view",
+                        Type = typeof(Matrix44),
+                        DefaultValue = Matrix44.Identity,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "Projection",
+                        Name = "u_proj",
+                        Type = typeof(Matrix44),
+                        DefaultValue = Matrix44.Identity,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "MaterialColour",
+                        Name = "u_colour",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.White,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "AmbientLightColour",
+                        Name = "u_liAmbient",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Gray,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "EmissiveColour",
+                        Name = "u_emissiveColour",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Black,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "SpecularColour",
+                        Name = "u_specularColour",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.White,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "SpecularPower",
+                        Name = "u_specularPower",
+                        Type = typeof(Single),
+                        DefaultValue = 0.7f,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "EyePosition",
+                        Name = "u_eyePosition",
+                        Type = typeof(Vector3),
+                        DefaultValue = Vector3.Zero,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "FogEnabled",
+                        Name = "u_fogEnabled",
+                        Type = typeof(Single),
+                        DefaultValue = 1f,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "FogStart",
+                        Name = "u_fogStart",
+                        Type = typeof(Single),
+                        DefaultValue = 100f,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "FogEnd",
+                        Name = "u_fogEnd",
+                        Type = typeof(Single),
+                        DefaultValue = 1000f,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "FogColour",
+                        Name = "u_fogColour",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Blue,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight0Direction",
+                        Name = "u_li0Dir",
+                        Type = typeof(Vector3),
+                        DefaultValue = Vector3.Down,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight0DiffuseColour",
+                        Name = "u_li0Diffuse",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Red,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight0SpecularColour",
+                        Name = "u_li0Spec",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Salmon,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight1Direction",
+                        Name = "u_li1Dir",
+                        Type = typeof(Vector3),
+                        DefaultValue = Vector3.Down,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight1DiffuseColour",
+                        Name = "u_li1Diffuse",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Red,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight1SpecularColour",
+                        Name = "u_li1Spec",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Salmon,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight2Direction",
+                        Name = "u_li2Dir",
+                        Type = typeof(Vector3),
+                        DefaultValue = Vector3.Down,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight2DiffuseColour",
+                        Name = "u_li2Diffuse",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Red,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "DirectionalLight2SpecularColour",
+                        Name = "u_li2Spec",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.Salmon,
+                    },
+                },
+                VariantDefinitions = new List<ShaderVariantDefinition>()
+                {
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "VertexLit_PositionNormal",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/VertexLit_PositionNormal.vsh",
+                                    PixelShaderPath = "shaders/VertexLit_PositionNormal.fsh",
+                                },
+                            },
+                        },
+                    },
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "VertexLit_PositionNormalTexture",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/VertexLit_PositionNormalTexture.vsh",
+                                    PixelShaderPath = "shaders/VertexLit_PositionNormalTexture.fsh",
+                                },
+                            },
+                        },
+                    },
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "VertexLit_PositionNormalColour",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/VertexLit_PositionNormalColour.vsh",
+                                    PixelShaderPath = "shaders/VertexLit_PositionNormalColour.fsh",
+                                },
+                            },
+                        },
+                    },
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "VertexLit_PositionNormalTextureColour",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/VertexLit_PositionNormalTextureColour.vsh",
+                                    PixelShaderPath = "shaders/VertexLit_PositionNormalTextureColour.fsh",
+                                },
+                            },
+                        },
+                    },
+                },
+            };
+
+
+            var s = new Shader (parameter);
+
+            Console.WriteLine(s);
+
+            return s;
+        }
+    }
+
+    public static partial class CorShaders
+    {   
+        public static IShader CreateUnlit()
+        {
+            var parameter = new ShaderDefinition()
+            {
+                Name = "Unlit",
+                PassNames = new List<string>() { "Main" },
+                InputDefinitions = new List<ShaderInputDefinition>()
+                {
+                    new ShaderInputDefinition()
+                    {
+                        Name = "a_vertPos",
+                        Type = typeof(Vector3),
+                        Usage = VertexElementUsage.Position,
+                        DefaultValue = Vector3.Zero,
+                        Optional = false,
+                    },
+                    new ShaderInputDefinition()
+                    {
+                        Name = "a_vertTexcoord",
+                        Type = typeof(Vector2),
+                        Usage = VertexElementUsage.TextureCoordinate,
+                        DefaultValue = Vector2.Zero,
+                        Optional = true,
+                    },
+                    new ShaderInputDefinition()
+                    {
+                        Name = "a_vertColour",
+                        Type = typeof(Rgba32),
+                        Usage = VertexElementUsage.Colour,
+                        DefaultValue = Rgba32.White,
+                        Optional = true,
+                    },
+                },
+                SamplerDefinitions = new List<ShaderSamplerDefinition>()
+                {
+                    new ShaderSamplerDefinition()
+                    {
+                        NiceName = "TextureSampler",
+                        Name = "s_tex0",
+                        Optional = true,
+                    }
+                },
+                VariableDefinitions = new List<ShaderVariableDefinition>()
+                {
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "MaterialColour",
+                        Name = "u_colour",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.White,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "World",
+                        Name = "u_world",
+                        Type = typeof(Matrix44),
+                        DefaultValue = Matrix44.Identity,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "View",
+                        Name = "u_view",
+                        Type = typeof(Matrix44),
+                        DefaultValue = Matrix44.Identity,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "Projection",
+                        Name = "u_proj",
+                        Type = typeof(Matrix44),
+                        DefaultValue = Matrix44.Identity,
+                    },
+                },
+                VariantDefinitions = new List<ShaderVariantDefinition>()
+                {
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "Unlit_Position",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/Unlit_Position.vsh",
+                                    PixelShaderPath = "shaders/Unlit_Position.fsh",
+                                },
+                            },
+                        },
+                    },
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "Unlit_PositionTexture",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/Unlit_PositionTexture.vsh",
+                                    PixelShaderPath = "shaders/Unlit_PositionTexture.fsh",
+                                },
+                            },
+                        },
+                    },
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "Unlit_PositionColour",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/Unlit_PositionColour.vsh",
+                                    PixelShaderPath = "shaders/Unlit_PositionColour.fsh",
+                                },
+                            },
+                        },
+                    },
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "Unlit_PositionTextureColour",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/Unlit_PositionTextureColour.vsh",
+                                    PixelShaderPath = "shaders/Unlit_PositionTextureColour.fsh",
+                                },
+                            },
+                        },
+                    },
+                },
+            };
+
+
+            var s = new Shader (parameter);
+
+            Console.WriteLine(s);
+
+            return s;
+        }
+    }
+
+
+    #endregion
 }

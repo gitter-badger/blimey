@@ -1,17 +1,18 @@
     public class ResourceManager
         : IResourceManager
     {
-        readonly IShader tempStubShader = new StubShader();
-        
+        Dictionary<ShaderType, IShader> shaderCache;
+
         public ResourceManager()
         {
-            Console.WriteLine(
-                "ResourceManager -> ()");
+            shaderCache = new Dictionary<ShaderType, IShader>();
+
+            shaderCache[ShaderType.Unlit] = CorShaders.CreateUnlit();
+            shaderCache[ShaderType.VertexLit] = CorShaders.CreatePhongVertexLit();
+            shaderCache[ShaderType.PixelLit] = CorShaders.CreatePhongPixelLit();
         }
 
-        #region IResourceManager
-
-        public T Load<T>(String path) where T : IResource
+        public T Load<T>(string path) where T : IResource
         {
             if(!File.Exists(path))
             {
@@ -30,9 +31,12 @@
 
         public IShader LoadShader(ShaderType shaderType)
         {
-            return tempStubShader;
-        }
+            if( !shaderCache.ContainsKey(shaderType) )
+            {
+                throw new NotImplementedException();
+            }
 
-        #endregion
+            return shaderCache[shaderType];
+        }
     }
 
