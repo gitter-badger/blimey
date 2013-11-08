@@ -52,26 +52,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="assets\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\submodules\cor.demo\assets\bg1.png">
-      <Link>assets\bg1.png</Link>
-    </None>
-    <None Include="..\..\..\submodules\cor.demo\assets\bg2.png">
-      <Link>assets\bg2.png</Link>
-    </None>
-    <None Include="..\..\..\submodules\cor.demo\assets\bg3.png">
-      <Link>assets\bg3.png</Link>
-    </None>
-    <None Include="..\..\..\submodules\cor.demo\assets\cvan01.png">
-      <Link>assets\cvan01.png</Link>
-    </None>
-    <None Include="..\..\..\submodules\cor.demo\assets\cvan02.png">
-      <Link>assets\cvan02.png</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\cor\build_examples\Sungiant.Cor\Sungiant.Cor %28monomac%29.csproj">
       <Project>{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}</Project>
       <Name>Sungiant.Cor (monomac)</Name>
@@ -80,5 +60,25 @@
       <Project>{97195993-2B6B-434B-8F2C-BD0A4BCDC70A}</Project>
       <Name>Sungiant.Abacus (monomac)</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="assets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="..\..\assets\bg1.png">
+      <Link>assets\bg1.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\assets\bg2.png">
+      <Link>assets\bg2.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\assets\bg3.png">
+      <Link>assets\bg3.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\assets\cvan02.png">
+      <Link>assets\cvan02.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\assets\cvan01.png">
+      <Link>assets\cvan01.png</Link>
+    </BundleResource>
   </ItemGroup>
 </Project>
