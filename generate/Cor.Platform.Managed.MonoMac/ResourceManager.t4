@@ -13,7 +13,19 @@
 
         public T Load<T>(String path) where T : IResource
         {
-            return default(T);
+            if(!File.Exists(path))
+            {
+                throw new FileNotFoundException(path);
+            }
+
+            if(typeof(T) == typeof(Texture2D))
+            {
+                var tex = OpenGLTexture.CreateFromFile(path);
+                
+                return (T)(IResource) tex;
+            }
+            
+            throw new NotImplementedException();
         }
 
         public IShader LoadShader(ShaderType shaderType)
