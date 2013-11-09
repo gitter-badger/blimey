@@ -1,14 +1,14 @@
-uniform mediump vec3 u_fogColour;
+uniform vec3 u_fogColour;
 
-uniform mediump sampler2D s_tex0;
+uniform sampler2D s_tex0;
 
-varying mediump vec4 v_diffuse;
-varying mediump vec4 v_specular;
-varying mediump vec2 v_texCoord;
+varying vec4 v_diffuse;
+varying vec4 v_specular;
+varying vec2 v_texCoord;
 
 void main()
 {
-	mediump float fogFactor = v_specular.w;
+	float fogFactor = v_specular.w;
 	
 	gl_FragColor = mix(
 		v_diffuse + vec4(v_specular.rgb, v_diffuse.a),

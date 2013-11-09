@@ -22,14 +22,14 @@
 // You are not allowed to specify a uniform/attribute/varying type in a function or a void.
 
 
-attribute mediump vec4 a_vertPos;
+attribute vec4 a_vertPos;
 
-uniform mediump mat4 u_world;
-uniform mediump mat4 u_view;
-uniform mediump mat4 u_proj;
-uniform mediump vec4 u_colour;
+uniform mat4 u_world;
+uniform mat4 u_view;
+uniform mat4 u_proj;
+uniform vec4 u_colour;
 
-varying mediump vec4 v_tint;
+varying vec4 v_tint;
 
 void main()
 {

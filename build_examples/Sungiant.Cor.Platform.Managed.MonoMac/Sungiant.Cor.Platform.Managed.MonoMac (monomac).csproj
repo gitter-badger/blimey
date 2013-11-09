@@ -99,9 +99,6 @@
     <BundleResource Include="..\..\shaders\Unlit_Position.fsh">
       <Link>shaders\Unlit_Position.fsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\shaders\Unlit_Position.rfx">
-      <Link>shaders\Unlit_Position.rfx</Link>
-    </BundleResource>
     <BundleResource Include="..\..\shaders\Unlit_Position.vsh">
       <Link>shaders\Unlit_Position.vsh</Link>
     </BundleResource>

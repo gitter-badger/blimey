@@ -628,14 +628,22 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public T Load<T>(string path) where T : IResource
         {
-            if(!File.Exists(path))
+            string rtype = Path.GetExtension(path);
+            string rname = Path.Combine(
+                Path.GetDirectoryName(path),
+                Path.GetFileNameWithoutExtension(path));
+            
+            var correctPath =
+                global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource(rname, rtype);
+            
+            if(!File.Exists(correctPath))
             {
-                throw new FileNotFoundException(path);
+                throw new FileNotFoundException(correctPath);
             }
 
             if(typeof(T) == typeof(Texture2D))
             {
-                var tex = OpenGLTexture.CreateFromFile(path);
+                var tex = OpenGLTexture.CreateFromFile(correctPath);
                 
                 return (T)(IResource) tex;
             }
@@ -2792,7 +2800,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         int pixelsHigh;  
 
         internal static OpenGLTexture CreateFromFile(string path)
-        {   
+        {
             using(var fStream = new FileStream(path, FileMode.Open))
             {
                 var nsImage = NSImage.FromStream( fStream );

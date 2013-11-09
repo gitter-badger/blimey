@@ -1,7 +1,7 @@
-uniform mediump sampler2D s_tex0;
+uniform sampler2D s_tex0;
 
-varying mediump vec2 v_texCoord;
-varying mediump vec4 v_tint;
+varying vec2 v_texCoord;
+varying vec4 v_tint;
 
 void main()
 {

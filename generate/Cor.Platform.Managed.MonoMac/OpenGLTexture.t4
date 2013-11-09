@@ -9,7 +9,7 @@
         int pixelsHigh;  
 
         internal static OpenGLTexture CreateFromFile(string path)
-        {   
+        {
             using(var fStream = new FileStream(path, FileMode.Open))
             {
                 var nsImage = NSImage.FromStream( fStream );
