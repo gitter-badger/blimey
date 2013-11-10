@@ -1,7 +1,7 @@
 ﻿    /// <summary>
     /// todo
     /// </summary>
-    internal class TouchCollectionEnumerator
+    internal sealed class TouchCollectionEnumerator
         : IEnumerator<Touch>
     {
         /// <summary>

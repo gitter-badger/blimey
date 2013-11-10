@@ -1,0 +1,16 @@
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IXbox360GamepadThumbsticks
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        Vector2 Left { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        Vector2 Right { get; }
+    }
+

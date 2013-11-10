@@ -1,0 +1,13 @@
+    public interface IKeyboard
+    {
+        FunctionalKey[] GetPressedFunctionalKey ();
+        Boolean IsFunctionalKeyDown (FunctionalKey key);
+        Boolean IsFunctionalKeyUp (FunctionalKey key);
+        KeyState this [FunctionalKey key] { get; }
+
+        Char[] GetPressedCharacterKeys();
+        Boolean IsCharacterKeyDown (Char key);
+        Boolean IsCharacterKeyUp (Char key);
+        KeyState this [Char key] { get; }
+    }
+

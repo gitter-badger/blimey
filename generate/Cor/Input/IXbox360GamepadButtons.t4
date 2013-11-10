@@ -1,0 +1,56 @@
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IXbox360GamepadButtons
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState A { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState B { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Back { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState LeftShoulder { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState LeftStick { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState RightShoulder { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState RightStick { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Start { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState X { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Y { get; }
+    }
+

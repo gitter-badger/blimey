@@ -1,0 +1,26 @@
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IXbox360GamepadDPad
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Down { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Left { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Right { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Up { get; }
+    }
+

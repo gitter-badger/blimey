@@ -83,21 +83,36 @@ namespace Sungiant.Cor
 <#@ include file="CorEnums/TouchPhase.t4"#>
 <#@ include file="CorEnums/VertexElementFormat.t4"#>
 <#@ include file="CorEnums/VertexElementUsage.t4"#>
+<#@ include file="CorEnums/KeyState.t4"#>
+<#@ include file="CorEnums/FunctionalKey.t4"#>
     #endregion
 
     #region Types
 
 <#@ include file="CorTypes/AppSettings.t4"#>
 <#@ include file="CorTypes/AppTime.t4"#>
-<#@ include file="CorTypes/GenericGamepad.t4"#>
-<#@ include file="CorTypes/MultitouchController.t4"#>
-<#@ include file="CorTypes/Touch.t4"#>
-<#@ include file="CorTypes/TouchCollection.t4"#>
-<#@ include file="CorTypes/TouchCollectionEnumerator.t4"#>
 <#@ include file="CorTypes/VertexDeclaration.t4"#>
 <#@ include file="CorTypes/VertexElement.t4"#>
-<#@ include file="CorTypes/VitaController.t4"#>
-<#@ include file="CorTypes/Xbox360Controller.t4"#>
+    #endregion
+
+    #region Input
+
+<#@ include file="Input/Touch.t4"#>
+<#@ include file="Input/TouchCollection.t4"#>
+<#@ include file="Input/TouchCollectionEnumerator.t4"#>
+<#@ include file="Input/IPsmGamepad.t4"#>
+<#@ include file="Input/IPsmGamepadButtons.t4"#>
+<#@ include file="Input/IPsmGamepadDPad.t4"#>
+<#@ include file="Input/IPsmGamepadThumbsticks.t4"#>
+<#@ include file="Input/IXbox360Gamepad.t4"#>
+<#@ include file="Input/IXbox360GamepadButtons.t4"#>
+<#@ include file="Input/IXbox360GamepadDPad.t4"#>
+<#@ include file="Input/IXbox360GamepadThumbsticks.t4"#>
+<#@ include file="Input/IXbox360GamepadTriggers.t4"#>
+<#@ include file="Input/IMultitouchController.t4"#>
+<#@ include file="Input/IGenericGamepad.t4"#>
+<#@ include file="Input/IMouse.t4"#>
+<#@ include file="Input/IKeyboard.t4"#>
     #endregion
 
     #region Vertices

@@ -1,0 +1,16 @@
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IMultiTouchController
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        IPanelSpecification PanelSpecification { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        TouchCollection TouchCollection { get; }
+    }
+

@@ -1,7 +1,7 @@
 ﻿    /// <summary>
     /// todo
     /// </summary>
-    public class TouchCollection
+    public sealed class TouchCollection
         : IEnumerable<Touch>
     {
         /// <summary>

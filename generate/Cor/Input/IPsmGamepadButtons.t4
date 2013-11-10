@@ -1,0 +1,46 @@
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IPsmGamepadButtons
+    {   
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Triangle { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Square { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Circle { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Cross { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Start { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Select { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState LeftShoulder { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState RightShoulder { get; }
+    }
+
