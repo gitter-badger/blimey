@@ -304,33 +304,41 @@ namespace Sungiant.Cor
     /// For example, if you are running on iPad, the GetXbox360Gamepad
     /// method will return NULL.  The way to make your app deal with
     /// multiple platforms is to poll the input devices at bootup
-    /// and then query only those that are avaible in your update
-    /// loop.  
+    /// and then query only those that are avaible in your update loop.  
     /// </summary>
     public interface IInputManager
     {
         /// <summary>
-        // An Xbox 360 gamepad
+        // An Xbox 360 gamepad.
         /// </summary>
-        Xbox360Gamepad GetXbox360Gamepad(PlayerIndex player);
+        IXbox360Gamepad GetXbox360Gamepad(PlayerIndex player);
 
         /// <summary>
-        // The virtual gamepad used by PlayStation Mobile, 
+        // The virtual gamepad used by PlayStation Mobile systems, 
         // if you are running on Vita this will be the Vita itself.
         /// </summary>
-        PsmGamepad GetPsmGamepad();
+        IPsmGamepad GetPsmGamepad();
 
         /// <summary>
         // A generalised multitouch pad, which may or may
         // not have a screen.
         /// </summary>
-        MultiTouchController GetMultiTouchController();
+        IMultiTouchController GetMultiTouchController();
 
         /// <summary>
-        // A very basic gamepad, supported by most implementations
-        // for platforms that have gamepads.
+        // A very basic gamepad, supported by most implementations.
         /// </summary>
-        GenericGamepad GetGenericGamepad();
+        IGenericGamepad GetGenericGamepad();
+
+        /// <summary>
+        // A computer mouse.
+        /// </summary>
+        IMouse GetMouse();
+
+        /// <summary>
+        // A computer keyboard.
+        /// </summary>
+        IKeyboard GetKeyboard();
     }
 
     /// <summary>
@@ -1310,6 +1318,404 @@ namespace Sungiant.Cor
         TessellateFactor
     }
 
+    /// <summary>
+    /// A keyboard key can be described as being in one of these states.
+    /// </summary>
+    public enum KeyState
+    {
+        /// <summary>
+        /// The key is pressed.
+        /// </summary>
+        Down,
+
+        /// <summary>
+        /// The key is released.
+        /// </summary>
+        Up,  
+    }
+
+    /// <summary>
+    /// All supported functional keyboard keys (not including character keys).
+    /// </summary>
+    [Flags]
+    public enum FunctionalKey
+    {
+        /// <summary>
+        /// BACKSPACE key.
+        /// </summary>
+        Backspace,
+
+        /// <summary>
+        /// TAB key.
+        /// </summary> 
+        Tab,
+
+        /// <summary>
+        /// ENTER key.
+        /// </summary>
+        Enter,
+
+        /// <summary>
+        /// CAPS LOCK key.
+        /// </summary>
+        CapsLock,
+
+        /// <summary>
+        /// ESC key.
+        /// </summary>
+        Escape,
+
+        // SPACEBAR
+        Spacebar,
+
+        /// <summary>
+        /// PAGE UP key.
+        /// </summary>
+        PageUp,
+
+        /// <summary>
+        /// PAGE DOWN key.
+        /// </summary>
+        PageDown,
+
+        /// <summary>
+        /// END key.
+        /// </summary>   
+        End,
+
+        /// <summary>
+        /// HOME key.
+        /// </summary>
+        Home,
+
+        /// <summary>
+        /// LEFT ARROW key.
+        /// </summary>
+        Left,
+
+        /// <summary>
+        /// UP ARROW key.
+        /// </summary>
+        Up,
+
+        /// <summary>
+        /// RIGHT ARROW key.
+        /// </summary>
+        Right,
+
+        /// <summary>
+        /// DOWN ARROW key.
+        /// </summary>
+        Down,
+
+        /// <summary>
+        /// SELECT key.
+        /// </summary>
+        Select,
+
+        /// <summary>
+        /// PRINT key.
+        /// </summary>
+        Print,        
+
+        /// <summary>
+        /// EXECUTE key.
+        /// </summary>
+        Execute,
+
+        /// <summary>
+        /// PRINT SCREEN key.
+        /// </summary>
+        PrintScreen,
+
+        /// <summary>
+        /// INS key.
+        /// </summary>
+        Insert,
+
+        /// <summary>
+        /// DEL key.
+        /// </summary>
+        Delete,
+
+        /// <summary>
+        /// HELP key.
+        /// </summary>
+        Help,
+
+        /// <summary>
+        /// Left Windows key.
+        /// </summary>
+        LeftWindows,
+
+        /// <summary>
+        /// Right Windows key.
+        /// </summary>
+        RightWindows,
+
+        /// <summary>
+        /// Left Windows key.
+        /// </summary>
+        LeftFlower,
+
+        /// <summary>
+        /// Right Windows key.
+        /// </summary>
+        RightFlower,
+
+        /// <summary>
+        /// Applications key.
+        /// </summary>
+        Apps,
+
+        /// <summary>
+        /// Computer Sleep key.
+        /// </summary>
+        Sleep,
+
+        /// <summary>
+        /// Numeric pad 0 key.
+        /// </summary>
+        NumPad0,
+
+        /// <summary>
+        /// Numeric pad 1 key.
+        /// </summary>
+        NumPad1,
+
+        /// <summary>
+        /// Numeric pad 2 key.
+        /// </summary>
+        NumPad2,
+
+        /// <summary>
+        /// Numeric key
+        /// pad 3 key.
+        /// </summary>
+        NumPad3,
+
+        /// <summary>
+        /// Numeric key
+        /// pad 4 key.
+        /// </summary>
+        NumPad4,
+
+        /// <summary>
+        /// Numeric pad 5 key.
+        /// </summary>
+        NumPad5,
+
+        /// <summary>
+        /// Numeric pad 6 key.
+        /// </summary>
+        NumPad6,
+
+        /// <summary>
+        /// Numeric pad 7 key.
+        /// </summary>
+        NumPad7,
+
+        /// <summary>
+        /// Numeric pad 8 key.
+        /// </summary>
+        NumPad8,
+
+        /// <summary>
+        /// Numeric pad 9 key.
+        /// </summary>
+        NumPad9,
+
+        /// <summary>
+        /// Multiply key.
+        /// </summary>
+        Multiply,
+
+        /// <summary>
+        /// Add key.
+        /// </summary>
+        Add,
+
+        /// <summary>
+        /// Separator key.
+        /// </summary>
+        Separator,
+
+        /// <summary>
+        /// Subtract key.
+        /// </summary>
+        Subtract,
+
+        /// <summary>
+        /// Decimal key.
+        /// </summary>
+        Decimal,
+
+        /// <summary>
+        /// Divide key.
+        /// </summary>
+        Divide,
+
+        /// <summary>
+        /// F1 key.
+        /// </summary>
+        F1,
+
+        /// <summary>
+        /// F2 key.
+        /// </summary>
+        F2,
+
+        /// <summary>
+        /// F3 key.
+        /// </summary>
+        F3,
+
+        /// <summary>
+        /// F4 key.
+        /// </summary>
+        F4,
+
+        /// <summary>
+        /// F5 key.
+        /// </summary>
+        F5,
+
+        /// <summary>
+        /// F6 key.
+        /// </summary>
+        F6,
+
+        /// <summary>
+        /// F7 key.
+        /// </summary>
+        F7,
+
+        /// <summary>
+        /// F8 key.
+        /// </summary>
+        F8,
+
+        /// <summary>
+        /// F9 key.
+        /// </summary>
+        F9,
+
+        /// <summary>
+        /// F10 key.
+        /// </summary>
+        F10,
+
+        /// <summary>
+        /// F11 key.
+        /// </summary>
+        F11,
+
+        /// <summary>
+        /// F12 key.
+        /// </summary>
+        F12,
+
+        /// <summary>
+        /// F13 key.
+        /// </summary>
+        F13,
+
+        /// <summary>
+        /// F14 key.
+        /// </summary>
+        F14,
+
+        /// <summary>
+        /// F15 key.
+        /// </summary>
+        F15,
+
+        /// <summary>
+        /// F16 key.
+        /// </summary>
+        F16,
+
+        /// <summary>
+        /// F17 key.
+        /// </summary>
+        F17,
+
+        /// <summary>
+        /// F18 key.
+        /// </summary>
+        F18,
+
+        /// <summary>
+        /// F19 key.
+        /// </summary>
+        F19,
+
+        /// <summary>
+        /// F20 key.
+        /// </summary>
+        F20,
+
+        /// <summary>
+        /// F21 key.
+        /// </summary>
+        F21,
+
+        /// <summary>
+        /// F22 key.
+        /// </summary>
+        F22,
+
+        /// <summary>
+        /// F23 key.
+        /// </summary>
+        F23,
+
+        /// <summary>
+        /// F24 key.
+        /// </summary>
+        F24,
+
+        /// <summary>
+        /// NUM LOCK key.
+        /// </summary>
+        NumLock,
+
+        /// <summary>
+        /// SCROLL LOCK key.
+        /// </summary>
+        ScrollLock,
+
+        /// <summary>
+        /// Left SHIFT key.
+        /// </summary>
+        LeftShift,
+
+        /// <summary>
+        /// Right SHIFT key.
+        /// </summary>
+        RightShift,
+
+        /// <summary>
+        /// Left CONTROL key.
+        /// </summary>
+        LeftControl,
+
+        /// <summary>
+        /// Right CONTROL key.
+        /// </summary>
+        RightControl,
+
+        /// <summary>
+        /// Left ALT key.
+        /// </summary>
+        LeftAlt,
+
+        /// <summary>
+        /// Right ALT key.
+        /// </summary>
+        RightAlt,
+    }
+
     #endregion
 
     #region Types
@@ -1402,577 +1808,6 @@ namespace Sungiant.Cor
         /// <value>The frame number.</value>
         public Int64 FrameNumber { get { return frameNumber; } }
     }
-    /// <summary>
-    /// todo
-    /// </summary>
-    public class GenericGamepad
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        IInputManager _inputManager;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState _down;
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState _left;
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState _right;
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState _up;
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState _north;
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState _south;
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState _east;
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState _west;
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState _option;
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState _pause;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public ButtonState Down { get { return _down; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public ButtonState Left { get { return _left; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public ButtonState Right { get { return _right; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public ButtonState Up { get { return _up; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public ButtonState North { get { return _north; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public ButtonState South { get { return _south; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public ButtonState East { get { return _east; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public ButtonState West { get { return _west; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public ButtonState Option { get { return _option; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public ButtonState Pause { get { return _pause; } }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public GenericGamepad(IInputManager inputManager)
-        {
-            _inputManager = inputManager;
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        internal void Reset()
-        {
-            _down = ButtonState.Released;
-            _left = ButtonState.Released;
-            _right = ButtonState.Released;
-            _up = ButtonState.Released;
-            _north = ButtonState.Released;
-            _south = ButtonState.Released;
-            _east = ButtonState.Released;
-            _west = ButtonState.Released;
-            _option = ButtonState.Released;
-            _pause = ButtonState.Released;
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        internal void Update(AppTime time)
-        {
-            this.Reset();
-
-            var xbox360Gamepad = _inputManager.GetXbox360Gamepad(
-                PlayerIndex.One);
-
-            var vitaGamepad = _inputManager.GetPsmGamepad();
-
-            if( xbox360Gamepad != null )
-            {
-                if( xbox360Gamepad.DPad.Down == ButtonState.Pressed) 
-                    _down = ButtonState.Pressed;
-
-                if( xbox360Gamepad.DPad.Left == ButtonState.Pressed) 
-                    _left = ButtonState.Pressed;
-
-                if( xbox360Gamepad.DPad.Right == ButtonState.Pressed) 
-                    _right = ButtonState.Pressed;
-
-                if( xbox360Gamepad.DPad.Up == ButtonState.Pressed) 
-                    _up = ButtonState.Pressed;
-
-                if( xbox360Gamepad.Buttons.Y == ButtonState.Pressed) 
-                    _north = ButtonState.Pressed;
-
-                if( xbox360Gamepad.Buttons.A == ButtonState.Pressed) 
-                    _south = ButtonState.Pressed;
-
-                if( xbox360Gamepad.Buttons.B == ButtonState.Pressed) 
-                    _east = ButtonState.Pressed;
-
-                if( xbox360Gamepad.Buttons.X == ButtonState.Pressed) 
-                    _west = ButtonState.Pressed;
-
-                if( xbox360Gamepad.Buttons.Back == ButtonState.Pressed) 
-                    _option = ButtonState.Pressed;
-
-                if( xbox360Gamepad.Buttons.Start == ButtonState.Pressed) 
-                    _pause = ButtonState.Pressed;
-            }
-
-            if( vitaGamepad != null )
-            {
-                if( vitaGamepad.DPad.Down == ButtonState.Pressed) 
-                    _down = ButtonState.Pressed;
-                
-                if( vitaGamepad.DPad.Left == ButtonState.Pressed) 
-                    _left = ButtonState.Pressed;
-                
-                if( vitaGamepad.DPad.Right == ButtonState.Pressed) 
-                    _right = ButtonState.Pressed;
-                
-                if( vitaGamepad.DPad.Up == ButtonState.Pressed) 
-                    _up = ButtonState.Pressed;
-                
-                if( vitaGamepad.Buttons.Triangle == ButtonState.Pressed) 
-                    _north = ButtonState.Pressed;
-                
-                if( vitaGamepad.Buttons.Cross == ButtonState.Pressed) 
-                    _south = ButtonState.Pressed;
-                
-                if( vitaGamepad.Buttons.Circle == ButtonState.Pressed) 
-                    _east = ButtonState.Pressed;
-                
-                if( vitaGamepad.Buttons.Square == ButtonState.Pressed) 
-                    _west = ButtonState.Pressed;
-                
-                if( vitaGamepad.Buttons.Select == ButtonState.Pressed) 
-                    _option = ButtonState.Pressed;
-
-                if( vitaGamepad.Buttons.Start == ButtonState.Pressed) 
-                    _pause = ButtonState.Pressed;
-            }
-        }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public abstract class MultiTouchController
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        internal MultiTouchController(ICor engine)
-        {
-            this.engine = engine;
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        protected ICor engine;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public abstract IPanelSpecification PanelSpecification { get; }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public TouchCollection TouchCollection 
-        { 
-            get { return this.collection; } 
-        }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        protected TouchCollection collection = new TouchCollection();
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        internal abstract void Update(AppTime time);
-    }
-
-    /// <summary>
-    /// A touch in a single frame definition of a finger on the screen.
-    /// </summary>
-    public struct Touch
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        Int32 id;
-
-        /// <summary>
-        /// The position of a touch ranges between -0.5 and 0.5 in both X and Y
-        /// </summary>
-        Vector2 normalisedEngineSpacePosition;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        TouchPhase phase;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        Int64 frameNumber;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        Single timestamp;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        static Touch invalidTouch;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public Int32 ID { get { return id; } }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public Vector2 Position
-        {
-            get { return normalisedEngineSpacePosition; }
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public TouchPhase Phase { get { return phase; } }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public Int64 FrameNumber { get { return frameNumber; } }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public Single Timestamp { get { return timestamp; } }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public Touch(
-            Int32 id,
-            Vector2 normalisedEngineSpacePosition,
-            TouchPhase phase,
-            Int64 frame,
-            Single timestamp)
-        {
-            if( normalisedEngineSpacePosition.X > 0.5f || 
-                normalisedEngineSpacePosition.X < -0.5f )
-            {
-                throw new Exception(
-                    "Touch has a bad X coordinate: " + 
-                    normalisedEngineSpacePosition.X);
-            }
-
-            if( normalisedEngineSpacePosition.Y > 0.5f || 
-                normalisedEngineSpacePosition.X < -0.5f )
-            {
-                throw new Exception(
-                    "Touch has a bad Y coordinate: " + 
-                    normalisedEngineSpacePosition.Y);
-            }
-
-            this.id = id;
-            this.normalisedEngineSpacePosition = normalisedEngineSpacePosition;
-            this.phase = phase;
-            this.frameNumber = frame;
-            this.timestamp = timestamp;
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        static Touch()
-        {
-            invalidTouch = new Touch(
-                -1, 
-                Vector2.Zero, 
-                TouchPhase.Invalid, 
-                -1, 
-                0f);
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public static Touch Invalid { get { return invalidTouch; } }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public class TouchCollection
-        : IEnumerable<Touch>
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        List<Touch> touchBuffer = new List<Touch>();
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        IEnumerator<Touch> IEnumerable<Touch>.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        internal void ClearBuffer()
-        {
-            this.touchBuffer.Clear();
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        internal void RegisterTouch(
-            Int32 id, 
-            Vector2 normalisedEngineSpacePosition, 
-            TouchPhase phase, 
-            Int64 frameNum, 
-            Single timestamp)
-        {
-            Boolean die = false;
-
-            if( normalisedEngineSpacePosition.X > 0.5f || 
-                normalisedEngineSpacePosition.X < -0.5f )
-            {
-                Console.WriteLine(
-                    "Touch has a bad X coordinate: " + 
-                    normalisedEngineSpacePosition.X);
-
-                die = true;
-            }
-            
-            if( normalisedEngineSpacePosition.Y > 0.5f || 
-                normalisedEngineSpacePosition.X < -0.5f )
-            {
-                Console.WriteLine(
-                    "Touch has a bad Y coordinate: " + 
-                    normalisedEngineSpacePosition.Y);
-
-                die = true;
-            }
-
-            if (die)
-            {
-                Console.WriteLine("Discarding Bad Touch");
-                return;
-            }
-
-            var touch = new Touch(
-                id, 
-                normalisedEngineSpacePosition, 
-                phase, 
-                frameNum, 
-                timestamp);
-
-            this.touchBuffer.Add(touch);
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public IEnumerator<Touch> GetEnumerator()
-        {
-            return new TouchCollectionEnumerator(this.touchBuffer);
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public int TouchCount
-        {
-            get
-            {
-                return touchBuffer.Count;
-            }
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public Touch GetTouchFromTouchID(int zTouchID)
-        {
-            foreach (var touch in touchBuffer)
-            {
-                if (touch.ID == zTouchID) return touch;
-            }
-
-            //System.Diagnostics.Debug.WriteLine(
-            //    "The touch requested no longer exists.");
-
-            return Touch.Invalid;
-        }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    internal class TouchCollectionEnumerator
-        : IEnumerator<Touch>
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        List<Touch> touches;
-
-        /// <summary>
-        /// Enumerators are positioned before the first element
-        /// until the first MoveNext() call.
-        /// </summary>
-        Int32 position = -1;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        internal TouchCollectionEnumerator(List<Touch> touches)
-        {
-            this.touches = touches;
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        void IDisposable.Dispose()
-        {
-
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public Boolean MoveNext()
-        {
-            position++;
-            return (position < touches.Count);
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public void Reset()
-        {
-            position = -1;
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        Object IEnumerator.Current
-        {
-            get
-            {
-                return Current;
-            }
-        }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public Touch Current
-        {
-            get
-            {
-                try
-                {
-                    return touches[position];
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    throw new InvalidOperationException();
-                }
-            }
-        }
-    }
-
     /// <summary>
     /// todo
     /// </summary>
@@ -2336,593 +2171,692 @@ namespace Sungiant.Cor
     }
 
 
+    #endregion
+
+    #region Input
+
     /// <summary>
-    /// todo
+    /// A touch in a single frame definition of a finger on the screen.
     /// </summary>
-    public abstract class PsmGamepad
+    public struct Touch
     {
         /// <summary>
         /// todo
         /// </summary>
-        public class GamePadButtons
-        {   
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _triangle = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _square = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _circle = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _cross = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _leftShoulder = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _rightShoulder = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _start = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _select = ButtonState.Released;
+        Int32 id;
 
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Triangle 
-            { 
-                get { return _triangle; } 
-                internal set { _triangle = value; } 
+        /// <summary>
+        /// The position of a touch ranges between -0.5 and 0.5 in both X and Y
+        /// </summary>
+        Vector2 normalisedEngineSpacePosition;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        TouchPhase phase;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        Int64 frameNumber;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        Single timestamp;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static Touch invalidTouch;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int32 ID { get { return id; } }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Vector2 Position
+        {
+            get { return normalisedEngineSpacePosition; }
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public TouchPhase Phase { get { return phase; } }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int64 FrameNumber { get { return frameNumber; } }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Single Timestamp { get { return timestamp; } }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Touch(
+            Int32 id,
+            Vector2 normalisedEngineSpacePosition,
+            TouchPhase phase,
+            Int64 frame,
+            Single timestamp)
+        {
+            if( normalisedEngineSpacePosition.X > 0.5f || 
+                normalisedEngineSpacePosition.X < -0.5f )
+            {
+                throw new Exception(
+                    "Touch has a bad X coordinate: " + 
+                    normalisedEngineSpacePosition.X);
+            }
+
+            if( normalisedEngineSpacePosition.Y > 0.5f || 
+                normalisedEngineSpacePosition.X < -0.5f )
+            {
+                throw new Exception(
+                    "Touch has a bad Y coordinate: " + 
+                    normalisedEngineSpacePosition.Y);
+            }
+
+            this.id = id;
+            this.normalisedEngineSpacePosition = normalisedEngineSpacePosition;
+            this.phase = phase;
+            this.frameNumber = frame;
+            this.timestamp = timestamp;
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static Touch()
+        {
+            invalidTouch = new Touch(
+                -1, 
+                Vector2.Zero, 
+                TouchPhase.Invalid, 
+                -1, 
+                0f);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public static Touch Invalid { get { return invalidTouch; } }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public sealed class TouchCollection
+        : IEnumerable<Touch>
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        List<Touch> touchBuffer = new List<Touch>();
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        IEnumerator<Touch> IEnumerable<Touch>.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        internal void ClearBuffer()
+        {
+            this.touchBuffer.Clear();
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        internal void RegisterTouch(
+            Int32 id, 
+            Vector2 normalisedEngineSpacePosition, 
+            TouchPhase phase, 
+            Int64 frameNum, 
+            Single timestamp)
+        {
+            Boolean die = false;
+
+            if( normalisedEngineSpacePosition.X > 0.5f || 
+                normalisedEngineSpacePosition.X < -0.5f )
+            {
+                Console.WriteLine(
+                    "Touch has a bad X coordinate: " + 
+                    normalisedEngineSpacePosition.X);
+
+                die = true;
             }
             
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Square 
-            { 
-                get { return _square; } 
-                internal set { _square = value; } 
+            if( normalisedEngineSpacePosition.Y > 0.5f || 
+                normalisedEngineSpacePosition.X < -0.5f )
+            {
+                Console.WriteLine(
+                    "Touch has a bad Y coordinate: " + 
+                    normalisedEngineSpacePosition.Y);
+
+                die = true;
             }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Circle 
-            { 
-                get { return _circle; } 
-                internal set { _circle = value; } 
+
+            if (die)
+            {
+                Console.WriteLine("Discarding Bad Touch");
+                return;
             }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Cross 
-            { 
-                get { return _cross; } 
-                internal set { _cross = value; } 
-            }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Start 
-            { 
-                get { return _start; } 
-                internal set { _start = value; } 
-            }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Select 
-            { 
-                get { return _select; } 
-                internal set { _select = value; } 
-            } 
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState LeftShoulder 
-            { 
-                get { return _leftShoulder; } 
-                internal set { _leftShoulder = value; } 
-            }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState RightShoulder 
-            { 
-                get { return _rightShoulder; } 
-                internal set { _rightShoulder = value; } 
+
+            var touch = new Touch(
+                id, 
+                normalisedEngineSpacePosition, 
+                phase, 
+                frameNum, 
+                timestamp);
+
+            this.touchBuffer.Add(touch);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public IEnumerator<Touch> GetEnumerator()
+        {
+            return new TouchCollectionEnumerator(this.touchBuffer);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public int TouchCount
+        {
+            get
+            {
+                return touchBuffer.Count;
             }
         }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public class GamePadDPad
-        {
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _down = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _left = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _right = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _up = ButtonState.Released;
 
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Down 
-            { 
-                get { return _down; } 
-                internal set { _down = value; } 
-            }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Left 
-            { 
-                get { return _left; } 
-                internal set { _left = value; } 
-            }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Right 
-            { 
-                get { return _right; } 
-                internal set { _right = value; } 
-            }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Up 
-            { 
-                get { return _up; } 
-                internal set { _up = value; } 
-            }
-        }
-    
         /// <summary>
         /// todo
         /// </summary>
-        public class GamePadThumbSticks
+        public Touch GetTouchFromTouchID(int zTouchID)
         {
-            /// <summary>
-            /// todo
-            /// </summary>
-            Vector2 _left = Vector2.Zero;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            Vector2 _right = Vector2.Zero;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public Vector2 Left { get { return _left; } }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public Vector2 Right { get { return _right; } }
-        }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        GamePadButtons _buttons = new GamePadButtons();
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        GamePadDPad _dpad = new GamePadDPad();
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        GamePadThumbSticks _thumbsticks = new GamePadThumbSticks();
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public GamePadButtons Buttons { get { return _buttons; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public GamePadDPad DPad { get { return _dpad; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public GamePadThumbSticks ThumbSticks { get { return _thumbsticks; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        protected void Reset()
-        {
-            _dpad.Down = ButtonState.Released;
-            _dpad.Up = ButtonState.Released;
-            _dpad.Left = ButtonState.Released;
-            _dpad.Right = ButtonState.Released;
+            foreach (var touch in touchBuffer)
+            {
+                if (touch.ID == zTouchID) return touch;
+            }
 
-            _buttons.Triangle = ButtonState.Released;
-            _buttons.Square = ButtonState.Released;
-            _buttons.Circle = ButtonState.Released;
-            _buttons.Cross = ButtonState.Released;
-            _buttons.Start = ButtonState.Released;
-            _buttons.Select = ButtonState.Released;
-            _buttons.LeftShoulder = ButtonState.Released;
-            _buttons.RightShoulder = ButtonState.Released;
+            //System.Diagnostics.Debug.WriteLine(
+            //    "The touch requested no longer exists.");
+
+            return Touch.Invalid;
         }
     }
+
     /// <summary>
     /// todo
     /// </summary>
-    public abstract class Xbox360Gamepad
+    internal sealed class TouchCollectionEnumerator
+        : IEnumerator<Touch>
     {
         /// <summary>
         /// todo
         /// </summary>
-        public class GamePadButtons
-        {   
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _a = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _b = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _back = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _leftShoulder = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _leftStick = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _rightShoulder = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _rightStick = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _start = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _x = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _y = ButtonState.Released;
+        List<Touch> touches;
 
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState A 
-            { 
-                get { return _a; } 
-                internal set { _a = value; } 
-            }
+        /// <summary>
+        /// Enumerators are positioned before the first element
+        /// until the first MoveNext() call.
+        /// </summary>
+        Int32 position = -1;
 
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState B 
-            { 
-                get { return _b; } 
-                internal set { _b = value; } 
-            }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Back 
-            { 
-                get { return _back; } 
-                internal set { _back = value; } 
-            }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState LeftShoulder 
-            { 
-                get { return _leftShoulder; } 
-                internal set { _leftShoulder = value; } 
-            }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState LeftStick 
-            { 
-                get { return _leftStick; } 
-                internal set { _leftStick = value; } 
-            }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState RightShoulder 
-            { 
-                get { return _rightShoulder; } 
-                internal set { _rightShoulder = value; } 
-            }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState RightStick 
-            { 
-                get { return _rightStick; } 
-                internal set { _rightStick = value; } 
-            }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Start 
-            { 
-                get { return _start; } 
-                internal set { _start = value; } 
-            }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState X 
-            { 
-                get { return _x; } 
-                internal set { _x = value; } 
-            }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Y 
-            { 
-                get { return _y; } 
-                internal set { _y = value; } 
-            }    
-        }
-        
         /// <summary>
         /// todo
         /// </summary>
-        public class GamePadDPad
+        internal TouchCollectionEnumerator(List<Touch> touches)
         {
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _down = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _left = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _right = ButtonState.Released;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            ButtonState _up = ButtonState.Released;
-
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Down
-            { 
-                get { return _down; } 
-                internal set { _down = value; } 
-            }
-
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Left 
-            { 
-                get { return _left; } 
-                internal set { _left = value; } 
-            }
-
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Right 
-            { 
-                get { return _right; } 
-                internal set { _right = value; } 
-            }
-
-            /// <summary>
-            /// todo
-            /// </summary>
-            public ButtonState Up 
-            { 
-                get { return _up; } 
-                internal set { _up = value; } 
-            }
+            this.touches = touches;
         }
-    
+
         /// <summary>
         /// todo
         /// </summary>
-        public class GamePadThumbSticks
+        void IDisposable.Dispose()
         {
-            /// <summary>
-            /// todo
-            /// </summary>
-            Vector2 _left = Vector2.Zero;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            Vector2 _right = Vector2.Zero;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public Vector2 Left { get { return _left; } }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public Vector2 Right { get { return _right; } }
+
         }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public class GamePadTriggers
-        {   
-            /// <summary>
-            /// todo
-            /// </summary>
-            Single _left = 0f;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            Single _right = 0f;
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public Single Left { get { return _left; } }
-            
-            /// <summary>
-            /// todo
-            /// </summary>
-            public Single Right { get { return _right; } }
-        }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        GamePadButtons _buttons = new GamePadButtons();
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        GamePadDPad _dpad = new GamePadDPad();
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        GamePadThumbSticks _thumbsticks = new GamePadThumbSticks();
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        GamePadTriggers _triggers = new GamePadTriggers();
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public GamePadButtons Buttons { get { return _buttons; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public GamePadDPad DPad { get { return _dpad; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public GamePadThumbSticks ThumbSticks { get { return _thumbsticks; } }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        public GamePadTriggers Triggers { get { return _triggers; } }
 
         /// <summary>
         /// todo
         /// </summary>
-        protected void Reset()
+        public Boolean MoveNext()
         {
-            _dpad.Down = ButtonState.Released;
-            _dpad.Up = ButtonState.Released;
-            _dpad.Left = ButtonState.Released;
-            _dpad.Right = ButtonState.Released;
-
-            _buttons.A = ButtonState.Released;
-            _buttons.B = ButtonState.Released;
-            _buttons.X = ButtonState.Released;
-            _buttons.Y = ButtonState.Released;
-            _buttons.Start = ButtonState.Released;
-            _buttons.Back = ButtonState.Released;
-            _buttons.LeftShoulder = ButtonState.Released;
-            _buttons.RightShoulder = ButtonState.Released;
-            _buttons.LeftStick = ButtonState.Released;
-            _buttons.RightStick = ButtonState.Released;
+            position++;
+            return (position < touches.Count);
         }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public void Reset()
+        {
+            position = -1;
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        Object IEnumerator.Current
+        {
+            get
+            {
+                return Current;
+            }
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Touch Current
+        {
+            get
+            {
+                try
+                {
+                    return touches[position];
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IPsmGamepad
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        IPsmGamepadButtons Buttons { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        IPsmGamepadDPad DPad { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        IPsmGamepadThumbsticks Thumbsticks { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IPsmGamepadButtons
+    {   
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Triangle { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Square { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Circle { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Cross { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Start { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Select { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState LeftShoulder { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState RightShoulder { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IPsmGamepadDPad
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Down { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Left { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Right { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Up { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IPsmGamepadThumbsticks
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        Vector2 Left { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        Vector2 Right { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IXbox360Gamepad
+    {        
+        /// <summary>
+        /// todo
+        /// </summary>
+        IXbox360GamepadButtons Buttons { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        IXbox360GamepadDPad DPad { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        IXbox360GamepadThumbsticks Thumbsticks { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        IXbox360GamepadTriggers Triggers { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IXbox360GamepadButtons
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState A { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState B { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Back { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState LeftShoulder { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState LeftStick { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState RightShoulder { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState RightStick { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Start { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState X { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Y { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IXbox360GamepadDPad
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Down { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Left { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Right { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Up { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IXbox360GamepadThumbsticks
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        Vector2 Left { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        Vector2 Right { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IXbox360GamepadTriggers
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        Single Left { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        Single Right { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IMultiTouchController
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        IPanelSpecification PanelSpecification { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        TouchCollection TouchCollection { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IGenericGamepad
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Down { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Left { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Right { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Up { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState North { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState South { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState East { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState West { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Option { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Pause { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IMouse
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Left { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Middle { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Right { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        Int32 ScrollWheelValue { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        Int32 X { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        Int32 Y { get; }
+    }
+
+    public interface IKeyboard
+    {
+        FunctionalKey[] GetPressedFunctionalKey ();
+        Boolean IsFunctionalKeyDown (FunctionalKey key);
+        Boolean IsFunctionalKeyUp (FunctionalKey key);
+        KeyState this [FunctionalKey key] { get; }
+
+        Char[] GetPressedCharacterKeys();
+        Boolean IsCharacterKeyDown (Char key);
+        Boolean IsCharacterKeyUp (Char key);
+        KeyState this [Char key] { get; }
     }
 
     #endregion
