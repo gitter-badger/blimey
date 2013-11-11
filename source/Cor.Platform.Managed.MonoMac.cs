@@ -47,7 +47,9 @@ using Sungiant.Abacus;
 using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
+
 using Sungiant.Cor.Lib.Managed.Khronos;
+using Sungiant.Cor.Platform.Stub;
 
 using MonoMac.Foundation;
 using MonoMac.AppKit;
@@ -59,7 +61,7 @@ using MonoMac.ImageKit;
 
 namespace Sungiant.Cor.Platform.Managed.MonoMac
 {
-    public class Engine
+    public sealed class Engine
         : ICor
     {
         readonly AudioManager audio;
@@ -125,7 +127,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
 
-    public class AudioManager
+    public sealed class AudioManager
         : IAudioManager
     {
         public Single volume = 1f;
@@ -155,7 +157,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         #endregion
     }
 
-    public class GraphicsManager
+    public sealed class GraphicsManager
         : IGraphicsManager
     {
         readonly IDisplayStatus displayStatus;
@@ -557,7 +559,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         #endregion
     }
 
-    public class DisplayStatus
+    public sealed class DisplayStatus
         : IDisplayStatus
     {
         public DisplayStatus()
@@ -724,11 +726,16 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
     }
 
-    public class InputManager
+    public sealed class InputManager
         : IInputManager
     {
         readonly Keyboard keyboard;
         readonly Mouse mouse;
+
+        readonly IXbox360Gamepad xbox360Gamepad = new StubXbox360Gamepad();
+        readonly IPsmGamepad psmGamepad = new StubPsmGamepad();
+        readonly IMultiTouchController multiTouchController = new StubMultiTouchController();
+        readonly IGenericGamepad genericGamepad = new StubGenericGamepad();
 
         public InputManager()
         {
@@ -746,34 +753,22 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public IXbox360Gamepad Xbox360Gamepad
         {
-            get
-            {
-                return null;
-            }
+            get { return xbox360Gamepad; }
         }
 
         public IPsmGamepad PsmGamepad
         {
-            get
-            {
-                return null;
-            }
+            get { return psmGamepad; }
         }
 
         public IMultiTouchController MultiTouchController
         {
-            get
-            {
-                return null;
-            }
+            get { return multiTouchController; }
         }
 
         public IGenericGamepad GenericGamepad
         {
-            get
-            {
-                return null;
-            }
+            get { return genericGamepad; }
         }
 
         public IMouse Mouse
@@ -795,7 +790,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         #endregion
     }
 
-    public class ResourceManager
+    public sealed class ResourceManager
         : IResourceManager
     {
         Dictionary<ShaderType, IShader> shaderCache;
@@ -845,7 +840,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
 
-    public class PanelSpecification
+    public sealed class PanelSpecification
         : IPanelSpecification
     {
         public PanelSpecification()
@@ -871,7 +866,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         #endregion
     }
 
-    public class ScreenSpecification
+    public sealed class ScreenSpecification
         : IScreenSpecification
     {
         Int32 width = 800;
@@ -885,12 +880,12 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         #region IScreenSpecification
 
-        public virtual Int32 ScreenResolutionWidth
+        public Int32 ScreenResolutionWidth
         { 
             get { return width; }
         }
         
-        public virtual Int32 ScreenResolutionHeight
+        public Int32 ScreenResolutionHeight
         { 
             get { return height; }
         }
@@ -908,7 +903,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         #endregion
     }
 
-    public class GeometryBuffer
+    public sealed class GeometryBuffer
         : IGeometryBuffer
     {
         IndexBuffer _iBuf;
@@ -955,7 +950,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         internal VertexBuffer OpenTKVertexBuffer { get { return _vBuf; } }
     }
 
-    public class SystemManager
+    public sealed class SystemManager
         : ISystemManager
     {
         readonly IScreenSpecification screen;
@@ -1168,7 +1163,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
     }
 
-    public class MonoMacApp
+    public sealed class MonoMacApp
         : IDisposable
     {
         MacGameNSWindow mainWindow;
@@ -1232,7 +1227,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
 
-    public class OpenGLView 
+    public sealed class OpenGLView 
         : global::MonoMac.OpenGL.MonoMacGameView
     {
         Rectangle clientBounds;
@@ -1502,7 +1497,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
 
-    public class MacGameNSWindow 
+    public sealed class MacGameNSWindow 
         : NSWindow
     {
         [Export ("initWithContentRect:styleMask:backing:defer:")]
@@ -1525,7 +1520,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
 
-    class MainWindowDelegate 
+    internal sealed class MainWindowDelegate 
         : NSWindowDelegate
     {
         private readonly MonoMacApp owner;
@@ -1543,66 +1538,66 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
 
-    public static class Vector2Converter
+    internal static class Vector2Converter
     {
         // VECTOR 2
-        public static global::MonoMac.OpenGL.Vector2 ToOpenGL (this Vector2 vec)
+        internal static global::MonoMac.OpenGL.Vector2 ToOpenGL (this Vector2 vec)
         {
             return new global::MonoMac.OpenGL.Vector2 (vec.X, vec.Y);
         }
 
-        public static Vector2 ToAbacus (this global::MonoMac.OpenGL.Vector2 vec)
+        internal static Vector2 ToAbacus (this global::MonoMac.OpenGL.Vector2 vec)
         {
             return new Vector2 (vec.X, vec.Y);
         }
 
         
-        public static System.Drawing.PointF ToSystemDrawing(this Vector2 vec)
+        internal static System.Drawing.PointF ToSystemDrawing(this Vector2 vec)
         {
             return new System.Drawing.PointF (vec.X, vec.Y);
         }
 
-        public static Vector2 ToAbacus (this System.Drawing.PointF vec)
+        internal static Vector2 ToAbacus (this System.Drawing.PointF vec)
         {
             return new Vector2 (vec.X, vec.Y);
         }
     }
 
     
-    public static class Vector3Converter
+    internal static class Vector3Converter
     {
         // VECTOR 3
-        public static global::MonoMac.OpenGL.Vector3 ToOpenGL (this Vector3 vec)
+        internal static global::MonoMac.OpenGL.Vector3 ToOpenGL (this Vector3 vec)
         {
             return new global::MonoMac.OpenGL.Vector3 (vec.X, vec.Y, vec.Z);
         }
 
-        public static Vector3 ToAbacus (this global::MonoMac.OpenGL.Vector3 vec)
+        internal static Vector3 ToAbacus (this global::MonoMac.OpenGL.Vector3 vec)
         {
             return new Vector3 (vec.X, vec.Y, vec.Z);
         }
     }
     
-    public static class Vector4Converter
+    internal static class Vector4Converter
     {
         // VECTOR 3
-        public static global::MonoMac.OpenGL.Vector4 ToOpenGL (this Vector4 vec)
+        internal static global::MonoMac.OpenGL.Vector4 ToOpenGL (this Vector4 vec)
         {
             return new global::MonoMac.OpenGL.Vector4 (vec.X, vec.Y, vec.Z, vec.W);
         }
 
-        public static Vector4 ToAbacus (this global::MonoMac.OpenGL.Vector4 vec)
+        internal static Vector4 ToAbacus (this global::MonoMac.OpenGL.Vector4 vec)
         {
             return new Vector4 (vec.X, vec.Y, vec.Z, vec.W);
         }
     }
 
-    public static class MatrixConverter
+    internal static class MatrixConverter
     {
         static bool flip = false;
 
         // MATRIX
-        public static global::MonoMac.OpenGL.Matrix4 ToOpenGL (this Matrix44 mat)
+        internal static global::MonoMac.OpenGL.Matrix4 ToOpenGL (this Matrix44 mat)
         {
             if( flip )
             {
@@ -1624,7 +1619,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             }
         }
 
-        public static Matrix44 ToAbacus (this global::MonoMac.OpenGL.Matrix4 mat)
+        internal static Matrix44 ToAbacus (this global::MonoMac.OpenGL.Matrix4 mat)
         {
 
             if( flip )
@@ -1650,9 +1645,9 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     }
 
 
-    public static class EnumConverter
+    internal static class EnumConverter
     {
-        public static global::MonoMac.OpenGL.TextureUnit ToOpenGLTextureSlot(Int32 slot)
+        internal static global::MonoMac.OpenGL.TextureUnit ToOpenGLTextureSlot(Int32 slot)
         {
             switch(slot)
             {
@@ -1693,7 +1688,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
 
 
-        public static Type ToType (global::MonoMac.OpenGL.ActiveAttribType ogl)
+        internal static Type ToType (global::MonoMac.OpenGL.ActiveAttribType ogl)
         {
             switch(ogl)
             {
@@ -1709,7 +1704,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             throw new NotSupportedException();
         }
 
-        public static Type ToType (global::MonoMac.OpenGL.ActiveUniformType ogl)
+        internal static Type ToType (global::MonoMac.OpenGL.ActiveUniformType ogl)
         {
             switch(ogl)
             {
@@ -1735,7 +1730,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             throw new NotSupportedException();
         }
 
-        public static void ToOpenGL (
+        internal static void ToOpenGL (
             VertexElementFormat blimey,
             out global::MonoMac.OpenGL.VertexAttribPointerType dataFormat,
             out bool normalized,
@@ -1778,7 +1773,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             }
         }
 
-        public static global::MonoMac.OpenGL.BlendingFactorSrc ToOpenGLSrc(BlendFactor blimey)
+        internal static global::MonoMac.OpenGL.BlendingFactorSrc ToOpenGLSrc(BlendFactor blimey)
         {
             switch(blimey)
             {
@@ -1797,7 +1792,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             throw new Exception();
         }
 
-        public static global::MonoMac.OpenGL.BlendingFactorDest ToOpenGLDest(BlendFactor blimey)
+        internal static global::MonoMac.OpenGL.BlendingFactorDest ToOpenGLDest(BlendFactor blimey)
         {
             switch(blimey)
             {
@@ -1816,7 +1811,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             throw new Exception();
         }
 
-        public static BlendFactor ToCorDestinationBlendFactor (global::MonoMac.OpenGL.All ogl)
+        internal static BlendFactor ToCorDestinationBlendFactor (global::MonoMac.OpenGL.All ogl)
         {
             switch(ogl)
             {
@@ -1835,7 +1830,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             throw new Exception();
         }
 
-        public static global::MonoMac.OpenGL.BlendEquationMode ToOpenGL(BlendFunction blimey)
+        internal static global::MonoMac.OpenGL.BlendEquationMode ToOpenGL(BlendFunction blimey)
         {
             switch(blimey)
             {
@@ -1849,7 +1844,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             throw new Exception();
         }
 
-        public static BlendFunction ToCorDestinationBlendFunction (global::MonoMac.OpenGL.All ogl)
+        internal static BlendFunction ToCorDestinationBlendFunction (global::MonoMac.OpenGL.All ogl)
         {
             switch(ogl)
             {
@@ -1864,7 +1859,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
 
         // PRIMITIVE TYPE
-        public static global::MonoMac.OpenGL.BeginMode ToOpenGL (PrimitiveType blimey)
+        internal static global::MonoMac.OpenGL.BeginMode ToOpenGL (PrimitiveType blimey)
         {
             switch (blimey) {
             case PrimitiveType.LineList:
@@ -1881,7 +1876,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             }
         }
 
-        public static PrimitiveType ToCorPrimitiveType (global::MonoMac.OpenGL.All ogl)
+        internal static PrimitiveType ToCorPrimitiveType (global::MonoMac.OpenGL.All ogl)
         {
             switch (ogl) {
             case global::MonoMac.OpenGL.All.Lines:
@@ -1904,7 +1899,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
 
-    public class MonoMacGpuUtils
+    public sealed class MonoMacGpuUtils
         : IGpuUtils
     {
         public MonoMacGpuUtils()
@@ -1935,7 +1930,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         #endregion
     }
-    public class StubShader
+    public sealed class StubShader
         : IShader
     {
         IShaderPass[] passes = new IShaderPass[0];
@@ -1978,7 +1973,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     /// <summary>
     /// The Cor.Xios implementation of Cor's IShader interface.
     /// </summary>
-    public class Shader
+    public sealed class Shader
         : IShader
         , IDisposable
     {
@@ -2252,7 +2247,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     /// Defines how to create Cor.Xios's implementation
     /// of IShader.
     /// </summary>
-    public class ShaderDefinition
+    public sealed class ShaderDefinition
     {
         /// <summary>
         /// Defines a global name for this shader
@@ -2454,7 +2449,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     /// <summary>
     /// Represents in individual pass of a Cor.Xios high level Shader object.
     /// </summary>
-    public class ShaderPass
+    public sealed class ShaderPass
         : IShaderPass
         , IDisposable
     {
@@ -2609,7 +2604,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
     
-    internal class OpenGLTexture
+    internal sealed class OpenGLTexture
         : Texture2D
     {
         public int glTextureId {get; private set;}
@@ -2808,7 +2803,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
 
-    public class Keyboard
+    public sealed class Keyboard
         : IKeyboard
     {
         readonly HashSet<Char> characterKeysThatAreDown = new HashSet<Char>();
@@ -2911,7 +2906,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         #endregion
     }
 
-    public class Mouse
+    public sealed class Mouse
         : IMouse
     {
         public ButtonState Left
@@ -2966,7 +2961,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
     #region OpenGL ES Shaders
 
-    public class OpenGLShader
+    public sealed class OpenGLShader
         : IDisposable
     {
         public List<OpenGLShaderInput> Inputs { get; private set; }
@@ -3260,7 +3255,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
     
-    public class OpenGLShaderDefinition
+    public sealed class OpenGLShaderDefinition
     {
         public string VertexShaderPath { get; set; }
         public string PixelShaderPath { get; set; }
@@ -3271,7 +3266,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     /// the shader at runtime, not from the ShaderInputDefinition.  This way we can compare the
     /// two and check to see that we have what we are expecting.
     /// </summary>
-    public class OpenGLShaderInput
+    public sealed class OpenGLShaderInput
     {
         int ProgramHandle { get; set; }
         internal int AttributeLocation { get; private set; }
@@ -3298,6 +3293,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             this.Name = attribute.Name;
             this.Type = EnumConverter.ToType(attribute.Type);
             
+
         }
         
         internal void RegisterExtraInfo(ShaderInputDefinition definition)
@@ -3308,7 +3304,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }   
     }
 
-    public class OpenGLShaderSampler
+    public sealed class OpenGLShaderSampler
     {
         int ProgramHandle { get; set; }
         internal int UniformLocation { get; private set; }
@@ -3344,7 +3340,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
     }
 
-    public class OpenGLShaderVariable
+    public sealed class OpenGLShaderVariable
     {
         int ProgramHandle { get; set; }
         internal int UniformLocation { get; private set; }
@@ -3449,7 +3445,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
     #region Shader Definitions
 
-    public class ShaderInputDefinition
+    public sealed class ShaderInputDefinition
     {
         public String Name { get; set; }
         public Type Type { get; set; }
@@ -3458,14 +3454,14 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         public Boolean Optional { get; set; }
     }
 
-    public class ShaderSamplerDefinition
+    public sealed class ShaderSamplerDefinition
     {
         public String NiceName { get; set; }
         public String Name { get; set; }
         public Boolean Optional { get; set; }
     }
 
-    public class ShaderVariableDefinition
+    public sealed class ShaderVariableDefinition
     {
         public String NiceName { get; set; }
 
@@ -3484,13 +3480,13 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         public Object DefaultValue { get; set; }
     }
 
-    public class ShaderVariantDefinition
+    public sealed class ShaderVariantDefinition
     {
         public string VariantName { get; set; }
         public List<ShaderVarientPassDefinition> VariantPassDefinitions { get; set; }
     }
 
-    public class ShaderVarientPassDefinition
+    public sealed class ShaderVarientPassDefinition
     {
         public string PassName { get; set; }
         public OpenGLShaderDefinition PassDefinition { get; set; }

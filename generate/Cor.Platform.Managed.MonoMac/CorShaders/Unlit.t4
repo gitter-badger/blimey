@@ -1,4 +1,4 @@
-    public sealed static partial class CorShaders
+    public static partial class CorShaders
     {   
         public static IShader CreateUnlit()
         {

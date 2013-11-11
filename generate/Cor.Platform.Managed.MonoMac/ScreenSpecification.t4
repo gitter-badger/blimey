@@ -12,12 +12,12 @@
 
         #region IScreenSpecification
 
-        public virtual Int32 ScreenResolutionWidth
+        public Int32 ScreenResolutionWidth
         { 
             get { return width; }
         }
         
-        public virtual Int32 ScreenResolutionHeight
+        public Int32 ScreenResolutionHeight
         { 
             get { return height; }
         }
