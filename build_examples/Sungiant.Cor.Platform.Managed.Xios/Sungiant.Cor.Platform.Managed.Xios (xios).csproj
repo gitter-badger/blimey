@@ -120,6 +120,10 @@
       <Project>{E8051D31-0602-408F-81A8-0E0FABC26758}</Project>
       <Name>Sungiant.Cor.Lib.Managed.Khronos (xios)</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\cor.platform.stub\build_examples\Sungiant.Cor.Platform.Stub\Sungiant.Cor.Platform.Stub %28xios%29.csproj">
+      <Project>{D51BD03A-B3DF-4B58-9C36-01AE0168CF69}</Project>
+      <Name>Sungiant.Cor.Platform.Stub (xios)</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="..\..\shaders\PixelLit_PositionNormal.fsh">

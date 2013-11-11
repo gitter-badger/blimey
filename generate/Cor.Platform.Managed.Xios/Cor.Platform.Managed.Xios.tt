@@ -52,6 +52,7 @@ using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
 
 using Sungiant.Cor.Lib.Managed.Khronos;
+using Sungiant.Cor.Platform.Stub;
 
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;

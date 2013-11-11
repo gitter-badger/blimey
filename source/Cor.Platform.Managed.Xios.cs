@@ -50,6 +50,7 @@ using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
 
 using Sungiant.Cor.Lib.Managed.Khronos;
+using Sungiant.Cor.Platform.Stub;
 
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
@@ -1757,6 +1758,12 @@ namespace Sungiant.Cor.Platform.Managed.Xios
     {
         readonly TouchScreen touchScreen;
 
+        readonly IXbox360Gamepad stubXbox360Gamepad = new StubXbox360Gamepad();
+        readonly IPsmGamepad stubPsmGamepad = new StubPsmGamepad();
+        readonly IGenericGamepad stubGenericGamepad = new StubGenericGamepad();
+        readonly IKeyboard stubKeyboard = new StubKeyboard();
+        readonly IMouse stubMouse = new StubMouse();
+
         internal void Update(AppTime time)
         {
             this.touchScreen.Update(time);
@@ -1776,27 +1783,27 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
         public IXbox360Gamepad Xbox360Gamepad
         {
-            get { return null; }
+            get { return stubXbox360Gamepad; }
         }
 
         public IPsmGamepad PsmGamepad
         {
-            get { return null; }
+            get { return stubPsmGamepad; }
         }
 
         public IGenericGamepad GenericGamepad
         {
-            get { return null; }
+            get { return stubGenericGamepad; }
         }
 
         public IMouse Mouse
         {
-            get { return null; }
+            get { return stubMouse; }
         }
 
         public IKeyboard Keyboard
         {
-            get { return null; }
+            get { return stubKeyboard; }
         }
 
         #endregion
