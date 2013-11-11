@@ -1,2 +1,2 @@
-cor.lib.opentk
-==============
+cor.lib.managed.khronos
+=======================
