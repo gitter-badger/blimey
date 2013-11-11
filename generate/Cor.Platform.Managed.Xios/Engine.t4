@@ -1,4 +1,4 @@
-    public class Engine
+    public sealed class Engine
         : ICor
     {
         TouchScreen touchScreen;

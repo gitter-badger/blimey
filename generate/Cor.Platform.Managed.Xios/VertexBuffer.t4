@@ -28,7 +28,7 @@
             this.bufferUsage = OpenTK.Graphics.ES20.BufferUsage.DynamicDraw;
 
             OpenTK.Graphics.ES20.GL.GenBuffers(1, out this.bufferHandle);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
 
             if( this.bufferHandle == 0 )
@@ -49,7 +49,7 @@
                 (System.IntPtr) null,
                 this.bufferUsage);
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             resourceCounter++;
 
@@ -58,13 +58,13 @@
         internal void Activate()
         {
             OpenTK.Graphics.ES20.GL.BindBuffer(this.type, this.bufferHandle);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         internal void Deactivate()
         {
             OpenTK.Graphics.ES20.GL.BindBuffer(this.type, 0);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         ~VertexBuffer()
@@ -80,7 +80,7 @@
         void CleanUpNativeResources()
         {
             OpenTK.Graphics.ES20.GL.DeleteBuffers(1, ref this.bufferHandle);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             bufferHandle = 0;
 
@@ -114,7 +114,7 @@
                 (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
                 data);
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
 

@@ -13,7 +13,7 @@
 
             int uniformLocation = OpenTK.Graphics.ES20.GL.GetUniformLocation(programHandle, uniform.Name);
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
 
             this.UniformLocation = uniformLocation;
@@ -29,7 +29,7 @@
         {
             // set the sampler texture unit to 0
             OpenTK.Graphics.ES20.GL.Uniform1( this.UniformLocation, slot );
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
     }

@@ -1,4 +1,4 @@
-    public class AudioManager
+    public sealed class AudioManager
         : IAudioManager
     {
         public Single Volume { get; set; }

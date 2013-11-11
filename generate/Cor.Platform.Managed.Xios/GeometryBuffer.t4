@@ -1,4 +1,4 @@
-    public class GeometryBuffer
+    public sealed class GeometryBuffer
         : IGeometryBuffer
     {
         IndexBuffer _iBuf;

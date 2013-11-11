@@ -1,4 +1,4 @@
-    public class GpuUtils
+    public sealed class GpuUtils
         : IGpuUtils
     {
         public Int32 BeginEvent (Rgba32 colour, String eventName){ return 0; }

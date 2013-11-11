@@ -1,4 +1,4 @@
-    internal class OglesTexture
+    internal sealed class OglesTexture
         : Texture2D
         //, IDisposable todo: IResource pattern for destroying stuff
     {
@@ -106,14 +106,14 @@
             // By default, the value is 4, meaning that rows of pixels are assumed to begin
             // on 4-byte boundaries.  this is a global STATE.
             OpenTK.Graphics.ES20.GL.PixelStore(OpenTK.Graphics.ES20.PixelStoreParameter.UnpackAlignment, 4);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             // the first sept in the application of texture is to create the
             // texture object.  this is a container object that holds the 
             // texture data.  this function returns a handle to a texture
             // object.
             OpenTK.Graphics.ES20.GL.GenTextures(1, out textureId);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             this.glTextureId = textureId;
 
@@ -123,7 +123,7 @@
             
             // we need to bind the texture object so that we can opperate on it.
             OpenTK.Graphics.ES20.GL.BindTexture(textureTarget, textureId);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             var internalFormat = OpenTK.Graphics.ES20.PixelInternalFormat.Rgba;
             var format = OpenTK.Graphics.ES20.PixelFormat.Rgba;
@@ -176,18 +176,18 @@
                 
                 );
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             // sets the minification and maginfication filtering modes.  required
             // because we have not loaded a complete mipmap chain for the texture
             // so we must select a non mipmapped minification filter.
             OpenTK.Graphics.ES20.GL.TexParameter(textureTarget, OpenTK.Graphics.ES20.TextureParameterName.TextureMinFilter, (int) OpenTK.Graphics.ES20.All.Nearest );
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.TexParameter(textureTarget, OpenTK.Graphics.ES20.TextureParameterName.TextureMagFilter, (int) OpenTK.Graphics.ES20.All.Nearest );
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
         
         

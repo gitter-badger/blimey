@@ -45,14 +45,18 @@ using System.Diagnostics;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Linq;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using MonoTouch.CoreText;
-using MonoTouch.CoreGraphics;
+
 using Sungiant.Abacus;
 using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
+
+using Sungiant.Cor.Lib.Managed.Khronos;
+
+using MonoTouch.UIKit;
+using MonoTouch.Foundation;
+using MonoTouch.CoreText;
+using MonoTouch.CoreGraphics;
 
 namespace Sungiant.Cor.Platform.Managed.Xios
 {
@@ -69,13 +73,11 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 <#@ include file="iOSTouchState.t4"#>
 <#@ include file="OpenGLTextureWrapper.t4"#>
 <#@ include file="OpenGLViewController.t4"#>
-<#@ include file="OpenTKHelper.t4"#>
 <#@ include file="ResourceManager.t4"#>
 <#@ include file="Shader.t4"#>
 <#@ include file="ShaderDefinition.t4"#>
 <#@ include file="ShaderHelper.t4"#>
 <#@ include file="ShaderPass.t4"#>
-<#@ include file="ShaderUtils.t4"#>
 <#@ include file="SystemManager.t4"#>
 <#@ include file="TouchScreen.t4"#>
 <#@ include file="VertexBuffer.t4"#>

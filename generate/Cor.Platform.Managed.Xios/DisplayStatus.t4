@@ -1,4 +1,4 @@
-    public class DisplayStatus
+    public sealed class DisplayStatus
         : IDisplayStatus
     {
         public Boolean Fullscreen

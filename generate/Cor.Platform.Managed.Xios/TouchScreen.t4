@@ -1,25 +1,26 @@
-    public class TouchScreen
-        : MultiTouchController
+    public sealed class TouchScreen
+        : IMultiTouchController
         , IPanelSpecification
         , IScreenSpecification
     {
-        Dictionary<Int32, iOSTouchState> touchData;
-        MonoTouch.UIKit.UIView view;
+        readonly Dictionary<Int32, iOSTouchState> touchData;
+        readonly MonoTouch.UIKit.UIView view;
+        readonly TouchCollection collection = new TouchCollection();
+        readonly ICor engine;
 
         internal TouchScreen(
             ICor engine,
             MonoTouch.UIKit.UIView view,
             Dictionary<Int32, iOSTouchState> touches)
-            : base(engine)
         {
             this.view = view;
-
+            this.engine = engine;
             this.touchData = touches;
 
             Console.WriteLine(string.Format("Screen Specification - Width: {0}, Height: {1}", ScreenResolutionWidth, ScreenResolutionHeight));
         }
 
-        public override IPanelSpecification PanelSpecification
+        public IPanelSpecification PanelSpecification
         {
             get
             {
@@ -27,7 +28,7 @@
             }
         }
 
-        internal override void Update(AppTime time)
+        internal void Update(AppTime time)
         {
             //Console.WriteLine(string.Format("MonoTouch.UIKit.UIScreen.MainScreen.Bounds - h: {0}, w: {1}", ScreenResolutionWidth, ScreenResolutionHeight));
 
@@ -152,6 +153,11 @@
                     MonoTouch.UIKit.UIScreen.MainScreen.Bounds.Width *
                     MonoTouch.UIKit.UIScreen.MainScreen.Scale);
             }
-        }   
+        }
+
+        public TouchCollection TouchCollection 
+        { 
+            get { return this.collection; } 
+        }
     }
 

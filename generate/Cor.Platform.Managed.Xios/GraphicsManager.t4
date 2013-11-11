@@ -1,4 +1,4 @@
-﻿    public class GraphicsManager
+﻿    public sealed class GraphicsManager
         : IGraphicsManager
     {
         GpuUtils gpuUtils;
@@ -15,7 +15,7 @@
             displayStatus = new DisplayStatus();
 
             OpenTK.Graphics.ES20.GL.Enable(OpenTK.Graphics.ES20.EnableCap.Blend);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             // default this
             // todo: all the interfaces need an base abstract implementation
@@ -32,16 +32,16 @@
             */
 
             OpenTK.Graphics.ES20.GL.Enable(OpenTK.Graphics.ES20.EnableCap.DepthTest);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.DepthMask(true);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.DepthRange(0f, 1f);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.DepthFunc(OpenTK.Graphics.ES20.DepthFunction.Lequal);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             SetCullMode (CullMode.CW);
         }
@@ -53,26 +53,26 @@
                 if (cullMode == CullMode.None)
                 {
                     OpenTK.Graphics.ES20.GL.Disable (OpenTK.Graphics.ES20.EnableCap.CullFace);
-                    OpenTKHelper.CheckError ();
+                    ErrorHandler.Check ();
 
                 }
                 else
                 {
                     OpenTK.Graphics.ES20.GL.Enable(OpenTK.Graphics.ES20.EnableCap.CullFace);
-                    OpenTKHelper.CheckError();
+                    ErrorHandler.Check();
 
                     OpenTK.Graphics.ES20.GL.FrontFace(OpenTK.Graphics.ES20.FrontFaceDirection.Cw);
-                    OpenTKHelper.CheckError();
+                    ErrorHandler.Check();
 
                     if (cullMode == CullMode.CW)
                     {
                         OpenTK.Graphics.ES20.GL.CullFace (OpenTK.Graphics.ES20.CullFaceMode.Back);
-                        OpenTKHelper.CheckError ();
+                        ErrorHandler.Check ();
                     }
                     else if (cullMode == CullMode.CCW)
                     {
                         OpenTK.Graphics.ES20.GL.CullFace (OpenTK.Graphics.ES20.CullFaceMode.Front);
-                        OpenTKHelper.CheckError ();
+                        ErrorHandler.Check ();
                     }
                     else
                     {
@@ -105,7 +105,7 @@
 
             OpenTK.Graphics.ES20.GL.Clear ( (Int32) mask );
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
         }
 */
@@ -123,7 +123,7 @@
                 
                 // we need to bind the texture object so that we can opperate on it.
                 OpenTK.Graphics.ES20.GL.BindTexture(textureTarget, oglt0.glTextureId);
-                OpenTKHelper.CheckError();
+                ErrorHandler.Check();
             }
 
         }
@@ -140,7 +140,7 @@
 
             OpenTK.Graphics.ES20.GL.Clear ( mask );
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         public void ClearDepthBuffer(Single val = 1)
@@ -151,7 +151,7 @@
 
             OpenTK.Graphics.ES20.GL.Clear ( mask );
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         public IGpuUtils GpuUtils
@@ -228,7 +228,7 @@
                 OpenTK.Graphics.ES20.DrawElementsType.UnsignedShort,
                 (System.IntPtr) 0 );
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             this.DisableVertAttribs(vertDecl);
 
@@ -284,7 +284,7 @@
             var bindTarget = OpenTK.Graphics.ES20.BufferTarget.ArrayBuffer;
 
             OpenTK.Graphics.ES20.GL.BindBuffer(bindTarget, 0);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
 
             this.EnableVertAttribs( vertDecl, pointer );
@@ -297,7 +297,7 @@
                 vertexOffset,  // specifies the starting vertex index in the enabled vertex arrays
                 count ); // specifies the number of indicies to be drawn
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
 
             this.DisableVertAttribs(vertDecl);
@@ -335,7 +335,7 @@
             foreach(var elem in vertElems)
             {
                 OpenTK.Graphics.ES20.GL.EnableVertexAttribArray(counter);
-                OpenTKHelper.CheckError();
+                ErrorHandler.Check();
 
                 //var vertElemUsage = elem.VertexElementUsage;
                 var vertElemFormat = elem.VertexElementFormat;
@@ -370,7 +370,7 @@
                     
                     );
 
-                OpenTKHelper.CheckError();
+                ErrorHandler.Check();
 
                 counter++;
 
@@ -384,7 +384,7 @@
             for(int i = 0; i < vertElems.Length; ++i)
             {
                 OpenTK.Graphics.ES20.GL.DisableVertexAttribArray(i);
-                OpenTKHelper.CheckError();
+                ErrorHandler.Check();
             }
         }
 
@@ -396,14 +396,14 @@
             OpenTK.Graphics.ES20.GL.BlendEquationSeparate(
                 EnumConverter.ToOpenTK(rgbBlendFunction),
                 EnumConverter.ToOpenTK(alphaBlendFunction) );
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.BlendFuncSeparate(
                 EnumConverter.ToOpenTKSrc(sourceRgb),
                 EnumConverter.ToOpenTKDest(destinationRgb),
                 EnumConverter.ToOpenTKSrc(sourceAlpha),
                 EnumConverter.ToOpenTKDest(destinationAlpha) );
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
         }
 

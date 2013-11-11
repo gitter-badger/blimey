@@ -43,18 +43,22 @@ using System.Diagnostics;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Linq;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using MonoTouch.CoreText;
-using MonoTouch.CoreGraphics;
+
 using Sungiant.Abacus;
 using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
 
+using Sungiant.Cor.Lib.Managed.Khronos;
+
+using MonoTouch.UIKit;
+using MonoTouch.Foundation;
+using MonoTouch.CoreText;
+using MonoTouch.CoreGraphics;
+
 namespace Sungiant.Cor.Platform.Managed.Xios
 {
-    public class AudioManager
+    public sealed class AudioManager
         : IAudioManager
     {
         public Single Volume { get; set; }
@@ -622,7 +626,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 */
 
 
-    public class DisplayStatus
+    public sealed class DisplayStatus
         : IDisplayStatus
     {
         public Boolean Fullscreen
@@ -652,7 +656,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
     }
 
     [MonoTouch.Foundation.Register ("EAGLView")]
-    public class EAGLView 
+    public sealed class EAGLView 
         : OpenTK.Platform.iPhoneOS.iPhoneOSGameView
     {
 
@@ -744,20 +748,20 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             // Enable the depth buffer
             //
             OpenTK.Graphics.ES20.GL.GenRenderbuffers(1, out _depthRenderbuffer);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.BindRenderbuffer(OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer, _depthRenderbuffer);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.RenderbufferStorage(OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer, OpenTK.Graphics.ES20.RenderbufferInternalFormat.DepthComponent16, Size.Width, Size.Height);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.FramebufferRenderbuffer(
                 OpenTK.Graphics.ES20.FramebufferTarget.Framebuffer,
                 OpenTK.Graphics.ES20.FramebufferSlot.DepthAttachment,
                 OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer,
                 _depthRenderbuffer);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
         }
         
@@ -994,7 +998,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         }
     }
 
-    public class Engine
+    public sealed class Engine
         : ICor
     {
         TouchScreen touchScreen;
@@ -1101,7 +1105,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
     }
     
-    public class GeometryBuffer
+    public sealed class GeometryBuffer
         : IGeometryBuffer
     {
         IndexBuffer _iBuf;
@@ -1148,7 +1152,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         internal VertexBuffer OpenTKVertexBuffer { get { return _vBuf; } }
     }
 
-    public class GpuUtils
+    public sealed class GpuUtils
         : IGpuUtils
     {
         public Int32 BeginEvent (Rgba32 colour, String eventName){ return 0; }
@@ -1157,8 +1161,8 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         public void SetMarker (Rgba32 colour, String eventName){ }
         public void SetRegion (Rgba32 colour, String eventName){ }
     }
-    
-    public class GraphicsManager
+
+    public sealed class GraphicsManager
         : IGraphicsManager
     {
         GpuUtils gpuUtils;
@@ -1175,7 +1179,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             displayStatus = new DisplayStatus();
 
             OpenTK.Graphics.ES20.GL.Enable(OpenTK.Graphics.ES20.EnableCap.Blend);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             // default this
             // todo: all the interfaces need an base abstract implementation
@@ -1192,16 +1196,16 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             */
 
             OpenTK.Graphics.ES20.GL.Enable(OpenTK.Graphics.ES20.EnableCap.DepthTest);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.DepthMask(true);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.DepthRange(0f, 1f);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.DepthFunc(OpenTK.Graphics.ES20.DepthFunction.Lequal);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             SetCullMode (CullMode.CW);
         }
@@ -1213,26 +1217,26 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                 if (cullMode == CullMode.None)
                 {
                     OpenTK.Graphics.ES20.GL.Disable (OpenTK.Graphics.ES20.EnableCap.CullFace);
-                    OpenTKHelper.CheckError ();
+                    ErrorHandler.Check ();
 
                 }
                 else
                 {
                     OpenTK.Graphics.ES20.GL.Enable(OpenTK.Graphics.ES20.EnableCap.CullFace);
-                    OpenTKHelper.CheckError();
+                    ErrorHandler.Check();
 
                     OpenTK.Graphics.ES20.GL.FrontFace(OpenTK.Graphics.ES20.FrontFaceDirection.Cw);
-                    OpenTKHelper.CheckError();
+                    ErrorHandler.Check();
 
                     if (cullMode == CullMode.CW)
                     {
                         OpenTK.Graphics.ES20.GL.CullFace (OpenTK.Graphics.ES20.CullFaceMode.Back);
-                        OpenTKHelper.CheckError ();
+                        ErrorHandler.Check ();
                     }
                     else if (cullMode == CullMode.CCW)
                     {
                         OpenTK.Graphics.ES20.GL.CullFace (OpenTK.Graphics.ES20.CullFaceMode.Front);
-                        OpenTKHelper.CheckError ();
+                        ErrorHandler.Check ();
                     }
                     else
                     {
@@ -1265,7 +1269,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
             OpenTK.Graphics.ES20.GL.Clear ( (Int32) mask );
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
         }
 */
@@ -1283,7 +1287,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                 
                 // we need to bind the texture object so that we can opperate on it.
                 OpenTK.Graphics.ES20.GL.BindTexture(textureTarget, oglt0.glTextureId);
-                OpenTKHelper.CheckError();
+                ErrorHandler.Check();
             }
 
         }
@@ -1300,7 +1304,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
             OpenTK.Graphics.ES20.GL.Clear ( mask );
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         public void ClearDepthBuffer(Single val = 1)
@@ -1311,7 +1315,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
             OpenTK.Graphics.ES20.GL.Clear ( mask );
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         public IGpuUtils GpuUtils
@@ -1388,7 +1392,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                 OpenTK.Graphics.ES20.DrawElementsType.UnsignedShort,
                 (System.IntPtr) 0 );
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             this.DisableVertAttribs(vertDecl);
 
@@ -1444,7 +1448,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             var bindTarget = OpenTK.Graphics.ES20.BufferTarget.ArrayBuffer;
 
             OpenTK.Graphics.ES20.GL.BindBuffer(bindTarget, 0);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
 
             this.EnableVertAttribs( vertDecl, pointer );
@@ -1457,7 +1461,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                 vertexOffset,  // specifies the starting vertex index in the enabled vertex arrays
                 count ); // specifies the number of indicies to be drawn
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
 
             this.DisableVertAttribs(vertDecl);
@@ -1495,7 +1499,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             foreach(var elem in vertElems)
             {
                 OpenTK.Graphics.ES20.GL.EnableVertexAttribArray(counter);
-                OpenTKHelper.CheckError();
+                ErrorHandler.Check();
 
                 //var vertElemUsage = elem.VertexElementUsage;
                 var vertElemFormat = elem.VertexElementFormat;
@@ -1530,7 +1534,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                     
                     );
 
-                OpenTKHelper.CheckError();
+                ErrorHandler.Check();
 
                 counter++;
 
@@ -1544,7 +1548,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             for(int i = 0; i < vertElems.Length; ++i)
             {
                 OpenTK.Graphics.ES20.GL.DisableVertexAttribArray(i);
-                OpenTKHelper.CheckError();
+                ErrorHandler.Check();
             }
         }
 
@@ -1556,14 +1560,14 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             OpenTK.Graphics.ES20.GL.BlendEquationSeparate(
                 EnumConverter.ToOpenTK(rgbBlendFunction),
                 EnumConverter.ToOpenTK(alphaBlendFunction) );
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.BlendFuncSeparate(
                 EnumConverter.ToOpenTKSrc(sourceRgb),
                 EnumConverter.ToOpenTKDest(destinationRgb),
                 EnumConverter.ToOpenTKSrc(sourceAlpha),
                 EnumConverter.ToOpenTKDest(destinationAlpha) );
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
         }
 
@@ -1611,7 +1615,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             OpenTK.Graphics.ES20.GL.GenBuffers(1, out this.bufferHandle);
             //try
             //{
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
             //}
             //catch
             //{
@@ -1635,7 +1639,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                 (System.IntPtr) null,
                 this.bufferUsage);
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             resourceCounter++;
 
@@ -1654,7 +1658,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         void CleanUpNativeResources()
         {
             OpenTK.Graphics.ES20.GL.DeleteBuffers(1, ref this.bufferHandle);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             bufferHandle = 0;
 
@@ -1671,13 +1675,13 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         internal void Activate()
         {
             OpenTK.Graphics.ES20.GL.BindBuffer(this.type, this.bufferHandle);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         internal void Deactivate()
         {
             OpenTK.Graphics.ES20.GL.BindBuffer(this.type, 0);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
 
@@ -1710,7 +1714,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
             udata = null;
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         public int IndexCount
@@ -1748,40 +1752,54 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
     }
 
-    public class InputManager
+    public sealed class InputManager
         : IInputManager
     {
-        TouchScreen touchScreen;
+        readonly TouchScreen touchScreen;
+
+        internal void Update(AppTime time)
+        {
+            this.touchScreen.Update(time);
+        }
+
+        #region IInputManager
 
         public InputManager(ICor engine, TouchScreen touchScreen)
         {
             this.touchScreen = touchScreen;
         }
 
-        public MultiTouchController GetMultiTouchController()
+        public IMultiTouchController MultiTouchController
         {
-            return this.touchScreen;
+            get { return this.touchScreen; }
         }
 
-        public virtual Xbox360Gamepad GetXbox360Gamepad(PlayerIndex player)
+        public IXbox360Gamepad Xbox360Gamepad
         {
-            return null;
+            get { return null; }
         }
 
-        public virtual PsmGamepad GetPsmGamepad()
+        public IPsmGamepad PsmGamepad
         {
-            return null;
+            get { return null; }
         }
 
-        public virtual GenericGamepad GetGenericGamepad()
+        public IGenericGamepad GenericGamepad
         {
-            return null;
+            get { return null; }
         }
 
-        public void Update(AppTime time)
+        public IMouse Mouse
         {
-            this.touchScreen.Update(time);
+            get { return null; }
         }
+
+        public IKeyboard Keyboard
+        {
+            get { return null; }
+        }
+
+        #endregion
     }
 
     internal struct iOSTouchState
@@ -1792,7 +1810,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         public Int64 LastUpdated;
     }
 
-    internal class OglesTexture
+    internal sealed class OglesTexture
         : Texture2D
         //, IDisposable todo: IResource pattern for destroying stuff
     {
@@ -1900,14 +1918,14 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             // By default, the value is 4, meaning that rows of pixels are assumed to begin
             // on 4-byte boundaries.  this is a global STATE.
             OpenTK.Graphics.ES20.GL.PixelStore(OpenTK.Graphics.ES20.PixelStoreParameter.UnpackAlignment, 4);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             // the first sept in the application of texture is to create the
             // texture object.  this is a container object that holds the 
             // texture data.  this function returns a handle to a texture
             // object.
             OpenTK.Graphics.ES20.GL.GenTextures(1, out textureId);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             this.glTextureId = textureId;
 
@@ -1917,7 +1935,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             
             // we need to bind the texture object so that we can opperate on it.
             OpenTK.Graphics.ES20.GL.BindTexture(textureTarget, textureId);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             var internalFormat = OpenTK.Graphics.ES20.PixelInternalFormat.Rgba;
             var format = OpenTK.Graphics.ES20.PixelFormat.Rgba;
@@ -1970,18 +1988,18 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                 
                 );
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             // sets the minification and maginfication filtering modes.  required
             // because we have not loaded a complete mipmap chain for the texture
             // so we must select a non mipmapped minification filter.
             OpenTK.Graphics.ES20.GL.TexParameter(textureTarget, OpenTK.Graphics.ES20.TextureParameterName.TextureMinFilter, (int) OpenTK.Graphics.ES20.All.Nearest );
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.TexParameter(textureTarget, OpenTK.Graphics.ES20.TextureParameterName.TextureMagFilter, (int) OpenTK.Graphics.ES20.All.Nearest );
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
         
         
@@ -1995,7 +2013,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
     }
 
     [MonoTouch.Foundation.Register ("OpenGLViewController")]
-    public partial class OpenGLViewController 
+    public sealed class OpenGLViewController 
         : MonoTouch.UIKit.UIViewController
     {
         AppSettings _settings;
@@ -2113,21 +2131,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         }
     }
 
-    public static class OpenTKHelper
-    {
-        [Conditional("DEBUG")]
-        public static void CheckError()
-        {
-            var ec = OpenTK.Graphics.ES20.GL.GetError();
-
-            if (ec != OpenTK.Graphics.ES20.ErrorCode.NoError)
-            {
-                throw new Exception( ec.ToString());
-            }
-        }
-    }
-
-    public class ResourceManager
+    public sealed class ResourceManager
         : IResourceManager
     {
         Dictionary<ShaderType, IShader> shaderCache;
@@ -2172,7 +2176,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
     /// <summary>
     /// The Cor.Xios implementation of Cor's IShader interface.
     /// </summary>
-    public class Shader
+    public sealed class Shader
         : IShader
         , IDisposable
     {
@@ -2446,7 +2450,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
     /// Defines how to create Cor.Xios's implementation
     /// of IShader.
     /// </summary>
-    public class ShaderDefinition
+    public sealed class ShaderDefinition
     {
         /// <summary>
         /// Defines a global name for this shader
@@ -2648,7 +2652,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
     /// <summary>
     /// Represents in individual pass of a Cor.Xios high level Shader object.
     /// </summary>
-    public class ShaderPass
+    public sealed class ShaderPass
         : IShaderPass
         , IDisposable
     {
@@ -2803,426 +2807,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         }
     }
     
-    //
-    // Shader Utils
-    // ------------
-    // Static class to help with open tk's horrible shader system.
-    //
-    public static class ShaderUtils
-    {
-        public class ShaderUniform
-        {
-            public Int32 Index { get; set; }
-            public String Name { get; set; }
-            public OpenTK.Graphics.ES20.ActiveUniformType Type { get; set; }
-        }
-
-        public class ShaderAttribute
-        {
-            public Int32 Index { get; set; }
-            public String Name { get; set; }
-            public OpenTK.Graphics.ES20.ActiveAttribType Type { get; set; }
-        }
-        
-        public static Int32 CreateShaderProgram()
-        {
-            // Create shader program.
-            Int32 programHandle = OpenTK.Graphics.ES20.GL.CreateProgram ();
-
-            if( programHandle == 0 )
-                throw new Exception("Failed to create shader program");
-
-            OpenTKHelper.CheckError();
-
-            return programHandle;
-        }
-
-        public static Int32 CreateVertexShader(string path)
-        {
-            Int32 vertShaderHandle;
-            string ext = Path.GetExtension(path);
-
-            if( ext != ".vsh" )
-            {
-                throw new Exception("Resource [" + path + "] should end with .vsh");
-            }
-
-            string filename = path.Substring(0, path.Length - ext.Length);
-
-            var vertShaderPathname =
-                MonoTouch.Foundation.NSBundle.MainBundle.PathForResource (
-                    filename,
-                    "vsh" );
-
-            if( vertShaderPathname == null )
-            {
-                throw new Exception("Resource [" + path + "] not found");
-            }
-
-
-            //Console.WriteLine ("[Cor.Resources] " + vertShaderPathname);
-
-
-            ShaderUtils.CompileShader (
-                OpenTK.Graphics.ES20.ShaderType.VertexShader, 
-                vertShaderPathname, 
-                out vertShaderHandle );
-
-            if( vertShaderHandle == 0 )
-                throw new Exception("Failed to compile vertex shader program");
-
-            return vertShaderHandle;
-        }
-
-        public static Int32 CreateFragmentShader(string path)
-        {
-            Int32 fragShaderHandle;
-
-            string ext = Path.GetExtension(path);
-            
-            if( ext != ".fsh" )
-            {
-                throw new Exception("Resource [" + path + "] should end with .fsh");
-            }
-            
-            string filename = path.Substring(0, path.Length - ext.Length);
-            
-            var fragShaderPathname =
-                MonoTouch.Foundation.NSBundle.MainBundle.PathForResource (
-                    filename,
-                    "fsh" );
-            
-            if( fragShaderPathname == null )
-            {
-                throw new Exception("Resource [" + path + "] not found");
-            }
-
-            //Console.WriteLine ("[Cor.Resources] " + fragShaderPathname);
-
-
-            ShaderUtils.CompileShader (
-                OpenTK.Graphics.ES20.ShaderType.FragmentShader,
-                fragShaderPathname,
-                out fragShaderHandle );
-
-            if( fragShaderHandle == 0 )
-                throw new Exception("Failed to compile fragment shader program");
-
-
-            return fragShaderHandle;
-        }
-
-        public static void AttachShader(
-            Int32 programHandle,
-            Int32 shaderHandle)
-        {
-            if (shaderHandle != 0)
-            {
-                // Attach vertex shader to program.
-                OpenTK.Graphics.ES20.GL.AttachShader (programHandle, shaderHandle);
-                OpenTKHelper.CheckError();
-            }
-        }
-
-        public static void DetachShader(
-            Int32 programHandle,
-            Int32 shaderHandle )
-        {
-            if (shaderHandle != 0)
-            {
-                OpenTK.Graphics.ES20.GL.DetachShader (programHandle, shaderHandle);
-                OpenTKHelper.CheckError();
-            }
-        }
-
-        public static void DeleteShader(
-            Int32 programHandle,
-            Int32 shaderHandle )
-        {
-            if (shaderHandle != 0)
-            {
-                OpenTK.Graphics.ES20.GL.DeleteShader (shaderHandle);
-                shaderHandle = 0;
-                OpenTKHelper.CheckError();
-            }
-        }
-        
-        public static void DestroyShaderProgram (Int32 programHandle)
-        {
-            if (programHandle != 0)
-            {
-                OpenTK.Graphics.ES20.GL.DeleteProgram (programHandle);
-                programHandle = 0;
-                OpenTKHelper.CheckError();
-            }
-        }
-
-        public static void CompileShader (
-            OpenTK.Graphics.ES20.ShaderType type,
-            String file,
-            out Int32 shaderHandle )
-        {
-            String src = string.Empty;
-
-            try
-            {
-                // Get the data from the text file
-                src = System.IO.File.ReadAllText (file);
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.Message);
-                shaderHandle = 0;
-                return;
-            }
-
-            // Create an empty vertex shader object
-            shaderHandle = OpenTK.Graphics.ES20.GL.CreateShader (type);
-
-            OpenTKHelper.CheckError();
-
-            // Replace the source code in the vertex shader object
-            OpenTK.Graphics.ES20.GL.ShaderSource (
-                shaderHandle,
-                1,
-                new String[] { src },
-                (Int32[]) null );
-
-            OpenTKHelper.CheckError();
-
-            OpenTK.Graphics.ES20.GL.CompileShader (shaderHandle);
-
-            OpenTKHelper.CheckError();
-            
-#if DEBUG
-            Int32 logLength = 0;
-            OpenTK.Graphics.ES20.GL.GetShader (
-                shaderHandle,
-                OpenTK.Graphics.ES20.ShaderParameter.InfoLogLength,
-                out logLength);
-
-            OpenTKHelper.CheckError();
-            var infoLog = new System.Text.StringBuilder(logLength);
-
-            if (logLength > 0)
-            {
-                int temp = 0;
-                OpenTK.Graphics.ES20.GL.GetShaderInfoLog (
-                    shaderHandle,
-                    logLength,
-                    out temp,
-                    infoLog );
-
-                string log = infoLog.ToString();
-
-                Console.WriteLine(file);
-                Console.WriteLine (log);
-                Console.WriteLine(type);
-            }
-#endif
-            Int32 status = 0;
-
-            OpenTK.Graphics.ES20.GL.GetShader (
-                shaderHandle,
-                OpenTK.Graphics.ES20.ShaderParameter.CompileStatus,
-                out status );
-
-            OpenTKHelper.CheckError();
-
-            if (status == 0)
-            {
-                OpenTK.Graphics.ES20.GL.DeleteShader (shaderHandle);
-                throw new Exception ("Failed to compile " + type.ToString());
-            }
-        }
-        
-        public static List<ShaderUniform> GetUniforms (Int32 prog)
-        {
-            
-            int numActiveUniforms = 0;
-            
-            var result = new List<ShaderUniform>();
-
-            OpenTK.Graphics.ES20.GL.GetProgram(prog, OpenTK.Graphics.ES20.ProgramParameter.ActiveUniforms, out numActiveUniforms);
-            OpenTKHelper.CheckError();
-
-            for(int i = 0; i < numActiveUniforms; ++i)
-            {
-                var sb = new System.Text.StringBuilder ();
-                
-                int buffSize = 0;
-                int length = 0;
-                int size = 0;
-                OpenTK.Graphics.ES20.ActiveUniformType type;
-
-                OpenTK.Graphics.ES20.GL.GetActiveUniform(
-                    prog,
-                    i,
-                    64,
-                    out length,
-                    out size,
-                    out type,
-                    sb);
-                OpenTKHelper.CheckError();
-                
-                result.Add(
-                    new ShaderUniform()
-                    {
-                    Index = i,
-                    Name = sb.ToString(),
-                    Type = type
-                    }
-                );
-            }
-            
-            return result;
-        }
-
-        public static List<ShaderAttribute> GetAttributes (Int32 prog)
-        {
-            int numActiveAttributes = 0;
-            
-            var result = new List<ShaderAttribute>();
-            
-            // gets the number of active vertex attributes
-            OpenTK.Graphics.ES20.GL.GetProgram(prog, OpenTK.Graphics.ES20.ProgramParameter.ActiveAttributes, out numActiveAttributes);
-            OpenTKHelper.CheckError();
-
-            for(int i = 0; i < numActiveAttributes; ++i)
-            {
-                var sb = new System.Text.StringBuilder ();
-
-                int buffSize = 0;
-                int length = 0;
-                int size = 0;
-                OpenTK.Graphics.ES20.ActiveAttribType type;
-                OpenTK.Graphics.ES20.GL.GetActiveAttrib(
-                    prog,
-                    i,
-                    64,
-                    out length,
-                    out size,
-                    out type,
-                    sb);
-                OpenTKHelper.CheckError();
-                    
-                result.Add(
-                    new ShaderAttribute()
-                    {
-                        Index = i,
-                        Name = sb.ToString(),
-                        Type = type
-                    }
-                );
-            }
-            
-            return result;
-        }
-        
-        
-        public static bool LinkProgram (Int32 prog)
-        {
-            bool retVal = true;
-
-            OpenTK.Graphics.ES20.GL.LinkProgram (prog);
-
-            OpenTKHelper.CheckError();
-            
-#if DEBUG
-            Int32 logLength = 0;
-
-            OpenTK.Graphics.ES20.GL.GetProgram (
-                prog,
-                OpenTK.Graphics.ES20.ProgramParameter.InfoLogLength,
-                out logLength );
-
-            OpenTKHelper.CheckError();
-
-            if (logLength > 0)
-            {
-                retVal = false;
-
-                /*
-                var infoLog = new System.Text.StringBuilder ();
-
-                OpenTK.Graphics.ES20.GL.GetProgramInfoLog (
-                    prog,
-                    logLength,
-                    out logLength,
-                    infoLog );
-                */
-                var infoLog = string.Empty;
-                OpenTK.Graphics.ES20.GL.GetProgramInfoLog(prog, out infoLog);
-
-
-                OpenTKHelper.CheckError();
-
-                Console.WriteLine (string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
-            }
-#endif
-            Int32 status = 0;
-
-            OpenTK.Graphics.ES20.GL.GetProgram (
-                prog,
-                OpenTK.Graphics.ES20.ProgramParameter.LinkStatus,
-                out status );
-
-            OpenTKHelper.CheckError();
-
-            if (status == 0)
-            {
-                throw new Exception(String.Format("Failed to link program: {0:x}", prog));
-            }
-
-            return retVal;
-
-        }
-
-        public static void ValidateProgram (Int32 programHandle)
-        {
-            OpenTK.Graphics.ES20.GL.ValidateProgram (programHandle);
-
-            OpenTKHelper.CheckError();
-            
-            Int32 logLength = 0;
-
-            OpenTK.Graphics.ES20.GL.GetProgram (
-                programHandle,
-                OpenTK.Graphics.ES20.ProgramParameter.InfoLogLength,
-                out logLength );
-
-            OpenTKHelper.CheckError();
-
-            if (logLength > 0)
-            {
-                var infoLog = new System.Text.StringBuilder ();
-
-                OpenTK.Graphics.ES20.GL.GetProgramInfoLog (
-                    programHandle,
-                    logLength,
-                    out logLength, infoLog );
-
-                OpenTKHelper.CheckError();
-
-                Console.WriteLine (string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
-            }
-            
-            Int32 status = 0;
-
-            OpenTK.Graphics.ES20.GL.GetProgram (
-                programHandle, OpenTK.Graphics.ES20.ProgramParameter.LinkStatus,
-                out status );
-
-            OpenTKHelper.CheckError();
-
-            if (status == 0)
-            {
-                throw new Exception (String.Format("Failed to validate program {0:x}", programHandle));
-            }
-        }
-    }
-
-    public class SystemManager
+    public sealed class SystemManager
         : ISystemManager
     {
         TouchScreen screen;
@@ -3373,28 +2958,29 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         }
     }
 
-    public class TouchScreen
-        : MultiTouchController
+    public sealed class TouchScreen
+        : IMultiTouchController
         , IPanelSpecification
         , IScreenSpecification
     {
-        Dictionary<Int32, iOSTouchState> touchData;
-        MonoTouch.UIKit.UIView view;
+        readonly Dictionary<Int32, iOSTouchState> touchData;
+        readonly MonoTouch.UIKit.UIView view;
+        readonly TouchCollection collection = new TouchCollection();
+        readonly ICor engine;
 
         internal TouchScreen(
             ICor engine,
             MonoTouch.UIKit.UIView view,
             Dictionary<Int32, iOSTouchState> touches)
-            : base(engine)
         {
             this.view = view;
-
+            this.engine = engine;
             this.touchData = touches;
 
             Console.WriteLine(string.Format("Screen Specification - Width: {0}, Height: {1}", ScreenResolutionWidth, ScreenResolutionHeight));
         }
 
-        public override IPanelSpecification PanelSpecification
+        public IPanelSpecification PanelSpecification
         {
             get
             {
@@ -3402,7 +2988,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             }
         }
 
-        internal override void Update(AppTime time)
+        internal void Update(AppTime time)
         {
             //Console.WriteLine(string.Format("MonoTouch.UIKit.UIScreen.MainScreen.Bounds - h: {0}, w: {1}", ScreenResolutionWidth, ScreenResolutionHeight));
 
@@ -3527,7 +3113,12 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                     MonoTouch.UIKit.UIScreen.MainScreen.Bounds.Width *
                     MonoTouch.UIKit.UIScreen.MainScreen.Scale);
             }
-        }   
+        }
+
+        public TouchCollection TouchCollection 
+        { 
+            get { return this.collection; } 
+        }
     }
 
     //
@@ -3560,7 +3151,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             this.bufferUsage = OpenTK.Graphics.ES20.BufferUsage.DynamicDraw;
 
             OpenTK.Graphics.ES20.GL.GenBuffers(1, out this.bufferHandle);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
 
             if( this.bufferHandle == 0 )
@@ -3581,7 +3172,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                 (System.IntPtr) null,
                 this.bufferUsage);
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             resourceCounter++;
 
@@ -3590,13 +3181,13 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         internal void Activate()
         {
             OpenTK.Graphics.ES20.GL.BindBuffer(this.type, this.bufferHandle);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         internal void Deactivate()
         {
             OpenTK.Graphics.ES20.GL.BindBuffer(this.type, 0);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         ~VertexBuffer()
@@ -3612,7 +3203,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         void CleanUpNativeResources()
         {
             OpenTK.Graphics.ES20.GL.DeleteBuffers(1, ref this.bufferHandle);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             bufferHandle = 0;
 
@@ -3646,7 +3237,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                 (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
                 data);
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
 
@@ -3878,6 +3469,27 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             }
         }
         */
+
+        static string GetResourcePath(string path)
+        {
+            string ext = Path.GetExtension(path);
+
+            string filename = path.Substring(0, path.Length - ext.Length);
+
+            var resourcePathname =
+                MonoTouch.Foundation.NSBundle.MainBundle.PathForResource (
+                    filename,
+                    ext.Substring(1, ext.Length - 1)
+                );
+
+            if( resourcePathname == null )
+            {
+                throw new Exception("Resource [" + path + "] not found");
+            }
+
+            return resourcePathname;
+        }
+
         internal OglesShader(String variantName, String passName, OglesShaderDefinition definition)
         {
             Console.WriteLine ("  Creating Pass Variant: " + variantName);
@@ -3888,8 +3500,8 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             
             //Variables = 
             programHandle = ShaderUtils.CreateShaderProgram ();
-            vertShaderHandle = ShaderUtils.CreateVertexShader (this.vertexShaderPath);
-            fragShaderHandle = ShaderUtils.CreateFragmentShader (this.pixelShaderPath);
+            vertShaderHandle = ShaderUtils.CreateVertexShader (GetResourcePath(this.vertexShaderPath));
+            fragShaderHandle = ShaderUtils.CreateFragmentShader (GetResourcePath(this.pixelShaderPath));
             
             ShaderUtils.AttachShader (programHandle, vertShaderHandle);
             ShaderUtils.AttachShader (programHandle, fragShaderHandle);
@@ -3903,7 +3515,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             foreach(var attName in orderedAttributes)
             {
                 OpenTK.Graphics.ES20.GL.BindAttribLocation(programHandle, index, attName);
-                OpenTKHelper.CheckError();
+                ErrorHandler.Check();
                 bool success = ShaderUtils.LinkProgram (programHandle);
                 if (success)
                 {
@@ -3973,13 +3585,13 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         public void Activate ()
         {
             OpenTK.Graphics.ES20.GL.UseProgram (programHandle);
-            OpenTKHelper.CheckError ();
+            ErrorHandler.Check ();
         }
         
         public void Dispose()
         {
             ShaderUtils.DestroyShaderProgram(programHandle);
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
     }
     
@@ -4010,7 +3622,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         {
             int attLocation = OpenTK.Graphics.ES20.GL.GetAttribLocation(programHandle, attribute.Name);
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             Console.WriteLine(string.Format(
                 "    Binding Shader Input: [Prog={0}, AttIndex={1}, AttLocation={4}, AttName={2}, AttType={3}]",
@@ -4047,7 +3659,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
             int uniformLocation = OpenTK.Graphics.ES20.GL.GetUniformLocation(programHandle, uniform.Name);
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
 
             this.UniformLocation = uniformLocation;
@@ -4063,7 +3675,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         {
             // set the sampler texture unit to 0
             OpenTK.Graphics.ES20.GL.Uniform1( this.UniformLocation, slot );
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
         }
 
     }
@@ -4086,7 +3698,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
             int uniformLocation = OpenTK.Graphics.ES20.GL.GetUniformLocation(programHandle, uniform.Name);
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             if( uniformLocation == -1 )
                 throw new Exception();
@@ -4163,7 +3775,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                 throw new Exception("Not supported");
             }
             
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
         }
     }

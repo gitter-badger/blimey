@@ -19,7 +19,7 @@
         {
             int attLocation = OpenTK.Graphics.ES20.GL.GetAttribLocation(programHandle, attribute.Name);
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             Console.WriteLine(string.Format(
                 "    Binding Shader Input: [Prog={0}, AttIndex={1}, AttLocation={4}, AttName={2}, AttType={3}]",

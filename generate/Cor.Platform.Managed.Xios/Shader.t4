@@ -1,7 +1,7 @@
     /// <summary>
     /// The Cor.Xios implementation of Cor's IShader interface.
     /// </summary>
-    public class Shader
+    public sealed class Shader
         : IShader
         , IDisposable
     {

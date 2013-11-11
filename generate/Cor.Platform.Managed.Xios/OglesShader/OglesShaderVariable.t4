@@ -16,7 +16,7 @@
 
             int uniformLocation = OpenTK.Graphics.ES20.GL.GetUniformLocation(programHandle, uniform.Name);
 
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
             if( uniformLocation == -1 )
                 throw new Exception();
@@ -93,7 +93,7 @@
                 throw new Exception("Not supported");
             }
             
-            OpenTKHelper.CheckError();
+            ErrorHandler.Check();
 
         }
     }

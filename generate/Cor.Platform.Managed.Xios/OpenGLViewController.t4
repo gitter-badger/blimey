@@ -1,5 +1,5 @@
     [MonoTouch.Foundation.Register ("OpenGLViewController")]
-    public partial class OpenGLViewController 
+    public sealed class OpenGLViewController 
         : MonoTouch.UIKit.UIViewController
     {
         AppSettings _settings;
