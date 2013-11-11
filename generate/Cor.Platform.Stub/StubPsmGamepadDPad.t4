@@ -1,0 +1,18 @@
+    public sealed class StubPsmGamepadDPad
+        : IPsmGamepadDPad
+    {
+        public StubPsmGamepadDPad()
+        {
+            Console.WriteLine("StubPsmGamepadDPad -> ()");
+        }
+
+        #region IPsmGamepadDPad
+
+        public ButtonState Down { get { return ButtonState.Released; } }
+        public ButtonState Left { get { return ButtonState.Released; } }
+        public ButtonState Right { get { return ButtonState.Released; } }
+        public ButtonState Up { get { return ButtonState.Released; } }
+
+        #endregion
+    }
+

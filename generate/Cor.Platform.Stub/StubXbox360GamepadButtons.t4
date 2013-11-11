@@ -1,0 +1,24 @@
+    public sealed class StubXbox360GamepadButtons
+        : IXbox360GamepadButtons
+    {
+        public StubXbox360GamepadButtons()
+        {
+            Console.WriteLine("StubXbox360GamepadButtons -> ()");
+        }
+
+        #region IXbox360GamepadButtons
+        
+        public ButtonState A { get { return ButtonState.Released; } }
+        public ButtonState B { get { return ButtonState.Released; } }
+        public ButtonState Back { get { return ButtonState.Released; } }
+        public ButtonState LeftShoulder { get { return ButtonState.Released; } }
+        public ButtonState LeftStick { get { return ButtonState.Released; } }
+        public ButtonState RightShoulder { get { return ButtonState.Released; } }
+        public ButtonState RightStick { get { return ButtonState.Released; } }
+        public ButtonState Start { get { return ButtonState.Released; } }
+        public ButtonState X { get { return ButtonState.Released; } }
+        public ButtonState Y { get { return ButtonState.Released; } }
+
+        #endregion
+    }
+

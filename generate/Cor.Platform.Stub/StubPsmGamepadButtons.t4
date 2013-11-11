@@ -1,0 +1,22 @@
+    public sealed class StubPsmGamepadButtons
+        : IPsmGamepadButtons
+    {
+        public StubPsmGamepadButtons()
+        {
+            Console.WriteLine("StubPsmGamepadButtons -> ()");
+        }
+
+        #region IPsmGamepadButtons
+
+        public ButtonState Triangle { get { return ButtonState.Released; } }
+        public ButtonState Square { get { return ButtonState.Released; } }
+        public ButtonState Circle { get { return ButtonState.Released; } }
+        public ButtonState Cross { get { return ButtonState.Released; } }
+        public ButtonState Start { get { return ButtonState.Released; } }
+        public ButtonState Select { get { return ButtonState.Released; } }
+        public ButtonState LeftShoulder { get { return ButtonState.Released; } }
+        public ButtonState RightShoulder { get { return ButtonState.Released; } }
+
+        #endregion
+    }
+

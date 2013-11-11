@@ -1,0 +1,16 @@
+    public sealed class StubPsmGamepadThumbsticks
+        : IPsmGamepadThumbsticks
+    {
+        public StubPsmGamepadThumbsticks()
+        {
+            Console.WriteLine("StubPsmGamepadThumbsticks -> ()");
+        }
+
+        #region IPsmGamepadThumbsticks
+
+        public Vector2 Left { get { return Vector2.Zero; } }
+        public Vector2 Right { get { return Vector2.Zero; } }
+
+        #endregion
+    }
+

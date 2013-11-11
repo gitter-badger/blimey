@@ -44,14 +44,13 @@ using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
 
-namespace Sungiant.Cor.StubPlatform
+namespace Sungiant.Cor.Platform.Stub
 {
 <#@ include file="StubEngine.t4"#>
 <#@ include file="StubAudioManager.t4"#>
 <#@ include file="StubGraphicsManager.t4"#>
 <#@ include file="StubDisplayStatus.t4"#>
 <#@ include file="StubIndexBuffer.t4"#>
-<#@ include file="StubInputManager.t4"#>
 <#@ include file="StubResourceManager.t4"#>
 <#@ include file="StubPanelSpecification.t4"#>
 <#@ include file="StubScreenSpecification.t4"#>
@@ -60,4 +59,18 @@ namespace Sungiant.Cor.StubPlatform
 <#@ include file="StubVertexBuffer.t4"#>
 <#@ include file="StubGpuUtils.t4"#>
 <#@ include file="StubShader.t4"#>
+<#@ include file="StubInputManager.t4"#>
+<#@ include file="StubGenericGamepad.t4"#>
+<#@ include file="StubKeyboard.t4"#>
+<#@ include file="StubMouse.t4"#>
+<#@ include file="StubMultiTouchController.t4"#>
+<#@ include file="StubPsmGamepad.t4"#>
+<#@ include file="StubPsmGamepadButtons.t4"#>
+<#@ include file="StubPsmGamepadDPad.t4"#>
+<#@ include file="StubPsmGamepadThumbsticks.t4"#>
+<#@ include file="StubXbox360Gamepad.t4"#>
+<#@ include file="StubXbox360GamepadButtons.t4"#>
+<#@ include file="StubXbox360GamepadDPad.t4"#>
+<#@ include file="StubXbox360GamepadThumbsticks.t4"#>
+<#@ include file="StubXbox360GamepadTriggers.t4"#>
 }

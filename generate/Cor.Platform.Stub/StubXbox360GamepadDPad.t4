@@ -1,0 +1,18 @@
+    public sealed class StubXbox360GamepadDPad
+        : IXbox360GamepadDPad
+    {
+        public StubXbox360GamepadDPad()
+        {
+            Console.WriteLine("StubXbox360GamepadDPads -> ()");
+        }
+
+        #region IXbox360GamepadDPad
+
+        public ButtonState Down { get { return ButtonState.Released; } }
+        public ButtonState Left { get { return ButtonState.Released; } }
+        public ButtonState Right { get { return ButtonState.Released; } }
+        public ButtonState Up { get { return ButtonState.Released; } }
+        
+        #endregion
+    }
+

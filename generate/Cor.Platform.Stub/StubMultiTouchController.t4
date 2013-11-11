@@ -1,0 +1,20 @@
+    public sealed class StubMultiTouchController
+        : IMultiTouchController
+    {
+        readonly TouchCollection touchCollection = new TouchCollection();
+        readonly IPanelSpecification panelSpecification = new StubPanelSpecification();
+
+        public StubMultiTouchController()
+        {
+            Console.WriteLine("StubMultiTouchController -> ()");
+        }
+
+        #region IMultiTouchController
+
+        public IPanelSpecification PanelSpecification { get { return panelSpecification; } }
+
+        public TouchCollection TouchCollection { get { return touchCollection; } }
+
+        #endregion
+    }
+

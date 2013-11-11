@@ -42,7 +42,7 @@ using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
 
-namespace Sungiant.Cor.StubPlatform
+namespace Sungiant.Cor.Platform.Stub
 {
     public class StubEngine
         : ICor
@@ -288,40 +288,6 @@ namespace Sungiant.Cor.StubPlatform
 
         #endregion
     }
-    public class StubInputManager
-        : IInputManager
-    {
-        public StubInputManager()
-        {
-            Console.WriteLine(
-                "StubInputManager -> ()");
-        }
-
-        #region IInputManager
-
-        public Xbox360Gamepad GetXbox360Gamepad(PlayerIndex player)
-        {
-            return null;
-        }
-
-        public PsmGamepad GetPsmGamepad()
-        {
-            return null;
-        }
-
-        public MultiTouchController GetMultiTouchController()
-        {
-            return null;
-        }
-
-        public GenericGamepad GetGenericGamepad()
-        {
-            return null;
-        }
-
-        #endregion
-    }
-
     public class StubResourceManager
         : IResourceManager
     {
@@ -616,6 +582,331 @@ namespace Sungiant.Cor.StubPlatform
         {
 
         }
+
+        #endregion
+    }
+
+    public class StubInputManager
+        : IInputManager
+    {
+        readonly IXbox360Gamepad xbox360Gamepad = new StubXbox360Gamepad();
+        readonly IPsmGamepad psmGamepad = new StubPsmGamepad();
+        readonly IMultiTouchController multiTouchController = new StubMultiTouchController();
+        readonly IGenericGamepad genericGamepad = new StubGenericGamepad();
+        readonly IKeyboard keyboard = new StubKeyboard();
+        readonly IMouse mouse = new StubMouse();
+
+        public StubInputManager()
+        {
+            Console.WriteLine("StubInputManager -> ()");
+        }
+
+        #region IInputManager
+
+        public IXbox360Gamepad Xbox360Gamepad
+        {
+            get { return xbox360Gamepad; }
+        }
+
+        public IPsmGamepad PsmGamepad
+        {
+            get { return psmGamepad; }
+        }
+
+        public IMultiTouchController MultiTouchController
+        {
+            get { return multiTouchController; }
+        }
+
+        public IGenericGamepad GenericGamepad
+        {
+            get { return genericGamepad; }
+        }
+
+        public IKeyboard Keyboard
+        {
+            get { return keyboard; }
+        }
+
+        public IMouse Mouse
+        {
+            get { return mouse; }
+        }
+
+        #endregion
+    }
+
+    public sealed class StubGenericGamepad
+        : IGenericGamepad
+    {
+        public StubGenericGamepad()
+        {
+            Console.WriteLine("StubGenericGamepad -> ()");
+        }
+
+        #region IGenericGamepad
+
+        public ButtonState Down { get { return ButtonState.Released; } }
+        
+        public ButtonState Left { get { return ButtonState.Released; } }
+        
+        public ButtonState Right { get { return ButtonState.Released; } }
+        
+        public ButtonState Up { get { return ButtonState.Released; } }
+        
+        public ButtonState North { get { return ButtonState.Released; } }
+        
+        public ButtonState South { get { return ButtonState.Released; } }
+        
+        public ButtonState East { get { return ButtonState.Released; } }
+        
+        public ButtonState West { get { return ButtonState.Released; } }
+        
+        public ButtonState Option { get { return ButtonState.Released; } }
+        
+        public ButtonState Pause { get { return ButtonState.Released; } }
+
+        #endregion
+    }
+
+    public sealed class StubKeyboard
+        : IKeyboard
+    {
+        public StubKeyboard()
+        {
+            Console.WriteLine("StubKeyboard -> ()");
+        }
+
+        #region IKeyboard
+
+        public FunctionalKey[] GetPressedFunctionalKey () { return new FunctionalKey[]{}; }
+        public Boolean IsFunctionalKeyDown (FunctionalKey key) { return false; }
+        public Boolean IsFunctionalKeyUp (FunctionalKey key) { return false; }
+        public KeyState this [FunctionalKey key] { get { return KeyState.Up; } }
+
+        public Char[] GetPressedCharacterKeys() { return new Char[]{}; }
+        public Boolean IsCharacterKeyDown (Char key) { return false; }
+        public Boolean IsCharacterKeyUp (Char key) { return false; }
+        public KeyState this [Char key] { get { return KeyState.Up; } }
+
+        #endregion
+    }
+
+    public sealed class StubMouse
+        : IMouse
+    {
+        public StubMouse()
+        {
+            Console.WriteLine("StubMouse -> ()");
+        }
+
+        #region IMouse
+
+        public ButtonState Left { get { return ButtonState.Released; } }
+
+        public ButtonState Middle { get { return ButtonState.Released; } }
+
+        public ButtonState Right { get { return ButtonState.Released; } }
+
+        public Int32 ScrollWheelValue { get { return 0; } }
+
+        public Int32 X { get { return 0; } }
+
+        public Int32 Y { get { return 0; } }
+
+        #endregion
+    }
+
+    public sealed class StubMultiTouchController
+        : IMultiTouchController
+    {
+        readonly TouchCollection touchCollection = new TouchCollection();
+        readonly IPanelSpecification panelSpecification = new StubPanelSpecification();
+
+        public StubMultiTouchController()
+        {
+            Console.WriteLine("StubMultiTouchController -> ()");
+        }
+
+        #region IMultiTouchController
+
+        public IPanelSpecification PanelSpecification { get { return panelSpecification; } }
+
+        public TouchCollection TouchCollection { get { return touchCollection; } }
+
+        #endregion
+    }
+
+    public sealed class StubPsmGamepad
+        : IPsmGamepad
+    {
+        readonly IPsmGamepadButtons psmGamepadButtons = new StubPsmGamepadButtons();
+        readonly IPsmGamepadDPad psmGamepadDPad = new StubPsmGamepadDPad();
+        readonly IPsmGamepadThumbsticks psmGamepadThumbsticks = new StubPsmGamepadThumbsticks();
+        
+        public StubPsmGamepad()
+        {
+            Console.WriteLine("StubPsmGamepad -> ()");
+        }
+
+        #region IPsmGamepad
+
+        public IPsmGamepadButtons Buttons { get { return psmGamepadButtons; } }
+        public IPsmGamepadDPad DPad  { get { return psmGamepadDPad; } }
+        public IPsmGamepadThumbsticks Thumbsticks { get { return psmGamepadThumbsticks; } }
+
+        #endregion
+    }
+
+    public sealed class StubPsmGamepadButtons
+        : IPsmGamepadButtons
+    {
+        public StubPsmGamepadButtons()
+        {
+            Console.WriteLine("StubPsmGamepadButtons -> ()");
+        }
+
+        #region IPsmGamepadButtons
+
+        public ButtonState Triangle { get { return ButtonState.Released; } }
+        public ButtonState Square { get { return ButtonState.Released; } }
+        public ButtonState Circle { get { return ButtonState.Released; } }
+        public ButtonState Cross { get { return ButtonState.Released; } }
+        public ButtonState Start { get { return ButtonState.Released; } }
+        public ButtonState Select { get { return ButtonState.Released; } }
+        public ButtonState LeftShoulder { get { return ButtonState.Released; } }
+        public ButtonState RightShoulder { get { return ButtonState.Released; } }
+
+        #endregion
+    }
+
+    public sealed class StubPsmGamepadDPad
+        : IPsmGamepadDPad
+    {
+        public StubPsmGamepadDPad()
+        {
+            Console.WriteLine("StubPsmGamepadDPad -> ()");
+        }
+
+        #region IPsmGamepadDPad
+
+        public ButtonState Down { get { return ButtonState.Released; } }
+        public ButtonState Left { get { return ButtonState.Released; } }
+        public ButtonState Right { get { return ButtonState.Released; } }
+        public ButtonState Up { get { return ButtonState.Released; } }
+
+        #endregion
+    }
+
+    public sealed class StubPsmGamepadThumbsticks
+        : IPsmGamepadThumbsticks
+    {
+        public StubPsmGamepadThumbsticks()
+        {
+            Console.WriteLine("StubPsmGamepadThumbsticks -> ()");
+        }
+
+        #region IPsmGamepadThumbsticks
+
+        public Vector2 Left { get { return Vector2.Zero; } }
+        public Vector2 Right { get { return Vector2.Zero; } }
+
+        #endregion
+    }
+
+    public sealed class StubXbox360Gamepad
+        : IXbox360Gamepad
+    {
+        readonly IXbox360GamepadButtons buttons = new Xbox360GamepadButtons();
+        readonly IXbox360GamepadDPad dPad = new Xbox360GamepadDPad();
+        readonly IXbox360GamepadThumbsticks thumbsticks = new Xbox360GamepadThumbsticks();
+        readonly IXbox360GamepadTriggers triggers = new Xbox360GamepadTriggers();
+
+        public StubXbox360Gamepad()
+        {
+            Console.WriteLine("StubXbox360Gamepad -> ()");
+        }
+
+        #region IXbox360Gamepad
+
+        public IXbox360GamepadButtons Buttons { get { return buttons; } }
+        public IXbox360GamepadDPad DPad { get { return dPad; } }
+        public IXbox360GamepadThumbsticks Thumbsticks { get { return thumbsticks; } }
+        public IXbox360GamepadTriggers Triggers { get { return triggers; } }
+
+        #endregion
+    }
+
+    public sealed class StubXbox360GamepadButtons
+        : IXbox360GamepadButtons
+    {
+        public StubXbox360GamepadButtons()
+        {
+            Console.WriteLine("StubXbox360GamepadButtons -> ()");
+        }
+
+        #region IXbox360GamepadButtons
+        
+        public ButtonState A { get { return ButtonState.Released; } }
+        public ButtonState B { get { return ButtonState.Released; } }
+        public ButtonState Back { get { return ButtonState.Released; } }
+        public ButtonState LeftShoulder { get { return ButtonState.Released; } }
+        public ButtonState LeftStick { get { return ButtonState.Released; } }
+        public ButtonState RightShoulder { get { return ButtonState.Released; } }
+        public ButtonState RightStick { get { return ButtonState.Released; } }
+        public ButtonState Start { get { return ButtonState.Released; } }
+        public ButtonState X { get { return ButtonState.Released; } }
+        public ButtonState Y { get { return ButtonState.Released; } }
+
+        #endregion
+    }
+
+    public sealed class StubXbox360GamepadDPad
+        : IXbox360GamepadDPad
+    {
+        public StubXbox360GamepadDPad()
+        {
+            Console.WriteLine("StubXbox360GamepadDPads -> ()");
+        }
+
+        #region IXbox360GamepadDPad
+
+        public ButtonState Down { get { return ButtonState.Released; } }
+        public ButtonState Left { get { return ButtonState.Released; } }
+        public ButtonState Right { get { return ButtonState.Released; } }
+        public ButtonState Up { get { return ButtonState.Released; } }
+        
+        #endregion
+    }
+
+    public sealed class StubXbox360GamepadThumbsticks
+        : IXbox360GamepadThumbsticks
+    {
+        public StubXbox360GamepadThumbsticks()
+        {
+            Console.WriteLine("StubXbox360GamepadThumbsticks -> ()");
+        }
+
+        #region IXbox360GamepadThumbsticks
+        
+        public Vector2 Left { get { return Vector2.Zero; } }
+        public Vector2 Right { get { return Vector2.Zero; } }
+
+        #endregion
+    }
+
+    public sealed class StubXbox360GamepadTriggers
+        : IXbox360GamepadTriggers
+    {
+        public StubXbox360GamepadTriggers()
+        {
+            Console.WriteLine("StubXbox360GamepadTriggers -> ()");
+        }
+
+        #region IXbox360GamepadTriggers
+
+        public Single Left { get { return 0f; } }
+        public Single Right { get { return 0f; } }
 
         #endregion
     }

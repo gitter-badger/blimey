@@ -2,12 +2,12 @@
 
 startPath=`pwd`
 
-cd ../generate/Cor.StubPlatform
+cd ../generate/Cor.Platform.Stub
 
 # tabs to spaces
 find ./ ! -type d ! -name _tmp_ -exec sh -c 'expand -t 4 {} > _tmp_ && mv _tmp_ {}' \;
 
-# Generate Cor.StubPlatform.cs
-mono-t4 Cor.StubPlatform.tt -o ../../source/Cor.StubPlatform.cs
+# Generate Cor.Platform.Stub.cs
+mono-t4 Cor.Platform.Stub.tt -o ../../source/Cor.Platform.Stub.cs
 
 cd $startPath
