@@ -1,32 +1,69 @@
     public class InputManager
         : IInputManager
     {
+        readonly Keyboard keyboard;
+        readonly Mouse mouse;
+
         public InputManager()
         {
             Console.WriteLine(
                 "InputManager -> ()");
+
+            keyboard = new Keyboard();
+            mouse = new Mouse();
         }
+
+        internal Keyboard KeyboardImplemenatation { get { return keyboard; } }
+        internal Mouse MouseImplemenatation { get { return mouse; } }
 
         #region IInputManager
 
-        public Xbox360Gamepad GetXbox360Gamepad(PlayerIndex player)
+        public IXbox360Gamepad Xbox360Gamepad
         {
-            return null;
+            get
+            {
+                return null;
+            }
         }
 
-        public PsmGamepad GetPsmGamepad()
+        public IPsmGamepad PsmGamepad
         {
-            return null;
+            get
+            {
+                return null;
+            }
         }
 
-        public MultiTouchController GetMultiTouchController()
+        public IMultiTouchController MultiTouchController
         {
-            return null;
+            get
+            {
+                return null;
+            }
         }
 
-        public GenericGamepad GetGenericGamepad()
+        public IGenericGamepad GenericGamepad
         {
-            return null;
+            get
+            {
+                return null;
+            }
+        }
+
+        public IMouse Mouse
+        {
+            get
+            {
+                return mouse;
+            }
+        }
+
+        public IKeyboard Keyboard
+        {
+            get
+            {
+                return keyboard;
+            }
         }
 
         #endregion

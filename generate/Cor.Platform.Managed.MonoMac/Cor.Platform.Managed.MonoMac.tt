@@ -86,6 +86,8 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 <#@ include file="ShaderPass.t4"#>
 <#@ include file="ShaderUtils.t4"#>
 <#@ include file="OpenGLTexture.t4"#>
+<#@ include file="Keyboard.t4"#>
+<#@ include file="Mouse.t4"#>
 
     #region OpenGL ES Shaders
 

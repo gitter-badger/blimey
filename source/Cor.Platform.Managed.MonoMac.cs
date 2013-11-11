@@ -61,11 +61,11 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     public class Engine
         : ICor
     {
-        readonly IAudioManager audio;
-        readonly IGraphicsManager graphics;
-        readonly IResourceManager resources;
-        readonly IInputManager input;
-        readonly ISystemManager system;
+        readonly AudioManager audio;
+        readonly GraphicsManager graphics;
+        readonly ResourceManager resources;
+        readonly InputManager input;
+        readonly SystemManager system;
         readonly AppSettings settings;
         readonly IApp app;
 
@@ -85,6 +85,16 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             this.app = app;
             this.app.Initilise(this);
         }
+
+        internal AudioManager AudioImplementation { get { return this.audio; } }
+
+        internal GraphicsManager GraphicsImplementation { get { return this.graphics; } }
+
+        internal ResourceManager ResourcesImplementation { get { return this.resources; } }
+
+        internal InputManager InputImplementation { get { return this.input; } }
+
+        internal SystemManager SystemImplementation { get { return this.system; } }
 
         #region ICor
 
@@ -716,32 +726,69 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     public class InputManager
         : IInputManager
     {
+        readonly Keyboard keyboard;
+        readonly Mouse mouse;
+
         public InputManager()
         {
             Console.WriteLine(
                 "InputManager -> ()");
+
+            keyboard = new Keyboard();
+            mouse = new Mouse();
         }
+
+        internal Keyboard KeyboardImplemenatation { get { return keyboard; } }
+        internal Mouse MouseImplemenatation { get { return mouse; } }
 
         #region IInputManager
 
-        public Xbox360Gamepad GetXbox360Gamepad(PlayerIndex player)
+        public IXbox360Gamepad Xbox360Gamepad
         {
-            return null;
+            get
+            {
+                return null;
+            }
         }
 
-        public PsmGamepad GetPsmGamepad()
+        public IPsmGamepad PsmGamepad
         {
-            return null;
+            get
+            {
+                return null;
+            }
         }
 
-        public MultiTouchController GetMultiTouchController()
+        public IMultiTouchController MultiTouchController
         {
-            return null;
+            get
+            {
+                return null;
+            }
         }
 
-        public GenericGamepad GetGenericGamepad()
+        public IGenericGamepad GenericGamepad
         {
-            return null;
+            get
+            {
+                return null;
+            }
+        }
+
+        public IMouse Mouse
+        {
+            get
+            {
+                return mouse;
+            }
+        }
+
+        public IKeyboard Keyboard
+        {
+            get
+            {
+                return keyboard;
+            }
         }
 
         #endregion
@@ -1380,7 +1427,78 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         }
 
+        // Keyboard //--------------------------------------------------------//
+        public override void KeyDown (NSEvent theEvent)
+        {
+            this.gameEngine.InputImplementation.KeyboardImplemenatation.KeyDown (theEvent);
+        }
 
+        public override void KeyUp (NSEvent theEvent)
+        {
+            this.gameEngine.InputImplementation.KeyboardImplemenatation.KeyUp (theEvent);
+        }
+
+        public override void FlagsChanged (NSEvent theEvent)
+        {
+            base.FlagsChanged (theEvent);
+        }
+
+
+        // Mouse //-----------------------------------------------------------//
+        public override void MouseDown (NSEvent theEvent)
+        {
+            base.MouseDown (theEvent);
+        }
+
+        public override void MouseUp (NSEvent theEvent)
+        {
+            base.MouseUp (theEvent);
+        }
+        
+        public override void MouseDragged (NSEvent theEvent)
+        {
+            base.MouseDragged (theEvent);
+        }
+        
+        public override void RightMouseDown (NSEvent theEvent)
+        {
+            base.RightMouseDown (theEvent);
+        }
+        
+        public override void RightMouseUp (NSEvent theEvent)
+        {
+            base.RightMouseUp (theEvent);
+        }
+        
+        public override void RightMouseDragged (NSEvent theEvent)
+        {
+            base.RightMouseDragged (theEvent);
+        }
+        
+        public override void OtherMouseDown (NSEvent theEvent)
+        {
+            base.OtherMouseDown (theEvent);
+        }
+        
+        public override void OtherMouseUp (NSEvent theEvent)
+        {
+            base.OtherMouseUp (theEvent);
+        }
+        
+        public override void OtherMouseDragged (NSEvent theEvent)
+        {
+            base.OtherMouseDragged (theEvent);
+        }
+        
+        public override void ScrollWheel (NSEvent theEvent)
+        {
+            base.ScrollWheel (theEvent);
+        }
+
+        public override void MouseMoved (NSEvent theEvent)
+        {
+            base.MouseMoved (theEvent);      
+        }
     }
 
     public class MacGameNSWindow 
@@ -3120,6 +3238,163 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             int textureId = (texture as OpenGLTexture).glTextureId;
             
             global::MonoMac.OpenGL.GL.DeleteTextures(1, ref textureId);
+        }
+    }
+
+    public class Keyboard
+        : IKeyboard
+    {
+        readonly HashSet<Char> characterKeysThatAreDown = new HashSet<Char>();
+        readonly HashSet<FunctionalKey> functionalKeysThatAreDown = new HashSet<FunctionalKey>();
+        
+        internal void KeyDown (NSEvent theEvent)
+        {
+            theEvent.Characters
+                .ToCharArray ()
+                .Where(x => !IsFunctionalKey(x))
+                .ToList ()
+                .ForEach (x => characterKeysThatAreDown.Add(x));
+                
+            var fKey = GetFunctionalKey(theEvent.KeyCode);
+            if( fKey.HasValue ) functionalKeysThatAreDown.Add(fKey.Value);
+                
+            Console.WriteLine(theEvent.KeyCode);
+        }
+
+        internal void KeyUp (NSEvent theEvent)
+        {
+            theEvent.Characters
+                .ToCharArray ()
+                .Where(x => !IsFunctionalKey(x))
+                .ToList ()
+                .ForEach (x => characterKeysThatAreDown.Remove(x));
+                
+            var fKey = GetFunctionalKey(theEvent.KeyCode);
+            if( fKey.HasValue ) functionalKeysThatAreDown.Remove(fKey.Value);
+        }
+        
+        static FunctionalKey? GetFunctionalKey (UInt16 hardwareIndependantKeyCode)
+        {
+            if (hardwareIndependantKeyCode == 0x24) return FunctionalKey.Enter;
+            if (hardwareIndependantKeyCode == 0x7c) return FunctionalKey.Right;
+            if (hardwareIndependantKeyCode == 0x7b) return FunctionalKey.Left;
+            if (hardwareIndependantKeyCode == 0x7e) return FunctionalKey.Up;
+            if (hardwareIndependantKeyCode == 0x7d) return FunctionalKey.Down;
+            if (hardwareIndependantKeyCode == 0x31) return FunctionalKey.Spacebar;
+            if (hardwareIndependantKeyCode == 0x35) return FunctionalKey.Escape;
+            
+            return null;
+        }
+        
+        static Boolean IsFunctionalKey (Char c)
+        {
+            if (c == '\r') return true;
+            if (c == '\n') return true;
+            if (c == '\t') return true;
+            
+            return false;
+        }
+
+        #region IKeyboard
+
+        public FunctionalKey[] GetPressedFunctionalKey ()
+        {
+            return functionalKeysThatAreDown.ToArray();
+        }
+
+        public Boolean IsFunctionalKeyDown (FunctionalKey key)
+        {
+            return functionalKeysThatAreDown.Contains(key);
+        }
+
+        public Boolean IsFunctionalKeyUp (FunctionalKey key)
+        {
+            return !functionalKeysThatAreDown.Contains(key);
+        }
+
+        public KeyState this [FunctionalKey key]
+        {
+            get
+            {
+                return functionalKeysThatAreDown.Contains(key) ? KeyState.Down : KeyState.Up;
+            }
+        }
+
+        public Char[] GetPressedCharacterKeys()
+        {
+            return characterKeysThatAreDown.ToArray();
+        }
+        
+        public Boolean IsCharacterKeyDown (Char key)
+        {
+            return characterKeysThatAreDown.Contains(key);
+        }
+        
+        public Boolean IsCharacterKeyUp (Char key)
+        {
+            return !characterKeysThatAreDown.Contains(key);
+        }
+
+        public KeyState this [Char key]
+        {
+            get
+            {
+                return characterKeysThatAreDown.Contains(key) ? KeyState.Down : KeyState.Up;
+            }
+        }
+
+        #endregion
+    }
+
+    public class Mouse
+        : IMouse
+    {
+        public ButtonState Left
+        {
+            get
+            {
+                return ButtonState.Released;
+            }
+        }
+
+        public ButtonState Middle
+        {
+            get
+            {
+                return ButtonState.Released;
+            }
+        }
+
+        public ButtonState Right
+        {
+            get
+            {
+                return ButtonState.Released;
+            }
+        }
+
+        public Int32 ScrollWheelValue
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        public Int32 X
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        public Int32 Y
+        {
+            get
+            {
+                return 0;
+            }
         }
     }
 

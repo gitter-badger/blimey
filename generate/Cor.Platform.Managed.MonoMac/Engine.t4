@@ -1,11 +1,11 @@
     public class Engine
         : ICor
     {
-        readonly IAudioManager audio;
-        readonly IGraphicsManager graphics;
-        readonly IResourceManager resources;
-        readonly IInputManager input;
-        readonly ISystemManager system;
+        readonly AudioManager audio;
+        readonly GraphicsManager graphics;
+        readonly ResourceManager resources;
+        readonly InputManager input;
+        readonly SystemManager system;
         readonly AppSettings settings;
         readonly IApp app;
 
@@ -25,6 +25,16 @@
             this.app = app;
             this.app.Initilise(this);
         }
+
+        internal AudioManager AudioImplementation { get { return this.audio; } }
+
+        internal GraphicsManager GraphicsImplementation { get { return this.graphics; } }
+
+        internal ResourceManager ResourcesImplementation { get { return this.resources; } }
+
+        internal InputManager InputImplementation { get { return this.input; } }
+
+        internal SystemManager SystemImplementation { get { return this.system; } }
 
         #region ICor
 
