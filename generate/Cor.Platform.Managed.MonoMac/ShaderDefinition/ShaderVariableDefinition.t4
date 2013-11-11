@@ -1,4 +1,4 @@
-    public class ShaderVariableDefinition
+    public sealed class ShaderVariableDefinition
     {
         public String NiceName { get; set; }
 

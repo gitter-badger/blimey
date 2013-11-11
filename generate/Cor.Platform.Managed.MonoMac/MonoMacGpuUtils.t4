@@ -1,4 +1,4 @@
-    public class MonoMacGpuUtils
+    public sealed class MonoMacGpuUtils
         : IGpuUtils
     {
         public MonoMacGpuUtils()

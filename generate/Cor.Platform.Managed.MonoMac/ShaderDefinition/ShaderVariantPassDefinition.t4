@@ -1,4 +1,4 @@
-    public class ShaderVarientPassDefinition
+    public sealed class ShaderVarientPassDefinition
     {
         public string PassName { get; set; }
         public OpenGLShaderDefinition PassDefinition { get; set; }

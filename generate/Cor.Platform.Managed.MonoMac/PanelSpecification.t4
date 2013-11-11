@@ -1,4 +1,4 @@
-    public class PanelSpecification
+    public sealed class PanelSpecification
         : IPanelSpecification
     {
         public PanelSpecification()

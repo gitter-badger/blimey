@@ -1,4 +1,4 @@
-    public class ShaderInputDefinition
+    public sealed class ShaderInputDefinition
     {
         public String Name { get; set; }
         public Type Type { get; set; }

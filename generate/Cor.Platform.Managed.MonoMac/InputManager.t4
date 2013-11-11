@@ -1,4 +1,4 @@
-    public class InputManager
+    public sealed class InputManager
         : IInputManager
     {
         readonly Keyboard keyboard;

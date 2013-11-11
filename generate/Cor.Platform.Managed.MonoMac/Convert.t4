@@ -1,63 +1,63 @@
-    public static class Vector2Converter
+    internal static class Vector2Converter
     {
         // VECTOR 2
-        public static global::MonoMac.OpenGL.Vector2 ToOpenGL (this Vector2 vec)
+        internal static global::MonoMac.OpenGL.Vector2 ToOpenGL (this Vector2 vec)
         {
             return new global::MonoMac.OpenGL.Vector2 (vec.X, vec.Y);
         }
 
-        public static Vector2 ToAbacus (this global::MonoMac.OpenGL.Vector2 vec)
+        internal static Vector2 ToAbacus (this global::MonoMac.OpenGL.Vector2 vec)
         {
             return new Vector2 (vec.X, vec.Y);
         }
 
         
-        public static System.Drawing.PointF ToSystemDrawing(this Vector2 vec)
+        internal static System.Drawing.PointF ToSystemDrawing(this Vector2 vec)
         {
             return new System.Drawing.PointF (vec.X, vec.Y);
         }
 
-        public static Vector2 ToAbacus (this System.Drawing.PointF vec)
+        internal static Vector2 ToAbacus (this System.Drawing.PointF vec)
         {
             return new Vector2 (vec.X, vec.Y);
         }
     }
 
     
-    public static class Vector3Converter
+    internal static class Vector3Converter
     {
         // VECTOR 3
-        public static global::MonoMac.OpenGL.Vector3 ToOpenGL (this Vector3 vec)
+        internal static global::MonoMac.OpenGL.Vector3 ToOpenGL (this Vector3 vec)
         {
             return new global::MonoMac.OpenGL.Vector3 (vec.X, vec.Y, vec.Z);
         }
 
-        public static Vector3 ToAbacus (this global::MonoMac.OpenGL.Vector3 vec)
+        internal static Vector3 ToAbacus (this global::MonoMac.OpenGL.Vector3 vec)
         {
             return new Vector3 (vec.X, vec.Y, vec.Z);
         }
     }
     
-    public static class Vector4Converter
+    internal static class Vector4Converter
     {
         // VECTOR 3
-        public static global::MonoMac.OpenGL.Vector4 ToOpenGL (this Vector4 vec)
+        internal static global::MonoMac.OpenGL.Vector4 ToOpenGL (this Vector4 vec)
         {
             return new global::MonoMac.OpenGL.Vector4 (vec.X, vec.Y, vec.Z, vec.W);
         }
 
-        public static Vector4 ToAbacus (this global::MonoMac.OpenGL.Vector4 vec)
+        internal static Vector4 ToAbacus (this global::MonoMac.OpenGL.Vector4 vec)
         {
             return new Vector4 (vec.X, vec.Y, vec.Z, vec.W);
         }
     }
 
-    public static class MatrixConverter
+    internal static class MatrixConverter
     {
         static bool flip = false;
 
         // MATRIX
-        public static global::MonoMac.OpenGL.Matrix4 ToOpenGL (this Matrix44 mat)
+        internal static global::MonoMac.OpenGL.Matrix4 ToOpenGL (this Matrix44 mat)
         {
             if( flip )
             {
@@ -79,7 +79,7 @@
             }
         }
 
-        public static Matrix44 ToAbacus (this global::MonoMac.OpenGL.Matrix4 mat)
+        internal static Matrix44 ToAbacus (this global::MonoMac.OpenGL.Matrix4 mat)
         {
 
             if( flip )
@@ -105,9 +105,9 @@
     }
 
 
-    public static class EnumConverter
+    internal static class EnumConverter
     {
-        public static global::MonoMac.OpenGL.TextureUnit ToOpenGLTextureSlot(Int32 slot)
+        internal static global::MonoMac.OpenGL.TextureUnit ToOpenGLTextureSlot(Int32 slot)
         {
             switch(slot)
             {
@@ -148,7 +148,7 @@
         }
 
 
-        public static Type ToType (global::MonoMac.OpenGL.ActiveAttribType ogl)
+        internal static Type ToType (global::MonoMac.OpenGL.ActiveAttribType ogl)
         {
             switch(ogl)
             {
@@ -164,7 +164,7 @@
             throw new NotSupportedException();
         }
 
-        public static Type ToType (global::MonoMac.OpenGL.ActiveUniformType ogl)
+        internal static Type ToType (global::MonoMac.OpenGL.ActiveUniformType ogl)
         {
             switch(ogl)
             {
@@ -190,7 +190,7 @@
             throw new NotSupportedException();
         }
 
-        public static void ToOpenGL (
+        internal static void ToOpenGL (
             VertexElementFormat blimey,
             out global::MonoMac.OpenGL.VertexAttribPointerType dataFormat,
             out bool normalized,
@@ -233,7 +233,7 @@
             }
         }
 
-        public static global::MonoMac.OpenGL.BlendingFactorSrc ToOpenGLSrc(BlendFactor blimey)
+        internal static global::MonoMac.OpenGL.BlendingFactorSrc ToOpenGLSrc(BlendFactor blimey)
         {
             switch(blimey)
             {
@@ -252,7 +252,7 @@
             throw new Exception();
         }
 
-        public static global::MonoMac.OpenGL.BlendingFactorDest ToOpenGLDest(BlendFactor blimey)
+        internal static global::MonoMac.OpenGL.BlendingFactorDest ToOpenGLDest(BlendFactor blimey)
         {
             switch(blimey)
             {
@@ -271,7 +271,7 @@
             throw new Exception();
         }
 
-        public static BlendFactor ToCorDestinationBlendFactor (global::MonoMac.OpenGL.All ogl)
+        internal static BlendFactor ToCorDestinationBlendFactor (global::MonoMac.OpenGL.All ogl)
         {
             switch(ogl)
             {
@@ -290,7 +290,7 @@
             throw new Exception();
         }
 
-        public static global::MonoMac.OpenGL.BlendEquationMode ToOpenGL(BlendFunction blimey)
+        internal static global::MonoMac.OpenGL.BlendEquationMode ToOpenGL(BlendFunction blimey)
         {
             switch(blimey)
             {
@@ -304,7 +304,7 @@
             throw new Exception();
         }
 
-        public static BlendFunction ToCorDestinationBlendFunction (global::MonoMac.OpenGL.All ogl)
+        internal static BlendFunction ToCorDestinationBlendFunction (global::MonoMac.OpenGL.All ogl)
         {
             switch(ogl)
             {
@@ -319,7 +319,7 @@
         }
 
         // PRIMITIVE TYPE
-        public static global::MonoMac.OpenGL.BeginMode ToOpenGL (PrimitiveType blimey)
+        internal static global::MonoMac.OpenGL.BeginMode ToOpenGL (PrimitiveType blimey)
         {
             switch (blimey) {
             case PrimitiveType.LineList:
@@ -336,7 +336,7 @@
             }
         }
 
-        public static PrimitiveType ToCorPrimitiveType (global::MonoMac.OpenGL.All ogl)
+        internal static PrimitiveType ToCorPrimitiveType (global::MonoMac.OpenGL.All ogl)
         {
             switch (ogl) {
             case global::MonoMac.OpenGL.All.Lines:

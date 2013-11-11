@@ -1,4 +1,4 @@
-    public class ScreenSpecification
+    public sealed class ScreenSpecification
         : IScreenSpecification
     {
         Int32 width = 800;

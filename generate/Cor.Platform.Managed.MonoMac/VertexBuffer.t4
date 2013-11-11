@@ -22,7 +22,7 @@
             this.bufferUsage = global::MonoMac.OpenGL.BufferUsageHint.DynamicDraw;
 
             global::MonoMac.OpenGL.GL.GenBuffers(1, out this.bufferHandle);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
 
             if( this.bufferHandle == 0 )
@@ -39,7 +39,7 @@
                 (System.IntPtr) null,
                 this.bufferUsage);
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             resourceCounter++;
 
@@ -48,13 +48,13 @@
         internal void Activate()
         {
             global::MonoMac.OpenGL.GL.BindBuffer(this.type, this.bufferHandle);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         internal void Deactivate()
         {
             global::MonoMac.OpenGL.GL.BindBuffer(this.type, 0);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         ~VertexBuffer()
@@ -70,7 +70,7 @@
         void CleanUpNativeResources()
         {
             global::MonoMac.OpenGL.GL.DeleteBuffers(1, ref this.bufferHandle);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             bufferHandle = 0;
 
@@ -104,7 +104,7 @@
                 (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
                 data);
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
 

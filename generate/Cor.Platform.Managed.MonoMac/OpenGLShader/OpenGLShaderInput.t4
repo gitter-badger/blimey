@@ -3,7 +3,7 @@
     /// the shader at runtime, not from the ShaderInputDefinition.  This way we can compare the
     /// two and check to see that we have what we are expecting.
     /// </summary>
-    public class OpenGLShaderInput
+    public sealed class OpenGLShaderInput
     {
         int ProgramHandle { get; set; }
         internal int AttributeLocation { get; private set; }
@@ -19,7 +19,7 @@
         {
             int attLocation = global::MonoMac.OpenGL.GL.GetAttribLocation(programHandle, attribute.Name);
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             Console.WriteLine(string.Format(
                 "    Binding Shader Input: [Prog={0}, AttIndex={1}, AttLocation={4}, AttName={2}, AttType={3}]",

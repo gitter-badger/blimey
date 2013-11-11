@@ -1,4 +1,4 @@
-    public class MonoMacApp
+    public sealed class MonoMacApp
         : IDisposable
     {
         MacGameNSWindow mainWindow;

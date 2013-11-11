@@ -1,4 +1,4 @@
-    public class ResourceManager
+    public sealed class ResourceManager
         : IResourceManager
     {
         Dictionary<ShaderType, IShader> shaderCache;

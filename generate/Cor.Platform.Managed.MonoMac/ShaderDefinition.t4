@@ -2,7 +2,7 @@
     /// Defines how to create Cor.Xios's implementation
     /// of IShader.
     /// </summary>
-    public class ShaderDefinition
+    public sealed class ShaderDefinition
     {
         /// <summary>
         /// Defines a global name for this shader

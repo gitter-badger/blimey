@@ -1,4 +1,4 @@
-    public class GraphicsManager
+    public sealed class GraphicsManager
         : IGraphicsManager
     {
         readonly IDisplayStatus displayStatus;
@@ -16,23 +16,23 @@
             this.gpuUtils = new MonoMacGpuUtils();
 
             global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.Blend);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             this.SetBlendEquation(
                 BlendFunction.Add, BlendFactor.SourceAlpha, BlendFactor.InverseSourceAlpha,
                 BlendFunction.Add, BlendFactor.One, BlendFactor.InverseSourceAlpha);
 
             global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.DepthTest);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.DepthMask(true);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.DepthRange(0f, 1f);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.DepthFunc(global::MonoMac.OpenGL.DepthFunction.Lequal);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             SetCullMode (CullMode.CW);
         }
@@ -64,7 +64,7 @@
             foreach(var elem in vertElems)
             {
                 global::MonoMac.OpenGL.GL.EnableVertexAttribArray(counter);
-                OpenGLHelper.CheckError();
+                ErrorHandler.Check();
 
                 //var vertElemUsage = elem.VertexElementUsage;
                 var vertElemFormat = elem.VertexElementFormat;
@@ -99,7 +99,7 @@
                     
                     );
 
-                OpenGLHelper.CheckError();
+                ErrorHandler.Check();
 
                 counter++;
 
@@ -113,7 +113,7 @@
             for(int i = 0; i < vertElems.Length; ++i)
             {
                 global::MonoMac.OpenGL.GL.DisableVertexAttribArray(i);
-                OpenGLHelper.CheckError();
+                ErrorHandler.Check();
             }
         }
 
@@ -146,7 +146,7 @@
 
             global::MonoMac.OpenGL.GL.Clear ( mask );
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         public void ClearDepthBuffer(Single val = 1)
@@ -157,7 +157,7 @@
 
             global::MonoMac.OpenGL.GL.Clear ( mask );
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         public void SetCullMode(CullMode cullMode)
@@ -167,26 +167,26 @@
                 if (cullMode == CullMode.None)
                 {
                     global::MonoMac.OpenGL.GL.Disable (global::MonoMac.OpenGL.EnableCap.CullFace);
-                    OpenGLHelper.CheckError ();
+                    ErrorHandler.Check ();
 
                 }
                 else
                 {
                     global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.CullFace);
-                    OpenGLHelper.CheckError();
+                    ErrorHandler.Check();
 
                     global::MonoMac.OpenGL.GL.FrontFace(global::MonoMac.OpenGL.FrontFaceDirection.Cw);
-                    OpenGLHelper.CheckError();
+                    ErrorHandler.Check();
 
                     if (cullMode == CullMode.CW)
                     {
                         global::MonoMac.OpenGL.GL.CullFace (global::MonoMac.OpenGL.CullFaceMode.Back);
-                        OpenGLHelper.CheckError ();
+                        ErrorHandler.Check ();
                     }
                     else if (cullMode == CullMode.CCW)
                     {
                         global::MonoMac.OpenGL.GL.CullFace (global::MonoMac.OpenGL.CullFaceMode.Front);
-                        OpenGLHelper.CheckError ();
+                        ErrorHandler.Check ();
                     }
                     else
                     {
@@ -241,7 +241,7 @@
                 
                 // we need to bind the texture object so that we can opperate on it.
                 global::MonoMac.OpenGL.GL.BindTexture(textureTarget, oglt0.glTextureId);
-                OpenGLHelper.CheckError();
+                ErrorHandler.Check();
             }
 
         }
@@ -258,14 +258,14 @@
             global::MonoMac.OpenGL.GL.BlendEquationSeparate(
                 EnumConverter.ToOpenGL(rgbBlendFunction),
                 EnumConverter.ToOpenGL(alphaBlendFunction) );
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.BlendFuncSeparate(
                 EnumConverter.ToOpenGLSrc(sourceRgb),
                 EnumConverter.ToOpenGLDest(destinationRgb),
                 EnumConverter.ToOpenGLSrc(sourceAlpha),
                 EnumConverter.ToOpenGLDest(destinationAlpha) );
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         public void DrawPrimitives(
@@ -306,7 +306,7 @@
                 global::MonoMac.OpenGL.DrawElementsType.UnsignedShort,
                 (System.IntPtr) 0 );
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             this.DisableVertAttribs(vertDecl);
         }
@@ -361,7 +361,7 @@
             var bindTarget = global::MonoMac.OpenGL.BufferTarget.ArrayBuffer;
 
             global::MonoMac.OpenGL.GL.BindBuffer(bindTarget, 0);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
 
             this.EnableVertAttribs( vertDecl, pointer );
@@ -374,7 +374,7 @@
                 vertexOffset,  // specifies the starting vertex index in the enabled vertex arrays
                 count ); // specifies the number of indicies to be drawn
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
 
             this.DisableVertAttribs(vertDecl);

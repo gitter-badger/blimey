@@ -1,4 +1,4 @@
-    public class OpenGLView 
+    public sealed class OpenGLView 
         : global::MonoMac.OpenGL.MonoMacGameView
     {
         Rectangle clientBounds;
@@ -124,25 +124,25 @@
             // Enable the depth buffer
             //
             global::MonoMac.OpenGL.GL.GenRenderbuffers(1, out _depthRenderbuffer);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.BindRenderbuffer(
                 global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer, 
                 _depthRenderbuffer);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.RenderbufferStorage(
                 global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer, 
                 global::MonoMac.OpenGL.RenderbufferStorage.DepthComponent16, 
                 Size.Width, Size.Height);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.FramebufferRenderbuffer(
                 global::MonoMac.OpenGL.FramebufferTarget.Framebuffer,
                 global::MonoMac.OpenGL.FramebufferAttachment.DepthAttachment,
                 global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer,
                 _depthRenderbuffer);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
         }
 

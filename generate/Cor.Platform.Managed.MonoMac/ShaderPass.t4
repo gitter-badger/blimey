@@ -1,7 +1,7 @@
     /// <summary>
     /// Represents in individual pass of a Cor.Xios high level Shader object.
     /// </summary>
-    public class ShaderPass
+    public sealed class ShaderPass
         : IShaderPass
         , IDisposable
     {

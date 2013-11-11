@@ -47,6 +47,7 @@ using Sungiant.Abacus;
 using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
+using Sungiant.Cor.Lib.Managed.Khronos;
 
 using MonoMac.Foundation;
 using MonoMac.AppKit;
@@ -172,23 +173,23 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             this.gpuUtils = new MonoMacGpuUtils();
 
             global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.Blend);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             this.SetBlendEquation(
                 BlendFunction.Add, BlendFactor.SourceAlpha, BlendFactor.InverseSourceAlpha,
                 BlendFunction.Add, BlendFactor.One, BlendFactor.InverseSourceAlpha);
 
             global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.DepthTest);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.DepthMask(true);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.DepthRange(0f, 1f);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.DepthFunc(global::MonoMac.OpenGL.DepthFunction.Lequal);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             SetCullMode (CullMode.CW);
         }
@@ -220,7 +221,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             foreach(var elem in vertElems)
             {
                 global::MonoMac.OpenGL.GL.EnableVertexAttribArray(counter);
-                OpenGLHelper.CheckError();
+                ErrorHandler.Check();
 
                 //var vertElemUsage = elem.VertexElementUsage;
                 var vertElemFormat = elem.VertexElementFormat;
@@ -255,7 +256,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                     
                     );
 
-                OpenGLHelper.CheckError();
+                ErrorHandler.Check();
 
                 counter++;
 
@@ -269,7 +270,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             for(int i = 0; i < vertElems.Length; ++i)
             {
                 global::MonoMac.OpenGL.GL.DisableVertexAttribArray(i);
-                OpenGLHelper.CheckError();
+                ErrorHandler.Check();
             }
         }
 
@@ -302,7 +303,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             global::MonoMac.OpenGL.GL.Clear ( mask );
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         public void ClearDepthBuffer(Single val = 1)
@@ -313,7 +314,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             global::MonoMac.OpenGL.GL.Clear ( mask );
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         public void SetCullMode(CullMode cullMode)
@@ -323,26 +324,26 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 if (cullMode == CullMode.None)
                 {
                     global::MonoMac.OpenGL.GL.Disable (global::MonoMac.OpenGL.EnableCap.CullFace);
-                    OpenGLHelper.CheckError ();
+                    ErrorHandler.Check ();
 
                 }
                 else
                 {
                     global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.CullFace);
-                    OpenGLHelper.CheckError();
+                    ErrorHandler.Check();
 
                     global::MonoMac.OpenGL.GL.FrontFace(global::MonoMac.OpenGL.FrontFaceDirection.Cw);
-                    OpenGLHelper.CheckError();
+                    ErrorHandler.Check();
 
                     if (cullMode == CullMode.CW)
                     {
                         global::MonoMac.OpenGL.GL.CullFace (global::MonoMac.OpenGL.CullFaceMode.Back);
-                        OpenGLHelper.CheckError ();
+                        ErrorHandler.Check ();
                     }
                     else if (cullMode == CullMode.CCW)
                     {
                         global::MonoMac.OpenGL.GL.CullFace (global::MonoMac.OpenGL.CullFaceMode.Front);
-                        OpenGLHelper.CheckError ();
+                        ErrorHandler.Check ();
                     }
                     else
                     {
@@ -397,7 +398,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 
                 // we need to bind the texture object so that we can opperate on it.
                 global::MonoMac.OpenGL.GL.BindTexture(textureTarget, oglt0.glTextureId);
-                OpenGLHelper.CheckError();
+                ErrorHandler.Check();
             }
 
         }
@@ -414,14 +415,14 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             global::MonoMac.OpenGL.GL.BlendEquationSeparate(
                 EnumConverter.ToOpenGL(rgbBlendFunction),
                 EnumConverter.ToOpenGL(alphaBlendFunction) );
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.BlendFuncSeparate(
                 EnumConverter.ToOpenGLSrc(sourceRgb),
                 EnumConverter.ToOpenGLDest(destinationRgb),
                 EnumConverter.ToOpenGLSrc(sourceAlpha),
                 EnumConverter.ToOpenGLDest(destinationAlpha) );
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         public void DrawPrimitives(
@@ -462,7 +463,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 global::MonoMac.OpenGL.DrawElementsType.UnsignedShort,
                 (System.IntPtr) 0 );
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             this.DisableVertAttribs(vertDecl);
         }
@@ -517,7 +518,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             var bindTarget = global::MonoMac.OpenGL.BufferTarget.ArrayBuffer;
 
             global::MonoMac.OpenGL.GL.BindBuffer(bindTarget, 0);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
 
             this.EnableVertAttribs( vertDecl, pointer );
@@ -530,7 +531,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 vertexOffset,  // specifies the starting vertex index in the enabled vertex arrays
                 count ); // specifies the number of indicies to be drawn
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
 
             this.DisableVertAttribs(vertDecl);
@@ -595,7 +596,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             global::MonoMac.OpenGL.GL.GenBuffers(1, out this.bufferHandle);
             
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             if( this.bufferHandle == 0 )
             {
@@ -610,7 +611,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 (System.IntPtr) null,
                 this.bufferUsage);
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             resourceCounter++;
 
@@ -629,7 +630,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         void CleanUpNativeResources()
         {
             global::MonoMac.OpenGL.GL.DeleteBuffers(1, ref this.bufferHandle);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             bufferHandle = 0;
 
@@ -646,13 +647,13 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         internal void Activate()
         {
             global::MonoMac.OpenGL.GL.BindBuffer(this.type, this.bufferHandle);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         internal void Deactivate()
         {
             global::MonoMac.OpenGL.GL.BindBuffer(this.type, 0);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
 
@@ -685,7 +686,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             udata = null;
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         public int IndexCount
@@ -1053,7 +1054,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             this.bufferUsage = global::MonoMac.OpenGL.BufferUsageHint.DynamicDraw;
 
             global::MonoMac.OpenGL.GL.GenBuffers(1, out this.bufferHandle);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
 
             if( this.bufferHandle == 0 )
@@ -1070,7 +1071,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 (System.IntPtr) null,
                 this.bufferUsage);
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             resourceCounter++;
 
@@ -1079,13 +1080,13 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         internal void Activate()
         {
             global::MonoMac.OpenGL.GL.BindBuffer(this.type, this.bufferHandle);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         internal void Deactivate()
         {
             global::MonoMac.OpenGL.GL.BindBuffer(this.type, 0);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
         ~VertexBuffer()
@@ -1101,7 +1102,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         void CleanUpNativeResources()
         {
             global::MonoMac.OpenGL.GL.DeleteBuffers(1, ref this.bufferHandle);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             bufferHandle = 0;
 
@@ -1135,7 +1136,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
                 data);
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
 
@@ -1357,25 +1358,25 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             // Enable the depth buffer
             //
             global::MonoMac.OpenGL.GL.GenRenderbuffers(1, out _depthRenderbuffer);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.BindRenderbuffer(
                 global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer, 
                 _depthRenderbuffer);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.RenderbufferStorage(
                 global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer, 
                 global::MonoMac.OpenGL.RenderbufferStorage.DepthComponent16, 
                 Size.Width, Size.Height);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.FramebufferRenderbuffer(
                 global::MonoMac.OpenGL.FramebufferTarget.Framebuffer,
                 global::MonoMac.OpenGL.FramebufferAttachment.DepthAttachment,
                 global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer,
                 _depthRenderbuffer);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
         }
 
@@ -1539,20 +1540,6 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         public override bool ShouldZoom (NSWindow window, RectangleF newFrame)
         {
             return true;
-        }
-    }
-
-    public static class OpenGLHelper
-    {
-        [Conditional("DEBUG")]
-        public static void CheckError()
-        {
-            var ec = global::MonoMac.OpenGL.GL.GetError();
-
-            if (ec != global::MonoMac.OpenGL.ErrorCode.NoError)
-            {
-                throw new Exception( ec.ToString());
-            }
         }
     }
 
@@ -2622,426 +2609,6 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
     
-    //
-    // Shader Utils
-    // ------------
-    // Static class to help with open tk's horrible shader system.
-    //
-    public static class ShaderUtils
-    {
-        public class ShaderUniform
-        {
-            public Int32 Index { get; set; }
-            public String Name { get; set; }
-            public global::MonoMac.OpenGL.ActiveUniformType Type { get; set; }
-        }
-
-        public class ShaderAttribute
-        {
-            public Int32 Index { get; set; }
-            public String Name { get; set; }
-            public global::MonoMac.OpenGL.ActiveAttribType Type { get; set; }
-        }
-        
-        public static Int32 CreateShaderProgram()
-        {
-            // Create shader program.
-            Int32 programHandle = global::MonoMac.OpenGL.GL.CreateProgram ();
-
-            if( programHandle == 0 )
-                throw new Exception("Failed to create shader program");
-
-            OpenGLHelper.CheckError();
-
-            return programHandle;
-        }
-
-        public static Int32 CreateVertexShader(string path)
-        {
-            Int32 vertShaderHandle;
-            string ext = Path.GetExtension(path);
-
-            if( ext != ".vsh" )
-            {
-                throw new Exception("Resource [" + path + "] should end with .vsh");
-            }
-
-            string filename = path.Substring(0, path.Length - ext.Length);
-
-            var vertShaderPathname =
-                global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (
-                    filename,
-                    "vsh" );
-
-            if( vertShaderPathname == null )
-            {
-                throw new Exception("Resource [" + path + "] not found");
-            }
-
-
-            //Console.WriteLine ("[Cor.Resources] " + vertShaderPathname);
-
-
-            ShaderUtils.CompileShader (
-                global::MonoMac.OpenGL.ShaderType.VertexShader, 
-                vertShaderPathname, 
-                out vertShaderHandle );
-
-            if( vertShaderHandle == 0 )
-                throw new Exception("Failed to compile vertex shader program");
-
-            return vertShaderHandle;
-        }
-
-        public static Int32 CreateFragmentShader(string path)
-        {
-            Int32 fragShaderHandle;
-
-            string ext = Path.GetExtension(path);
-            
-            if( ext != ".fsh" )
-            {
-                throw new Exception("Resource [" + path + "] should end with .fsh");
-            }
-            
-            string filename = path.Substring(0, path.Length - ext.Length);
-            
-            var fragShaderPathname =
-                global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (
-                    filename,
-                    "fsh" );
-            
-            if( fragShaderPathname == null )
-            {
-                throw new Exception("Resource [" + path + "] not found");
-            }
-
-            //Console.WriteLine ("[Cor.Resources] " + fragShaderPathname);
-
-
-            ShaderUtils.CompileShader (
-                global::MonoMac.OpenGL.ShaderType.FragmentShader,
-                fragShaderPathname,
-                out fragShaderHandle );
-
-            if( fragShaderHandle == 0 )
-                throw new Exception("Failed to compile fragment shader program");
-
-
-            return fragShaderHandle;
-        }
-
-        public static void AttachShader(
-            Int32 programHandle,
-            Int32 shaderHandle)
-        {
-            if (shaderHandle != 0)
-            {
-                // Attach vertex shader to program.
-                global::MonoMac.OpenGL.GL.AttachShader (programHandle, shaderHandle);
-                OpenGLHelper.CheckError();
-            }
-        }
-
-        public static void DetachShader(
-            Int32 programHandle,
-            Int32 shaderHandle )
-        {
-            if (shaderHandle != 0)
-            {
-                global::MonoMac.OpenGL.GL.DetachShader (programHandle, shaderHandle);
-                OpenGLHelper.CheckError();
-            }
-        }
-
-        public static void DeleteShader(
-            Int32 programHandle,
-            Int32 shaderHandle )
-        {
-            if (shaderHandle != 0)
-            {
-                global::MonoMac.OpenGL.GL.DeleteShader (shaderHandle);
-                shaderHandle = 0;
-                OpenGLHelper.CheckError();
-            }
-        }
-        
-        public static void DestroyShaderProgram (Int32 programHandle)
-        {
-            if (programHandle != 0)
-            {
-                global::MonoMac.OpenGL.GL.DeleteProgram (1, new int[]{ programHandle } );
-                programHandle = 0;
-                OpenGLHelper.CheckError();
-            }
-        }
-
-        public static void CompileShader (
-            global::MonoMac.OpenGL.ShaderType type,
-            String file,
-            out Int32 shaderHandle )
-        {
-            String src = string.Empty;
-
-            try
-            {
-                // Get the data from the text file
-                src = System.IO.File.ReadAllText (file);
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.Message);
-                shaderHandle = 0;
-                return;
-            }
-
-            // Create an empty vertex shader object
-            shaderHandle = global::MonoMac.OpenGL.GL.CreateShader (type);
-
-            OpenGLHelper.CheckError();
-
-            // Replace the source code in the vertex shader object
-            global::MonoMac.OpenGL.GL.ShaderSource (
-                shaderHandle,
-                src);
-                //1,
-                //new String[] { src },
-                //(Int32[]) null );
-
-            OpenGLHelper.CheckError();
-
-            global::MonoMac.OpenGL.GL.CompileShader (shaderHandle);
-
-            OpenGLHelper.CheckError();
-            
-#if DEBUG
-            Int32 logLength = 0;
-            global::MonoMac.OpenGL.GL.GetShader (
-                shaderHandle,
-                global::MonoMac.OpenGL.ShaderParameter.InfoLogLength,
-                out logLength);
-
-            OpenGLHelper.CheckError();
-            var infoLog = new System.Text.StringBuilder(logLength);
-
-            if (logLength > 0)
-            {
-                int temp = 0;
-                global::MonoMac.OpenGL.GL.GetShaderInfoLog (
-                    shaderHandle,
-                    logLength,
-                    out temp,
-                    infoLog );
-
-                string log = infoLog.ToString();
-
-                Console.WriteLine(file);
-                Console.WriteLine (log);
-                Console.WriteLine(type);
-            }
-#endif
-            Int32 status = 0;
-
-            global::MonoMac.OpenGL.GL.GetShader (
-                shaderHandle,
-                global::MonoMac.OpenGL.ShaderParameter.CompileStatus,
-                out status );
-
-            OpenGLHelper.CheckError();
-
-            if (status == 0)
-            {
-                global::MonoMac.OpenGL.GL.DeleteShader (shaderHandle);
-                throw new Exception ("Failed to compile " + type.ToString());
-            }
-        }
-        
-        public static List<ShaderUniform> GetUniforms (Int32 prog)
-        {
-            
-            int numActiveUniforms = 0;
-            
-            var result = new List<ShaderUniform>();
-
-            global::MonoMac.OpenGL.GL.GetProgram(prog, global::MonoMac.OpenGL.ProgramParameter.ActiveUniforms, out numActiveUniforms);
-            OpenGLHelper.CheckError();
-
-            for(int i = 0; i < numActiveUniforms; ++i)
-            {
-                var sb = new System.Text.StringBuilder ();
-                
-                int buffSize = 0;
-                int length = 0;
-                int size = 0;
-                global::MonoMac.OpenGL.ActiveUniformType type;
-
-                global::MonoMac.OpenGL.GL.GetActiveUniform(
-                    prog,
-                    i,
-                    64,
-                    out length,
-                    out size,
-                    out type,
-                    sb);
-                OpenGLHelper.CheckError();
-                
-                result.Add(
-                    new ShaderUniform()
-                    {
-                    Index = i,
-                    Name = sb.ToString(),
-                    Type = type
-                    }
-                );
-            }
-            
-            return result;
-        }
-
-        public static List<ShaderAttribute> GetAttributes (Int32 prog)
-        {
-            int numActiveAttributes = 0;
-            
-            var result = new List<ShaderAttribute>();
-            
-            // gets the number of active vertex attributes
-            global::MonoMac.OpenGL.GL.GetProgram(prog, global::MonoMac.OpenGL.ProgramParameter.ActiveAttributes, out numActiveAttributes);
-            OpenGLHelper.CheckError();
-
-            for(int i = 0; i < numActiveAttributes; ++i)
-            {
-                var sb = new System.Text.StringBuilder ();
-
-                int buffSize = 0;
-                int length = 0;
-                int size = 0;
-                global::MonoMac.OpenGL.ActiveAttribType type;
-                global::MonoMac.OpenGL.GL.GetActiveAttrib(
-                    prog,
-                    i,
-                    64,
-                    out length,
-                    out size,
-                    out type,
-                    sb);
-                OpenGLHelper.CheckError();
-                    
-                result.Add(
-                    new ShaderAttribute()
-                    {
-                        Index = i,
-                        Name = sb.ToString(),
-                        Type = type
-                    }
-                );
-            }
-            
-            return result;
-        }
-        
-        
-        public static bool LinkProgram (Int32 prog)
-        {
-            bool retVal = true;
-
-            global::MonoMac.OpenGL.GL.LinkProgram (prog);
-
-            OpenGLHelper.CheckError();
-            
-#if DEBUG
-            Int32 logLength = 0;
-
-            global::MonoMac.OpenGL.GL.GetProgram (
-                prog,
-                global::MonoMac.OpenGL.ProgramParameter.InfoLogLength,
-                out logLength );
-
-            OpenGLHelper.CheckError();
-
-            if (logLength > 0)
-            {
-                retVal = false;
-
-                /*
-                var infoLog = new System.Text.StringBuilder ();
-
-                global::MonoMac.OpenGL.GL.GetProgramInfoLog (
-                    prog,
-                    logLength,
-                    out logLength,
-                    infoLog );
-                */
-                var infoLog = string.Empty;
-                global::MonoMac.OpenGL.GL.GetProgramInfoLog(prog, out infoLog);
-
-
-                OpenGLHelper.CheckError();
-
-                Console.WriteLine (string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
-            }
-#endif
-            Int32 status = 0;
-
-            global::MonoMac.OpenGL.GL.GetProgram (
-                prog,
-                global::MonoMac.OpenGL.ProgramParameter.LinkStatus,
-                out status );
-
-            OpenGLHelper.CheckError();
-
-            if (status == 0)
-            {
-                throw new Exception(String.Format("Failed to link program: {0:x}", prog));
-            }
-
-            return retVal;
-
-        }
-
-        public static void ValidateProgram (Int32 programHandle)
-        {
-            global::MonoMac.OpenGL.GL.ValidateProgram (programHandle);
-
-            OpenGLHelper.CheckError();
-            
-            Int32 logLength = 0;
-
-            global::MonoMac.OpenGL.GL.GetProgram (
-                programHandle,
-                global::MonoMac.OpenGL.ProgramParameter.InfoLogLength,
-                out logLength );
-
-            OpenGLHelper.CheckError();
-
-            if (logLength > 0)
-            {
-                var infoLog = new System.Text.StringBuilder ();
-
-                global::MonoMac.OpenGL.GL.GetProgramInfoLog (
-                    programHandle,
-                    logLength,
-                    out logLength, infoLog );
-
-                OpenGLHelper.CheckError();
-
-                Console.WriteLine (string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
-            }
-            
-            Int32 status = 0;
-
-            global::MonoMac.OpenGL.GL.GetProgram (
-                programHandle, global::MonoMac.OpenGL.ProgramParameter.LinkStatus,
-                out status );
-
-            OpenGLHelper.CheckError();
-
-            if (status == 0)
-            {
-                throw new Exception (String.Format("Failed to validate program {0:x}", programHandle));
-            }
-        }
-    }
-
     internal class OpenGLTexture
         : Texture2D
     {
@@ -3151,14 +2718,14 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             // By default, the value is 4, meaning that rows of pixels are assumed to begin
             // on 4-byte boundaries.  this is a global STATE.
             global::MonoMac.OpenGL.GL.PixelStore(global::MonoMac.OpenGL.PixelStoreParameter.UnpackAlignment, 4);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             // the first sept in the application of texture is to create the
             // texture object.  this is a container object that holds the 
             // texture data.  this function returns a handle to a texture
             // object.
             global::MonoMac.OpenGL.GL.GenTextures(1, out textureId);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             this.glTextureId = textureId;
 
@@ -3166,7 +2733,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             
             // we need to bind the texture object so that we can opperate on it.
             global::MonoMac.OpenGL.GL.BindTexture(textureTarget, textureId);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             var internalFormat = global::MonoMac.OpenGL.PixelInternalFormat.Rgba;
             var format = global::MonoMac.OpenGL.PixelFormat.Rgba;
@@ -3217,18 +2784,18 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 
                 );
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             // sets the minification and maginfication filtering modes.  required
             // because we have not loaded a complete mipmap chain for the texture
             // so we must select a non mipmapped minification filter.
             global::MonoMac.OpenGL.GL.TexParameter(textureTarget, global::MonoMac.OpenGL.TextureParameterName.TextureMinFilter, (int) global::MonoMac.OpenGL.All.Nearest );
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.TexParameter(textureTarget, global::MonoMac.OpenGL.TextureParameterName.TextureMagFilter, (int) global::MonoMac.OpenGL.All.Nearest );
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
         
         
@@ -3257,8 +2824,6 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 
             var fKey = GetFunctionalKey(theEvent.KeyCode);
             if( fKey.HasValue ) functionalKeysThatAreDown.Add(fKey.Value);
-                
-            Console.WriteLine(theEvent.KeyCode);
         }
 
         internal void KeyUp (NSEvent theEvent)
@@ -3568,6 +3133,27 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             }
         }
         */
+
+        static string GetResourcePath(string path)
+        {
+            string ext = Path.GetExtension(path);
+
+            string filename = path.Substring(0, path.Length - ext.Length);
+
+            var resourcePathname =
+                global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (
+                    filename,
+                    ext.Substring(1, ext.Length - 1)
+                );
+
+            if( resourcePathname == null )
+            {
+                throw new Exception("Resource [" + path + "] not found");
+            }
+
+            return resourcePathname;
+        }
+
         internal OpenGLShader(String variantName, String passName, OpenGLShaderDefinition definition)
         {
             Console.WriteLine ("  Creating Pass Variant: " + variantName);
@@ -3578,8 +3164,9 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             
             //Variables = 
             programHandle = ShaderUtils.CreateShaderProgram ();
-            vertShaderHandle = ShaderUtils.CreateVertexShader (this.vertexShaderPath);
-            fragShaderHandle = ShaderUtils.CreateFragmentShader (this.pixelShaderPath);
+
+            vertShaderHandle = ShaderUtils.CreateVertexShader (GetResourcePath(this.vertexShaderPath));
+            fragShaderHandle = ShaderUtils.CreateFragmentShader (GetResourcePath(this.pixelShaderPath));
             
             ShaderUtils.AttachShader (programHandle, vertShaderHandle);
             ShaderUtils.AttachShader (programHandle, fragShaderHandle);
@@ -3593,7 +3180,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             foreach(var attName in orderedAttributes)
             {
                 global::MonoMac.OpenGL.GL.BindAttribLocation(programHandle, index, attName);
-                OpenGLHelper.CheckError();
+                ErrorHandler.Check();
                 bool success = ShaderUtils.LinkProgram (programHandle);
                 if (success)
                 {
@@ -3663,13 +3250,13 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         public void Activate ()
         {
             global::MonoMac.OpenGL.GL.UseProgram (programHandle);
-            OpenGLHelper.CheckError ();
+            ErrorHandler.Check ();
         }
         
         public void Dispose()
         {
             ShaderUtils.DestroyShaderProgram(programHandle);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
     }
     
@@ -3700,7 +3287,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         {
             int attLocation = global::MonoMac.OpenGL.GL.GetAttribLocation(programHandle, attribute.Name);
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             Console.WriteLine(string.Format(
                 "    Binding Shader Input: [Prog={0}, AttIndex={1}, AttLocation={4}, AttName={2}, AttType={3}]",
@@ -3711,7 +3298,6 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             this.Name = attribute.Name;
             this.Type = EnumConverter.ToType(attribute.Type);
             
-
         }
         
         internal void RegisterExtraInfo(ShaderInputDefinition definition)
@@ -3737,7 +3323,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             int uniformLocation = global::MonoMac.OpenGL.GL.GetUniformLocation(programHandle, uniform.Name);
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
 
             this.UniformLocation = uniformLocation;
@@ -3753,7 +3339,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         {
             // set the sampler texture unit to 0
             global::MonoMac.OpenGL.GL.Uniform1( this.UniformLocation, slot );
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
     }
@@ -3776,7 +3362,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             int uniformLocation = global::MonoMac.OpenGL.GL.GetUniformLocation(programHandle, uniform.Name);
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
             if( uniformLocation == -1 )
                 throw new Exception();
@@ -3853,7 +3439,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 throw new Exception("Not supported");
             }
             
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
         }
     }

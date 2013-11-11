@@ -1,6 +1,5 @@
     public class Scene
     {
-
         float rtri; // Angle For The Triangle ( NEW )
         float rquad;    // Angle For The Quad     ( NEW )
 

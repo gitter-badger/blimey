@@ -1,4 +1,4 @@
-    public class Keyboard
+    public sealed class Keyboard
         : IKeyboard
     {
         readonly HashSet<Char> characterKeysThatAreDown = new HashSet<Char>();

@@ -1,4 +1,4 @@
-    class MainWindowDelegate 
+    internal sealed class MainWindowDelegate 
         : NSWindowDelegate
     {
         private readonly MonoMacApp owner;

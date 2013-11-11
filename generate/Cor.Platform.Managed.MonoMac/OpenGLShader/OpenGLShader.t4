@@ -1,4 +1,4 @@
-    public class OpenGLShader
+    public sealed class OpenGLShader
         : IDisposable
     {
         public List<OpenGLShaderInput> Inputs { get; private set; }
@@ -165,6 +165,27 @@
             }
         }
         */
+
+        static string GetResourcePath(string path)
+        {
+            string ext = Path.GetExtension(path);
+
+            string filename = path.Substring(0, path.Length - ext.Length);
+
+            var resourcePathname =
+                global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (
+                    filename,
+                    ext.Substring(1, ext.Length - 1)
+                );
+
+            if( resourcePathname == null )
+            {
+                throw new Exception("Resource [" + path + "] not found");
+            }
+
+            return resourcePathname;
+        }
+
         internal OpenGLShader(String variantName, String passName, OpenGLShaderDefinition definition)
         {
             Console.WriteLine ("  Creating Pass Variant: " + variantName);
@@ -175,8 +196,9 @@
             
             //Variables = 
             programHandle = ShaderUtils.CreateShaderProgram ();
-            vertShaderHandle = ShaderUtils.CreateVertexShader (this.vertexShaderPath);
-            fragShaderHandle = ShaderUtils.CreateFragmentShader (this.pixelShaderPath);
+
+            vertShaderHandle = ShaderUtils.CreateVertexShader (GetResourcePath(this.vertexShaderPath));
+            fragShaderHandle = ShaderUtils.CreateFragmentShader (GetResourcePath(this.pixelShaderPath));
             
             ShaderUtils.AttachShader (programHandle, vertShaderHandle);
             ShaderUtils.AttachShader (programHandle, fragShaderHandle);
@@ -190,7 +212,7 @@
             foreach(var attName in orderedAttributes)
             {
                 global::MonoMac.OpenGL.GL.BindAttribLocation(programHandle, index, attName);
-                OpenGLHelper.CheckError();
+                ErrorHandler.Check();
                 bool success = ShaderUtils.LinkProgram (programHandle);
                 if (success)
                 {
@@ -260,13 +282,13 @@
         public void Activate ()
         {
             global::MonoMac.OpenGL.GL.UseProgram (programHandle);
-            OpenGLHelper.CheckError ();
+            ErrorHandler.Check ();
         }
         
         public void Dispose()
         {
             ShaderUtils.DestroyShaderProgram(programHandle);
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
     }
     

@@ -1,4 +1,4 @@
-    public class ShaderSamplerDefinition
+    public sealed class ShaderSamplerDefinition
     {
         public String NiceName { get; set; }
         public String Name { get; set; }

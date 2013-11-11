@@ -1,4 +1,4 @@
-    public class MacGameNSWindow 
+    public sealed class MacGameNSWindow 
         : NSWindow
     {
         [Export ("initWithContentRect:styleMask:backing:defer:")]

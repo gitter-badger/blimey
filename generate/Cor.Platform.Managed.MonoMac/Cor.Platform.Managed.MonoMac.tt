@@ -50,6 +50,8 @@ using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
 using Sungiant.Abacus.Int32Precision;
 
+using Sungiant.Cor.Lib.Managed.Khronos;
+
 using MonoMac.Foundation;
 using MonoMac.AppKit;
 using MonoMac.CoreVideo;
@@ -76,7 +78,6 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 <#@ include file="OpenGLView.t4"#>
 <#@ include file="MacGameNSWindow.t4"#>
 <#@ include file="MainWindowDelegate.t4"#>
-<#@ include file="OpenGLHelper.t4"#>
 <#@ include file="Convert.t4"#>
 <#@ include file="MonoMacGpuUtils.t4"#>
 <#@ include file="StubShader.t4"#>
@@ -84,7 +85,6 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 <#@ include file="ShaderDefinition.t4"#>
 <#@ include file="ShaderHelper.t4"#>
 <#@ include file="ShaderPass.t4"#>
-<#@ include file="ShaderUtils.t4"#>
 <#@ include file="OpenGLTexture.t4"#>
 <#@ include file="Keyboard.t4"#>
 <#@ include file="Mouse.t4"#>

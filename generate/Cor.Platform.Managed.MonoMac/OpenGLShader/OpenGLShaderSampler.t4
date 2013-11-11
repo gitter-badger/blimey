@@ -1,4 +1,4 @@
-    public class OpenGLShaderSampler
+    public sealed class OpenGLShaderSampler
     {
         int ProgramHandle { get; set; }
         internal int UniformLocation { get; private set; }
@@ -13,7 +13,7 @@
 
             int uniformLocation = global::MonoMac.OpenGL.GL.GetUniformLocation(programHandle, uniform.Name);
 
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
 
 
             this.UniformLocation = uniformLocation;
@@ -29,7 +29,7 @@
         {
             // set the sampler texture unit to 0
             global::MonoMac.OpenGL.GL.Uniform1( this.UniformLocation, slot );
-            OpenGLHelper.CheckError();
+            ErrorHandler.Check();
         }
 
     }

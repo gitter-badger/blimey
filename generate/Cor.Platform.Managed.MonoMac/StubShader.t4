@@ -1,4 +1,4 @@
-    public class StubShader
+    public sealed class StubShader
         : IShader
     {
         IShaderPass[] passes = new IShaderPass[0];

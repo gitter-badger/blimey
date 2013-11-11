@@ -1,4 +1,4 @@
-    public class SystemManager
+    public sealed class SystemManager
         : ISystemManager
     {
         readonly IScreenSpecification screen;
