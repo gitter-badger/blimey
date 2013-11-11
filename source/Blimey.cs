@@ -2407,13 +2407,13 @@ namespace Sungiant.Blimey
 
     public class InputEventSystem
     {
-        MultiTouchController controller;
+        IMultiTouchController controller;
 
         internal InputEventSystem(ICor engine)
         {
             this.engine = engine;
 
-            this.controller = engine.Input.GetMultiTouchController();
+            this.controller = engine.Input.MultiTouchController;
         }
 
         ICor engine;
