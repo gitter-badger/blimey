@@ -311,34 +311,34 @@ namespace Sungiant.Cor
         /// <summary>
         // An Xbox 360 gamepad.
         /// </summary>
-        IXbox360Gamepad GetXbox360Gamepad(PlayerIndex player);
+        IXbox360Gamepad Xbox360Gamepad { get; }
 
         /// <summary>
         // The virtual gamepad used by PlayStation Mobile systems, 
         // if you are running on Vita this will be the Vita itself.
         /// </summary>
-        IPsmGamepad GetPsmGamepad();
+        IPsmGamepad PsmGamepad { get; }
 
         /// <summary>
         // A generalised multitouch pad, which may or may
         // not have a screen.
         /// </summary>
-        IMultiTouchController GetMultiTouchController();
+        IMultiTouchController MultiTouchController { get; }
 
         /// <summary>
         // A very basic gamepad, supported by most implementations.
         /// </summary>
-        IGenericGamepad GetGenericGamepad();
+        IGenericGamepad GenericGamepad { get; }
 
         /// <summary>
         // A computer mouse.
         /// </summary>
-        IMouse GetMouse();
+        IMouse Mouse { get; }
 
         /// <summary>
         // A computer keyboard.
         /// </summary>
-        IKeyboard GetKeyboard();
+        IKeyboard Keyboard { get; }
     }
 
     /// <summary>
