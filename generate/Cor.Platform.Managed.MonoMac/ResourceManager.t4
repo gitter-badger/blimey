@@ -12,28 +12,48 @@
             shaderCache[ShaderType.PixelLit] = CorShaders.CreatePhongPixelLit();
         }
 
-        public T Load<T>(string path) where T : IResource
+        static string GetBundlePath(string path)
         {
             string rtype = Path.GetExtension(path);
             string rname = Path.Combine(
                 Path.GetDirectoryName(path),
                 Path.GetFileNameWithoutExtension(path));
-            
+
             var correctPath =
                 global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource(rname, rtype);
-            
+
             if(!File.Exists(correctPath))
             {
                 throw new FileNotFoundException(correctPath);
             }
 
+            return correctPath;
+        }
+
+        public T Load<T>(string path) where T : IResource
+        {
+            path = GetBundlePath(path);
+
+
             if(typeof(T) == typeof(Texture2D))
             {
-                var tex = OpenGLTexture.CreateFromFile(correctPath);
-                
+                var tex = OpenGLTexture.CreateFromFile(path);
+
                 return (T)(IResource) tex;
             }
-            
+
+            throw new NotImplementedException();
+        }
+
+        public T Open<T>(string path) where T : IDisposable
+        {
+            path = GetBundlePath(path);
+
+            if(typeof(T) == typeof(StreamReader))
+            {
+                return (T)(IDisposable) new StreamReader(path);
+            }
+
             throw new NotImplementedException();
         }
 
