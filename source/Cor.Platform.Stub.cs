@@ -306,6 +306,11 @@ namespace Sungiant.Cor.Platform.Stub
             return default(T);
         }
 
+        public T Open<T>(string path) where T : IDisposable
+        {
+            return default(T);
+        }
+
         public IShader LoadShader(ShaderType shaderType)
         {
             return stubShader;
