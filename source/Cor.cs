@@ -354,6 +354,11 @@ namespace Sungiant.Cor
         /// <summary>
         /// todo
         /// </summary>
+        T Open<T>(String path) where T : IDisposable;
+
+        /// <summary>
+        /// todo
+        /// </summary>
         IShader LoadShader(ShaderType shaderType);
     }
 
