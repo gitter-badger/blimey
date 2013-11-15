@@ -50,8 +50,10 @@ namespace Sungiant.Cor.Demo
 
         static Demo()
         {
-            appSettings.FullScreen = true;
-            appSettings.MouseGeneratesTouches = true;
+			appSettings = new AppSettings ("COR-DEMO") {
+				FullScreen = true,
+				MouseGeneratesTouches = true
+			};
 
             basicApp = new BasicApp();
         }

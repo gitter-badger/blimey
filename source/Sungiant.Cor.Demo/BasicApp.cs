@@ -60,10 +60,12 @@ namespace Sungiant.Cor.Demo
             this.unlitEffect = engine.Resources.LoadShader(ShaderType.Unlit);
             this.vertexLitEffect = engine.Resources.LoadShader(ShaderType.PixelLit);
 
+			this.engine.Log.Info ("Start loading shapes.");
             this.LoadShape1();
             this.LoadShape2();
             this.LoadShape3();
-            this.LoadShape4();
+			this.LoadShape4();
+			this.engine.Log.Info ("Finished loading");
         }
 
         public Boolean Update(AppTime time)
