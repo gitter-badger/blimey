@@ -61,4 +61,6 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.Xna4")]
 [assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.Psm")]
 [assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.MonoMac")]
+[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Stub")]
+[assembly: InternalsVisibleTo("Sungiant.Cor.Lib.Managed.Khronos")]
 

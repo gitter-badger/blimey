@@ -39,6 +39,11 @@ using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+using System.Reflection;
+
 using Sungiant.Abacus;
 using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
@@ -93,6 +98,8 @@ namespace Sungiant.Cor
 <#@ include file="CorTypes/AppTime.t4"#>
 <#@ include file="CorTypes/VertexDeclaration.t4"#>
 <#@ include file="CorTypes/VertexElement.t4"#>
+<#@ include file="CorTypes/LogManagerSettings.t4"#>
+<#@ include file="CorTypes/LogManager.t4"#>
     #endregion
 
     #region Input
@@ -138,5 +145,12 @@ namespace Sungiant.Cor
 
 <#@ include file="Internal/PrimitiveHelper.t4"#>
 <#@ include file="Internal/VertexElementValidator.t4"#>
+<#@ include file="Internal/InternalUtils.t4"#>
     #endregion
+
+    #region Extentions
+
+<#@ include file="Extensions/ListExtensions.t4"#>
+    #endregion
+
 }

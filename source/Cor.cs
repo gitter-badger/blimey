@@ -37,6 +37,11 @@ using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+using System.Reflection;
+
 using Sungiant.Abacus;
 using Sungiant.Abacus.Packed;
 using Sungiant.Abacus.SinglePrecision;
@@ -77,7 +82,12 @@ namespace Sungiant.Cor
         ISystemManager System { get; }
 
         /// <summary>
-        /// Gets a copy of the <see cref="Sungiant.Cor.AppSettings"/>
+        /// Provides access to Cor's logging sysetm.
+        /// </summary>
+        LogManager Log { get; }
+
+        /// <summary>
+        /// Gets the <see cref="Sungiant.Cor.AppSettings"/>
         /// value used by the Cor! framework when initilising the app.
         /// </summary>
         AppSettings Settings { get; }
@@ -1727,29 +1737,65 @@ namespace Sungiant.Cor
 
     /// <summary>
     /// Defines the initial startup settings for the Cor! App
-    /// Framework.  These settings cannot be changed at runtime.
+    /// Framework.
     /// </summary>
-    public struct AppSettings
+    public class AppSettings
     {
-        /// <summary>
-        /// Gets or sets a value indicating whether the mouse 
-        /// input device should generates touch event to simulate a
-        /// touch controller inside the Cor! framework.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if the mouse should generates touch 
-        /// events; otherwise, <c>false</c>.
-        /// </value>
-        public Boolean MouseGeneratesTouches { get; set; }
+        readonly String appName;
+        readonly LogManagerSettings logSettings;
+
+        Boolean mouseGeneratesTouches = true;
+        Boolean fullScreen = false;
+
+        public AppSettings(
+            String appName)
+        {
+            this.appName = appName;
+            this.logSettings = new LogManagerSettings(this.appName);
+        }
+
+        public String AppName
+        {
+            get { return appName; }
+        }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the app 
+        /// Gets or sets a value indicating whether the mouse
+        /// input device (if it exists on the platform) should generates
+        /// touch events to simulate a touch controller inside the
+        /// Cor! framework.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if the mouse should generates touch
+        /// events; otherwise, <c>false</c>.
+        /// </value>
+        public Boolean MouseGeneratesTouches
+        {
+            get { return mouseGeneratesTouches; }
+            set { mouseGeneratesTouches = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the app
         /// should be run in fullscreen mode inside the Cor! framework.
+        /// On platforms where running in a windowed mode is not possible
+        /// this variable is ignored.
         /// </summary>
         /// <value>
         /// <c>true</c> if fullscreen; otherwise, <c>false</c>.
         /// </value>
-        public Boolean FullScreen { get; set; }
+        public Boolean FullScreen
+        {
+            get { return fullScreen; }
+            set { fullScreen = value; }
+        }
+
+        public LogManagerSettings LogSettings
+        {
+            get { return logSettings; }
+        }
+
+
     }
 
     /// <summary>
@@ -2176,6 +2222,254 @@ namespace Sungiant.Cor
     }
 
 
+    public class LogManagerSettings
+    {
+        readonly HashSet<String> enabledLogChannels;
+        readonly List<LogManager.WriteLogDelegate> logWriters;
+        Boolean useLogChannels = false;
+        readonly String tag;
+
+        internal LogManagerSettings(String tag)
+        {
+            this.tag = tag;
+
+            this.enabledLogChannels = new HashSet<String>();
+
+            this.logWriters = new List<LogManager.WriteLogDelegate>()
+            {
+                this.DefaultWriteLogFunction
+            };
+        }
+
+        void DefaultWriteLogFunction(
+            String assembly,
+            String tag,
+            String channel,
+            String type,
+            String time,
+            String[] lines)
+        {
+            String startString = String.Format(
+                "[{3}][{1}][{0}][{2}] ",
+                time,
+                type,
+                channel,
+                tag);
+
+            if (!String.IsNullOrWhiteSpace(assembly))
+                startString = String.Format ("[{0}]{1}", assembly, startString);
+
+            String customNewLine = Environment.NewLine + new String(' ', startString.Length);
+
+            String formatedLine = lines
+                    .Join (customNewLine);
+
+            String log = startString + formatedLine;
+
+            Console.WriteLine (log);
+        }
+
+        public String Tag
+        {
+            get { return tag; }
+        }
+
+        public Boolean UseLogChannels
+        {
+            get { return useLogChannels; }
+            set { useLogChannels = value; }
+        }
+
+        public HashSet<String> EnabledLogChannels
+        {
+            get { return enabledLogChannels; }
+        }
+
+        public List<LogManager.WriteLogDelegate> LogWriters
+        {
+            get { return logWriters; }
+        }
+    }
+
+    public sealed class LogManager
+    {
+        public delegate void WriteLogDelegate (
+            String assembly,
+            String tag,
+            String channel,
+            String type,
+            String time,
+            String[] lines);
+
+        public void Debug(String line)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Debug, assembly, line);
+        }
+
+        public void Debug(String line, params Object[] args)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Debug, assembly, line, args);
+        }
+
+        public void Debug(String channel, String line, params Object[] args)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Debug, assembly, channel, line, args);
+        }
+
+        public void Debug(String channel, String line)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Debug, assembly, channel, line);
+        }
+
+        public void Info(String line)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Info, assembly, line);
+        }
+
+        public void Info(String line, params Object[] args)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Info, assembly, line, args);
+        }
+
+        public void Info(String channel, String line, params Object[] args)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Info, assembly, channel, line, args);
+        }
+
+        public void Info(String channel, String line)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Info, assembly, channel, line);
+        }
+
+        public void Warning(String line)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Warning, assembly, line);
+        }
+
+        public void Warning(String line, params Object[] args)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Warning, assembly, line, args);
+        }
+
+        public void Warning(String channel, String line, params Object[] args)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Warning, assembly, channel, line, args);
+        }
+
+        public void Warning(String channel, String line)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Warning, assembly, channel, line);
+        }
+
+        public void Error(String line)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Error, assembly, line);
+        }
+
+        public void Error(String line, params Object[] args)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Error, assembly, line, args);
+        }
+
+        public void Error(String channel, String line, params Object[] args)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Error, assembly, channel, line, args);
+        }
+
+        public void Error(String channel, String line)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            WriteLine(LogType.Error, assembly, channel, line);
+        }
+
+
+        enum LogType
+        {
+            Debug,
+            Info,
+            Warning,
+            Error,
+        }
+
+        readonly LogManagerSettings settings;
+
+        internal LogManager(LogManagerSettings settings)
+        {
+            this.settings = settings;
+        }
+
+        // This should be user customisable
+        void DoWriteLog(
+            String assembly,
+            String tag,
+            String channel,
+            String type,
+            String time,
+            String[] lines)
+        {
+            foreach(var writeLogFn in settings.LogWriters)
+            {
+                writeLogFn(assembly, tag, channel, type, time, lines);
+            }
+        }
+
+        void WriteLine(LogType type, Assembly callingAssembly, String line)
+        {
+            WriteLine(type, callingAssembly, "Default", line);
+        }
+
+
+        void WriteLine(LogType type, Assembly callingAssembly, String line, params object[] args)
+        {
+            WriteLine(type, callingAssembly, "Default", line, args);
+        }
+
+        void WriteLine(LogType type, Assembly callingAssembly, String channel, String line, params object[] args)
+        {
+            String main = String.Format(line, args);
+
+            WriteLine(type, callingAssembly, channel, main);
+        }
+
+        void WriteLine(LogType type, Assembly callingAssembly, String channel, String line)
+        {
+            if (settings.UseLogChannels &&
+                !settings.EnabledLogChannels.Contains(channel))
+            {
+                return;
+            }
+
+            if (String.IsNullOrWhiteSpace (line))
+            {
+                return;
+            }
+
+            String assembyStr = Path.GetFileNameWithoutExtension (callingAssembly.Location);
+            String typeStr = type.ToString().ToUpper();
+            String timeStr = DateTime.Now.ToString("HH:mm:ss.ffffff");
+            String[] lines = line.Split(Environment.NewLine.ToCharArray())
+                .Where (x => !String.IsNullOrWhiteSpace(x))
+                .ToArray();
+
+            DoWriteLog(assembyStr, settings.Tag, channel, typeStr, timeStr, lines);
+        }
+    }
+
     #endregion
 
     #region Input
@@ -2334,29 +2628,29 @@ namespace Sungiant.Cor
         /// todo
         /// </summary>
         internal void RegisterTouch(
-            Int32 id, 
-            Vector2 normalisedEngineSpacePosition, 
-            TouchPhase phase, 
-            Int64 frameNum, 
+            Int32 id,
+            Vector2 normalisedEngineSpacePosition,
+            TouchPhase phase,
+            Int64 frameNum,
             Single timestamp)
         {
             Boolean die = false;
 
-            if( normalisedEngineSpacePosition.X > 0.5f || 
+            if( normalisedEngineSpacePosition.X > 0.5f ||
                 normalisedEngineSpacePosition.X < -0.5f )
             {
-                Console.WriteLine(
-                    "Touch has a bad X coordinate: " + 
+                InternalUtils.Log.Info(
+                    "Touch has a bad X coordinate: " +
                     normalisedEngineSpacePosition.X);
 
                 die = true;
             }
-            
-            if( normalisedEngineSpacePosition.Y > 0.5f || 
+
+            if( normalisedEngineSpacePosition.Y > 0.5f ||
                 normalisedEngineSpacePosition.X < -0.5f )
             {
-                Console.WriteLine(
-                    "Touch has a bad Y coordinate: " + 
+                InternalUtils.Log.Info(
+                    "Touch has a bad Y coordinate: " +
                     normalisedEngineSpacePosition.Y);
 
                 die = true;
@@ -2364,15 +2658,15 @@ namespace Sungiant.Cor
 
             if (die)
             {
-                Console.WriteLine("Discarding Bad Touch");
+                InternalUtils.Log.Info("Discarding Bad Touch");
                 return;
             }
 
             var touch = new Touch(
-                id, 
-                normalisedEngineSpacePosition, 
-                phase, 
-                frameNum, 
+                id,
+                normalisedEngineSpacePosition,
+                phase,
+                frameNum,
                 timestamp);
 
             this.touchBuffer.Add(touch);
@@ -3854,5 +4148,41 @@ namespace Sungiant.Cor
         }
     }
 
+    static class InternalUtils
+    {
+        static readonly LogManager log;
+
+        static InternalUtils()
+        {
+            var settings = new LogManagerSettings("INTERNAL");
+            log = new LogManager(settings);
+        }
+
+        public static LogManager Log
+        {
+            get { return log; }
+        }
+    }
+
     #endregion
+
+    #region Extentions
+
+    public static class ListExtensions
+    {
+        public static string Join<T>(this IEnumerable<T> values, string seperator)
+        {
+            var sb = new StringBuilder();
+            foreach (var value in values)
+            {
+                if (sb.Length > 0)
+                    sb.Append(seperator);
+                sb.Append(value);
+            }
+            return sb.ToString();
+        }
+    }
+
+    #endregion
+
 }

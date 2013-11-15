@@ -1,0 +1,16 @@
+    static class InternalUtils
+    {
+        static readonly LogManager log;
+
+        static InternalUtils()
+        {
+            var settings = new LogManagerSettings("INTERNAL");
+            log = new LogManager(settings);
+        }
+
+        public static LogManager Log
+        {
+            get { return log; }
+        }
+    }
+

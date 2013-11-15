@@ -31,7 +31,12 @@
         ISystemManager System { get; }
 
         /// <summary>
-        /// Gets a copy of the <see cref="Sungiant.Cor.AppSettings"/>
+        /// Provides access to Cor's logging sysetm.
+        /// </summary>
+        LogManager Log { get; }
+
+        /// <summary>
+        /// Gets the <see cref="Sungiant.Cor.AppSettings"/>
         /// value used by the Cor! framework when initilising the app.
         /// </summary>
         AppSettings Settings { get; }

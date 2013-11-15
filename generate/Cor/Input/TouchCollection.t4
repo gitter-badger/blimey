@@ -37,29 +37,29 @@
         /// todo
         /// </summary>
         internal void RegisterTouch(
-            Int32 id, 
-            Vector2 normalisedEngineSpacePosition, 
-            TouchPhase phase, 
-            Int64 frameNum, 
+            Int32 id,
+            Vector2 normalisedEngineSpacePosition,
+            TouchPhase phase,
+            Int64 frameNum,
             Single timestamp)
         {
             Boolean die = false;
 
-            if( normalisedEngineSpacePosition.X > 0.5f || 
+            if( normalisedEngineSpacePosition.X > 0.5f ||
                 normalisedEngineSpacePosition.X < -0.5f )
             {
-                Console.WriteLine(
-                    "Touch has a bad X coordinate: " + 
+                InternalUtils.Log.Info(
+                    "Touch has a bad X coordinate: " +
                     normalisedEngineSpacePosition.X);
 
                 die = true;
             }
-            
-            if( normalisedEngineSpacePosition.Y > 0.5f || 
+
+            if( normalisedEngineSpacePosition.Y > 0.5f ||
                 normalisedEngineSpacePosition.X < -0.5f )
             {
-                Console.WriteLine(
-                    "Touch has a bad Y coordinate: " + 
+                InternalUtils.Log.Info(
+                    "Touch has a bad Y coordinate: " +
                     normalisedEngineSpacePosition.Y);
 
                 die = true;
@@ -67,15 +67,15 @@
 
             if (die)
             {
-                Console.WriteLine("Discarding Bad Touch");
+                InternalUtils.Log.Info("Discarding Bad Touch");
                 return;
             }
 
             var touch = new Touch(
-                id, 
-                normalisedEngineSpacePosition, 
-                phase, 
-                frameNum, 
+                id,
+                normalisedEngineSpacePosition,
+                phase,
+                frameNum,
                 timestamp);
 
             this.touchBuffer.Add(touch);
