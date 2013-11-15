@@ -8,7 +8,7 @@
 
         public StubXbox360Gamepad()
         {
-            Console.WriteLine("StubXbox360Gamepad -> ()");
+            InternalUtils.Log.Info("StubXbox360Gamepad -> ()");
         }
 
         #region IXbox360Gamepad

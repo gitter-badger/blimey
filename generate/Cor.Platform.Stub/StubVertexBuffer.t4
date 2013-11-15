@@ -3,7 +3,7 @@
     {
         public StubVertexBuffer()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubVertexBuffer -> ()");
         }
 
@@ -11,14 +11,14 @@
 
         public Int32 VertexCount { get { return 0; } }
 
-        public VertexDeclaration VertexDeclaration 
-        { 
+        public VertexDeclaration VertexDeclaration
+        {
             get { return null; }
         }
 
-        public void SetData<T> (T[] data) 
-            where T: 
-                struct, 
+        public void SetData<T> (T[] data)
+            where T:
+                struct,
                 IVertexType
         {
 

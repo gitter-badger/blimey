@@ -3,7 +3,7 @@
     {
         public StubXbox360GamepadTriggers()
         {
-            Console.WriteLine("StubXbox360GamepadTriggers -> ()");
+            InternalUtils.Log.Info("StubXbox360GamepadTriggers -> ()");
         }
 
         #region IXbox360GamepadTriggers

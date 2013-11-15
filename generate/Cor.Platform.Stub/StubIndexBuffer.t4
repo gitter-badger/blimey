@@ -5,19 +5,19 @@
 
         public StubIndexBuffer()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubIndexBuffer -> ()");
         }
 
         static internal UInt16[] ConvertToUnsigned (Int32[] indexBuffer)
-        {   
+        {
             UInt16[] udata = new UInt16[indexBuffer.Length];
 
             for(Int32 i = 0; i < indexBuffer.Length; ++i)
             {
                 udata[i] = (UInt16) indexBuffer[i];
             }
-            
+
             return udata;
         }
 

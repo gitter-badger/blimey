@@ -3,7 +3,7 @@
     {
         public StubMouse()
         {
-            Console.WriteLine("StubMouse -> ()");
+            InternalUtils.Log.Info("StubMouse -> ()");
         }
 
         #region IMouse

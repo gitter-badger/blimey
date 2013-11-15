@@ -3,7 +3,7 @@
     {
         public StubDisplayStatus()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubDisplayStatus -> ()");
         }
 

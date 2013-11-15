@@ -3,7 +3,7 @@
     {
         public StubPsmGamepadDPad()
         {
-            Console.WriteLine("StubPsmGamepadDPad -> ()");
+            InternalUtils.Log.Info("StubPsmGamepadDPad -> ()");
         }
 
         #region IPsmGamepadDPad

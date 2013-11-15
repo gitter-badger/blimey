@@ -3,11 +3,11 @@
     {
         public StubXbox360GamepadButtons()
         {
-            Console.WriteLine("StubXbox360GamepadButtons -> ()");
+            InternalUtils.Log.Info("StubXbox360GamepadButtons -> ()");
         }
 
         #region IXbox360GamepadButtons
-        
+
         public ButtonState A { get { return ButtonState.Released; } }
         public ButtonState B { get { return ButtonState.Released; } }
         public ButtonState Back { get { return ButtonState.Released; } }

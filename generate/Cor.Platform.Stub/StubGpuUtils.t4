@@ -3,7 +3,7 @@
     {
         public StubGpuUtils()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubGpuUtils -> ()");
         }
 

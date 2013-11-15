@@ -10,7 +10,7 @@
 
         public StubInputManager()
         {
-            Console.WriteLine("StubInputManager -> ()");
+            InternalUtils.Log.Info("StubInputManager -> ()");
         }
 
         #region IInputManager

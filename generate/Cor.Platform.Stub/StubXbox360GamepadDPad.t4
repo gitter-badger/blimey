@@ -3,7 +3,7 @@
     {
         public StubXbox360GamepadDPad()
         {
-            Console.WriteLine("StubXbox360GamepadDPads -> ()");
+            InternalUtils.Log.Info("StubXbox360GamepadDPads -> ()");
         }
 
         #region IXbox360GamepadDPad
@@ -12,7 +12,7 @@
         public ButtonState Left { get { return ButtonState.Released; } }
         public ButtonState Right { get { return ButtonState.Released; } }
         public ButtonState Up { get { return ButtonState.Released; } }
-        
+
         #endregion
     }
 

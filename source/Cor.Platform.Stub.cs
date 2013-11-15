@@ -54,12 +54,13 @@ namespace Sungiant.Cor.Platform.Stub
         readonly ISystemManager system;
         readonly AppSettings settings;
         readonly IApp app;
+        readonly LogManager log;
 
         public StubEngine(IApp app, AppSettings settings)
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubEngine -> ()");
-            
+
             this.audio = new StubAudioManager();
             this.graphics = new StubGraphicsManager();
             this.resources = new StubResourceManager();
@@ -67,6 +68,7 @@ namespace Sungiant.Cor.Platform.Stub
             this.system = new StubSystemManager();
             this.settings = settings;
             this.app = app;
+            this.log = new LogManager(this.settings.LogSettings);
             this.app.Initilise(this);
         }
 
@@ -82,6 +84,8 @@ namespace Sungiant.Cor.Platform.Stub
 
         public ISystemManager System { get { return this.system; } }
 
+        public LogManager Log { get { return this.log; } }
+
         public AppSettings Settings { get { return this.settings; } }
 
         #endregion
@@ -93,22 +97,22 @@ namespace Sungiant.Cor.Platform.Stub
         public Single volume = 1f;
 
         public Single Volume
-        { 
+        {
             get { return this.volume; }
             set
             {
                 this.volume = value;
 
-                Console.WriteLine(
+                InternalUtils.Log.Info(
                     "StubAudioManager -> Setting Volume:" + value);
-            } 
+            }
         }
 
         #region IAudioManager
 
         public StubAudioManager()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubAudioManager -> ()");
 
             this.volume = 1f;
@@ -125,7 +129,7 @@ namespace Sungiant.Cor.Platform.Stub
 
         public StubGraphicsManager()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubGraphicsManager -> ()");
 
             this.displayStatus = new StubDisplayStatus();
@@ -140,22 +144,22 @@ namespace Sungiant.Cor.Platform.Stub
 
         public void Reset()
         {
-            
+
         }
 
         public void ClearColourBuffer(Rgba32 color = new Rgba32())
         {
-            
+
         }
 
         public void ClearDepthBuffer(Single depth = 1f)
         {
-            
+
         }
 
         public void SetCullMode(CullMode cullMode)
         {
-            
+
         }
 
         public IGeometryBuffer CreateGeometryBuffer (
@@ -168,33 +172,33 @@ namespace Sungiant.Cor.Platform.Stub
 
         public void SetActiveGeometryBuffer(IGeometryBuffer buffer)
         {
-            
+
         }
 
         public void SetActiveTexture(Int32 slot, Texture2D tex)
         {
-            
+
         }
 
         public void SetBlendEquation(
-            BlendFunction rgbBlendFunction, 
-            BlendFactor sourceRgb, 
+            BlendFunction rgbBlendFunction,
+            BlendFactor sourceRgb,
             BlendFactor destinationRgb,
-            BlendFunction alphaBlendFunction, 
-            BlendFactor sourceAlpha, 
+            BlendFunction alphaBlendFunction,
+            BlendFactor sourceAlpha,
             BlendFactor destinationAlpha
             )
         {
-            
+
         }
 
         public void DrawPrimitives(
-            PrimitiveType primitiveType,            
-            Int32 startVertex,                      
+            PrimitiveType primitiveType,
+            Int32 startVertex,
             Int32 primitiveCount )
         {
-            
-        }              
+
+        }
 
         public void DrawIndexedPrimitives (
             PrimitiveType primitiveType,
@@ -205,7 +209,7 @@ namespace Sungiant.Cor.Platform.Stub
             Int32 primitiveCount
             )
         {
-            
+
         }
 
         public void DrawUserPrimitives <T> (
@@ -216,7 +220,7 @@ namespace Sungiant.Cor.Platform.Stub
             VertexDeclaration vertexDeclaration )
             where T : struct, IVertexType
         {
-            
+
         }
 
         public void DrawUserIndexedPrimitives <T> (
@@ -227,7 +231,7 @@ namespace Sungiant.Cor.Platform.Stub
             Int32[] indexData,
             Int32 indexOffset,
             Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration ) 
+            VertexDeclaration vertexDeclaration )
             where T : struct, IVertexType
         {
 
@@ -241,7 +245,7 @@ namespace Sungiant.Cor.Platform.Stub
     {
         public StubDisplayStatus()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubDisplayStatus -> ()");
         }
 
@@ -254,26 +258,27 @@ namespace Sungiant.Cor.Platform.Stub
         public Int32 CurrentHeight { get { return 600; } }
 
         #endregion
-    }    public class StubIndexBuffer
+    }
+    public class StubIndexBuffer
         : IIndexBuffer
     {
         UInt16[] data;
 
         public StubIndexBuffer()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubIndexBuffer -> ()");
         }
 
         static internal UInt16[] ConvertToUnsigned (Int32[] indexBuffer)
-        {   
+        {
             UInt16[] udata = new UInt16[indexBuffer.Length];
 
             for(Int32 i = 0; i < indexBuffer.Length; ++i)
             {
                 udata[i] = (UInt16) indexBuffer[i];
             }
-            
+
             return udata;
         }
 
@@ -295,7 +300,7 @@ namespace Sungiant.Cor.Platform.Stub
 
         public StubResourceManager()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubResourceManager -> ()");
         }
 
@@ -324,22 +329,22 @@ namespace Sungiant.Cor.Platform.Stub
     {
         public StubPanelSpecification()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubPanelSpecification -> ()");
         }
 
         #region IPanelSpecification
 
-        public Vector2 PanelPhysicalSize 
-        { 
-            get { return new Vector2(0.20f, 0.15f ); } 
+        public Vector2 PanelPhysicalSize
+        {
+            get { return new Vector2(0.20f, 0.15f ); }
         }
-        
-        public Single PanelPhysicalAspectRatio 
-        { 
-            get { return PanelPhysicalSize.X / PanelPhysicalSize.Y; } 
+
+        public Single PanelPhysicalAspectRatio
+        {
+            get { return PanelPhysicalSize.X / PanelPhysicalSize.Y; }
         }
-        
+
         public PanelType PanelType { get { return PanelType.TouchScreen; } }
 
         #endregion
@@ -353,28 +358,28 @@ namespace Sungiant.Cor.Platform.Stub
 
         public StubScreenSpecification()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubScreenSpecification -> ()");
         }
 
         #region IScreenSpecification
 
         public virtual Int32 ScreenResolutionWidth
-        { 
+        {
             get { return width; }
         }
-        
+
         public virtual Int32 ScreenResolutionHeight
-        { 
+        {
             get { return height; }
         }
-        
+
         public Single ScreenResolutionAspectRatio
         {
-            get 
-            { 
-                return 
-                    (Single)this.ScreenResolutionWidth / 
+            get
+            {
+                return
+                    (Single)this.ScreenResolutionWidth /
                     (Single)this.ScreenResolutionHeight;
             }
         }
@@ -393,7 +398,7 @@ namespace Sungiant.Cor.Platform.Stub
             Int32 vertexCount,
             Int32 indexCount )
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubGeometryBuffer -> ()");
 
             this.vertexBuffer = new StubVertexBuffer();
@@ -422,7 +427,7 @@ namespace Sungiant.Cor.Platform.Stub
 
         public StubSystemManager()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubSystemManager -> ()");
 
             screen = new StubScreenSpecification();
@@ -430,7 +435,7 @@ namespace Sungiant.Cor.Platform.Stub
         }
 
         void GetEffectiveDisplaySize(
-            ref Int32 screenSpecWidth, 
+            ref Int32 screenSpecWidth,
             ref Int32 screenSpecHeight)
         {
             if (this.CurrentOrientation == DeviceOrientation.Default ||
@@ -472,18 +477,18 @@ namespace Sungiant.Cor.Platform.Stub
         public String SystemVersion { get { return "1314.0.1.29"; } }
 
         public DeviceOrientation CurrentOrientation
-        { 
+        {
             get { return DeviceOrientation.Default; }
         }
 
         public IScreenSpecification ScreenSpecification
-        { 
-            get { return this.screen; } 
+        {
+            get { return this.screen; }
         }
 
-        public IPanelSpecification PanelSpecification 
-        { 
-            get { return this.panel; } 
+        public IPanelSpecification PanelSpecification
+        {
+            get { return this.panel; }
         }
 
         #endregion
@@ -494,7 +499,7 @@ namespace Sungiant.Cor.Platform.Stub
     {
         public StubVertexBuffer()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubVertexBuffer -> ()");
         }
 
@@ -502,14 +507,14 @@ namespace Sungiant.Cor.Platform.Stub
 
         public Int32 VertexCount { get { return 0; } }
 
-        public VertexDeclaration VertexDeclaration 
-        { 
+        public VertexDeclaration VertexDeclaration
+        {
             get { return null; }
         }
 
-        public void SetData<T> (T[] data) 
-            where T: 
-                struct, 
+        public void SetData<T> (T[] data)
+            where T:
+                struct,
                 IVertexType
         {
 
@@ -523,7 +528,7 @@ namespace Sungiant.Cor.Platform.Stub
     {
         public StubGpuUtils()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubGpuUtils -> ()");
         }
 
@@ -603,7 +608,7 @@ namespace Sungiant.Cor.Platform.Stub
 
         public StubInputManager()
         {
-            Console.WriteLine("StubInputManager -> ()");
+            InternalUtils.Log.Info("StubInputManager -> ()");
         }
 
         #region IInputManager
@@ -646,29 +651,29 @@ namespace Sungiant.Cor.Platform.Stub
     {
         public StubGenericGamepad()
         {
-            Console.WriteLine("StubGenericGamepad -> ()");
+            InternalUtils.Log.Info("StubGenericGamepad -> ()");
         }
 
         #region IGenericGamepad
 
         public ButtonState Down { get { return ButtonState.Released; } }
-        
+
         public ButtonState Left { get { return ButtonState.Released; } }
-        
+
         public ButtonState Right { get { return ButtonState.Released; } }
-        
+
         public ButtonState Up { get { return ButtonState.Released; } }
-        
+
         public ButtonState North { get { return ButtonState.Released; } }
-        
+
         public ButtonState South { get { return ButtonState.Released; } }
-        
+
         public ButtonState East { get { return ButtonState.Released; } }
-        
+
         public ButtonState West { get { return ButtonState.Released; } }
-        
+
         public ButtonState Option { get { return ButtonState.Released; } }
-        
+
         public ButtonState Pause { get { return ButtonState.Released; } }
 
         #endregion
@@ -679,7 +684,7 @@ namespace Sungiant.Cor.Platform.Stub
     {
         public StubKeyboard()
         {
-            Console.WriteLine("StubKeyboard -> ()");
+            InternalUtils.Log.Info("StubKeyboard -> ()");
         }
 
         #region IKeyboard
@@ -702,7 +707,7 @@ namespace Sungiant.Cor.Platform.Stub
     {
         public StubMouse()
         {
-            Console.WriteLine("StubMouse -> ()");
+            InternalUtils.Log.Info("StubMouse -> ()");
         }
 
         #region IMouse
@@ -730,7 +735,7 @@ namespace Sungiant.Cor.Platform.Stub
 
         public StubMultiTouchController()
         {
-            Console.WriteLine("StubMultiTouchController -> ()");
+            InternalUtils.Log.Info("StubMultiTouchController -> ()");
         }
 
         #region IMultiTouchController
@@ -748,10 +753,10 @@ namespace Sungiant.Cor.Platform.Stub
         readonly IPsmGamepadButtons psmGamepadButtons = new StubPsmGamepadButtons();
         readonly IPsmGamepadDPad psmGamepadDPad = new StubPsmGamepadDPad();
         readonly IPsmGamepadThumbsticks psmGamepadThumbsticks = new StubPsmGamepadThumbsticks();
-        
+
         public StubPsmGamepad()
         {
-            Console.WriteLine("StubPsmGamepad -> ()");
+            InternalUtils.Log.Info("StubPsmGamepad -> ()");
         }
 
         #region IPsmGamepad
@@ -768,7 +773,7 @@ namespace Sungiant.Cor.Platform.Stub
     {
         public StubPsmGamepadButtons()
         {
-            Console.WriteLine("StubPsmGamepadButtons -> ()");
+            InternalUtils.Log.Info("StubPsmGamepadButtons -> ()");
         }
 
         #region IPsmGamepadButtons
@@ -790,7 +795,7 @@ namespace Sungiant.Cor.Platform.Stub
     {
         public StubPsmGamepadDPad()
         {
-            Console.WriteLine("StubPsmGamepadDPad -> ()");
+            InternalUtils.Log.Info("StubPsmGamepadDPad -> ()");
         }
 
         #region IPsmGamepadDPad
@@ -808,7 +813,7 @@ namespace Sungiant.Cor.Platform.Stub
     {
         public StubPsmGamepadThumbsticks()
         {
-            Console.WriteLine("StubPsmGamepadThumbsticks -> ()");
+            InternalUtils.Log.Info("StubPsmGamepadThumbsticks -> ()");
         }
 
         #region IPsmGamepadThumbsticks
@@ -829,7 +834,7 @@ namespace Sungiant.Cor.Platform.Stub
 
         public StubXbox360Gamepad()
         {
-            Console.WriteLine("StubXbox360Gamepad -> ()");
+            InternalUtils.Log.Info("StubXbox360Gamepad -> ()");
         }
 
         #region IXbox360Gamepad
@@ -847,11 +852,11 @@ namespace Sungiant.Cor.Platform.Stub
     {
         public StubXbox360GamepadButtons()
         {
-            Console.WriteLine("StubXbox360GamepadButtons -> ()");
+            InternalUtils.Log.Info("StubXbox360GamepadButtons -> ()");
         }
 
         #region IXbox360GamepadButtons
-        
+
         public ButtonState A { get { return ButtonState.Released; } }
         public ButtonState B { get { return ButtonState.Released; } }
         public ButtonState Back { get { return ButtonState.Released; } }
@@ -871,7 +876,7 @@ namespace Sungiant.Cor.Platform.Stub
     {
         public StubXbox360GamepadDPad()
         {
-            Console.WriteLine("StubXbox360GamepadDPads -> ()");
+            InternalUtils.Log.Info("StubXbox360GamepadDPads -> ()");
         }
 
         #region IXbox360GamepadDPad
@@ -880,7 +885,7 @@ namespace Sungiant.Cor.Platform.Stub
         public ButtonState Left { get { return ButtonState.Released; } }
         public ButtonState Right { get { return ButtonState.Released; } }
         public ButtonState Up { get { return ButtonState.Released; } }
-        
+
         #endregion
     }
 
@@ -889,11 +894,11 @@ namespace Sungiant.Cor.Platform.Stub
     {
         public StubXbox360GamepadThumbsticks()
         {
-            Console.WriteLine("StubXbox360GamepadThumbsticks -> ()");
+            InternalUtils.Log.Info("StubXbox360GamepadThumbsticks -> ()");
         }
 
         #region IXbox360GamepadThumbsticks
-        
+
         public Vector2 Left { get { return Vector2.Zero; } }
         public Vector2 Right { get { return Vector2.Zero; } }
 
@@ -905,7 +910,7 @@ namespace Sungiant.Cor.Platform.Stub
     {
         public StubXbox360GamepadTriggers()
         {
-            Console.WriteLine("StubXbox360GamepadTriggers -> ()");
+            InternalUtils.Log.Info("StubXbox360GamepadTriggers -> ()");
         }
 
         #region IXbox360GamepadTriggers

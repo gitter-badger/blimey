@@ -8,12 +8,13 @@
         readonly ISystemManager system;
         readonly AppSettings settings;
         readonly IApp app;
+        readonly LogManager log;
 
         public StubEngine(IApp app, AppSettings settings)
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubEngine -> ()");
-            
+
             this.audio = new StubAudioManager();
             this.graphics = new StubGraphicsManager();
             this.resources = new StubResourceManager();
@@ -21,6 +22,7 @@
             this.system = new StubSystemManager();
             this.settings = settings;
             this.app = app;
+            this.log = new LogManager(this.settings.LogSettings);
             this.app.Initilise(this);
         }
 
@@ -35,6 +37,8 @@
         public IInputManager Input { get { return this.input; } }
 
         public ISystemManager System { get { return this.system; } }
+
+        public LogManager Log { get { return this.log; } }
 
         public AppSettings Settings { get { return this.settings; } }
 

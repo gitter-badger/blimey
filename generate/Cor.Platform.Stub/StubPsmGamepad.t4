@@ -4,10 +4,10 @@
         readonly IPsmGamepadButtons psmGamepadButtons = new StubPsmGamepadButtons();
         readonly IPsmGamepadDPad psmGamepadDPad = new StubPsmGamepadDPad();
         readonly IPsmGamepadThumbsticks psmGamepadThumbsticks = new StubPsmGamepadThumbsticks();
-        
+
         public StubPsmGamepad()
         {
-            Console.WriteLine("StubPsmGamepad -> ()");
+            InternalUtils.Log.Info("StubPsmGamepad -> ()");
         }
 
         #region IPsmGamepad

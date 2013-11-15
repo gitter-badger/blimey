@@ -3,7 +3,7 @@
     {
         public StubPsmGamepadButtons()
         {
-            Console.WriteLine("StubPsmGamepadButtons -> ()");
+            InternalUtils.Log.Info("StubPsmGamepadButtons -> ()");
         }
 
         #region IPsmGamepadButtons

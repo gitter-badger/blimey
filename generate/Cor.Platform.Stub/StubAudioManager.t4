@@ -4,22 +4,22 @@
         public Single volume = 1f;
 
         public Single Volume
-        { 
+        {
             get { return this.volume; }
             set
             {
                 this.volume = value;
 
-                Console.WriteLine(
+                InternalUtils.Log.Info(
                     "StubAudioManager -> Setting Volume:" + value);
-            } 
+            }
         }
 
         #region IAudioManager
 
         public StubAudioManager()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubAudioManager -> ()");
 
             this.volume = 1f;

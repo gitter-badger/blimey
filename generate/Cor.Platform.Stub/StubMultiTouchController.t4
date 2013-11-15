@@ -6,7 +6,7 @@
 
         public StubMultiTouchController()
         {
-            Console.WriteLine("StubMultiTouchController -> ()");
+            InternalUtils.Log.Info("StubMultiTouchController -> ()");
         }
 
         #region IMultiTouchController

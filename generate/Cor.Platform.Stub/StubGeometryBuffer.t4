@@ -9,7 +9,7 @@
             Int32 vertexCount,
             Int32 indexCount )
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "StubGeometryBuffer -> ()");
 
             this.vertexBuffer = new StubVertexBuffer();

@@ -3,7 +3,7 @@
     {
         public StubKeyboard()
         {
-            Console.WriteLine("StubKeyboard -> ()");
+            InternalUtils.Log.Info("StubKeyboard -> ()");
         }
 
         #region IKeyboard
