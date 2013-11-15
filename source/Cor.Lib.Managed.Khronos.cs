@@ -39,8 +39,10 @@ using System.Diagnostics;
 
 #if COR_PLATFORM_MANAGED_XIOS
 using OpenTK.Graphics.ES20;
+using GLShaderType = OpenTK.Graphics.ES20.ShaderType;
 #elif COR_PLATFORM_MANAGED_MONOMAC
 using MonoMac.OpenGL;
+using GLShaderType = MonoMac.OpenGL.ShaderType;
 #else
     Platform not supported.
 #endif
@@ -79,7 +81,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             public String Name { get; set; }
             public ActiveAttribType Type { get; set; }
         }
-        
+
         public static Int32 CreateShaderProgram()
         {
             // Create shader program.
@@ -108,8 +110,8 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             }
 
             ShaderUtils.CompileShader (
-                ShaderType.VertexShader, 
-                path, 
+                GLShaderType.VertexShader,
+                path,
                 out vertShaderHandle );
 
             if( vertShaderHandle == 0 )
@@ -133,7 +135,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             }
 
             ShaderUtils.CompileShader (
-                ShaderType.FragmentShader,
+                GLShaderType.FragmentShader,
                 path,
                 out fragShaderHandle );
 
@@ -178,7 +180,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
                 ErrorHandler.Check();
             }
         }
-        
+
         public static void DestroyShaderProgram (Int32 programHandle)
         {
             if (programHandle != 0)
@@ -195,7 +197,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
         }
 
         public static void CompileShader (
-            ShaderType type,
+            GLShaderType type,
             String file,
             out Int32 shaderHandle )
         {
@@ -208,7 +210,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             }
             catch(Exception e)
             {
-                Console.WriteLine(e.Message);
+                InternalUtils.Log.Info(e.Message);
                 shaderHandle = 0;
                 return;
             }
@@ -236,7 +238,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             GL.CompileShader (shaderHandle);
 
             ErrorHandler.Check();
-            
+
 #if DEBUG
             Int32 logLength = 0;
             GL.GetShader (
@@ -258,9 +260,9 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
 
                 string log = infoLog.ToString();
 
-                Console.WriteLine(file);
-                Console.WriteLine (log);
-                Console.WriteLine(type);
+                InternalUtils.Log.Info(file);
+                InternalUtils.Log.Info (log);
+                InternalUtils.Log.Info(type.ToString());
             }
 #endif
             Int32 status = 0;
@@ -278,12 +280,12 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
                 throw new Exception ("Failed to compile " + type.ToString());
             }
         }
-        
+
         public static List<ShaderUniform> GetUniforms (Int32 prog)
         {
-            
+
             int numActiveUniforms = 0;
-            
+
             var result = new List<ShaderUniform>();
 
             GL.GetProgram(prog, ProgramParameter.ActiveUniforms, out numActiveUniforms);
@@ -292,7 +294,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             for(int i = 0; i < numActiveUniforms; ++i)
             {
                 var sb = new System.Text.StringBuilder ();
-                
+
                 int buffSize = 0;
                 int length = 0;
                 int size = 0;
@@ -307,7 +309,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
                     out type,
                     sb);
                 ErrorHandler.Check();
-                
+
                 result.Add(
                     new ShaderUniform()
                     {
@@ -317,16 +319,16 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
                     }
                 );
             }
-            
+
             return result;
         }
 
         public static List<ShaderAttribute> GetAttributes (Int32 prog)
         {
             int numActiveAttributes = 0;
-            
+
             var result = new List<ShaderAttribute>();
-            
+
             // gets the number of active vertex attributes
             GL.GetProgram(prog, ProgramParameter.ActiveAttributes, out numActiveAttributes);
             ErrorHandler.Check();
@@ -348,7 +350,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
                     out type,
                     sb);
                 ErrorHandler.Check();
-                    
+
                 result.Add(
                     new ShaderAttribute()
                     {
@@ -358,11 +360,11 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
                     }
                 );
             }
-            
+
             return result;
         }
-        
-        
+
+
         public static bool LinkProgram (Int32 prog)
         {
             bool retVal = true;
@@ -370,7 +372,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             GL.LinkProgram (prog);
 
             ErrorHandler.Check();
-            
+
 #if DEBUG
             Int32 logLength = 0;
 
@@ -400,7 +402,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
 
                 ErrorHandler.Check();
 
-                Console.WriteLine (string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
+                InternalUtils.Log.Info (string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
             }
 #endif
             Int32 status = 0;
@@ -426,7 +428,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             GL.ValidateProgram (programHandle);
 
             ErrorHandler.Check();
-            
+
             Int32 logLength = 0;
 
             GL.GetProgram (
@@ -447,9 +449,9 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
 
                 ErrorHandler.Check();
 
-                Console.WriteLine (string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
+                InternalUtils.Log.Info (string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
             }
-            
+
             Int32 status = 0;
 
             GL.GetProgram (

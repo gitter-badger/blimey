@@ -41,8 +41,10 @@ using System.Diagnostics;
 
 #if COR_PLATFORM_MANAGED_XIOS
 using OpenTK.Graphics.ES20;
+using GLShaderType = OpenTK.Graphics.ES20.ShaderType;
 #elif COR_PLATFORM_MANAGED_MONOMAC
 using MonoMac.OpenGL;
+using GLShaderType = MonoMac.OpenGL.ShaderType;
 #else
     Platform not supported.
 #endif

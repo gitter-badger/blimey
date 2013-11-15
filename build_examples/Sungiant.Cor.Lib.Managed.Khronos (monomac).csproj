@@ -68,4 +68,10 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\cor\build_examples\Sungiant.Cor\Sungiant.Cor %28monomac%29.csproj">
+      <Project>{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}</Project>
+      <Name>Sungiant.Cor (monomac)</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

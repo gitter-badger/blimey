@@ -16,7 +16,7 @@
             public String Name { get; set; }
             public ActiveAttribType Type { get; set; }
         }
-        
+
         public static Int32 CreateShaderProgram()
         {
             // Create shader program.
@@ -45,8 +45,8 @@
             }
 
             ShaderUtils.CompileShader (
-                ShaderType.VertexShader, 
-                path, 
+                GLShaderType.VertexShader,
+                path,
                 out vertShaderHandle );
 
             if( vertShaderHandle == 0 )
@@ -70,7 +70,7 @@
             }
 
             ShaderUtils.CompileShader (
-                ShaderType.FragmentShader,
+                GLShaderType.FragmentShader,
                 path,
                 out fragShaderHandle );
 
@@ -115,7 +115,7 @@
                 ErrorHandler.Check();
             }
         }
-        
+
         public static void DestroyShaderProgram (Int32 programHandle)
         {
             if (programHandle != 0)
@@ -132,7 +132,7 @@
         }
 
         public static void CompileShader (
-            ShaderType type,
+            GLShaderType type,
             String file,
             out Int32 shaderHandle )
         {
@@ -145,7 +145,7 @@
             }
             catch(Exception e)
             {
-                Console.WriteLine(e.Message);
+                InternalUtils.Log.Info(e.Message);
                 shaderHandle = 0;
                 return;
             }
@@ -173,7 +173,7 @@
             GL.CompileShader (shaderHandle);
 
             ErrorHandler.Check();
-            
+
 #if DEBUG
             Int32 logLength = 0;
             GL.GetShader (
@@ -195,9 +195,9 @@
 
                 string log = infoLog.ToString();
 
-                Console.WriteLine(file);
-                Console.WriteLine (log);
-                Console.WriteLine(type);
+                InternalUtils.Log.Info(file);
+                InternalUtils.Log.Info (log);
+                InternalUtils.Log.Info(type.ToString());
             }
 #endif
             Int32 status = 0;
@@ -215,12 +215,12 @@
                 throw new Exception ("Failed to compile " + type.ToString());
             }
         }
-        
+
         public static List<ShaderUniform> GetUniforms (Int32 prog)
         {
-            
+
             int numActiveUniforms = 0;
-            
+
             var result = new List<ShaderUniform>();
 
             GL.GetProgram(prog, ProgramParameter.ActiveUniforms, out numActiveUniforms);
@@ -229,7 +229,7 @@
             for(int i = 0; i < numActiveUniforms; ++i)
             {
                 var sb = new System.Text.StringBuilder ();
-                
+
                 int buffSize = 0;
                 int length = 0;
                 int size = 0;
@@ -244,7 +244,7 @@
                     out type,
                     sb);
                 ErrorHandler.Check();
-                
+
                 result.Add(
                     new ShaderUniform()
                     {
@@ -254,16 +254,16 @@
                     }
                 );
             }
-            
+
             return result;
         }
 
         public static List<ShaderAttribute> GetAttributes (Int32 prog)
         {
             int numActiveAttributes = 0;
-            
+
             var result = new List<ShaderAttribute>();
-            
+
             // gets the number of active vertex attributes
             GL.GetProgram(prog, ProgramParameter.ActiveAttributes, out numActiveAttributes);
             ErrorHandler.Check();
@@ -285,7 +285,7 @@
                     out type,
                     sb);
                 ErrorHandler.Check();
-                    
+
                 result.Add(
                     new ShaderAttribute()
                     {
@@ -295,11 +295,11 @@
                     }
                 );
             }
-            
+
             return result;
         }
-        
-        
+
+
         public static bool LinkProgram (Int32 prog)
         {
             bool retVal = true;
@@ -307,7 +307,7 @@
             GL.LinkProgram (prog);
 
             ErrorHandler.Check();
-            
+
 #if DEBUG
             Int32 logLength = 0;
 
@@ -337,7 +337,7 @@
 
                 ErrorHandler.Check();
 
-                Console.WriteLine (string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
+                InternalUtils.Log.Info (string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
             }
 #endif
             Int32 status = 0;
@@ -363,7 +363,7 @@
             GL.ValidateProgram (programHandle);
 
             ErrorHandler.Check();
-            
+
             Int32 logLength = 0;
 
             GL.GetProgram (
@@ -384,9 +384,9 @@
 
                 ErrorHandler.Check();
 
-                Console.WriteLine (string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
+                InternalUtils.Log.Info (string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
             }
-            
+
             Int32 status = 0;
 
             GL.GetProgram (
