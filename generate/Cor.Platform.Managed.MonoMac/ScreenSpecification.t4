@@ -6,28 +6,28 @@
 
         public ScreenSpecification()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "ScreenSpecification -> ()");
         }
 
         #region IScreenSpecification
 
         public Int32 ScreenResolutionWidth
-        { 
+        {
             get { return width; }
         }
-        
+
         public Int32 ScreenResolutionHeight
-        { 
+        {
             get { return height; }
         }
-        
+
         public Single ScreenResolutionAspectRatio
         {
-            get 
-            { 
-                return 
-                    (Single)this.ScreenResolutionWidth / 
+            get
+            {
+                return
+                    (Single)this.ScreenResolutionWidth /
                     (Single)this.ScreenResolutionHeight;
             }
         }

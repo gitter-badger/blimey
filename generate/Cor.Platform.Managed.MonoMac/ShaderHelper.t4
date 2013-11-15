@@ -6,11 +6,11 @@
         /// </summary>
         public static OpenGLShader WorkOutBestVariantFor(VertexDeclaration vertexDeclaration, IList<OpenGLShader> variants)
         {
-            Console.WriteLine("\n");
-            Console.WriteLine("\n");
-            Console.WriteLine("=====================================================================");
-            Console.WriteLine("Working out the best shader variant for: " + vertexDeclaration);
-            Console.WriteLine("Possible variants:");
+            InternalUtils.Log.Info("\n");
+            InternalUtils.Log.Info("\n");
+            InternalUtils.Log.Info("=====================================================================");
+            InternalUtils.Log.Info("Working out the best shader variant for: " + vertexDeclaration);
+            InternalUtils.Log.Info("Possible variants:");
 
             int best = 0;
 
@@ -23,14 +23,14 @@
             {
                 // work out how many vert inputs match
 
-                
+
                 var matchResult = CompareShaderInputs(vertexDeclaration, variants[i]);
 
                 int numMatchedVertElems = matchResult.NumMatchedInputs;
                 int numUnmatchedVertElems = matchResult.NumUnmatchedInputs;
                 int numMissingNonOptionalInputs = matchResult.NumUnmatchedRequiredInputs;
 
-                Console.WriteLine(" - " + variants[i]);
+                InternalUtils.Log.Info(" - " + variants[i]);
 
                 if( i == 0 )
                 {
@@ -40,16 +40,16 @@
                 }
                 else
                 {
-                    if( 
+                    if(
                         (
-                            numMatchedVertElems > bestNumMatchedVertElems && 
+                            numMatchedVertElems > bestNumMatchedVertElems &&
                             bestNumMissingNonOptionalInputs == 0
                         )
-                        || 
+                        ||
                         (
-                            numMatchedVertElems == bestNumMatchedVertElems && 
+                            numMatchedVertElems == bestNumMatchedVertElems &&
                             bestNumMissingNonOptionalInputs == 0 &&
-                            numUnmatchedVertElems < bestNumUnmatchedVertElems 
+                            numUnmatchedVertElems < bestNumUnmatchedVertElems
                         )
                       )
                     {
@@ -58,13 +58,13 @@
                         bestNumMissingNonOptionalInputs = numMissingNonOptionalInputs;
                         best = i;
                     }
-                    
+
                 }
-                
+
             }
 
             //best = 2;
-            Console.WriteLine("Chosen variant: " + variants[best].VariantName);
+            InternalUtils.Log.Info("Chosen variant: " + variants[best].VariantName);
 
             return variants[best];
         }
@@ -78,14 +78,14 @@
         }
 
         static CompareShaderInputsResult CompareShaderInputs (
-            VertexDeclaration vertexDeclaration, 
+            VertexDeclaration vertexDeclaration,
             OpenGLShader oglesShader
             )
         {
             var result = new CompareShaderInputsResult();
-            
+
             var oglesShaderInputsUsed = new List<OpenGLShaderInput>();
-            
+
             var vertElems = vertexDeclaration.GetVertexElements();
 
             // itterate over each input defined in the vert decl
@@ -99,7 +99,7 @@
                 foreach( var input in oglesShader.Inputs )
                 {
                     // the vertDecl knows what each input's intended use is,
-                    // so lets match up 
+                    // so lets match up
                     if( input.Usage == usage )
                     {
                         // intended use seems good
@@ -108,22 +108,22 @@
 
                 // find all inputs that could match
                 var matchingInputs = oglesShader.Inputs.FindAll(
-                    x => 
+                    x =>
 
                         x.Usage == usage &&
-                        (x.Type == VertexElementFormatHelper.FromEnum(format) || 
+                        (x.Type == VertexElementFormatHelper.FromEnum(format) ||
                         ( (x.Type.GetType() == typeof(Vector4)) && (format == VertexElementFormat.Colour) ))
 
                  );*/
 
                 var matchingInputs = oglesShader.Inputs.FindAll(x => x.Usage == usage);
-                
+
                 // now make sure it's not been used already
-                
+
                 while(matchingInputs.Count > 0)
                 {
                     var potentialInput = matchingInputs[0];
-                    
+
                     if( oglesShaderInputsUsed.Find(x => x == potentialInput) != null)
                     {
                         matchingInputs.RemoveAt(0);
@@ -134,13 +134,13 @@
                     }
                 }
             }
-            
+
             result.NumMatchedInputs = oglesShaderInputsUsed.Count;
-            
+
             result.NumUnmatchedInputs = vertElems.Length - result.NumMatchedInputs;
-            
+
             result.NumUnmatchedRequiredInputs = 0;
-            
+
             foreach (var input in oglesShader.Inputs)
             {
                 if(!oglesShaderInputsUsed.Contains(input) )
@@ -150,10 +150,10 @@
                         result.NumUnmatchedRequiredInputs++;
                     }
                 }
-                
+
             }
 
-            Console.WriteLine(string.Format("[{0}, {1}, {2}]", result.NumMatchedInputs, result.NumUnmatchedInputs, result.NumUnmatchedRequiredInputs));
+            InternalUtils.Log.Info(string.Format("[{0}, {1}, {2}]", result.NumMatchedInputs, result.NumUnmatchedInputs, result.NumUnmatchedRequiredInputs));
             return result;
         }
 

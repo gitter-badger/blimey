@@ -8,14 +8,15 @@
         readonly SystemManager system;
         readonly AppSettings settings;
         readonly IApp app;
+        readonly LogManager log;
 
         public Engine(
             AppSettings settings,
             IApp app)
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "Engine -> ()");
-            
+
             this.audio = new AudioManager();
             this.graphics = new GraphicsManager();
             this.resources = new ResourceManager();
@@ -23,6 +24,7 @@
             this.system = new SystemManager();
             this.settings = settings;
             this.app = app;
+            this.log = new LogManager(this.settings.LogSettings);
             this.app.Initilise(this);
         }
 
@@ -47,6 +49,8 @@
         public IInputManager Input { get { return this.input; } }
 
         public ISystemManager System { get { return this.system; } }
+
+        public LogManager Log { get { return this.log; } }
 
         public AppSettings Settings { get { return this.settings; } }
 

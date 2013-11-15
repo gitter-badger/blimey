@@ -71,14 +71,15 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         readonly SystemManager system;
         readonly AppSettings settings;
         readonly IApp app;
+        readonly LogManager log;
 
         public Engine(
             AppSettings settings,
             IApp app)
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "Engine -> ()");
-            
+
             this.audio = new AudioManager();
             this.graphics = new GraphicsManager();
             this.resources = new ResourceManager();
@@ -86,6 +87,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             this.system = new SystemManager();
             this.settings = settings;
             this.app = app;
+            this.log = new LogManager(this.settings.LogSettings);
             this.app.Initilise(this);
         }
 
@@ -111,6 +113,8 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public ISystemManager System { get { return this.system; } }
 
+        public LogManager Log { get { return this.log; } }
+
         public AppSettings Settings { get { return this.settings; } }
 
         #endregion
@@ -133,22 +137,22 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         public Single volume = 1f;
 
         public Single Volume
-        { 
+        {
             get { return this.volume; }
             set
             {
                 this.volume = value;
 
-                Console.WriteLine(
+                InternalUtils.Log.Info(
                     "AudioManager -> Setting Volume:" + value);
-            } 
+            }
         }
 
         #region IAudioManager
 
         public AudioManager()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "AudioManager -> ()");
 
             this.volume = 1f;
@@ -168,7 +172,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public GraphicsManager()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "GraphicsManager -> ()");
 
             this.displayStatus = new DisplayStatus();
@@ -255,7 +259,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                                             //          If stride is > 0, then we use the stride valude tas the pitch to get vertex data
                                             //          for the next index.
                     ptr
-                    
+
                     );
 
                 ErrorHandler.Check();
@@ -382,22 +386,22 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 {
                     temp.Activate();
                 }
-                
+
                 this.currentGeomBuffer = temp;
             }
         }
 
         public void SetActiveTexture(Int32 slot, Texture2D tex)
         {
-            global::MonoMac.OpenGL.TextureUnit oglTexSlot = EnumConverter.ToOpenGLTextureSlot(slot); 
+            global::MonoMac.OpenGL.TextureUnit oglTexSlot = EnumConverter.ToOpenGLTextureSlot(slot);
             global::MonoMac.OpenGL.GL.ActiveTexture(oglTexSlot);
 
             var oglt0 = tex as OpenGLTexture;
-            
+
             if( oglt0 != null )
             {
                 var textureTarget = global::MonoMac.OpenGL.TextureTarget.Texture2D;
-                
+
                 // we need to bind the texture object so that we can opperate on it.
                 global::MonoMac.OpenGL.GL.BindTexture(textureTarget, oglt0.glTextureId);
                 ErrorHandler.Check();
@@ -406,11 +410,11 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
 
         public void SetBlendEquation(
-            BlendFunction rgbBlendFunction, 
-            BlendFactor sourceRgb, 
+            BlendFunction rgbBlendFunction,
+            BlendFactor sourceRgb,
             BlendFactor destinationRgb,
-            BlendFunction alphaBlendFunction, 
-            BlendFactor sourceAlpha, 
+            BlendFunction alphaBlendFunction,
+            BlendFactor sourceAlpha,
             BlendFactor destinationAlpha
             )
         {
@@ -428,12 +432,12 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
 
         public void DrawPrimitives(
-            PrimitiveType primitiveType,            
-            Int32 startVertex,                      
+            PrimitiveType primitiveType,
+            Int32 startVertex,
             Int32 primitiveCount )
         {
             throw new NotImplementedException();
-        }              
+        }
 
         public void DrawIndexedPrimitives (
             PrimitiveType primitiveType,
@@ -485,24 +489,24 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             //MSDN
             //
-            //The GCHandle structure is used with the GCHandleType 
-            //enumeration to create a handle corresponding to any managed 
-            //object. This handle can be one of four types: Weak, 
-            //WeakTrackResurrection, Normal, or Pinned. When the handle has 
-            //been allocated, you can use it to prevent the managed object 
-            //from being collected by the garbage collector when an unmanaged 
-            //client holds the only reference. Without such a handle, 
-            //the object can be collected by the garbage collector before 
+            //The GCHandle structure is used with the GCHandleType
+            //enumeration to create a handle corresponding to any managed
+            //object. This handle can be one of four types: Weak,
+            //WeakTrackResurrection, Normal, or Pinned. When the handle has
+            //been allocated, you can use it to prevent the managed object
+            //from being collected by the garbage collector when an unmanaged
+            //client holds the only reference. Without such a handle,
+            //the object can be collected by the garbage collector before
             //completing its work on behalf of the unmanaged client.
             //
-            //You can also use GCHandle to create a pinned object that 
-            //returns a memory address to prevent the garbage collector 
+            //You can also use GCHandle to create a pinned object that
+            //returns a memory address to prevent the garbage collector
             //from moving the object in memory.
             //
-            //When the handle goes out of scope you must explicitly release 
-            //it by calling the Free method; otherwise, memory leaks may 
+            //When the handle goes out of scope you must explicitly release
+            //it by calling the Free method; otherwise, memory leaks may
             //occur. When you free a pinned handle, the associated object
-            //will be unpinned and will become eligible for garbage 
+            //will be unpinned and will become eligible for garbage
             //collection, if there are no other references to it.
             //
             GCHandle pinnedArray = GCHandle.Alloc(vertexData, GCHandleType.Pinned);
@@ -550,7 +554,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             Int32[] indexData,
             Int32 indexOffset,
             Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration ) 
+            VertexDeclaration vertexDeclaration )
             where T : struct, IVertexType
         {
             throw new NotImplementedException();
@@ -564,7 +568,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     {
         public DisplayStatus()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "DisplayStatus -> ()");
         }
 
@@ -577,7 +581,8 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         public Int32 CurrentHeight { get { return 600; } }
 
         #endregion
-    }    public sealed class IndexBuffer
+    }
+    public sealed class IndexBuffer
         : IIndexBuffer
         , IDisposable
     {
@@ -739,7 +744,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public InputManager()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "InputManager -> ()");
 
             keyboard = new Keyboard();
@@ -843,8 +848,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             if(typeof(T) == typeof(StreamReader))
             {
-                var a = new StreamReader(path);
-				return (T)(IDisposable) a;
+                return (T)(IDisposable) new StreamReader(path);
             }
 
             throw new NotImplementedException();
@@ -866,22 +870,22 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     {
         public PanelSpecification()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "PanelSpecification -> ()");
         }
 
         #region IPanelSpecification
 
-        public Vector2 PanelPhysicalSize 
-        { 
-            get { return new Vector2(0.20f, 0.15f ); } 
+        public Vector2 PanelPhysicalSize
+        {
+            get { return new Vector2(0.20f, 0.15f ); }
         }
-        
-        public Single PanelPhysicalAspectRatio 
-        { 
-            get { return PanelPhysicalSize.X / PanelPhysicalSize.Y; } 
+
+        public Single PanelPhysicalAspectRatio
+        {
+            get { return PanelPhysicalSize.X / PanelPhysicalSize.Y; }
         }
-        
+
         public PanelType PanelType { get { return PanelType.TouchScreen; } }
 
         #endregion
@@ -895,28 +899,28 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public ScreenSpecification()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "ScreenSpecification -> ()");
         }
 
         #region IScreenSpecification
 
         public Int32 ScreenResolutionWidth
-        { 
+        {
             get { return width; }
         }
-        
+
         public Int32 ScreenResolutionHeight
-        { 
+        {
             get { return height; }
         }
-        
+
         public Single ScreenResolutionAspectRatio
         {
-            get 
-            { 
-                return 
-                    (Single)this.ScreenResolutionWidth / 
+            get
+            {
+                return
+                    (Single)this.ScreenResolutionWidth /
                     (Single)this.ScreenResolutionHeight;
             }
         }
@@ -979,7 +983,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public SystemManager()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "SystemManager -> ()");
 
             screen = new ScreenSpecification();
@@ -987,7 +991,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
 
         void GetEffectiveDisplaySize(
-            ref Int32 screenSpecWidth, 
+            ref Int32 screenSpecWidth,
             ref Int32 screenSpecHeight)
         {
             if (this.CurrentOrientation == DeviceOrientation.Default ||
@@ -1029,18 +1033,18 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         public String SystemVersion { get { return "1314.0.1.29"; } }
 
         public DeviceOrientation CurrentOrientation
-        { 
+        {
             get { return DeviceOrientation.Default; }
         }
 
         public IScreenSpecification ScreenSpecification
-        { 
-            get { return this.screen; } 
+        {
+            get { return this.screen; }
         }
 
-        public IPanelSpecification PanelSpecification 
-        { 
-            get { return this.panel; } 
+        public IPanelSpecification PanelSpecification
+        {
+            get { return this.panel; }
         }
 
         #endregion
@@ -1248,7 +1252,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
 
-    public sealed class OpenGLView 
+    public sealed class OpenGLView
         : global::MonoMac.OpenGL.MonoMacGameView
     {
         Rectangle clientBounds;
@@ -1268,14 +1272,14 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         readonly AppSettings settings;
         readonly IApp entryPoint;
 
-        
-        public OpenGLView(AppSettings settings, IApp entryPoint, RectangleF frame) 
+
+        public OpenGLView(AppSettings settings, IApp entryPoint, RectangleF frame)
             : base (frame)
         {
             this.settings = settings;
             this.entryPoint = entryPoint;
 
-            this.AutoresizingMask = 
+            this.AutoresizingMask =
                 global::MonoMac.AppKit.NSViewResizingMask.HeightSizable |
                 global::MonoMac.AppKit.NSViewResizingMask.MaxXMargin |
                 global::MonoMac.AppKit.NSViewResizingMask.MinYMargin |
@@ -1285,18 +1289,18 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             clientBounds = new Rectangle (0,0,(int)rect.Width,(int)rect.Height);
 
 
-            
+
             Resize += delegate {
-                //scene.ResizeGLScene(Bounds);    
+                //scene.ResizeGLScene(Bounds);
             };
-            
+
             Load += OnLoad;
-            
+
             UpdateFrame += delegate(object src, global::MonoMac.OpenGL.FrameEventArgs fea) {
 
                 Single dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
                 previousTimeSpan = timer.Elapsed;
-                
+
                 if (dt > 0.5f)
                 {
                     dt = 0.0f;
@@ -1306,16 +1310,16 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
                 var appTime = new AppTime(dt, elapsedTime, ++frameCounter);
 
-                gameEngine.Update(appTime);   
+                gameEngine.Update(appTime);
             };
-            
+
             RenderFrame += delegate(object src, global::MonoMac.OpenGL.FrameEventArgs fea) {
 
                 gameEngine.Render();
             };
-            
+
         }
-        
+
         void OnLoad (object src, EventArgs fea)
         {
             //CreateFrameBuffer();
@@ -1324,24 +1328,24 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             gameEngine = new Engine(
                 this.settings,
                 this.entryPoint
-                //this, 
-                //this.GraphicsContext, 
+                //this,
+                //this.GraphicsContext,
                 //this.touchState
                 );
             timer.Start();
 
-            //Console.WriteLine("load ");   
+            //InternalUtils.Log.Info("load ");
             //InitGL();
             //UpdateView();
-            
+
         }
-        
+
         // All Setup For OpenGL Goes Here
         bool InitGL ()
         {
-            // Enables Smooth Shading  
+            // Enables Smooth Shading
             global::MonoMac.OpenGL.GL.ShadeModel (global::MonoMac.OpenGL.ShadingModel.Smooth);
-            // Set background color to black     
+            // Set background color to black
             global::MonoMac.OpenGL.GL.ClearColor (Color.Black);
 
             // Setup Depth Testing
@@ -1355,10 +1359,10 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             // Really Nice Perspective Calculations
             global::MonoMac.OpenGL.GL.Hint (global::MonoMac.OpenGL.HintTarget.PerspectiveCorrectionHint, global::MonoMac.OpenGL.HintMode.Nicest);
-            
+
             return true;
         }
-        
+
         //[Export("toggleFullScreen:")]
         void toggleFullScreen (NSObject sender)
         {
@@ -1377,13 +1381,13 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.BindRenderbuffer(
-                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer, 
+                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer,
                 _depthRenderbuffer);
             ErrorHandler.Check();
 
             global::MonoMac.OpenGL.GL.RenderbufferStorage(
-                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer, 
-                global::MonoMac.OpenGL.RenderbufferStorage.DepthComponent16, 
+                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer,
+                global::MonoMac.OpenGL.RenderbufferStorage.DepthComponent16,
                 Size.Width, Size.Height);
             ErrorHandler.Check();
 
@@ -1430,7 +1434,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             trackingArea = new NSTrackingArea(
                 Frame,
-                NSTrackingAreaOptions.MouseMoved | 
+                NSTrackingAreaOptions.MouseMoved |
                 NSTrackingAreaOptions.MouseEnteredAndExited |
                 NSTrackingAreaOptions.EnabledDuringMouseDrag |
                 NSTrackingAreaOptions.ActiveWhenFirstResponder |
@@ -1471,42 +1475,42 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         {
             base.MouseUp (theEvent);
         }
-        
+
         public override void MouseDragged (NSEvent theEvent)
         {
             base.MouseDragged (theEvent);
         }
-        
+
         public override void RightMouseDown (NSEvent theEvent)
         {
             base.RightMouseDown (theEvent);
         }
-        
+
         public override void RightMouseUp (NSEvent theEvent)
         {
             base.RightMouseUp (theEvent);
         }
-        
+
         public override void RightMouseDragged (NSEvent theEvent)
         {
             base.RightMouseDragged (theEvent);
         }
-        
+
         public override void OtherMouseDown (NSEvent theEvent)
         {
             base.OtherMouseDown (theEvent);
         }
-        
+
         public override void OtherMouseUp (NSEvent theEvent)
         {
             base.OtherMouseUp (theEvent);
         }
-        
+
         public override void OtherMouseDragged (NSEvent theEvent)
         {
             base.OtherMouseDragged (theEvent);
         }
-        
+
         public override void ScrollWheel (NSEvent theEvent)
         {
             base.ScrollWheel (theEvent);
@@ -1514,7 +1518,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public override void MouseMoved (NSEvent theEvent)
         {
-            base.MouseMoved (theEvent);      
+            base.MouseMoved (theEvent);
         }
     }
 
@@ -2013,7 +2017,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             {
                 string varName = variableDefinition.Name;
                 object value = variableDefinition.DefaultValue;
-                
+
                 if( variableDefinition.Type == typeof(Matrix44) )
                 {
                     this.SetVariable(varName, (Matrix44) value);
@@ -2033,11 +2037,11 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 else if( variableDefinition.Type == typeof(Vector3) )
                 {
                     this.SetVariable(varName, (Vector3) value);
-                } 
+                }
                 else if( variableDefinition.Type == typeof(Vector4) )
                 {
                     this.SetVariable(varName, (Vector4) value);
-                } 
+                }
                 else if( variableDefinition.Type == typeof(Rgba32) )
                 {
                     this.SetVariable(varName, (Rgba32) value);
@@ -2046,7 +2050,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 {
                     throw new NotSupportedException();
                 }
-                
+
             }
         }
 
@@ -2080,10 +2084,10 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             }
         }
 
-        
+
         /// <summary>
         /// Provides access to the individual passes in this shader.
-        /// the calling code can itterate though these and apply them 
+        /// the calling code can itterate though these and apply them
         ///to the graphics context before it makes a draw call.
         /// </summary>
         public IShaderPass[] Passes
@@ -2093,7 +2097,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 return passes.ToArray();
             }
         }
-        
+
         /// <summary>
         /// Defines which vertex elements are required by this shader.
         /// </summary>
@@ -2105,7 +2109,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 return requiredVertexElements.ToArray();
             }
         }
-        
+
         /// <summary>
         /// Defines which vertex elements are optionally used by this
         /// shader if they happen to be present.
@@ -2144,13 +2148,13 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
 
         /// <summary>
-        /// The <see cref="ShaderPass"/> objects that need to each, in turn,  be individually activated and used to 
+        /// The <see cref="ShaderPass"/> objects that need to each, in turn,  be individually activated and used to
         /// draw with to apply the effect of this containing <see cref="Shader"/> object.
         /// </summary>
         List<ShaderPass> passes = new List<ShaderPass>();
 
         /// <summary>
-        /// Cached reference to the <see cref="ShaderDefinition"/> object used 
+        /// Cached reference to the <see cref="ShaderDefinition"/> object used
         /// to create this <see cref="Shader"/> object.
         /// </summary>
         readonly ShaderDefinition cachedShaderDefinition;
@@ -2163,10 +2167,10 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         /// </summary>
         internal Shader (ShaderDefinition shaderDefinition)
         {
-            Console.WriteLine("\n");
-            Console.WriteLine("\n");
-            Console.WriteLine("=====================================================================");
-            Console.WriteLine("Creating Shader: " + shaderDefinition.Name);
+            InternalUtils.Log.Info("\n");
+            InternalUtils.Log.Info("\n");
+            InternalUtils.Log.Info("=====================================================================");
+            InternalUtils.Log.Info("Creating Shader: " + shaderDefinition.Name);
             this.cachedShaderDefinition = shaderDefinition;
             this.Name = shaderDefinition.Name;
             CalculateRequiredInputs(shaderDefinition);
@@ -2176,7 +2180,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
 
         /// <summary>
-        /// Works out and caches a copy of which shader inputs are required/optional, needed as the 
+        /// Works out and caches a copy of which shader inputs are required/optional, needed as the
         /// <see cref="IShader"/> interface requires this information.
         /// </summary>
         void CalculateRequiredInputs(ShaderDefinition shaderDefinition)
@@ -2195,7 +2199,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
 
         /// <summary>
-        /// Triggers the creation of all of this <see cref="Shader"/> object's passes. 
+        /// Triggers the creation of all of this <see cref="Shader"/> object's passes.
         /// </summary>
         void InitilisePasses(ShaderDefinition shaderDefinition)
         {
@@ -2208,9 +2212,9 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             // For each named shader pass.
             foreach (var definedPassName in shaderDefinition.PassNames)
             {
-                
-                Console.WriteLine(" Preparing to initilising Shader Pass: " + definedPassName);
-                // 
+
+                InternalUtils.Log.Info(" Preparing to initilising Shader Pass: " + definedPassName);
+                //
 
                 // itterate over the defined pass names, ex: cel, outline...
 
@@ -2232,14 +2236,14 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
                     // find the pass in the shader variant definition that corresponds to the pass we are
                     // currently trying to initilise.
-                    var variantPassDefinition = 
+                    var variantPassDefinition =
                         shaderVariantDefinition.VariantPassDefinitions
                             .Find(x => x.PassName == definedPassName);
 
 
-                    // now we have a Variant name, say: 
+                    // now we have a Variant name, say:
                     //   - Unlit_PositionTextureColour
-                    // and a pass definition, say : 
+                    // and a pass definition, say :
                     //   - Main
                     //   - Shaders/Unlit_PositionTextureColour.vsh
                     //   - Shaders/Unlit_PositionTextureColour.fsh
@@ -2314,11 +2318,11 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         /// </summary>
         public static OpenGLShader WorkOutBestVariantFor(VertexDeclaration vertexDeclaration, IList<OpenGLShader> variants)
         {
-            Console.WriteLine("\n");
-            Console.WriteLine("\n");
-            Console.WriteLine("=====================================================================");
-            Console.WriteLine("Working out the best shader variant for: " + vertexDeclaration);
-            Console.WriteLine("Possible variants:");
+            InternalUtils.Log.Info("\n");
+            InternalUtils.Log.Info("\n");
+            InternalUtils.Log.Info("=====================================================================");
+            InternalUtils.Log.Info("Working out the best shader variant for: " + vertexDeclaration);
+            InternalUtils.Log.Info("Possible variants:");
 
             int best = 0;
 
@@ -2331,14 +2335,14 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             {
                 // work out how many vert inputs match
 
-                
+
                 var matchResult = CompareShaderInputs(vertexDeclaration, variants[i]);
 
                 int numMatchedVertElems = matchResult.NumMatchedInputs;
                 int numUnmatchedVertElems = matchResult.NumUnmatchedInputs;
                 int numMissingNonOptionalInputs = matchResult.NumUnmatchedRequiredInputs;
 
-                Console.WriteLine(" - " + variants[i]);
+                InternalUtils.Log.Info(" - " + variants[i]);
 
                 if( i == 0 )
                 {
@@ -2348,16 +2352,16 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 }
                 else
                 {
-                    if( 
+                    if(
                         (
-                            numMatchedVertElems > bestNumMatchedVertElems && 
+                            numMatchedVertElems > bestNumMatchedVertElems &&
                             bestNumMissingNonOptionalInputs == 0
                         )
-                        || 
+                        ||
                         (
-                            numMatchedVertElems == bestNumMatchedVertElems && 
+                            numMatchedVertElems == bestNumMatchedVertElems &&
                             bestNumMissingNonOptionalInputs == 0 &&
-                            numUnmatchedVertElems < bestNumUnmatchedVertElems 
+                            numUnmatchedVertElems < bestNumUnmatchedVertElems
                         )
                       )
                     {
@@ -2366,13 +2370,13 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                         bestNumMissingNonOptionalInputs = numMissingNonOptionalInputs;
                         best = i;
                     }
-                    
+
                 }
-                
+
             }
 
             //best = 2;
-            Console.WriteLine("Chosen variant: " + variants[best].VariantName);
+            InternalUtils.Log.Info("Chosen variant: " + variants[best].VariantName);
 
             return variants[best];
         }
@@ -2386,14 +2390,14 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
 
         static CompareShaderInputsResult CompareShaderInputs (
-            VertexDeclaration vertexDeclaration, 
+            VertexDeclaration vertexDeclaration,
             OpenGLShader oglesShader
             )
         {
             var result = new CompareShaderInputsResult();
-            
+
             var oglesShaderInputsUsed = new List<OpenGLShaderInput>();
-            
+
             var vertElems = vertexDeclaration.GetVertexElements();
 
             // itterate over each input defined in the vert decl
@@ -2407,7 +2411,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 foreach( var input in oglesShader.Inputs )
                 {
                     // the vertDecl knows what each input's intended use is,
-                    // so lets match up 
+                    // so lets match up
                     if( input.Usage == usage )
                     {
                         // intended use seems good
@@ -2416,22 +2420,22 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
                 // find all inputs that could match
                 var matchingInputs = oglesShader.Inputs.FindAll(
-                    x => 
+                    x =>
 
                         x.Usage == usage &&
-                        (x.Type == VertexElementFormatHelper.FromEnum(format) || 
+                        (x.Type == VertexElementFormatHelper.FromEnum(format) ||
                         ( (x.Type.GetType() == typeof(Vector4)) && (format == VertexElementFormat.Colour) ))
 
                  );*/
 
                 var matchingInputs = oglesShader.Inputs.FindAll(x => x.Usage == usage);
-                
+
                 // now make sure it's not been used already
-                
+
                 while(matchingInputs.Count > 0)
                 {
                     var potentialInput = matchingInputs[0];
-                    
+
                     if( oglesShaderInputsUsed.Find(x => x == potentialInput) != null)
                     {
                         matchingInputs.RemoveAt(0);
@@ -2442,13 +2446,13 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                     }
                 }
             }
-            
+
             result.NumMatchedInputs = oglesShaderInputsUsed.Count;
-            
+
             result.NumUnmatchedInputs = vertElems.Length - result.NumMatchedInputs;
-            
+
             result.NumUnmatchedRequiredInputs = 0;
-            
+
             foreach (var input in oglesShader.Inputs)
             {
                 if(!oglesShaderInputsUsed.Contains(input) )
@@ -2458,10 +2462,10 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                         result.NumUnmatchedRequiredInputs++;
                     }
                 }
-                
+
             }
 
-            Console.WriteLine(string.Format("[{0}, {1}, {2}]", result.NumMatchedInputs, result.NumUnmatchedInputs, result.NumUnmatchedRequiredInputs));
+            InternalUtils.Log.Info(string.Format("[{0}, {1}, {2}]", result.NumMatchedInputs, result.NumUnmatchedInputs, result.NumUnmatchedRequiredInputs));
             return result;
         }
 
@@ -2479,12 +2483,12 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         /// input parameters, that are suitable for rendering this ShaderPass object.
         /// </summary>
         List<OpenGLShader> Variants { get; set; }
-        
+
         /// <summary>
         /// A nice name for the shader pass, for example: Main or Cel -> Outline.
         /// </summary>
         public string Name { get; private set; }
-        
+
         /// <summary>
         /// Whenever this ShaderPass object gets asked to activate itself whilst a VertexDeclaration it has not seen
         /// before is active, the best matching shader pass variant is found and then stored in this map to fast
@@ -2499,19 +2503,19 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         internal void SetVariable<T>(string name, T value)
         {
-            currentVariables[name] = value; 
+            currentVariables[name] = value;
         }
 
         internal void SetSamplerTarget(string name, Int32 textureSlot)
         {
             currentSamplerSlots[name] = textureSlot;
         }
-        
+
         public ShaderPass(string passName, List<Tuple<string, ShaderVarientPassDefinition>> passVariants___Name_AND_passVariantDefinition)
         {
-            Console.WriteLine("Creating ShaderPass: " + passName);
+            InternalUtils.Log.Info("Creating ShaderPass: " + passName);
             this.Name = passName;
-            this.Variants = 
+            this.Variants =
                 passVariants___Name_AND_passVariantDefinition
                     .Select (x => new OpenGLShader (x.Item1, passName, x.Item2.PassDefinition))
                     .ToList();
@@ -2519,7 +2523,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             this.BestVariantMap = new Dictionary<VertexDeclaration, OpenGLShader>();
         }
 
-        
+
         internal void BindAttributes(IList<String> inputNames)
         {
             foreach (var variant in this.Variants)
@@ -2535,7 +2539,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 variant.Link();
             }
         }
-        
+
         internal void ValidateInputs(List<ShaderInputDefinition> definitions)
         {
             foreach(var variant in this.Variants)
@@ -2543,7 +2547,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 variant.ValidateInputs(definitions);
             }
         }
-        
+
         internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
         {
             foreach(var variant in this.Variants)
@@ -2559,8 +2563,8 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 variant.ValidateSamplers(definitions);
             }
         }
-        
-        
+
+
         public void Activate(VertexDeclaration vertexDeclaration)
         {
             if (!BestVariantMap.ContainsKey (vertexDeclaration))
@@ -2570,20 +2574,20 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             var bestVariant = BestVariantMap[vertexDeclaration];
             // select the correct shader pass variant and then activate it
             bestVariant.Activate ();
-            
+
             foreach (var key1 in currentVariables.Keys)
             {
                 var variable = bestVariant
                     .Variables
                     .Find(x => x.NiceName == key1 || x.Name == key1);
-                
+
                 if( variable == null )
                 {
                     string warning = "WARNING: missing variable: " + key1;
 
                     if( !logHistory.ContainsKey(warning) )
                     {
-                        Console.WriteLine(warning);
+                        InternalUtils.Log.Info(warning);
 
                         logHistory.Add(warning, true);
                     }
@@ -2591,7 +2595,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 else
                 {
                     var val = currentVariables[key1];
-                    
+
                     variable.Set(val);
                 }
             }
@@ -2604,7 +2608,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
                 if( sampler == null )
                 {
-                    //Console.WriteLine("missing sampler: " + key2);
+                    //InternalUtils.Log.Info("missing sampler: " + key2);
                 }
                 else
                 {
@@ -2613,9 +2617,9 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                     sampler.SetSlot(slot);
                 }
             }
-            
+
         }
-        
+
         public void Dispose()
         {
             foreach (var oglesShader in Variants)
@@ -2624,7 +2628,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             }
         }
     }
-    
+
     internal sealed class OpenGLTexture
         : Texture2D
     {
@@ -3009,27 +3013,27 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             string a = string.Empty;
 
             for(int i = 0; i < Inputs.Count; ++i)
-            { 
-                a += Inputs[i].Name; if( i + 1 < Inputs.Count ) { a += ", "; } 
+            {
+                a += Inputs[i].Name; if( i + 1 < Inputs.Count ) { a += ", "; }
             }
 
             string b = string.Empty;
             for(int i = 0; i < Variables.Count; ++i)
-            { 
-                b += Variables[i].Name; if( i + 1 < Variables.Count ) { b += ", "; } 
+            {
+                b += Variables[i].Name; if( i + 1 < Variables.Count ) { b += ", "; }
             }
 
             return string.Format (
-                "[OpenGLShader: Variant {0}, Pass {1}: Inputs: [{2}], Variables: [{3}]]", 
-                variantName, 
-                passName, 
-                a, 
+                "[OpenGLShader: Variant {0}, Pass {1}: Inputs: [{2}], Variables: [{3}]]",
+                variantName,
+                passName,
+                a,
                 b);
         }
 
         internal void ValidateInputs(List<ShaderInputDefinition> definitions)
         {
-            Console.WriteLine(string.Format ("Pass: {1} => ValidateInputs({0})", variantName, passName ));
+            InternalUtils.Log.Info(string.Format ("Pass: {1} => ValidateInputs({0})", variantName, passName ));
 
             // Make sure that this shader implements all of the non-optional defined inputs.
             var nonOptionalDefinitions = definitions.Where(y => !y.Optional).ToList();
@@ -3047,7 +3051,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             // Make sure that every implemented input is defined.
             foreach(var input in Inputs)
             {
-                var find = definitions.Find(x => x.Name == input.Name 
+                var find = definitions.Find(x => x.Name == input.Name
                     /*&& (x.Type == input.Type || (x.Type == typeof(Rgba32) && input.Type == typeof(Vector4)))*/
                     );
 
@@ -3064,18 +3068,18 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
         {
-            Console.WriteLine(string.Format ("Pass: {1} => ValidateVariables({0})", variantName, passName ));
+            InternalUtils.Log.Info(string.Format ("Pass: {1} => ValidateVariables({0})", variantName, passName ));
 
 
             // Make sure that every implemented input is defined.
             foreach(var variable in Variables)
             {
                 var find = definitions.Find(
-                    x => 
-                    x.Name == variable.Name //&& 
+                    x =>
+                    x.Name == variable.Name //&&
                     //(x.Type == variable.Type || (x.Type == typeof(Rgba32) && variable.Type == typeof(Vector4)))
                     );
-                
+
                 if( find == null )
                 {
                     throw new Exception("problem");
@@ -3089,7 +3093,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         internal void ValidateSamplers(List<ShaderSamplerDefinition> definitions)
         {
-            Console.WriteLine(string.Format ("Pass: {1} => ValidateSamplers({0})", variantName, passName ));
+            InternalUtils.Log.Info(string.Format ("Pass: {1} => ValidateSamplers({0})", variantName, passName ));
 
             var nonOptionalSamplers = definitions.Where(y => !y.Optional).ToList();
 
@@ -3124,24 +3128,24 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         {
             throw new NotImplementedException();
         }
-        
+
         static void CheckInputCompatibility(List<OpenGLShaderInput> definedInputs, Dictionary<string, global::MonoMac.OpenGL.ActiveAttribType> actualAttributes )
         {
-            // make sure that the shader we just loaded will work with this shader definition   
+            // make sure that the shader we just loaded will work with this shader definition
             if( actualAttributes.Count != definedInputs.Count )
             {
                 throw new Exception("shader doesn't implement definition");
             }
-        
+
             foreach( var key in actualAttributes.Keys )
             {
                 var item = definedInputs.Find(x => x.Name == key);
-                
+
                 if( item == null )
                 {
                     throw new Exception("shader doesn't implement definition - missing variable");
                 }
-                
+
                 if( item.Type != EnumConverter.ToType( actualAttributes[key] ) )
                 {
                     throw new Exception("shader doesn't implement definition - variable is of the wrong type");
@@ -3172,18 +3176,18 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         internal OpenGLShader(String variantName, String passName, OpenGLShaderDefinition definition)
         {
-            Console.WriteLine ("  Creating Pass Variant: " + variantName);
+            InternalUtils.Log.Info ("  Creating Pass Variant: " + variantName);
             this.variantName = variantName;
             this.passName = passName;
             this.vertexShaderPath = definition.VertexShaderPath;
             this.pixelShaderPath = definition.PixelShaderPath;
-            
-            //Variables = 
+
+            //Variables =
             programHandle = ShaderUtils.CreateShaderProgram ();
 
             vertShaderHandle = ShaderUtils.CreateVertexShader (GetResourcePath(this.vertexShaderPath));
             fragShaderHandle = ShaderUtils.CreateFragmentShader (GetResourcePath(this.pixelShaderPath));
-            
+
             ShaderUtils.AttachShader (programHandle, vertShaderHandle);
             ShaderUtils.AttachShader (programHandle, fragShaderHandle);
 
@@ -3211,42 +3215,43 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             // bind atts here
             //ShaderUtils.LinkProgram (programHandle);
 
-            Console.WriteLine("  Finishing linking");
+            InternalUtils.Log.Info("  Finishing linking");
 
-            Console.WriteLine("  Initilise Attributes");
+            InternalUtils.Log.Info("  Initilise Attributes");
             var attributes = ShaderUtils.GetAttributes(programHandle);
 
             Inputs = attributes
                 .Select(x => new OpenGLShaderInput(programHandle, x))
                 .OrderBy(y => y.AttributeLocation)
                 .ToList();
-            Console.Write("  Inputs : ");
-            foreach (var input in Inputs) {
-                Console.Write (input.Name + ", ");
-            }
-            Console.Write (Environment.NewLine);
 
-            Console.WriteLine("  Initilise Uniforms");
+            String logInputs = "  Inputs : ";
+            foreach (var input in Inputs) {
+                logInputs += input.Name + ", ";
+            }
+            InternalUtils.Log.Info (logInputs);
+
+            InternalUtils.Log.Info("  Initilise Uniforms");
             var uniforms = ShaderUtils.GetUniforms(programHandle);
 
 
             Variables = uniforms
-                .Where(y => 
-                       y.Type != global::MonoMac.OpenGL.ActiveUniformType.Sampler2D && 
+                .Where(y =>
+                       y.Type != global::MonoMac.OpenGL.ActiveUniformType.Sampler2D &&
                        y.Type != global::MonoMac.OpenGL.ActiveUniformType.SamplerCube)
                 .Select(x => new OpenGLShaderVariable(programHandle, x))
                 .OrderBy(z => z.UniformLocation)
                 .ToList();
-            Console.Write("  Variables : ");
+            String logVars = "  Variables : ";
             foreach (var variable in Variables) {
-                Console.Write (variable.Name + ", ");
+                logVars += variable.Name + ", ";
             }
-            Console.Write (Environment.NewLine);
+            InternalUtils.Log.Info (logVars);
 
-            Console.WriteLine("  Initilise Samplers");
+            InternalUtils.Log.Info("  Initilise Samplers");
             Samplers = uniforms
-                .Where(y => 
-                       y.Type == global::MonoMac.OpenGL.ActiveUniformType.Sampler2D || 
+                .Where(y =>
+                       y.Type == global::MonoMac.OpenGL.ActiveUniformType.Sampler2D ||
                        y.Type == global::MonoMac.OpenGL.ActiveUniformType.SamplerCube)
                 .Select(x => new OpenGLShaderSampler(programHandle, x))
                 .OrderBy(z => z.UniformLocation)
@@ -3255,27 +3260,27 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             #if DEBUG
             ShaderUtils.ValidateProgram (programHandle);
             #endif
-            
+
             ShaderUtils.DetachShader(programHandle, fragShaderHandle);
             ShaderUtils.DetachShader(programHandle, vertShaderHandle);
-            
+
             ShaderUtils.DeleteShader(programHandle, fragShaderHandle);
             ShaderUtils.DeleteShader(programHandle, vertShaderHandle);
         }
-        
+
         public void Activate ()
         {
             global::MonoMac.OpenGL.GL.UseProgram (programHandle);
             ErrorHandler.Check ();
         }
-        
+
         public void Dispose()
         {
             ShaderUtils.DestroyShaderProgram(programHandle);
             ErrorHandler.Check();
         }
     }
-    
+
     public sealed class OpenGLShaderDefinition
     {
         public string VertexShaderPath { get; set; }
@@ -3291,13 +3296,13 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     {
         int ProgramHandle { get; set; }
         internal int AttributeLocation { get; private set; }
-        
+
         public String Name { get; private set; }
         public Type Type { get; private set; }
         public VertexElementUsage Usage { get; private set; }
         public Object DefaultValue { get; private set; }
         public Boolean Optional { get; private set; }
-        
+
         public OpenGLShaderInput(
             int programHandle, ShaderUtils.ShaderAttribute attribute)
         {
@@ -3305,7 +3310,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             ErrorHandler.Check();
 
-            Console.WriteLine(string.Format(
+            InternalUtils.Log.Info(string.Format(
                 "    Binding Shader Input: [Prog={0}, AttIndex={1}, AttLocation={4}, AttName={2}, AttType={3}]",
                 programHandle, attribute.Index, attribute.Name, attribute.Type, attLocation));
 
@@ -3313,16 +3318,16 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             this.AttributeLocation = attLocation;
             this.Name = attribute.Name;
             this.Type = EnumConverter.ToType(attribute.Type);
-            
+
 
         }
-        
+
         internal void RegisterExtraInfo(ShaderInputDefinition definition)
         {
             Usage = definition.Usage;
             DefaultValue = definition.DefaultValue;
             Optional = definition.Optional;
-        }   
+        }
     }
 
     public sealed class OpenGLShaderSampler
@@ -3365,12 +3370,12 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     {
         int ProgramHandle { get; set; }
         internal int UniformLocation { get; private set; }
-        
+
         public String NiceName { get; private set; }
         public String Name { get; private set; }
         public Type Type { get; private set; }
         public Object DefaultValue { get; private set; }
-        
+
         public OpenGLShaderVariable(
             int programHandle, ShaderUtils.ShaderUniform uniform)
         {
@@ -3383,28 +3388,28 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             if( uniformLocation == -1 )
                 throw new Exception();
-                
+
             this.UniformLocation = uniformLocation;
             this.Name = uniform.Name;
             this.Type = EnumConverter.ToType(uniform.Type);
 
-            Console.WriteLine(string.Format(
+            InternalUtils.Log.Info(string.Format(
                 "    Caching Reference to Shader Variable: [Prog={0}, UniIndex={1}, UniLocation={2}, UniName={3}, UniType={4}]",
                 programHandle, uniform.Index, uniformLocation, uniform.Name, uniform.Type));
 
         }
-        
+
         internal void RegisterExtraInfo(ShaderVariableDefinition definition)
         {
             NiceName = definition.NiceName;
             DefaultValue = definition.DefaultValue;
         }
-        
+
         public void Set(object value)
         {
             //todo this should be using convert turn the data into proper opengl es types.
             Type t = value.GetType();
-            
+
             if( t == typeof(Matrix44) )
             {
                 var castValue = (Matrix44) value;
@@ -3430,7 +3435,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             {
                 var castValue = (Vector3) value;
                 global::MonoMac.OpenGL.GL.Uniform3( UniformLocation, 1, ref castValue.X );
-            } 
+            }
             else if( t == typeof(Vector4) )
             {
                 var castValue = (Vector4) value;
@@ -3439,10 +3444,10 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             else if( t == typeof(Rgba32) )
             {
                 var castValue = (Rgba32) value;
-                
+
                 Vector4 vec4Value;
                 castValue.UnpackTo(out vec4Value);
-                
+
                 // does this rgba value need to be packed in to a vector3 or a vector4
                 if( this.Type == typeof(Vector4) )
                     global::MonoMac.OpenGL.GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
@@ -3455,7 +3460,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             {
                 throw new Exception("Not supported");
             }
-            
+
             ErrorHandler.Check();
 
         }
@@ -3519,7 +3524,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     #region Shader Definitions
 
     public static partial class CorShaders
-    {   
+    {
         public static IShader CreatePhongPixelLit()
         {
             var parameter = new ShaderDefinition()
@@ -3798,14 +3803,14 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             var s = new Shader (parameter);
 
-            Console.WriteLine(s);
+			InternalUtils.Log.Info(s.ToString());
 
             return s;
         }
     }
 
     public static partial class CorShaders
-    {   
+    {
         public static IShader CreatePhongVertexLit()
         {
             var parameter = new ShaderDefinition()
@@ -4085,14 +4090,14 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             var s = new Shader (parameter);
 
-            Console.WriteLine(s);
+			InternalUtils.Log.Info(s.ToString());
 
             return s;
         }
     }
 
     public static partial class CorShaders
-    {   
+    {
         public static IShader CreateUnlit()
         {
             var parameter = new ShaderDefinition()
@@ -4238,7 +4243,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             var s = new Shader (parameter);
 
-            Console.WriteLine(s);
+			InternalUtils.Log.Info(s.ToString());
 
             return s;
         }

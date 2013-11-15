@@ -11,7 +11,7 @@
 
         public InputManager()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "InputManager -> ()");
 
             keyboard = new Keyboard();

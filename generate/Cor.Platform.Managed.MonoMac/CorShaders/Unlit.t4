@@ -1,5 +1,5 @@
     public static partial class CorShaders
-    {   
+    {
         public static IShader CreateUnlit()
         {
             var parameter = new ShaderDefinition()
@@ -145,7 +145,7 @@
 
             var s = new Shader (parameter);
 
-            Console.WriteLine(s);
+            InternalUtils.Log.Info(s.ToString());
 
             return s;
         }

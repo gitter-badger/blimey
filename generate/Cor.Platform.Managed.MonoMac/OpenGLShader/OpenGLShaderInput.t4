@@ -7,13 +7,13 @@
     {
         int ProgramHandle { get; set; }
         internal int AttributeLocation { get; private set; }
-        
+
         public String Name { get; private set; }
         public Type Type { get; private set; }
         public VertexElementUsage Usage { get; private set; }
         public Object DefaultValue { get; private set; }
         public Boolean Optional { get; private set; }
-        
+
         public OpenGLShaderInput(
             int programHandle, ShaderUtils.ShaderAttribute attribute)
         {
@@ -21,7 +21,7 @@
 
             ErrorHandler.Check();
 
-            Console.WriteLine(string.Format(
+            InternalUtils.Log.Info(string.Format(
                 "    Binding Shader Input: [Prog={0}, AttIndex={1}, AttLocation={4}, AttName={2}, AttType={3}]",
                 programHandle, attribute.Index, attribute.Name, attribute.Type, attLocation));
 
@@ -29,15 +29,15 @@
             this.AttributeLocation = attLocation;
             this.Name = attribute.Name;
             this.Type = EnumConverter.ToType(attribute.Type);
-            
+
 
         }
-        
+
         internal void RegisterExtraInfo(ShaderInputDefinition definition)
         {
             Usage = definition.Usage;
             DefaultValue = definition.DefaultValue;
             Optional = definition.Optional;
-        }   
+        }
     }
 

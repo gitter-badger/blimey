@@ -25,27 +25,27 @@
             string a = string.Empty;
 
             for(int i = 0; i < Inputs.Count; ++i)
-            { 
-                a += Inputs[i].Name; if( i + 1 < Inputs.Count ) { a += ", "; } 
+            {
+                a += Inputs[i].Name; if( i + 1 < Inputs.Count ) { a += ", "; }
             }
 
             string b = string.Empty;
             for(int i = 0; i < Variables.Count; ++i)
-            { 
-                b += Variables[i].Name; if( i + 1 < Variables.Count ) { b += ", "; } 
+            {
+                b += Variables[i].Name; if( i + 1 < Variables.Count ) { b += ", "; }
             }
 
             return string.Format (
-                "[OpenGLShader: Variant {0}, Pass {1}: Inputs: [{2}], Variables: [{3}]]", 
-                variantName, 
-                passName, 
-                a, 
+                "[OpenGLShader: Variant {0}, Pass {1}: Inputs: [{2}], Variables: [{3}]]",
+                variantName,
+                passName,
+                a,
                 b);
         }
 
         internal void ValidateInputs(List<ShaderInputDefinition> definitions)
         {
-            Console.WriteLine(string.Format ("Pass: {1} => ValidateInputs({0})", variantName, passName ));
+            InternalUtils.Log.Info(string.Format ("Pass: {1} => ValidateInputs({0})", variantName, passName ));
 
             // Make sure that this shader implements all of the non-optional defined inputs.
             var nonOptionalDefinitions = definitions.Where(y => !y.Optional).ToList();
@@ -63,7 +63,7 @@
             // Make sure that every implemented input is defined.
             foreach(var input in Inputs)
             {
-                var find = definitions.Find(x => x.Name == input.Name 
+                var find = definitions.Find(x => x.Name == input.Name
                     /*&& (x.Type == input.Type || (x.Type == typeof(Rgba32) && input.Type == typeof(Vector4)))*/
                     );
 
@@ -80,18 +80,18 @@
 
         internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
         {
-            Console.WriteLine(string.Format ("Pass: {1} => ValidateVariables({0})", variantName, passName ));
+            InternalUtils.Log.Info(string.Format ("Pass: {1} => ValidateVariables({0})", variantName, passName ));
 
 
             // Make sure that every implemented input is defined.
             foreach(var variable in Variables)
             {
                 var find = definitions.Find(
-                    x => 
-                    x.Name == variable.Name //&& 
+                    x =>
+                    x.Name == variable.Name //&&
                     //(x.Type == variable.Type || (x.Type == typeof(Rgba32) && variable.Type == typeof(Vector4)))
                     );
-                
+
                 if( find == null )
                 {
                     throw new Exception("problem");
@@ -105,7 +105,7 @@
 
         internal void ValidateSamplers(List<ShaderSamplerDefinition> definitions)
         {
-            Console.WriteLine(string.Format ("Pass: {1} => ValidateSamplers({0})", variantName, passName ));
+            InternalUtils.Log.Info(string.Format ("Pass: {1} => ValidateSamplers({0})", variantName, passName ));
 
             var nonOptionalSamplers = definitions.Where(y => !y.Optional).ToList();
 
@@ -140,24 +140,24 @@
         {
             throw new NotImplementedException();
         }
-        
+
         static void CheckInputCompatibility(List<OpenGLShaderInput> definedInputs, Dictionary<string, global::MonoMac.OpenGL.ActiveAttribType> actualAttributes )
         {
-            // make sure that the shader we just loaded will work with this shader definition   
+            // make sure that the shader we just loaded will work with this shader definition
             if( actualAttributes.Count != definedInputs.Count )
             {
                 throw new Exception("shader doesn't implement definition");
             }
-        
+
             foreach( var key in actualAttributes.Keys )
             {
                 var item = definedInputs.Find(x => x.Name == key);
-                
+
                 if( item == null )
                 {
                     throw new Exception("shader doesn't implement definition - missing variable");
                 }
-                
+
                 if( item.Type != EnumConverter.ToType( actualAttributes[key] ) )
                 {
                     throw new Exception("shader doesn't implement definition - variable is of the wrong type");
@@ -188,18 +188,18 @@
 
         internal OpenGLShader(String variantName, String passName, OpenGLShaderDefinition definition)
         {
-            Console.WriteLine ("  Creating Pass Variant: " + variantName);
+            InternalUtils.Log.Info ("  Creating Pass Variant: " + variantName);
             this.variantName = variantName;
             this.passName = passName;
             this.vertexShaderPath = definition.VertexShaderPath;
             this.pixelShaderPath = definition.PixelShaderPath;
-            
-            //Variables = 
+
+            //Variables =
             programHandle = ShaderUtils.CreateShaderProgram ();
 
             vertShaderHandle = ShaderUtils.CreateVertexShader (GetResourcePath(this.vertexShaderPath));
             fragShaderHandle = ShaderUtils.CreateFragmentShader (GetResourcePath(this.pixelShaderPath));
-            
+
             ShaderUtils.AttachShader (programHandle, vertShaderHandle);
             ShaderUtils.AttachShader (programHandle, fragShaderHandle);
 
@@ -227,42 +227,43 @@
             // bind atts here
             //ShaderUtils.LinkProgram (programHandle);
 
-            Console.WriteLine("  Finishing linking");
+            InternalUtils.Log.Info("  Finishing linking");
 
-            Console.WriteLine("  Initilise Attributes");
+            InternalUtils.Log.Info("  Initilise Attributes");
             var attributes = ShaderUtils.GetAttributes(programHandle);
 
             Inputs = attributes
                 .Select(x => new OpenGLShaderInput(programHandle, x))
                 .OrderBy(y => y.AttributeLocation)
                 .ToList();
-            Console.Write("  Inputs : ");
-            foreach (var input in Inputs) {
-                Console.Write (input.Name + ", ");
-            }
-            Console.Write (Environment.NewLine);
 
-            Console.WriteLine("  Initilise Uniforms");
+            String logInputs = "  Inputs : ";
+            foreach (var input in Inputs) {
+                logInputs += input.Name + ", ";
+            }
+            InternalUtils.Log.Info (logInputs);
+
+            InternalUtils.Log.Info("  Initilise Uniforms");
             var uniforms = ShaderUtils.GetUniforms(programHandle);
 
 
             Variables = uniforms
-                .Where(y => 
-                       y.Type != global::MonoMac.OpenGL.ActiveUniformType.Sampler2D && 
+                .Where(y =>
+                       y.Type != global::MonoMac.OpenGL.ActiveUniformType.Sampler2D &&
                        y.Type != global::MonoMac.OpenGL.ActiveUniformType.SamplerCube)
                 .Select(x => new OpenGLShaderVariable(programHandle, x))
                 .OrderBy(z => z.UniformLocation)
                 .ToList();
-            Console.Write("  Variables : ");
+            String logVars = "  Variables : ";
             foreach (var variable in Variables) {
-                Console.Write (variable.Name + ", ");
+                logVars += variable.Name + ", ";
             }
-            Console.Write (Environment.NewLine);
+            InternalUtils.Log.Info (logVars);
 
-            Console.WriteLine("  Initilise Samplers");
+            InternalUtils.Log.Info("  Initilise Samplers");
             Samplers = uniforms
-                .Where(y => 
-                       y.Type == global::MonoMac.OpenGL.ActiveUniformType.Sampler2D || 
+                .Where(y =>
+                       y.Type == global::MonoMac.OpenGL.ActiveUniformType.Sampler2D ||
                        y.Type == global::MonoMac.OpenGL.ActiveUniformType.SamplerCube)
                 .Select(x => new OpenGLShaderSampler(programHandle, x))
                 .OrderBy(z => z.UniformLocation)
@@ -271,24 +272,24 @@
             #if DEBUG
             ShaderUtils.ValidateProgram (programHandle);
             #endif
-            
+
             ShaderUtils.DetachShader(programHandle, fragShaderHandle);
             ShaderUtils.DetachShader(programHandle, vertShaderHandle);
-            
+
             ShaderUtils.DeleteShader(programHandle, fragShaderHandle);
             ShaderUtils.DeleteShader(programHandle, vertShaderHandle);
         }
-        
+
         public void Activate ()
         {
             global::MonoMac.OpenGL.GL.UseProgram (programHandle);
             ErrorHandler.Check ();
         }
-        
+
         public void Dispose()
         {
             ShaderUtils.DestroyShaderProgram(programHandle);
             ErrorHandler.Check();
         }
     }
-    
+

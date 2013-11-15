@@ -6,7 +6,7 @@
 
         public SystemManager()
         {
-            Console.WriteLine(
+            InternalUtils.Log.Info(
                 "SystemManager -> ()");
 
             screen = new ScreenSpecification();
@@ -14,7 +14,7 @@
         }
 
         void GetEffectiveDisplaySize(
-            ref Int32 screenSpecWidth, 
+            ref Int32 screenSpecWidth,
             ref Int32 screenSpecHeight)
         {
             if (this.CurrentOrientation == DeviceOrientation.Default ||
@@ -56,18 +56,18 @@
         public String SystemVersion { get { return "1314.0.1.29"; } }
 
         public DeviceOrientation CurrentOrientation
-        { 
+        {
             get { return DeviceOrientation.Default; }
         }
 
         public IScreenSpecification ScreenSpecification
-        { 
-            get { return this.screen; } 
+        {
+            get { return this.screen; }
         }
 
-        public IPanelSpecification PanelSpecification 
-        { 
-            get { return this.panel; } 
+        public IPanelSpecification PanelSpecification
+        {
+            get { return this.panel; }
         }
 
         #endregion
