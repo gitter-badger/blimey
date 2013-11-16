@@ -1,0 +1,103 @@
+    class DictionarySerialiser<TKey, TValue> 
+        : AssetTypeSerialiser<Dictionary<TKey, TValue>>
+    {
+        AssetTypeSerialiser<TKey> keySerialiser;
+        AssetTypeSerialiser<TValue> valueSerialiser;
+
+        AssetTypeSerialiserManager manager;
+        
+        internal DictionarySerialiser () {}
+
+        protected internal override void Initialise(AssetTypeSerialiserManager manager)
+        {
+            this.manager = manager;
+            keySerialiser = manager.GetTypeSerialiser<TKey>();
+            valueSerialiser = manager.GetTypeSerialiser<TValue>();
+        }
+
+        protected internal override Dictionary<TKey, TValue> Read(AssetBinaryReader abr)
+        {
+            UInt32 count = abr.ReadUInt32();
+
+            var dictionary = new Dictionary<TKey, TValue>();
+
+            Type keyType = typeof(TKey);
+            Type valueType = typeof(TValue);
+
+            for (UInt32 i = 0; i < count; ++i)
+            {
+                TKey key;
+                TValue value;
+
+                if (keyType.IsValueType)
+                {
+                    key = keySerialiser.Read(abr);
+                }
+                else
+                {
+                    // Get the id of the type reader for this element,
+                    // as this element might not be of Type T, it might be
+                    // polymorphic.
+                    Int32 keyTypeSerialiserId = abr.Read7BitEncodedInt32 ();
+                    
+                    if (keyTypeSerialiserId > 0)
+                    {
+                        // Locate the correct serialiser for this element.
+                        AssetTypeSerialiser virtualElementSerialiser = 
+                            this.manager.GetTypeSerialiserFromId (keyTypeSerialiserId);
+                    
+                        //
+                        Object item = virtualElementSerialiser.BaseRead (abr);
+                    
+                        // add to array then move on
+                        key = (TKey)item;
+                    }
+                    else
+                    {
+                        // the element is null
+                        key = default(TKey);
+                    }
+                }
+
+                if (valueType.IsValueType)
+                {
+                    value = valueSerialiser.Read(abr);
+                }
+                else
+                {
+                    // Get the id of the type reader for this element,
+                    // as this element might not be of Type T, it might be
+                    // polymorphic.
+                    Int32 valueTypeSerialiserId = abr.Read7BitEncodedInt32 ();
+                    
+                    if (valueTypeSerialiserId > 0)
+                    {
+                        // Locate the correct serialiser for this element.
+                        AssetTypeSerialiser virtualElementSerialiser = 
+                            this.manager.GetTypeSerialiserFromId (valueTypeSerialiserId);
+                    
+                        //
+                        Object item = virtualElementSerialiser.BaseRead (abr);
+                    
+                        // add to array then move on
+                        value = (TValue)item;
+                    }
+                    else
+                    {
+                        // the element is null
+                        value = default(TValue);
+                    }
+                }
+                
+                dictionary.Add(key, value);
+            }
+
+            return dictionary;
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Dictionary<TKey, TValue> obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+

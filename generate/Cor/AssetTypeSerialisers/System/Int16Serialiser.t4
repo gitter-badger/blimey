@@ -1,0 +1,16 @@
+    class Int16Serialiser 
+        : AssetTypeSerialiser<Int16>
+    {
+        internal Int16Serialiser () {}
+
+        protected internal override Int16 Read(AssetBinaryReader abr)
+        {
+            return abr.ReadInt16 ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Int16 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

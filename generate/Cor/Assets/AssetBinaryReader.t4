@@ -1,0 +1,26 @@
+    public class AssetBinaryReader
+        : BinaryReader
+    {
+        internal AssetBinaryReader(Stream stream)
+            : base(stream)
+        {
+        }
+
+        public Int32 Read7BitEncodedInt32()
+        {
+            Int32 result = 0;
+            Int32 bitsRead = 0;
+            Int32 value;
+
+            do
+            {
+                value = ReadByte();
+                result |= (value & 0x7f) << bitsRead;
+                bitsRead += 7;
+            }
+            while ((value & 0x80) != 0);
+
+            return result;
+        }
+    }
+

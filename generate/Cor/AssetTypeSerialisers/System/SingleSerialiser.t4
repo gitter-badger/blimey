@@ -1,0 +1,16 @@
+    class SingleSerialiser 
+        : AssetTypeSerialiser<Single>
+    {
+        internal SingleSerialiser () {}
+
+        protected internal override Single Read(AssetBinaryReader abr)
+        {
+            return abr.ReadSingle ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Single obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

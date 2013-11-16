@@ -1,0 +1,16 @@
+    class UInt64Serialiser 
+        : AssetTypeSerialiser<UInt64>
+    {
+        internal UInt64Serialiser () {}
+
+        protected internal override UInt64 Read(AssetBinaryReader cbr)
+        {
+            return cbr.ReadUInt64 ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, UInt64 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

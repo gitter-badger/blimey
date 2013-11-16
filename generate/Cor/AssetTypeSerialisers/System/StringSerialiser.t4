@@ -1,0 +1,16 @@
+    class StringSerialiser 
+        : AssetTypeSerialiser<String>
+    {
+        internal StringSerialiser () {}
+
+        protected internal override String Read(AssetBinaryReader abr)
+        {
+            return abr.ReadString ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, String obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

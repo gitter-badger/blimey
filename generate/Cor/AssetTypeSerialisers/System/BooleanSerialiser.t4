@@ -1,0 +1,16 @@
+    class BooleanSerialiser 
+        : AssetTypeSerialiser<Boolean>
+    {
+        internal BooleanSerialiser () {}
+
+        protected internal override Boolean Read(AssetBinaryReader abr)
+        {
+            return abr.ReadBoolean ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Boolean obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

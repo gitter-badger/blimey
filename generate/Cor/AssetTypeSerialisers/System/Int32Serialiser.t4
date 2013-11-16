@@ -1,0 +1,16 @@
+    class Int32Serialiser 
+        : AssetTypeSerialiser<Int32>
+    {
+        internal Int32Serialiser () {}
+
+        protected internal override Int32 Read(AssetBinaryReader abr)
+        {
+            return abr.ReadInt32 ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Int32 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

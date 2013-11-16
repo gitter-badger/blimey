@@ -1,0 +1,33 @@
+    // EnumSerialiser<T>
+    // test
+    // enum Foo : long { One, Two };
+    // enum Bar : byte { x = 255 };
+    class EnumSerialiser<T>
+        : AssetTypeSerialiser<T>
+    {
+        AssetTypeSerialiser underlyingTypeSerialiser;
+
+        internal EnumSerialiser () {}
+
+        protected internal override void Initialise(AssetTypeSerialiserManager manager)
+        {
+            // can we not get this at compile time? -_-
+            // lets stick with Int32 for now
+            Type readerType = Enum.GetUnderlyingType(typeof(T));
+
+            underlyingTypeSerialiser = manager.GetTypeSerialiser(readerType);
+        }
+        
+        protected internal override T Read(AssetBinaryReader abr)
+        {
+            Object underlyingValue = underlyingTypeSerialiser.BaseRead(abr);
+
+            return (T) underlyingValue;
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, T obj)
+        {
+            underlyingTypeSerialiser.BaseWrite(abw, obj);
+        }
+    }
+

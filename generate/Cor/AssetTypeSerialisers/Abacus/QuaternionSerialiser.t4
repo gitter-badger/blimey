@@ -1,0 +1,24 @@
+    class QuaternionSerialiser
+        : AssetTypeSerialiser<Quaternion>
+    {
+        internal QuaternionSerialiser () {}
+
+        protected internal override Quaternion Read(AssetBinaryReader abr)
+        {
+            Single x = abr.ReadSingle();
+            Single y = abr.ReadSingle();
+            Single z = abr.ReadSingle();
+            Single w = abr.ReadSingle();
+            
+            return new Quaternion(x, y, z, w);
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Quaternion obj)
+        {
+            abw.Write(obj.X);
+            abw.Write(obj.Y);
+            abw.Write(obj.Z);
+            abw.Write(obj.W);
+        }
+    }
+

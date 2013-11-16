@@ -1,0 +1,20 @@
+    class Vector2Serialiser
+        : AssetTypeSerialiser<Vector2>
+    {
+        internal Vector2Serialiser () {}
+
+        protected internal override Vector2 Read(AssetBinaryReader abr)
+        {
+            Single x = abr.ReadSingle();
+            Single y = abr.ReadSingle();
+
+            return new Vector2(x, y);
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Vector2 obj)
+        {
+            abw.Write(obj.X);
+            abw.Write(obj.Y);
+        }
+    }
+

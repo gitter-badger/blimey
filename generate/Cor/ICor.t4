@@ -31,6 +31,11 @@
         ISystemManager System { get; }
 
         /// <summary>
+        /// Provides access to Cor's Asset sysetm.
+        /// </summary>
+        AssetManager Assets { get; }
+
+        /// <summary>
         /// Provides access to Cor's logging sysetm.
         /// </summary>
         LogManager Log { get; }

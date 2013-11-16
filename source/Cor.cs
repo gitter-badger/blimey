@@ -82,6 +82,11 @@ namespace Sungiant.Cor
         ISystemManager System { get; }
 
         /// <summary>
+        /// Provides access to Cor's Asset sysetm.
+        /// </summary>
+        AssetManager Assets { get; }
+
+        /// <summary>
         /// Provides access to Cor's logging sysetm.
         /// </summary>
         LogManager Log { get; }
@@ -4185,4 +4190,872 @@ namespace Sungiant.Cor
 
     #endregion
 
+    #region Assets
+
+    public abstract class AssetTypeSerialiser
+    {
+        readonly Type targetType;
+
+        public Type TargetType
+        {
+            get { return this.targetType; }
+        }
+
+        protected AssetTypeSerialiser(Type targetType)
+        {
+            this.targetType = targetType;
+        }
+
+        protected internal abstract Object BaseRead (AssetBinaryReader abr);
+
+        protected internal abstract void BaseWrite (AssetBinaryWriter abw, Object obj);
+    }
+
+    public abstract class AssetTypeSerialiser<T>
+        : AssetTypeSerialiser
+    {
+        protected AssetTypeSerialiser()
+            : base(typeof(T))
+        {
+
+        }
+        
+        protected internal virtual void Initialise (AssetTypeSerialiserManager manager) {}
+
+        protected internal override Object BaseRead (AssetBinaryReader abr)
+        {
+            return this.Read (abr);
+        }
+
+        protected internal override void BaseWrite (AssetBinaryWriter abw, Object obj)
+        {
+            this.Write(abw, (T) obj);
+        }
+
+        protected internal abstract T Read (AssetBinaryReader abr);
+
+        protected internal abstract void Write (AssetBinaryWriter abw, T obj);
+    }
+
+    public sealed class AssetManager
+        : IDisposable
+    {
+        internal AssetManager(IGraphicsManager Graphics)
+        {
+
+        }
+
+        public T Load<T>(String assetName)
+        {
+            return default(T);
+        }
+
+        public void Unload()
+        {
+            
+        }
+
+        public void Dispose()
+        {
+            
+        }
+    }
+
+    public sealed class AssetTypeSerialiserManager
+    {
+        Dictionary<Type, AssetTypeSerialiser> assetTypeSerialisers;
+
+        internal AssetTypeSerialiserManager()
+        {
+            assetTypeSerialisers = new Dictionary<Type, AssetTypeSerialiser>();
+        }
+
+        public AssetTypeSerialiser<T> GetTypeSerialiser<T>()
+        {
+            throw new NotImplementedException();
+            //return assetTypeSerialisers[typeof(T)] as AssetTypeSerialiser<T>;
+        }
+
+        public AssetTypeSerialiser GetTypeSerialiser(Type type)
+        {
+            throw new NotImplementedException();
+            //return assetTypeSerialisers[type];
+        }
+
+        public AssetTypeSerialiser GetTypeSerialiserFromId(Int32 id)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AssetBinaryReader
+        : BinaryReader
+    {
+        internal AssetBinaryReader(Stream stream)
+            : base(stream)
+        {
+        }
+
+        public Int32 Read7BitEncodedInt32()
+        {
+            Int32 result = 0;
+            Int32 bitsRead = 0;
+            Int32 value;
+
+            do
+            {
+                value = ReadByte();
+                result |= (value & 0x7f) << bitsRead;
+                bitsRead += 7;
+            }
+            while ((value & 0x80) != 0);
+
+            return result;
+        }
+    }
+
+    public class AssetBinaryWriter
+        : BinaryWriter
+    {
+        internal AssetBinaryWriter(Stream stream)
+            : base(stream)
+        {
+        }
+    }
+
+    #endregion
+
+    #region AssetTypeSerialisers
+
+    class Int64Serialiser 
+        : AssetTypeSerialiser<Int64>
+    {
+        internal Int64Serialiser () {}
+
+        protected internal override Int64 Read(AssetBinaryReader abr)
+        {
+            return abr.ReadInt64 ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Int64 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class BooleanSerialiser 
+        : AssetTypeSerialiser<Boolean>
+    {
+        internal BooleanSerialiser () {}
+
+        protected internal override Boolean Read(AssetBinaryReader abr)
+        {
+            return abr.ReadBoolean ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Boolean obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class ByteSerialiser 
+        : AssetTypeSerialiser<Byte>
+    {
+        internal ByteSerialiser () {}
+
+        protected internal override Byte Read(AssetBinaryReader abr)
+        {
+            return abr.ReadByte ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Byte obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class CharSerialiser 
+        : AssetTypeSerialiser<Char>
+    {
+        internal CharSerialiser () {}
+
+        protected internal override Char Read(AssetBinaryReader abr)
+        {
+            return abr.ReadChar ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Char obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class DecimalSerialiser
+        : AssetTypeSerialiser<Decimal>
+    {
+        internal DecimalSerialiser () {}
+
+        protected internal override Decimal Read(AssetBinaryReader abr)
+        {
+            return abr.ReadDecimal ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Decimal obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class DoubleSerialiser 
+        : AssetTypeSerialiser<Double>
+    {
+        internal DoubleSerialiser () {}
+
+        protected internal override Double Read(AssetBinaryReader abr)
+        {
+            return abr.ReadDouble ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Double obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class Int16Serialiser 
+        : AssetTypeSerialiser<Int16>
+    {
+        internal Int16Serialiser () {}
+
+        protected internal override Int16 Read(AssetBinaryReader abr)
+        {
+            return abr.ReadInt16 ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Int16 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class Int32Serialiser 
+        : AssetTypeSerialiser<Int32>
+    {
+        internal Int32Serialiser () {}
+
+        protected internal override Int32 Read(AssetBinaryReader abr)
+        {
+            return abr.ReadInt32 ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Int32 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class SByteSerialiser 
+        : AssetTypeSerialiser<SByte>
+    {
+        internal SByteSerialiser () {}
+
+        protected internal override SByte Read(AssetBinaryReader abr)
+        {
+            return abr.ReadSByte ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, SByte obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class SingleSerialiser 
+        : AssetTypeSerialiser<Single>
+    {
+        internal SingleSerialiser () {}
+
+        protected internal override Single Read(AssetBinaryReader abr)
+        {
+            return abr.ReadSingle ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Single obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class StringSerialiser 
+        : AssetTypeSerialiser<String>
+    {
+        internal StringSerialiser () {}
+
+        protected internal override String Read(AssetBinaryReader abr)
+        {
+            return abr.ReadString ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, String obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class TimeSpanSerialiser 
+        : AssetTypeSerialiser<TimeSpan>
+    {
+        internal TimeSpanSerialiser () {}
+
+        protected internal override TimeSpan Read(AssetBinaryReader abr)
+        {
+            Int64 ticks = abr.ReadInt64 ();
+            
+            return new TimeSpan(ticks);
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, TimeSpan obj)
+        {
+            abw.Write(obj.Ticks);
+        }
+    }
+
+    class UInt16Serialiser 
+        : AssetTypeSerialiser<UInt16>
+    {
+        internal UInt16Serialiser () {}
+
+        protected internal override UInt16 Read(AssetBinaryReader abr)
+        {
+            return abr.ReadUInt16 ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, UInt16 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class UInt32Serialiser 
+        : AssetTypeSerialiser<UInt32>
+    {
+        internal UInt32Serialiser () {}
+
+        protected internal override UInt32 Read(AssetBinaryReader abr)
+        {
+            return abr.ReadUInt32 ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, UInt32 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class UInt64Serialiser 
+        : AssetTypeSerialiser<UInt64>
+    {
+        internal UInt64Serialiser () {}
+
+        protected internal override UInt64 Read(AssetBinaryReader cbr)
+        {
+            return cbr.ReadUInt64 ();
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, UInt64 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+
+    // test reading lists containing different items from a chain of inheritance.
+    class ListSerialiser<T>
+        : AssetTypeSerialiser<List<T>>
+    {
+        AssetTypeSerialiser<T> elementSerialiser;
+
+        AssetTypeSerialiserManager manager;
+
+        internal ListSerialiser () {}
+
+        protected internal override void Initialise (AssetTypeSerialiserManager manager)
+        {
+            this.manager = manager;
+            elementSerialiser = manager.GetTypeSerialiser<T> ();
+        }
+
+        protected internal override List<T> Read(AssetBinaryReader abr)
+        {
+            UInt32 count = abr.ReadUInt32 ();
+
+            var list = new List<T> ();
+
+            Type objectType = typeof(T);
+            
+            if (objectType.IsValueType)
+            {
+                for (Int32 i = 0; i < count; ++i)
+                {
+                    // no inheritance for structs
+                    T item = elementSerialiser.Read (abr);
+                    list.Add(item);
+                }
+            }
+            else
+            {
+                for (Int32 i = 0; i < count; ++i)
+                {
+                    // Get the id of the type reader for this element,
+                    // as this element might not be of Type T, it might be
+                    // polymorphic.
+                    Int32 objectTypeSerialiserId = abr.Read7BitEncodedInt32();
+
+                    if (objectTypeSerialiserId > 0)
+                    {
+                        // Locate the correct serialiser for this element.
+                        AssetTypeSerialiser virtualElementSerialiser = 
+                            this.manager.GetTypeSerialiserFromId(objectTypeSerialiserId);
+                        
+                        //
+                        Object item = virtualElementSerialiser.BaseRead (abr);
+                        
+                        // add to list then move on
+                        list.Add((T)item);
+                    }
+                    else
+                    {
+                        // the element is null
+                        list.Add(default(T));
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, List<T> obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class NullableSerialiser<T>
+        : AssetTypeSerialiser<T?>
+    where T 
+        : struct
+    {
+        AssetTypeSerialiser<T> valueSerialiser;
+
+        internal NullableSerialiser () {}
+
+        protected internal override void Initialise (AssetTypeSerialiserManager manager)
+        {
+            valueSerialiser = manager.GetTypeSerialiser<T>();
+        }
+        
+        protected internal override T? Read(AssetBinaryReader abr)
+        {
+            if(abr.ReadBoolean())
+            {
+                return valueSerialiser.Read (abr);
+            }
+            
+            return null;
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, T? obj)
+        {
+            if( obj.HasValue )
+            {
+                abw.Write(true);
+                valueSerialiser.Write(abw, obj.Value);
+            }
+            else
+            {
+                abw.Write(false);
+            }
+        }
+    }
+
+    // EnumSerialiser<T>
+    // test
+    // enum Foo : long { One, Two };
+    // enum Bar : byte { x = 255 };
+    class EnumSerialiser<T>
+        : AssetTypeSerialiser<T>
+    {
+        AssetTypeSerialiser underlyingTypeSerialiser;
+
+        internal EnumSerialiser () {}
+
+        protected internal override void Initialise(AssetTypeSerialiserManager manager)
+        {
+            // can we not get this at compile time? -_-
+            // lets stick with Int32 for now
+            Type readerType = Enum.GetUnderlyingType(typeof(T));
+
+            underlyingTypeSerialiser = manager.GetTypeSerialiser(readerType);
+        }
+        
+        protected internal override T Read(AssetBinaryReader abr)
+        {
+            Object underlyingValue = underlyingTypeSerialiser.BaseRead(abr);
+
+            return (T) underlyingValue;
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, T obj)
+        {
+            underlyingTypeSerialiser.BaseWrite(abw, obj);
+        }
+    }
+
+    class ArraySerialiser<T>
+        : AssetTypeSerialiser<T[]>
+    {
+        AssetTypeSerialiser<T> elementSerialiser;
+
+        AssetTypeSerialiserManager manager;
+
+        internal ArraySerialiser () {}
+
+        protected internal override void Initialise(AssetTypeSerialiserManager manager)
+        {
+            this.manager = manager;
+            elementSerialiser = manager.GetTypeSerialiser<T>();
+        }
+
+        protected internal override T[] Read (AssetBinaryReader abr)
+        {
+            UInt32 count = abr.ReadUInt32 ();
+
+            var array = new T[count];
+            
+            Type objectType = typeof(T);
+            
+            if (objectType.IsValueType)
+            {
+                for (UInt32 i = 0; i < count; ++i)
+                {
+                    array [i] = elementSerialiser.Read (abr);
+                }
+            }
+            else
+            {
+                for (UInt32 i = 0; i < count; ++i)
+                {
+                    // Get the id of the type reader for this element,
+                    // as this element might not be of Type T, it might be
+                    // polymorphic.
+                    Int32 objectTypeSerialiserId = abr.Read7BitEncodedInt32 ();
+                    
+                    if (objectTypeSerialiserId > 0)
+                    {
+                        // Locate the correct serialiser for this element.
+                        AssetTypeSerialiser virtualElementSerialiser = 
+                            this.manager.GetTypeSerialiserFromId (objectTypeSerialiserId);
+                    
+                        //
+                        Object item = virtualElementSerialiser.BaseRead (abr);
+                    
+                        // add to array then move on
+                        array [i] = (T)item;
+                    }
+                    else
+                    {
+                        // the element is null
+                        array [i] = default(T);
+                    }
+                }
+            }
+            
+            return array;
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, T[] obj)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    class DictionarySerialiser<TKey, TValue> 
+        : AssetTypeSerialiser<Dictionary<TKey, TValue>>
+    {
+        AssetTypeSerialiser<TKey> keySerialiser;
+        AssetTypeSerialiser<TValue> valueSerialiser;
+
+        AssetTypeSerialiserManager manager;
+        
+        internal DictionarySerialiser () {}
+
+        protected internal override void Initialise(AssetTypeSerialiserManager manager)
+        {
+            this.manager = manager;
+            keySerialiser = manager.GetTypeSerialiser<TKey>();
+            valueSerialiser = manager.GetTypeSerialiser<TValue>();
+        }
+
+        protected internal override Dictionary<TKey, TValue> Read(AssetBinaryReader abr)
+        {
+            UInt32 count = abr.ReadUInt32();
+
+            var dictionary = new Dictionary<TKey, TValue>();
+
+            Type keyType = typeof(TKey);
+            Type valueType = typeof(TValue);
+
+            for (UInt32 i = 0; i < count; ++i)
+            {
+                TKey key;
+                TValue value;
+
+                if (keyType.IsValueType)
+                {
+                    key = keySerialiser.Read(abr);
+                }
+                else
+                {
+                    // Get the id of the type reader for this element,
+                    // as this element might not be of Type T, it might be
+                    // polymorphic.
+                    Int32 keyTypeSerialiserId = abr.Read7BitEncodedInt32 ();
+                    
+                    if (keyTypeSerialiserId > 0)
+                    {
+                        // Locate the correct serialiser for this element.
+                        AssetTypeSerialiser virtualElementSerialiser = 
+                            this.manager.GetTypeSerialiserFromId (keyTypeSerialiserId);
+                    
+                        //
+                        Object item = virtualElementSerialiser.BaseRead (abr);
+                    
+                        // add to array then move on
+                        key = (TKey)item;
+                    }
+                    else
+                    {
+                        // the element is null
+                        key = default(TKey);
+                    }
+                }
+
+                if (valueType.IsValueType)
+                {
+                    value = valueSerialiser.Read(abr);
+                }
+                else
+                {
+                    // Get the id of the type reader for this element,
+                    // as this element might not be of Type T, it might be
+                    // polymorphic.
+                    Int32 valueTypeSerialiserId = abr.Read7BitEncodedInt32 ();
+                    
+                    if (valueTypeSerialiserId > 0)
+                    {
+                        // Locate the correct serialiser for this element.
+                        AssetTypeSerialiser virtualElementSerialiser = 
+                            this.manager.GetTypeSerialiserFromId (valueTypeSerialiserId);
+                    
+                        //
+                        Object item = virtualElementSerialiser.BaseRead (abr);
+                    
+                        // add to array then move on
+                        value = (TValue)item;
+                    }
+                    else
+                    {
+                        // the element is null
+                        value = default(TValue);
+                    }
+                }
+                
+                dictionary.Add(key, value);
+            }
+
+            return dictionary;
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Dictionary<TKey, TValue> obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+    class Rgba32Serialiser
+        : AssetTypeSerialiser<Rgba32>
+    {
+        internal Rgba32Serialiser () {}
+
+        protected internal override Rgba32 Read(AssetBinaryReader abr)
+        {
+            Byte r = abr.ReadByte();
+            Byte g = abr.ReadByte();
+            Byte b = abr.ReadByte();
+            Byte a = abr.ReadByte();
+            
+            return new Rgba32(r, g, b, a);
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Rgba32 obj)
+        {
+            abw.Write(obj.R);
+            abw.Write(obj.G);
+            abw.Write(obj.B);
+            abw.Write(obj.A);
+        }
+    }
+
+    class Matrix44Serialiser
+        : AssetTypeSerialiser<Matrix44>
+    {
+        internal Matrix44Serialiser () {}
+
+        protected internal override Matrix44 Read(AssetBinaryReader abr)
+        {
+            Single m11 = abr.ReadSingle();
+            Single m12 = abr.ReadSingle();
+            Single m13 = abr.ReadSingle();
+            Single m14 = abr.ReadSingle();
+
+            Single m21 = abr.ReadSingle();
+            Single m22 = abr.ReadSingle();
+            Single m23 = abr.ReadSingle();
+            Single m24 = abr.ReadSingle();
+
+            Single m31 = abr.ReadSingle();
+            Single m32 = abr.ReadSingle();
+            Single m33 = abr.ReadSingle();
+            Single m34 = abr.ReadSingle();
+
+            Single m41 = abr.ReadSingle();
+            Single m42 = abr.ReadSingle();
+            Single m43 = abr.ReadSingle();
+            Single m44 = abr.ReadSingle();
+
+            return new Matrix44(
+                m11, m12, m13, m14,
+                m21, m22, m23, m24,
+                m31, m32, m33, m34,
+                m41, m42, m43, m44
+            );
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Matrix44 obj)
+        {
+            abw.Write(obj.M11);
+            abw.Write(obj.M12);
+            abw.Write(obj.M13);
+            abw.Write(obj.M14);
+
+            abw.Write(obj.M21);
+            abw.Write(obj.M22);
+            abw.Write(obj.M23);
+            abw.Write(obj.M24);
+
+            abw.Write(obj.M31);
+            abw.Write(obj.M32);
+            abw.Write(obj.M33);
+            abw.Write(obj.M34);
+
+            abw.Write(obj.M41);
+            abw.Write(obj.M42);
+            abw.Write(obj.M43);
+            abw.Write(obj.M44);
+        }
+    }
+
+    class QuaternionSerialiser
+        : AssetTypeSerialiser<Quaternion>
+    {
+        internal QuaternionSerialiser () {}
+
+        protected internal override Quaternion Read(AssetBinaryReader abr)
+        {
+            Single x = abr.ReadSingle();
+            Single y = abr.ReadSingle();
+            Single z = abr.ReadSingle();
+            Single w = abr.ReadSingle();
+            
+            return new Quaternion(x, y, z, w);
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Quaternion obj)
+        {
+            abw.Write(obj.X);
+            abw.Write(obj.Y);
+            abw.Write(obj.Z);
+            abw.Write(obj.W);
+        }
+    }
+
+    class Vector2Serialiser
+        : AssetTypeSerialiser<Vector2>
+    {
+        internal Vector2Serialiser () {}
+
+        protected internal override Vector2 Read(AssetBinaryReader abr)
+        {
+            Single x = abr.ReadSingle();
+            Single y = abr.ReadSingle();
+
+            return new Vector2(x, y);
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Vector2 obj)
+        {
+            abw.Write(obj.X);
+            abw.Write(obj.Y);
+        }
+    }
+
+    class Vector3Serialiser
+        : AssetTypeSerialiser<Vector3>
+    {
+        internal Vector3Serialiser () {}
+
+        protected internal override Vector3 Read(AssetBinaryReader abr)
+        {
+            Single x = abr.ReadSingle();
+            Single y = abr.ReadSingle();
+            Single z = abr.ReadSingle();
+            
+            return new Vector3(x, y, z);
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Vector3 obj)
+        {
+            abw.Write(obj.X);
+            abw.Write(obj.Y);
+            abw.Write(obj.Z);
+        }
+    }
+
+    class Vector4Serialiser
+        : AssetTypeSerialiser<Vector4>
+    {
+        internal Vector4Serialiser () {}
+
+        protected internal override Vector4 Read(AssetBinaryReader abr)
+        {
+            Single x = abr.ReadSingle();
+            Single y = abr.ReadSingle();
+            Single z = abr.ReadSingle();
+            Single w = abr.ReadSingle();
+            
+            return new Vector4(x, y, z, w);
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, Vector4 obj)
+        {
+            abw.Write(obj.X);
+            abw.Write(obj.Y);
+            abw.Write(obj.Z);
+            abw.Write(obj.W);
+        }
+    }
+
+    #endregion
 }
