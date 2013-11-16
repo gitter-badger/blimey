@@ -72,6 +72,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         readonly AppSettings settings;
         readonly IApp app;
         readonly LogManager log;
+        readonly AssetManager assets;
 
         public Engine(
             AppSettings settings,
@@ -88,6 +89,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             this.settings = settings;
             this.app = app;
             this.log = new LogManager(this.settings.LogSettings);
+            this.assets = new AssetManager(this.graphics);
             this.app.Initilise(this);
         }
 
@@ -114,6 +116,8 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         public ISystemManager System { get { return this.system; } }
 
         public LogManager Log { get { return this.log; } }
+
+        public AssetManager Assets { get { return this.assets; } }
 
         public AppSettings Settings { get { return this.settings; } }
 
@@ -3803,7 +3807,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             var s = new Shader (parameter);
 
-			InternalUtils.Log.Info(s.ToString());
+            InternalUtils.Log.Info(s.ToString());
 
             return s;
         }
@@ -4090,7 +4094,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             var s = new Shader (parameter);
 
-			InternalUtils.Log.Info(s.ToString());
+            InternalUtils.Log.Info(s.ToString());
 
             return s;
         }
@@ -4243,7 +4247,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             var s = new Shader (parameter);
 
-			InternalUtils.Log.Info(s.ToString());
+            InternalUtils.Log.Info(s.ToString());
 
             return s;
         }
