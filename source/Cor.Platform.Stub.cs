@@ -55,6 +55,7 @@ namespace Sungiant.Cor.Platform.Stub
         readonly AppSettings settings;
         readonly IApp app;
         readonly LogManager log;
+        readonly AssetManager assets;
 
         public StubEngine(IApp app, AppSettings settings)
         {
@@ -69,6 +70,7 @@ namespace Sungiant.Cor.Platform.Stub
             this.settings = settings;
             this.app = app;
             this.log = new LogManager(this.settings.LogSettings);
+            this.assets = new AssetManager(this.graphics);
             this.app.Initilise(this);
         }
 
@@ -85,6 +87,8 @@ namespace Sungiant.Cor.Platform.Stub
         public ISystemManager System { get { return this.system; } }
 
         public LogManager Log { get { return this.log; } }
+
+        public AssetManager Assets { get { return this.assets; } }
 
         public AppSettings Settings { get { return this.settings; } }
 

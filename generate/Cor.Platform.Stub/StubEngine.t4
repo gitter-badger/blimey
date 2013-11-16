@@ -9,6 +9,7 @@
         readonly AppSettings settings;
         readonly IApp app;
         readonly LogManager log;
+        readonly AssetManager assets;
 
         public StubEngine(IApp app, AppSettings settings)
         {
@@ -23,6 +24,7 @@
             this.settings = settings;
             this.app = app;
             this.log = new LogManager(this.settings.LogSettings);
+            this.assets = new AssetManager(this.graphics);
             this.app.Initilise(this);
         }
 
@@ -39,6 +41,8 @@
         public ISystemManager System { get { return this.system; } }
 
         public LogManager Log { get { return this.log; } }
+
+        public AssetManager Assets { get { return this.assets; } }
 
         public AppSettings Settings { get { return this.settings; } }
 
