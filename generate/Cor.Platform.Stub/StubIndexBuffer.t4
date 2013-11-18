@@ -30,5 +30,29 @@
             this.data = ConvertToUnsigned(data);
         }
 
+        public void GetData(Int32[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetData(Int32[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetData(Int32[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
+
+        public void SetRawData(Byte[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
+
+        public Byte[] GetRawData(Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
         #endregion
     }

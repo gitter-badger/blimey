@@ -295,6 +295,30 @@ namespace Sungiant.Cor.Platform.Stub
             this.data = ConvertToUnsigned(data);
         }
 
+        public void GetData(Int32[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetData(Int32[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetData(Int32[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
+
+        public void SetRawData(Byte[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
+
+        public Byte[] GetRawData(Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
         #endregion
     }
     public class StubResourceManager
@@ -517,13 +541,49 @@ namespace Sungiant.Cor.Platform.Stub
         }
 
         public void SetData<T> (T[] data)
-            where T:
-                struct,
-                IVertexType
+        where T
+            : struct
+            , IVertexType
         {
-
         }
 
+        public T[] GetData<T> ()
+        where T
+            : struct
+            , IVertexType
+        {
+            throw new NotImplementedException();
+        }
+ 
+        public void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount)
+        where T
+            : struct
+            , IVertexType
+        {
+        }
+        
+        public T[] GetData<T> (Int32 startIndex, Int32 elementCount)
+        where T
+            : struct
+            , IVertexType
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetRawData (
+            Byte[] data,
+            Int32 startIndex, 
+            Int32 elementCount)
+        {
+        }
+        
+        public Byte[] GetRawData (
+            Int32 startIndex,
+            Int32 elementCount)
+        {
+            throw new NotImplementedException();
+        }
+        
         #endregion
     }
 
