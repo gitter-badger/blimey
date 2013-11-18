@@ -67,14 +67,11 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 <#@ include file="AudioManager.t4"#>
 <#@ include file="GraphicsManager.t4"#>
 <#@ include file="DisplayStatus.t4"#>
-<#@ include file="IndexBuffer.t4"#>
 <#@ include file="InputManager.t4"#>
 <#@ include file="ResourceManager.t4"#>
 <#@ include file="PanelSpecification.t4"#>
 <#@ include file="ScreenSpecification.t4"#>
-<#@ include file="GeometryBuffer.t4"#>
 <#@ include file="SystemManager.t4"#>
-<#@ include file="VertexBuffer.t4"#>
 <#@ include file="MonoMacApp.t4"#>
 <#@ include file="OpenGLView.t4"#>
 <#@ include file="MacGameNSWindow.t4"#>
