@@ -179,18 +179,19 @@ namespace Sungiant.Cor
 <#@ include file="AssetTypeSerialisers/System/UInt16Serialiser.t4"#>
 <#@ include file="AssetTypeSerialisers/System/UInt32Serialiser.t4"#>
 <#@ include file="AssetTypeSerialisers/System/UInt64Serialiser.t4"#>
-
 <#@ include file="AssetTypeSerialisers/System/ListSerialiser.t4"#>
 <#@ include file="AssetTypeSerialisers/System/NullableSerialiser.t4"#>
 <#@ include file="AssetTypeSerialisers/System/EnumSerialiser.t4"#>
 <#@ include file="AssetTypeSerialisers/System/ArraySerialiser.t4"#>
 <#@ include file="AssetTypeSerialisers/System/DictionarySerialiser.t4"#>
-
 <#@ include file="AssetTypeSerialisers/Abacus/Rgba32Serialiser.t4"#>
 <#@ include file="AssetTypeSerialisers/Abacus/Matrix44Serialiser.t4"#>
 <#@ include file="AssetTypeSerialisers/Abacus/QuaternionSerialiser.t4"#>
 <#@ include file="AssetTypeSerialisers/Abacus/Vector2Serialiser.t4"#>
 <#@ include file="AssetTypeSerialisers/Abacus/Vector3Serialiser.t4"#>
 <#@ include file="AssetTypeSerialisers/Abacus/Vector4Serialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/Cor/VertexDeclarationSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/Cor/VertexElementSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/Cor/GeometryBufferSerialiser.t4"#>
     #endregion
 }

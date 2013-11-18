@@ -36,7 +36,7 @@
         AssetManager Assets { get; }
 
         /// <summary>
-        /// Provides access to Cor's logging sysetm.
+        /// Provides access to Cor's logging system.
         /// </summary>
         LogManager Log { get; }
 

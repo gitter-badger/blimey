@@ -16,51 +16,53 @@
         /// <summary>
         /// todo
         /// </summary>
-        void SetData<T> (T[] data) where T: struct, IVertexType;
+        void SetData<T> (T[] data)
+        where T
+            : struct
+            , IVertexType;
 
         /// <summary>
         /// todo
         /// </summary>
-        //void GetData<T> (T[] data) where T: struct, IVertexType;
+        T[] GetData<T> () 
+        where T
+            : struct
+            , IVertexType;
 
         /// <summary>
         /// todo
         /// </summary>
-        //void SetData<T> (
-        //    T[] data,
-        //    Int32 startIndex,
-        //    Int32 elementCount)
-        //    where T: struct, IVertexType;
+        void SetData<T> (
+            T[] data,
+            Int32 startIndex,
+            Int32 elementCount)
+        where T
+            : struct
+            , IVertexType;
 
         /// <summary>
         /// todo
         /// </summary>
-        //void GetData<T> (
-        //    T[] data,
-        //    Int32 startIndex,
-        //    Int32 elementCount)
-        //    where T: struct, IVertexType;
+        T[] GetData<T> (
+            Int32 startIndex,
+            Int32 elementCount)
+        where T
+            : struct
+            , IVertexType;
         
         /// <summary>
         /// todo
         /// </summary>
-        //void SetData<T> (
-        //    Int32 offsetInBytes, 
-        //    T[] data, 
-        //    Int32 startIndex, 
-        //    Int32 elementCount, 
-        //    Int32 vertexStride) 
-        //    where T: struct, IVertexType;
+        void SetRawData (
+            Byte[] data, 
+            Int32 startIndex, 
+            Int32 elementCount);
         
         /// <summary>
         /// todo
         /// </summary>
-        //void GetData<T> (
-        //    Int32 offsetInBytes, 
-        //    T[] data, 
-        //    Int32 startIndex, 
-        //    Int32 elementCount, 
-        //    Int32 vertexStride) 
-        //    where T: struct, IVertexType;
+        Byte[] GetRawData (
+            Int32 startIndex, 
+            Int32 elementCount);
     }
 

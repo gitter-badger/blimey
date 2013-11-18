@@ -87,7 +87,7 @@ namespace Sungiant.Cor
         AssetManager Assets { get; }
 
         /// <summary>
-        /// Provides access to Cor's logging sysetm.
+        /// Provides access to Cor's logging system.
         /// </summary>
         LogManager Log { get; }
 
@@ -598,52 +598,54 @@ namespace Sungiant.Cor
         /// <summary>
         /// todo
         /// </summary>
-        void SetData<T> (T[] data) where T: struct, IVertexType;
+        void SetData<T> (T[] data)
+        where T
+            : struct
+            , IVertexType;
 
         /// <summary>
         /// todo
         /// </summary>
-        //void GetData<T> (T[] data) where T: struct, IVertexType;
+        T[] GetData<T> () 
+        where T
+            : struct
+            , IVertexType;
 
         /// <summary>
         /// todo
         /// </summary>
-        //void SetData<T> (
-        //    T[] data,
-        //    Int32 startIndex,
-        //    Int32 elementCount)
-        //    where T: struct, IVertexType;
+        void SetData<T> (
+            T[] data,
+            Int32 startIndex,
+            Int32 elementCount)
+        where T
+            : struct
+            , IVertexType;
 
         /// <summary>
         /// todo
         /// </summary>
-        //void GetData<T> (
-        //    T[] data,
-        //    Int32 startIndex,
-        //    Int32 elementCount)
-        //    where T: struct, IVertexType;
+        T[] GetData<T> (
+            Int32 startIndex,
+            Int32 elementCount)
+        where T
+            : struct
+            , IVertexType;
         
         /// <summary>
         /// todo
         /// </summary>
-        //void SetData<T> (
-        //    Int32 offsetInBytes, 
-        //    T[] data, 
-        //    Int32 startIndex, 
-        //    Int32 elementCount, 
-        //    Int32 vertexStride) 
-        //    where T: struct, IVertexType;
+        void SetRawData (
+            Byte[] data, 
+            Int32 startIndex, 
+            Int32 elementCount);
         
         /// <summary>
         /// todo
         /// </summary>
-        //void GetData<T> (
-        //    Int32 offsetInBytes, 
-        //    T[] data, 
-        //    Int32 startIndex, 
-        //    Int32 elementCount, 
-        //    Int32 vertexStride) 
-        //    where T: struct, IVertexType;
+        Byte[] GetRawData (
+            Int32 startIndex, 
+            Int32 elementCount);
     }
 
     /// <summary>
@@ -680,41 +682,38 @@ namespace Sungiant.Cor
         /// <summary>
         /// todo
         /// </summary>
-        //void GetData(Int32[] data);
+        void GetData(Int32[] data);
 
         /// <summary>
         /// todo
         /// </summary>
-        //void SetData(
-        //    Int16[] data, 
-        //    Int32 startIndex, 
-        //    Int32 elementCount);
+        void SetData(
+            Int32[] data, 
+            Int32 startIndex, 
+            Int32 elementCount);
 
         /// <summary>
         /// todo
         /// </summary>
-        //void GetData(
-        //    Int16[] data, 
-        //    Int32 startIndex, 
-        //    Int32 elementCount);
+        void GetData(
+            Int32[] data, 
+            Int32 startIndex, 
+            Int32 elementCount);
 
         /// <summary>
         /// todo
         /// </summary>
-        //void GetData(
-        //    Int32 offsetInBytes, 
-        //    Int16[] data, 
-        //    Int32 startIndex, 
-        //    Int32 elementCount);
+        void SetRawData(
+            Byte[] data, 
+            Int32 startIndex, 
+            Int32 elementCount);
 
         /// <summary>
         /// todo
         /// </summary>
-        //void SetData(
-        //    Int32 offsetInBytes, 
-        //    Int16[] data, 
-        //    Int32 startIndex, 
-        //    Int32 elementCount);
+        Byte[] GetRawData(
+            Int32 startIndex, 
+            Int32 elementCount);
     }
 
     /// <summary>
@@ -4569,7 +4568,6 @@ namespace Sungiant.Cor
         }
     }
 
-
     // test reading lists containing different items from a chain of inheritance.
     class ListSerialiser<T>
         : AssetTypeSerialiser<List<T>>
@@ -4883,7 +4881,6 @@ namespace Sungiant.Cor
         }
     }
 
-
     class Rgba32Serialiser
         : AssetTypeSerialiser<Rgba32>
     {
@@ -5054,6 +5051,117 @@ namespace Sungiant.Cor
             abw.Write(obj.Y);
             abw.Write(obj.Z);
             abw.Write(obj.W);
+        }
+    }
+
+    class VertexDeclarationSerialiser
+        : AssetTypeSerialiser<VertexDeclaration>
+    {
+        AssetTypeSerialiser<VertexElement> vertexElementSerialiser;
+
+        internal VertexDeclarationSerialiser () {}
+
+        protected internal override void Initialise(AssetTypeSerialiserManager manager)
+        {
+            vertexElementSerialiser = manager.GetTypeSerialiser<VertexElement>();
+        }
+
+        protected internal override VertexDeclaration Read(AssetBinaryReader abr)
+        {
+            var elementCount = abr.ReadUInt32();
+
+            VertexElement[] elements = new VertexElement[elementCount];
+            
+            for (UInt32 i = 0; i < elementCount; ++i)
+            {
+                VertexElement element = vertexElementSerialiser.Read(abr);
+
+                elements[i] = element;
+            }
+
+            return new VertexDeclaration(elements);
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, VertexDeclaration obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class VertexElementSerialiser
+        : AssetTypeSerialiser<VertexElement>
+    {
+        AssetTypeSerialiser<VertexElementFormat> formatSerialiser;
+        AssetTypeSerialiser<VertexElementUsage> usageSerialiser;
+
+        internal VertexElementSerialiser () {}
+
+        protected internal override void Initialise(AssetTypeSerialiserManager manager)
+        {
+            formatSerialiser = manager.GetTypeSerialiser<VertexElementFormat>();
+            usageSerialiser = manager.GetTypeSerialiser<VertexElementUsage>();
+        }
+
+        protected internal override VertexElement Read(AssetBinaryReader abr)
+        {
+            Int32 offset = abr.ReadInt32();
+
+            VertexElementFormat elementFormat = formatSerialiser.Read(abr);
+            VertexElementUsage elementUsage = usageSerialiser.Read(abr);
+
+            Int32 usageIndex = abr.ReadInt32();
+
+            return new VertexElement(offset, elementFormat, elementUsage, usageIndex);
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, VertexElement obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+
+    class GeometryBufferSerialiser
+        : AssetTypeSerialiser<IGeometryBuffer>
+    {
+        AssetTypeSerialiser<VertexDeclaration> vertexDeclSerialiser;
+
+        internal GeometryBufferSerialiser () {}
+
+        protected internal override void Initialise(AssetTypeSerialiserManager manager)
+        {
+            vertexDeclSerialiser = manager.GetTypeSerialiser<VertexDeclaration>();
+        }
+
+        protected internal override IGeometryBuffer Read(AssetBinaryReader abr)
+        {
+            VertexDeclaration declaration = vertexDeclSerialiser.Read(abr);
+            Int32 vertexCount = abr.ReadInt32();
+
+            Byte[] vertData = abr.ReadBytes(vertexCount * declaration.VertexStride);
+            
+            Int32 indexCount = abr.ReadInt32();
+
+            Byte[] indexData = abr.ReadBytes(vertexCount * sizeof(Int32));
+            
+            IGraphicsManager gfx = null;
+            
+            IGeometryBuffer buffer = gfx.CreateGeometryBuffer (
+                declaration,
+                vertexCount,
+                indexCount );
+
+            buffer.VertexBuffer.SetRawData (vertData, 0, vertexCount);
+
+            buffer.IndexBuffer.SetRawData (indexData, 0, indexCount);
+            
+            return buffer;
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, IGeometryBuffer obj)
+        {
+            throw new NotImplementedException();
         }
     }
 

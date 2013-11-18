@@ -16,40 +16,37 @@
         /// <summary>
         /// todo
         /// </summary>
-        //void GetData(Int32[] data);
+        void GetData(Int32[] data);
 
         /// <summary>
         /// todo
         /// </summary>
-        //void SetData(
-        //    Int16[] data, 
-        //    Int32 startIndex, 
-        //    Int32 elementCount);
+        void SetData(
+            Int32[] data, 
+            Int32 startIndex, 
+            Int32 elementCount);
 
         /// <summary>
         /// todo
         /// </summary>
-        //void GetData(
-        //    Int16[] data, 
-        //    Int32 startIndex, 
-        //    Int32 elementCount);
+        void GetData(
+            Int32[] data, 
+            Int32 startIndex, 
+            Int32 elementCount);
 
         /// <summary>
         /// todo
         /// </summary>
-        //void GetData(
-        //    Int32 offsetInBytes, 
-        //    Int16[] data, 
-        //    Int32 startIndex, 
-        //    Int32 elementCount);
+        void SetRawData(
+            Byte[] data, 
+            Int32 startIndex, 
+            Int32 elementCount);
 
         /// <summary>
         /// todo
         /// </summary>
-        //void SetData(
-        //    Int32 offsetInBytes, 
-        //    Int16[] data, 
-        //    Int32 startIndex, 
-        //    Int32 elementCount);
+        Byte[] GetRawData(
+            Int32 startIndex, 
+            Int32 elementCount);
     }
 

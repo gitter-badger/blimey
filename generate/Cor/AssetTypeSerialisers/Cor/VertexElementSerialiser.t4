@@ -1,0 +1,34 @@
+    class VertexElementSerialiser
+        : AssetTypeSerialiser<VertexElement>
+    {
+        AssetTypeSerialiser<VertexElementFormat> formatSerialiser;
+        AssetTypeSerialiser<VertexElementUsage> usageSerialiser;
+
+        internal VertexElementSerialiser () {}
+
+        protected internal override void Initialise(AssetTypeSerialiserManager manager)
+        {
+            formatSerialiser = manager.GetTypeSerialiser<VertexElementFormat>();
+            usageSerialiser = manager.GetTypeSerialiser<VertexElementUsage>();
+        }
+
+        protected internal override VertexElement Read(AssetBinaryReader abr)
+        {
+            Int32 offset = abr.ReadInt32();
+
+            VertexElementFormat elementFormat = formatSerialiser.Read(abr);
+            VertexElementUsage elementUsage = usageSerialiser.Read(abr);
+
+            Int32 usageIndex = abr.ReadInt32();
+
+            return new VertexElement(offset, elementFormat, elementUsage, usageIndex);
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, VertexElement obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+
