@@ -467,4 +467,373 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
         }
     }
 
+    public sealed class VertexBuffer
+        : IVertexBuffer
+        , IDisposable
+    {
+        static Int32 resourceCounter;
+
+        readonly VertexDeclaration vertDecl;
+
+        readonly Int32 vertexCount;
+
+        UInt32 bufferHandle;
+
+        BufferTarget type;
+        BufferUsageHint bufferUsage;
+
+        public VertexBuffer (VertexDeclaration vd, Int32 vertexCount)
+        {
+            this.vertDecl = vd;
+            this.vertexCount = vertexCount;
+
+            this.type = BufferTarget.ArrayBuffer;
+
+            this.bufferUsage = BufferUsageHint.DynamicDraw;
+
+            GL.GenBuffers(1, out this.bufferHandle);
+            ErrorHandler.Check();
+
+
+            if( this.bufferHandle == 0 )
+            {
+                throw new Exception("Failed to generate vert buffer.");
+            }
+            
+
+            this.Activate();
+
+            GL.BufferData(
+                this.type,
+                (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
+                (System.IntPtr) null,
+                this.bufferUsage);
+
+            ErrorHandler.Check();
+
+            resourceCounter++;
+
+        }
+
+        internal void Activate()
+        {
+            GL.BindBuffer(this.type, this.bufferHandle);
+            ErrorHandler.Check();
+        }
+
+        internal void Deactivate()
+        {
+            GL.BindBuffer(this.type, 0);
+            ErrorHandler.Check();
+        }
+
+        ~VertexBuffer()
+        {
+            CleanUpNativeResources();
+        }
+
+        void CleanUpManagedResources()
+        {
+
+        }
+
+        void CleanUpNativeResources()
+        {
+            GL.DeleteBuffers(1, ref this.bufferHandle);
+            ErrorHandler.Check();
+
+            bufferHandle = 0;
+
+            resourceCounter--;
+        }
+
+        public void Dispose()
+        {
+            CleanUpManagedResources();
+            CleanUpNativeResources();
+            GC.SuppressFinalize(this);
+        }
+
+        public Int32 VertexCount
+        {
+            get
+            {
+                return this.vertexCount;
+            }
+        }
+
+        public VertexDeclaration VertexDeclaration 
+        {
+            get
+            {
+                return this.vertDecl;
+            }
+        } 
+
+        public void SetData<T> (T[] data)
+        where T
+            : struct
+            , IVertexType
+        {
+            this.SetData(data, 0, this.vertexCount);
+        }
+
+        public T[] GetData<T> ()
+        where T
+            : struct
+            , IVertexType
+        { 
+            return this.GetData<T> (0, this.vertexCount);
+        }
+ 
+        public void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount)
+        where T
+            : struct
+            , IVertexType
+        {
+            if( data.Length != vertexCount )
+            {
+                throw new Exception("?");
+            }
+            
+            this.Activate();
+
+            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
+            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
+            // then content of data are copied to the allocated data store.  The contents of the buffer object data
+            // store can be initialized or updated using the glBufferSubData FN
+            GL.BufferSubData(
+                this.type,
+                (System.IntPtr) (this.vertDecl.VertexStride * startIndex),
+                (System.IntPtr) (this.vertDecl.VertexStride * elementCount),
+                data);
+
+            ErrorHandler.Check();
+        }
+        
+        public T[] GetData<T> (Int32 startIndex, Int32 elementCount)
+        where T
+            : struct
+            , IVertexType
+        {
+            throw new System.NotSupportedException();
+        }
+
+        public void SetRawData (
+            Byte[] data,
+            Int32 startIndex, 
+            Int32 elementCount)
+        {
+            this.Activate();
+
+            GL.BufferSubData(
+                this.type,
+                (System.IntPtr) (this.vertDecl.VertexStride * startIndex),
+                (System.IntPtr) (this.vertDecl.VertexStride * elementCount),
+                data);
+
+            ErrorHandler.Check();
+        }
+        
+        public Byte[] GetRawData (
+            Int32 startIndex,
+            Int32 elementCount)
+        {
+            throw new System.NotSupportedException();
+        }
+    }
+
+    public sealed class IndexBuffer
+        : IIndexBuffer
+        , IDisposable
+    {
+        static Int32 resourceCounter;
+
+        Int32 indexCount;
+        BufferTarget type;
+        UInt32 bufferHandle;
+        BufferUsageHint bufferUsage;
+
+        public IndexBuffer (Int32 indexCount)
+        {
+            this.indexCount = indexCount;
+
+            this.type = BufferTarget.ElementArrayBuffer;
+
+            this.bufferUsage = BufferUsageHint.DynamicDraw;
+
+            GL.GenBuffers(1, out this.bufferHandle);
+            
+            ErrorHandler.Check();
+
+            if( this.bufferHandle == 0 )
+            {
+                throw new Exception("Failed to generate vert buffer.");
+            }
+
+            this.Activate();
+
+            GL.BufferData(
+                this.type,
+                (System.IntPtr) (sizeof(UInt16) * this.indexCount),
+                (System.IntPtr) null,
+                this.bufferUsage);
+
+            ErrorHandler.Check();
+
+            resourceCounter++;
+
+        }
+
+        ~IndexBuffer()
+        {
+            CleanUpNativeResources();
+        }
+
+        void CleanUpManagedResources()
+        {
+
+        }
+
+        void CleanUpNativeResources()
+        {
+            GL.DeleteBuffers(1, ref this.bufferHandle);
+            ErrorHandler.Check();
+
+            bufferHandle = 0;
+
+            resourceCounter--;
+        }
+
+        public void Dispose()
+        {
+            CleanUpManagedResources();
+            CleanUpNativeResources();
+            GC.SuppressFinalize(this);
+        }
+
+        internal void Activate()
+        {
+            GL.BindBuffer(this.type, this.bufferHandle);
+            ErrorHandler.Check();
+        }
+
+        internal void Deactivate()
+        {
+            GL.BindBuffer(this.type, 0);
+            ErrorHandler.Check();
+        }
+
+        public int IndexCount
+        {
+            get
+            {
+                return indexCount;
+            }
+        }
+
+
+        public void SetData (Int32[] data)
+        {
+
+            if( data.Length != indexCount )
+            {
+                throw new Exception("?");
+            }
+
+            UInt16[] udata = new UInt16[data.Length];
+
+            for(Int32 i = 0; i < data.Length; ++i)
+            {
+                udata[i] = (UInt16) data[i];
+            }
+            
+            this.Activate();
+
+            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
+            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
+            // then content of data are copied to the allocated data store.  The contents of the buffer object data
+            // store can be initialized or updated using the glBufferSubData FN
+            GL.BufferSubData(
+                this.type,
+                (System.IntPtr) 0,
+                (System.IntPtr) (sizeof(UInt16) * this.indexCount),
+                udata);
+
+            udata = null;
+
+            ErrorHandler.Check();
+        }
+
+        public void GetData(Int32[] data)
+        {
+            throw new NotImplementedException();    
+        }
+
+        public void SetData(Int32[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
+
+        public void GetData(Int32[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
+
+        public void SetRawData(Byte[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
+
+        public Byte[] GetRawData(Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();    
+        }
+    }
+
+    public sealed class GeometryBuffer
+        : IGeometryBuffer
+    {
+        IndexBuffer _iBuf;
+        VertexBuffer _vBuf;
+        
+        public GeometryBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount, Int32 indexCount)
+        {
+
+            if(vertexCount == 0)
+            {
+                throw new Exception("A geometry buffer must have verts");
+            }
+
+            if( indexCount != 0 )
+            {
+                _iBuf = new IndexBuffer(indexCount);
+            }
+
+            _vBuf = new VertexBuffer(vertexDeclaration, vertexCount);
+
+        }
+
+        internal void Activate()
+        {
+            _vBuf.Activate();
+
+            if( _iBuf != null )
+                _iBuf.Activate();
+        }
+
+        internal void Deactivate()
+        {
+            _vBuf.Deactivate();
+
+            if( _iBuf != null )
+                _iBuf.Deactivate();
+        }
+
+        public IVertexBuffer VertexBuffer { get { return _vBuf; } }
+        public IIndexBuffer IndexBuffer { get { return _iBuf; } }
+
+        internal VertexBuffer OpenTKVertexBuffer { get { return _vBuf; } }
+    }
+
 }

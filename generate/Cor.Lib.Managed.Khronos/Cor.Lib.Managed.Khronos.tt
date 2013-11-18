@@ -53,4 +53,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
 {
 <#@ include file="ErrorHandler.t4"#>
 <#@ include file="ShaderUtils.t4"#>
+<#@ include file="VertexBuffer.t4"#>
+<#@ include file="IndexBuffer.t4"#>
+<#@ include file="GeometryBuffer.t4"#>
 }
