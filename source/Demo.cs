@@ -1,4 +1,4 @@
-// ┌────────────────────────────────────────────────────────────────────────┐ \\
+﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ Cor! - Low Level 3D App Engine                                         │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Brought to you by:                                                     │ \\
@@ -33,77 +33,30 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
-using Sungiant.Abacus;
-using Sungiant.Abacus.SinglePrecision;
-using Sungiant.Abacus.Packed;
+using Abacus;
+using Abacus.SinglePrecision;
+using Abacus.Packed;
 using Sungiant.Cor;
 using System.Collections.Generic;
 
 namespace Sungiant.Cor.Demo
 {
-    public static class CustomShape_PositionColour
+    public static class Demo
     {
+        public static IApp GetEntryPoint() { return basicApp; }
+        public static AppSettings GetAppSettings() { return appSettings; }
+        static IApp basicApp;
+        static AppSettings appSettings;
 
-        public static VertexPositionColour[] VertArray
+        static Demo()
         {
-            get
-            {
-                return new VertexPositionColour[]
-                {
-                    new VertexPositionColour( new Vector3(0.0f, 0.0f, 0.0f), RandomColours.GetNext() ),
-                    // Top
-                    new VertexPositionColour( new Vector3(-0.2f, 0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.2f, 0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.0f, 0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.0f, 1.0f, 0.0f), RandomColours.GetNext() ),
-                    // Bottom
-                    new VertexPositionColour( new Vector3(-0.2f, -0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.2f, -0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.0f, -0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.0f, -1.0f, 0.0f), RandomColours.GetNext() ),
-                    // Left
-                    new VertexPositionColour( new Vector3(-0.8f, -0.2f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(-0.8f, 0.2f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(-0.8f, 0.0f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(-1.0f, 0.0f, 0.0f), RandomColours.GetNext() ),
-                    // Right
-                    new VertexPositionColour( new Vector3(0.8f, -0.2f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.8f, 0.2f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.8f, 0.0f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(1.0f, 0.0f, 0.0f), RandomColours.GetNext() ),
-                };
-            }
-        }
-        
-        public static Int32[] IndexArray
-        {
-            get
-            {
-                return new Int32[] {
-                    // Top
-                    0, 1, 3,
-                    0, 3, 2,
-                    3, 1, 4,
-                    3, 4, 2,
-                    // Bottom
-                    0, 7, 5,
-                    0, 6, 7,
-                    7, 8, 5,
-                    7, 6, 8,
-                    // Left
-                    0, 9, 11,
-                    0, 11, 10,
-                    11, 9, 12,
-                    11, 12, 10,
-                    // Right
-                    0, 15, 13, 
-                    0, 14, 15,
-                    15, 16, 13,
-                    15, 14, 16
-                };
-            }
-        }
+			appSettings = new AppSettings ("COR-DEMO") {
+				FullScreen = true,
+				MouseGeneratesTouches = true
+			};
 
+            basicApp = new BasicApp();
+        }
     }
 }
 

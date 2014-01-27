@@ -33,9 +33,9 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
-using Sungiant.Abacus;
-using Sungiant.Abacus.SinglePrecision;
-using Sungiant.Abacus.Packed;
+using Abacus;
+using Abacus.SinglePrecision;
+using Abacus.Packed;
 using Sungiant.Cor;
 using System.Collections.Generic;
 
@@ -77,7 +77,7 @@ namespace Sungiant.Cor.Demo
             }
             Vector3 a = Vector3.Backward;
 
-            Single delta = Sungiant.Abacus.RealMaths.Sin(time.Elapsed);
+            Single delta = Abacus.RealMaths.Sin(time.Elapsed);
 
             Matrix44.CreateFromAxisAngle(ref a, delta,  out this.rotation1);
 
