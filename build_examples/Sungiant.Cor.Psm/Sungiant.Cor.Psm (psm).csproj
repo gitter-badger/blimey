@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{364DAF31-EDB5-4022-BBAA-D941316FE607}</ProjectGuid>
+    <ProjectTypeGuids>{69878862-DA7D-4DC6-B0A1-50D8FAB4242F};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Sungiant.Cor.Psm</RootNamespace>
+    <AssemblyName>Sungiant.Cor.Psm</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Sce.PlayStation.Core" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Sce\Sce.Psm.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Properties\" />
+    <Folder Include="Shaders\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\Properties.cs" />
+    <Compile Include="..\..\source\Convert.cs">
+      <Link>Convert.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Engine.cs">
+      <Link>Engine.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\GeometryBuffer.cs">
+      <Link>GeometryBuffer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\GpuUtils.cs">
+      <Link>GpuUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\GraphicsManager.cs">
+      <Link>GraphicsManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\IndexBuffer.cs">
+      <Link>IndexBuffer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\InputManager.cs">
+      <Link>InputManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\PixelLit_PositionNormal.cs">
+      <Link>PixelLit_PositionNormal.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\ResourceManager.cs">
+      <Link>ResourceManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\SystemManager.cs">
+      <Link>SystemManager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\TouchScreen.cs">
+      <Link>TouchScreen.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Unlit_Position.cs">
+      <Link>Unlit_Position.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Unlit_PositionColour.cs">
+      <Link>Unlit_PositionColour.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Unlit_PositionColourTexture.cs">
+      <Link>Unlit_PositionColourTexture.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Unlit_PositionTexture.cs">
+      <Link>Unlit_PositionTexture.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\VertexBuffer.cs">
+      <Link>VertexBuffer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\VertexLit_PositionNormal.cs">
+      <Link>VertexLit_PositionNormal.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\VitaControllerImplementation.cs">
+      <Link>VitaControllerImplementation.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ShaderProgram Include="..\..\source\Shaders\BlinnPhong.fcg">
+      <Link>Shaders\BlinnPhong.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\BlinnPhong.vcg">
+      <Link>Shaders\BlinnPhong.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\BumpMap.fcg">
+      <Link>Shaders\BumpMap.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\BumpMap.vcg">
+      <Link>Shaders\BumpMap.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Fog.fcg">
+      <Link>Shaders\Fog.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Fog.vcg">
+      <Link>Shaders\Fog.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\GlossMap.fcg">
+      <Link>Shaders\GlossMap.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\GlossMap.vcg">
+      <Link>Shaders\GlossMap.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Gouraud.fcg">
+      <Link>Shaders\Gouraud.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Gouraud.vcg">
+      <Link>Shaders\Gouraud.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\MultiTexture.fcg">
+      <Link>Shaders\MultiTexture.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\MultiTexture.vcg">
+      <Link>Shaders\MultiTexture.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Phong.fcg">
+      <Link>Shaders\Phong.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Phong.vcg">
+      <Link>Shaders\Phong.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\ProjectionShadow.fcg">
+      <Link>Shaders\ProjectionShadow.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\ProjectionShadow.vcg">
+      <Link>Shaders\ProjectionShadow.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\ShadowMap.vcg">
+      <Link>Shaders\ShadowMap.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Simple.fcg">
+      <Link>Shaders\Simple.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Simple.vcg">
+      <Link>Shaders\Simple.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\SimpleSprite.fcg">
+      <Link>Shaders\SimpleSprite.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\SimpleSprite.vcg">
+      <Link>Shaders\SimpleSprite.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Texture.fcg">
+      <Link>Shaders\Texture.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Texture.vcg">
+      <Link>Shaders\Texture.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Toon.fcg">
+      <Link>Shaders\Toon.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Toon.vcg">
+      <Link>Shaders\Toon.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Unlit_Position.fcg">
+      <Link>Shaders\Unlit_Position.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Unlit_Position.vcg">
+      <Link>Shaders\Unlit_Position.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Unlit_PositionColour.fcg">
+      <Link>Shaders\Unlit_PositionColour.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Unlit_PositionColour.vcg">
+      <Link>Shaders\Unlit_PositionColour.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Unlit_PositionColourTexture.fcg">
+      <Link>Shaders\Unlit_PositionColourTexture.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Unlit_PositionColourTexture.vcg">
+      <Link>Shaders\Unlit_PositionColourTexture.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Unlit_PositionTexture.fcg">
+      <Link>Shaders\Unlit_PositionTexture.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\Unlit_PositionTexture.vcg">
+      <Link>Shaders\Unlit_PositionTexture.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\VertexColor.fcg">
+      <Link>Shaders\VertexColor.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\VertexColor.vcg">
+      <Link>Shaders\VertexColor.vcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\VertexLighting.fcg">
+      <Link>Shaders\VertexLighting.fcg</Link>
+    </ShaderProgram>
+    <ShaderProgram Include="..\..\source\Shaders\VertexLighting.vcg">
+      <Link>Shaders\VertexLighting.vcg</Link>
+    </ShaderProgram>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus %28psm%29.csproj">
+      <Project>{D7DE17E0-DD0E-4AE2-9596-E9BD352DC92D}</Project>
+      <Name>Sungiant.Abacus (psm)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\cor\build_examples\Sungiant.Cor\Sungiant.Cor %28psm%29.csproj">
+      <Project>{2375F7C7-85D4-4E6C-8EDF-20FE1E21CC63}</Project>
+      <Name>Sungiant.Cor (psm)</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
