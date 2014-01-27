@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>12.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D5DF7BE7-78FC-46FA-BC7B-C1DA12B5CEB2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Cor.StubPlatform</RootNamespace>
+    <AssemblyName>Cor.StubPlatform</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\source\Cor.Platform.Stub.cs">
+      <Link>Cor.Platform.Stub.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus %28net40%29.csproj">
+      <Project>{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}</Project>
+      <Name>Sungiant.Abacus (net40)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\cor\build_examples\Sungiant.Cor\Sungiant.Cor %28net40%29.csproj">
+      <Project>{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}</Project>
+      <Name>Sungiant.Cor (net40)</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,37 @@
+    public class StubScreenSpecification
+        : IScreenSpecification
+    {
+        Int32 width = 800;
+        Int32 height = 600;
+
+        public StubScreenSpecification()
+        {
+            InternalUtils.Log.Info(
+                "StubScreenSpecification -> ()");
+        }
+
+        #region IScreenSpecification
+
+        public virtual Int32 ScreenResolutionWidth
+        {
+            get { return width; }
+        }
+
+        public virtual Int32 ScreenResolutionHeight
+        {
+            get { return height; }
+        }
+
+        public Single ScreenResolutionAspectRatio
+        {
+            get
+            {
+                return
+                    (Single)this.ScreenResolutionWidth /
+                    (Single)this.ScreenResolutionHeight;
+            }
+        }
+
+        #endregion
+    }
+

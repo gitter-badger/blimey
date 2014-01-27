@@ -1,0 +1,50 @@
+    public class StubInputManager
+        : IInputManager
+    {
+        readonly IXbox360Gamepad xbox360Gamepad = new StubXbox360Gamepad();
+        readonly IPsmGamepad psmGamepad = new StubPsmGamepad();
+        readonly IMultiTouchController multiTouchController = new StubMultiTouchController();
+        readonly IGenericGamepad genericGamepad = new StubGenericGamepad();
+        readonly IKeyboard keyboard = new StubKeyboard();
+        readonly IMouse mouse = new StubMouse();
+
+        public StubInputManager()
+        {
+            InternalUtils.Log.Info("StubInputManager -> ()");
+        }
+
+        #region IInputManager
+
+        public IXbox360Gamepad Xbox360Gamepad
+        {
+            get { return xbox360Gamepad; }
+        }
+
+        public IPsmGamepad PsmGamepad
+        {
+            get { return psmGamepad; }
+        }
+
+        public IMultiTouchController MultiTouchController
+        {
+            get { return multiTouchController; }
+        }
+
+        public IGenericGamepad GenericGamepad
+        {
+            get { return genericGamepad; }
+        }
+
+        public IKeyboard Keyboard
+        {
+            get { return keyboard; }
+        }
+
+        public IMouse Mouse
+        {
+            get { return mouse; }
+        }
+
+        #endregion
+    }
+
