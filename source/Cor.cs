@@ -42,10 +42,10 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 
-using Sungiant.Abacus;
-using Sungiant.Abacus.Packed;
-using Sungiant.Abacus.SinglePrecision;
-using Sungiant.Abacus.Int32Precision;
+using Abacus;
+using Abacus.Packed;
+using Abacus.SinglePrecision;
+using Abacus.Int32Precision;
 
 namespace Sungiant.Cor
 {
@@ -1257,9 +1257,9 @@ namespace Sungiant.Cor
                 case VertexElementFormat.NormalisedShort4: 
                     return typeof(NormalisedShort4);
                 //case VertexElementFormat.HalfVector2: 
-                //    return typeof(Sungiant.Abacus.HalfPrecision.Vector2);
+                //    return typeof(Abacus.HalfPrecision.Vector2);
                 //case VertexElementFormat.HalfVector4: 
-                //    return typeof(Sungiant.Abacus.HalfPrecision.Vector4);
+                //    return typeof(Abacus.HalfPrecision.Vector4);
             }
 
             throw new NotSupportedException();

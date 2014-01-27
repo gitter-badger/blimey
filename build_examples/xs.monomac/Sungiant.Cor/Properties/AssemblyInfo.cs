@@ -39,14 +39,12 @@ using System.Runtime.InteropServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("Sungiant.Cor")]
+[assembly: AssemblyDescription("Sungiant.Cor, built with Xamarin Studio, targetting MonoMac.")]
 [assembly: ComVisible(false)]
 [assembly: AssemblyVersion("0.0.0.1")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: CLSCompliant(true)]
 
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.Xios")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.Xna4")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.Psm")]
 [assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.MonoMac")]
 [assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Stub")]
 [assembly: InternalsVisibleTo("Sungiant.Cor.Lib.Managed.Khronos")]
