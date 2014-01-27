@@ -1,0 +1,64 @@
+    public sealed class MonoMacApp
+        : IDisposable
+    {
+        MacGameNSWindow mainWindow;
+        OpenGLView openGLView;
+        readonly AppSettings settings;
+        readonly IApp entryPoint;
+
+        public MonoMacApp(AppSettings settings, IApp entryPoint)
+        {
+            this.settings = settings;
+            this.entryPoint = entryPoint;
+        }
+
+        void InitializeMainWindow()
+        {
+            RectangleF frame = new RectangleF(
+                0, 0,
+                800,
+                600);
+
+            mainWindow = new MacGameNSWindow(
+                frame,
+                NSWindowStyle.Titled | NSWindowStyle.Closable | NSWindowStyle.Miniaturizable,
+                NSBackingStore.Buffered,
+                true);
+
+            mainWindow.WindowController = new NSWindowController(mainWindow);
+            mainWindow.Delegate = new MainWindowDelegate(this);
+
+            mainWindow.IsOpaque = true;
+            mainWindow.EnableCursorRects();
+            mainWindow.AcceptsMouseMovedEvents = false;
+            mainWindow.Center();
+
+            openGLView = new OpenGLView(this.settings, this.entryPoint, frame);
+
+            mainWindow.ContentView.AddSubview(openGLView);
+
+            mainWindow.MakeKeyAndOrderFront(mainWindow);
+            
+            openGLView.StartRunLoop(60f);
+        }
+
+        public void Run()
+        {
+            InitializeMainWindow();
+        }
+
+        public void Dispose()
+        {
+            // No need to dispose openGLView or mainWindow.  They will be released by the
+            // nearest NSAutoreleasePool.
+        }
+
+        float GetTitleBarHeight()
+        {
+            RectangleF contentRect = NSWindow.ContentRectFor(
+                mainWindow.Frame, mainWindow.StyleMask);
+
+            return mainWindow.Frame.Height - contentRect.Height;
+        }
+    }
+

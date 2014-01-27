@@ -1,0 +1,153 @@
+    public static partial class CorShaders
+    {
+        public static IShader CreateUnlit()
+        {
+            var parameter = new ShaderDefinition()
+            {
+                Name = "Unlit",
+                PassNames = new List<string>() { "Main" },
+                InputDefinitions = new List<ShaderInputDefinition>()
+                {
+                    new ShaderInputDefinition()
+                    {
+                        Name = "a_vertPos",
+                        Type = typeof(Vector3),
+                        Usage = VertexElementUsage.Position,
+                        DefaultValue = Vector3.Zero,
+                        Optional = false,
+                    },
+                    new ShaderInputDefinition()
+                    {
+                        Name = "a_vertTexcoord",
+                        Type = typeof(Vector2),
+                        Usage = VertexElementUsage.TextureCoordinate,
+                        DefaultValue = Vector2.Zero,
+                        Optional = true,
+                    },
+                    new ShaderInputDefinition()
+                    {
+                        Name = "a_vertColour",
+                        Type = typeof(Rgba32),
+                        Usage = VertexElementUsage.Colour,
+                        DefaultValue = Rgba32.White,
+                        Optional = true,
+                    },
+                },
+                SamplerDefinitions = new List<ShaderSamplerDefinition>()
+                {
+                    new ShaderSamplerDefinition()
+                    {
+                        NiceName = "TextureSampler",
+                        Name = "s_tex0",
+                        Optional = true,
+                    }
+                },
+                VariableDefinitions = new List<ShaderVariableDefinition>()
+                {
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "MaterialColour",
+                        Name = "u_colour",
+                        Type = typeof(Rgba32),
+                        DefaultValue = Rgba32.White,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "World",
+                        Name = "u_world",
+                        Type = typeof(Matrix44),
+                        DefaultValue = Matrix44.Identity,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "View",
+                        Name = "u_view",
+                        Type = typeof(Matrix44),
+                        DefaultValue = Matrix44.Identity,
+                    },
+                    new ShaderVariableDefinition()
+                    {
+                        NiceName = "Projection",
+                        Name = "u_proj",
+                        Type = typeof(Matrix44),
+                        DefaultValue = Matrix44.Identity,
+                    },
+                },
+                VariantDefinitions = new List<ShaderVariantDefinition>()
+                {
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "Unlit_Position",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/Unlit_Position.vsh",
+                                    PixelShaderPath = "shaders/Unlit_Position.fsh",
+                                },
+                            },
+                        },
+                    },
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "Unlit_PositionTexture",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/Unlit_PositionTexture.vsh",
+                                    PixelShaderPath = "shaders/Unlit_PositionTexture.fsh",
+                                },
+                            },
+                        },
+                    },
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "Unlit_PositionColour",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/Unlit_PositionColour.vsh",
+                                    PixelShaderPath = "shaders/Unlit_PositionColour.fsh",
+                                },
+                            },
+                        },
+                    },
+                    new ShaderVariantDefinition()
+                    {
+                        VariantName = "Unlit_PositionTextureColour",
+                        VariantPassDefinitions = new List<ShaderVarientPassDefinition>()
+                        {
+                            new ShaderVarientPassDefinition()
+                            {
+                                PassName = "Main",
+                                PassDefinition = new OpenGLShaderDefinition()
+                                {
+                                    VertexShaderPath = "shaders/Unlit_PositionTextureColour.vsh",
+                                    PixelShaderPath = "shaders/Unlit_PositionTextureColour.fsh",
+                                },
+                            },
+                        },
+                    },
+                },
+            };
+
+
+            var s = new Shader (parameter);
+
+            InternalUtils.Log.Info(s.ToString());
+
+            return s;
+        }
+    }
+

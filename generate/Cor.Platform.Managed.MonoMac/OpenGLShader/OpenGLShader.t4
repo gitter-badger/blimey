@@ -1,0 +1,295 @@
+    public sealed class OpenGLShader
+        : IDisposable
+    {
+        public List<OpenGLShaderInput> Inputs { get; private set; }
+        public List<OpenGLShaderVariable> Variables { get; private set; }
+        public List<OpenGLShaderSampler> Samplers { get; private set; }
+
+        internal string VariantName { get { return variantName; }}
+        Int32 programHandle;
+        Int32 fragShaderHandle;
+        Int32 vertShaderHandle;
+
+        // for debugging
+        string variantName;
+        string passName;
+
+        string pixelShaderPath;
+        string vertexShaderPath;
+
+        public override string ToString ()
+        {
+            //string a = Inputs.Select(x => x.Name).Join(", ");
+            //string b = Variables.Select(x => x.Name).Join(", ");
+
+            string a = string.Empty;
+
+            for(int i = 0; i < Inputs.Count; ++i)
+            {
+                a += Inputs[i].Name; if( i + 1 < Inputs.Count ) { a += ", "; }
+            }
+
+            string b = string.Empty;
+            for(int i = 0; i < Variables.Count; ++i)
+            {
+                b += Variables[i].Name; if( i + 1 < Variables.Count ) { b += ", "; }
+            }
+
+            return string.Format (
+                "[OpenGLShader: Variant {0}, Pass {1}: Inputs: [{2}], Variables: [{3}]]",
+                variantName,
+                passName,
+                a,
+                b);
+        }
+
+        internal void ValidateInputs(List<ShaderInputDefinition> definitions)
+        {
+            InternalUtils.Log.Info(string.Format ("Pass: {1} => ValidateInputs({0})", variantName, passName ));
+
+            // Make sure that this shader implements all of the non-optional defined inputs.
+            var nonOptionalDefinitions = definitions.Where(y => !y.Optional).ToList();
+
+            foreach(var definition in nonOptionalDefinitions)
+            {
+                var find = Inputs.Find(x => x.Name == definition.Name/* && x.Type == definition.Type */);
+
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+            }
+
+            // Make sure that every implemented input is defined.
+            foreach(var input in Inputs)
+            {
+                var find = definitions.Find(x => x.Name == input.Name
+                    /*&& (x.Type == input.Type || (x.Type == typeof(Rgba32) && input.Type == typeof(Vector4)))*/
+                    );
+
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+                else
+                {
+                    input.RegisterExtraInfo(find);
+                }
+            }
+        }
+
+        internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
+        {
+            InternalUtils.Log.Info(string.Format ("Pass: {1} => ValidateVariables({0})", variantName, passName ));
+
+
+            // Make sure that every implemented input is defined.
+            foreach(var variable in Variables)
+            {
+                var find = definitions.Find(
+                    x =>
+                    x.Name == variable.Name //&&
+                    //(x.Type == variable.Type || (x.Type == typeof(Rgba32) && variable.Type == typeof(Vector4)))
+                    );
+
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+                else
+                {
+                    variable.RegisterExtraInfo(find);
+                }
+            }
+        }
+
+        internal void ValidateSamplers(List<ShaderSamplerDefinition> definitions)
+        {
+            InternalUtils.Log.Info(string.Format ("Pass: {1} => ValidateSamplers({0})", variantName, passName ));
+
+            var nonOptionalSamplers = definitions.Where(y => !y.Optional).ToList();
+
+            foreach(var definition in nonOptionalSamplers)
+            {
+                var find = this.Samplers.Find(x => x.Name == definition.Name);
+
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+            }
+
+            // Make sure that every implemented input is defined.
+            foreach(var sampler in this.Samplers)
+            {
+                var find = definitions.Find(x => x.Name == sampler.Name);
+
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+                else
+                {
+                    sampler.RegisterExtraInfo(find);
+                }
+            }
+        }
+
+        /*
+        static void CheckVariableCompatibility(List<OpenGLShaderVariable> definedVariables )
+        {
+            throw new NotImplementedException();
+        }
+
+        static void CheckInputCompatibility(List<OpenGLShaderInput> definedInputs, Dictionary<string, global::MonoMac.OpenGL.ActiveAttribType> actualAttributes )
+        {
+            // make sure that the shader we just loaded will work with this shader definition
+            if( actualAttributes.Count != definedInputs.Count )
+            {
+                throw new Exception("shader doesn't implement definition");
+            }
+
+            foreach( var key in actualAttributes.Keys )
+            {
+                var item = definedInputs.Find(x => x.Name == key);
+
+                if( item == null )
+                {
+                    throw new Exception("shader doesn't implement definition - missing variable");
+                }
+
+                if( item.Type != EnumConverter.ToType( actualAttributes[key] ) )
+                {
+                    throw new Exception("shader doesn't implement definition - variable is of the wrong type");
+                }
+            }
+        }
+        */
+
+        static string GetResourcePath(string path)
+        {
+            string ext = Path.GetExtension(path);
+
+            string filename = path.Substring(0, path.Length - ext.Length);
+
+            var resourcePathname =
+                global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (
+                    filename,
+                    ext.Substring(1, ext.Length - 1)
+                );
+
+            if( resourcePathname == null )
+            {
+                throw new Exception("Resource [" + path + "] not found");
+            }
+
+            return resourcePathname;
+        }
+
+        internal OpenGLShader(String variantName, String passName, OpenGLShaderDefinition definition)
+        {
+            InternalUtils.Log.Info ("  Creating Pass Variant: " + variantName);
+            this.variantName = variantName;
+            this.passName = passName;
+            this.vertexShaderPath = definition.VertexShaderPath;
+            this.pixelShaderPath = definition.PixelShaderPath;
+
+            //Variables =
+            programHandle = ShaderUtils.CreateShaderProgram ();
+
+            vertShaderHandle = ShaderUtils.CreateVertexShader (GetResourcePath(this.vertexShaderPath));
+            fragShaderHandle = ShaderUtils.CreateFragmentShader (GetResourcePath(this.pixelShaderPath));
+
+            ShaderUtils.AttachShader (programHandle, vertShaderHandle);
+            ShaderUtils.AttachShader (programHandle, fragShaderHandle);
+
+        }
+
+        internal void BindAttributes(IList<String> orderedAttributes)
+        {
+            int index = 0;
+
+            foreach(var attName in orderedAttributes)
+            {
+                global::MonoMac.OpenGL.GL.BindAttribLocation(programHandle, index, attName);
+                ErrorHandler.Check();
+                bool success = ShaderUtils.LinkProgram (programHandle);
+                if (success)
+                {
+                    index++;
+                }
+
+            }
+        }
+
+        internal void Link()
+        {
+            // bind atts here
+            //ShaderUtils.LinkProgram (programHandle);
+
+            InternalUtils.Log.Info("  Finishing linking");
+
+            InternalUtils.Log.Info("  Initilise Attributes");
+            var attributes = ShaderUtils.GetAttributes(programHandle);
+
+            Inputs = attributes
+                .Select(x => new OpenGLShaderInput(programHandle, x))
+                .OrderBy(y => y.AttributeLocation)
+                .ToList();
+
+            String logInputs = "  Inputs : ";
+            foreach (var input in Inputs) {
+                logInputs += input.Name + ", ";
+            }
+            InternalUtils.Log.Info (logInputs);
+
+            InternalUtils.Log.Info("  Initilise Uniforms");
+            var uniforms = ShaderUtils.GetUniforms(programHandle);
+
+
+            Variables = uniforms
+                .Where(y =>
+                       y.Type != global::MonoMac.OpenGL.ActiveUniformType.Sampler2D &&
+                       y.Type != global::MonoMac.OpenGL.ActiveUniformType.SamplerCube)
+                .Select(x => new OpenGLShaderVariable(programHandle, x))
+                .OrderBy(z => z.UniformLocation)
+                .ToList();
+            String logVars = "  Variables : ";
+            foreach (var variable in Variables) {
+                logVars += variable.Name + ", ";
+            }
+            InternalUtils.Log.Info (logVars);
+
+            InternalUtils.Log.Info("  Initilise Samplers");
+            Samplers = uniforms
+                .Where(y =>
+                       y.Type == global::MonoMac.OpenGL.ActiveUniformType.Sampler2D ||
+                       y.Type == global::MonoMac.OpenGL.ActiveUniformType.SamplerCube)
+                .Select(x => new OpenGLShaderSampler(programHandle, x))
+                .OrderBy(z => z.UniformLocation)
+                .ToList();
+
+            #if DEBUG
+            ShaderUtils.ValidateProgram (programHandle);
+            #endif
+
+            ShaderUtils.DetachShader(programHandle, fragShaderHandle);
+            ShaderUtils.DetachShader(programHandle, vertShaderHandle);
+
+            ShaderUtils.DeleteShader(programHandle, fragShaderHandle);
+            ShaderUtils.DeleteShader(programHandle, vertShaderHandle);
+        }
+
+        public void Activate ()
+        {
+            global::MonoMac.OpenGL.GL.UseProgram (programHandle);
+            ErrorHandler.Check ();
+        }
+
+        public void Dispose()
+        {
+            ShaderUtils.DestroyShaderProgram(programHandle);
+            ErrorHandler.Check();
+        }
+    }
+
