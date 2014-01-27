@@ -98,17 +98,5 @@
       <Project>{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}</Project>
       <Name>Sungiant.Cor (xs.monomac)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\submodules\cor.lib.managed.khronos\build_examples\xs.monomac\Sungiant.Cor.Lib.Managed.Khronos\Sungiant.Cor.Lib.Managed.Khronos %28xs.monomac%29.csproj">
-      <Project>{ED7356DC-C1E3-4210-A4D9-26DCDD1DBBD3}</Project>
-      <Name>Sungiant.Cor.Lib.Managed.Khronos (xs.monomac)</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\submodules\cor.platform.managed.monomac\build_examples\xs.monomac\Sungiant.Cor.Platform.Managed.MonoMac\Sungiant.Cor.Platform.Managed.MonoMac %28xs.monomac%29.csproj">
-      <Project>{D61A79CF-39FB-45F2-A72D-714BE42FBFD6}</Project>
-      <Name>Sungiant.Cor.Platform.Managed.MonoMac (xs.monomac)</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\submodules\cor.platform.stub\build_examples\xs.monomac\Sungiant.Cor.Platform.Stub\Sungiant.Cor.Platform.Stub %28xs.monomac%29.csproj">
-      <Project>{F8F891BB-0FB2-4A55-B0C7-C637C1B4F8CC}</Project>
-      <Name>Sungiant.Cor.Platform.Stub (xs.monomac)</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>

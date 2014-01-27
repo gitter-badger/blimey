@@ -3,17 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacus (xs.monomac)", "..\..\submodules\abacus\build_examples\xs.monomac\Abacus (xs.monomac).csproj", "{97195993-2B6B-434B-8F2C-BD0A4BCDC70A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor (xs.monomac)", "..\..\submodules\cor\build_examples\xs.monomac\Sungiant.Cor\Sungiant.Cor (xs.monomac).csproj", "{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Lib.Managed.Khronos (xs.monomac)", "..\..\submodules\cor.lib.managed.khronos\build_examples\xs.monomac\Sungiant.Cor.Lib.Managed.Khronos\Sungiant.Cor.Lib.Managed.Khronos (xs.monomac).csproj", "{ED7356DC-C1E3-4210-A4D9-26DCDD1DBBD3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Platform.Stub (xs.monomac)", "..\..\submodules\cor.platform.stub\build_examples\xs.monomac\Sungiant.Cor.Platform.Stub\Sungiant.Cor.Platform.Stub (xs.monomac).csproj", "{F8F891BB-0FB2-4A55-B0C7-C637C1B4F8CC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Platform.Managed.MonoMac (xs.monomac)", "..\..\submodules\cor.platform.managed.monomac\build_examples\xs.monomac\Sungiant.Cor.Platform.Managed.MonoMac\Sungiant.Cor.Platform.Managed.MonoMac (xs.monomac).csproj", "{D61A79CF-39FB-45F2-A72D-714BE42FBFD6}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo (xs.monomac)", "Sungiant.Cor.Demo\Sungiant.Cor.Demo (xs.monomac).csproj", "{84FD9E59-FC74-44E5-8856-90D1FC6F4F54}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo.MonoMac (xs.monomac)", "Sungiant.Cor.Demo.MonoMac\Sungiant.Cor.Demo.MonoMac (xs.monomac).csproj", "{2D399EBD-D7A2-45D8-8BD2-DA9A9A691C48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor (xs.monomac)", "..\..\submodules\cor\build_examples\xs.monomac\Sungiant.Cor\Sungiant.Cor (xs.monomac).csproj", "{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,8 +16,8 @@ Global
 		AppStore|x86 = AppStore|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}.AppStore|x86.ActiveCfg = Debug|Any CPU
-		{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}.AppStore|x86.Build.0 = Debug|Any CPU
+		{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}.AppStore|x86.ActiveCfg = Release|Any CPU
+		{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}.AppStore|x86.Build.0 = Release|Any CPU
 		{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}.Debug|x86.Build.0 = Debug|Any CPU
 		{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}.Release|x86.ActiveCfg = Release|Any CPU
@@ -46,24 +40,6 @@ Global
 		{97195993-2B6B-434B-8F2C-BD0A4BCDC70A}.Debug|x86.Build.0 = Debug|Any CPU
 		{97195993-2B6B-434B-8F2C-BD0A4BCDC70A}.Release|x86.ActiveCfg = Release|Any CPU
 		{97195993-2B6B-434B-8F2C-BD0A4BCDC70A}.Release|x86.Build.0 = Release|Any CPU
-		{D61A79CF-39FB-45F2-A72D-714BE42FBFD6}.AppStore|x86.ActiveCfg = Debug|Any CPU
-		{D61A79CF-39FB-45F2-A72D-714BE42FBFD6}.AppStore|x86.Build.0 = Debug|Any CPU
-		{D61A79CF-39FB-45F2-A72D-714BE42FBFD6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D61A79CF-39FB-45F2-A72D-714BE42FBFD6}.Debug|x86.Build.0 = Debug|Any CPU
-		{D61A79CF-39FB-45F2-A72D-714BE42FBFD6}.Release|x86.ActiveCfg = Release|Any CPU
-		{D61A79CF-39FB-45F2-A72D-714BE42FBFD6}.Release|x86.Build.0 = Release|Any CPU
-		{ED7356DC-C1E3-4210-A4D9-26DCDD1DBBD3}.AppStore|x86.ActiveCfg = Debug|Any CPU
-		{ED7356DC-C1E3-4210-A4D9-26DCDD1DBBD3}.AppStore|x86.Build.0 = Debug|Any CPU
-		{ED7356DC-C1E3-4210-A4D9-26DCDD1DBBD3}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{ED7356DC-C1E3-4210-A4D9-26DCDD1DBBD3}.Debug|x86.Build.0 = Debug|Any CPU
-		{ED7356DC-C1E3-4210-A4D9-26DCDD1DBBD3}.Release|x86.ActiveCfg = Release|Any CPU
-		{ED7356DC-C1E3-4210-A4D9-26DCDD1DBBD3}.Release|x86.Build.0 = Release|Any CPU
-		{F8F891BB-0FB2-4A55-B0C7-C637C1B4F8CC}.AppStore|x86.ActiveCfg = Debug|Any CPU
-		{F8F891BB-0FB2-4A55-B0C7-C637C1B4F8CC}.AppStore|x86.Build.0 = Debug|Any CPU
-		{F8F891BB-0FB2-4A55-B0C7-C637C1B4F8CC}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F8F891BB-0FB2-4A55-B0C7-C637C1B4F8CC}.Debug|x86.Build.0 = Debug|Any CPU
-		{F8F891BB-0FB2-4A55-B0C7-C637C1B4F8CC}.Release|x86.ActiveCfg = Release|Any CPU
-		{F8F891BB-0FB2-4A55-B0C7-C637C1B4F8CC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Sungiant.Cor.Demo.MonoMac\Sungiant.Cor.Demo.MonoMac (xs.monomac).csproj

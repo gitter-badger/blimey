@@ -4,36 +4,3 @@
 [submodule "submodules/cor"]
 	path = submodules/cor
 	url = git@github.com:sungiant/cor.git
-[submodule "submodules/cor.lib.managed.foundation"]
-	path = submodules/cor.lib.managed.foundation
-	url = git@github.com:sungiant/cor.lib.managed.foundation.git
-[submodule "submodules/cor.platform.managed.psm"]
-	path = submodules/cor.platform.managed.psm
-	url = git@github.com:sungiant/cor.platform.managed.psm.git
-[submodule "submodules/cor.lib.managed.khronos"]
-	path = submodules/cor.lib.managed.khronos
-	url = git@github.com:sungiant/cor.lib.managed.khronos.git
-[submodule "submodules/cor.platform.managed.xna4"]
-	path = submodules/cor.platform.managed.xna4
-	url = git@github.com:sungiant/cor.platform.managed.xna4.git
-[submodule "submodules/cor.platform.managed.xdroid"]
-	path = submodules/cor.platform.managed.xdroid
-	url = git@github.com:sungiant/cor.platform.managed.xdroid.git
-[submodule "submodules/cor.platform.managed.xios"]
-	path = submodules/cor.platform.managed.xios
-	url = git@github.com:sungiant/cor.platform.managed.xios.git
-[submodule "submodules/cor.platform.managed.monomac"]
-	path = submodules/cor.platform.managed.monomac
-	url = git@github.com:sungiant/cor.platform.managed.monomac.git
-[submodule "submodules/cor.platform.stub"]
-	path = submodules/cor.platform.stub
-	url = git@github.com:sungiant/cor.platform.stub.git
-[submodule "submodules/cor.platform.native.linux"]
-	path = submodules/cor.platform.native.linux
-	url = git@github.com:sungiant/cor.platform.native.linux.git
-[submodule "submodules/cor.platform.native.osx"]
-	path = submodules/cor.platform.native.osx
-	url = git@github.com:sungiant/cor.platform.native.osx.git
-[submodule "submodules/cor.platform.native.win32"]
-	path = submodules/cor.platform.native.win32
-	url = git@github.com:sungiant/cor.platform.native.win32.git
