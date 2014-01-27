@@ -45,7 +45,3 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: CLSCompliant(true)]
 
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.MonoMac")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Stub")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Lib.Managed.Khronos")]
-
