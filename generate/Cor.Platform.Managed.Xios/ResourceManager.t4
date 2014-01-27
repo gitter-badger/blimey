@@ -1,0 +1,42 @@
+    public sealed class ResourceManager
+        : IResourceManager
+    {
+        Dictionary<ShaderType, IShader> shaderCache;
+
+        public ResourceManager()
+        {
+            shaderCache = new Dictionary<ShaderType, IShader>();
+
+            shaderCache[ShaderType.Unlit] = CorShaders.CreateUnlit();
+            shaderCache[ShaderType.VertexLit] = CorShaders.CreatePhongVertexLit();
+            shaderCache[ShaderType.PixelLit] = CorShaders.CreatePhongPixelLit();
+        }
+
+        public T Load<T>(string path) where T : IResource
+        {
+            if(!File.Exists(path))
+            {
+                throw new FileNotFoundException(path);
+            }
+
+            if(typeof(T) == typeof(Texture2D))
+            {
+                var tex = OglesTexture.CreateFromFile(path);
+                
+                return (T)(IResource) tex;
+            }
+            
+            throw new NotImplementedException();
+        }
+
+        public IShader LoadShader(ShaderType shaderType)
+        {
+            if( !shaderCache.ContainsKey(shaderType) )
+            {
+                throw new NotImplementedException();
+            }
+
+            return shaderCache[shaderType];
+        }
+    }
+

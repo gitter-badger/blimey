@@ -1,0 +1,148 @@
+    //
+    // After the buffer object data store has been initialized or updated using
+    // the glBufferData or the glBufferSubData FN, the client data store is no longer
+    // needed and can be realeased.  For static geometry, applications can free
+    // the client data store and reduce the overall system memory consumed by the application.
+    //
+    public sealed class VertexBuffer
+        : IVertexBuffer
+        , IDisposable
+    {
+        Int32 resourceCounter;
+        VertexDeclaration vertDecl;
+
+        Int32 vertexCount;
+
+        UInt32 bufferHandle;
+
+        OpenTK.Graphics.ES20.BufferTarget type;
+        OpenTK.Graphics.ES20.BufferUsage bufferUsage;
+
+        public VertexBuffer (VertexDeclaration vd, Int32 vertexCount)
+        {
+            this.vertDecl = vd;
+            this.vertexCount = vertexCount;
+
+            this.type = OpenTK.Graphics.ES20.BufferTarget.ArrayBuffer;
+
+            this.bufferUsage = OpenTK.Graphics.ES20.BufferUsage.DynamicDraw;
+
+            OpenTK.Graphics.ES20.GL.GenBuffers(1, out this.bufferHandle);
+            ErrorHandler.Check();
+
+
+            if( this.bufferHandle == 0 )
+            {
+                throw new Exception("Failed to generate vert buffer.");
+            }
+            
+
+            this.Activate();
+
+            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
+            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
+            // then content of data are copied to the allocated data store.  The contents of the buffer object data
+            // store can be initialized or updated using the glBufferSubData FN
+            OpenTK.Graphics.ES20.GL.BufferData(
+                this.type,
+                (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
+                (System.IntPtr) null,
+                this.bufferUsage);
+
+            ErrorHandler.Check();
+
+            resourceCounter++;
+
+        }
+
+        internal void Activate()
+        {
+            OpenTK.Graphics.ES20.GL.BindBuffer(this.type, this.bufferHandle);
+            ErrorHandler.Check();
+        }
+
+        internal void Deactivate()
+        {
+            OpenTK.Graphics.ES20.GL.BindBuffer(this.type, 0);
+            ErrorHandler.Check();
+        }
+
+        ~VertexBuffer()
+        {
+            CleanUpNativeResources();
+        }
+
+        void CleanUpManagedResources()
+        {
+
+        }
+
+        void CleanUpNativeResources()
+        {
+            OpenTK.Graphics.ES20.GL.DeleteBuffers(1, ref this.bufferHandle);
+            ErrorHandler.Check();
+
+            bufferHandle = 0;
+
+            resourceCounter--;
+        }
+
+        public void Dispose()
+        {
+            CleanUpManagedResources();
+            CleanUpNativeResources();
+            GC.SuppressFinalize(this);
+        }
+
+        public void SetData<T> (T[] data)
+            where T: struct, IVertexType
+        {
+            if( data.Length != vertexCount )
+            {
+                throw new Exception("?");
+            }
+            
+            this.Activate();
+
+            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
+            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
+            // then content of data are copied to the allocated data store.  The contents of the buffer object data
+            // store can be initialized or updated using the glBufferSubData FN
+            OpenTK.Graphics.ES20.GL.BufferSubData(
+                this.type,
+                (System.IntPtr) 0,
+                (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
+                data);
+
+            ErrorHandler.Check();
+        }
+
+
+        public Int32 VertexCount
+        {
+            get
+            {
+                return this.vertexCount;
+            }
+        }
+
+        public VertexDeclaration VertexDeclaration 
+        {
+            get
+            {
+                return this.vertDecl;
+            }
+        } 
+
+        public void GetData<T> (T[] data) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void GetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+        
+        public void SetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType { throw new System.NotSupportedException(); }
+
+    }
+
