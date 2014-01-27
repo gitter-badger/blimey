@@ -85,7 +85,7 @@
                         NiceName = "AmbientLightColour",
                         Name = "u_liAmbient",
                         Type = typeof(Rgba32),
-                        DefaultValue = Rgba32.Gray,
+                        DefaultValue = Rgba32.Grey,
                     },
                     new ShaderVariableDefinition()
                     {

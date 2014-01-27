@@ -43,10 +43,10 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
 
-using Sungiant.Abacus;
-using Sungiant.Abacus.Packed;
-using Sungiant.Abacus.SinglePrecision;
-using Sungiant.Abacus.Int32Precision;
+using Abacus;
+using Abacus.Packed;
+using Abacus.SinglePrecision;
+using Abacus.Int32Precision;
 
 using Sungiant.Cor.Lib.Managed.Khronos;
 using Sungiant.Cor.Platform.Stub;
@@ -3280,7 +3280,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                         NiceName = "AmbientLightColour",
                         Name = "u_liAmbient",
                         Type = typeof(Rgba32),
-                        DefaultValue = Rgba32.Gray,
+                        DefaultValue = Rgba32.Grey,
                     },
                     new ShaderVariableDefinition()
                     {
@@ -3566,7 +3566,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                         NiceName = "AmbientLightColour",
                         Name = "u_liAmbient",
                         Type = typeof(Rgba32),
-                        DefaultValue = Rgba32.Gray,
+                        DefaultValue = Rgba32.Grey,
                     },
                     new ShaderVariableDefinition()
                     {
