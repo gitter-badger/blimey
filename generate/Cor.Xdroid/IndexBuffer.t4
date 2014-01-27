@@ -1,0 +1,34 @@
+    public class IndexBuffer
+        : IIndexBuffer
+    {
+        UInt16[] data;
+
+        public IndexBuffer()
+        {
+            Console.WriteLine(
+                "IndexBuffer -> ()");
+        }
+
+        static internal UInt16[] ConvertToUnsigned (Int32[] indexBuffer)
+        {   
+            UInt16[] udata = new UInt16[indexBuffer.Length];
+
+            for(Int32 i = 0; i < indexBuffer.Length; ++i)
+            {
+                udata[i] = (UInt16) indexBuffer[i];
+            }
+            
+            return udata;
+        }
+
+        #region IIndexBuffer
+
+        public Int32 IndexCount { get { return this.data.Length; } }
+
+        public void SetData(Int32[] data)
+        {
+            this.data = ConvertToUnsigned(data);
+        }
+
+        #endregion
+    }
