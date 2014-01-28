@@ -1,6 +1,6 @@
 [submodule "submodules/abacus"]
 	path = submodules/abacus
-	url = git@github.com:sungiant/abacus.git
+url=git@github.com:abacus3d/abacus.git
 [submodule "submodules/cor"]
 	path = submodules/cor
-	url = git@github.com:sungiant/cor.git
+url=git@github.com:blimey3d/cor.git
