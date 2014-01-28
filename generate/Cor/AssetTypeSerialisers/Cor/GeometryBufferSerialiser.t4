@@ -16,13 +16,13 @@
             Int32 vertexCount = abr.ReadInt32();
 
             Byte[] vertData = abr.ReadBytes(vertexCount * declaration.VertexStride);
-            
+
             Int32 indexCount = abr.ReadInt32();
 
             Byte[] indexData = abr.ReadBytes(vertexCount * sizeof(Int32));
-            
+
             IGraphicsManager gfx = null;
-            
+
             IGeometryBuffer buffer = gfx.CreateGeometryBuffer (
                 declaration,
                 vertexCount,
@@ -31,13 +31,22 @@
             buffer.VertexBuffer.SetRawData (vertData, 0, vertexCount);
 
             buffer.IndexBuffer.SetRawData (indexData, 0, indexCount);
-            
+
             return buffer;
         }
 
         protected internal override void Write(AssetBinaryWriter abw, IGeometryBuffer obj)
         {
-            throw new NotImplementedException();
+            declaration.Write (abw, obj.VertexDeclaration);
+
+            abw.Write (obj.VertexCount);
+            Byte[] rawVertData = obj.VertexBuffer.GetRawData (0, obj.VertexCount);
+            abw.Write (rawVertData);
+
+            abw.Write (obj.IndexCount);
+            Byte[] rawIndexData = obj.IndexBuffer.GetRawData (0, obj.IndexCount);
+            abw.Write (rawIndexData);
+
         }
     }
 

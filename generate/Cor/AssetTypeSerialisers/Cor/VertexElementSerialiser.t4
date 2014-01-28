@@ -15,10 +15,8 @@
         protected internal override VertexElement Read(AssetBinaryReader abr)
         {
             Int32 offset = abr.ReadInt32();
-
             VertexElementFormat elementFormat = formatSerialiser.Read(abr);
             VertexElementUsage elementUsage = usageSerialiser.Read(abr);
-
             Int32 usageIndex = abr.ReadInt32();
 
             return new VertexElement(offset, elementFormat, elementUsage, usageIndex);
@@ -26,7 +24,10 @@
 
         protected internal override void Write(AssetBinaryWriter abw, VertexElement obj)
         {
-            throw new NotImplementedException();
+            abr.Write(obj.Offset);
+            formatSerialiser.Write(abw, obj.VertexElementFormat);
+            usageSerialiser.Write(abw, obj.VertexElementUsage);
+            abr.Write(obj.UsageIndex);
         }
     }
 

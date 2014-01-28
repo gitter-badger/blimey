@@ -7,27 +7,27 @@
         /// <summary>
         /// todo
         /// </summary>
-        internal int _offset;
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        internal VertexElementFormat _format;
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        internal VertexElementUsage _usage;
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        internal int _usageIndex;
+        internal Int32 _offset;
 
         /// <summary>
         /// todo
         /// </summary>
-        public int Offset
+        internal VertexElementFormat _format;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        internal VertexElementUsage _usage;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        internal Int32 _usageIndex;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int32 Offset
         {
             get { return this._offset; }
             set { this._offset = value; }
@@ -54,7 +54,7 @@
         /// <summary>
         /// todo
         /// </summary>
-        public int UsageIndex
+        public Int32 UsageIndex
         {
             get { return this._usageIndex; }
             set { this._usageIndex = value; }
@@ -64,10 +64,10 @@
         /// todo
         /// </summary>
         public VertexElement (
-            int offset, 
-            VertexElementFormat elementFormat, 
-            VertexElementUsage elementUsage, 
-            int usageIndex)
+            Int32 offset,
+            VertexElementFormat elementFormat,
+            VertexElementUsage elementUsage,
+            Int32 usageIndex)
         {
             this._offset = offset;
             this._usageIndex = usageIndex;
@@ -80,11 +80,11 @@
         /// </summary>
         public override String ToString ()
         {
-            return string.Format (
+            return String.Format (
                 "[Offset:{0} Format:{1}, Usage:{2}, UsageIndex:{3}]",
-                this.Offset, 
-                this.VertexElementFormat, 
-                this.VertexElementUsage, 
+                this.Offset,
+                this.VertexElementFormat,
+                this.VertexElementUsage,
                 this.UsageIndex
             );
         }
@@ -100,38 +100,38 @@
         /// <summary>
         /// todo
         /// </summary>
-        public override Boolean Equals (object obj)
+        public override Boolean Equals (Object obj)
         {
             if (obj == null)
             {
                 return false;
             }
-            
+
             if (obj.GetType () != base.GetType ())
             {
                 return false;
             }
-            
+
             return (this == ((VertexElement)obj));
         }
 
         /// <summary>
         /// todo
         /// </summary>
-        public static Boolean operator == 
+        public static Boolean operator ==
             (VertexElement left, VertexElement right)
         {
-            return 
-                (left._offset == right._offset) && 
-                (left._usageIndex == right._usageIndex) && 
-                (left._usage == right._usage) && 
+            return
+                (left._offset == right._offset) &&
+                (left._usageIndex == right._usageIndex) &&
+                (left._usage == right._usage) &&
                 (left._format == right._format);
         }
 
         /// <summary>
         /// todo
         /// </summary>
-        public static Boolean operator != 
+        public static Boolean operator !=
             (VertexElement left, VertexElement right)
         {
             return !(left == right);

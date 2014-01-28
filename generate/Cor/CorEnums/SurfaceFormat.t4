@@ -1,0 +1,17 @@
+    public enum SurfaceFormat
+    {
+        Alpha8,
+        Bgr_5_6_5,
+        Bgra16,
+        Bgra_5_5_5_1,
+        Byte4,
+        Rgba32,
+
+        RgbaPvrtc2Bpp,
+        RgbaPvrtc4Bpp,
+
+        Dxt1,
+        Dxt3,
+        Dxt5,
+    }
+

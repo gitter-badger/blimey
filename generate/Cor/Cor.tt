@@ -90,6 +90,7 @@ namespace Sungiant.Cor
 <#@ include file="CorEnums/VertexElementUsage.t4"#>
 <#@ include file="CorEnums/KeyState.t4"#>
 <#@ include file="CorEnums/FunctionalKey.t4"#>
+<#@ include file="CorEnums/SurfaceFormat.t4"#>
     #endregion
 
     #region Types

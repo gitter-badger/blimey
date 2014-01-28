@@ -1,0 +1,48 @@
+    class ShaderSerialiser
+        : AssetTypeSerialiser<IShader>
+    {
+        AssetTypeSerialiser<ShaderDefinition> ShaderDefinitionSerialiser;
+
+        internal ShaderSerialiser () {}
+
+        protected internal override void Initialise(AssetTypeSerialiserManager manager)
+        {
+            ShaderDefinitionSerialiser = manager.GetTypeSerialiser<ShaderDefinition>();
+        }
+
+        protected internal override IShader Read(AssetBinaryReader abr)
+        {
+            ShaderDefinition ShaderDefinition = ShaderDefinitionSerialiser.Read(abr);
+
+            Int32 numCompiledDependancies = abr.ReadInt32();
+
+            foreach( var )
+            ShaderDefinition.Compiled
+
+            UInt32 width = abr.ReadUInt32();
+            UInt32 height = abr.ReadUInt32();
+            UInt32 mipCount = abr.ReadUInt32();
+
+            IGraphicsManager gfx = null;
+
+            IShader texture = gfx.CreateShader (
+                ShaderDefinition,
+                compiledShaders );
+
+            for (UInt32 i = 0; i < mipCount; ++i)
+            {
+                UInt32 byteCount = abr.ReadUInt32();
+                Byte[] rawData = abr.ReadBytes (byteCount);
+
+                texture.SetRawData (i, rawData);
+            }
+
+            return buffer;
+        }
+
+        protected internal override void Write(AssetBinaryWriter abw, IShader obj)
+        {
+
+        }
+    }
+
