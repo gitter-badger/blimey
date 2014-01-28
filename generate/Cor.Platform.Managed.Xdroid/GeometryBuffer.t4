@@ -1,0 +1,32 @@
+    public class GeometryBuffer
+        : IGeometryBuffer
+    {
+        IVertexBuffer vertexBuffer;
+        IIndexBuffer indexBuffer;
+
+        public GeometryBuffer(
+            VertexDeclaration vertexDeclaration,
+            Int32 vertexCount,
+            Int32 indexCount )
+        {
+            Console.WriteLine(
+                "GeometryBuffer -> ()");
+
+            this.vertexBuffer = new VertexBuffer();
+            this.indexBuffer = new IndexBuffer();
+        }
+
+        #region IGeometryBuffer
+
+        public IVertexBuffer VertexBuffer
+        {
+            get { return this.vertexBuffer; }
+        }
+
+        public IIndexBuffer IndexBuffer
+        {
+            get { return this.indexBuffer; }
+        }
+
+        #endregion
+    }

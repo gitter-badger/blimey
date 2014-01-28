@@ -1,0 +1,30 @@
+    public class AudioManager
+        : IAudioManager
+    {
+        public Single volume = 1f;
+
+        public Single Volume
+        { 
+            get { return this.volume; }
+            set
+            {
+                this.volume = value;
+
+                Console.WriteLine(
+                    "AudioManager -> Setting Volume:" + value);
+            } 
+        }
+
+        #region IAudioManager
+
+        public AudioManager()
+        {
+            Console.WriteLine(
+                "AudioManager -> ()");
+
+            this.volume = 1f;
+        }
+
+        #endregion
+    }
+

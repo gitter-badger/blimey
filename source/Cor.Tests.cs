@@ -49,10 +49,10 @@ using System.Reflection.Emit;
 using Windows.Storage;
 #endif
 
-using Sungiant.Abacus;
-using Sungiant.Abacus.Packed;
-using Sungiant.Abacus.SinglePrecision;
-using Sungiant.Abacus.Int32Precision;
+using Abacus;
+using Abacus.Packed;
+using Abacus.SinglePrecision;
+using Abacus.Int32Precision;
 
 using NUnit.Framework;
 

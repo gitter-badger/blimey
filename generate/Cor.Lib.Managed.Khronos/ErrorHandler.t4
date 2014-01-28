@@ -1,0 +1,14 @@
+    public static class ErrorHandler
+    {
+        [Conditional("DEBUG")]
+        public static void Check()
+        {
+            var ec = GL.GetError();
+
+            if (ec != ErrorCode.NoError)
+            {
+                throw new Exception( ec.ToString());
+            }
+        }
+    }
+

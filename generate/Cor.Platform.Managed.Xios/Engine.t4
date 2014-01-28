@@ -1,0 +1,107 @@
+    public sealed class Engine
+        : ICor
+    {
+        TouchScreen touchScreen;
+        AppSettings settings;
+        IApp app;
+        IGraphicsManager graphicsManager;
+        IResourceManager resourceManager;
+        InputManager inputManager;
+        SystemManager systemManager;
+        AudioManager audioManager;
+
+        internal Engine(
+            AppSettings settings,
+            IApp app,
+            OpenTK.Platform.iPhoneOS.iPhoneOSGameView view,
+            OpenTK.Graphics.IGraphicsContext gfxContext,
+            Dictionary<Int32, iOSTouchState> touches)
+        {   
+            this.settings = settings;
+
+            this.app = app;
+
+
+            this.graphicsManager = new GraphicsManager(gfxContext);
+
+            this.resourceManager = new ResourceManager();
+
+            this.touchScreen = new TouchScreen(this, view, touches);
+
+            this.systemManager = new SystemManager(touchScreen);
+
+            this.inputManager = new InputManager(this, this.touchScreen);
+
+            this.app.Initilise(this);
+
+        }
+
+        internal TouchScreen TouchScreenImplementation
+        {
+            get
+            {
+                return touchScreen;
+            }
+        }
+
+        public IAudioManager Audio
+        {
+            get
+            {
+                return audioManager;
+            }
+        }
+
+        public AppSettings Settings
+        {
+            get
+            {
+                return this.settings;
+            }
+        }
+
+        public ISystemManager System
+        {
+            get
+            {
+                return systemManager;
+            }
+        }
+
+        public IGraphicsManager Graphics
+        { 
+            get
+            {
+                return graphicsManager;
+            }
+        }
+
+        public IResourceManager Resources
+        { 
+            get
+            {
+                return resourceManager;
+            }
+        }
+        
+        public IInputManager Input
+        {
+            get
+            {
+                return inputManager;
+            }
+        }
+
+        internal Boolean Update(AppTime time)
+        {
+            inputManager.Update(time);
+            return app.Update(time);
+        }
+
+        internal void Render()
+        {
+            app.Render();
+        }
+
+    }
+    

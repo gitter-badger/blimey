@@ -1,0 +1,52 @@
+    public sealed class Mouse
+        : IMouse
+    {
+        public ButtonState Left
+        {
+            get
+            {
+                return ButtonState.Released;
+            }
+        }
+
+        public ButtonState Middle
+        {
+            get
+            {
+                return ButtonState.Released;
+            }
+        }
+
+        public ButtonState Right
+        {
+            get
+            {
+                return ButtonState.Released;
+            }
+        }
+
+        public Int32 ScrollWheelValue
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        public Int32 X
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        public Int32 Y
+        {
+            get
+            {
+                return 0;
+            }
+        }
+    }
+

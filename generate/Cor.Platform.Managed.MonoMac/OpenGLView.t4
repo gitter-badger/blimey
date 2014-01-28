@@ -1,0 +1,270 @@
+    public sealed class OpenGLView
+        : global::MonoMac.OpenGL.MonoMacGameView
+    {
+        Rectangle clientBounds;
+        NSTrackingArea trackingArea;
+        bool _needsToResetElapsedTime = false;
+        //Scene scene;
+
+        Engine gameEngine;
+        Stopwatch timer = new Stopwatch();
+        Single elapsedTime;
+        Int64 frameCounter = -1;
+        TimeSpan previousTimeSpan;
+        Int32 frameInterval;
+
+        uint _depthRenderbuffer;
+
+        readonly AppSettings settings;
+        readonly IApp entryPoint;
+
+
+        public OpenGLView(AppSettings settings, IApp entryPoint, RectangleF frame)
+            : base (frame)
+        {
+            this.settings = settings;
+            this.entryPoint = entryPoint;
+
+            this.AutoresizingMask =
+                global::MonoMac.AppKit.NSViewResizingMask.HeightSizable |
+                global::MonoMac.AppKit.NSViewResizingMask.MaxXMargin |
+                global::MonoMac.AppKit.NSViewResizingMask.MinYMargin |
+                global::MonoMac.AppKit.NSViewResizingMask.WidthSizable;
+
+            RectangleF rect = NSScreen.MainScreen.Frame;
+            clientBounds = new Rectangle (0,0,(int)rect.Width,(int)rect.Height);
+
+
+
+            Resize += delegate {
+                //scene.ResizeGLScene(Bounds);
+            };
+
+            Load += OnLoad;
+
+            UpdateFrame += delegate(object src, global::MonoMac.OpenGL.FrameEventArgs fea) {
+
+                Single dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
+                previousTimeSpan = timer.Elapsed;
+
+                if (dt > 0.5f)
+                {
+                    dt = 0.0f;
+                }
+
+                elapsedTime += dt;
+
+                var appTime = new AppTime(dt, elapsedTime, ++frameCounter);
+
+                gameEngine.Update(appTime);
+            };
+
+            RenderFrame += delegate(object src, global::MonoMac.OpenGL.FrameEventArgs fea) {
+
+                gameEngine.Render();
+            };
+
+        }
+
+        void OnLoad (object src, EventArgs fea)
+        {
+            //CreateFrameBuffer();
+            //scene = new Scene();
+
+            gameEngine = new Engine(
+                this.settings,
+                this.entryPoint
+                //this,
+                //this.GraphicsContext,
+                //this.touchState
+                );
+            timer.Start();
+
+            //InternalUtils.Log.Info("load ");
+            //InitGL();
+            //UpdateView();
+
+        }
+
+        // All Setup For OpenGL Goes Here
+        bool InitGL ()
+        {
+            // Enables Smooth Shading
+            global::MonoMac.OpenGL.GL.ShadeModel (global::MonoMac.OpenGL.ShadingModel.Smooth);
+            // Set background color to black
+            global::MonoMac.OpenGL.GL.ClearColor (Color.Black);
+
+            // Setup Depth Testing
+
+            // Depth Buffer setup
+            global::MonoMac.OpenGL.GL.ClearDepth (1.0);
+            // Enables Depth testing
+            global::MonoMac.OpenGL.GL.Enable (global::MonoMac.OpenGL.EnableCap.DepthTest);
+            // The type of depth testing to do
+            global::MonoMac.OpenGL.GL.DepthFunc (global::MonoMac.OpenGL.DepthFunction.Lequal);
+
+            // Really Nice Perspective Calculations
+            global::MonoMac.OpenGL.GL.Hint (global::MonoMac.OpenGL.HintTarget.PerspectiveCorrectionHint, global::MonoMac.OpenGL.HintMode.Nicest);
+
+            return true;
+        }
+
+        //[Export("toggleFullScreen:")]
+        void toggleFullScreen (NSObject sender)
+        {
+            if (WindowState == global::MonoMac.OpenGL.WindowState.Fullscreen)
+                WindowState = global::MonoMac.OpenGL.WindowState.Normal;
+            else
+                WindowState = global::MonoMac.OpenGL.WindowState.Fullscreen;
+        }
+
+        void CreateFrameBuffer()
+        {
+            //
+            // Enable the depth buffer
+            //
+            global::MonoMac.OpenGL.GL.GenRenderbuffers(1, out _depthRenderbuffer);
+            ErrorHandler.Check();
+
+            global::MonoMac.OpenGL.GL.BindRenderbuffer(
+                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer,
+                _depthRenderbuffer);
+            ErrorHandler.Check();
+
+            global::MonoMac.OpenGL.GL.RenderbufferStorage(
+                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer,
+                global::MonoMac.OpenGL.RenderbufferStorage.DepthComponent16,
+                Size.Width, Size.Height);
+            ErrorHandler.Check();
+
+            global::MonoMac.OpenGL.GL.FramebufferRenderbuffer(
+                global::MonoMac.OpenGL.FramebufferTarget.Framebuffer,
+                global::MonoMac.OpenGL.FramebufferAttachment.DepthAttachment,
+                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer,
+                _depthRenderbuffer);
+            ErrorHandler.Check();
+
+        }
+
+        public void StartRunLoop(double updateRate)
+        {
+            Run(updateRate);
+        }
+
+        public void ResetElapsedTime ()
+        {
+            _needsToResetElapsedTime = true;
+        }
+
+        protected override void OnRenderFrame (global::MonoMac.OpenGL.FrameEventArgs e)
+        {
+            base.OnRenderFrame (e);
+            // tick
+        }
+
+        public override bool AcceptsFirstResponder ()
+        {
+            // We want this view to be able to receive key events
+            return true;
+        }
+
+        public override bool BecomeFirstResponder ()
+        {
+            return true;
+        }
+
+        public override void ViewWillMoveToWindow (NSWindow newWindow)
+        {
+            if (trackingArea != null)
+                RemoveTrackingArea(trackingArea);
+
+            trackingArea = new NSTrackingArea(
+                Frame,
+                NSTrackingAreaOptions.MouseMoved |
+                NSTrackingAreaOptions.MouseEnteredAndExited |
+                NSTrackingAreaOptions.EnabledDuringMouseDrag |
+                NSTrackingAreaOptions.ActiveWhenFirstResponder |
+                NSTrackingAreaOptions.InVisibleRect |
+                NSTrackingAreaOptions.CursorUpdate,
+                this,
+                new NSDictionary()
+            );
+
+            AddTrackingArea(trackingArea);
+
+        }
+
+        // Keyboard //--------------------------------------------------------//
+        public override void KeyDown (NSEvent theEvent)
+        {
+            this.gameEngine.InputImplementation.KeyboardImplemenatation.KeyDown (theEvent);
+        }
+
+        public override void KeyUp (NSEvent theEvent)
+        {
+            this.gameEngine.InputImplementation.KeyboardImplemenatation.KeyUp (theEvent);
+        }
+
+        public override void FlagsChanged (NSEvent theEvent)
+        {
+            base.FlagsChanged (theEvent);
+        }
+
+
+        // Mouse //-----------------------------------------------------------//
+        public override void MouseDown (NSEvent theEvent)
+        {
+            base.MouseDown (theEvent);
+        }
+
+        public override void MouseUp (NSEvent theEvent)
+        {
+            base.MouseUp (theEvent);
+        }
+
+        public override void MouseDragged (NSEvent theEvent)
+        {
+            base.MouseDragged (theEvent);
+        }
+
+        public override void RightMouseDown (NSEvent theEvent)
+        {
+            base.RightMouseDown (theEvent);
+        }
+
+        public override void RightMouseUp (NSEvent theEvent)
+        {
+            base.RightMouseUp (theEvent);
+        }
+
+        public override void RightMouseDragged (NSEvent theEvent)
+        {
+            base.RightMouseDragged (theEvent);
+        }
+
+        public override void OtherMouseDown (NSEvent theEvent)
+        {
+            base.OtherMouseDown (theEvent);
+        }
+
+        public override void OtherMouseUp (NSEvent theEvent)
+        {
+            base.OtherMouseUp (theEvent);
+        }
+
+        public override void OtherMouseDragged (NSEvent theEvent)
+        {
+            base.OtherMouseDragged (theEvent);
+        }
+
+        public override void ScrollWheel (NSEvent theEvent)
+        {
+            base.ScrollWheel (theEvent);
+        }
+
+        public override void MouseMoved (NSEvent theEvent)
+        {
+            base.MouseMoved (theEvent);
+        }
+    }
+

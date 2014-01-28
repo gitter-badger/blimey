@@ -1,0 +1,6 @@
+    public class ShaderVarientPassDefinition
+    {
+        public string PassName { get; set; }
+        public OglesShaderDefinition PassDefinition { get; set; }
+    }
+

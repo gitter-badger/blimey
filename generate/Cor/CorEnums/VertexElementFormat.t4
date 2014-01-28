@@ -97,9 +97,9 @@
                 case VertexElementFormat.NormalisedShort4: 
                     return typeof(NormalisedShort4);
                 //case VertexElementFormat.HalfVector2: 
-                //    return typeof(Sungiant.Abacus.HalfPrecision.Vector2);
+                //    return typeof(Abacus.HalfPrecision.Vector2);
                 //case VertexElementFormat.HalfVector4: 
-                //    return typeof(Sungiant.Abacus.HalfPrecision.Vector4);
+                //    return typeof(Abacus.HalfPrecision.Vector4);
             }
 
             throw new NotSupportedException();

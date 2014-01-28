@@ -1,0 +1,114 @@
+<#@ template debug="true" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// │ Cor! Xamarin iOS Platform Implementation                               │ \\
+// ├────────────────────────────────────────────────────────────────────────┤ \\
+// │ Brought to you by:                                                     │ \\
+// │          _________                    .__               __             │ \\
+// │         /   _____/__ __  ____    ____ |__|____    _____/  |_           │ \\
+// │         \_____  \|  |  \/    \  / ___\|  \__  \  /    \   __\          │ \\
+// │         /        \  |  /   |  \/ /_/  >  |/ __ \|   |  \  |            │ \\
+// │        /_______  /____/|___|  /\___  /|__(____  /___|  /__|            │ \\
+// │                \/           \//_____/         \/     \/                │ \\
+// │                                                                        │ \\
+// ├────────────────────────────────────────────────────────────────────────┤ \\
+// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// ├────────────────────────────────────────────────────────────────────────┤ \\
+// │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
+// │ a copy of this software and associated documentation files (the        │ \\
+// │ "Software"), to deal in the Software without restriction, including    │ \\
+// │ without limitation the rights to use, copy, modify, merge, publish,    │ \\
+// │ distribute, sublicense, and/or sellcopies of the Software, and to      │ \\
+// │ permit persons to whom the Software is furnished to do so, subject to  │ \\
+// │ the following conditions:                                              │ \\
+// │                                                                        │ \\
+// │ The above copyright notice and this permission notice shall be         │ \\
+// │ included in all copies or substantial portions of the Software.        │ \\
+// │                                                                        │ \\
+// │ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,        │ \\
+// │ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF     │ \\
+// │ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. │ \\
+// │ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY   │ \\
+// │ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,   │ \\
+// │ TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE       │ \\
+// │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
+// └────────────────────────────────────────────────────────────────────────┘ \\
+
+using System;
+using System.Globalization;
+using System.Collections;
+using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.IO;
+using System.Drawing;
+using System.Diagnostics;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
+using System.Linq;
+
+using Sungiant.Abacus;
+using Sungiant.Abacus.Packed;
+using Sungiant.Abacus.SinglePrecision;
+using Sungiant.Abacus.Int32Precision;
+
+using Sungiant.Cor.Lib.Managed.Khronos;
+using Sungiant.Cor.Platform.Stub;
+
+using MonoTouch.UIKit;
+using MonoTouch.Foundation;
+using MonoTouch.CoreText;
+using MonoTouch.CoreGraphics;
+
+namespace Sungiant.Cor.Platform.Managed.Xios
+{
+<#@ include file="AudioManager.t4"#>
+<#@ include file="Convert.t4"#>
+<#@ include file="DisplayStatus.t4"#>
+<#@ include file="EAGLView.t4"#>
+<#@ include file="Engine.t4"#>
+<#@ include file="GeometryBuffer.t4"#>
+<#@ include file="GpuUtils.t4"#>
+<#@ include file="GraphicsManager.t4"#>
+<#@ include file="IndexBuffer.t4"#>
+<#@ include file="InputManager.t4"#>
+<#@ include file="iOSTouchState.t4"#>
+<#@ include file="OpenGLTextureWrapper.t4"#>
+<#@ include file="OpenGLViewController.t4"#>
+<#@ include file="ResourceManager.t4"#>
+<#@ include file="Shader.t4"#>
+<#@ include file="ShaderDefinition.t4"#>
+<#@ include file="ShaderHelper.t4"#>
+<#@ include file="ShaderPass.t4"#>
+<#@ include file="SystemManager.t4"#>
+<#@ include file="TouchScreen.t4"#>
+<#@ include file="VertexBuffer.t4"#>
+<#@ include file="CorAppEngine.t4"#>
+
+    #region OpenGL ES Shaders
+
+<#@ include file="OglesShader/OglesShader.t4"#>
+<#@ include file="OglesShader/OglesShaderDefinition.t4"#>
+<#@ include file="OglesShader/OglesShaderInput.t4"#>
+<#@ include file="OglesShader/OglesShaderSampler.t4"#>
+<#@ include file="OglesShader/OglesShaderVariable.t4"#>
+
+    #endregion
+
+    #region Shader Definitions
+
+<#@ include file="ShaderDefinition/ShaderInputDefinition.t4"#>
+<#@ include file="ShaderDefinition/ShaderSamplerDefinition.t4"#>
+<#@ include file="ShaderDefinition/ShaderVariableDefinition.t4"#>
+<#@ include file="ShaderDefinition/ShaderVariantDefinition.t4"#>
+<#@ include file="ShaderDefinition/ShaderVariantPassDefinition.t4"#>
+
+    #endregion
+
+    #region Shader Definitions
+
+<#@ include file="CorShaders/PixelLit.t4"#>
+<#@ include file="CorShaders/VertexLit.t4"#>
+<#@ include file="CorShaders/Unlit.t4"#>
+
+    #endregion
+}

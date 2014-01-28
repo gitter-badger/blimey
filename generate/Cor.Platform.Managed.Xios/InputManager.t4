@@ -1,0 +1,56 @@
+    public sealed class InputManager
+        : IInputManager
+    {
+        readonly TouchScreen touchScreen;
+
+        readonly IXbox360Gamepad stubXbox360Gamepad = new StubXbox360Gamepad();
+        readonly IPsmGamepad stubPsmGamepad = new StubPsmGamepad();
+        readonly IGenericGamepad stubGenericGamepad = new StubGenericGamepad();
+        readonly IKeyboard stubKeyboard = new StubKeyboard();
+        readonly IMouse stubMouse = new StubMouse();
+
+        internal void Update(AppTime time)
+        {
+            this.touchScreen.Update(time);
+        }
+
+        #region IInputManager
+
+        public InputManager(ICor engine, TouchScreen touchScreen)
+        {
+            this.touchScreen = touchScreen;
+        }
+
+        public IMultiTouchController MultiTouchController
+        {
+            get { return this.touchScreen; }
+        }
+
+        public IXbox360Gamepad Xbox360Gamepad
+        {
+            get { return stubXbox360Gamepad; }
+        }
+
+        public IPsmGamepad PsmGamepad
+        {
+            get { return stubPsmGamepad; }
+        }
+
+        public IGenericGamepad GenericGamepad
+        {
+            get { return stubGenericGamepad; }
+        }
+
+        public IMouse Mouse
+        {
+            get { return stubMouse; }
+        }
+
+        public IKeyboard Keyboard
+        {
+            get { return stubKeyboard; }
+        }
+
+        #endregion
+    }
+

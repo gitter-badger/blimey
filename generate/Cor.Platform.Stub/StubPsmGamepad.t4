@@ -1,0 +1,21 @@
+    public sealed class StubPsmGamepad
+        : IPsmGamepad
+    {
+        readonly IPsmGamepadButtons psmGamepadButtons = new StubPsmGamepadButtons();
+        readonly IPsmGamepadDPad psmGamepadDPad = new StubPsmGamepadDPad();
+        readonly IPsmGamepadThumbsticks psmGamepadThumbsticks = new StubPsmGamepadThumbsticks();
+
+        public StubPsmGamepad()
+        {
+            InternalUtils.Log.Info("StubPsmGamepad -> ()");
+        }
+
+        #region IPsmGamepad
+
+        public IPsmGamepadButtons Buttons { get { return psmGamepadButtons; } }
+        public IPsmGamepadDPad DPad  { get { return psmGamepadDPad; } }
+        public IPsmGamepadThumbsticks Thumbsticks { get { return psmGamepadThumbsticks; } }
+
+        #endregion
+    }
+

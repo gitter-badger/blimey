@@ -1,0 +1,100 @@
+    public class OglesShaderVariable
+    {
+        int ProgramHandle { get; set; }
+        internal int UniformLocation { get; private set; }
+        
+        public String NiceName { get; private set; }
+        public String Name { get; private set; }
+        public Type Type { get; private set; }
+        public Object DefaultValue { get; private set; }
+        
+        public OglesShaderVariable(
+            int programHandle, ShaderUtils.ShaderUniform uniform)
+        {
+
+            this.ProgramHandle = programHandle;
+
+            int uniformLocation = OpenTK.Graphics.ES20.GL.GetUniformLocation(programHandle, uniform.Name);
+
+            ErrorHandler.Check();
+
+            if( uniformLocation == -1 )
+                throw new Exception();
+                
+            this.UniformLocation = uniformLocation;
+            this.Name = uniform.Name;
+            this.Type = EnumConverter.ToType(uniform.Type);
+
+            Console.WriteLine(string.Format(
+                "    Caching Reference to Shader Variable: [Prog={0}, UniIndex={1}, UniLocation={2}, UniName={3}, UniType={4}]",
+                programHandle, uniform.Index, uniformLocation, uniform.Name, uniform.Type));
+
+        }
+        
+        internal void RegisterExtraInfo(ShaderVariableDefinition definition)
+        {
+            NiceName = definition.NiceName;
+            DefaultValue = definition.DefaultValue;
+        }
+        
+        public void Set(object value)
+        {
+            //todo this should be using convert turn the data into proper opengl es types.
+            Type t = value.GetType();
+            
+            if( t == typeof(Matrix44) )
+            {
+                var castValue = (Matrix44) value;
+                var otkValue = MatrixConverter.ToOpenTK(castValue);
+                OpenTK.Graphics.ES20.GL.UniformMatrix4( UniformLocation, false, ref otkValue );
+            }
+            else if( t == typeof(Int32) )
+            {
+                var castValue = (Int32) value;
+                OpenTK.Graphics.ES20.GL.Uniform1( UniformLocation, 1, ref castValue );
+            }
+            else if( t == typeof(Single) )
+            {
+                var castValue = (Single) value;
+                OpenTK.Graphics.ES20.GL.Uniform1( UniformLocation, 1, ref castValue );
+            }
+            else if( t == typeof(Vector2) )
+            {
+                var castValue = (Vector2) value;
+                OpenTK.Graphics.ES20.GL.Uniform2( UniformLocation, 1, ref castValue.X );
+            }
+            else if( t == typeof(Vector3) )
+            {
+                var castValue = (Vector3) value;
+                OpenTK.Graphics.ES20.GL.Uniform3( UniformLocation, 1, ref castValue.X );
+            } 
+            else if( t == typeof(Vector4) )
+            {
+                var castValue = (Vector4) value;
+                OpenTK.Graphics.ES20.GL.Uniform4( UniformLocation, 1, ref castValue.X );
+            }
+            else if( t == typeof(Rgba32) )
+            {
+                var castValue = (Rgba32) value;
+                
+                Vector4 vec4Value;
+                castValue.UnpackTo(out vec4Value);
+                
+                // does this rgba value need to be packed in to a vector3 or a vector4
+                if( this.Type == typeof(Vector4) )
+                    OpenTK.Graphics.ES20.GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
+                else if( this.Type == typeof(Vector3) )
+                    OpenTK.Graphics.ES20.GL.Uniform3( UniformLocation, 1, ref vec4Value.X );
+                else
+                    throw new Exception("Not supported");
+            }
+            else
+            {
+                throw new Exception("Not supported");
+            }
+            
+            ErrorHandler.Check();
+
+        }
+    }
+

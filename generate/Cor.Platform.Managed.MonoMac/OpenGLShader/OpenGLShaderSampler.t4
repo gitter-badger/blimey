@@ -1,0 +1,36 @@
+    public sealed class OpenGLShaderSampler
+    {
+        int ProgramHandle { get; set; }
+        internal int UniformLocation { get; private set; }
+
+        public String NiceName { get; set; }
+        public String Name { get; set; }
+
+        public OpenGLShaderSampler(
+            int programHandle, ShaderUtils.ShaderUniform uniform )
+        {
+            this.ProgramHandle = programHandle;
+
+            int uniformLocation = global::MonoMac.OpenGL.GL.GetUniformLocation(programHandle, uniform.Name);
+
+            ErrorHandler.Check();
+
+
+            this.UniformLocation = uniformLocation;
+            this.Name = uniform.Name;
+        }
+
+        internal void RegisterExtraInfo(ShaderSamplerDefinition definition)
+        {
+            NiceName = definition.NiceName;
+        }
+
+        public void SetSlot(Int32 slot)
+        {
+            // set the sampler texture unit to 0
+            global::MonoMac.OpenGL.GL.Uniform1( this.UniformLocation, slot );
+            ErrorHandler.Check();
+        }
+
+    }
+
