@@ -1,5 +1,7 @@
+<#@ template debug="true" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
 // ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor! - Low Level 3D App Engine                                         │ \\
+// │ Cor! XNA 4 Platform Implementation                                     │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Brought to you by:                                                     │ \\
 // │          _________                    .__               __             │ \\
@@ -10,7 +12,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://abacus3d.github.com)                 │ \\
+// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -33,24 +35,36 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
-using System.Reflection;
-using System.Runtime.CompilerServices;
+using System.Globalization;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Drawing;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.ConstrainedExecution;
 
-// Information about this assembly is defined by the following attributes. 
-// Change them to the values specific to your project.
+using Abacus;
+using Abacus.Packed;
+using Abacus.SinglePrecision;
+using Abacus.Int32Precision;
 
-[assembly: AssemblyTitle("Sungiant.Cor")]
-[assembly: AssemblyDescription("Sungiant.Cor, built with Visual Studio 2010, targetting .NET 40.")]
-[assembly: ComVisible(false)]
-[assembly: AssemblyVersion("0.0.0.1")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: CLSCompliant(true)]
-
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.Xios")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.Xna4")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.Psm")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.MonoMac")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Stub")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Lib.Managed.Khronos")]
-
+namespace Sungiant.Cor.Platform.Managed.Xna4
+{
+<#@ include file="BasicEffectShaderAdapter.t4"#>
+<#@ include file="Convert.t4"#>
+<#@ include file="Engine.t4"#>
+<#@ include file="GeometryBuffer.t4"#>
+<#@ include file="GpuUtils.t4"#>
+<#@ include file="GraphicsManager.t4"#>
+<#@ include file="IndexBufferWrapper.t4"#>
+<#@ include file="InputManager.t4"#>
+<#@ include file="ResourceManager.t4"#>
+<#@ include file="ScreenImplementation.t4"#>
+<#@ include file="SystemManager.t4"#>
+<#@ include file="TouchScreenImplementation.t4"#>
+<#@ include file="VertexBufferWrapper.t4"#>
+<#@ include file="Xbox360ControllerImplementation.t4"#>
+<#@ include file="XnaGame.t4"#>
+}

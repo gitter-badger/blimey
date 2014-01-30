@@ -1,5 +1,7 @@
+<#@ template debug="true" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
 // ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor! - Low Level 3D App Engine                                         │ \\
+// │ Cor! Xamarin Android Platform Implementation                           │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Brought to you by:                                                     │ \\
 // │          _________                    .__               __             │ \\
@@ -10,7 +12,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://abacus3d.github.com)                 │ \\
+// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -33,24 +35,27 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Globalization;
+using System.Collections;
+using System.Collections.Generic;
+using Sungiant.Abacus;
+using Sungiant.Abacus.Packed;
+using Sungiant.Abacus.SinglePrecision;
+using Sungiant.Abacus.Int32Precision;
 
-// Information about this assembly is defined by the following attributes. 
-// Change them to the values specific to your project.
-
-[assembly: AssemblyTitle("Sungiant.Cor")]
-[assembly: AssemblyDescription("Sungiant.Cor, built with Visual Studio 2010, targetting .NET 40.")]
-[assembly: ComVisible(false)]
-[assembly: AssemblyVersion("0.0.0.1")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: CLSCompliant(true)]
-
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.Xios")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.Xna4")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.Psm")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Managed.MonoMac")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Platform.Stub")]
-[assembly: InternalsVisibleTo("Sungiant.Cor.Lib.Managed.Khronos")]
-
+namespace Sungiant.Cor.Platform.Managed.Xdroid
+{
+<#@ include file="Engine.t4"#>
+<#@ include file="AudioManager.t4"#>
+<#@ include file="GraphicsManager.t4"#>
+<#@ include file="DisplayStatus.t4"#>
+<#@ include file="IndexBuffer.t4"#>
+<#@ include file="InputManager.t4"#>
+<#@ include file="ResourceManager.t4"#>
+<#@ include file="PanelSpecification.t4"#>
+<#@ include file="ScreenSpecification.t4"#>
+<#@ include file="GeometryBuffer.t4"#>
+<#@ include file="SystemManager.t4"#>
+<#@ include file="VertexBuffer.t4"#>
+}

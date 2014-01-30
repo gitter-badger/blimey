@@ -499,7 +499,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             {
                 throw new Exception("Failed to generate vert buffer.");
             }
-            
+
 
             this.Activate();
 
@@ -562,13 +562,62 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             }
         }
 
-        public VertexDeclaration VertexDeclaration 
+        public VertexDeclaration VertexDeclaration
         {
             get
             {
                 return this.vertDecl;
             }
-        } 
+        }
+
+        void GetBufferData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount, int vertexStride) where T : struct
+        {
+            GL.BindBuffer (BufferTarget.ArrayBuffer, vbo);
+            GraphicsExtensions.CheckGLError();
+            var elementSizeInByte = Marshal.SizeOf(typeof(T));
+            IntPtr ptr = GL.MapBuffer (BufferTarget.ArrayBuffer, BufferAccess.ReadOnly);
+            GraphicsExtensions.CheckGLError();
+
+            // Pointer to the start of data to read in the index buffer
+            ptr = new IntPtr (ptr.ToInt64 () + offsetInBytes);
+            if (data is byte[])
+            {
+                byte[] buffer = data as byte[];
+                // If data is already a byte[] we can skip the temporary buffer
+                // Copy from the vertex buffer to the destination array
+                Marshal.Copy (ptr, buffer, 0, buffer.Length);
+            }
+            else
+            {
+                // Temporary buffer to store the copied section of data
+                byte[] buffer = new byte[elementCount * vertexStride - offsetInBytes];
+                // Copy from the vertex buffer to the temporary buffer
+                Marshal.Copy(ptr, buffer, 0, buffer.Length);
+
+                var dataHandle = GCHandle.Alloc (data, GCHandleType.Pinned);
+                var dataPtr = (IntPtr)(dataHandle.AddrOfPinnedObject ().ToInt64 () + startIndex * elementSizeInByte);
+
+                // Copy from the temporary buffer to the destination array
+
+                int dataSize = Marshal.SizeOf(typeof(T));
+                if (dataSize == vertexStride)
+                    Marshal.Copy(buffer, 0, dataPtr, buffer.Length);
+                else
+                {
+                    // If the user is asking for a specific element within the vertex buffer, copy them one by one...
+                    for (int i = 0; i < elementCount; i++)
+                    {
+                        Marshal.Copy(buffer, i * vertexStride, dataPtr, dataSize);
+                        dataPtr = (IntPtr)(dataPtr.ToInt64() + dataSize);
+                    }
+                }
+
+                dataHandle.Free ();
+
+                //Buffer.BlockCopy(buffer, 0, data, startIndex * elementSizeInByte, elementCount * elementSizeInByte);
+            }
+            GL.UnmapBuffer(BufferTarget.ArrayBuffer);
+        }
 
         public void SetData<T> (T[] data)
         where T
@@ -582,10 +631,10 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
         where T
             : struct
             , IVertexType
-        { 
+        {
             return this.GetData<T> (0, this.vertexCount);
         }
- 
+
         public void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount)
         where T
             : struct
@@ -595,7 +644,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             {
                 throw new Exception("?");
             }
-            
+
             this.Activate();
 
             // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
@@ -610,7 +659,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
 
             ErrorHandler.Check();
         }
-        
+
         public T[] GetData<T> (Int32 startIndex, Int32 elementCount)
         where T
             : struct
@@ -621,7 +670,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
 
         public void SetRawData (
             Byte[] data,
-            Int32 startIndex, 
+            Int32 startIndex,
             Int32 elementCount)
         {
             this.Activate();
@@ -634,7 +683,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
 
             ErrorHandler.Check();
         }
-        
+
         public Byte[] GetRawData (
             Int32 startIndex,
             Int32 elementCount)
@@ -663,7 +712,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             this.bufferUsage = BufferUsageHint.DynamicDraw;
 
             GL.GenBuffers(1, out this.bufferHandle);
-            
+
             ErrorHandler.Check();
 
             if( this.bufferHandle == 0 )
@@ -712,6 +761,35 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             GC.SuppressFinalize(this);
         }
 
+        void GetBufferData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount)
+            where T : struct
+        {
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ibo);
+            GraphicsExtensions.CheckGLError();
+            var elementSizeInByte = Marshal.SizeOf(typeof(T));
+            IntPtr ptr = GL.MapBuffer(BufferTarget.ArrayBuffer, BufferAccess.ReadOnly);
+            // Pointer to the start of data to read in the index buffer
+            ptr = new IntPtr(ptr.ToInt64() + offsetInBytes);
+            if (data is byte[])
+            {
+                byte[] buffer = data as byte[];
+                // If data is already a byte[] we can skip the temporary buffer
+                // Copy from the index buffer to the destination array
+                Marshal.Copy(ptr, buffer, 0, buffer.Length);
+            }
+            else
+            {
+                // Temporary buffer to store the copied section of data
+                byte[] buffer = new byte[elementCount * elementSizeInByte];
+                // Copy from the index buffer to the temporary buffer
+                Marshal.Copy(ptr, buffer, 0, buffer.Length);
+                // Copy from the temporary buffer to the destination array
+                Buffer.BlockCopy(buffer, 0, data, startIndex * elementSizeInByte, elementCount * elementSizeInByte);
+            }
+            GL.UnmapBuffer(BufferTarget.ArrayBuffer);
+            GraphicsExtensions.CheckGLError();
+        }
+
         internal void Activate()
         {
             GL.BindBuffer(this.type, this.bufferHandle);
@@ -747,7 +825,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             {
                 udata[i] = (UInt16) data[i];
             }
-            
+
             this.Activate();
 
             // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
@@ -767,27 +845,27 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
 
         public void GetData(Int32[] data)
         {
-            throw new NotImplementedException();    
+            throw new NotImplementedException();
         }
 
         public void SetData(Int32[] data, Int32 startIndex, Int32 elementCount)
         {
-            throw new NotImplementedException();    
+            throw new NotImplementedException();
         }
 
         public void GetData(Int32[] data, Int32 startIndex, Int32 elementCount)
         {
-            throw new NotImplementedException();    
+            throw new NotImplementedException();
         }
 
         public void SetRawData(Byte[] data, Int32 startIndex, Int32 elementCount)
         {
-            throw new NotImplementedException();    
+            throw new NotImplementedException();
         }
 
         public Byte[] GetRawData(Int32 startIndex, Int32 elementCount)
         {
-            throw new NotImplementedException();    
+            throw new NotImplementedException();
         }
     }
 
