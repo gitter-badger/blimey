@@ -1,21 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Abacus (xna4.x86)", "..\submodules\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus (xna4.x86).csproj", "{D87E8FF2-EECC-4C5C-88A9-2E2497C34012}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacus (vs.xna4_x86)", "..\..\submodules\abacus\build_examples\vs.xna4_x86\Abacus (vs.xna4_x86).csproj", "{D87E8FF2-EECC-4C5C-88A9-2E2497C34012}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo (xna4.x86)", "..\submodules\cor.demo\build_examples\Sungiant.Cor.Demo\Sungiant.Cor.Demo (xna4.x86).csproj", "{CE4D6D6B-0BCE-4552-B376-EAD2A20914F5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor (xna4_x86)", "..\..\submodules\cor\build_examples\vs.xna4_x86\Sungiant.Cor\Sungiant.Cor (xna4_x86).csproj", "{A6223F87-F0B4-4CA5-AB3E-B4C77DEE6B1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey (xna4.x86)", "..\submodules\blimey\build_examples\Sungiant.Blimey\Sungiant.Blimey (xna4.x86).csproj", "{F729D748-DDEE-4217-AA2B-C15A27CB4C04}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo.Platform.Managed.Xna4 (xna4.x86)", "Sungiant.Cor.Demo.Platform.Managed.Xna4\Sungiant.Cor.Demo.Platform.Managed.Xna4 (xna4.x86).csproj", "{E9CBE96D-1919-4DE6-9741-5E7EBC318591}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey.Demo (xna4.x86)", "..\submodules\blimey.demo\build_examples\Sungiant.Blimey.Demo\Sungiant.Blimey.Demo (xna4.x86).csproj", "{E09823E3-B7F0-4D3E-A8DE-967614A67C17}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor (xna4.x86)", "..\submodules\cor\build_examples\Sungiant.Cor\Sungiant.Cor (xna4.x86).csproj", "{A6223F87-F0B4-4CA5-AB3E-B4C77DEE6B1C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Platform.Managed.Xna4 (xna4.x86)", "..\submodules\cor.platform.managed.xna4\build_examples\Sungiant.Cor.Platform.Managed.Xna4\Sungiant.Cor.Platform.Managed.Xna4 (xna4.x86).csproj", "{1F19C87D-2A40-4642-A5A4-38346C471FBF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey.Demo.Xna4 (xna4.x86)", "Sungiant.Blimey.Demo.Xna4\Sungiant.Blimey.Demo.Xna4 (xna4.x86).csproj", "{AD57AFD5-CFCF-474B-9EA1-4964F15DFEC1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo.Xna4 (xna4.x86)", "Sungiant.Cor.Demo.Xna4\Sungiant.Cor.Demo.Xna4 (xna4.x86).csproj", "{E9CBE96D-1919-4DE6-9741-5E7EBC318591}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo (xna4.x86)", "Sungiant.Cor.Demo\Sungiant.Cor.Demo (xna4.x86).csproj", "{CE4D6D6B-0BCE-4552-B376-EAD2A20914F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,34 +19,18 @@ Global
 		{D87E8FF2-EECC-4C5C-88A9-2E2497C34012}.Debug|x86.Build.0 = Debug|x86
 		{D87E8FF2-EECC-4C5C-88A9-2E2497C34012}.Release|x86.ActiveCfg = Release|x86
 		{D87E8FF2-EECC-4C5C-88A9-2E2497C34012}.Release|x86.Build.0 = Release|x86
-		{CE4D6D6B-0BCE-4552-B376-EAD2A20914F5}.Debug|x86.ActiveCfg = Debug|x86
-		{CE4D6D6B-0BCE-4552-B376-EAD2A20914F5}.Debug|x86.Build.0 = Debug|x86
-		{CE4D6D6B-0BCE-4552-B376-EAD2A20914F5}.Release|x86.ActiveCfg = Release|x86
-		{CE4D6D6B-0BCE-4552-B376-EAD2A20914F5}.Release|x86.Build.0 = Release|x86
-		{F729D748-DDEE-4217-AA2B-C15A27CB4C04}.Debug|x86.ActiveCfg = Debug|x86
-		{F729D748-DDEE-4217-AA2B-C15A27CB4C04}.Debug|x86.Build.0 = Debug|x86
-		{F729D748-DDEE-4217-AA2B-C15A27CB4C04}.Release|x86.ActiveCfg = Release|x86
-		{F729D748-DDEE-4217-AA2B-C15A27CB4C04}.Release|x86.Build.0 = Release|x86
-		{E09823E3-B7F0-4D3E-A8DE-967614A67C17}.Debug|x86.ActiveCfg = Debug|x86
-		{E09823E3-B7F0-4D3E-A8DE-967614A67C17}.Debug|x86.Build.0 = Debug|x86
-		{E09823E3-B7F0-4D3E-A8DE-967614A67C17}.Release|x86.ActiveCfg = Release|x86
-		{E09823E3-B7F0-4D3E-A8DE-967614A67C17}.Release|x86.Build.0 = Release|x86
 		{A6223F87-F0B4-4CA5-AB3E-B4C77DEE6B1C}.Debug|x86.ActiveCfg = Debug|x86
 		{A6223F87-F0B4-4CA5-AB3E-B4C77DEE6B1C}.Debug|x86.Build.0 = Debug|x86
 		{A6223F87-F0B4-4CA5-AB3E-B4C77DEE6B1C}.Release|x86.ActiveCfg = Release|x86
 		{A6223F87-F0B4-4CA5-AB3E-B4C77DEE6B1C}.Release|x86.Build.0 = Release|x86
-		{1F19C87D-2A40-4642-A5A4-38346C471FBF}.Debug|x86.ActiveCfg = Debug|x86
-		{1F19C87D-2A40-4642-A5A4-38346C471FBF}.Debug|x86.Build.0 = Debug|x86
-		{1F19C87D-2A40-4642-A5A4-38346C471FBF}.Release|x86.ActiveCfg = Release|x86
-		{1F19C87D-2A40-4642-A5A4-38346C471FBF}.Release|x86.Build.0 = Release|x86
-		{AD57AFD5-CFCF-474B-9EA1-4964F15DFEC1}.Debug|x86.ActiveCfg = Debug|x86
-		{AD57AFD5-CFCF-474B-9EA1-4964F15DFEC1}.Debug|x86.Build.0 = Debug|x86
-		{AD57AFD5-CFCF-474B-9EA1-4964F15DFEC1}.Release|x86.ActiveCfg = Release|x86
-		{AD57AFD5-CFCF-474B-9EA1-4964F15DFEC1}.Release|x86.Build.0 = Release|x86
 		{E9CBE96D-1919-4DE6-9741-5E7EBC318591}.Debug|x86.ActiveCfg = Debug|x86
 		{E9CBE96D-1919-4DE6-9741-5E7EBC318591}.Debug|x86.Build.0 = Debug|x86
 		{E9CBE96D-1919-4DE6-9741-5E7EBC318591}.Release|x86.ActiveCfg = Release|x86
 		{E9CBE96D-1919-4DE6-9741-5E7EBC318591}.Release|x86.Build.0 = Release|x86
+		{CE4D6D6B-0BCE-4552-B376-EAD2A20914F5}.Debug|x86.ActiveCfg = Debug|x86
+		{CE4D6D6B-0BCE-4552-B376-EAD2A20914F5}.Debug|x86.Build.0 = Debug|x86
+		{CE4D6D6B-0BCE-4552-B376-EAD2A20914F5}.Release|x86.ActiveCfg = Release|x86
+		{CE4D6D6B-0BCE-4552-B376-EAD2A20914F5}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

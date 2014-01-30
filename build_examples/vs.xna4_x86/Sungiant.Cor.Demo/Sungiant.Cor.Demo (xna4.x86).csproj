@@ -53,29 +53,26 @@
     <Compile Include="..\..\..\source\BasicApp.cs">
       <Link>BasicApp.cs</Link>
     </Compile>
-        <Compile Include="..\..\..\source\CustomCube_PositionTexture.cs">
+    <Compile Include="..\..\..\source\CustomCube_PositionTexture.cs">
       <Link>CustomCube_PositionTexture.cs</Link>
     </Compile>
-        <Compile Include="..\..\..\source\CustomCylinder_PositionNormalTexture.cs">
-      <Link>CustomCylinder_PositionNormalTexture.cs</Link>
-    </Compile>
-        <Compile Include="..\..\..\source\CustomShape_PositionColour.cs">
+    <Compile Include="..\..\..\source\CustomShape_PositionColour.cs">
       <Link>CustomShape_PositionColour.cs</Link>
     </Compile>
-        <Compile Include="..\..\..\source\Demo.cs">
+    <Compile Include="..\..\..\source\Demo.cs">
       <Link>Demo.cs</Link>
     </Compile>
-        <Compile Include="..\..\..\source\RandomColours.cs">
+    <Compile Include="..\..\..\source\RandomColours.cs">
       <Link>RandomColours.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus %28xna4.x86%29.csproj">
+    <ProjectReference Include="..\..\..\submodules\abacus\build_examples\vs.xna4_x86\Abacus %28vs.xna4_x86%29.csproj">
       <Project>{D87E8FF2-EECC-4C5C-88A9-2E2497C34012}</Project>
       <Name>Sungiant.Abacus %28xna4.x86%29</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\cor\build_examples\Sungiant.Cor\Sungiant.Cor %28xna4.x86%29.csproj">
+    <ProjectReference Include="..\..\..\submodules\cor\build_examples\vs.xna4_x86\Sungiant.Cor\Sungiant.Cor %28xna4_x86%29.csproj">
       <Project>{A6223F87-F0B4-4CA5-AB3E-B4C77DEE6B1C}</Project>
       <Name>Sungiant.Cor %28xna4.x86%29</Name>
     </ProjectReference>
