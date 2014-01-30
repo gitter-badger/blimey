@@ -1,6 +1,6 @@
-	public class BasicEffectShaderAdapter
-		: IShader
-	{
+    public class BasicEffectShaderAdapter
+        : IShader
+    {
         public class ShaderPassWrapper
             : IShaderPass
         {
@@ -324,5 +324,5 @@
         public string Name { get { return this.name; } }
 
         #endregion
-	}
+    }
 

@@ -1,42 +1,42 @@
-﻿	internal class DisplayStatus
-		: IDisplayStatus
-	{
-		Microsoft.Xna.Framework.GraphicsDeviceManager gfxManager;
+﻿    internal class DisplayStatus
+        : IDisplayStatus
+    {
+        Microsoft.Xna.Framework.GraphicsDeviceManager gfxManager;
 
-		internal DisplayStatus(Microsoft.Xna.Framework.GraphicsDeviceManager gfxManager)
-		{
-			this.gfxManager = gfxManager;
-		}
+        internal DisplayStatus(Microsoft.Xna.Framework.GraphicsDeviceManager gfxManager)
+        {
+            this.gfxManager = gfxManager;
+        }
 
-		public Boolean Fullscreen { get { return this.gfxManager.IsFullScreen; } }
+        public Boolean Fullscreen { get { return this.gfxManager.IsFullScreen; } }
 
-		// What is the size of the frame buffer?
-		// On most devices this will be the same as the screen size.
-		// However on a PC or Mac the app could be running in windowed mode
-		// and not take up the whole screen.
-		public Int32 CurrentWidth { get { return this.gfxManager.GraphicsDevice.PresentationParameters.BackBufferWidth; } }
-		public Int32 CurrentHeight { get { return this.gfxManager.GraphicsDevice.PresentationParameters.BackBufferHeight; } }
-	}
+        // What is the size of the frame buffer?
+        // On most devices this will be the same as the screen size.
+        // However on a PC or Mac the app could be running in windowed mode
+        // and not take up the whole screen.
+        public Int32 CurrentWidth { get { return this.gfxManager.GraphicsDevice.PresentationParameters.BackBufferWidth; } }
+        public Int32 CurrentHeight { get { return this.gfxManager.GraphicsDevice.PresentationParameters.BackBufferHeight; } }
+    }
 
-	public class GraphicsManager
-		: IGraphicsManager
-	{
-		Microsoft.Xna.Framework.GraphicsDeviceManager _xnaGfxDeviceManager;
-		GpuUtils _gpuUtils;
-		DisplayStatus displayStatus;
+    public class GraphicsManager
+        : IGraphicsManager
+    {
+        Microsoft.Xna.Framework.GraphicsDeviceManager _xnaGfxDeviceManager;
+        GpuUtils _gpuUtils;
+        DisplayStatus displayStatus;
 
-		public GraphicsManager(ICor engine, Microsoft.Xna.Framework.GraphicsDeviceManager gfxManager)
-		{
-			_xnaGfxDeviceManager = gfxManager;
+        public GraphicsManager(ICor engine, Microsoft.Xna.Framework.GraphicsDeviceManager gfxManager)
+        {
+            _xnaGfxDeviceManager = gfxManager;
 
-			_xnaGfxDeviceManager.GraphicsDevice.RasterizerState = Microsoft.Xna.Framework.Graphics.RasterizerState.CullNone;
-			_xnaGfxDeviceManager.GraphicsDevice.BlendState = Microsoft.Xna.Framework.Graphics.BlendState.Opaque;
-			_xnaGfxDeviceManager.GraphicsDevice.DepthStencilState = Microsoft.Xna.Framework.Graphics.DepthStencilState.Default;
+            _xnaGfxDeviceManager.GraphicsDevice.RasterizerState = Microsoft.Xna.Framework.Graphics.RasterizerState.CullNone;
+            _xnaGfxDeviceManager.GraphicsDevice.BlendState = Microsoft.Xna.Framework.Graphics.BlendState.Opaque;
+            _xnaGfxDeviceManager.GraphicsDevice.DepthStencilState = Microsoft.Xna.Framework.Graphics.DepthStencilState.Default;
 
-			_gpuUtils = new GpuUtils();
+            _gpuUtils = new GpuUtils();
 
-			displayStatus = new DisplayStatus(_xnaGfxDeviceManager);
-		}
+            displayStatus = new DisplayStatus(_xnaGfxDeviceManager);
+        }
 
 
 
