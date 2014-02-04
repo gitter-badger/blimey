@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacus (xs.monomac)", "..\..\submodules\abacus\build_examples\xs.monomac\Abacus (xs.monomac).csproj", "{97195993-2B6B-434B-8F2C-BD0A4BCDC70A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacus (xs.monomac)", "..\..\submodules\abacus\build_examples\xs.monomac\Abacus\Abacus (xs.monomac).csproj", "{97195993-2B6B-434B-8F2C-BD0A4BCDC70A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo (xs.monomac)", "Sungiant.Cor.Demo\Sungiant.Cor.Demo (xs.monomac).csproj", "{84FD9E59-FC74-44E5-8856-90D1FC6F4F54}"
 EndProject
