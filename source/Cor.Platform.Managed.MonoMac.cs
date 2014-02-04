@@ -881,9 +881,14 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
             mainWindow = new MacGameNSWindow(
                 frame,
-                NSWindowStyle.Titled | NSWindowStyle.Closable | NSWindowStyle.Miniaturizable,
+                NSWindowStyle.Titled |
+                NSWindowStyle.Closable |
+                NSWindowStyle.Miniaturizable |
+                NSWindowStyle.Resizable,
                 NSBackingStore.Buffered,
                 true);
+
+            mainWindow.Title = this.settings.AppName;
 
             mainWindow.WindowController = new NSWindowController(mainWindow);
             mainWindow.Delegate = new MainWindowDelegate(this);
@@ -898,7 +903,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             mainWindow.ContentView.AddSubview(openGLView);
 
             mainWindow.MakeKeyAndOrderFront(mainWindow);
-            
+
             openGLView.StartRunLoop(60f);
         }
 
@@ -909,8 +914,8 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         public void Dispose()
         {
-            // No need to dispose openGLView or mainWindow.  They will be released by the
-            // nearest NSAutoreleasePool.
+            mainWindow.Dispose ();
+            openGLView.Dispose ();
         }
 
         float GetTitleBarHeight()
@@ -922,26 +927,26 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         }
     }
 
+    [CLSCompliant(false)]
     public sealed class OpenGLView
         : global::MonoMac.OpenGL.MonoMacGameView
     {
-        Rectangle clientBounds;
         NSTrackingArea trackingArea;
-        bool _needsToResetElapsedTime = false;
-        //Scene scene;
 
         Engine gameEngine;
-        Stopwatch timer = new Stopwatch();
         Single elapsedTime;
         Int64 frameCounter = -1;
         TimeSpan previousTimeSpan;
-        Int32 frameInterval;
 
         uint _depthRenderbuffer;
 
         readonly AppSettings settings;
         readonly IApp entryPoint;
+        readonly Stopwatch timer = new Stopwatch();
 
+        //------------------------------------------------------------------------------------------------------------//
+        // Init
+        //------------------------------------------------------------------------------------------------------------//
 
         public OpenGLView(AppSettings settings, IApp entryPoint, RectangleF frame)
             : base (frame)
@@ -954,65 +959,12 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 global::MonoMac.AppKit.NSViewResizingMask.MaxXMargin |
                 global::MonoMac.AppKit.NSViewResizingMask.MinYMargin |
                 global::MonoMac.AppKit.NSViewResizingMask.WidthSizable;
-
-            RectangleF rect = NSScreen.MainScreen.Frame;
-            clientBounds = new Rectangle (0,0,(int)rect.Width,(int)rect.Height);
-
-
-
-            Resize += delegate {
-                //scene.ResizeGLScene(Bounds);
-            };
-
-            Load += OnLoad;
-
-            UpdateFrame += delegate(object src, global::MonoMac.OpenGL.FrameEventArgs fea) {
-
-                Single dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
-                previousTimeSpan = timer.Elapsed;
-
-                if (dt > 0.5f)
-                {
-                    dt = 0.0f;
-                }
-
-                elapsedTime += dt;
-
-                var appTime = new AppTime(dt, elapsedTime, ++frameCounter);
-
-                gameEngine.Update(appTime);
-            };
-
-            RenderFrame += delegate(object src, global::MonoMac.OpenGL.FrameEventArgs fea) {
-
-                gameEngine.Render();
-            };
-
-        }
-
-        void OnLoad (object src, EventArgs fea)
-        {
-            //CreateFrameBuffer();
-            //scene = new Scene();
-
-            gameEngine = new Engine(
-                this.settings,
-                this.entryPoint
-                //this,
-                //this.GraphicsContext,
-                //this.touchState
-                );
-            timer.Start();
-
-            //InternalUtils.Log.Info("load ");
-            //InitGL();
-            //UpdateView();
-
         }
 
         // All Setup For OpenGL Goes Here
         bool InitGL ()
         {
+
             // Enables Smooth Shading
             global::MonoMac.OpenGL.GL.ShadeModel (global::MonoMac.OpenGL.ShadingModel.Smooth);
             // Set background color to black
@@ -1033,7 +985,6 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             return true;
         }
 
-        //[Export("toggleFullScreen:")]
         void toggleFullScreen (NSObject sender)
         {
             if (WindowState == global::MonoMac.OpenGL.WindowState.Fullscreen)
@@ -1075,16 +1026,104 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             Run(updateRate);
         }
 
-        public void ResetElapsedTime ()
+        //------------------------------------------------------------------------------------------------------------//
+        // MonoMacGameView Callbacks
+        //------------------------------------------------------------------------------------------------------------//
+
+        protected override void OnClosed (EventArgs e)
         {
-            _needsToResetElapsedTime = true;
+            InternalUtils.Log.Info ("MonoMacGameView.OnClosed");
+            base.OnClosed (e);
+        }
+
+        protected override void OnDisposed (EventArgs e)
+        {
+            InternalUtils.Log.Info ("MonoMacGameView.OnDisposed");
+            base.OnDisposed (e);
+        }
+
+        protected override void OnLoad (EventArgs e)
+        {
+            gameEngine = new Engine(
+                this.settings,
+                this.entryPoint
+                );
+
+            timer.Start();
+
+            InternalUtils.Log.Info ("MonoMacGameView.OnLoad");
+            base.OnLoad (e);
         }
 
         protected override void OnRenderFrame (global::MonoMac.OpenGL.FrameEventArgs e)
         {
+            try
+            {
+                gameEngine.Render();
+            }
+            catch(Exception ex)
+            {
+                InternalUtils.Log.Error("Failed to render frame:" + ex.Message);
+            }
+
             base.OnRenderFrame (e);
-            // tick
         }
+
+        protected override void OnResize (EventArgs e)
+        {
+
+            InternalUtils.Log.Info ("MonoMacGameView.OnResize");
+            base.OnResize (e);
+        }
+
+        protected override void OnTitleChanged (EventArgs e)
+        {
+            InternalUtils.Log.Info ("MonoMacGameView.OnTitleChanged");
+            base.OnTitleChanged (e);
+        }
+
+        protected override void OnUnload (EventArgs e)
+        {
+            InternalUtils.Log.Info ("MonoMacGameView.OnUnload");
+            base.OnUnload (e);
+        }
+
+        protected override void OnUpdateFrame (global::MonoMac.OpenGL.FrameEventArgs fea)
+        {
+            Single dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
+            previousTimeSpan = timer.Elapsed;
+
+            if (dt > 0.5f)
+            {
+                dt = 0.0f;
+            }
+
+            elapsedTime += dt;
+
+            var appTime = new AppTime(dt, elapsedTime, ++frameCounter);
+
+            gameEngine.Update(appTime);
+
+            base.OnUpdateFrame (fea);
+        }
+
+        protected override void OnVisibleChanged (EventArgs e)
+        {
+            InternalUtils.Log.Info ("MonoMacGameView.OnVisibleChanged");
+            base.OnVisibleChanged (e);
+        }
+
+        protected override void OnWindowStateChanged (EventArgs e)
+        {
+            InternalUtils.Log.Info ("MonoMacGameView.OnWindowStateChanged");
+            base.OnWindowStateChanged (e);
+        }
+
+
+
+        //------------------------------------------------------------------------------------------------------------//
+        // NSResponder Callbacks
+        //------------------------------------------------------------------------------------------------------------//
 
         public override bool AcceptsFirstResponder ()
         {
@@ -1095,6 +1134,16 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         public override bool BecomeFirstResponder ()
         {
             return true;
+        }
+
+        public override bool EnterFullscreenModeWithOptions (NSScreen screen, NSDictionary options)
+        {
+            return base.EnterFullscreenModeWithOptions (screen, options);
+        }
+
+        public override void ExitFullscreenModeWithOptions (NSDictionary options)
+        {
+            base.ExitFullscreenModeWithOptions (options);
         }
 
         public override void ViewWillMoveToWindow (NSWindow newWindow)
@@ -1171,6 +1220,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             base.OtherMouseDown (theEvent);
         }
 
+
         public override void OtherMouseUp (NSEvent theEvent)
         {
             base.OtherMouseUp (theEvent);
@@ -1191,7 +1241,6 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             base.MouseMoved (theEvent);
         }
     }
-
     public sealed class MacGameNSWindow 
         : NSWindow
     {

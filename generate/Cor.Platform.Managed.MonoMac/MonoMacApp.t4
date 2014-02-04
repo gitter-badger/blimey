@@ -21,9 +21,14 @@
 
             mainWindow = new MacGameNSWindow(
                 frame,
-                NSWindowStyle.Titled | NSWindowStyle.Closable | NSWindowStyle.Miniaturizable,
+                NSWindowStyle.Titled |
+                NSWindowStyle.Closable |
+                NSWindowStyle.Miniaturizable |
+                NSWindowStyle.Resizable,
                 NSBackingStore.Buffered,
                 true);
+
+            mainWindow.Title = this.settings.AppName;
 
             mainWindow.WindowController = new NSWindowController(mainWindow);
             mainWindow.Delegate = new MainWindowDelegate(this);
@@ -38,7 +43,7 @@
             mainWindow.ContentView.AddSubview(openGLView);
 
             mainWindow.MakeKeyAndOrderFront(mainWindow);
-            
+
             openGLView.StartRunLoop(60f);
         }
 
@@ -49,8 +54,8 @@
 
         public void Dispose()
         {
-            // No need to dispose openGLView or mainWindow.  They will be released by the
-            // nearest NSAutoreleasePool.
+            mainWindow.Dispose ();
+            openGLView.Dispose ();
         }
 
         float GetTitleBarHeight()
