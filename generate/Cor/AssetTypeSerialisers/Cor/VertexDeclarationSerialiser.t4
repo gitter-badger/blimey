@@ -28,12 +28,13 @@
 
         protected internal override void Write(AssetBinaryWriter abw, VertexDeclaration obj)
         {
+            throw new NotImplementedException();/*
             abr.Write (obj.ElementCount);
 
             for (Int32 i = 0; i < obj.ElementCount; ++i)
             {
                 vertexElementSerialiser.Write(abw, obj.Element[i]);
-            }
+            }*/
         }
     }
 

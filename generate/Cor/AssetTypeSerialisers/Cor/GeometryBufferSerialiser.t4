@@ -37,6 +37,7 @@
 
         protected internal override void Write(AssetBinaryWriter abw, IGeometryBuffer obj)
         {
+            throw new NotImplementedException();/*
             declaration.Write (abw, obj.VertexDeclaration);
 
             abw.Write (obj.VertexCount);
@@ -45,7 +46,7 @@
 
             abw.Write (obj.IndexCount);
             Byte[] rawIndexData = obj.IndexBuffer.GetRawData (0, obj.IndexCount);
-            abw.Write (rawIndexData);
+            abw.Write (rawIndexData);*/
 
         }
     }

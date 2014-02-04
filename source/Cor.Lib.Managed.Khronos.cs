@@ -36,6 +36,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 #if COR_PLATFORM_MANAGED_XIOS
 using OpenTK.Graphics.ES20;
@@ -572,6 +573,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
 
         void GetBufferData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount, int vertexStride) where T : struct
         {
+            throw new NotImplementedException();/*
             GL.BindBuffer (BufferTarget.ArrayBuffer, vbo);
             GraphicsExtensions.CheckGLError();
             var elementSizeInByte = Marshal.SizeOf(typeof(T));
@@ -616,7 +618,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
 
                 //Buffer.BlockCopy(buffer, 0, data, startIndex * elementSizeInByte, elementCount * elementSizeInByte);
             }
-            GL.UnmapBuffer(BufferTarget.ArrayBuffer);
+            GL.UnmapBuffer(BufferTarget.ArrayBuffer);*/
         }
 
         public void SetData<T> (T[] data)
@@ -764,6 +766,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
         void GetBufferData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount)
             where T : struct
         {
+            throw new NotImplementedException();/*
             GL.BindBuffer(BufferTarget.ArrayBuffer, ibo);
             GraphicsExtensions.CheckGLError();
             var elementSizeInByte = Marshal.SizeOf(typeof(T));
@@ -788,6 +791,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
             }
             GL.UnmapBuffer(BufferTarget.ArrayBuffer);
             GraphicsExtensions.CheckGLError();
+            */
         }
 
         internal void Activate()

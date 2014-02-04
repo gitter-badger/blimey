@@ -24,10 +24,11 @@
 
         protected internal override void Write(AssetBinaryWriter abw, VertexElement obj)
         {
+            throw new NotImplementedException();/*
             abr.Write(obj.Offset);
             formatSerialiser.Write(abw, obj.VertexElementFormat);
             usageSerialiser.Write(abw, obj.VertexElementUsage);
-            abr.Write(obj.UsageIndex);
+            abr.Write(obj.UsageIndex);*/
         }
     }
 

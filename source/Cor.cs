@@ -5101,12 +5101,13 @@ namespace Sungiant.Cor
 
         protected internal override void Write(AssetBinaryWriter abw, VertexDeclaration obj)
         {
+            throw new NotImplementedException();/*
             abr.Write (obj.ElementCount);
 
             for (Int32 i = 0; i < obj.ElementCount; ++i)
             {
                 vertexElementSerialiser.Write(abw, obj.Element[i]);
-            }
+            }*/
         }
     }
 
@@ -5136,10 +5137,11 @@ namespace Sungiant.Cor
 
         protected internal override void Write(AssetBinaryWriter abw, VertexElement obj)
         {
+            throw new NotImplementedException();/*
             abr.Write(obj.Offset);
             formatSerialiser.Write(abw, obj.VertexElementFormat);
             usageSerialiser.Write(abw, obj.VertexElementUsage);
-            abr.Write(obj.UsageIndex);
+            abr.Write(obj.UsageIndex);*/
         }
     }
 
@@ -5184,6 +5186,7 @@ namespace Sungiant.Cor
 
         protected internal override void Write(AssetBinaryWriter abw, IGeometryBuffer obj)
         {
+            throw new NotImplementedException();/*
             declaration.Write (abw, obj.VertexDeclaration);
 
             abw.Write (obj.VertexCount);
@@ -5192,7 +5195,7 @@ namespace Sungiant.Cor
 
             abw.Write (obj.IndexCount);
             Byte[] rawIndexData = obj.IndexBuffer.GetRawData (0, obj.IndexCount);
-            abw.Write (rawIndexData);
+            abw.Write (rawIndexData);*/
 
         }
     }

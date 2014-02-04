@@ -38,6 +38,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 #if COR_PLATFORM_MANAGED_XIOS
 using OpenTK.Graphics.ES20;

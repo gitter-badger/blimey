@@ -70,6 +70,7 @@
         void GetBufferData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount)
             where T : struct
         {
+            throw new NotImplementedException();/*
             GL.BindBuffer(BufferTarget.ArrayBuffer, ibo);
             GraphicsExtensions.CheckGLError();
             var elementSizeInByte = Marshal.SizeOf(typeof(T));
@@ -94,6 +95,7 @@
             }
             GL.UnmapBuffer(BufferTarget.ArrayBuffer);
             GraphicsExtensions.CheckGLError();
+            */
         }
 
         internal void Activate()
