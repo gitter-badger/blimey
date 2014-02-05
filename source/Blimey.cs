@@ -38,10 +38,10 @@ using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Sungiant.Abacus;
-using Sungiant.Abacus.Packed;
-using Sungiant.Abacus.SinglePrecision;
-using Sungiant.Abacus.Int32Precision;
+using Abacus;
+using Abacus.Packed;
+using Abacus.SinglePrecision;
+using Abacus.Int32Precision;
 using System.Linq;
 using Sungiant.Cor;
 
@@ -1620,8 +1620,8 @@ namespace Sungiant.Blimey
         static LightingManager()
         {
             ambientLightColour = Rgba32.Black;
-            emissiveColour = Rgba32.DarkSlateGray;
-            specularColour = Rgba32.DarkGray;
+            emissiveColour = Rgba32.DarkSlateGrey;
+            specularColour = Rgba32.DarkGrey;
             specularPower = 2f;
 
             fogEnabled = true;
@@ -1632,17 +1632,17 @@ namespace Sungiant.Blimey
 
             dirLight0Direction = new Vector3(-0.3f, -0.9f, +0.3f); 
             Vector3.Normalise(ref dirLight0Direction, out dirLight0Direction);
-            dirLight0DiffuseColour = Rgba32.DimGray;
+            dirLight0DiffuseColour = Rgba32.DimGrey;
             dirLight0SpecularColour = Rgba32.DarkGreen;
 
             dirLight1Direction = new Vector3(0.3f, 0.1f, -0.3f);
             Vector3.Normalise(ref dirLight1Direction, out dirLight1Direction);
-            dirLight1DiffuseColour = Rgba32.DimGray;
+            dirLight1DiffuseColour = Rgba32.DimGrey;
             dirLight1SpecularColour = Rgba32.DarkRed;
 
             dirLight2Direction = new Vector3( -0.7f, -0.3f, +0.1f);
             Vector3.Normalise(ref dirLight2Direction, out dirLight2Direction);
-            dirLight2DiffuseColour = Rgba32.DimGray;
+            dirLight2DiffuseColour = Rgba32.DimGrey;
             dirLight2SpecularColour = Rgba32.DarkBlue;
 
         }
@@ -2145,7 +2145,7 @@ namespace Sungiant.Blimey
         float gridSquareSize = 0.50f;  // in meters
         int numberOfGridSquares = 10;
 
-        Rgba32 gridColour = Rgba32.LightGray;
+        Rgba32 gridColour = Rgba32.LightGrey;
 
         public bool ShowXZPlane = true;
         public bool ShowXYPlane = false;
