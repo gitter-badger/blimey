@@ -77,76 +77,76 @@
     <Folder Include="shaders\" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\PixelLit_PositionNormal.fsh">
+    <BundleResource Include="..\..\..\shaders\monomac\PixelLit_PositionNormal.fsh">
       <Link>shaders\PixelLit_PositionNormal.fsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\PixelLit_PositionNormal.vsh">
+    <BundleResource Include="..\..\..\shaders\monomac\PixelLit_PositionNormal.vsh">
       <Link>shaders\PixelLit_PositionNormal.vsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\PixelLit_PositionNormalColour.fsh">
+    <BundleResource Include="..\..\..\shaders\monomac\PixelLit_PositionNormalColour.fsh">
       <Link>shaders\PixelLit_PositionNormalColour.fsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\PixelLit_PositionNormalColour.vsh">
+    <BundleResource Include="..\..\..\shaders\monomac\PixelLit_PositionNormalColour.vsh">
       <Link>shaders\PixelLit_PositionNormalColour.vsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\PixelLit_PositionNormalTexture.fsh">
+    <BundleResource Include="..\..\..\shaders\monomac\PixelLit_PositionNormalTexture.fsh">
       <Link>shaders\PixelLit_PositionNormalTexture.fsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\PixelLit_PositionNormalTexture.vsh">
+    <BundleResource Include="..\..\..\shaders\monomac\PixelLit_PositionNormalTexture.vsh">
       <Link>shaders\PixelLit_PositionNormalTexture.vsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\PixelLit_PositionNormalTextureColour.fsh">
+    <BundleResource Include="..\..\..\shaders\monomac\PixelLit_PositionNormalTextureColour.fsh">
       <Link>shaders\PixelLit_PositionNormalTextureColour.fsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\PixelLit_PositionNormalTextureColour.vsh">
+    <BundleResource Include="..\..\..\shaders\monomac\PixelLit_PositionNormalTextureColour.vsh">
       <Link>shaders\PixelLit_PositionNormalTextureColour.vsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\Unlit_Position.fsh">
+    <BundleResource Include="..\..\..\shaders\monomac\Unlit_Position.fsh">
       <Link>shaders\Unlit_Position.fsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\Unlit_Position.vsh">
+    <BundleResource Include="..\..\..\shaders\monomac\Unlit_Position.vsh">
       <Link>shaders\Unlit_Position.vsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\Unlit_PositionColour.fsh">
+    <BundleResource Include="..\..\..\shaders\monomac\Unlit_PositionColour.fsh">
       <Link>shaders\Unlit_PositionColour.fsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\Unlit_PositionColour.vsh">
+    <BundleResource Include="..\..\..\shaders\monomac\Unlit_PositionColour.vsh">
       <Link>shaders\Unlit_PositionColour.vsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\Unlit_PositionTexture.fsh">
+    <BundleResource Include="..\..\..\shaders\monomac\Unlit_PositionTexture.fsh">
       <Link>shaders\Unlit_PositionTexture.fsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\Unlit_PositionTexture.vsh">
+    <BundleResource Include="..\..\..\shaders\monomac\Unlit_PositionTexture.vsh">
       <Link>shaders\Unlit_PositionTexture.vsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\Unlit_PositionTextureColour.fsh">
+    <BundleResource Include="..\..\..\shaders\monomac\Unlit_PositionTextureColour.fsh">
       <Link>shaders\Unlit_PositionTextureColour.fsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\Unlit_PositionTextureColour.vsh">
+    <BundleResource Include="..\..\..\shaders\monomac\Unlit_PositionTextureColour.vsh">
       <Link>shaders\Unlit_PositionTextureColour.vsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\VertexLit_PositionNormal.fsh">
+    <BundleResource Include="..\..\..\shaders\monomac\VertexLit_PositionNormal.fsh">
       <Link>shaders\VertexLit_PositionNormal.fsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\VertexLit_PositionNormal.vsh">
+    <BundleResource Include="..\..\..\shaders\monomac\VertexLit_PositionNormal.vsh">
       <Link>shaders\VertexLit_PositionNormal.vsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\VertexLit_PositionNormalColour.fsh">
+    <BundleResource Include="..\..\..\shaders\monomac\VertexLit_PositionNormalColour.fsh">
       <Link>shaders\VertexLit_PositionNormalColour.fsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\VertexLit_PositionNormalColour.vsh">
+    <BundleResource Include="..\..\..\shaders\monomac\VertexLit_PositionNormalColour.vsh">
       <Link>shaders\VertexLit_PositionNormalColour.vsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\VertexLit_PositionNormalTexture.fsh">
+    <BundleResource Include="..\..\..\shaders\monomac\VertexLit_PositionNormalTexture.fsh">
       <Link>shaders\VertexLit_PositionNormalTexture.fsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\VertexLit_PositionNormalTexture.vsh">
+    <BundleResource Include="..\..\..\shaders\monomac\VertexLit_PositionNormalTexture.vsh">
       <Link>shaders\VertexLit_PositionNormalTexture.vsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\VertexLit_PositionNormalTextureColour.fsh">
+    <BundleResource Include="..\..\..\shaders\monomac\VertexLit_PositionNormalTextureColour.fsh">
       <Link>shaders\VertexLit_PositionNormalTextureColour.fsh</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\..\..\..\..\blimey3D\cor.demo\submodules\cor\shaders\monomac\VertexLit_PositionNormalTextureColour.vsh">
+    <BundleResource Include="..\..\..\shaders\monomac\VertexLit_PositionNormalTextureColour.vsh">
       <Link>shaders\VertexLit_PositionNormalTextureColour.vsh</Link>
     </BundleResource>
   </ItemGroup>
