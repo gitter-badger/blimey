@@ -37,7 +37,7 @@ using MonoMac.Foundation;
 using MonoMac.AppKit;
 using Sungiant.Cor.Platform.Managed.MonoMac;
 
-namespace Sungiant.Cor.Demo.MonoMac
+namespace Sungiant.Cor.Demo
 {
 	class AppDelegate
 		: NSApplicationDelegate

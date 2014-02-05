@@ -1,5 +1,5 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor! - Low Level 3D App Engine                                         │ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// │ Blimey - Fast, efficient, high level engine built upon Cor & Abacus    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Brought to you by:                                                     │ \\
 // │          _________                    .__               __             │ \\
@@ -34,28 +34,121 @@
 
 using System;
 using Abacus;
-using Abacus.SinglePrecision;
 using Abacus.Packed;
+using Abacus.SinglePrecision;
 using Sungiant.Cor;
 using System.Collections.Generic;
 
-namespace Sungiant.Cor.Demo
+namespace Sungiant.Blimey.Demo
 {
-    public static class Demo
+    public class Scene1
+        : Scene
     {
-        public static IApp GetEntryPoint() { return basicApp; }
-        public static AppSettings GetAppSettings() { return appSettings; }
-        static IApp basicApp;
-        static AppSettings appSettings;
+        List<SceneObject> _objects;
 
-        static Demo()
+        SceneObject _alternateCamera;
+
+        GridRenderer gr;
+
+        const Single _cameraChangeTime = 5f;
+
+        Single _timer = _cameraChangeTime;
+
+        bool _defaultCamIsCurrent = true;
+
+        Scene _returnScene;
+
+        LookAtSubject las = null;
+
+        public override void Start ()
         {
-			appSettings = new AppSettings ("COR-DEMO") {
-				FullScreen = true,
-				MouseGeneratesTouches = true
-			};
+            //this.ClearColour = Colour.LightGray;
+            gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Default");
 
-            basicApp = new BasicApp();
+            _alternateCamera = this.CreateSceneObject("Alternate Camera");
+
+            _alternateCamera.AddTrait<Camera>();
+
+            _alternateCamera.Transform.Position = new Vector3(0.65f, 1f, -2.50f) * 3;
+            _alternateCamera.Transform.LookAt(Vector3.Zero);
+
+
+            las = _alternateCamera.AddTrait<LookAtSubject> ();
+
+            _objects = RandomObjectHelper.Generate(this);
+
+            var landmarkGo = this.CreateLandmark();
+            _objects.Add(landmarkGo);
+
+            _returnScene = this;
+
+            this.Blimey.InputEventSystem.Tap += this.OnTap;
+        }
+
+        SceneObject CreateLandmark()
+        {
+            var landmarkGo = this.CreateSceneObject("landmark");
+
+            landmarkGo.Transform.LocalPosition = new Vector3(0f, 0f, 0f);
+            landmarkGo.Transform.LocalScale = new Vector3(0.64f, 0.64f, 0.64f);
+
+            var cowMesh = new TeapotPrimitive(this.Cor.Graphics);
+
+            var mr = landmarkGo.AddTrait<MeshRenderer>();
+
+            mr.Mesh = cowMesh;
+
+            var shader = this.Cor.Resources.LoadShader(ShaderType.PixelLit);
+
+            var mat = new Material("Default", shader);
+
+            mat.SetColour("MaterialColour", Rgba32.CornflowerBlue);
+
+            mr.Material = mat;
+
+            return landmarkGo;
+        }
+
+        public override Scene Update(AppTime time)
+        {
+            if (Cor.Input.GenericGamepad.East == ButtonState.Pressed ||
+                Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape))
+            {
+                _returnScene = new MainMenuScene();
+            }
+
+            gr.Update();
+
+            _timer -= time.Delta;
+
+            if( _timer < 0f )
+            {
+                _timer = _cameraChangeTime;
+
+                if( _defaultCamIsCurrent )
+                {
+                    this.SetRenderPassCameraTo("Default", _alternateCamera);
+                }
+                else
+                {
+                    this.SetRenderPassCameraToDefault("Default");
+                }
+
+                _defaultCamIsCurrent = !_defaultCamIsCurrent;
+            }
+
+            return _returnScene;
+        }
+
+        public override void Shutdown ()
+        {
+            _objects = null;
+            this.Blimey.InputEventSystem.Tap -= this.OnTap;
+        }
+
+        void OnTap(Gesture gesture)
+        {
+            _returnScene = new MainMenuScene();
         }
     }
 }

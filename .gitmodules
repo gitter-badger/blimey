@@ -1,6 +1,12 @@
 [submodule "submodules/abacus"]
 	path = submodules/abacus
-url=git@github.com:abacus3d/abacus.git
+    url=git@github.com:abacus3d/abacus.git
+    branch = development
 [submodule "submodules/cor"]
 	path = submodules/cor
-url=git@github.com:blimey3D/cor.git
+    url=git@github.com:blimey3D/cor.git
+    branch = development
+[submodule "submodules/blimey"]
+	path = submodules/blimey
+	url = git@github.com:blimey3D/blimey.git
+	branch = development

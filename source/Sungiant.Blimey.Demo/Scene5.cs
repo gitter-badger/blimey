@@ -1,5 +1,5 @@
 // ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor.Demo MonoMac Startup Project                                       │ \\
+// │ Blimey - Fast, efficient, high level engine built upon Cor & Abacus    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Brought to you by:                                                     │ \\
 // │          _________                    .__               __             │ \\
@@ -33,24 +33,135 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
-using System.Drawing;
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using MonoMac.ObjCRuntime;
+using Abacus;
+using Abacus.Packed;
+using Abacus.SinglePrecision;
+using Sungiant.Cor;
+using System.Collections.Generic;
+using System.IO;
 
-namespace Sungiant.Cor.Demo.MonoMac
+namespace Sungiant.Blimey.Demo
 {
-	class Program
+	public class Scene5
+		: Scene
 	{
-		static void Main (string [] args)
-		{
-			NSApplication.Init ();
+		Scene returnScene;
+		SceneObject earthGo;
 
-			using (var p = new NSAutoreleasePool ()) {
-				NSApplication.SharedApplication.Delegate = new AppDelegate();
-				NSApplication.Main(args);
+		GridRenderer gr;
+
+		readonly List<Airport> airports = new List<Airport>();
+
+		public override void Start()
+		{
+			gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Debug");
+
+
+			using (var streamReader = this.Cor.Resources.Open<StreamReader>("resources/airports.dat"))
+			{
+				while (!streamReader.EndOfStream)
+				{
+					string line = streamReader.ReadLine();
+
+					string[] items = line.Split(',');
+
+					if (items.Length == 11)
+					{
+						airports.Add(new Airport(items));
+					}
+				}
+
 			}
+			Console.WriteLine("num airports: " + airports.Count);
+
+
+			this.Settings.BackgroundColour = Rgba32.Red;
+
+			returnScene = this;
+
+			float radius = 1.5f;
+			// create a sprite
+			var sphereMesh = new SpherePrimitive(this.Cor.Graphics);
+			var shader = this.Cor.Resources.LoadShader(ShaderType.VertexLit);
+			var mat = new Material("Default",shader);
+            mat.SetColour("MaterialColour", Rgba32.LightGrey);
+			earthGo = this.CreateSceneObject("earth");
+
+			SceneObject camSo = CreateSceneObject ("Scene 5 Camera");
+			var camTrait = camSo.AddTrait<Camera>();
+			var lookatTrait = camSo.AddTrait<LookAtSubject>();
+			lookatTrait.Subject = Transform.Origin;
+			var orbitTrait = camSo.AddTrait<OrbitAroundSubject>();
+			orbitTrait.CameraSubject = Transform.Origin;
+
+			camSo.Transform.LocalPosition = new Vector3(10f,4f,10f);
+
+			this.SetRenderPassCameraTo("Debug", camSo);
+			this.SetRenderPassCameraTo("Default", camSo);
+
+			earthGo.Transform.LocalScale = new Vector3(2 * radius, 2 * radius, 2 * radius);
+			var mr = earthGo.AddTrait<MeshRenderer>();
+			mr.Mesh = sphereMesh;
+			mr.Material = mat;
+
+			var shader2 = this.Cor.Resources.LoadShader(ShaderType.Unlit);
+			var mat2 = new Material("Default", shader2);
+			mat2.SetColour("MaterialColour", Rgba32.Blue);
+
+			foreach (var airport in airports)
+			{
+				var so = this.CreateSceneObject(airport.Iata);
+
+				so.Transform.Parent = earthGo.Transform;
+
+				var somr = so.AddTrait<MeshRenderer>();
+				somr.Mesh = sphereMesh;
+				somr.Material = mat2;
+
+				var lat = airport.Latitude;
+				var lon = airport.Longitude;
+
+				Vector3 pos = new Vector3(
+					radius * RealMaths.Cos(RealMaths.ToRadians(lat)),
+					radius * RealMaths.Sin(RealMaths.ToRadians(lat)),
+					0f);
+
+				Single t = RealMaths.ToRadians (lon);
+
+				Matrix44 rot; Matrix44.CreateRotationY(t, out rot);
+
+				Vector3 r; Vector3.Transform(ref pos, ref rot, out r);
+				so.Transform.Position = r;
+				so.Transform.LocalScale = new Vector3(0.005f, 0.005f, 0.005f);
+
+			}
+
+			this.Blimey.InputEventSystem.Tap += this.OnTap;
+		}
+
+		public override void Shutdown()
+		{
+			this.Blimey.InputEventSystem.Tap -= this.OnTap;
+		}
+
+		public override Scene Update(AppTime time)
+		{
+			gr.Update ();
+
+			if (Cor.Input.GenericGamepad.East == ButtonState.Pressed ||
+			    Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape))
+			{
+				returnScene = new MainMenuScene ();
+			}
+
+
+			return returnScene;
+		}
+
+		void OnTap(Gesture gesture)
+		{
+			returnScene = new MainMenuScene();
 		}
 	}
-}	
+}
 

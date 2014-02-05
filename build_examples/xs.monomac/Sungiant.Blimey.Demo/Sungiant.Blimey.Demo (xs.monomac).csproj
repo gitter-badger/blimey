@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>12.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2D399EBD-D7A2-45D8-8BD2-DA9A9A691C48}</ProjectGuid>
+    <ProjectGuid>{49536819-F662-4249-A36A-B59D0ACEA955}</ProjectGuid>
     <ProjectTypeGuids>{948B3504-5B70-4649-8FE4-BDE1FB46EC69};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Sungiant.Cor.Demo</RootNamespace>
+    <RootNamespace>Sungiant.Blimey.Demo</RootNamespace>
     <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
     <SuppressXamMacUpsell>True</SuppressXamMacUpsell>
   </PropertyGroup>
@@ -31,7 +31,7 @@
     <PackageSigningKey>Developer ID Installer</PackageSigningKey>
     <I18n>
     </I18n>
-    <AssemblyName>Sungiant.Cor.Demo</AssemblyName>
+    <AssemblyName>Sungiant.Blimey.Demo</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>full</DebugType>
@@ -48,7 +48,7 @@
     <CodeSigningKey>Developer ID Application</CodeSigningKey>
     <EnableCodeSigning>true</EnableCodeSigning>
     <EnablePackageSigning>false</EnablePackageSigning>
-    <AssemblyName>Sungiant.Cor.Demo</AssemblyName>
+    <AssemblyName>Sungiant.Blimey.Demo</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|x86' ">
     <DebugType>full</DebugType>
@@ -66,7 +66,7 @@
     <CodeSigningKey>3rd Party Mac Developer Application</CodeSigningKey>
     <EnableCodeSigning>true</EnableCodeSigning>
     <EnablePackageSigning>true</EnablePackageSigning>
-    <AssemblyName>Sungiant.Cor.Demo</AssemblyName>
+    <AssemblyName>Sungiant.Blimey.Demo</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -79,43 +79,54 @@
   <ItemGroup>
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="..\..\..\source\Sungiant.Cor.Demo\BasicApp.cs">
-      <Link>source\BasicApp.cs</Link>
+    <Compile Include="..\..\..\source\Sungiant.Blimey.Demo\Airport.cs">
+      <Link>source\Airport.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Sungiant.Cor.Demo\CustomCube_PositionTexture.cs">
-      <Link>source\CustomCube_PositionTexture.cs</Link>
+    <Compile Include="..\..\..\source\Sungiant.Blimey.Demo\CaliforniaVan.cs">
+      <Link>source\CaliforniaVan.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Sungiant.Cor.Demo\CustomCylinder_PositionNormalTexture.cs">
-      <Link>source\CustomCylinder_PositionNormalTexture.cs</Link>
+    <Compile Include="..\..\..\source\Sungiant.Blimey.Demo\ColourChanger.cs">
+      <Link>source\ColourChanger.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Sungiant.Cor.Demo\CustomShape_PositionColour.cs">
-      <Link>source\CustomShape_PositionColour.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Sungiant.Cor.Demo\Demo.cs">
+    <Compile Include="..\..\..\source\Sungiant.Blimey.Demo\Demo.cs">
       <Link>source\Demo.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Sungiant.Cor.Demo\RandomColours.cs">
-      <Link>source\RandomColours.cs</Link>
+    <Compile Include="..\..\..\source\Sungiant.Blimey.Demo\MainMenuScene.cs">
+      <Link>source\MainMenuScene.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Sungiant.Blimey.Demo\RandomLocalRotate.cs">
+      <Link>source\RandomLocalRotate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Sungiant.Blimey.Demo\RandomObjectHelper.cs">
+      <Link>source\RandomObjectHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Sungiant.Blimey.Demo\Scene1.cs">
+      <Link>source\Scene1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Sungiant.Blimey.Demo\Scene2.cs">
+      <Link>source\Scene2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Sungiant.Blimey.Demo\Scene3.cs">
+      <Link>source\Scene3.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Sungiant.Blimey.Demo\Scene4.cs">
+      <Link>source\Scene4.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Sungiant.Blimey.Demo\Scene5.cs">
+      <Link>source\Scene5.cs</Link>
     </Compile>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="Info.plist" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\submodules\cor\build_examples\xs.monomac\Sungiant.Cor\Sungiant.Cor %28xs.monomac%29.csproj">
-      <Project>{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}</Project>
-      <Name>Sungiant.Cor (xs.monomac)</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\submodules\abacus\build_examples\xs.monomac\Abacus\Abacus %28xs.monomac%29.csproj">
-      <Project>{97195993-2B6B-434B-8F2C-BD0A4BCDC70A}</Project>
-      <Name>Abacus (xs.monomac)</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="resources\" />
   </ItemGroup>
   <ItemGroup>
+    <BundleResource Include="..\..\..\resources\airports.dat">
+      <Link>resources\airports.dat</Link>
+    </BundleResource>
     <BundleResource Include="..\..\..\resources\bg1.png">
       <Link>resources\bg1.png</Link>
     </BundleResource>
@@ -203,5 +214,19 @@
     <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\VertexLit_PositionNormalTextureColour.vsh">
       <Link>shaders\VertexLit_PositionNormalTextureColour.vsh</Link>
     </BundleResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\submodules\abacus\build_examples\xs.monomac\Abacus\Abacus %28xs.monomac%29.csproj">
+      <Project>{97195993-2B6B-434B-8F2C-BD0A4BCDC70A}</Project>
+      <Name>Abacus (xs.monomac)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\blimey\build_examples\xs.monomac\Sungiant.Blimey\Sungiant.Blimey %28xs.monomac%29.csproj">
+      <Project>{1B6913B6-DCF2-4B43-BD2F-2C493801F026}</Project>
+      <Name>Sungiant.Blimey (xs.monomac)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\cor\build_examples\xs.monomac\Sungiant.Cor\Sungiant.Cor %28xs.monomac%29.csproj">
+      <Project>{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}</Project>
+      <Name>Sungiant.Cor (xs.monomac)</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
