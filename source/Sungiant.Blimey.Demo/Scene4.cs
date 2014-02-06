@@ -79,10 +79,10 @@ namespace Sungiant.Blimey.Demo
             screenHeight = this.Cor.Graphics.DisplayStatus.CurrentHeight;
 
             if( texVan1 == null )
-                texVan1 = this.Cor.Resources.Load<Texture2D>("Assets/cvan01.png");
+                texVan1 = this.Cor.Resources.Load<Texture2D>("resources/cvan01.png");
 
             if( texVan2 == null )
-                texVan2 = this.Cor.Resources.Load<Texture2D>("Assets/cvan02.png");
+                texVan2 = this.Cor.Resources.Load<Texture2D>("resources/cvan02.png");
 
             /*
             var go = this.CreateSceneObject("block");

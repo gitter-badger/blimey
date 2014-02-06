@@ -77,7 +77,10 @@ namespace Sungiant.Blimey.Demo
                 _target = RandomGenerator.Default.GetRandomColour();
             }
 
-            Rgba32 colToSet = Rgba32.Lerp(_current, _target, 1f - _timer);
+            Single lerpVal = 1f - _timer;
+            if(lerpVal < 0f) lerpVal = 0f;
+
+            Rgba32 colToSet = Rgba32.Lerp(_current, _target, lerpVal);
             
             _renderer.Material.SetColour("MaterialColour", colToSet);
         }
