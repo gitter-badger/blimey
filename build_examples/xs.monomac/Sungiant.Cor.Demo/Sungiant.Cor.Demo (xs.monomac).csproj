@@ -11,6 +11,7 @@
     <RootNamespace>Sungiant.Cor.Demo</RootNamespace>
     <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
     <SuppressXamMacUpsell>True</SuppressXamMacUpsell>
+    <AssemblyName>Sungiant.Cor.Demo</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,7 +32,6 @@
     <PackageSigningKey>Developer ID Installer</PackageSigningKey>
     <I18n>
     </I18n>
-    <AssemblyName>Sungiant.Cor.Demo</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>full</DebugType>
@@ -48,7 +48,6 @@
     <CodeSigningKey>Developer ID Application</CodeSigningKey>
     <EnableCodeSigning>true</EnableCodeSigning>
     <EnablePackageSigning>false</EnablePackageSigning>
-    <AssemblyName>Sungiant.Cor.Demo</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|x86' ">
     <DebugType>full</DebugType>
@@ -66,7 +65,6 @@
     <CodeSigningKey>3rd Party Mac Developer Application</CodeSigningKey>
     <EnableCodeSigning>true</EnableCodeSigning>
     <EnablePackageSigning>true</EnablePackageSigning>
-    <AssemblyName>Sungiant.Cor.Demo</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
