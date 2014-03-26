@@ -576,13 +576,16 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 "DisplayStatus -> ()");
         }
 
+		Int32 width = 800;
+		Int32 height = 600;
+
         #region IDisplayStatus
 
         public Boolean Fullscreen { get { return true; } }
 
-        public Int32 CurrentWidth { get { return 800; } }
+		public Int32 CurrentWidth { get { return width; } internal set { width = value; } }
 
-        public Int32 CurrentHeight { get { return 600; } }
+        public Int32 CurrentHeight { get { return height; } internal set { height = value; } }
 
         #endregion
     }
@@ -749,6 +752,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     public sealed class ScreenSpecification
         : IScreenSpecification
     {
+		// this should get the resolution of the screen
         Int32 width = 800;
         Int32 height = 600;
 
@@ -932,7 +936,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         : global::MonoMac.OpenGL.MonoMacGameView
     {
         NSTrackingArea trackingArea;
-
+		
         Engine gameEngine;
         Single elapsedTime;
         Int64 frameCounter = -1;
@@ -1048,7 +1052,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 this.settings,
                 this.entryPoint
                 );
-
+			
             timer.Start();
 
             InternalUtils.Log.Info ("MonoMacGameView.OnLoad");
@@ -1071,7 +1075,6 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         protected override void OnResize (EventArgs e)
         {
-
             InternalUtils.Log.Info ("MonoMacGameView.OnResize");
             base.OnResize (e);
         }
@@ -1090,6 +1093,9 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         protected override void OnUpdateFrame (global::MonoMac.OpenGL.FrameEventArgs fea)
         {
+			(gameEngine.Graphics.DisplayStatus as DisplayStatus).CurrentHeight = Size.Height;
+			(gameEngine.Graphics.DisplayStatus as DisplayStatus).CurrentWidth= Size.Width;
+
             Single dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
             previousTimeSpan = timer.Elapsed;
 
