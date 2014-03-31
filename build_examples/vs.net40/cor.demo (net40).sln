@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Abacus (net40)", "..\submodules\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus (net40).csproj", "{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacus (net40)", "..\submodules\abacus\build_examples\Abacus\Abacus (net40).csproj", "{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey (net40)", "..\submodules\blimey\build_examples\Sungiant.Blimey\Sungiant.Blimey (net40).csproj", "{DCD6F568-67C2-4C18-842B-417ACF84C5FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey (net40)", "..\submodules\blimey\build_examples\Blimey\Blimey (net40).csproj", "{DCD6F568-67C2-4C18-842B-417ACF84C5FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey.Demo (net40)", "..\submodules\blimey.demo\build_examples\Sungiant.Blimey.Demo\Sungiant.Blimey.Demo (net40).csproj", "{C56A607A-958A-4A42-905C-50F98A1EFE4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Demo (net40)", "..\submodules\blimey.demo\build_examples\Blimey.Demo\Blimey.Demo (net40).csproj", "{C56A607A-958A-4A42-905C-50F98A1EFE4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor (net40)", "..\submodules\cor\build_examples\Sungiant.Cor\Sungiant.Cor (net40).csproj", "{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor (net40)", "..\submodules\cor\build_examples\Cor\Cor (net40).csproj", "{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo (net40)", "..\submodules\cor.demo\build_examples\Sungiant.Cor.Demo\Sungiant.Cor.Demo (net40).csproj", "{FAC80B38-A913-40E4-8FAE-B80AE15B5D5B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Demo (net40)", "..\submodules\cor.demo\build_examples\Cor.Demo\Cor.Demo (net40).csproj", "{FAC80B38-A913-40E4-8FAE-B80AE15B5D5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Platform.Stub (net40)", "..\submodules\cor.platform.stub\build_examples\Sungiant.Cor.Platform.Stub\Sungiant.Cor.Platform.Stub (net40).csproj", "{D5DF7BE7-78FC-46FA-BC7B-C1DA12B5CEB2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Platform.Stub (net40)", "..\submodules\cor.platform.stub\build_examples\Cor.Platform.Stub\Cor.Platform.Stub (net40).csproj", "{D5DF7BE7-78FC-46FA-BC7B-C1DA12B5CEB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,7 +79,7 @@ Global
 		{39484047-9CD3-48FE-8D58-110ED4D4106D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = ..\submodules\blimey.demo\build_examples\Sungiant.Blimey.Demo\Sungiant.Blimey.Demo (net40).csproj
+		StartupItem = ..\submodules\blimey.demo\build_examples\Blimey.Demo\Blimey.Demo (net40).csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

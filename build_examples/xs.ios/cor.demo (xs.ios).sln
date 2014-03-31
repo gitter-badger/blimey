@@ -1,25 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Abacus (xios)", "..\submodules\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus (xios).csproj", "{DE5491E6-4DF9-4BBB-9985-E7CD86905D41}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacus (xios)", "..\submodules\abacus\build_examples\Abacus\Abacus (xios).csproj", "{DE5491E6-4DF9-4BBB-9985-E7CD86905D41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor (xios)", "..\submodules\cor\build_examples\Sungiant.Cor\Sungiant.Cor (xios).csproj", "{C8436444-EAAC-4B9A-A8E3-6F8494186F57}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor (xios)", "..\submodules\cor\build_examples\Cor\Cor (xios).csproj", "{C8436444-EAAC-4B9A-A8E3-6F8494186F57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey (xios)", "..\submodules\blimey\build_examples\Sungiant.Blimey\Sungiant.Blimey (xios).csproj", "{072F383E-B1B5-4E79-B917-9D299672FE9A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey (xios)", "..\submodules\blimey\build_examples\Blimey\Blimey (xios).csproj", "{072F383E-B1B5-4E79-B917-9D299672FE9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey.Demo (xios)", "..\submodules\blimey.demo\build_examples\Sungiant.Blimey.Demo\Sungiant.Blimey.Demo (xios).csproj", "{0CBDAD29-88E3-4374-B4AC-7F1A993D664C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Demo (xios)", "..\submodules\blimey.demo\build_examples\Blimey.Demo\Blimey.Demo (xios).csproj", "{0CBDAD29-88E3-4374-B4AC-7F1A993D664C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo (xios)", "..\submodules\cor.demo\build_examples\Sungiant.Cor.Demo\Sungiant.Cor.Demo (xios).csproj", "{E28D8421-617F-40B5-B138-252788350130}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Demo (xios)", "..\submodules\cor.demo\build_examples\Cor.Demo\Cor.Demo (xios).csproj", "{E28D8421-617F-40B5-B138-252788350130}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Platform.Managed.Xios (xios)", "..\submodules\cor.platform.managed.xios\build_examples\Sungiant.Cor.Platform.Managed.Xios\Sungiant.Cor.Platform.Managed.Xios (xios).csproj", "{88551613-DC7E-4A2E-8498-A933CE990357}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Platform.Managed.Xios (xios)", "..\submodules\cor.platform.managed.xios\build_examples\Cor.Platform.Managed.Xios\Cor.Platform.Managed.Xios (xios).csproj", "{88551613-DC7E-4A2E-8498-A933CE990357}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey.Demo.Xios (xios)", "Sungiant.Blimey.Demo.Xios\Sungiant.Blimey.Demo.Xios (xios).csproj", "{ACED4711-670C-453C-8990-6E1385C78E2E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Demo.Xios (xios)", "Blimey.Demo.Xios\Blimey.Demo.Xios (xios).csproj", "{ACED4711-670C-453C-8990-6E1385C78E2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo.Xios (xios)", "Sungiant.Cor.Demo.Xios\Sungiant.Cor.Demo.Xios (xios).csproj", "{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Demo.Xios (xios)", "Cor.Demo.Xios\Cor.Demo.Xios (xios).csproj", "{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Lib.Managed.Khronos (xios)", "..\submodules\cor.lib.managed.khronos\build_examples\Sungiant.Cor.Lib.Managed.Khronos (xios).csproj", "{E8051D31-0602-408F-81A8-0E0FABC26758}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Lib.Managed.Khronos (xios)", "..\submodules\cor.lib.managed.khronos\build_examples\Cor.Lib.Managed.Khronos (xios).csproj", "{E8051D31-0602-408F-81A8-0E0FABC26758}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Platform.Stub (xios)", "..\submodules\cor.platform.stub\build_examples\Sungiant.Cor.Platform.Stub\Sungiant.Cor.Platform.Stub (xios).csproj", "{D51BD03A-B3DF-4B58-9C36-01AE0168CF69}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Platform.Stub (xios)", "..\submodules\cor.platform.stub\build_examples\Cor.Platform.Stub\Cor.Platform.Stub (xios).csproj", "{D51BD03A-B3DF-4B58-9C36-01AE0168CF69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,6 +153,6 @@ Global
 		{E8051D31-0602-408F-81A8-0E0FABC26758}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Sungiant.Blimey.Demo.Xios\Sungiant.Blimey.Demo.Xios (xios).csproj
+		StartupItem = Blimey.Demo.Xios\Blimey.Demo.Xios (xios).csproj
 	EndGlobalSection
 EndGlobal

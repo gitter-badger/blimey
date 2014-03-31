@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacus (xs.monomac)", "..\..\submodules\abacus\build_examples\xs.monomac\Abacus\Abacus (xs.monomac).csproj", "{97195993-2B6B-434B-8F2C-BD0A4BCDC70A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo (xs.monomac)", "Sungiant.Cor.Demo\Sungiant.Cor.Demo (xs.monomac).csproj", "{2D399EBD-D7A2-45D8-8BD2-DA9A9A691C48}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Demo (xs.monomac)", "Cor.Demo\Cor.Demo (xs.monomac).csproj", "{2D399EBD-D7A2-45D8-8BD2-DA9A9A691C48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor (xs.monomac)", "..\..\submodules\cor\build_examples\xs.monomac\Sungiant.Cor\Sungiant.Cor (xs.monomac).csproj", "{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor (xs.monomac)", "..\..\submodules\cor\build_examples\xs.monomac\Cor\Cor (xs.monomac).csproj", "{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey (xs.monomac)", "..\..\submodules\blimey\build_examples\xs.monomac\Sungiant.Blimey\Sungiant.Blimey (xs.monomac).csproj", "{1B6913B6-DCF2-4B43-BD2F-2C493801F026}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey (xs.monomac)", "..\..\submodules\blimey\build_examples\xs.monomac\Blimey\Blimey (xs.monomac).csproj", "{1B6913B6-DCF2-4B43-BD2F-2C493801F026}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey.Demo (xs.monomac)", "Sungiant.Blimey.Demo\Sungiant.Blimey.Demo (xs.monomac).csproj", "{49536819-F662-4249-A36A-B59D0ACEA955}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Demo (xs.monomac)", "Blimey.Demo\Blimey.Demo (xs.monomac).csproj", "{49536819-F662-4249-A36A-B59D0ACEA955}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +50,6 @@ Global
 		{97195993-2B6B-434B-8F2C-BD0A4BCDC70A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Sungiant.Blimey.Demo\Sungiant.Blimey.Demo (xs.monomac).csproj
+		StartupItem = Blimey.Demo\Blimey.Demo (xs.monomac).csproj
 	EndGlobalSection
 EndGlobal

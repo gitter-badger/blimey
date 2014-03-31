@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>12.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{49536819-F662-4249-A36A-B59D0ACEA955}</ProjectGuid>
+    <ProjectTypeGuids>{948B3504-5B70-4649-8FE4-BDE1FB46EC69};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Blimey.Demo</RootNamespace>
+    <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
+    <SuppressXamMacUpsell>True</SuppressXamMacUpsell>
+    <AssemblyName>Blimey.Demo</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+    <UseSGen>true</UseSGen>
+    <IncludeMonoRuntime>false</IncludeMonoRuntime>
+    <EnablePackageSigning>false</EnablePackageSigning>
+    <CodeSigningKey>Mac Developer</CodeSigningKey>
+    <EnableCodeSigning>false</EnableCodeSigning>
+    <CreatePackage>false</CreatePackage>
+    <PackageSigningKey>Developer ID Installer</PackageSigningKey>
+    <I18n>
+    </I18n>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+    <LinkMode>Full</LinkMode>
+    <UseSGen>true</UseSGen>
+    <IncludeMonoRuntime>true</IncludeMonoRuntime>
+    <CreatePackage>true</CreatePackage>
+    <CodeSigningKey>Developer ID Application</CodeSigningKey>
+    <EnableCodeSigning>true</EnableCodeSigning>
+    <EnablePackageSigning>false</EnablePackageSigning>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|x86' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\x86\AppStore</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+    <LinkMode>Full</LinkMode>
+    <UseSGen>true</UseSGen>
+    <IncludeMonoRuntime>true</IncludeMonoRuntime>
+    <PackageSigningKey>3rd Party Mac Developer Installer</PackageSigningKey>
+    <CreatePackage>true</CreatePackage>
+    <CodeSigningKey>3rd Party Mac Developer Application</CodeSigningKey>
+    <EnableCodeSigning>true</EnableCodeSigning>
+    <EnablePackageSigning>true</EnablePackageSigning>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="MonoMac" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppDelegate.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="..\..\..\source\Blimey.Demo\Airport.cs">
+      <Link>source\Airport.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\CaliforniaVan.cs">
+      <Link>source\CaliforniaVan.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\ColourChanger.cs">
+      <Link>source\ColourChanger.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Demo.cs">
+      <Link>source\Demo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\MainMenuScene.cs">
+      <Link>source\MainMenuScene.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\RandomLocalRotate.cs">
+      <Link>source\RandomLocalRotate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\RandomObjectHelper.cs">
+      <Link>source\RandomObjectHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene1.cs">
+      <Link>source\Scene1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene2.cs">
+      <Link>source\Scene2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene3.cs">
+      <Link>source\Scene3.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene4.cs">
+      <Link>source\Scene4.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene5.cs">
+      <Link>source\Scene5.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.plist" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="..\..\..\resources\airports.dat">
+      <Link>resources\airports.dat</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\resources\bg1.png">
+      <Link>resources\bg1.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\resources\bg2.png">
+      <Link>resources\bg2.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\resources\bg3.png">
+      <Link>resources\bg3.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\resources\cvan01.png">
+      <Link>resources\cvan01.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\resources\cvan02.png">
+      <Link>resources\cvan02.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\PixelLit_PositionNormal.fsh">
+      <Link>shaders\PixelLit_PositionNormal.fsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\PixelLit_PositionNormal.vsh">
+      <Link>shaders\PixelLit_PositionNormal.vsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\PixelLit_PositionNormalColour.fsh">
+      <Link>shaders\PixelLit_PositionNormalColour.fsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\PixelLit_PositionNormalColour.vsh">
+      <Link>shaders\PixelLit_PositionNormalColour.vsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\PixelLit_PositionNormalTexture.fsh">
+      <Link>shaders\PixelLit_PositionNormalTexture.fsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\PixelLit_PositionNormalTexture.vsh">
+      <Link>shaders\PixelLit_PositionNormalTexture.vsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\PixelLit_PositionNormalTextureColour.fsh">
+      <Link>shaders\PixelLit_PositionNormalTextureColour.fsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\PixelLit_PositionNormalTextureColour.vsh">
+      <Link>shaders\PixelLit_PositionNormalTextureColour.vsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\Unlit_Position.fsh">
+      <Link>shaders\Unlit_Position.fsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\Unlit_Position.vsh">
+      <Link>shaders\Unlit_Position.vsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\Unlit_PositionColour.fsh">
+      <Link>shaders\Unlit_PositionColour.fsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\Unlit_PositionColour.vsh">
+      <Link>shaders\Unlit_PositionColour.vsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\Unlit_PositionTexture.fsh">
+      <Link>shaders\Unlit_PositionTexture.fsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\Unlit_PositionTexture.vsh">
+      <Link>shaders\Unlit_PositionTexture.vsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\Unlit_PositionTextureColour.fsh">
+      <Link>shaders\Unlit_PositionTextureColour.fsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\Unlit_PositionTextureColour.vsh">
+      <Link>shaders\Unlit_PositionTextureColour.vsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\VertexLit_PositionNormal.fsh">
+      <Link>shaders\VertexLit_PositionNormal.fsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\VertexLit_PositionNormal.vsh">
+      <Link>shaders\VertexLit_PositionNormal.vsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\VertexLit_PositionNormalColour.fsh">
+      <Link>shaders\VertexLit_PositionNormalColour.fsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\VertexLit_PositionNormalColour.vsh">
+      <Link>shaders\VertexLit_PositionNormalColour.vsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\VertexLit_PositionNormalTexture.fsh">
+      <Link>shaders\VertexLit_PositionNormalTexture.fsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\VertexLit_PositionNormalTexture.vsh">
+      <Link>shaders\VertexLit_PositionNormalTexture.vsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\VertexLit_PositionNormalTextureColour.fsh">
+      <Link>shaders\VertexLit_PositionNormalTextureColour.fsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\VertexLit_PositionNormalTextureColour.vsh">
+      <Link>shaders\VertexLit_PositionNormalTextureColour.vsh</Link>
+    </BundleResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\submodules\abacus\build_examples\xs.monomac\Abacus\Abacus %28xs.monomac%29.csproj">
+      <Project>{97195993-2B6B-434B-8F2C-BD0A4BCDC70A}</Project>
+      <Name>Abacus (xs.monomac)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\blimey\build_examples\xs.monomac\Blimey\Blimey %28xs.monomac%29.csproj">
+      <Project>{1B6913B6-DCF2-4B43-BD2F-2C493801F026}</Project>
+      <Name>Blimey (xs.monomac)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\cor\build_examples\xs.monomac\Cor\Cor %28xs.monomac%29.csproj">
+      <Project>{0B27F5CA-51C8-4290-ACE9-CDDDB9F3AC03}</Project>
+      <Name>Cor (xs.monomac)</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

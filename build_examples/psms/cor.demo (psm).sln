@@ -1,21 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Abacus (psm)", "..\submodules\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus (psm).csproj", "{D7DE17E0-DD0E-4AE2-9596-E9BD352DC92D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacus (psm)", "..\submodules\abacus\build_examples\Abacus\Abacus (psm).csproj", "{D7DE17E0-DD0E-4AE2-9596-E9BD352DC92D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo.Psm (psm)", "Sungiant.Cor.Demo.Psm\Sungiant.Cor.Demo.Psm (psm).csproj", "{B40455AB-4B94-4009-97AA-DE828B38B7E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Demo.Psm (psm)", "Cor.Demo.Psm\Cor.Demo.Psm (psm).csproj", "{B40455AB-4B94-4009-97AA-DE828B38B7E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey.Demo.Psm (psm)", "Sungiant.Blimey.Demo.Psm\Sungiant.Blimey.Demo.Psm (psm).csproj", "{A01367C2-F037-438A-B667-9DB771E6C534}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Demo.Psm (psm)", "Blimey.Demo.Psm\Blimey.Demo.Psm (psm).csproj", "{A01367C2-F037-438A-B667-9DB771E6C534}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor (psm)", "..\submodules\cor\build_examples\Sungiant.Cor\Sungiant.Cor (psm).csproj", "{2375F7C7-85D4-4E6C-8EDF-20FE1E21CC63}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor (psm)", "..\submodules\cor\build_examples\Cor\Cor (psm).csproj", "{2375F7C7-85D4-4E6C-8EDF-20FE1E21CC63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo (psm)", "..\submodules\cor.demo\build_examples\Sungiant.Cor.Demo\Sungiant.Cor.Demo (psm).csproj", "{31AD450F-B634-43E1-992B-F94C8B3578DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Demo (psm)", "..\submodules\cor.demo\build_examples\Cor.Demo\Cor.Demo (psm).csproj", "{31AD450F-B634-43E1-992B-F94C8B3578DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey (psm)", "..\submodules\blimey\build_examples\Sungiant.Blimey\Sungiant.Blimey (psm).csproj", "{19AEB284-5313-4289-B66C-1C876799B4FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey (psm)", "..\submodules\blimey\build_examples\Blimey\Blimey (psm).csproj", "{19AEB284-5313-4289-B66C-1C876799B4FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey.Demo (psm)", "..\submodules\blimey.demo\build_examples\Sungiant.Blimey.Demo\Sungiant.Blimey.Demo (psm).csproj", "{400CBEB2-0D7C-43E1-8546-20C7A71EC1D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Demo (psm)", "..\submodules\blimey.demo\build_examples\Blimey.Demo\Blimey.Demo (psm).csproj", "{400CBEB2-0D7C-43E1-8546-20C7A71EC1D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Psm (psm)", "..\submodules\cor.psm\build_examples\Sungiant.Cor.Psm\Sungiant.Cor.Psm (psm).csproj", "{364DAF31-EDB5-4022-BBAA-D941316FE607}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Psm (psm)", "..\submodules\cor.psm\build_examples\Cor.Psm\Cor.Psm (psm).csproj", "{364DAF31-EDB5-4022-BBAA-D941316FE607}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +57,6 @@ Global
 		{D7DE17E0-DD0E-4AE2-9596-E9BD352DC92D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Sungiant.Cor.Demo.Psm\Sungiant.Cor.Demo.Psm (psm).csproj
+		StartupItem = Cor.Demo.Psm\Cor.Demo.Psm (psm).csproj
 	EndGlobalSection
 EndGlobal

@@ -1,21 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey.Demo.Xdroid (xdroid)", "Sungiant.Blimey.Demo.Xdroid\Sungiant.Blimey.Demo.Xdroid (xdroid).csproj", "{896DFA7F-7355-409B-B4EA-2DC12EF9477F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Demo.Xdroid (xdroid)", "Blimey.Demo.Xdroid\Blimey.Demo.Xdroid (xdroid).csproj", "{896DFA7F-7355-409B-B4EA-2DC12EF9477F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo.Xdroid (xdroid)", "Sungiant.Cor.Demo.Xdroid\Sungiant.Cor.Demo.Xdroid (xdroid).csproj", "{BF87212B-A700-4B70-9C49-32CC977A9D10}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Demo.Xdroid (xdroid)", "Cor.Demo.Xdroid\Cor.Demo.Xdroid (xdroid).csproj", "{BF87212B-A700-4B70-9C49-32CC977A9D10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Abacus (xdroid)", "..\submodules\abacus\build_examples\Sungiant.Abacus\Sungiant.Abacus (xdroid).csproj", "{C381B68E-E70B-4BA1-BE9B-CA6164C5A881}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacus (xdroid)", "..\submodules\abacus\build_examples\Abacus\Abacus (xdroid).csproj", "{C381B68E-E70B-4BA1-BE9B-CA6164C5A881}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor (xdroid)", "..\submodules\cor\build_examples\Sungiant.Cor\Sungiant.Cor (xdroid).csproj", "{CA61A408-7FC3-406A-B135-2D687CBD00C4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor (xdroid)", "..\submodules\cor\build_examples\Cor\Cor (xdroid).csproj", "{CA61A408-7FC3-406A-B135-2D687CBD00C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey.Demo (xdroid)", "..\submodules\blimey.demo\build_examples\Sungiant.Blimey.Demo\Sungiant.Blimey.Demo (xdroid).csproj", "{3CDFAEE2-5D7A-4259-B1A1-E1632DFF2DF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Demo (xdroid)", "..\submodules\blimey.demo\build_examples\Blimey.Demo\Blimey.Demo (xdroid).csproj", "{3CDFAEE2-5D7A-4259-B1A1-E1632DFF2DF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Demo (xdroid)", "..\submodules\cor.demo\build_examples\Sungiant.Cor.Demo\Sungiant.Cor.Demo (xdroid).csproj", "{DC751E47-B4C1-4E85-ACCC-966D67E18E03}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Demo (xdroid)", "..\submodules\cor.demo\build_examples\Cor.Demo\Cor.Demo (xdroid).csproj", "{DC751E47-B4C1-4E85-ACCC-966D67E18E03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Blimey (xdroid)", "..\submodules\blimey\build_examples\Sungiant.Blimey\Sungiant.Blimey (xdroid).csproj", "{AB35B5C5-79DF-4FA7-A8FB-105DD645550F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey (xdroid)", "..\submodules\blimey\build_examples\Blimey\Blimey (xdroid).csproj", "{AB35B5C5-79DF-4FA7-A8FB-105DD645550F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sungiant.Cor.Xdroid (xdroid)", "..\submodules\cor.xdroid\build_examples\Sungiant.Cor.Xdroid\Sungiant.Cor.Xdroid (xdroid).csproj", "{76BF38BE-B229-4905-B72E-9D4A0EDFD891}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Xdroid (xdroid)", "..\submodules\cor.xdroid\build_examples\Cor.Xdroid\Cor.Xdroid (xdroid).csproj", "{76BF38BE-B229-4905-B72E-9D4A0EDFD891}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +57,6 @@ Global
 		{DC751E47-B4C1-4E85-ACCC-966D67E18E03}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Sungiant.Cor.Demo.Xdroid\Sungiant.Cor.Demo.Xdroid (xdroid).csproj
+		StartupItem = Cor.Demo.Xdroid\Cor.Demo.Xdroid (xdroid).csproj
 	EndGlobalSection
 EndGlobal
