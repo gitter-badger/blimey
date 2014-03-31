@@ -483,6 +483,8 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
         BufferTarget type;
         BufferUsageHint bufferUsage;
 
+        bool alreadyDisposed;
+
         public VertexBuffer (VertexDeclaration vd, Int32 vertexCount)
         {
             this.vertDecl = vd;
@@ -530,7 +532,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
 
         ~VertexBuffer()
         {
-            CleanUpNativeResources();
+            RunDispose(false);
         }
 
         void CleanUpManagedResources()
@@ -550,9 +552,26 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
 
         public void Dispose()
         {
-            CleanUpManagedResources();
-            CleanUpNativeResources();
+            RunDispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public void RunDispose(bool isDisposing)
+        {
+            if (alreadyDisposed)
+                return;
+
+            if (isDisposing)
+            {
+                CleanUpNativeResources ();
+
+            }
+
+            // FREE UNMANAGED STUFF HERE
+            CleanUpManagedResources ();
+
+            alreadyDisposed = true;
+
         }
 
         public Int32 VertexCount
@@ -705,6 +724,8 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
         UInt32 bufferHandle;
         BufferUsageHint bufferUsage;
 
+        bool alreadyDisposed;
+
         public IndexBuffer (Int32 indexCount)
         {
             this.indexCount = indexCount;
@@ -738,7 +759,7 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
 
         ~IndexBuffer()
         {
-            CleanUpNativeResources();
+            RunDispose(false);
         }
 
         void CleanUpManagedResources()
@@ -758,9 +779,26 @@ namespace Sungiant.Cor.Lib.Managed.Khronos
 
         public void Dispose()
         {
-            CleanUpManagedResources();
-            CleanUpNativeResources();
+            RunDispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public void RunDispose(bool isDisposing)
+        {
+            if (alreadyDisposed)
+                return;
+
+            if (isDisposing)
+            {
+                CleanUpNativeResources ();
+
+            }
+
+            // FREE UNMANAGED STUFF HERE
+            CleanUpManagedResources ();
+
+            alreadyDisposed = true;
+
         }
 
         void GetBufferData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount)

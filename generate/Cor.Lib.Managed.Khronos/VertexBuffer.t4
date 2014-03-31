@@ -13,6 +13,8 @@
         BufferTarget type;
         BufferUsageHint bufferUsage;
 
+        bool alreadyDisposed;
+
         public VertexBuffer (VertexDeclaration vd, Int32 vertexCount)
         {
             this.vertDecl = vd;
@@ -60,7 +62,7 @@
 
         ~VertexBuffer()
         {
-            CleanUpNativeResources();
+            RunDispose(false);
         }
 
         void CleanUpManagedResources()
@@ -80,9 +82,26 @@
 
         public void Dispose()
         {
-            CleanUpManagedResources();
-            CleanUpNativeResources();
+            RunDispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public void RunDispose(bool isDisposing)
+        {
+            if (alreadyDisposed)
+                return;
+
+            if (isDisposing)
+            {
+                CleanUpNativeResources ();
+
+            }
+
+            // FREE UNMANAGED STUFF HERE
+            CleanUpManagedResources ();
+
+            alreadyDisposed = true;
+
         }
 
         public Int32 VertexCount

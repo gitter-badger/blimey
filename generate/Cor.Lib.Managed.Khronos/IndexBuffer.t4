@@ -9,6 +9,8 @@
         UInt32 bufferHandle;
         BufferUsageHint bufferUsage;
 
+        bool alreadyDisposed;
+
         public IndexBuffer (Int32 indexCount)
         {
             this.indexCount = indexCount;
@@ -42,7 +44,7 @@
 
         ~IndexBuffer()
         {
-            CleanUpNativeResources();
+            RunDispose(false);
         }
 
         void CleanUpManagedResources()
@@ -62,9 +64,26 @@
 
         public void Dispose()
         {
-            CleanUpManagedResources();
-            CleanUpNativeResources();
+            RunDispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public void RunDispose(bool isDisposing)
+        {
+            if (alreadyDisposed)
+                return;
+
+            if (isDisposing)
+            {
+                CleanUpNativeResources ();
+
+            }
+
+            // FREE UNMANAGED STUFF HERE
+            CleanUpManagedResources ();
+
+            alreadyDisposed = true;
+
         }
 
         void GetBufferData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount)
