@@ -4959,25 +4959,25 @@ namespace Sungiant.Cor
 
         protected internal override void Write(AssetBinaryWriter abw, Matrix44 obj)
         {
-            abw.Write(obj.M11);
-            abw.Write(obj.M12);
-            abw.Write(obj.M13);
-            abw.Write(obj.M14);
+            abw.Write(obj.R0C0);
+            abw.Write(obj.R0C1);
+            abw.Write(obj.R0C2);
+            abw.Write(obj.R0C3);
 
-            abw.Write(obj.M21);
-            abw.Write(obj.M22);
-            abw.Write(obj.M23);
-            abw.Write(obj.M24);
+            abw.Write(obj.R1C0);
+            abw.Write(obj.R1C1);
+            abw.Write(obj.R1C2);
+            abw.Write(obj.R1C3);
 
-            abw.Write(obj.M31);
-            abw.Write(obj.M32);
-            abw.Write(obj.M33);
-            abw.Write(obj.M34);
+            abw.Write(obj.R2C0);
+            abw.Write(obj.R2C1);
+            abw.Write(obj.R2C2);
+            abw.Write(obj.R2C3);
 
-            abw.Write(obj.M41);
-            abw.Write(obj.M42);
-            abw.Write(obj.M43);
-            abw.Write(obj.M44);
+            abw.Write(obj.R3C0);
+            abw.Write(obj.R3C1);
+            abw.Write(obj.R3C2);
+            abw.Write(obj.R3C3);
         }
     }
 
@@ -4988,20 +4988,20 @@ namespace Sungiant.Cor
 
         protected internal override Quaternion Read(AssetBinaryReader abr)
         {
-            Single x = abr.ReadSingle();
-            Single y = abr.ReadSingle();
-            Single z = abr.ReadSingle();
-            Single w = abr.ReadSingle();
+            Single i = abr.ReadSingle();
+            Single j = abr.ReadSingle();
+            Single k = abr.ReadSingle();
+            Single u = abr.ReadSingle();
             
-            return new Quaternion(x, y, z, w);
+            return new Quaternion(i, j, k, u);
         }
 
         protected internal override void Write(AssetBinaryWriter abw, Quaternion obj)
         {
-            abw.Write(obj.X);
-            abw.Write(obj.Y);
-            abw.Write(obj.Z);
-            abw.Write(obj.W);
+            abw.Write(obj.I);
+            abw.Write(obj.J);
+            abw.Write(obj.K);
+            abw.Write(obj.U);
         }
     }
 

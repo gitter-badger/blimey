@@ -58,10 +58,10 @@
         public static Microsoft.Xna.Framework.Matrix ToXNA(this Matrix44 mat)
         {
             return new Microsoft.Xna.Framework.Matrix(
-                mat.M11, mat.M12, mat.M13, mat.M14,
-                mat.M21, mat.M22, mat.M23, mat.M24,
-                mat.M31, mat.M32, mat.M33, mat.M34,
-                mat.M41, mat.M42, mat.M43, mat.M44
+                mat.R0C0, mat.R0C1, mat.R0C2, mat.R0C3,
+                mat.R1C0, mat.R1C1, mat.R1C2, mat.R1C3,
+                mat.R2C0, mat.R2C1, mat.R2C2, mat.R2C3,
+                mat.R3C0, mat.R3C1, mat.R3C2, mat.R3C3
                 );
         }
 

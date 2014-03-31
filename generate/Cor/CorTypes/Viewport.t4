@@ -134,7 +134,7 @@
             Matrix44 temp; Matrix44.Multiply(ref world, ref view, out temp);
             Matrix44 matrix; Matrix44.Multiply(ref temp, ref projection, out matrix);
             Vector3 vector; Vector3.Transform(ref source, ref matrix, out vector);
-            float a = (((source.X * matrix.M14) + (source.Y * matrix.M24)) + (source.Z * matrix.M34)) + matrix.M44;
+            float a = (((source.X * matrix.R0C3) + (source.Y * matrix.R1C3)) + (source.Z * matrix.R2C3)) + matrix.R3C3;
             if (!WithinEpsilon(a, 1f))
             {
                 vector = (Vector3) (vector / a);
@@ -154,7 +154,7 @@
             source.Y = -((((source.Y - this.Y) / ((float) this.Height)) * 2f) - 1f);
             source.Z = (source.Z - this.MinDepth) / (this.MaxDepth - this.MinDepth);
             Vector3 vector; Vector3.Transform(ref source, ref matrix, out vector);
-            float a = (((source.X * matrix.M14) + (source.Y * matrix.M24)) + (source.Z * matrix.M34)) + matrix.M44;
+            float a = (((source.X * matrix.R0C3) + (source.Y * matrix.R1C3)) + (source.Z * matrix.R2C3)) + matrix.R3C3;
             if (!WithinEpsilon(a, 1f))
             {
                 vector = (Vector3) (vector / a);

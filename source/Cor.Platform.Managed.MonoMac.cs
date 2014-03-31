@@ -576,16 +576,13 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 "DisplayStatus -> ()");
         }
 
-		Int32 width = 800;
-		Int32 height = 600;
-
         #region IDisplayStatus
 
         public Boolean Fullscreen { get { return true; } }
 
-		public Int32 CurrentWidth { get { return width; } internal set { width = value; } }
+        public Int32 CurrentWidth { get { return 800; } }
 
-        public Int32 CurrentHeight { get { return height; } internal set { height = value; } }
+        public Int32 CurrentHeight { get { return 600; } }
 
         #endregion
     }
@@ -752,7 +749,6 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
     public sealed class ScreenSpecification
         : IScreenSpecification
     {
-		// this should get the resolution of the screen
         Int32 width = 800;
         Int32 height = 600;
 
@@ -936,7 +932,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         : global::MonoMac.OpenGL.MonoMacGameView
     {
         NSTrackingArea trackingArea;
-		
+
         Engine gameEngine;
         Single elapsedTime;
         Int64 frameCounter = -1;
@@ -1052,7 +1048,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
                 this.settings,
                 this.entryPoint
                 );
-			
+
             timer.Start();
 
             InternalUtils.Log.Info ("MonoMacGameView.OnLoad");
@@ -1075,6 +1071,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         protected override void OnResize (EventArgs e)
         {
+
             InternalUtils.Log.Info ("MonoMacGameView.OnResize");
             base.OnResize (e);
         }
@@ -1093,9 +1090,6 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
 
         protected override void OnUpdateFrame (global::MonoMac.OpenGL.FrameEventArgs fea)
         {
-			(gameEngine.Graphics.DisplayStatus as DisplayStatus).CurrentHeight = Size.Height;
-			(gameEngine.Graphics.DisplayStatus as DisplayStatus).CurrentWidth= Size.Width;
-
             Single dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
             previousTimeSpan = timer.Elapsed;
 
@@ -1352,19 +1346,19 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
             if( flip )
             {
                 return new global::MonoMac.OpenGL.Matrix4(
-                    mat.M11, mat.M21, mat.M31, mat.M41,
-                    mat.M12, mat.M22, mat.M32, mat.M42,
-                    mat.M13, mat.M23, mat.M33, mat.M43,
-                    mat.M14, mat.M24, mat.M34, mat.M44
+                    mat.R0C0, mat.R1C0, mat.R2C0, mat.R3C0,
+                    mat.R0C1, mat.R1C1, mat.R2C1, mat.R3C1,
+                    mat.R0C2, mat.R1C2, mat.R2C2, mat.R3C2,
+                    mat.R0C3, mat.R1C3, mat.R2C3, mat.R3C3
                     );
             }
             else
             {
                 return new global::MonoMac.OpenGL.Matrix4(
-                    mat.M11, mat.M12, mat.M13, mat.M14,
-                    mat.M21, mat.M22, mat.M23, mat.M24,
-                    mat.M31, mat.M32, mat.M33, mat.M34,
-                    mat.M41, mat.M42, mat.M43, mat.M44
+                    mat.R0C0, mat.R0C1, mat.R0C2, mat.R0C3,
+                    mat.R1C0, mat.R1C1, mat.R1C2, mat.R1C3,
+                    mat.R2C0, mat.R2C1, mat.R2C2, mat.R2C3,
+                    mat.R3C0, mat.R3C1, mat.R3C2, mat.R3C3
                     );
             }
         }

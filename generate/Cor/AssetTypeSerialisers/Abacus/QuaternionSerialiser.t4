@@ -5,20 +5,20 @@
 
         protected internal override Quaternion Read(AssetBinaryReader abr)
         {
-            Single x = abr.ReadSingle();
-            Single y = abr.ReadSingle();
-            Single z = abr.ReadSingle();
-            Single w = abr.ReadSingle();
+            Single i = abr.ReadSingle();
+            Single j = abr.ReadSingle();
+            Single k = abr.ReadSingle();
+            Single u = abr.ReadSingle();
             
-            return new Quaternion(x, y, z, w);
+            return new Quaternion(i, j, k, u);
         }
 
         protected internal override void Write(AssetBinaryWriter abw, Quaternion obj)
         {
-            abw.Write(obj.X);
-            abw.Write(obj.Y);
-            abw.Write(obj.Z);
-            abw.Write(obj.W);
+            abw.Write(obj.I);
+            abw.Write(obj.J);
+            abw.Write(obj.K);
+            abw.Write(obj.U);
         }
     }
 
