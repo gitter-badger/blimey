@@ -100,6 +100,7 @@ namespace Sungiant.Blimey.Demo
 			this.SetRenderPassCameraTo("Default", camSo);
 
 			earthGo.Transform.LocalScale = new Vector3(2 * radius, 2 * radius, 2 * radius);
+
 			var mr = earthGo.AddTrait<MeshRenderer>();
 			mr.Mesh = sphereMesh;
 			mr.Material = mat;
@@ -108,11 +109,12 @@ namespace Sungiant.Blimey.Demo
 			var mat2 = new Material("Default", shader2);
 			mat2.SetColour("MaterialColour", Rgba32.Blue);
 
-			foreach (var airport in airports)
+            foreach (var airport in airports)
 			{
 				var so = this.CreateSceneObject(airport.Iata);
 
-				so.Transform.Parent = earthGo.Transform;
+                so.Transform.Parent = earthGo.Transform;
+
 
 				var somr = so.AddTrait<MeshRenderer>();
 				somr.Mesh = sphereMesh;
@@ -128,7 +130,7 @@ namespace Sungiant.Blimey.Demo
 
 				Single t = RealMaths.ToRadians (lon);
 
-				Matrix44 rot; Matrix44.CreateRotationY(t, out rot);
+                Matrix44 rot; Matrix44.CreateRotationY(ref t, out rot);
 
 				Vector3 r; Vector3.Transform(ref pos, ref rot, out r);
 				so.Transform.Position = r;

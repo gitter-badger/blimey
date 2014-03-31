@@ -49,9 +49,9 @@ namespace Sungiant.Blimey.Demo
         //const Int32 MinVans = 25;
         const Int32 MaxVans = 64;
 
-        Int32 currentNumVans = 64;
+        const Int32 currentNumVans = 64;
 
-        List<CaliforniaVan> vans = new List<CaliforniaVan>();
+        readonly List<CaliforniaVan> vans = new List<CaliforniaVan>();
         
         GridRenderer gr;
     

@@ -79,13 +79,13 @@ namespace Sungiant.Cor.Demo
 
             Single delta = Abacus.RealMaths.Sin(time.Elapsed);
 
-            Matrix44.CreateFromAxisAngle(ref a, delta,  out this.rotation1);
+            Matrix44.CreateFromAxisAngle(ref a, ref delta,  out this.rotation1);
 
-            Matrix44.CreateFromYawPitchRoll( delta, delta, delta, out this.rotation2);
+            Matrix44.CreateFromYawPitchRoll( ref delta, ref delta, ref delta, out this.rotation2);
 
-            Matrix44.CreateFromYawPitchRoll( delta, delta, delta, out this.rotation3);
+            Matrix44.CreateFromYawPitchRoll( ref delta, ref delta, ref delta, out this.rotation3);
             
-            Matrix44.CreateFromAxisAngle(ref a, delta,  out this.rotation4);
+            Matrix44.CreateFromAxisAngle(ref a, ref delta,  out this.rotation4);
 
             return false;
         }
@@ -142,15 +142,14 @@ namespace Sungiant.Cor.Demo
             
             this.engine.Graphics.SetActiveGeometryBuffer(this.shape1GeomBuffer);
 
-            Matrix44 worldScale;
-            Matrix44.CreateScale(0.5f, out worldScale);
+            Matrix44 worldScale = Matrix44.CreateScale(0.5f);
             
-            Matrix44 shape1Translation;
-            Matrix44.CreateTranslation(-0.5f, 0.5f, 0f, out shape1Translation);
+            Matrix44 shape1Translation = 
+                Matrix44.CreateTranslation(-0.5f, 0.5f, 0f);
             
             var world = worldScale * this.rotation1;
             world = world * shape1Translation;
-            
+
             var a = Vector3.UnitZ; var b = Vector3.Forward; var c = Vector3.Up;
             Matrix44 view; Matrix44.CreateLookAt(
                 ref a,
@@ -158,7 +157,8 @@ namespace Sungiant.Cor.Demo
                 ref c,
                 out view);
             
-            Matrix44 proj; Matrix44.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 1f, -1f, out proj);
+            Matrix44 proj = Matrix44.CreateOrthographicOffCenter(
+                -1f, 1f, -1f, 1f, 1f, -1f);
             
             // set the variable on the shader to our desired variables
             //unlitEffect.ResetVariables ();
@@ -223,11 +223,10 @@ namespace Sungiant.Cor.Demo
             
             this.engine.Graphics.SetActiveGeometryBuffer(this.shape2GeomBuffer);
             
-            Matrix44 worldScale;
-            Matrix44.CreateScale(0.5f, out worldScale);
+            Matrix44 worldScale = Matrix44.CreateScale(0.5f);
             
-            Matrix44 shape2Translation;
-            Matrix44.CreateTranslation(0.5f, 0.5f, 0f, out shape2Translation);
+            Matrix44 shape2Translation =
+                Matrix44.CreateTranslation(0.5f, 0.5f, 0f);
             
             
             var world = worldScale * this.rotation2;
@@ -240,7 +239,8 @@ namespace Sungiant.Cor.Demo
                 ref c,
                 out view);
             
-            Matrix44 proj; Matrix44.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 1f, -1f, out proj);
+            Matrix44 proj = Matrix44.CreateOrthographicOffCenter(
+                -1f, 1f, -1f, 1f, 1f, -1f);
             
             // set the variable on the shader to our desired variables
             unlitEffect.ResetVariables ();
@@ -309,11 +309,10 @@ namespace Sungiant.Cor.Demo
             
             this.engine.Graphics.SetActiveGeometryBuffer(this.shape3GeomBuffer);
             
-            Matrix44 worldScale;
-            Matrix44.CreateScale(0.5f, out worldScale);
+            Matrix44 worldScale = Matrix44.CreateScale(0.5f);
             
-            Matrix44 shape3Translation;
-            Matrix44.CreateTranslation(-0.5f, -0.5f, 0f, out shape3Translation);
+            Matrix44 shape3Translation =
+                Matrix44.CreateTranslation(-0.5f, -0.5f, 0f);
             
             
             var world = worldScale * this.rotation3;
@@ -326,7 +325,8 @@ namespace Sungiant.Cor.Demo
                 ref c,
                 out view);
             
-            Matrix44 proj; Matrix44.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 1f, -1f, out proj);
+            Matrix44 proj = Matrix44.CreateOrthographicOffCenter(
+                -1f, 1f, -1f, 1f, 1f, -1f);
             
             // set the variable on the shader to our desired variables
             vertexLitEffect.ResetVariables ();
@@ -390,11 +390,10 @@ namespace Sungiant.Cor.Demo
 
             this.engine.Graphics.SetActiveGeometryBuffer(this.shape4GeomBuffer);
 
-            Matrix44 worldScale;
-            Matrix44.CreateScale(0.5f, out worldScale);
+            Matrix44 worldScale = Matrix44.CreateScale(0.5f);
 
-            Matrix44 shape4Translation;
-            Matrix44.CreateTranslation(0.5f, -0.5f, 0f, out shape4Translation);
+            Matrix44 shape4Translation =
+                Matrix44.CreateTranslation(0.5f, -0.5f, 0f);
 
             var world = worldScale * this.rotation4;
             world = world * shape4Translation;
@@ -406,7 +405,8 @@ namespace Sungiant.Cor.Demo
                 ref c,
                 out view);
 
-            Matrix44 proj; Matrix44.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 1f, -1f, out proj);
+            Matrix44 proj =
+                Matrix44.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 1f, -1f);
 
             // set the variable on the shader to our desired variables
             unlitEffect.ResetVariables ();

@@ -66,7 +66,7 @@ namespace Sungiant.Blimey.Demo
 
             Single displacement = _speed * _timer;
             Quaternion rot;
-            Quaternion.CreateFromAxisAngle(ref _vec, displacement, out rot);
+            Quaternion.CreateFromAxisAngle(ref _vec, ref displacement, out rot);
 
             this.Parent.Transform.LocalRotation = rot;
         }
