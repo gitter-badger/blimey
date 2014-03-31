@@ -71,7 +71,7 @@
                 {
                     if( state == TouchPhase.JustPressed )
                     {
-                        //Sungiant.Core.Teletype.WriteLine("ignoring " + id);
+                        //Core.Teletype.WriteLine("ignoring " + id);
 
                         state = TouchPhase.Active;
                     }
@@ -115,11 +115,11 @@
 
 
         public float ScreenResolutionAspectRatio
-        { 
-            get 
+        {
+            get
             {
                 return this.ScreenResolutionWidth / this.ScreenResolutionHeight;
-            } 
+            }
         }
 
         // need to think about
@@ -155,9 +155,9 @@
             }
         }
 
-        public TouchCollection TouchCollection 
-        { 
-            get { return this.collection; } 
+        public TouchCollection TouchCollection
+        {
+            get { return this.collection; }
         }
     }
 

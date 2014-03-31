@@ -37,10 +37,10 @@ using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
-using Sungiant.Abacus;
-using Sungiant.Abacus.Packed;
-using Sungiant.Abacus.SinglePrecision;
-using Sungiant.Abacus.Int32Precision;
+using Abacus;
+using Abacus.Packed;
+using Abacus.SinglePrecision;
+using Abacus.Int32Precision;
 using System.Runtime.CompilerServices;
 
 public static class NativeBindings
@@ -92,7 +92,7 @@ public static class ManagedBindings
 	}
 }
 
-namespace Sungiant.Cor.Platform.Native.Linux
+namespace Cor.Platform.Native.Linux
 {
     public class NativeEngineBinding
         : ICor
@@ -107,7 +107,7 @@ namespace Sungiant.Cor.Platform.Native.Linux
         public NativeEngineBinding(AppSettings settings)
         {
 			NativeBindings.Engine_Create();
-            
+
             this.audio = new NativeAudioManagerBinding();
             this.graphics = new NativeGraphicsManagerBinding();
             this.resources = new NativeResourceManagerBinding();
@@ -139,7 +139,7 @@ namespace Sungiant.Cor.Platform.Native.Linux
         public Single volume = 1f;
 
         public Single Volume
-        { 
+        {
             get { return this.volume; }
             set
             {
@@ -147,7 +147,7 @@ namespace Sungiant.Cor.Platform.Native.Linux
 
                 Console.WriteLine(
                     "StubAudioManager -> Setting Volume:" + value);
-            } 
+            }
         }
 
         #region IAudioManager
@@ -182,22 +182,22 @@ namespace Sungiant.Cor.Platform.Native.Linux
 
         public void Reset()
         {
-            
+
         }
 
         public void ClearColourBuffer(Rgba32 color = new Rgba32())
         {
-            
+
         }
 
         public void ClearDepthBuffer(Single depth = 1f)
         {
-            
+
         }
 
         public void SetCullMode(CullMode cullMode)
         {
-            
+
         }
 
         public IGeometryBuffer CreateGeometryBuffer (
@@ -210,33 +210,33 @@ namespace Sungiant.Cor.Platform.Native.Linux
 
         public void SetActiveGeometryBuffer(IGeometryBuffer buffer)
         {
-            
+
         }
 
         public void SetActiveTexture(Int32 slot, Texture2D tex)
         {
-            
+
         }
 
         public void SetBlendEquation(
-            BlendFunction rgbBlendFunction, 
-            BlendFactor sourceRgb, 
+            BlendFunction rgbBlendFunction,
+            BlendFactor sourceRgb,
             BlendFactor destinationRgb,
-            BlendFunction alphaBlendFunction, 
-            BlendFactor sourceAlpha, 
+            BlendFunction alphaBlendFunction,
+            BlendFactor sourceAlpha,
             BlendFactor destinationAlpha
             )
         {
-            
+
         }
 
         public void DrawPrimitives(
-            PrimitiveType primitiveType,            
-            Int32 startVertex,                      
+            PrimitiveType primitiveType,
+            Int32 startVertex,
             Int32 primitiveCount )
         {
-            
-        }              
+
+        }
 
         public void DrawIndexedPrimitives (
             PrimitiveType primitiveType,
@@ -247,7 +247,7 @@ namespace Sungiant.Cor.Platform.Native.Linux
             Int32 primitiveCount
             )
         {
-            
+
         }
 
         public void DrawUserPrimitives <T> (
@@ -258,7 +258,7 @@ namespace Sungiant.Cor.Platform.Native.Linux
             VertexDeclaration vertexDeclaration )
             where T : struct, IVertexType
         {
-            
+
         }
 
         public void DrawUserIndexedPrimitives <T> (
@@ -269,7 +269,7 @@ namespace Sungiant.Cor.Platform.Native.Linux
             Int32[] indexData,
             Int32 indexOffset,
             Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration ) 
+            VertexDeclaration vertexDeclaration )
             where T : struct, IVertexType
         {
 
@@ -308,14 +308,14 @@ namespace Sungiant.Cor.Platform.Native.Linux
         }
 
         static internal UInt16[] ConvertToUnsigned (Int32[] indexBuffer)
-        {   
+        {
             UInt16[] udata = new UInt16[indexBuffer.Length];
 
             for(Int32 i = 0; i < indexBuffer.Length; ++i)
             {
                 udata[i] = (UInt16) indexBuffer[i];
             }
-            
+
             return udata;
         }
 
@@ -397,16 +397,16 @@ namespace Sungiant.Cor.Platform.Native.Linux
 
         #region IPanelSpecification
 
-        public Vector2 PanelPhysicalSize 
-        { 
-            get { return new Vector2(0.20f, 0.15f ); } 
+        public Vector2 PanelPhysicalSize
+        {
+            get { return new Vector2(0.20f, 0.15f ); }
         }
-        
-        public Single PanelPhysicalAspectRatio 
-        { 
-            get { return PanelPhysicalSize.X / PanelPhysicalSize.Y; } 
+
+        public Single PanelPhysicalAspectRatio
+        {
+            get { return PanelPhysicalSize.X / PanelPhysicalSize.Y; }
         }
-        
+
         public PanelType PanelType { get { return PanelType.TouchScreen; } }
 
         #endregion
@@ -426,21 +426,21 @@ namespace Sungiant.Cor.Platform.Native.Linux
         #region IScreenSpecification
 
         public virtual Int32 ScreenResolutionWidth
-        { 
+        {
             get { return width; }
         }
-        
+
         public virtual Int32 ScreenResolutionHeight
-        { 
+        {
             get { return height; }
         }
-        
+
         public Single ScreenResolutionAspectRatio
         {
-            get 
-            { 
-                return 
-                    (Single)this.ScreenResolutionWidth / 
+            get
+            {
+                return
+                    (Single)this.ScreenResolutionWidth /
                     (Single)this.ScreenResolutionHeight;
             }
         }
@@ -494,7 +494,7 @@ namespace Sungiant.Cor.Platform.Native.Linux
         }
 
         void GetEffectiveDisplaySize(
-            ref Int32 screenSpecWidth, 
+            ref Int32 screenSpecWidth,
             ref Int32 screenSpecHeight)
         {
             if (this.CurrentOrientation == DeviceOrientation.Default ||
@@ -536,18 +536,18 @@ namespace Sungiant.Cor.Platform.Native.Linux
         public String SystemVersion { get { return "1314.0.1.29"; } }
 
         public DeviceOrientation CurrentOrientation
-        { 
+        {
             get { return DeviceOrientation.Default; }
         }
 
         public IScreenSpecification ScreenSpecification
-        { 
-            get { return this.screen; } 
+        {
+            get { return this.screen; }
         }
 
-        public IPanelSpecification PanelSpecification 
-        { 
-            get { return this.panel; } 
+        public IPanelSpecification PanelSpecification
+        {
+            get { return this.panel; }
         }
 
         #endregion
@@ -565,14 +565,14 @@ namespace Sungiant.Cor.Platform.Native.Linux
 
         public Int32 VertexCount { get { return 0; } }
 
-        public VertexDeclaration VertexDeclaration 
-        { 
+        public VertexDeclaration VertexDeclaration
+        {
             get { return null; }
         }
 
-        public void SetData<T> (T[] data) 
-            where T: 
-                struct, 
+        public void SetData<T> (T[] data)
+            where T:
+                struct,
                 IVertexType
         {
 

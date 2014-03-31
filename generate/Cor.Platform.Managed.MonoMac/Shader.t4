@@ -133,7 +133,7 @@
         #region IDisposable
 
         /// <summary>
-        /// Releases all resource used by the <see cref="Sungiant.Cor.MonoTouchRuntime.Shader"/> object.
+        /// Releases all resource used by the <see cref="Cor.MonoTouchRuntime.Shader"/> object.
         /// </summary>
         public void Dispose()
         {

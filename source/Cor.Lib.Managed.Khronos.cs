@@ -48,7 +48,7 @@ using GLShaderType = MonoMac.OpenGL.ShaderType;
     Platform not supported.
 #endif
 
-namespace Sungiant.Cor.Lib.Managed.Khronos
+namespace Cor.Lib.Managed.Khronos
 {
     public static class ErrorHandler
     {

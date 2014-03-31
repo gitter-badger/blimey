@@ -41,7 +41,7 @@
         LogManager Log { get; }
 
         /// <summary>
-        /// Gets the <see cref="Sungiant.Cor.AppSettings"/>
+        /// Gets the <see cref="Cor.AppSettings"/>
         /// value used by the Cor! framework when initilising the app.
         /// </summary>
         AppSettings Settings { get; }

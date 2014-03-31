@@ -44,7 +44,7 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
-namespace Sungiant.Cor.Platform.Stub
+namespace Cor.Platform.Stub
 {
 <#@ include file="StubEngine.t4"#>
 <#@ include file="StubAudioManager.t4"#>

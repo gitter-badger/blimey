@@ -119,7 +119,7 @@ cManagedBindings::~cManagedBindings ()
 //void cManagedBindings::Boot (char* settings, char* entryPoint)
 //{
     // this needs to make a call into:
-    // - Sungiant.Cor.Platform.Native.Linux.Bindings.dll
+    // - Cor.Platform.Native.Linux.Bindings.dll
     // to trigger starting the users app from their desired
     // entry point with their desired settings
 

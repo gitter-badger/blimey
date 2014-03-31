@@ -50,7 +50,7 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
-namespace Sungiant.Cor.Platform.Managed.Xna4
+namespace Cor.Platform.Managed.Xna4
 {
 <#@ include file="BasicEffectShaderAdapter.t4"#>
 <#@ include file="Convert.t4"#>

@@ -12,8 +12,8 @@
         Single elapsed;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Sungiant.Cor.AppTime"/>
-        /// struct.  Internal so it can only be instantiated by friend 
+        /// Initializes a new instance of the <see cref="Cor.AppTime"/>
+        /// struct.  Internal so it can only be instantiated by friend
         /// assemblies, namely the platform specific Cor! Runtime frameworks.
         /// </summary>
         /// <param name="dt">Delta time.</param>
@@ -27,18 +27,18 @@
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current 
-        /// <see cref="Sungiant.Cor.AppTime"/>.
+        /// Returns a <see cref="System.String"/> that represents the current
+        /// <see cref="Cor.AppTime"/>.
         /// </summary>
         public override string ToString ()
         {
             return string.Format (
-                "[AppTime: Delta={0}, Elapsed={1}, FrameNumber={2}]", 
-                Delta, 
-                Elapsed, 
+                "[AppTime: Delta={0}, Elapsed={1}, FrameNumber={2}]",
+                Delta,
+                Elapsed,
                 FrameNumber);
         }
-        
+
         /// <summary>
         /// Gets the time in seconds since between this frame and the last.
         /// </summary>
@@ -51,7 +51,7 @@
         /// <value>The elapsed time.</value>
         public Single Elapsed { get { return elapsed; } }
 
-        
+
         /// <summary>
         /// Gets the index of the current frame, the first frame is given
         /// the number zero, programmers count from zero.

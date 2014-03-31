@@ -48,7 +48,7 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
-namespace Sungiant.Cor.Platform.Managed.Xna4
+namespace Cor.Platform.Managed.Xna4
 {
     public class BasicEffectShaderAdapter
         : IShader

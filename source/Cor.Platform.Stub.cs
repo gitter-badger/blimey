@@ -42,7 +42,7 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
-namespace Sungiant.Cor.Platform.Stub
+namespace Cor.Platform.Stub
 {
     public class StubEngine
         : ICor

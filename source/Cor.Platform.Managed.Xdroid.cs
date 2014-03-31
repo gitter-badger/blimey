@@ -37,12 +37,12 @@ using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
-using Sungiant.Abacus;
-using Sungiant.Abacus.Packed;
-using Sungiant.Abacus.SinglePrecision;
-using Sungiant.Abacus.Int32Precision;
+using Abacus;
+using Abacus.Packed;
+using Abacus.SinglePrecision;
+using Abacus.Int32Precision;
 
-namespace Sungiant.Cor.Platform.Managed.Xdroid
+namespace Cor.Platform.Managed.Xdroid
 {
     public class Engine
         : ICor

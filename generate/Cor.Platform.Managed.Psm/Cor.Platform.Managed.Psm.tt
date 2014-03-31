@@ -50,7 +50,7 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
-namespace Sungiant.Cor.Platform.Managed.MonoMac
+namespace Cor.Platform.Managed.MonoMac
 {
 <#@ include file="Convert.t4"#>
 <#@ include file="Engine.t4"#>

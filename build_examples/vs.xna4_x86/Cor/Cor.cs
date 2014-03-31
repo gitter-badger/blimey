@@ -155,23 +155,23 @@ namespace Cor
         /// Sets the GPU's current culling mode to the value specified.
         /// </summary>
         void SetCullMode(CullMode cullMode);
-        
+
         /// <summary>
-        /// With the current design the only way you can create geom buffers is 
+        /// With the current design the only way you can create geom buffers is
         /// here.  This is to maintain consistency across platforms by bowing to
         /// the quirks of PlayStation Mobile. Each IGeometryBuffer has vert
         /// data, and optionally index data.  Normally this data would be
         /// seperate, so you can upload one chunk of vert data, and, say, 5 sets
         /// of index data, then achive neat optimisations like switching on
-        /// index data whilst keeping the vert data the same, resulting in  
-        /// defining different shapes, saving on memory and context switching 
+        /// index data whilst keeping the vert data the same, resulting in
+        /// defining different shapes, saving on memory and context switching
         /// (this is how the grass worked on Pure).
         ///
         /// Right now I am endevouring to support PlayStation Mobile so vert and
         /// index buffers are combined into a single geom buffer.
         ///
         /// EDIT: I think this should be split up again.  And the get the Psm
-        ///       runtime to internally create a load of geom-buffers for 
+        ///       runtime to internally create a load of geom-buffers for
         ///       index and vert buffer combinations as they arise...
         ///       Hmmm... Still thinking...
         /// </summary>
@@ -194,60 +194,60 @@ namespace Cor
         /// Defines how we blend colours
         /// </summary>
         void SetBlendEquation(
-            BlendFunction rgbBlendFunction, 
-            BlendFactor sourceRgb, 
+            BlendFunction rgbBlendFunction,
+            BlendFactor sourceRgb,
             BlendFactor destinationRgb,
-            BlendFunction alphaBlendFunction, 
-            BlendFactor sourceAlpha, 
+            BlendFunction alphaBlendFunction,
+            BlendFactor sourceAlpha,
             BlendFactor destinationAlpha
             );
 
         /// <summary>
-        /// Renders a sequence of non-indexed geometric primitives of the 
+        /// Renders a sequence of non-indexed geometric primitives of the
         /// specified type from the active geometry buffer (which sits in GRAM).
         ///
         /// Info: From GRAM - Non-Indexed.
         ///
         /// Arguments:
         ///   primitiveType  -> Describes the type of primitive to render.
-        ///   startVertex    -> Index of the first vertex to load. Beginning at 
-        ///                     startVertex, the correct number of vertices is 
+        ///   startVertex    -> Index of the first vertex to load. Beginning at
+        ///                     startVertex, the correct number of vertices is
         ///                     read out of the vertex buffer.
-        ///   primitiveCount -> Number of primitives to render. The 
-        ///                     primitiveCount is the number of primitives as 
-        ///                     determined by the primitive type. If it is a 
-        ///                     line list, each primitive has two vertices. If 
-        ///                     it is a triangle list, each primitive has three 
+        ///   primitiveCount -> Number of primitives to render. The
+        ///                     primitiveCount is the number of primitives as
+        ///                     determined by the primitive type. If it is a
+        ///                     line list, each primitive has two vertices. If
+        ///                     it is a triangle list, each primitive has three
         ///                      vertices.
         /// </summary>
         void DrawPrimitives(
-            PrimitiveType primitiveType,            
-            Int32 startVertex,                      
-            Int32 primitiveCount );                 
+            PrimitiveType primitiveType,
+            Int32 startVertex,
+            Int32 primitiveCount );
 
         /// <summary>
-        /// Renders a sequence of indexed geometric primitives of the 
+        /// Renders a sequence of indexed geometric primitives of the
         /// specified type from the active geometry buffer (which sits in GRAM).
         ///
         /// Info: From GRAM - Indexed.
         ///
         /// Arguments:
-        ///   primitiveType  -> Describes the type of primitive to render. 
-        ///                     PrimitiveType.PointList is not supported with 
+        ///   primitiveType  -> Describes the type of primitive to render.
+        ///                     PrimitiveType.PointList is not supported with
         ///                     this method.
-        ///   baseVertex     -> Offset to add to each vertex index in the index 
+        ///   baseVertex     -> Offset to add to each vertex index in the index
         ///                     buffer.
-        ///   minVertexIndex -> Minimum vertex index for vertices used during 
-        ///                     the call. The minVertexIndex parameter and all 
-        ///                     of the indices in the index stream are relative 
+        ///   minVertexIndex -> Minimum vertex index for vertices used during
+        ///                     the call. The minVertexIndex parameter and all
+        ///                     of the indices in the index stream are relative
         ///                     to the baseVertex parameter.
-        ///   numVertices    -> Number of vertices used during the call. The 
-        ///                     first vertex is located at index: baseVertex + 
+        ///   numVertices    -> Number of vertices used during the call. The
+        ///                     first vertex is located at index: baseVertex +
         ///                     minVertexIndex.
-        ///   startIndex     -> Location in the index array at which to start 
+        ///   startIndex     -> Location in the index array at which to start
         ///                     reading vertices.
-        ///   primitiveCount -> Number of primitives to render. The number of 
-        ///                     vertices used is a function of primitiveCount 
+        ///   primitiveCount -> Number of primitives to render. The number of
+        ///                     vertices used is a function of primitiveCount
         ///                     and primitiveType.
         /// </summary>
         void DrawIndexedPrimitives (
@@ -267,10 +267,10 @@ namespace Cor
         /// Arguments:
         /// primitiveType     -> Describes the type of primitive to render.
         /// vertexData        -> The vertex data.
-        /// vertexOffset      -> Offset (in vertices) from the beginning of the 
+        /// vertexOffset      -> Offset (in vertices) from the beginning of the
         ///                      buffer to start reading data.
         /// primitiveCount    -> Number of primitives to render.
-        /// vertexDeclaration -> The vertex declaration, which defines 
+        /// vertexDeclaration -> The vertex declaration, which defines
         ///                      per-vertex data.
         /// </summary>
         void DrawUserPrimitives <T> (
@@ -289,14 +289,14 @@ namespace Cor
         /// Arguments:
         /// primitiveType     -> Describes the type of primitive to render.
         /// vertexData        -> The vertex data.
-        /// vertexOffset      -> Offset (in vertices) from the beginning of the 
+        /// vertexOffset      -> Offset (in vertices) from the beginning of the
         ///                      vertex buffer to the first vertex to draw.
         /// numVertices       -> Number of vertices to draw.
         /// indexData         -> The index data.
         /// indexOffset       -> Offset (in indices) from the beginning of the
         ///                      index buffer to the first index to use.
         /// primitiveCount    -> Number of primitives to render.
-        /// vertexDeclaration -> The vertex declaration, which defines 
+        /// vertexDeclaration -> The vertex declaration, which defines
         ///                      per-vertex data.
         /// </summary>
         void DrawUserIndexedPrimitives <T> (
@@ -307,7 +307,7 @@ namespace Cor
             Int32[] indexData,
             Int32 indexOffset,
             Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration ) 
+            VertexDeclaration vertexDeclaration )
             where T : struct, IVertexType;
     }
 
@@ -319,7 +319,7 @@ namespace Cor
     /// For example, if you are running on iPad, the GetXbox360Gamepad
     /// method will return NULL.  The way to make your app deal with
     /// multiple platforms is to poll the input devices at bootup
-    /// and then query only those that are avaible in your update loop.  
+    /// and then query only those that are avaible in your update loop.
     /// </summary>
     public interface IInputManager
     {
@@ -329,7 +329,7 @@ namespace Cor
         IXbox360Gamepad Xbox360Gamepad { get; }
 
         /// <summary>
-        // The virtual gamepad used by PlayStation Mobile systems, 
+        // The virtual gamepad used by PlayStation Mobile systems,
         // if you are running on Vita this will be the Vita itself.
         /// </summary>
         IPsmGamepad PsmGamepad { get; }
@@ -491,7 +491,7 @@ namespace Cor
         /// todo
         /// </summary>
         Int32 BeginEvent(Rgba32 colour, String eventName);
-            
+
         /// <summary>
         /// todo
         /// </summary>
@@ -606,7 +606,7 @@ namespace Cor
         /// <summary>
         /// todo
         /// </summary>
-        T[] GetData<T> () 
+        T[] GetData<T> ()
         where T
             : struct
             , IVertexType;
@@ -631,20 +631,20 @@ namespace Cor
         where T
             : struct
             , IVertexType;
-        
+
         /// <summary>
         /// todo
         /// </summary>
         void SetRawData (
-            Byte[] data, 
-            Int32 startIndex, 
+            Byte[] data,
+            Int32 startIndex,
             Int32 elementCount);
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Byte[] GetRawData (
-            Int32 startIndex, 
+            Int32 startIndex,
             Int32 elementCount);
     }
 
@@ -688,31 +688,31 @@ namespace Cor
         /// todo
         /// </summary>
         void SetData(
-            Int32[] data, 
-            Int32 startIndex, 
+            Int32[] data,
+            Int32 startIndex,
             Int32 elementCount);
 
         /// <summary>
         /// todo
         /// </summary>
         void GetData(
-            Int32[] data, 
-            Int32 startIndex, 
+            Int32[] data,
+            Int32 startIndex,
             Int32 elementCount);
 
         /// <summary>
         /// todo
         /// </summary>
         void SetRawData(
-            Byte[] data, 
-            Int32 startIndex, 
+            Byte[] data,
+            Int32 startIndex,
             Int32 elementCount);
 
         /// <summary>
         /// todo
         /// </summary>
         Byte[] GetRawData(
-            Int32 startIndex, 
+            Int32 startIndex,
             Int32 elementCount);
     }
 
@@ -731,7 +731,7 @@ namespace Cor
         /// Resets all the shader's samplers to null textures.
         /// </summary>
         void ResetSamplerTargets();
-  
+
         /// <summary>
         /// Sets the texture slot that a texture sampler should sample from.
         /// </summary>
@@ -739,11 +739,11 @@ namespace Cor
 
         /// <summary>
         /// Provides access to the individual passes in this shader.
-        /// the calling code can itterate though these and apply them 
+        /// the calling code can itterate though these and apply them
         /// to the graphics context before it makes a draw call.
         /// </summary>
         IShaderPass[] Passes { get; }
-        
+
         /// <summary>
         /// Defines which vertex elements are required by this shader.
         /// </summary>
@@ -789,7 +789,7 @@ namespace Cor
     /// <summary>
     /// Defines colour blending factors.
     ///               ogles2.0
-    /// 
+    ///
     /// factor        | s | d |
     /// ------------------------------------
     /// zero          | o | o |
@@ -825,83 +825,83 @@ namespace Cor
 
         /// <summary>
         /// Each component of the colour is multiplied by the source colour.
-        /// This can be represented as (Rs, Gs, Bs, As), where R, G, B, and A 
-        /// respectively stand for the red, green, blue, and alpha source 
+        /// This can be represented as (Rs, Gs, Bs, As), where R, G, B, and A
+        /// respectively stand for the red, green, blue, and alpha source
         /// values.
         /// </summary>
         SourceColour,
 
         /// <summary>
-        /// Each component of the colour is multiplied by the inverse of the 
+        /// Each component of the colour is multiplied by the inverse of the
         /// source colour. This can be represented as
-        /// (1 − Rs, 1 − Gs, 1 − Bs, 1 − As) where R, G, B, and A respectively 
+        /// (1 − Rs, 1 − Gs, 1 − Bs, 1 − As) where R, G, B, and A respectively
         /// stand for the red, green, blue, and alpha destination values.
         /// </summary>
         InverseSourceColour,
 
         /// <summary>
-        /// Each component of the colour is multiplied by the alpha value of the 
-        /// source. This can be represented as (As, As, As, As), where As is the 
+        /// Each component of the colour is multiplied by the alpha value of the
+        /// source. This can be represented as (As, As, As, As), where As is the
         /// alpha source value.
         /// </summary>
         SourceAlpha,
 
         /// <summary>
-        /// Each component of the colour is multiplied by the inverse of the 
-        /// alpha value of the source. This can be represented as 
-        /// (1 − As, 1 − As, 1 − As, 1 − As), where As is the alpha destination 
+        /// Each component of the colour is multiplied by the inverse of the
+        /// alpha value of the source. This can be represented as
+        /// (1 − As, 1 − As, 1 − As, 1 − As), where As is the alpha destination
         /// value.
         /// </summary>
         InverseSourceAlpha,
 
         /// <summary>
-        /// Each component of the colour is multiplied by the alpha value of the 
-        /// destination. This can be represented as (Ad, Ad, Ad, Ad), where Ad 
+        /// Each component of the colour is multiplied by the alpha value of the
+        /// destination. This can be represented as (Ad, Ad, Ad, Ad), where Ad
         /// is the destination alpha value.
         /// </summary>
         DestinationAlpha,
 
         /// <summary>
-        /// Each component of the colour is multiplied by the inverse of the 
+        /// Each component of the colour is multiplied by the inverse of the
         /// alpha value of the destination. This can be represented as
-        /// (1 − Ad, 1 − Ad, 1 − Ad, 1 − Ad), where Ad is the alpha destination 
+        /// (1 − Ad, 1 − Ad, 1 − Ad, 1 − Ad), where Ad is the alpha destination
         /// value.
         /// </summary>
         InverseDestinationAlpha,
 
         /// <summary>
-        /// Each component colour is multiplied by the destination colour. This 
-        /// can be represented as (Rd, Gd, Bd, Ad), where R, G, B, and A 
-        /// respectively stand for red, green, blue, and alpha destination 
+        /// Each component colour is multiplied by the destination colour. This
+        /// can be represented as (Rd, Gd, Bd, Ad), where R, G, B, and A
+        /// respectively stand for red, green, blue, and alpha destination
         /// values.
         /// </summary>
         DestinationColour,
 
         /// <summary>
-        /// Each component of the colour is multiplied by the inverse of the 
-        /// destination colour. This can be represented as 
-        /// (1 − Rd, 1 − Gd, 1 − Bd, 1 − Ad), where Rd, Gd, Bd, and Ad 
-        /// respectively stand for the red, green, blue, and alpha destination 
+        /// Each component of the colour is multiplied by the inverse of the
+        /// destination colour. This can be represented as
+        /// (1 − Rd, 1 − Gd, 1 − Bd, 1 − Ad), where Rd, Gd, Bd, and Ad
+        /// respectively stand for the red, green, blue, and alpha destination
         /// values.
         /// </summary>
         InverseDestinationColour,
 
         /// <summary>
-        /// Each component of the colour is multiplied by either the alpha of  
-        /// the source colour, or the inverse of the alpha of the source colour, 
-        /// whichever is greater. This can be represented as (f, f, f, 1), 
+        /// Each component of the colour is multiplied by either the alpha of
+        /// the source colour, or the inverse of the alpha of the source colour,
+        /// whichever is greater. This can be represented as (f, f, f, 1),
         /// where f = min(A, 1 − Ad).
         /// </summary>
         //SourceAlphaSaturation,
 
         /// <summary>
-        /// Each component of the colour is multiplied by a constant set in 
+        /// Each component of the colour is multiplied by a constant set in
         /// BlendFactor.
         /// </summary>
         //ConstantColour,
 
         /// <summary>
-        /// Each component of the colour is multiplied by the inverse of a 
+        /// Each component of the colour is multiplied by the inverse of a
         /// constant set in BlendFactor.
         /// </summary>
         //InverseConstantColour,
@@ -914,35 +914,35 @@ namespace Cor
     {
         /// <summary>
         /// The result is the destination added to the source.
-        /// Result = (Source Colour * Source Blend) + 
+        /// Result = (Source Colour * Source Blend) +
         ///          (Destination Colour * Destination Blend)
         /// </summary>
         Add,
 
         /// <summary>
         /// The result is the destination subtracted from the source.
-        /// Result = (Source Colour * Source Blend) − 
+        /// Result = (Source Colour * Source Blend) −
         ///          (Destination Colour * Destination Blend)
         /// </summary>
         Subtract,
 
         /// <summary>
         /// The result is the source subtracted from the destination.
-        /// Result = (Destination Colour * Destination Blend) − 
+        /// Result = (Destination Colour * Destination Blend) −
         ///          (Source Colour * Source Blend)
         /// </summary>
         ReverseSubtract,
 
         /// <summary>
         /// The result is the maximum of the source and destination.
-        /// Result = max( (Source Colour * Source Blend), 
+        /// Result = max( (Source Colour * Source Blend),
         ///               (Destination Colour * Destination Blend) )
         /// </summary>
         Max,
 
         /// <summary>
         /// The result is the minimum of the source and destination.
-        /// Result = min( (Source Colour * Source Blend), 
+        /// Result = min( (Source Colour * Source Blend),
         ///               (Destination Colour * Destination Blend) )
         /// </summary>
         Min
@@ -957,12 +957,12 @@ namespace Cor
         /// todo
         /// </summary>
         None,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         CW,
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -1000,7 +1000,7 @@ namespace Cor
         /// todo
         /// </summary>
         Stencil = 4,
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -1009,24 +1009,24 @@ namespace Cor
 
     /// <summary>
     /// todo
-    /// </summary>    
+    /// </summary>
     public enum DeviceOrientation
     {
         /// <summary>
         /// todo
         /// </summary>
         Default,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Rightside,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Upsidedown,
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -1042,12 +1042,12 @@ namespace Cor
         /// todo
         /// </summary>
         Screen,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Touch,
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -1063,17 +1063,17 @@ namespace Cor
         /// todo
         /// </summary>
         One,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Two,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Three,
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -1089,17 +1089,17 @@ namespace Cor
         /// todo
         /// </summary>
         TriangleList = 0,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         TriangleStrip = 1,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         LineList = 2,
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -1115,17 +1115,17 @@ namespace Cor
         /// todo
         /// </summary>
         Unlit,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         VertexLit,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         PixelLit,
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -1141,17 +1141,17 @@ namespace Cor
         /// todo
         /// </summary>
         Invalid = 0,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         JustReleased = 1,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         JustPressed = 2,
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -1167,57 +1167,57 @@ namespace Cor
         /// todo
         /// </summary>
         Single,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Vector2,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Vector3,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Vector4,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Colour,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Byte4,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Short2,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Short4,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         NormalisedShort2,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         NormalisedShort4,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         HalfVector2,
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -1236,29 +1236,29 @@ namespace Cor
         {
             switch(format)
             {
-                case VertexElementFormat.Single: 
+                case VertexElementFormat.Single:
                     return typeof(Single);
-                case VertexElementFormat.Vector2: 
+                case VertexElementFormat.Vector2:
                     return typeof(Vector2);
-                case VertexElementFormat.Vector3: 
+                case VertexElementFormat.Vector3:
                     return typeof(Vector3);
-                case VertexElementFormat.Vector4: 
+                case VertexElementFormat.Vector4:
                     return typeof(Vector4);
-                case VertexElementFormat.Colour: 
+                case VertexElementFormat.Colour:
                     return typeof(Rgba32);
-                case VertexElementFormat.Byte4: 
+                case VertexElementFormat.Byte4:
                     return typeof(Byte4);
-                case VertexElementFormat.Short2: 
+                case VertexElementFormat.Short2:
                     return typeof(Short2);
-                case VertexElementFormat.Short4: 
+                case VertexElementFormat.Short4:
                     return typeof(Short4);
-                case VertexElementFormat.NormalisedShort2: 
+                case VertexElementFormat.NormalisedShort2:
                     return typeof(NormalisedShort2);
-                case VertexElementFormat.NormalisedShort4: 
+                case VertexElementFormat.NormalisedShort4:
                     return typeof(NormalisedShort4);
-                //case VertexElementFormat.HalfVector2: 
+                //case VertexElementFormat.HalfVector2:
                 //    return typeof(Abacus.HalfPrecision.Vector2);
-                //case VertexElementFormat.HalfVector4: 
+                //case VertexElementFormat.HalfVector4:
                 //    return typeof(Abacus.HalfPrecision.Vector4);
             }
 
@@ -1275,62 +1275,62 @@ namespace Cor
         /// todo
         /// </summary>
         Position,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Colour,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         TextureCoordinate,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Normal,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Binormal,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Tangent,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         BlendIndices,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         BlendWeight,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Depth,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Fog,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         PointSize,
-        
+
         /// <summary>
         /// todo
         /// </summary>
         Sample,
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -1350,7 +1350,7 @@ namespace Cor
         /// <summary>
         /// The key is released.
         /// </summary>
-        Up,  
+        Up,
     }
 
     /// <summary>
@@ -1366,7 +1366,7 @@ namespace Cor
 
         /// <summary>
         /// TAB key.
-        /// </summary> 
+        /// </summary>
         Tab,
 
         /// <summary>
@@ -1399,7 +1399,7 @@ namespace Cor
 
         /// <summary>
         /// END key.
-        /// </summary>   
+        /// </summary>
         End,
 
         /// <summary>
@@ -1435,7 +1435,7 @@ namespace Cor
         /// <summary>
         /// PRINT key.
         /// </summary>
-        Print,        
+        Print,
 
         /// <summary>
         /// EXECUTE key.
@@ -1889,7 +1889,7 @@ namespace Cor
         /// todo
         /// </summary>
         VertexElement[] _elements;
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -1906,12 +1906,12 @@ namespace Cor
             }
             else
             {
-                VertexElement[] elementArray = 
+                VertexElement[] elementArray =
                     (VertexElement[]) elements.Clone ();
 
                 this._elements = elementArray;
 
-                Int32 vertexStride = 
+                Int32 vertexStride =
                     VertexElementValidator.GetVertexStride (elementArray);
 
                 this._vertexStride = vertexStride;
@@ -1967,7 +1967,7 @@ namespace Cor
         /// <summary>
         /// todo
         /// </summary>
-        public static Boolean operator != 
+        public static Boolean operator !=
             (VertexDeclaration one, VertexDeclaration other)
         {
             return !(one == other);
@@ -1976,7 +1976,7 @@ namespace Cor
         /// <summary>
         /// todo
         /// </summary>
-        public static Boolean operator == 
+        public static Boolean operator ==
             (VertexDeclaration one, VertexDeclaration other)
         {
             if ((object)one == null && (object)other == null)
@@ -2014,14 +2014,14 @@ namespace Cor
 
                 if( i + 1 < _elements.Length )
                 {
-                    s += ", "; 
+                    s += ", ";
                 }
 
             }
 
             return string.Format (
-                "[VertexDeclaration: Elements={0}, Stride={1}]", 
-                s, 
+                "[VertexDeclaration: Elements={0}, Stride={1}]",
+                s,
                 _vertexStride);
         }
 
@@ -2029,7 +2029,7 @@ namespace Cor
         /// todo
         /// </summary>
         public VertexDeclaration (
-            Int32 vertexStride, 
+            Int32 vertexStride,
             params VertexElement[] elements)
         {
             if ((elements == null) || (elements.Length == 0))
@@ -2038,13 +2038,13 @@ namespace Cor
             }
             else
             {
-                VertexElement[] elementArray = 
+                VertexElement[] elementArray =
                     (VertexElement[])elements.Clone ();
 
                 this._elements = elementArray;
-                
+
                 this._vertexStride = vertexStride;
-                
+
                 VertexElementValidator.Validate (vertexStride, elementArray);
             }
         }
@@ -2068,7 +2068,7 @@ namespace Cor
             }
 #endif
 
-            IVertexType type = 
+            IVertexType type =
                 Activator.CreateInstance (vertexType) as IVertexType;
 
             if (type == null)
@@ -2568,19 +2568,19 @@ namespace Cor
             Int64 frame,
             Single timestamp)
         {
-            if( normalisedEngineSpacePosition.X > 0.5f || 
+            if( normalisedEngineSpacePosition.X > 0.5f ||
                 normalisedEngineSpacePosition.X < -0.5f )
             {
                 throw new Exception(
-                    "Touch has a bad X coordinate: " + 
+                    "Touch has a bad X coordinate: " +
                     normalisedEngineSpacePosition.X);
             }
 
-            if( normalisedEngineSpacePosition.Y > 0.5f || 
+            if( normalisedEngineSpacePosition.Y > 0.5f ||
                 normalisedEngineSpacePosition.X < -0.5f )
             {
                 throw new Exception(
-                    "Touch has a bad Y coordinate: " + 
+                    "Touch has a bad Y coordinate: " +
                     normalisedEngineSpacePosition.Y);
             }
 
@@ -2597,10 +2597,10 @@ namespace Cor
         static Touch()
         {
             invalidTouch = new Touch(
-                -1, 
-                Vector2.Zero, 
-                TouchPhase.Invalid, 
-                -1, 
+                -1,
+                Vector2.Zero,
+                TouchPhase.Invalid,
+                -1,
                 0f);
         }
 
@@ -2818,12 +2818,12 @@ namespace Cor
         /// todo
         /// </summary>
         IPsmGamepadButtons Buttons { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         IPsmGamepadDPad DPad { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -2834,42 +2834,42 @@ namespace Cor
     /// todo
     /// </summary>
     public interface IPsmGamepadButtons
-    {   
+    {
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Triangle { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Square { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Circle { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Cross { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Start { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Select { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState LeftShoulder { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -2885,17 +2885,17 @@ namespace Cor
         /// todo
         /// </summary>
         ButtonState Down { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Left { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Right { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -2911,7 +2911,7 @@ namespace Cor
         /// todo
         /// </summary>
         Vector2 Left { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -2922,7 +2922,7 @@ namespace Cor
     /// todo
     /// </summary>
     public interface IXbox360Gamepad
-    {        
+    {
         /// <summary>
         /// todo
         /// </summary>
@@ -2932,7 +2932,7 @@ namespace Cor
         /// todo
         /// </summary>
         IXbox360GamepadDPad DPad { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -2958,42 +2958,42 @@ namespace Cor
         /// todo
         /// </summary>
         ButtonState B { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Back { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState LeftShoulder { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState LeftStick { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState RightShoulder { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState RightStick { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Start { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState X { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3009,17 +3009,17 @@ namespace Cor
         /// todo
         /// </summary>
         ButtonState Down { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Left { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Right { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3035,7 +3035,7 @@ namespace Cor
         /// todo
         /// </summary>
         Vector2 Left { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3051,7 +3051,7 @@ namespace Cor
         /// todo
         /// </summary>
         Single Left { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3083,47 +3083,47 @@ namespace Cor
         /// todo
         /// </summary>
         ButtonState Down { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Left { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Right { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Up { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState North { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState South { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState East { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState West { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         ButtonState Option { get; }
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3210,9 +3210,9 @@ namespace Cor
         {
             _vertexDeclaration = new VertexDeclaration (
                 new VertexElement(
-                    0, 
-                    VertexElementFormat.Vector3, 
-                    VertexElementUsage.Position, 
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
                     0)
                 );
 
@@ -3223,7 +3223,7 @@ namespace Cor
         /// todo
         /// </summary>
         readonly static VertexPosition _default;
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3263,7 +3263,7 @@ namespace Cor
         /// todo
         /// </summary>
         public Vector3 Position;
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3273,7 +3273,7 @@ namespace Cor
         /// todo
         /// </summary>
         public VertexPositionColour(
-            Vector3 position, 
+            Vector3 position,
             Rgba32 color)
         {
             this.Position = position;
@@ -3287,19 +3287,19 @@ namespace Cor
         {
             _vertexDeclaration = new VertexDeclaration (
                 new VertexElement(
-                    0, 
-                    VertexElementFormat.Vector3, 
-                    VertexElementUsage.Position, 
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
                     0),
                 new VertexElement(
-                    12, 
-                    VertexElementFormat.Colour, 
-                    VertexElementUsage.Colour, 
+                    12,
+                    VertexElementFormat.Colour,
+                    VertexElementUsage.Colour,
                     0)
                 );
 
             _default = new VertexPositionColour(
-                Vector3.Zero, 
+                Vector3.Zero,
                 Rgba32.Magenta);
         }
 
@@ -3307,7 +3307,7 @@ namespace Cor
         /// todo
         /// </summary>
         readonly static VertexPositionColour _default;
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3347,7 +3347,7 @@ namespace Cor
         /// todo
         /// </summary>
         public Vector3 Position;
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3357,7 +3357,7 @@ namespace Cor
         /// todo
         /// </summary>
         public VertexPositionNormal (
-            Vector3 position, 
+            Vector3 position,
             Vector3 normal)
         {
             this.Position = position;
@@ -3368,7 +3368,7 @@ namespace Cor
         /// todo
         /// </summary>
         readonly static VertexPositionNormal _default;
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3381,19 +3381,19 @@ namespace Cor
         {
             _vertexDeclaration = new VertexDeclaration (
                 new VertexElement (
-                    0, 
-                    VertexElementFormat.Vector3, 
-                    VertexElementUsage.Position, 
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
                     0),
                 new VertexElement (
-                    sizeof(Single) * 3, 
-                    VertexElementFormat.Vector3, 
-                    VertexElementUsage.Normal, 
+                    sizeof(Single) * 3,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Normal,
                     0)
                 );
 
             _default = new VertexPositionNormal (
-                Vector3.Zero, 
+                Vector3.Zero,
                 Vector3.Zero);
         }
 
@@ -3407,7 +3407,7 @@ namespace Cor
                 return _default;
             }
         }
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3415,7 +3415,7 @@ namespace Cor
         {
             get
             {
-                return _vertexDeclaration; 
+                return _vertexDeclaration;
             }
         }
     }
@@ -3431,12 +3431,12 @@ namespace Cor
         /// todo
         /// </summary>
         public Vector3 Position;
-        
+
         /// <summary>
         /// todo
         /// </summary>
         public Vector3 Normal;
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3446,8 +3446,8 @@ namespace Cor
         /// todo
         /// </summary>
         public VertexPositionNormalColour(
-            Vector3 position, 
-            Vector3 normal, 
+            Vector3 position,
+            Vector3 normal,
             Rgba32 color)
         {
             this.Position = position;
@@ -3462,25 +3462,25 @@ namespace Cor
         {
             _vertexDeclaration = new VertexDeclaration (
                 new VertexElement(
-                    0, 
-                    VertexElementFormat.Vector3, 
-                    VertexElementUsage.Position, 
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
                     0),
                 new VertexElement(
-                    12, 
-                    VertexElementFormat.Vector3, 
-                    VertexElementUsage.Normal, 
+                    12,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Normal,
                     0),
                 new VertexElement(
-                    24, 
-                    VertexElementFormat.Colour, 
-                    VertexElementUsage.Colour, 
+                    24,
+                    VertexElementFormat.Colour,
+                    VertexElementUsage.Colour,
                     0)
                 );
 
             _default = new VertexPositionNormalColour(
-                Vector3.Zero, 
-                Vector3.Zero, 
+                Vector3.Zero,
+                Vector3.Zero,
                 Rgba32.White);
         }
 
@@ -3488,7 +3488,7 @@ namespace Cor
         /// todo
         /// </summary>
         readonly static VertexPositionNormalColour _default;
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3528,12 +3528,12 @@ namespace Cor
         /// todo
         /// </summary>
         public Vector3 Position;
-        
+
         /// <summary>
         /// todo
         /// </summary>
         public Vector3 Normal;
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3543,8 +3543,8 @@ namespace Cor
         /// todo
         /// </summary>
         public VertexPositionNormalTexture (
-            Vector3 position, 
-            Vector3 normal, 
+            Vector3 position,
+            Vector3 normal,
             Vector2 uv)
         {
             this.Position = position;
@@ -3556,7 +3556,7 @@ namespace Cor
         /// todo
         /// </summary>
         readonly static VertexPositionNormalTexture _default;
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3569,25 +3569,25 @@ namespace Cor
         {
             _vertexDeclaration = new VertexDeclaration (
                 new VertexElement (
-                    0, 
-                    VertexElementFormat.Vector3, 
-                    VertexElementUsage.Position, 
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
                     0),
                 new VertexElement (
-                    12, 
-                    VertexElementFormat.Vector3, 
-                    VertexElementUsage.Normal, 
+                    12,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Normal,
                     0),
                 new VertexElement (
-                    24, 
-                    VertexElementFormat.Vector2, 
-                    VertexElementUsage.TextureCoordinate, 
+                    24,
+                    VertexElementFormat.Vector2,
+                    VertexElementUsage.TextureCoordinate,
                     0)
                 );
 
             _default = new VertexPositionNormalTexture (
-                Vector3.Zero, 
-                Vector3.Zero, 
+                Vector3.Zero,
+                Vector3.Zero,
                 Vector2.Zero);
         }
 
@@ -3606,11 +3606,11 @@ namespace Cor
         /// todo
         /// </summary>
         public VertexDeclaration VertexDeclaration
-        { 
+        {
             get
-            { 
-                return _vertexDeclaration; 
-            } 
+            {
+                return _vertexDeclaration;
+            }
         }
     }
 
@@ -3625,17 +3625,17 @@ namespace Cor
         /// todo
         /// </summary>
         public Vector3 Position;
-        
+
         /// <summary>
         /// todo
         /// </summary>
         public Vector3 Normal;
-        
+
         /// <summary>
         /// todo
         /// </summary>
         public Vector2 UV;
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3645,9 +3645,9 @@ namespace Cor
         /// todo
         /// </summary>
         public VertexPositionNormalTextureColour (
-            Vector3 position, 
-            Vector3 normal, 
-            Vector2 uv, 
+            Vector3 position,
+            Vector3 normal,
+            Vector2 uv,
             Rgba32 color)
         {
             this.Position = position;
@@ -3663,31 +3663,31 @@ namespace Cor
         {
             _vertexDeclaration = new VertexDeclaration (
                 new VertexElement (
-                    0, 
-                    VertexElementFormat.Vector3, 
-                    VertexElementUsage.Position, 
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
                     0),
                 new VertexElement (
-                    12, 
-                    VertexElementFormat.Vector3, 
-                    VertexElementUsage.Normal, 
+                    12,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Normal,
                     0),
                 new VertexElement (
-                    24, 
-                    VertexElementFormat.Vector2, 
-                    VertexElementUsage.TextureCoordinate, 
+                    24,
+                    VertexElementFormat.Vector2,
+                    VertexElementUsage.TextureCoordinate,
                     0),
                 new VertexElement (
-                    32, 
-                    VertexElementFormat.Colour, 
-                    VertexElementUsage.Colour, 
+                    32,
+                    VertexElementFormat.Colour,
+                    VertexElementUsage.Colour,
                     0)
                 );
 
             _default = new VertexPositionNormalTextureColour (
-                Vector3.Zero, 
-                Vector3.Zero, 
-                Vector2.Zero, 
+                Vector3.Zero,
+                Vector3.Zero,
+                Vector2.Zero,
                 Rgba32.White);
         }
 
@@ -3695,7 +3695,7 @@ namespace Cor
         /// todo
         /// </summary>
         readonly static VertexPositionNormalTextureColour _default;
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3716,11 +3716,11 @@ namespace Cor
         /// todo
         /// </summary>
         public VertexDeclaration VertexDeclaration
-        { 
+        {
             get
-            { 
-                return _vertexDeclaration; 
-            } 
+            {
+                return _vertexDeclaration;
+            }
         }
     }
 
@@ -3735,23 +3735,23 @@ namespace Cor
         /// todo
         /// </summary>
         public Vector3 Position;
-        
+
         /// <summary>
         /// todo
         /// </summary>
         public Vector2 UV;
-        
+
         /// <summary>
         /// todo
         /// </summary>
         public VertexPositionTexture (
-            Vector3 position, 
+            Vector3 position,
             Vector2 uv)
         {
             this.Position = position;
             this.UV = uv;
         }
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3759,32 +3759,32 @@ namespace Cor
         {
             _vertexDeclaration = new VertexDeclaration (
                 new VertexElement (
-                    0, 
-                    VertexElementFormat.Vector3, 
-                    VertexElementUsage.Position, 
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
                     0),
                 new VertexElement (
-                    12, 
-                    VertexElementFormat.Vector2, 
-                    VertexElementUsage.TextureCoordinate, 
+                    12,
+                    VertexElementFormat.Vector2,
+                    VertexElementUsage.TextureCoordinate,
                     0)
                 );
 
             _default = new VertexPositionTexture (
-                Vector3.Zero, 
+                Vector3.Zero,
                 Vector2.Zero);
         }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         readonly static VertexPositionTexture _default;
-        
+
         /// <summary>
         /// todo
         /// </summary>
         readonly static VertexDeclaration _vertexDeclaration;
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3795,16 +3795,16 @@ namespace Cor
                 return _default;
             }
         }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         public VertexDeclaration VertexDeclaration
-        { 
+        {
             get
-            { 
-                return _vertexDeclaration; 
-            } 
+            {
+                return _vertexDeclaration;
+            }
         }
     }
 
@@ -3819,30 +3819,30 @@ namespace Cor
         /// todo
         /// </summary>
         public Vector3 Position;
-        
+
         /// <summary>
         /// todo
         /// </summary>
         public Vector2 UV;
-        
+
         /// <summary>
         /// todo
         /// </summary>
         public Rgba32 Colour;
-        
+
         /// <summary>
         /// todo
         /// </summary>
         public VertexPositionTextureColour (
-            Vector3 position, 
-            Vector2 uv, 
+            Vector3 position,
+            Vector2 uv,
             Rgba32 color)
         {
             this.Position = position;
             this.UV = uv;
             this.Colour = color;
         }
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3850,38 +3850,38 @@ namespace Cor
         {
             _vertexDeclaration = new VertexDeclaration (
                 new VertexElement (
-                    0, 
-                    VertexElementFormat.Vector3, 
-                    VertexElementUsage.Position, 
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
                     0),
                 new VertexElement (
-                    12, 
-                    VertexElementFormat.Vector2, 
-                    VertexElementUsage.TextureCoordinate, 
+                    12,
+                    VertexElementFormat.Vector2,
+                    VertexElementUsage.TextureCoordinate,
                     0),
                 new VertexElement (
-                    20, 
-                    VertexElementFormat.Colour, 
-                    VertexElementUsage.Colour, 
+                    20,
+                    VertexElementFormat.Colour,
+                    VertexElementUsage.Colour,
                     0)
                 );
 
             _default = new VertexPositionTextureColour (
-                Vector3.Zero, 
-                Vector2.Zero, 
+                Vector3.Zero,
+                Vector2.Zero,
                 Rgba32.White);
         }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         readonly static VertexPositionTextureColour _default;
-        
+
         /// <summary>
         /// todo
         /// </summary>
         readonly static VertexDeclaration _vertexDeclaration;
-        
+
         /// <summary>
         /// todo
         /// </summary>
@@ -3892,16 +3892,16 @@ namespace Cor
                 return _default;
             }
         }
-        
+
         /// <summary>
         /// todo
         /// </summary>
         public VertexDeclaration VertexDeclaration
-        { 
+        {
             get
-            { 
-                return _vertexDeclaration; 
-            } 
+            {
+                return _vertexDeclaration;
+            }
         }
     }
 
@@ -3968,12 +3968,12 @@ namespace Cor
         /// <summary>
         /// todo
         /// </summary>
-        public abstract Int32 Width { get; } 
+        public abstract Int32 Width { get; }
 
         /// <summary>
         /// todo
         /// </summary>
-        public abstract Int32 Height { get; } 
+        public abstract Int32 Height { get; }
     }
 
     #endregion
@@ -3992,23 +3992,23 @@ namespace Cor
         {
             switch(type)
             {
-                case PrimitiveType.TriangleList: 
+                case PrimitiveType.TriangleList:
                     return 3;
-                case PrimitiveType.TriangleStrip: 
+                case PrimitiveType.TriangleStrip:
                     throw new NotImplementedException();
-                case PrimitiveType.LineList: 
+                case PrimitiveType.LineList:
                     return 2;
-                case PrimitiveType.LineStrip: 
+                case PrimitiveType.LineStrip:
                     throw new NotImplementedException();
-                default: 
-                    throw new NotImplementedException();   
+                default:
+                    throw new NotImplementedException();
             }
         }
     }
 
     /// <summary>
     /// todo
-    /// </summary>    
+    /// </summary>
     internal static class VertexElementValidator
     {
         /// <summary>
@@ -4065,7 +4065,7 @@ namespace Cor
 
             for (Int32 i = 0; i < elements.Length; i++)
             {
-                Int32 num3 = elements [i].Offset + 
+                Int32 num3 = elements [i].Offset +
                     GetTypeSize (elements [i].VertexElementFormat);
                 if (num2 < num3)
                 {
@@ -4080,7 +4080,7 @@ namespace Cor
         /// checks that an effect supports the given vert decl
         /// </summary>
         internal static void Validate(
-            IShader effect, 
+            IShader effect,
             VertexDeclaration vertexDeclaration)
         {
             throw new NotImplementedException ();
@@ -4090,64 +4090,64 @@ namespace Cor
         /// todo
         /// </summary>
         internal static void Validate (
-            int vertexStride, 
+            int vertexStride,
             VertexElement[] elements)
         {
             if (vertexStride <= 0)
             {
                 throw new ArgumentOutOfRangeException ("vertexStride");
             }
-            
+
             if ((vertexStride & 3) != 0)
             {
                 throw new ArgumentException (
                     "VertexElementOffsetNotMultipleFour");
             }
-            
+
             Int32[] numArray = new Int32[vertexStride];
-            
+
             for (Int32 i = 0; i < vertexStride; i++)
             {
                 numArray [i] = -1;
             }
-            
+
             for (Int32 j = 0; j < elements.Length; j++)
             {
                 Int32 offset = elements [j].Offset;
-                
+
                 Int32 typeSize = GetTypeSize (elements [j].VertexElementFormat);
-                
+
                 if (
-                    (elements [j].VertexElementUsage < 
-                     VertexElementUsage.Position ) || 
-                    (elements [j].VertexElementUsage > 
+                    (elements [j].VertexElementUsage <
+                     VertexElementUsage.Position ) ||
+                    (elements [j].VertexElementUsage >
                      VertexElementUsage.TessellateFactor)
-                    ) 
+                    )
                 {
                     throw new ArgumentException (
                         String.Format (
                             "FrameworkResources.VertexElementBadUsage"));
                 }
-                
+
                 if ((offset < 0) || ((offset + typeSize) > vertexStride))
                 {
                     throw new ArgumentException (
                         String.Format (
                             "FrameworkResources.VertexElementOutsideStride"));
                 }
-                
+
                 if ((offset & 3) != 0)
                 {
                     throw new ArgumentException (
                         "VertexElementOffsetNotMultipleFour");
                 }
-                
+
                 for (Int32 k = 0; k < j; k++)
                 {
                     if (
-                        (elements [j].VertexElementUsage == 
-                         elements [k].VertexElementUsage) && 
-                        (elements [j].UsageIndex == 
+                        (elements [j].VertexElementUsage ==
+                         elements [k].VertexElementUsage) &&
+                        (elements [j].UsageIndex ==
                          elements [k].UsageIndex))
                     {
                         throw new ArgumentException (
@@ -4235,7 +4235,7 @@ namespace Cor
         {
 
         }
-        
+
         protected internal virtual void Initialise (AssetTypeSerialiserManager manager) {}
 
         protected internal override Object BaseRead (AssetBinaryReader abr)
@@ -4268,12 +4268,12 @@ namespace Cor
 
         public void Unload()
         {
-            
+
         }
 
         public void Dispose()
         {
-            
+
         }
     }
 
@@ -4343,7 +4343,7 @@ namespace Cor
 
     #region AssetTypeSerialisers
 
-    class Int64Serialiser 
+    class Int64Serialiser
         : AssetTypeSerialiser<Int64>
     {
         internal Int64Serialiser () {}
@@ -4359,7 +4359,7 @@ namespace Cor
         }
     }
 
-    class BooleanSerialiser 
+    class BooleanSerialiser
         : AssetTypeSerialiser<Boolean>
     {
         internal BooleanSerialiser () {}
@@ -4375,7 +4375,7 @@ namespace Cor
         }
     }
 
-    class ByteSerialiser 
+    class ByteSerialiser
         : AssetTypeSerialiser<Byte>
     {
         internal ByteSerialiser () {}
@@ -4391,7 +4391,7 @@ namespace Cor
         }
     }
 
-    class CharSerialiser 
+    class CharSerialiser
         : AssetTypeSerialiser<Char>
     {
         internal CharSerialiser () {}
@@ -4423,7 +4423,7 @@ namespace Cor
         }
     }
 
-    class DoubleSerialiser 
+    class DoubleSerialiser
         : AssetTypeSerialiser<Double>
     {
         internal DoubleSerialiser () {}
@@ -4439,7 +4439,7 @@ namespace Cor
         }
     }
 
-    class Int16Serialiser 
+    class Int16Serialiser
         : AssetTypeSerialiser<Int16>
     {
         internal Int16Serialiser () {}
@@ -4455,7 +4455,7 @@ namespace Cor
         }
     }
 
-    class Int32Serialiser 
+    class Int32Serialiser
         : AssetTypeSerialiser<Int32>
     {
         internal Int32Serialiser () {}
@@ -4471,7 +4471,7 @@ namespace Cor
         }
     }
 
-    class SByteSerialiser 
+    class SByteSerialiser
         : AssetTypeSerialiser<SByte>
     {
         internal SByteSerialiser () {}
@@ -4487,7 +4487,7 @@ namespace Cor
         }
     }
 
-    class SingleSerialiser 
+    class SingleSerialiser
         : AssetTypeSerialiser<Single>
     {
         internal SingleSerialiser () {}
@@ -4503,7 +4503,7 @@ namespace Cor
         }
     }
 
-    class StringSerialiser 
+    class StringSerialiser
         : AssetTypeSerialiser<String>
     {
         internal StringSerialiser () {}
@@ -4519,7 +4519,7 @@ namespace Cor
         }
     }
 
-    class TimeSpanSerialiser 
+    class TimeSpanSerialiser
         : AssetTypeSerialiser<TimeSpan>
     {
         internal TimeSpanSerialiser () {}
@@ -4527,7 +4527,7 @@ namespace Cor
         protected internal override TimeSpan Read(AssetBinaryReader abr)
         {
             Int64 ticks = abr.ReadInt64 ();
-            
+
             return new TimeSpan(ticks);
         }
 
@@ -4537,7 +4537,7 @@ namespace Cor
         }
     }
 
-    class UInt16Serialiser 
+    class UInt16Serialiser
         : AssetTypeSerialiser<UInt16>
     {
         internal UInt16Serialiser () {}
@@ -4553,7 +4553,7 @@ namespace Cor
         }
     }
 
-    class UInt32Serialiser 
+    class UInt32Serialiser
         : AssetTypeSerialiser<UInt32>
     {
         internal UInt32Serialiser () {}
@@ -4569,7 +4569,7 @@ namespace Cor
         }
     }
 
-    class UInt64Serialiser 
+    class UInt64Serialiser
         : AssetTypeSerialiser<UInt64>
     {
         internal UInt64Serialiser () {}
@@ -4608,7 +4608,7 @@ namespace Cor
             var list = new List<T> ();
 
             Type objectType = typeof(T);
-            
+
             if (objectType.IsValueType)
             {
                 for (Int32 i = 0; i < count; ++i)
@@ -4630,12 +4630,12 @@ namespace Cor
                     if (objectTypeSerialiserId > 0)
                     {
                         // Locate the correct serialiser for this element.
-                        AssetTypeSerialiser virtualElementSerialiser = 
+                        AssetTypeSerialiser virtualElementSerialiser =
                             this.manager.GetTypeSerialiserFromId(objectTypeSerialiserId);
-                        
+
                         //
                         Object item = virtualElementSerialiser.BaseRead (abr);
-                        
+
                         // add to list then move on
                         list.Add((T)item);
                     }
@@ -4658,7 +4658,7 @@ namespace Cor
 
     class NullableSerialiser<T>
         : AssetTypeSerialiser<T?>
-    where T 
+    where T
         : struct
     {
         AssetTypeSerialiser<T> valueSerialiser;
@@ -4669,14 +4669,14 @@ namespace Cor
         {
             valueSerialiser = manager.GetTypeSerialiser<T>();
         }
-        
+
         protected internal override T? Read(AssetBinaryReader abr)
         {
             if(abr.ReadBoolean())
             {
                 return valueSerialiser.Read (abr);
             }
-            
+
             return null;
         }
 
@@ -4713,7 +4713,7 @@ namespace Cor
 
             underlyingTypeSerialiser = manager.GetTypeSerialiser(readerType);
         }
-        
+
         protected internal override T Read(AssetBinaryReader abr)
         {
             Object underlyingValue = underlyingTypeSerialiser.BaseRead(abr);
@@ -4747,9 +4747,9 @@ namespace Cor
             UInt32 count = abr.ReadUInt32 ();
 
             var array = new T[count];
-            
+
             Type objectType = typeof(T);
-            
+
             if (objectType.IsValueType)
             {
                 for (UInt32 i = 0; i < count; ++i)
@@ -4765,16 +4765,16 @@ namespace Cor
                     // as this element might not be of Type T, it might be
                     // polymorphic.
                     Int32 objectTypeSerialiserId = abr.Read7BitEncodedInt32 ();
-                    
+
                     if (objectTypeSerialiserId > 0)
                     {
                         // Locate the correct serialiser for this element.
-                        AssetTypeSerialiser virtualElementSerialiser = 
+                        AssetTypeSerialiser virtualElementSerialiser =
                             this.manager.GetTypeSerialiserFromId (objectTypeSerialiserId);
-                    
+
                         //
                         Object item = virtualElementSerialiser.BaseRead (abr);
-                    
+
                         // add to array then move on
                         array [i] = (T)item;
                     }
@@ -4785,7 +4785,7 @@ namespace Cor
                     }
                 }
             }
-            
+
             return array;
         }
 
@@ -4795,14 +4795,14 @@ namespace Cor
         }
     }
 
-    class DictionarySerialiser<TKey, TValue> 
+    class DictionarySerialiser<TKey, TValue>
         : AssetTypeSerialiser<Dictionary<TKey, TValue>>
     {
         AssetTypeSerialiser<TKey> keySerialiser;
         AssetTypeSerialiser<TValue> valueSerialiser;
 
         AssetTypeSerialiserManager manager;
-        
+
         internal DictionarySerialiser () {}
 
         protected internal override void Initialise(AssetTypeSerialiserManager manager)
@@ -4836,16 +4836,16 @@ namespace Cor
                     // as this element might not be of Type T, it might be
                     // polymorphic.
                     Int32 keyTypeSerialiserId = abr.Read7BitEncodedInt32 ();
-                    
+
                     if (keyTypeSerialiserId > 0)
                     {
                         // Locate the correct serialiser for this element.
-                        AssetTypeSerialiser virtualElementSerialiser = 
+                        AssetTypeSerialiser virtualElementSerialiser =
                             this.manager.GetTypeSerialiserFromId (keyTypeSerialiserId);
-                    
+
                         //
                         Object item = virtualElementSerialiser.BaseRead (abr);
-                    
+
                         // add to array then move on
                         key = (TKey)item;
                     }
@@ -4866,16 +4866,16 @@ namespace Cor
                     // as this element might not be of Type T, it might be
                     // polymorphic.
                     Int32 valueTypeSerialiserId = abr.Read7BitEncodedInt32 ();
-                    
+
                     if (valueTypeSerialiserId > 0)
                     {
                         // Locate the correct serialiser for this element.
-                        AssetTypeSerialiser virtualElementSerialiser = 
+                        AssetTypeSerialiser virtualElementSerialiser =
                             this.manager.GetTypeSerialiserFromId (valueTypeSerialiserId);
-                    
+
                         //
                         Object item = virtualElementSerialiser.BaseRead (abr);
-                    
+
                         // add to array then move on
                         value = (TValue)item;
                     }
@@ -4885,7 +4885,7 @@ namespace Cor
                         value = default(TValue);
                     }
                 }
-                
+
                 dictionary.Add(key, value);
             }
 
@@ -4909,7 +4909,7 @@ namespace Cor
             Byte g = abr.ReadByte();
             Byte b = abr.ReadByte();
             Byte a = abr.ReadByte();
-            
+
             return new Rgba32(r, g, b, a);
         }
 
@@ -4959,25 +4959,25 @@ namespace Cor
 
         protected internal override void Write(AssetBinaryWriter abw, Matrix44 obj)
         {
-            abw.Write(obj.R0C0);
-            abw.Write(obj.R0C1);
-            abw.Write(obj.R0C2);
-            abw.Write(obj.R0C3);
+            abw.Write(obj.M11);
+            abw.Write(obj.M12);
+            abw.Write(obj.M13);
+            abw.Write(obj.M14);
 
-            abw.Write(obj.R1C0);
-            abw.Write(obj.R1C1);
-            abw.Write(obj.R1C2);
-            abw.Write(obj.R1C3);
+            abw.Write(obj.M21);
+            abw.Write(obj.M22);
+            abw.Write(obj.M23);
+            abw.Write(obj.M24);
 
-            abw.Write(obj.R2C0);
-            abw.Write(obj.R2C1);
-            abw.Write(obj.R2C2);
-            abw.Write(obj.R2C3);
+            abw.Write(obj.M31);
+            abw.Write(obj.M32);
+            abw.Write(obj.M33);
+            abw.Write(obj.M34);
 
-            abw.Write(obj.R3C0);
-            abw.Write(obj.R3C1);
-            abw.Write(obj.R3C2);
-            abw.Write(obj.R3C3);
+            abw.Write(obj.M41);
+            abw.Write(obj.M42);
+            abw.Write(obj.M43);
+            abw.Write(obj.M44);
         }
     }
 
@@ -4988,20 +4988,20 @@ namespace Cor
 
         protected internal override Quaternion Read(AssetBinaryReader abr)
         {
-            Single i = abr.ReadSingle();
-            Single j = abr.ReadSingle();
-            Single k = abr.ReadSingle();
-            Single u = abr.ReadSingle();
-            
-            return new Quaternion(i, j, k, u);
+            Single x = abr.ReadSingle();
+            Single y = abr.ReadSingle();
+            Single z = abr.ReadSingle();
+            Single w = abr.ReadSingle();
+
+            return new Quaternion(x, y, z, w);
         }
 
         protected internal override void Write(AssetBinaryWriter abw, Quaternion obj)
         {
-            abw.Write(obj.I);
-            abw.Write(obj.J);
-            abw.Write(obj.K);
-            abw.Write(obj.U);
+            abw.Write(obj.X);
+            abw.Write(obj.Y);
+            abw.Write(obj.Z);
+            abw.Write(obj.W);
         }
     }
 
@@ -5035,7 +5035,7 @@ namespace Cor
             Single x = abr.ReadSingle();
             Single y = abr.ReadSingle();
             Single z = abr.ReadSingle();
-            
+
             return new Vector3(x, y, z);
         }
 
@@ -5058,7 +5058,7 @@ namespace Cor
             Single y = abr.ReadSingle();
             Single z = abr.ReadSingle();
             Single w = abr.ReadSingle();
-            
+
             return new Vector4(x, y, z, w);
         }
 
@@ -5101,13 +5101,12 @@ namespace Cor
 
         protected internal override void Write(AssetBinaryWriter abw, VertexDeclaration obj)
         {
-            throw new NotImplementedException();/*
             abr.Write (obj.ElementCount);
 
             for (Int32 i = 0; i < obj.ElementCount; ++i)
             {
                 vertexElementSerialiser.Write(abw, obj.Element[i]);
-            }*/
+            }
         }
     }
 
@@ -5137,11 +5136,10 @@ namespace Cor
 
         protected internal override void Write(AssetBinaryWriter abw, VertexElement obj)
         {
-            throw new NotImplementedException();/*
             abr.Write(obj.Offset);
             formatSerialiser.Write(abw, obj.VertexElementFormat);
             usageSerialiser.Write(abw, obj.VertexElementUsage);
-            abr.Write(obj.UsageIndex);*/
+            abr.Write(obj.UsageIndex);
         }
     }
 
@@ -5186,7 +5184,6 @@ namespace Cor
 
         protected internal override void Write(AssetBinaryWriter abw, IGeometryBuffer obj)
         {
-            throw new NotImplementedException();/*
             declaration.Write (abw, obj.VertexDeclaration);
 
             abw.Write (obj.VertexCount);
@@ -5195,7 +5192,7 @@ namespace Cor
 
             abw.Write (obj.IndexCount);
             Byte[] rawIndexData = obj.IndexBuffer.GetRawData (0, obj.IndexCount);
-            abw.Write (rawIndexData);*/
+            abw.Write (rawIndexData);
 
         }
     }

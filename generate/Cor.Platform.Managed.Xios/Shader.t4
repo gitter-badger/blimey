@@ -20,7 +20,7 @@
             {
                 string varName = variableDefinition.Name;
                 object value = variableDefinition.DefaultValue;
-                
+
                 if( variableDefinition.Type == typeof(Matrix44) )
                 {
                     this.SetVariable(varName, (Matrix44) value);
@@ -40,11 +40,11 @@
                 else if( variableDefinition.Type == typeof(Vector3) )
                 {
                     this.SetVariable(varName, (Vector3) value);
-                } 
+                }
                 else if( variableDefinition.Type == typeof(Vector4) )
                 {
                     this.SetVariable(varName, (Vector4) value);
-                } 
+                }
                 else if( variableDefinition.Type == typeof(Rgba32) )
                 {
                     this.SetVariable(varName, (Rgba32) value);
@@ -53,7 +53,7 @@
                 {
                     throw new NotSupportedException();
                 }
-                
+
             }
         }
 
@@ -87,10 +87,10 @@
             }
         }
 
-        
+
         /// <summary>
         /// Provides access to the individual passes in this shader.
-        /// the calling code can itterate though these and apply them 
+        /// the calling code can itterate though these and apply them
         ///to the graphics context before it makes a draw call.
         /// </summary>
         public IShaderPass[] Passes
@@ -100,7 +100,7 @@
                 return passes.ToArray();
             }
         }
-        
+
         /// <summary>
         /// Defines which vertex elements are required by this shader.
         /// </summary>
@@ -112,7 +112,7 @@
                 return requiredVertexElements.ToArray();
             }
         }
-        
+
         /// <summary>
         /// Defines which vertex elements are optionally used by this
         /// shader if they happen to be present.
@@ -133,7 +133,7 @@
         #region IDisposable
 
         /// <summary>
-        /// Releases all resource used by the <see cref="Sungiant.Cor.MonoTouchRuntime.Shader"/> object.
+        /// Releases all resource used by the <see cref="Cor.MonoTouchRuntime.Shader"/> object.
         /// </summary>
         public void Dispose()
         {
@@ -151,13 +151,13 @@
 
 
         /// <summary>
-        /// The <see cref="ShaderPass"/> objects that need to each, in turn,  be individually activated and used to 
+        /// The <see cref="ShaderPass"/> objects that need to each, in turn,  be individually activated and used to
         /// draw with to apply the effect of this containing <see cref="Shader"/> object.
         /// </summary>
         List<ShaderPass> passes = new List<ShaderPass>();
 
         /// <summary>
-        /// Cached reference to the <see cref="ShaderDefinition"/> object used 
+        /// Cached reference to the <see cref="ShaderDefinition"/> object used
         /// to create this <see cref="Shader"/> object.
         /// </summary>
         readonly ShaderDefinition cachedShaderDefinition;
@@ -183,7 +183,7 @@
         }
 
         /// <summary>
-        /// Works out and caches a copy of which shader inputs are required/optional, needed as the 
+        /// Works out and caches a copy of which shader inputs are required/optional, needed as the
         /// <see cref="IShader"/> interface requires this information.
         /// </summary>
         void CalculateRequiredInputs(ShaderDefinition shaderDefinition)
@@ -202,7 +202,7 @@
         }
 
         /// <summary>
-        /// Triggers the creation of all of this <see cref="Shader"/> object's passes. 
+        /// Triggers the creation of all of this <see cref="Shader"/> object's passes.
         /// </summary>
         void InitilisePasses(ShaderDefinition shaderDefinition)
         {
@@ -215,9 +215,9 @@
             // For each named shader pass.
             foreach (var definedPassName in shaderDefinition.PassNames)
             {
-                
+
                 Console.WriteLine(" Preparing to initilising Shader Pass: " + definedPassName);
-                // 
+                //
 
                 // itterate over the defined pass names, ex: cel, outline...
 
@@ -239,14 +239,14 @@
 
                     // find the pass in the shader variant definition that corresponds to the pass we are
                     // currently trying to initilise.
-                    var variantPassDefinition = 
+                    var variantPassDefinition =
                         shaderVariantDefinition.VariantPassDefinitions
                             .Find(x => x.PassName == definedPassName);
 
 
-                    // now we have a Variant name, say: 
+                    // now we have a Variant name, say:
                     //   - Unlit_PositionTextureColour
-                    // and a pass definition, say : 
+                    // and a pass definition, say :
                     //   - Main
                     //   - Shaders/Unlit_PositionTextureColour.vsh
                     //   - Shaders/Unlit_PositionTextureColour.fsh

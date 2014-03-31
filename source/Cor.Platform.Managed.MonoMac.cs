@@ -48,8 +48,8 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
-using Sungiant.Cor.Lib.Managed.Khronos;
-using Sungiant.Cor.Platform.Stub;
+using Cor.Lib.Managed.Khronos;
+using Cor.Platform.Stub;
 
 using MonoMac.Foundation;
 using MonoMac.AppKit;
@@ -59,7 +59,7 @@ using MonoMac.CoreImage;
 using MonoMac.ImageIO;
 using MonoMac.ImageKit;
 
-namespace Sungiant.Cor.Platform.Managed.MonoMac
+namespace Cor.Platform.Managed.MonoMac
 {
     public sealed class Engine
         : ICor
@@ -1849,7 +1849,7 @@ namespace Sungiant.Cor.Platform.Managed.MonoMac
         #region IDisposable
 
         /// <summary>
-        /// Releases all resource used by the <see cref="Sungiant.Cor.MonoTouchRuntime.Shader"/> object.
+        /// Releases all resource used by the <see cref="Cor.MonoTouchRuntime.Shader"/> object.
         /// </summary>
         public void Dispose()
         {

@@ -44,20 +44,20 @@ using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Linq;
 
-using Sungiant.Abacus;
-using Sungiant.Abacus.Packed;
-using Sungiant.Abacus.SinglePrecision;
-using Sungiant.Abacus.Int32Precision;
+using Abacus;
+using Abacus.Packed;
+using Abacus.SinglePrecision;
+using Abacus.Int32Precision;
 
-using Sungiant.Cor.Lib.Managed.Khronos;
-using Sungiant.Cor.Platform.Stub;
+using Cor.Lib.Managed.Khronos;
+using Cor.Platform.Stub;
 
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using MonoTouch.CoreText;
 using MonoTouch.CoreGraphics;
 
-namespace Sungiant.Cor.Platform.Managed.Xios
+namespace Cor.Platform.Managed.Xios
 {
     public sealed class AudioManager
         : IAudioManager
@@ -2202,7 +2202,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             {
                 string varName = variableDefinition.Name;
                 object value = variableDefinition.DefaultValue;
-                
+
                 if( variableDefinition.Type == typeof(Matrix44) )
                 {
                     this.SetVariable(varName, (Matrix44) value);
@@ -2222,11 +2222,11 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                 else if( variableDefinition.Type == typeof(Vector3) )
                 {
                     this.SetVariable(varName, (Vector3) value);
-                } 
+                }
                 else if( variableDefinition.Type == typeof(Vector4) )
                 {
                     this.SetVariable(varName, (Vector4) value);
-                } 
+                }
                 else if( variableDefinition.Type == typeof(Rgba32) )
                 {
                     this.SetVariable(varName, (Rgba32) value);
@@ -2235,7 +2235,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                 {
                     throw new NotSupportedException();
                 }
-                
+
             }
         }
 
@@ -2269,10 +2269,10 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             }
         }
 
-        
+
         /// <summary>
         /// Provides access to the individual passes in this shader.
-        /// the calling code can itterate though these and apply them 
+        /// the calling code can itterate though these and apply them
         ///to the graphics context before it makes a draw call.
         /// </summary>
         public IShaderPass[] Passes
@@ -2282,7 +2282,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                 return passes.ToArray();
             }
         }
-        
+
         /// <summary>
         /// Defines which vertex elements are required by this shader.
         /// </summary>
@@ -2294,7 +2294,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                 return requiredVertexElements.ToArray();
             }
         }
-        
+
         /// <summary>
         /// Defines which vertex elements are optionally used by this
         /// shader if they happen to be present.
@@ -2315,7 +2315,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         #region IDisposable
 
         /// <summary>
-        /// Releases all resource used by the <see cref="Sungiant.Cor.MonoTouchRuntime.Shader"/> object.
+        /// Releases all resource used by the <see cref="Cor.MonoTouchRuntime.Shader"/> object.
         /// </summary>
         public void Dispose()
         {
@@ -2333,13 +2333,13 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
 
         /// <summary>
-        /// The <see cref="ShaderPass"/> objects that need to each, in turn,  be individually activated and used to 
+        /// The <see cref="ShaderPass"/> objects that need to each, in turn,  be individually activated and used to
         /// draw with to apply the effect of this containing <see cref="Shader"/> object.
         /// </summary>
         List<ShaderPass> passes = new List<ShaderPass>();
 
         /// <summary>
-        /// Cached reference to the <see cref="ShaderDefinition"/> object used 
+        /// Cached reference to the <see cref="ShaderDefinition"/> object used
         /// to create this <see cref="Shader"/> object.
         /// </summary>
         readonly ShaderDefinition cachedShaderDefinition;
@@ -2365,7 +2365,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         }
 
         /// <summary>
-        /// Works out and caches a copy of which shader inputs are required/optional, needed as the 
+        /// Works out and caches a copy of which shader inputs are required/optional, needed as the
         /// <see cref="IShader"/> interface requires this information.
         /// </summary>
         void CalculateRequiredInputs(ShaderDefinition shaderDefinition)
@@ -2384,7 +2384,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
         }
 
         /// <summary>
-        /// Triggers the creation of all of this <see cref="Shader"/> object's passes. 
+        /// Triggers the creation of all of this <see cref="Shader"/> object's passes.
         /// </summary>
         void InitilisePasses(ShaderDefinition shaderDefinition)
         {
@@ -2397,9 +2397,9 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             // For each named shader pass.
             foreach (var definedPassName in shaderDefinition.PassNames)
             {
-                
+
                 Console.WriteLine(" Preparing to initilising Shader Pass: " + definedPassName);
-                // 
+                //
 
                 // itterate over the defined pass names, ex: cel, outline...
 
@@ -2421,14 +2421,14 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
                     // find the pass in the shader variant definition that corresponds to the pass we are
                     // currently trying to initilise.
-                    var variantPassDefinition = 
+                    var variantPassDefinition =
                         shaderVariantDefinition.VariantPassDefinitions
                             .Find(x => x.PassName == definedPassName);
 
 
-                    // now we have a Variant name, say: 
+                    // now we have a Variant name, say:
                     //   - Unlit_PositionTextureColour
-                    // and a pass definition, say : 
+                    // and a pass definition, say :
                     //   - Main
                     //   - Shaders/Unlit_PositionTextureColour.vsh
                     //   - Shaders/Unlit_PositionTextureColour.fsh
@@ -3038,7 +3038,7 @@ namespace Sungiant.Cor.Platform.Managed.Xios
                 {
                     if( state == TouchPhase.JustPressed )
                     {
-                        //Sungiant.Core.Teletype.WriteLine("ignoring " + id);
+                        //Core.Teletype.WriteLine("ignoring " + id);
 
                         state = TouchPhase.Active;
                     }
@@ -3082,11 +3082,11 @@ namespace Sungiant.Cor.Platform.Managed.Xios
 
 
         public float ScreenResolutionAspectRatio
-        { 
-            get 
+        {
+            get
             {
                 return this.ScreenResolutionWidth / this.ScreenResolutionHeight;
-            } 
+            }
         }
 
         // need to think about
@@ -3122,9 +3122,9 @@ namespace Sungiant.Cor.Platform.Managed.Xios
             }
         }
 
-        public TouchCollection TouchCollection 
-        { 
-            get { return this.collection; } 
+        public TouchCollection TouchCollection
+        {
+            get { return this.collection; }
         }
     }
 

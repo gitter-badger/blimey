@@ -1,7 +1,5 @@
-<#@ template debug="true" hostspecific="false" language="C#" #>
-<#@ output extension=".cs" #>
 // ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor! Xamarin Android Platform Implementation                           │ \\
+// │ Cor! - Low Level 3D App Engine                                         │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Brought to you by:                                                     │ \\
 // │          _________                    .__               __             │ \\
@@ -12,7 +10,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// │ Copyright © 2013 A.J.Pook (http://abacus3d.github.com)                 │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -35,27 +33,24 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Globalization;
-using System.Collections;
-using System.Collections.Generic;
-using Abacus;
-using Abacus.Packed;
-using Abacus.SinglePrecision;
-using Abacus.Int32Precision;
 
-namespace Cor.Platform.Managed.Xdroid
-{
-<#@ include file="Engine.t4"#>
-<#@ include file="AudioManager.t4"#>
-<#@ include file="GraphicsManager.t4"#>
-<#@ include file="DisplayStatus.t4"#>
-<#@ include file="IndexBuffer.t4"#>
-<#@ include file="InputManager.t4"#>
-<#@ include file="ResourceManager.t4"#>
-<#@ include file="PanelSpecification.t4"#>
-<#@ include file="ScreenSpecification.t4"#>
-<#@ include file="GeometryBuffer.t4"#>
-<#@ include file="SystemManager.t4"#>
-<#@ include file="VertexBuffer.t4"#>
-}
+// Information about this assembly is defined by the following attributes.
+// Change them to the values specific to your project.
+
+[assembly: AssemblyTitle("Cor")]
+[assembly: AssemblyDescription("Cor, built with Xamarin Studio, targetting Xamarin iOS.")]
+[assembly: ComVisible(false)]
+[assembly: AssemblyVersion("0.0.0.1")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: CLSCompliant(true)]
+
+[assembly: InternalsVisibleTo("Cor.Platform.Managed.Xios")]
+[assembly: InternalsVisibleTo("Cor.Platform.Managed.Xna4")]
+[assembly: InternalsVisibleTo("Cor.Platform.Managed.Psm")]
+[assembly: InternalsVisibleTo("Cor.Platform.Managed.MonoMac")]
+[assembly: InternalsVisibleTo("Cor.Platform.Stub")]
+[assembly: InternalsVisibleTo("Cor.Lib.Managed.Khronos")]
+
