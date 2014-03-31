@@ -42,7 +42,6 @@
       <Link>Cor.ContentBuilder.cs</Link>
     </Compile>
   </ItemGroup>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="app.config" />
