@@ -37,11 +37,11 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// Information about this assembly is defined by the following attributes. 
+// Information about this assembly is defined by the following attributes.
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle("Sungiant.Blimey")]
-[assembly: AssemblyDescription("Sungiant.Blimey, built with Xamarin Studio, targetting MonoMac.")]
+[assembly: AssemblyTitle("Blimey")]
+[assembly: AssemblyDescription("Blimey, built with Xamarin Studio, targetting MonoMac.")]
 [assembly: ComVisible(false)]
 [assembly: AssemblyVersion("0.0.0.1")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

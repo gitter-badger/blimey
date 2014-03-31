@@ -43,9 +43,9 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 using System.Linq;
-using Sungiant.Cor;
+using Cor;
 
-namespace Sungiant.Blimey
+namespace Blimey
 {
     public class BlimeyApp
         : IApp
@@ -4120,7 +4120,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
     //
     // MESH RENDERER
     //
-    // This behaviour takes a Sungiant.Blimey.Model and a Material, it then renders the models
+    // This behaviour takes a Blimey.Model and a Material, it then renders the models
     // at location, scale and orientaion of the parent SceneObject's Transform.
     //
     public sealed class MeshRenderer
@@ -4160,7 +4160,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
             Material.SetColour( "SpecularColour", LightingManager.specularColour );
             Material.SetFloat( "SpecularPower", LightingManager.specularPower );
 
-            
+
             Material.SetFloat( "FogEnabled", LightingManager.fogEnabled ? 1f : 0f );
             Material.SetFloat( "FogStart", LightingManager.fogStart );
             Material.SetFloat( "FogEnd", LightingManager.fogEnd );
@@ -4169,11 +4169,11 @@ namespace SunGiant.Framework.Ophelia.Cameras
             Material.SetVector3( "DirectionalLight0Direction", LightingManager.dirLight0Direction );
             Material.SetColour( "DirectionalLight0DiffuseColour", LightingManager.dirLight0DiffuseColour );
             Material.SetColour( "DirectionalLight0SpecularColour", LightingManager.dirLight0SpecularColour );
-            
+
             Material.SetVector3( "DirectionalLight1Direction", LightingManager.dirLight1Direction );
             Material.SetColour( "DirectionalLight1DiffuseColour", LightingManager.dirLight1DiffuseColour );
             Material.SetColour( "DirectionalLight1SpecularColour", LightingManager.dirLight1SpecularColour );
-            
+
             Material.SetVector3( "DirectionalLight2Direction", LightingManager.dirLight2Direction );
             Material.SetColour( "DirectionalLight2DiffuseColour", LightingManager.dirLight2DiffuseColour );
             Material.SetColour( "DirectionalLight2SpecularColour", LightingManager.dirLight2SpecularColour );
@@ -4187,7 +4187,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
                 zView,
                 zProjection
                 );
-            
+
             var shader = Material.GetShader ();
 
             if( shader != null)

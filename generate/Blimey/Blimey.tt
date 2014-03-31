@@ -45,9 +45,9 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 using System.Linq;
-using Sungiant.Cor;
+using Cor;
 
-namespace Sungiant.Blimey
+namespace Blimey
 {
 <#@ include file="BlimeyApp.t4"#>
 <#@ include file="BlimeyContext.t4"#>
