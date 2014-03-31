@@ -11,13 +11,3 @@ find ./ ! -type d ! -name _tmp_ -exec sh -c 'expand -t 4 {} > _tmp_ && mv _tmp_ 
 mono-t4 Blimey.tt -o ../../source/Blimey.cs
 
 cd $startPath
-
-cd ../generate/Blimey.Tests
-
-# tabs to spaces
-find ./ ! -type d ! -name _tmp_ -exec sh -c 'expand -t 4 {} > _tmp_ && mv _tmp_ {}' \;
-
-# Generate Tests.cs
-mono-t4 Blimey.Tests.tt -o ../../source/Blimey.Tests.cs
-
-cd $startPath

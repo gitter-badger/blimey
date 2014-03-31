@@ -19,8 +19,8 @@
         {
             Vector3 offset = this.Parent.Transform.LocalPosition - CameraSubject.Position;
 
-            Matrix44 rotation;
-            Matrix44.CreateRotationY(Speed * time.Delta, out rotation);
+            Matrix44 rotation =
+                Matrix44.CreateRotationY(Speed * time.Delta);
 
             Vector3 offsetIn = offset;
 

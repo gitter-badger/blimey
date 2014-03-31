@@ -7,7 +7,7 @@
         float gridSquareSize = 0.50f;  // in meters
         int numberOfGridSquares = 10;
 
-        Rgba32 gridColour = Rgba32.LightGray;
+        Rgba32 gridColour = Rgba32.LightGrey;
 
         public bool ShowXZPlane = true;
         public bool ShowXYPlane = false;

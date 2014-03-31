@@ -9,6 +9,9 @@
         LoggingHelper log;
 
 
+        Stopwatch stopwatch = new Stopwatch ();
+        int counter = 0;
+
         public ICor cor;
 
         public BlimeyApp(Scene startScene)
@@ -32,18 +35,34 @@
 
         public Boolean Update(AppTime time)
         {
+            stopwatch.Restart ();
+
             fps.Update(time);
             frameBuffer.Update(time);
 
-            return this.sceneManager.Update(time);
+            var ret = this.sceneManager.Update(time);
+
+            if (stopwatch.Elapsed.TotalMilliseconds > 10f)
+            {
+                Console.WriteLine(string.Format("Update Time -> {0:0.##}ms", stopwatch.Elapsed.TotalMilliseconds ));
+            }
+
+            return ret;
         }
 
         public void Render()
         {
+            stopwatch.Restart ();
+
             fps.LogRender();
             frameBuffer.Clear();
 
             this.sceneManager.Render();
+
+            if (stopwatch.Elapsed.TotalMilliseconds > 10f)
+            {
+                Console.WriteLine(string.Format("Render Time -> {0:0.##}ms", stopwatch.Elapsed.TotalMilliseconds ));
+            }
         }
 
     }

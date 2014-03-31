@@ -48,25 +48,27 @@
             {
                 if(TempWORKOUTANICERWAY)
                 {
-                    Matrix44.CreateOrthographic(
-                        width / SpriteConfiguration.Default.SpriteSpaceScale, 
-                        height / SpriteConfiguration.Default.SpriteSpaceScale, 
-                        1, -1, out _projection);
+                    _projection =
+                        Matrix44.CreateOrthographic(
+                            width / SpriteConfiguration.Default.SpriteSpaceScale, 
+                            height / SpriteConfiguration.Default.SpriteSpaceScale, 
+                            1, -1);
                 }
                 else
                 {
-                    Matrix44.CreateOrthographicOffCenter(
-                        -0.5f, 0.5f, -0.5f, 0.5f, 0.5f * size, -0.5f * size, out _projection);
+                    _projection = 
+                        Matrix44.CreateOrthographicOffCenter(
+                            -0.5f, 0.5f, -0.5f, 0.5f, 0.5f * size, -0.5f * size);
                 }
             } 
             else
             {
-                Matrix44.CreatePerspectiveFieldOfView (
-                    FieldOfView,
-                    width / height, // aspect ratio
-                    NearPlaneDistance,
-                    FarPlaneDistance,
-                    out _projection);
+                _projection =
+                    Matrix44.CreatePerspectiveFieldOfView (
+                        FieldOfView,
+                        width / height, // aspect ratio
+                        NearPlaneDistance,
+                        FarPlaneDistance);
             }
         }
     }

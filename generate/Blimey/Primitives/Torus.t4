@@ -20,11 +20,9 @@
 
                 // Create a transform matrix that will align geometry to
                 // slice perpendicularly though the current ring position.
-                Matrix44 translation;
-                Matrix44.CreateTranslation(diameter / 2, 0, 0, out translation);
+                Matrix44 translation = Matrix44.CreateTranslation(diameter / 2, 0, 0);
 
-                Matrix44 rotationY;
-                Matrix44.CreateRotationY(outerAngle, out rotationY);
+                Matrix44 rotationY = Matrix44.CreateRotationY(outerAngle);
 
                 Matrix44 transform = translation * rotationY;
 

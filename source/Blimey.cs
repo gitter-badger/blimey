@@ -58,6 +58,9 @@ namespace Sungiant.Blimey
         LoggingHelper log;
 
 
+        Stopwatch stopwatch = new Stopwatch ();
+        int counter = 0;
+
         public ICor cor;
 
         public BlimeyApp(Scene startScene)
@@ -81,18 +84,34 @@ namespace Sungiant.Blimey
 
         public Boolean Update(AppTime time)
         {
+            stopwatch.Restart ();
+
             fps.Update(time);
             frameBuffer.Update(time);
 
-            return this.sceneManager.Update(time);
+            var ret = this.sceneManager.Update(time);
+
+            if (stopwatch.Elapsed.TotalMilliseconds > 10f)
+            {
+                Console.WriteLine(string.Format("Update Time -> {0:0.##}ms", stopwatch.Elapsed.TotalMilliseconds ));
+            }
+
+            return ret;
         }
 
         public void Render()
         {
+            stopwatch.Restart ();
+
             fps.LogRender();
             frameBuffer.Clear();
 
             this.sceneManager.Render();
+
+            if (stopwatch.Elapsed.TotalMilliseconds > 10f)
+            {
+                Console.WriteLine(string.Format("Render Time -> {0:0.##}ms", stopwatch.Elapsed.TotalMilliseconds ));
+            }
         }
 
     }
@@ -196,7 +215,7 @@ namespace Sungiant.Blimey
             Single z = RealMaths.ToRadians(e.Z);
 
             Quaternion result;
-            Quaternion.CreateFromYawPitchRoll(x, y, z, out result);
+            Quaternion.CreateFromYawPitchRoll(ref x, ref y, ref z, out result);
             return result;
         }
 
@@ -204,10 +223,10 @@ namespace Sungiant.Blimey
         {
             // This bad boy works, taken from: 
 
-            Single q0 = rotation.W;
-            Single q1 = rotation.Y;
-            Single q2 = rotation.X;
-            Single q3 = rotation.Z;
+            Single q2 = rotation.I;
+            Single q1 = rotation.J;
+            Single q3 = rotation.K;
+            Single q0 = rotation.U;
 
             Vector3 angles = Vector3.Zero;
 
@@ -281,8 +300,8 @@ namespace Sungiant.Blimey
             Single pitch;
             Single roll;
 
-            Single XY = q.X * q.Y;
-            Single ZW = q.Z * q.W;
+            Single XY = q.I * q.J;
+            Single ZW = q.K * q.U;
 
             Single TEST = XY + ZW;
 
@@ -291,7 +310,7 @@ namespace Sungiant.Blimey
 
                 int sign = Math.Sign(TEST);
 
-                yaw = sign * 2 * (Single)Math.Atan2(q.X, q.W);
+                yaw = sign * 2 * (Single)Math.Atan2(q.I, q.U);
 
                 Single piOver2;
                 RealMaths.Pi(out piOver2);
@@ -305,15 +324,15 @@ namespace Sungiant.Blimey
             else
             {
 
-                Single XX = q.X * q.X;
-                Single XZ = q.X * q.Z;
-                Single XW = q.X * q.W;
+                Single XX = q.I * q.I;
+                Single XZ = q.I * q.K;
+                Single XW = q.I * q.U;
 
-                Single YY = q.Y * q.Y;
-                Single YW = q.Y * q.W;
-                Single YZ = q.Y * q.Z;
+                Single YY = q.J * q.J;
+                Single YW = q.J * q.U;
+                Single YZ = q.J * q.K;
 
-                Single ZZ = q.Z * q.Z;
+                Single ZZ = q.K * q.K;
 
                 yaw = (Single)Math.Atan2(2 * YW - 2 * XZ, 1 - 2 * YY - 2 * ZZ);
 
@@ -437,10 +456,10 @@ namespace Sungiant.Blimey
                 "| {4:+00000.00;-00000.00;} {5:+00000.00;-00000.00;} {6:+00000.00;-00000.00;} {7:+00000.00;-00000.00;} |\n" +
                 "| {8:+00000.00;-00000.00;} {9:+00000.00;-00000.00;} {10:+00000.00;-00000.00;} {11:+00000.00;-00000.00;} |\n" +
                 "| {12:+00000.00;-00000.00;} {13:+00000.00;-00000.00;} {14:+00000.00;-00000.00;} {15:+00000.00;-00000.00;} |\n",
-                mat.M11, mat.M12, mat.M13, mat.M14,
-                mat.M21, mat.M22, mat.M23, mat.M24,
-                mat.M31, mat.M32, mat.M33, mat.M34,
-                mat.M41, mat.M42, mat.M43, mat.M44) +
+                mat.R0C0, mat.R1C0, mat.R2C0, mat.R3C0,
+                mat.R0C1, mat.R1C1, mat.R2C1, mat.R3C1,
+                mat.R0C2, mat.R1C2, mat.R2C2, mat.R3C2,
+                mat.R0C3, mat.R1C3, mat.R2C3, mat.R3C3) +
 
             "Translation: " + mat.Translation + "\n";
         }
@@ -895,10 +914,10 @@ namespace Sungiant.Blimey
             }
         }
 
+        List<MeshRenderer> list = new List<MeshRenderer>();
         List<MeshRenderer> GetMeshRenderersWithMaterials(Scene scene, string pass)
         {
-            var list = new List<MeshRenderer>();
-
+            list.Clear ();
             foreach (var go in scene.SceneObjects)
             {
                 var mr = go.GetTrait<MeshRenderer>();
@@ -3720,11 +3739,9 @@ namespace Sungiant.Blimey
 
                 // Create a transform matrix that will align geometry to
                 // slice perpendicularly though the current ring position.
-                Matrix44 translation;
-                Matrix44.CreateTranslation(diameter / 2, 0, 0, out translation);
+                Matrix44 translation = Matrix44.CreateTranslation(diameter / 2, 0, 0);
 
-                Matrix44 rotationY;
-                Matrix44.CreateRotationY(outerAngle, out rotationY);
+                Matrix44 rotationY = Matrix44.CreateRotationY(outerAngle);
 
                 Matrix44 transform = translation * rotationY;
 
@@ -3821,25 +3838,27 @@ namespace Sungiant.Blimey
             {
                 if(TempWORKOUTANICERWAY)
                 {
-                    Matrix44.CreateOrthographic(
-                        width / SpriteConfiguration.Default.SpriteSpaceScale, 
-                        height / SpriteConfiguration.Default.SpriteSpaceScale, 
-                        1, -1, out _projection);
+                    _projection =
+                        Matrix44.CreateOrthographic(
+                            width / SpriteConfiguration.Default.SpriteSpaceScale, 
+                            height / SpriteConfiguration.Default.SpriteSpaceScale, 
+                            1, -1);
                 }
                 else
                 {
-                    Matrix44.CreateOrthographicOffCenter(
-                        -0.5f, 0.5f, -0.5f, 0.5f, 0.5f * size, -0.5f * size, out _projection);
+                    _projection = 
+                        Matrix44.CreateOrthographicOffCenter(
+                            -0.5f, 0.5f, -0.5f, 0.5f, 0.5f * size, -0.5f * size);
                 }
             } 
             else
             {
-                Matrix44.CreatePerspectiveFieldOfView (
-                    FieldOfView,
-                    width / height, // aspect ratio
-                    NearPlaneDistance,
-                    FarPlaneDistance,
-                    out _projection);
+                _projection =
+                    Matrix44.CreatePerspectiveFieldOfView (
+                        FieldOfView,
+                        width / height, // aspect ratio
+                        NearPlaneDistance,
+                        FarPlaneDistance);
             }
         }
     }
@@ -4209,8 +4228,8 @@ namespace SunGiant.Framework.Ophelia.Cameras
         {
             Vector3 offset = this.Parent.Transform.LocalPosition - CameraSubject.Position;
 
-            Matrix44 rotation;
-            Matrix44.CreateRotationY(Speed * time.Delta, out rotation);
+            Matrix44 rotation =
+                Matrix44.CreateRotationY(Speed * time.Delta);
 
             Vector3 offsetIn = offset;
 
@@ -4234,9 +4253,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
         {
             Single x = time.Delta * RealMaths.ToRadians(10f);
 
-            Quaternion rot;
-
-            Quaternion.CreateFromYawPitchRoll(x, 0, 0, out rot);
+            Quaternion rot = Quaternion.CreateFromYawPitchRoll(x, 0, 0);
 
             this.Parent.Transform.LocalRotation *= rot;
         }
@@ -4305,8 +4322,9 @@ namespace SunGiant.Framework.Ophelia.Cameras
             Single piOver2;
             RealMaths.Pi(out piOver2);
             piOver2 /= 2;
+            Single minusPiOver2 = -piOver2;
             Matrix44 rotation = Matrix44.Identity;
-            Matrix44.CreateRotationX(-piOver2, out rotation);
+            Matrix44.CreateRotationX(ref minusPiOver2, out rotation);
             Quaternion q;
             Quaternion.CreateFromRotationMatrix(ref rotation, out q);
 
@@ -4429,8 +4447,8 @@ namespace SunGiant.Framework.Ophelia.Cameras
 
         void CalculateTransforms()
         {
-            Matrix44 scale;
-            Matrix44.CreateScale(SpriteConfiguration.SpriteSpaceScale, out scale);
+            Matrix44 scale = 
+                Matrix44.CreateScale(SpriteConfiguration.SpriteSpaceScale);
 
             Quaternion q = SpriteConfiguration.SpriteSpaceOrientation;
             Matrix44 rotation;
@@ -4536,7 +4554,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
 
                 Quaternion ssLocalRotation;
                 Vector3 rotationAxis = Vector3.Up;
-                Quaternion.CreateFromAxisAngle(ref rotationAxis, desiredRotation, out ssLocalRotation);
+                Quaternion.CreateFromAxisAngle(ref rotationAxis, ref desiredRotation, out ssLocalRotation);
                 ssLocalRotation.Normalise();
 
                 Vector3 ssLocalScale = new Vector3(
@@ -4574,8 +4592,11 @@ namespace SunGiant.Framework.Ophelia.Cameras
                 Vector3 resultPos;
                 Quaternion resultRot;
                 Vector3 resultScale;
+                Boolean decomposeOk;
 
-                newLocation.Decompose(out resultScale, out resultRot, out resultPos);
+                Matrix44.Decompose(
+                    ref newLocation, out resultScale, out resultRot, 
+                    out resultPos, out decomposeOk);
 
                 resultRot.Normalise();
 

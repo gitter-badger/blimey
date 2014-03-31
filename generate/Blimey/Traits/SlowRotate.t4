@@ -5,9 +5,7 @@
         {
             Single x = time.Delta * RealMaths.ToRadians(10f);
 
-            Quaternion rot;
-
-            Quaternion.CreateFromYawPitchRoll(x, 0, 0, out rot);
+            Quaternion rot = Quaternion.CreateFromYawPitchRoll(x, 0, 0);
 
             this.Parent.Transform.LocalRotation *= rot;
         }

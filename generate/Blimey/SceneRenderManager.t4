@@ -23,10 +23,10 @@
             }
         }
 
+        List<MeshRenderer> list = new List<MeshRenderer>();
         List<MeshRenderer> GetMeshRenderersWithMaterials(Scene scene, string pass)
         {
-            var list = new List<MeshRenderer>();
-
+            list.Clear ();
             foreach (var go in scene.SceneObjects)
             {
                 var mr = go.GetTrait<MeshRenderer>();
