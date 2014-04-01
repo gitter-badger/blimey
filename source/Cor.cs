@@ -68,7 +68,12 @@ namespace Cor
 
         /// <summary>
         /// Provides access to Cor's resource manager.
+        /// The resource manager loads raw resources into
+        /// the engine, avoiding the asset build.  Eventually
+        /// it will get removed once everything uses the newer
+        /// asset system.
         /// </summary>
+        [Obsolete]
         IResourceManager Resources { get; }
 
         /// <summary>
@@ -359,6 +364,7 @@ namespace Cor
     /// <summary>
     /// todo
     /// </summary>
+    [Obsolete]
     public interface IResourceManager
     {
         /// <summary>
@@ -534,6 +540,7 @@ namespace Cor
     /// objects that Cor's! resource manager can load
     /// and track.
     /// </summary>
+    [Obsolete]
     public interface IResource
     {
     }

@@ -54,6 +54,7 @@ namespace Cor
 <#@ include file="ICor.t4"#>
     #region Interfaces
 
+<#@ include file="IAsset.t4"#>
 <#@ include file="IAudioManager.t4"#>
 <#@ include file="IGraphicsManager.t4"#>
 <#@ include file="IInputManager.t4"#>

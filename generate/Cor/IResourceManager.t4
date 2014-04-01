@@ -1,6 +1,7 @@
 ﻿    /// <summary>
     /// todo
     /// </summary>
+    [Obsolete]
     public interface IResourceManager
     {
         /// <summary>
