@@ -1,0 +1,16 @@
+{
+    "assetId" : "cvan02",
+    "assetType" : "Cor.Texture2D",
+    "assetSettings" : [ { "format" : "Abacus.Packed.Rgba32" } ],
+    "resources" :
+    {
+        "variants" :
+        [
+            {
+                "platforms" : [ "monomac", "xios", "xdroid" ],
+                "importer" : "Cor.PNGImporter",
+                "files" : [ "cvan02.png" ]
+            }
+        ]
+    }
+}

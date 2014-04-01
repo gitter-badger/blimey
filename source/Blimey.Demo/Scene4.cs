@@ -64,25 +64,54 @@ namespace Blimey.Demo
         public static Texture2D texVan1;
         public static Texture2D texVan2;
 
-
-
         public Scene4()
         {
             _returnScene = this;
         }
 
-        public override void Start()
+        public override void Start ()
         {
-            gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Default");
+            gr = new GridRenderer (this.Blimey.DebugShapeRenderer, "Default");
 
             screenWidth = this.Cor.Graphics.DisplayStatus.CurrentWidth;
             screenHeight = this.Cor.Graphics.DisplayStatus.CurrentHeight;
 
-            if( texVan1 == null )
-                texVan1 = this.Cor.Resources.Load<Texture2D>("resources/cvan01.png");
-
+            if (texVan1 == null)
+            {
+                try
+                {
+                    texVan1 = this.Cor.Assets.Load<Texture2D> ("cvan01.cba");
+                }
+                catch
+                {
+                    texVan1 = this.Cor.Resources.Load<Texture2D> ("resources/cvan01.png");
+                }
+            }
+            
             if( texVan2 == null )
-                texVan2 = this.Cor.Resources.Load<Texture2D>("resources/cvan02.png");
+            {
+                try
+                {
+                    texVan2 = this.Cor.Assets.Load<Texture2D> ("cvan02.cba");
+                }
+                catch
+                {
+                    texVan2 = this.Cor.Resources.Load<Texture2D> ("resources/cvan02.png");
+                }
+            }
+            
+            IShader unlitShader = null;
+            
+            try
+            {
+                unlitShader = this.Cor.Assets.Load<IShader> ("unlit.cba");
+            }
+            catch
+            {
+                unlitShader = this.Cor.Resources.LoadShader(ShaderType.Unlit);
+            }
+
+            Sprite.SpriteShader = unlitShader;
 
             /*
             var go = this.CreateSceneObject("block");

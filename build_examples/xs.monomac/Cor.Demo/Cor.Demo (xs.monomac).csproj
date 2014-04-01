@@ -99,18 +99,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="Info.plist" />
-    <None Include="..\..\..\assets\README.md">
-      <Link>assets\README.md</Link>
-    </None>
-    <None Include="..\..\..\assets\airports.cba">
-      <Link>assets\airports.cba</Link>
-    </None>
-    <None Include="..\..\..\assets\backgrounds.cba">
-      <Link>assets\backgrounds.cba</Link>
-    </None>
-    <None Include="..\..\..\assets\cvans.cba">
-      <Link>assets\cvans.cba</Link>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\submodules\cor\build_examples\xs.monomac\Cor\Cor %28xs.monomac%29.csproj">
@@ -125,6 +113,7 @@
   <ItemGroup>
     <Folder Include="resources\" />
     <Folder Include="assets\" />
+    <Folder Include="assets\monomac\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="..\..\..\resources\bg1.png">
@@ -213,6 +202,33 @@
     </BundleResource>
     <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\VertexLit_PositionNormalTextureColour.vsh">
       <Link>shaders\VertexLit_PositionNormalTextureColour.vsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\airports.cba">
+      <Link>assets\monomac\airports.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\bg1.cba">
+      <Link>assets\monomac\bg1.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\bg2.cba">
+      <Link>assets\monomac\bg2.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\bg3.cba">
+      <Link>assets\monomac\bg3.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\cvan01.cba">
+      <Link>assets\monomac\cvan01.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\cvan02.cba">
+      <Link>assets\monomac\cvan02.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\pixel_lit.cba">
+      <Link>assets\monomac\pixel_lit.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\unlit.cba">
+      <Link>assets\monomac\unlit.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\vertex_lit.cba">
+      <Link>assets\monomac\vertex_lit.cba</Link>
     </BundleResource>
   </ItemGroup>
 </Project>

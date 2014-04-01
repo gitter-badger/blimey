@@ -1,0 +1,15 @@
+{
+    "assetId" : "airports",
+    "assetType" : "System.String",
+    "resources" :
+    {
+        "variants" :
+        [
+            {
+                "platforms" : [ "monomac", "xios", "xdroid" ],
+                "importer" : "Cor.TextImporter",
+                "files" : [ "airports.dat" ]
+            }
+        ]
+    }
+}

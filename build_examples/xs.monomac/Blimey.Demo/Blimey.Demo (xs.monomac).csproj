@@ -120,6 +120,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="resources\" />
+    <Folder Include="assets\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="..\..\..\resources\airports.dat">
@@ -211,6 +212,33 @@
     </BundleResource>
     <BundleResource Include="..\..\..\submodules\cor\shaders\monomac\VertexLit_PositionNormalTextureColour.vsh">
       <Link>shaders\VertexLit_PositionNormalTextureColour.vsh</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\airports.cba">
+      <Link>assets\monomac\airports.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\bg1.cba">
+      <Link>assets\monomac\bg1.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\bg2.cba">
+      <Link>assets\monomac\bg2.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\bg3.cba">
+      <Link>assets\monomac\bg3.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\cvan01.cba">
+      <Link>assets\monomac\cvan01.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\cvan02.cba">
+      <Link>assets\monomac\cvan02.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\pixel_lit.cba">
+      <Link>assets\monomac\pixel_lit.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\unlit.cba">
+      <Link>assets\monomac\unlit.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\vertex_lit.cba">
+      <Link>assets\monomac\vertex_lit.cba</Link>
     </BundleResource>
   </ItemGroup>
   <ItemGroup>

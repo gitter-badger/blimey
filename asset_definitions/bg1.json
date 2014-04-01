@@ -1,0 +1,16 @@
+{
+    "assetId" : "bg1",
+    "assetType" : "Cor.Texture2D",
+    "assetSettings" : [ { "format" : "Abacus.Packed.Bgr_5_6_5" } ],
+    "resources" :
+    {
+        "variants" :
+        [
+            {
+                "platforms" : [ "monomac", "xios", "xdroid" ],
+                "importer" : "Cor.PNGImporter",
+                "files" : [ "bg1.png" ]
+            }
+        ]
+    }
+}
