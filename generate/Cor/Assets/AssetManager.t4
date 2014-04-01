@@ -1,24 +1,24 @@
     public sealed class AssetManager
         : IDisposable
     {
-        internal AssetManager(IGraphicsManager Graphics)
+        internal AssetManager (IGraphicsManager Graphics)
         {
 
         }
 
-        public T Load<T>(String assetName)
+        public T Load<T> (String assetId)
         {
-            return default(T);
+            throw new NotImplementedException ();
         }
 
-        public void Unload()
+        public void Unload ()
         {
-            
+
         }
 
-        public void Dispose()
+        public void Dispose ()
         {
-            
+
         }
     }
 
