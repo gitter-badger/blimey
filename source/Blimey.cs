@@ -4407,7 +4407,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
                 new VertexPositionTexture ((Vector3.Right + Vector3.Forward) / 2, new Vector2(1f, 0f)),
                 new VertexPositionTexture ((Vector3.Right - Vector3.Forward) / 2, new Vector2(1f, 1f))
             };
-            
+
             spriteIndices = new Int32[]
             {
                 0,1,2,
@@ -4419,14 +4419,14 @@ namespace SunGiant.Framework.Ophelia.Cameras
         {
             var sm = new SpriteMesh();
             sm.GeomBuffer = gfx.CreateGeometryBuffer(
-                VertexPositionTexture.Default.VertexDeclaration, 
+                VertexPositionTexture.Default.VertexDeclaration,
                 sm.spriteVerts.Length,
                 sm.spriteIndices.Length);
-            
+
             sm.GeomBuffer.VertexBuffer.SetData(sm.spriteVerts);
-            
+
             sm.GeomBuffer.IndexBuffer.SetData(sm.spriteIndices);
-            
+
             sm.TriangleCount = 2;
             sm.VertexCount = 4;
             return sm;
@@ -4466,10 +4466,10 @@ namespace SunGiant.Framework.Ophelia.Cameras
 
         public static SpriteConfiguration Default { get { return sprConf; } }
 
-        // Defines the number of units in world 
+        // Defines the number of units in world
         // space a sprite takes up, perhaps this should be a member of each
         // sprite... Not sure yet...
-        // so as it stands if your sprite has width of 256 and heigh of 128 in 
+        // so as it stands if your sprite has width of 256 and heigh of 128 in
         // world space, it will occupy 2.56 x 1.28 units on the face of the
         // plane it is defined to use.
         public Single SpriteSpaceScale { get; set; }
@@ -4491,8 +4491,13 @@ namespace SunGiant.Framework.Ophelia.Cameras
         //static BillboardPrimitive billboard;
 
         // they also share an unlit shader
-        public static IShader UnlitShader { get { return unlitShader; } }
-        static IShader unlitShader;
+        public static IShader SpriteShader
+        {
+            get { return spriteShader; }
+            set { spriteShader = value; }
+        }
+
+        static IShader spriteShader;
 
         // defines how to move from world space to sprite space.
         Matrix44 spriteSpaceMatrix;
@@ -4511,8 +4516,8 @@ namespace SunGiant.Framework.Ophelia.Cameras
             {
                 conf = value;
                 this.CalculateTransforms();
-            } 
-        } 
+            }
+        }
 
 
         // PRIVATES!
@@ -4554,16 +4559,16 @@ namespace SunGiant.Framework.Ophelia.Cameras
         public String DebugRender { get; set; }
         public Material Material { get { return meshRendererTrait.Material; } set { meshRendererTrait.Material = value; } }
 
-        public Single Width { get { return desiredWidth; } set { desiredWidth = value; } } 
-        public Single Height { get { return desiredHeight; } set { desiredHeight = value; } } 
-        public Single Depth { get { return desiredDepth; } set { desiredDepth = value; } } 
-        public Vector2 Position { get { return desiredPosition; } set { desiredPosition = value; } } 
-        public Single Rotation { get { return desiredRotation; } set { desiredRotation = value; } } 
-        public Single Scale { get { return desiredScale; } set { desiredScale = value; } } 
-        public Boolean FlipHorizontal { get { return desiredFlipHorizontal; } set { desiredFlipHorizontal = value; } } 
-        public Boolean FlipVertical { get { return desiredFlipVertical; } set { desiredFlipVertical = value; } } 
-        public Rgba32 Colour { get { return desiredColour; } set { desiredColour = value; } } 
-        public Texture2D Texture { get { return desiredTexture; } set { desiredTexture = value; } } 
+        public Single Width { get { return desiredWidth; } set { desiredWidth = value; } }
+        public Single Height { get { return desiredHeight; } set { desiredHeight = value; } }
+        public Single Depth { get { return desiredDepth; } set { desiredDepth = value; } }
+        public Vector2 Position { get { return desiredPosition; } set { desiredPosition = value; } }
+        public Single Rotation { get { return desiredRotation; } set { desiredRotation = value; } }
+        public Single Scale { get { return desiredScale; } set { desiredScale = value; } }
+        public Boolean FlipHorizontal { get { return desiredFlipHorizontal; } set { desiredFlipHorizontal = value; } }
+        public Boolean FlipVertical { get { return desiredFlipVertical; } set { desiredFlipVertical = value; } }
+        public Rgba32 Colour { get { return desiredColour; } set { desiredColour = value; } }
+        public Texture2D Texture { get { return desiredTexture; } set { desiredTexture = value; } }
 
         //--------------------------------------------------------------------//
         public Sprite()
@@ -4575,7 +4580,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
 
         void CalculateTransforms()
         {
-            Matrix44 scale = 
+            Matrix44 scale =
                 Matrix44.CreateScale(SpriteConfiguration.SpriteSpaceScale);
 
             Quaternion q = SpriteConfiguration.SpriteSpaceOrientation;
@@ -4605,14 +4610,12 @@ namespace SunGiant.Framework.Ophelia.Cameras
                 spriteMesh = SpriteMesh.Create(this.Cor.Graphics);
             }
 
-            if( unlitShader == null )
+            if (spriteShader == null)
             {
-                unlitShader = this.Cor.Resources.LoadShader(
-                    ShaderType.Unlit
-                );
+                throw new Exception ("Sprite.SpriteShader must be set by user.");
             }
 
-            var mat = new Material("Default", unlitShader);
+            var mat = new Material("Default", spriteShader);
 
             meshRendererTrait.Mesh = spriteMesh;
             meshRendererTrait.Material = mat;
@@ -4624,16 +4627,16 @@ namespace SunGiant.Framework.Ophelia.Cameras
         {
             ApplyChanges(false);
 
-            if (!String.IsNullOrWhiteSpace (this.DebugRender)) 
+            if (!String.IsNullOrWhiteSpace (this.DebugRender))
             {
-                var yScale = 
+                var yScale =
                     this.Parent.Transform.Scale.Z / 2;
 
                 // this is fucked.  shouldn't have to normalise here
                 var up = this.Parent.Transform.Location.Forward;
                 Vector3.Normalise(ref up, out up);
 
-                var xScale = 
+                var xScale =
                     this.Parent.Transform.Scale.X / 2;
 
                 // this is fucked.  shouldn't have to normalise here
@@ -4686,7 +4689,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
                 ssLocalRotation.Normalise();
 
                 Vector3 ssLocalScale = new Vector3(
-                    desiredWidth * desiredScale, 
+                    desiredWidth * desiredScale,
                     desiredScale,
                     desiredHeight * desiredScale
                     );
@@ -4697,10 +4700,10 @@ namespace SunGiant.Framework.Ophelia.Cameras
                 // Convert this to a Matrix44
                 Matrix44 scale;
                 Matrix44.CreateScale(ref ssLocalScale, out scale);
-                
+
                 Matrix44 rotation;
                 Matrix44.CreateFromQuaternion(ref ssLocalRotation, out rotation);
-                
+
                 Matrix44 spriteSpaceLocalLocation =  rotation * scale;
 
                 //Matrix44 translation;
@@ -4710,7 +4713,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
 
                 //--------------------------------------------------------------
                 // PT 3
-                // next use the inverse SpriteSpace matrix to transform the above into world space 
+                // next use the inverse SpriteSpace matrix to transform the above into world space
                 Matrix44 newLocation =  spriteSpaceLocalLocation * inverseSpriteSpaceMatrix;
 
 
@@ -4723,7 +4726,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
                 Boolean decomposeOk;
 
                 Matrix44.Decompose(
-                    ref newLocation, out resultScale, out resultRot, 
+                    ref newLocation, out resultScale, out resultRot,
                     out resultPos, out decomposeOk);
 
                 resultRot.Normalise();
@@ -4737,7 +4740,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
                 this.Parent.Transform.LocalRotation = resultRot;
                 this.Parent.Transform.LocalPosition = resultPos;
 
-                
+
 
                 //this.Parent.Transform.Rotation = newLocation.
 
