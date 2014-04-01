@@ -26,48 +26,56 @@
 
             zGfx.GpuUtils.BeginEvent(Rgba32.Red, "MeshRenderer.Render");
 
-            zGfx.SetCullMode(this.CullMode);
+            using (new ProfilingTimer(t => FrameStats.SetCullModeTime += t))
+            {
+                zGfx.SetCullMode(this.CullMode);
+            }
+            
+            using (new ProfilingTimer(t => FrameStats.ActivateGeomBufferTime += t))
+            {
+                // Set our vertex declaration, vertex buffer, and index buffer.
+                zGfx.SetActiveGeometryBuffer(Mesh.GeomBuffer);
+            }
 
-            Material.UpdateGpuSettings (zGfx);
+            using (new ProfilingTimer(t => FrameStats.MaterialTime += t))
+            {
+                Material.UpdateGpuSettings (zGfx);
 
-            // Set our vertex declaration, vertex buffer, and index buffer.
-            zGfx.SetActiveGeometryBuffer(Mesh.GeomBuffer);
+                // The lighing manager right now just grabs the shader and tries to set
+                // all variables to do with lighting, without even knowing if the shader
+                // supports lighting.
+                Material.SetColour( "AmbientLightColour", LightingManager.ambientLightColour );
+                Material.SetColour( "EmissiveColour", LightingManager.emissiveColour );
+                Material.SetColour( "SpecularColour", LightingManager.specularColour );
+                Material.SetFloat( "SpecularPower", LightingManager.specularPower );
 
-            // The lighing manager right now just grabs the shader and tries to set
-            // all variables to do with lighting, without even knowing if the shader
-            // supports lighting.
-            Material.SetColour( "AmbientLightColour", LightingManager.ambientLightColour );
-            Material.SetColour( "EmissiveColour", LightingManager.emissiveColour );
-            Material.SetColour( "SpecularColour", LightingManager.specularColour );
-            Material.SetFloat( "SpecularPower", LightingManager.specularPower );
+                Material.SetFloat( "FogEnabled", LightingManager.fogEnabled ? 1f : 0f );
+                Material.SetFloat( "FogStart", LightingManager.fogStart );
+                Material.SetFloat( "FogEnd", LightingManager.fogEnd );
+                Material.SetColour( "FogColour", LightingManager.fogColour );
 
+                Material.SetVector3( "DirectionalLight0Direction", LightingManager.dirLight0Direction );
+                Material.SetColour( "DirectionalLight0DiffuseColour", LightingManager.dirLight0DiffuseColour );
+                Material.SetColour( "DirectionalLight0SpecularColour", LightingManager.dirLight0SpecularColour );
 
-            Material.SetFloat( "FogEnabled", LightingManager.fogEnabled ? 1f : 0f );
-            Material.SetFloat( "FogStart", LightingManager.fogStart );
-            Material.SetFloat( "FogEnd", LightingManager.fogEnd );
-            Material.SetColour( "FogColour", LightingManager.fogColour );
+                Material.SetVector3( "DirectionalLight1Direction", LightingManager.dirLight1Direction );
+                Material.SetColour( "DirectionalLight1DiffuseColour", LightingManager.dirLight1DiffuseColour );
+                Material.SetColour( "DirectionalLight1SpecularColour", LightingManager.dirLight1SpecularColour );
 
-            Material.SetVector3( "DirectionalLight0Direction", LightingManager.dirLight0Direction );
-            Material.SetColour( "DirectionalLight0DiffuseColour", LightingManager.dirLight0DiffuseColour );
-            Material.SetColour( "DirectionalLight0SpecularColour", LightingManager.dirLight0SpecularColour );
+                Material.SetVector3( "DirectionalLight2Direction", LightingManager.dirLight2Direction );
+                Material.SetColour( "DirectionalLight2DiffuseColour", LightingManager.dirLight2DiffuseColour );
+                Material.SetColour( "DirectionalLight2SpecularColour", LightingManager.dirLight2SpecularColour );
 
-            Material.SetVector3( "DirectionalLight1Direction", LightingManager.dirLight1Direction );
-            Material.SetColour( "DirectionalLight1DiffuseColour", LightingManager.dirLight1DiffuseColour );
-            Material.SetColour( "DirectionalLight1SpecularColour", LightingManager.dirLight1SpecularColour );
+                Material.SetVector3( "EyePosition", zView.Translation );
 
-            Material.SetVector3( "DirectionalLight2Direction", LightingManager.dirLight2Direction );
-            Material.SetColour( "DirectionalLight2DiffuseColour", LightingManager.dirLight2DiffuseColour );
-            Material.SetColour( "DirectionalLight2SpecularColour", LightingManager.dirLight2SpecularColour );
-
-            Material.SetVector3( "EyePosition", zView.Translation );
-
-            // Get the material's shader and apply all of the settings
-            // it needs.
-            Material.UpdateShaderVariables (
-                this.Parent.Transform.Location,
-                zView,
-                zProjection
-                );
+                // Get the material's shader and apply all of the settings
+                // it needs.
+                Material.UpdateShaderVariables (
+                    this.Parent.Transform.Location,
+                    zView,
+                    zProjection
+                    );
+            }
 
             var shader = Material.GetShader ();
 
@@ -75,11 +83,17 @@
             {
                 foreach (var effectPass in shader.Passes)
                 {
-                    effectPass.Activate (Mesh.GeomBuffer.VertexBuffer.VertexDeclaration);
-
-                    zGfx.DrawIndexedPrimitives (
-                        PrimitiveType.TriangleList, 0, 0,
-                        Mesh.VertexCount, 0, Mesh.TriangleCount);
+                    using (new ProfilingTimer(t => FrameStats.ActivateShaderTime += t))
+                    {
+                        effectPass.Activate (Mesh.GeomBuffer.VertexBuffer.VertexDeclaration);
+                    }
+                    using (new ProfilingTimer(t => FrameStats.DrawTime += t))
+                    {
+                        FrameStats.DrawIndexedPrimitivesCount ++;
+                        zGfx.DrawIndexedPrimitives (
+                            PrimitiveType.TriangleList, 0, 0,
+                            Mesh.VertexCount, 0, Mesh.TriangleCount);
+                    }
                 }
             }
 

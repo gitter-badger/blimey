@@ -67,6 +67,8 @@ namespace Blimey
 
     #region DebugUtils
 
+<#@ include file="DebugUtils/ProfilingTimer.t4"#>
+<#@ include file="DebugUtils/FrameStats.t4"#>
 <#@ include file="DebugUtils/DebugShapeRenderer.t4"#>
 <#@ include file="DebugUtils/GridRenderer.t4"#>
 

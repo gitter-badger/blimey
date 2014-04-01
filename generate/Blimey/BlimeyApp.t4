@@ -8,10 +8,6 @@
         FrameBufferHelper frameBuffer;
         LoggingHelper log;
 
-
-        Stopwatch stopwatch = new Stopwatch ();
-        int counter = 0;
-
         public ICor cor;
 
         public BlimeyApp(Scene startScene)
@@ -30,40 +26,30 @@
             log.SystemDetails();
 
             this.sceneManager = new SceneManager(this.cor, startScene);
-
         }
 
         public Boolean Update(AppTime time)
         {
-            stopwatch.Restart ();
+            FrameStats.SlowLog ();
+            FrameStats.Reset ();
 
-            fps.Update(time);
-            frameBuffer.Update(time);
-
-            var ret = this.sceneManager.Update(time);
-
-            if (stopwatch.Elapsed.TotalMilliseconds > 10f)
+            using (new ProfilingTimer(t => FrameStats.UpdateTime += t))
             {
-                Console.WriteLine(string.Format("Update Time -> {0:0.##}ms", stopwatch.Elapsed.TotalMilliseconds ));
-            }
+                fps.Update(time);
+                frameBuffer.Update(time);
 
-            return ret;
+                return this.sceneManager.Update(time);
+            }
         }
 
         public void Render()
         {
-            stopwatch.Restart ();
-
-            fps.LogRender();
-            frameBuffer.Clear();
-
-            this.sceneManager.Render();
-
-            if (stopwatch.Elapsed.TotalMilliseconds > 10f)
+            using (new ProfilingTimer(t => FrameStats.RenderTime += t))
             {
-                Console.WriteLine(string.Format("Render Time -> {0:0.##}ms", stopwatch.Elapsed.TotalMilliseconds ));
+                fps.LogRender();
+                frameBuffer.Clear();
+                this.sceneManager.Render();
             }
         }
-
     }
 

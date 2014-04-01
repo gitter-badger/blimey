@@ -57,10 +57,6 @@ namespace Blimey
         FrameBufferHelper frameBuffer;
         LoggingHelper log;
 
-
-        Stopwatch stopwatch = new Stopwatch ();
-        int counter = 0;
-
         public ICor cor;
 
         public BlimeyApp(Scene startScene)
@@ -79,41 +75,31 @@ namespace Blimey
             log.SystemDetails();
 
             this.sceneManager = new SceneManager(this.cor, startScene);
-
         }
 
         public Boolean Update(AppTime time)
         {
-            stopwatch.Restart ();
+            FrameStats.SlowLog ();
+            FrameStats.Reset ();
 
-            fps.Update(time);
-            frameBuffer.Update(time);
-
-            var ret = this.sceneManager.Update(time);
-
-            if (stopwatch.Elapsed.TotalMilliseconds > 10f)
+            using (new ProfilingTimer(t => FrameStats.UpdateTime += t))
             {
-                Console.WriteLine(string.Format("Update Time -> {0:0.##}ms", stopwatch.Elapsed.TotalMilliseconds ));
-            }
+                fps.Update(time);
+                frameBuffer.Update(time);
 
-            return ret;
+                return this.sceneManager.Update(time);
+            }
         }
 
         public void Render()
         {
-            stopwatch.Restart ();
-
-            fps.LogRender();
-            frameBuffer.Clear();
-
-            this.sceneManager.Render();
-
-            if (stopwatch.Elapsed.TotalMilliseconds > 10f)
+            using (new ProfilingTimer(t => FrameStats.RenderTime += t))
             {
-                Console.WriteLine(string.Format("Render Time -> {0:0.##}ms", stopwatch.Elapsed.TotalMilliseconds ));
+                fps.LogRender();
+                frameBuffer.Clear();
+                this.sceneManager.Render();
             }
         }
-
     }
 
     internal class BlimeyContext
@@ -961,7 +947,6 @@ namespace Blimey
             // TODO: big one
             // we really need to group the mesh renderers by material
             // and only make a new draw call when there are changes.
-
             foreach (var mr in meshRenderers)
             {
                 mr.Render(gfxManager, cam.ViewMatrix44, cam.ProjectionMatrix44);
@@ -1670,6 +1655,134 @@ namespace Blimey
     #region DebugUtils
 
     /// <summary>
+    /// A simple timer for collecting profiler data.  Usage:
+    /// 
+    ///     using(new ProfilingTimer(time => myTime = time))
+    ///     {
+    ///         // stuff
+    ///     }
+    ///
+    /// </summary>
+    internal struct ProfilingTimer 
+        : IDisposable
+    {
+        public delegate void ResultHandler(double timeInMilliSeconds);
+
+        public ProfilingTimer(ResultHandler resultHandler)
+        {
+            _stopWatch = Stopwatch.StartNew();
+            _resultHandler = resultHandler;
+        }
+
+        public void Dispose()
+        {
+            double elapsedTime = (double)_stopWatch.ElapsedTicks / (double)Stopwatch.Frequency;
+            _resultHandler(elapsedTime * 1000.0);
+        }
+
+        private Stopwatch _stopWatch;
+        private ResultHandler _resultHandler;
+    }
+
+        public static class FrameStats
+        {
+            static FrameStats ()
+            {
+                Reset ();
+            }
+
+            public static void Reset ()
+            {
+                UpdateTime = 0.0;
+                RenderTime = 0.0;
+
+                SetCullModeTime = 0.0;
+                ActivateGeomBufferTime = 0.0;
+                MaterialTime = 0.0;
+                ActivateShaderTime = 0.0;
+                DrawTime = 0.0;
+
+                DrawUserPrimitivesCount = 0;
+                DrawIndexedPrimitivesCount = 0;
+            }
+
+            public static Double UpdateTime { get; set; }
+            public static Double RenderTime { get; set; }
+
+            public static Double SetCullModeTime { get; set; }
+            public static Double ActivateGeomBufferTime { get; set; }
+            public static Double MaterialTime { get; set; }
+            public static Double ActivateShaderTime { get; set; }
+            public static Double DrawTime { get; set; }
+
+            public static Int32 DrawUserPrimitivesCount { get; set; }
+            public static Int32 DrawIndexedPrimitivesCount { get; set; }
+
+            public static Int32 DrawCallCount
+            {
+                get
+                {
+                    return 
+                        DrawUserPrimitivesCount + 
+                        DrawIndexedPrimitivesCount;
+                }
+            }
+
+            public static void SlowLog ()
+            {
+                if (UpdateTime > 5.0)
+                {
+                    Console.WriteLine(
+                        string.Format(
+                            "UpdateTime -> {0:0.##}ms",
+                            UpdateTime ));
+                }
+
+                if (RenderTime > 10.0)
+                {
+                    Console.WriteLine(
+                        string.Format(
+                            "RenderTime -> {0:0.##}ms",
+                            RenderTime ));
+
+
+                    Console.WriteLine(
+                        string.Format(
+                            "\tMeshRenderer -> SetCullModeTime -> {0:0.##}ms",
+                            SetCullModeTime ));
+
+                    Console.WriteLine(
+                        string.Format(
+                            "\tActivateGeomBufferTime -> DrawTime -> {0:0.##}ms",
+                            ActivateGeomBufferTime ));
+
+                    Console.WriteLine(
+                        string.Format(
+                            "\tMeshRenderer -> MaterialTime -> {0:0.##}ms",
+                            MaterialTime ));
+
+                    Console.WriteLine(
+                        string.Format(
+                            "\tMeshRenderer -> ActivateShaderTime -> {0:0.##}ms",
+                            ActivateShaderTime ));
+                    
+                    Console.WriteLine(
+                        string.Format(
+                            "\tMeshRenderer -> DrawTime -> {0:0.##}ms",
+                            DrawTime ));
+                }
+
+                if (DrawCallCount > 25)
+                {
+                    Console.WriteLine(
+                        string.Format(
+                            "Draw Call Count -> {0}",
+                            DrawCallCount ));
+                }
+            }
+        }
+
+    /// <summary>
     /// A system for handling rendering of various debug shapes.
     /// </summary>
     /// <remarks>
@@ -2058,6 +2171,7 @@ namespace Blimey
                         // Figure out how many lines we're going to draw
                         int linesToDraw = Math.Min(lineCount, 65535);
 
+                        FrameStats.DrawUserPrimitivesCount ++;
                         zGfx.DrawUserPrimitives(
                             PrimitiveType.LineList, 
                             verts,
@@ -4145,48 +4259,56 @@ namespace SunGiant.Framework.Ophelia.Cameras
 
             zGfx.GpuUtils.BeginEvent(Rgba32.Red, "MeshRenderer.Render");
 
-            zGfx.SetCullMode(this.CullMode);
+            using (new ProfilingTimer(t => FrameStats.SetCullModeTime += t))
+            {
+                zGfx.SetCullMode(this.CullMode);
+            }
+            
+            using (new ProfilingTimer(t => FrameStats.ActivateGeomBufferTime += t))
+            {
+                // Set our vertex declaration, vertex buffer, and index buffer.
+                zGfx.SetActiveGeometryBuffer(Mesh.GeomBuffer);
+            }
 
-            Material.UpdateGpuSettings (zGfx);
+            using (new ProfilingTimer(t => FrameStats.MaterialTime += t))
+            {
+                Material.UpdateGpuSettings (zGfx);
 
-            // Set our vertex declaration, vertex buffer, and index buffer.
-            zGfx.SetActiveGeometryBuffer(Mesh.GeomBuffer);
+                // The lighing manager right now just grabs the shader and tries to set
+                // all variables to do with lighting, without even knowing if the shader
+                // supports lighting.
+                Material.SetColour( "AmbientLightColour", LightingManager.ambientLightColour );
+                Material.SetColour( "EmissiveColour", LightingManager.emissiveColour );
+                Material.SetColour( "SpecularColour", LightingManager.specularColour );
+                Material.SetFloat( "SpecularPower", LightingManager.specularPower );
 
-            // The lighing manager right now just grabs the shader and tries to set
-            // all variables to do with lighting, without even knowing if the shader
-            // supports lighting.
-            Material.SetColour( "AmbientLightColour", LightingManager.ambientLightColour );
-            Material.SetColour( "EmissiveColour", LightingManager.emissiveColour );
-            Material.SetColour( "SpecularColour", LightingManager.specularColour );
-            Material.SetFloat( "SpecularPower", LightingManager.specularPower );
+                Material.SetFloat( "FogEnabled", LightingManager.fogEnabled ? 1f : 0f );
+                Material.SetFloat( "FogStart", LightingManager.fogStart );
+                Material.SetFloat( "FogEnd", LightingManager.fogEnd );
+                Material.SetColour( "FogColour", LightingManager.fogColour );
 
+                Material.SetVector3( "DirectionalLight0Direction", LightingManager.dirLight0Direction );
+                Material.SetColour( "DirectionalLight0DiffuseColour", LightingManager.dirLight0DiffuseColour );
+                Material.SetColour( "DirectionalLight0SpecularColour", LightingManager.dirLight0SpecularColour );
 
-            Material.SetFloat( "FogEnabled", LightingManager.fogEnabled ? 1f : 0f );
-            Material.SetFloat( "FogStart", LightingManager.fogStart );
-            Material.SetFloat( "FogEnd", LightingManager.fogEnd );
-            Material.SetColour( "FogColour", LightingManager.fogColour );
+                Material.SetVector3( "DirectionalLight1Direction", LightingManager.dirLight1Direction );
+                Material.SetColour( "DirectionalLight1DiffuseColour", LightingManager.dirLight1DiffuseColour );
+                Material.SetColour( "DirectionalLight1SpecularColour", LightingManager.dirLight1SpecularColour );
 
-            Material.SetVector3( "DirectionalLight0Direction", LightingManager.dirLight0Direction );
-            Material.SetColour( "DirectionalLight0DiffuseColour", LightingManager.dirLight0DiffuseColour );
-            Material.SetColour( "DirectionalLight0SpecularColour", LightingManager.dirLight0SpecularColour );
+                Material.SetVector3( "DirectionalLight2Direction", LightingManager.dirLight2Direction );
+                Material.SetColour( "DirectionalLight2DiffuseColour", LightingManager.dirLight2DiffuseColour );
+                Material.SetColour( "DirectionalLight2SpecularColour", LightingManager.dirLight2SpecularColour );
 
-            Material.SetVector3( "DirectionalLight1Direction", LightingManager.dirLight1Direction );
-            Material.SetColour( "DirectionalLight1DiffuseColour", LightingManager.dirLight1DiffuseColour );
-            Material.SetColour( "DirectionalLight1SpecularColour", LightingManager.dirLight1SpecularColour );
+                Material.SetVector3( "EyePosition", zView.Translation );
 
-            Material.SetVector3( "DirectionalLight2Direction", LightingManager.dirLight2Direction );
-            Material.SetColour( "DirectionalLight2DiffuseColour", LightingManager.dirLight2DiffuseColour );
-            Material.SetColour( "DirectionalLight2SpecularColour", LightingManager.dirLight2SpecularColour );
-
-            Material.SetVector3( "EyePosition", zView.Translation );
-
-            // Get the material's shader and apply all of the settings
-            // it needs.
-            Material.UpdateShaderVariables (
-                this.Parent.Transform.Location,
-                zView,
-                zProjection
-                );
+                // Get the material's shader and apply all of the settings
+                // it needs.
+                Material.UpdateShaderVariables (
+                    this.Parent.Transform.Location,
+                    zView,
+                    zProjection
+                    );
+            }
 
             var shader = Material.GetShader ();
 
@@ -4194,11 +4316,17 @@ namespace SunGiant.Framework.Ophelia.Cameras
             {
                 foreach (var effectPass in shader.Passes)
                 {
-                    effectPass.Activate (Mesh.GeomBuffer.VertexBuffer.VertexDeclaration);
-
-                    zGfx.DrawIndexedPrimitives (
-                        PrimitiveType.TriangleList, 0, 0,
-                        Mesh.VertexCount, 0, Mesh.TriangleCount);
+                    using (new ProfilingTimer(t => FrameStats.ActivateShaderTime += t))
+                    {
+                        effectPass.Activate (Mesh.GeomBuffer.VertexBuffer.VertexDeclaration);
+                    }
+                    using (new ProfilingTimer(t => FrameStats.DrawTime += t))
+                    {
+                        FrameStats.DrawIndexedPrimitivesCount ++;
+                        zGfx.DrawIndexedPrimitives (
+                            PrimitiveType.TriangleList, 0, 0,
+                            Mesh.VertexCount, 0, Mesh.TriangleCount);
+                    }
                 }
             }
 

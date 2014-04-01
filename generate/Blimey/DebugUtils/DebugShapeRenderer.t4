@@ -387,6 +387,7 @@
                         // Figure out how many lines we're going to draw
                         int linesToDraw = Math.Min(lineCount, 65535);
 
+                        FrameStats.DrawUserPrimitivesCount ++;
                         zGfx.DrawUserPrimitives(
                             PrimitiveType.LineList, 
                             verts,

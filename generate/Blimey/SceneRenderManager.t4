@@ -70,7 +70,6 @@
             // TODO: big one
             // we really need to group the mesh renderers by material
             // and only make a new draw call when there are changes.
-
             foreach (var mr in meshRenderers)
             {
                 mr.Render(gfxManager, cam.ViewMatrix44, cam.ProjectionMatrix44);
