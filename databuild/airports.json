@@ -1,0 +1,20 @@
+{
+    "assets" :
+    [
+        {
+            "assetId" : "airports",
+            "assetType" : "System.String",
+            "resources" :
+            {
+                "variants" :
+                [
+                    {
+                        "platforms" : [ "any" ],
+                        "importer" : "Cor.TextImporter",
+                        "files" : [ "airports.dat" ]
+                    }
+                ]
+            }
+        }
+    ]
+}

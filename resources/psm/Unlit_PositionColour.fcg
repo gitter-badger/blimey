@@ -1,0 +1,6 @@
+void main( float4 in v_Color0 : COLOR0,
+           float4 out Color : COLOR,
+           uniform float4 MaterialColor )
+{
+	Color = v_Color0 * MaterialColor;
+}

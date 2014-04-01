@@ -99,6 +99,18 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="Info.plist" />
+    <None Include="..\..\..\assets\README.md">
+      <Link>assets\README.md</Link>
+    </None>
+    <None Include="..\..\..\assets\airports.cba">
+      <Link>assets\airports.cba</Link>
+    </None>
+    <None Include="..\..\..\assets\backgrounds.cba">
+      <Link>assets\backgrounds.cba</Link>
+    </None>
+    <None Include="..\..\..\assets\cvans.cba">
+      <Link>assets\cvans.cba</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\submodules\cor\build_examples\xs.monomac\Cor\Cor %28xs.monomac%29.csproj">
@@ -112,6 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="resources\" />
+    <Folder Include="assets\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="..\..\..\resources\bg1.png">

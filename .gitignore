@@ -5,6 +5,8 @@
 [Tt]est[Rr]esults
 [Tt]est-[Rr]esults/
 
+assets/*.cba
+
 *.userprefs
 *.suo
 *.user

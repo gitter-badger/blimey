@@ -1,0 +1,37 @@
+{
+    "assets" :
+    [
+        {
+            "assetId" : "cvan01",
+            "assetType" : "Cor.Texture2D",
+            "assetSettings" : [ { "format" : "Abacus.Packed.Rgba32" } ],
+            "resources" :
+            {
+                "variants" :
+                [
+                    {
+                        "platforms" : [ "any" ],
+                        "importer" : "Cor.PNGImporter",
+                        "files" : [ "cvan01.png" ]
+                    }
+                ]
+            }
+        },
+        {
+            "assetId" : "cvan02",
+            "assetType" : "Cor.Texture2D",
+            "assetSettings" : [ { "format" : "Abacus.Packed.Rgba32" } ],
+            "resources" :
+            {
+                "variants" :
+                [
+                    {
+                        "platforms" : [ "any" ],
+                        "importer" : "Cor.PNGImporter",
+                        "files" : [ "cvan02.png" ]
+                    }
+                ]
+            }
+        }
+    ]
+}
