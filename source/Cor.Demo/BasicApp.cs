@@ -56,25 +56,10 @@ namespace Cor.Demo
         public void Initilise (ICor engine)
         {
             this.engine = engine;
-            
-            try
-            {
-                this.unlitEffect = engine.Assets.Load<IShader> ("unlit.cba");
-            }
-            catch
-            {
-                this.unlitEffect = engine.Resources.LoadShader (ShaderType.Unlit);
-            }
 
-            try
-            {
-                this.vertexLitEffect = engine.Assets.Load<IShader> ("pixel_lit.cba");
-            }
-            catch
-            {
-                this.vertexLitEffect = engine.Resources.LoadShader (ShaderType.PixelLit);
-            }
-            
+            this.unlitEffect = engine.Assets.Load<IShader> ("unlit.cba");
+            this.vertexLitEffect = engine.Assets.Load<IShader> ("pixel_lit.cba");
+
 			this.engine.Log.Info ("Start loading shapes.");
             this.LoadShape1();
             this.LoadShape2();
@@ -215,15 +200,8 @@ namespace Cor.Demo
             this.shape2VertCount = vertBuffer.Length;
             this.shape2IndexCount = indexBuffer.Length;
 
-            try
-            {
-                this.shape2Texture = engine.Assets.Load<Texture2D> ("cvan01.cba");
-            }
-            catch
-            {
-                this.shape2Texture = engine.Resources.Load<Texture2D> ("resources/cvan01.png");
-            }
-            
+            this.shape2Texture = engine.Assets.Load<Texture2D> ("cvan01.cba");
+
             this.shape2GeomBuffer = engine.Graphics.CreateGeometryBuffer(
                 CustomCube_PositionTexture.VertexDeclaration,
                 this.shape2VertCount, this.shape2IndexCount);
@@ -307,15 +285,8 @@ namespace Cor.Demo
             this.shape3VertCount = vertBuffer.Length;
             this.shape3IndexCount = indexBuffer.Length;
 
-            try
-            {
-                this.shape3Texture = engine.Assets.Load<Texture2D> ("bg1.cba");
-            }
-            catch
-            {
-                this.shape3Texture = engine.Resources.Load<Texture2D> ("resources/bg1.png");
-            }
-            
+            this.shape3Texture = engine.Assets.Load<Texture2D> ("bg1.cba");
+
             this.shape3GeomBuffer = engine.Graphics.CreateGeometryBuffer(
                 CustomCylinder_PositionNormalTexture.VertexDeclaration,
                 this.shape3VertCount, this.shape3IndexCount);

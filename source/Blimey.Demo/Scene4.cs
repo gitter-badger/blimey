@@ -77,39 +77,12 @@ namespace Blimey.Demo
             screenHeight = this.Cor.Graphics.DisplayStatus.CurrentHeight;
 
             if (texVan1 == null)
-            {
-                try
-                {
-                    texVan1 = this.Cor.Assets.Load<Texture2D> ("cvan01.cba");
-                }
-                catch
-                {
-                    texVan1 = this.Cor.Resources.Load<Texture2D> ("resources/cvan01.png");
-                }
-            }
-            
+                texVan1 = this.Cor.Assets.Load<Texture2D> ("cvan01.cba");
+
             if( texVan2 == null )
-            {
-                try
-                {
-                    texVan2 = this.Cor.Assets.Load<Texture2D> ("cvan02.cba");
-                }
-                catch
-                {
-                    texVan2 = this.Cor.Resources.Load<Texture2D> ("resources/cvan02.png");
-                }
-            }
-            
-            IShader unlitShader = null;
-            
-            try
-            {
-                unlitShader = this.Cor.Assets.Load<IShader> ("unlit.cba");
-            }
-            catch
-            {
-                unlitShader = this.Cor.Resources.LoadShader(ShaderType.Unlit);
-            }
+                texVan2 = this.Cor.Assets.Load<Texture2D> ("cvan02.cba");
+
+            IShader unlitShader = this.Cor.Assets.Load<IShader> ("unlit.cba");
 
             Sprite.SpriteShader = unlitShader;
 

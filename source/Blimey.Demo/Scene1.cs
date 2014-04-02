@@ -98,17 +98,8 @@ namespace Blimey.Demo
 
             mr.Mesh = cowMesh;
 
-            IShader shader = null;
-            
-            try
-            {
-                shader = this.Cor.Assets.Load<IShader> ("pixel_lit.cba");
-            }
-            catch
-            {
-                shader = this.Cor.Resources.LoadShader(ShaderType.PixelLit);
-            }
-            
+            IShader shader = this.Cor.Assets.Load<IShader> ("pixel_lit.cba");
+
             var mat = new Material("Default", shader);
 
             mat.SetColour("MaterialColour", Rgba32.CornflowerBlue);

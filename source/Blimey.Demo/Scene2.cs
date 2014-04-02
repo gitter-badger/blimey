@@ -73,17 +73,8 @@ namespace Blimey.Demo
             // create a sprite
             var billboard = new BillboardPrimitive(this.Cor.Graphics);
 
-            IShader unlitShader = null;
-            
-            try
-            {
-                unlitShader = this.Cor.Assets.Load<IShader> ("unlit.cba");
-            }
-            catch
-            {
-                unlitShader = this.Cor.Resources.LoadShader(ShaderType.Unlit);
-            }
-            
+            IShader unlitShader = this.Cor.Assets.Load<IShader> ("unlit.cba");
+
             billboardGo = this.CreateSceneObject("billboard");
 
             var mr = billboardGo.AddTrait<MeshRenderer>();

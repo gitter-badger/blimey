@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey (xs.monomac)", "..\.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Demo (xs.monomac)", "Blimey.Demo\Blimey.Demo (xs.monomac).csproj", "{49536819-F662-4249-A36A-B59D0ACEA955}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.ContentBuilder (xs.monomac)", "..\..\submodules\cor\build_examples\xs.monomac\Cor.ContentBuilder\Cor.ContentBuilder (xs.monomac).csproj", "{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -32,12 +30,6 @@ Global
 		{1B6913B6-DCF2-4B43-BD2F-2C493801F026}.Debug|x86.Build.0 = Debug|Any CPU
 		{1B6913B6-DCF2-4B43-BD2F-2C493801F026}.Release|x86.ActiveCfg = Release|Any CPU
 		{1B6913B6-DCF2-4B43-BD2F-2C493801F026}.Release|x86.Build.0 = Release|Any CPU
-		{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}.AppStore|x86.ActiveCfg = Release|Any CPU
-		{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}.AppStore|x86.Build.0 = Release|Any CPU
-		{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}.Debug|x86.Build.0 = Debug|Any CPU
-		{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}.Release|x86.ActiveCfg = Release|Any CPU
-		{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}.Release|x86.Build.0 = Release|Any CPU
 		{2D399EBD-D7A2-45D8-8BD2-DA9A9A691C48}.AppStore|x86.ActiveCfg = AppStore|x86
 		{2D399EBD-D7A2-45D8-8BD2-DA9A9A691C48}.AppStore|x86.Build.0 = AppStore|x86
 		{2D399EBD-D7A2-45D8-8BD2-DA9A9A691C48}.Debug|x86.ActiveCfg = Debug|x86

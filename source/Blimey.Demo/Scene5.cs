@@ -82,18 +82,9 @@ namespace Blimey.Demo
 			float radius = 1.5f;
 			// create a sprite
 			var sphereMesh = new SpherePrimitive(this.Cor.Graphics);
-            
-			IShader shader = null;
-            
-            try
-            {
-                shader = this.Cor.Assets.Load<IShader> ("vertex_lit.cba");
-            }
-            catch
-            {
-                shader = this.Cor.Resources.LoadShader(ShaderType.VertexLit);
-            }
-			
+
+			IShader shader = this.Cor.Assets.Load<IShader> ("vertex_lit.cba");
+
             var mat = new Material("Default",shader);
             mat.SetColour("MaterialColour", Rgba32.LightGrey);
 			earthGo = this.CreateSceneObject("earth");
@@ -116,17 +107,8 @@ namespace Blimey.Demo
 			mr.Mesh = sphereMesh;
 			mr.Material = mat;
 
-            IShader shader2 = null;
-            
-            try
-            {
-                shader2 = this.Cor.Assets.Load<IShader> ("unlit.cba");
-            }
-            catch
-            {
-                shader2 = this.Cor.Resources.LoadShader(ShaderType.Unlit);
-            }
-            
+            IShader shader2 = this.Cor.Assets.Load<IShader> ("unlit.cba");
+
 			var mat2 = new Material("Default", shader2);
 			mat2.SetColour("MaterialColour", Rgba32.Blue);
 

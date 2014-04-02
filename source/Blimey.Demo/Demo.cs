@@ -43,10 +43,12 @@ namespace Blimey.Demo
 {
     public static class Demo
     {
-        public static IApp GetEntryPoint() { return new BlimeyApp(startScene); }
+        public static IApp GetEntryPoint() { return blimeyApp; }
         public static AppSettings GetAppSettings() { return appSettings; }
+
         readonly static Scene startScene;
         readonly static AppSettings appSettings;
+        readonly static BlimeyApp blimeyApp;
 
         static Demo()
         {
@@ -55,6 +57,8 @@ namespace Blimey.Demo
             appSettings.MouseGeneratesTouches = true;
 
             startScene = new MainMenuScene();
+
+            blimeyApp = new BlimeyApp(startScene);
         }
     }
 }
