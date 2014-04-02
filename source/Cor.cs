@@ -4263,13 +4263,39 @@ namespace Cor
     public sealed class AssetManager
         : IDisposable
     {
-        internal AssetManager (IGraphicsManager Graphics)
-        {
+        readonly IGraphicsManager graphics;
+        readonly IResourceManager legacyResources;
 
+        internal AssetManager (
+            IGraphicsManager graphics,
+            IResourceManager legacyResources)
+        {
+            this.graphics = graphics;
+            this.legacyResources = legacyResources;
         }
 
         public T Load<T> (String assetId)
         {
+            if (typeof (T) == typeof (IShader))
+            {
+                if (assetId.Contains ("pixel"))
+                    return (T) legacyResources.LoadShader (ShaderType.PixelLit);
+
+                if (assetId.Contains ("vertex"))
+                    return (T) legacyResources.LoadShader (ShaderType.VertexLit);
+
+                if (assetId.Contains ("unlit"))
+                    return (T) legacyResources.LoadShader (ShaderType.Unlit);
+            }
+
+            if (typeof (T) == typeof (Texture2D))
+            {
+                Texture2D tex = legacyResources.Load<Texture2D> (
+                    "resources/" + assetId.Replace (".cba", "") + ".png");
+
+                return (T) (Object) tex;
+            }
+
             throw new NotImplementedException ();
         }
 

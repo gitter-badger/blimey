@@ -89,7 +89,7 @@ namespace Cor.Platform.Managed.MonoMac
             this.settings = settings;
             this.app = app;
             this.log = new LogManager(this.settings.LogSettings);
-            this.assets = new AssetManager(this.graphics);
+            this.assets = new AssetManager(this.graphics, this.resources);
             this.app.Initilise(this);
         }
 
