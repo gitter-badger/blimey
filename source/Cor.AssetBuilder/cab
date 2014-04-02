@@ -1,0 +1,2 @@
+#!/bin/sh
+mono --debug /usr/local/bin/cab_app/Cor.AssetBuilder.exe $@

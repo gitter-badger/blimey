@@ -1,0 +1,4 @@
+[submodule "submodules/cor"]
+	path = submodules/cor
+	url = git@github.com:blimey3D/cor.git
+	branch = development
