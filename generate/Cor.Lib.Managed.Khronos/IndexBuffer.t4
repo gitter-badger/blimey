@@ -7,7 +7,7 @@
         Int32 indexCount;
         BufferTarget type;
         UInt32 bufferHandle;
-        BufferUsageHint bufferUsage;
+        GLBufferUsage bufferUsage;
 
         bool alreadyDisposed;
 
@@ -17,7 +17,7 @@
 
             this.type = BufferTarget.ElementArrayBuffer;
 
-            this.bufferUsage = BufferUsageHint.DynamicDraw;
+            this.bufferUsage = GLBufferUsage.DynamicDraw;
 
             GL.GenBuffers(1, out this.bufferHandle);
 

@@ -11,7 +11,7 @@
         UInt32 bufferHandle;
 
         BufferTarget type;
-        BufferUsageHint bufferUsage;
+        GLBufferUsage bufferUsage;
 
         bool alreadyDisposed;
 
@@ -22,7 +22,7 @@
 
             this.type = BufferTarget.ArrayBuffer;
 
-            this.bufferUsage = BufferUsageHint.DynamicDraw;
+            this.bufferUsage = GLBufferUsage.DynamicDraw;
 
             GL.GenBuffers(1, out this.bufferHandle);
             ErrorHandler.Check();

@@ -41,9 +41,11 @@ using System.Runtime.InteropServices;
 #if COR_PLATFORM_MANAGED_XIOS
 using OpenTK.Graphics.ES20;
 using GLShaderType = OpenTK.Graphics.ES20.ShaderType;
+using GLBufferUsage = OpenTK.Graphics.ES20.BufferUsage;
 #elif COR_PLATFORM_MANAGED_MONOMAC
 using MonoMac.OpenGL;
 using GLShaderType = MonoMac.OpenGL.ShaderType;
+using GLBufferUsage = MonoMac.OpenGL.BufferUsageHint;
 #else
     Platform not supported.
 #endif
@@ -481,7 +483,7 @@ namespace Cor.Lib.Managed.Khronos
         UInt32 bufferHandle;
 
         BufferTarget type;
-        BufferUsageHint bufferUsage;
+        GLBufferUsage bufferUsage;
 
         bool alreadyDisposed;
 
@@ -492,7 +494,7 @@ namespace Cor.Lib.Managed.Khronos
 
             this.type = BufferTarget.ArrayBuffer;
 
-            this.bufferUsage = BufferUsageHint.DynamicDraw;
+            this.bufferUsage = GLBufferUsage.DynamicDraw;
 
             GL.GenBuffers(1, out this.bufferHandle);
             ErrorHandler.Check();
@@ -722,7 +724,7 @@ namespace Cor.Lib.Managed.Khronos
         Int32 indexCount;
         BufferTarget type;
         UInt32 bufferHandle;
-        BufferUsageHint bufferUsage;
+        GLBufferUsage bufferUsage;
 
         bool alreadyDisposed;
 
@@ -732,7 +734,7 @@ namespace Cor.Lib.Managed.Khronos
 
             this.type = BufferTarget.ElementArrayBuffer;
 
-            this.bufferUsage = BufferUsageHint.DynamicDraw;
+            this.bufferUsage = GLBufferUsage.DynamicDraw;
 
             GL.GenBuffers(1, out this.bufferHandle);
 
