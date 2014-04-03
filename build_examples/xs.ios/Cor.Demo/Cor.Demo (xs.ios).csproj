@@ -3,35 +3,37 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E28D8421-617F-40B5-B138-252788350130}</ProjectGuid>
+    <ProjectGuid>{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}</ProjectGuid>
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>Cor.Demo</RootNamespace>
-    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>Cor.Demo</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>XIOS;DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <MtouchDebug>True</MtouchDebug>
+    <MtouchLink>None</MtouchLink>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
+    <AssemblyName>SungiantCorDemoPlatformManagedXios</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
-    <Optimize>False</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <MtouchLink>None</MtouchLink>
     <DefineConstants>XIOS;</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
-    <DebugSymbols>True</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>False</Optimize>
-    <ErrorReport>prompt</ErrorReport>
-    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
-    <WarningLevel>4</WarningLevel>
-    <MtouchLink>None</MtouchLink>
-    <ConsolePause>False</ConsolePause>
-    <DefineConstants>XIOS;DEBUG;</DefineConstants>
+    <AssemblyName>SungiantCorDemoPlatformManagedXios</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>True</DebugSymbols>
@@ -44,12 +46,15 @@
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Developer: Ashleigh Pook (9L6336R47Y)</CodesignKey>
     <MtouchDebug>True</MtouchDebug>
-    <MtouchProfiling>True</MtouchProfiling>
     <IpaPackageName>
     </IpaPackageName>
     <MtouchI18n>
     </MtouchI18n>
     <MtouchArch>ARMv7, ARMv7s</MtouchArch>
+    <CodesignProvision>B77A780A-45F1-4792-B935-BAC05C597EFC</CodesignProvision>
+    <CrashReportingApiKey>
+    </CrashReportingApiKey>
+    <AssemblyName>SungiantCorDemoXios</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -60,6 +65,7 @@
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
     <DefineConstants>XIOS;AOT;</DefineConstants>
+    <AssemblyName>SungiantCorDemoXios</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -71,6 +77,7 @@
     <BuildIpa>True</BuildIpa>
     <CodesignKey>iPhone Distribution</CodesignKey>
     <DefineConstants>XIOS;AOT;</DefineConstants>
+    <AssemblyName>SungiantCorDemoXios</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -81,47 +88,44 @@
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Distribution</CodesignKey>
     <DefineConstants>XIOS;AOT;</DefineConstants>
+    <AssemblyName>SungiantCorDemoXios</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="monotouch" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="Properties\" />
-    <Folder Include="assets\" />
+    <None Include="Info.plist" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\source\Cor.Demo.cs">
-      <Link>Cor.Demo.cs</Link>
-    </Compile>
+    <Compile Include="Source\AppDelegate.cs" />
+    <Compile Include="Source\Main.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Source\" />
+    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\abacus\build_examples\Abacus\Abacus %28xios%29.csproj">
+    <BundleResource Include="Icon.png" />
+    <BundleResource Include="Icon%402x.png" />
+    <BundleResource Include="Icon-72.png" />
+    <BundleResource Include="Icon-72%402x.png" />
+    <BundleResource Include="Icon-Small.png" />
+    <BundleResource Include="Icon-Small%402x.png" />
+    <BundleResource Include="Icon-Small-50.png" />
+    <BundleResource Include="Icon-Small-50%402x.png" />
+    <BundleResource Include="Default.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\submodules\abacus\build_examples\xs.ios\Abacus\Abacus %28xs.ios%29.csproj">
       <Project>{DE5491E6-4DF9-4BBB-9985-E7CD86905D41}</Project>
-      <Name>Abacus (xios)</Name>
+      <Name>Abacus (xs.ios)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\cor\build_examples\Cor\Cor %28xios%29.csproj">
+    <ProjectReference Include="..\..\..\submodules\cor\build_examples\xs.ios\Cor\Cor %28xs.ios%29.csproj">
       <Project>{C8436444-EAAC-4B9A-A8E3-6F8494186F57}</Project>
-      <Name>Cor (xios)</Name>
+      <Name>Cor (xs.ios)</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="..\..\assets\bg1.png">
-      <Link>assets\bg1.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\assets\bg2.png">
-      <Link>assets\bg2.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\assets\bg3.png">
-      <Link>assets\bg3.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\assets\cvan01.png">
-      <Link>assets\cvan01.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\assets\cvan02.png">
-      <Link>assets\cvan02.png</Link>
-    </BundleResource>
   </ItemGroup>
 </Project>
