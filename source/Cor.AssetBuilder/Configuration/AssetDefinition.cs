@@ -17,7 +17,7 @@ namespace Cor.AssetBuilder.Configuration
     /// files for a given collection of platforms, which
     /// when built yeild set of platform specific asset variants.
     /// </summary>
-    public class Source
+    public class SourceSet
     {
         /// <summary>
         /// Defines the platforms that this collection of resources
@@ -26,22 +26,27 @@ namespace Cor.AssetBuilder.Configuration
         public List<String> Platforms { get; set; }
         
         /// <summary>
-        /// Defines the type of the Resource Importer that the Asset build
-        /// will use to read this resource collection.
+        /// 
         /// </summary>
-        public Type ImporterType { get; set; }
+        public Type ResourceBuilderType { get; set; }
         
         /// <summary>
-        /// Defines settings specific to the importer, this covers things
-        /// that the importer cannot infer from the resource files.
+        /// 
         /// </summary>
-        public Dictionary<String, String> ImporterSettings { get; set; }
+        public Dictionary<String, String> ResourceBuilderSettings { get; set; }
+        
         
         /// <summary>
-        /// Every resource collection gets built into an asset.  Once
-        /// the resources have been imported the build pipeline then
-        /// uses these AssetSettings and the imported data to generate
-        /// the Asset.
+        ///
+        /// </summary>
+        public Type AssetBuilderType { get; set; }
+        
+        /// <summary>
+        /// Every source-set gets built into an asset.  Once the source-set
+        /// has been turned into a resource by the resource-builder
+        /// the cor build pipeline then
+        /// uses these AssetBuilderType and the resource to generate
+        /// the asset.
         /// For example:
         ///   A JPG file -> Texture2D
         ///   - On ios
@@ -57,7 +62,7 @@ namespace Cor.AssetBuilder.Configuration
         /// may want a compressed version of an asset whilt other platforms 
         /// do not.
         /// </summary>
-        public Dictionary<String, String> AssetSettings { get; set; }
+        public Dictionary<String, String> AssetBuilderSettings { get; set; }
         
         /// <summary>
         /// Defines which resource files this resource collection
@@ -83,7 +88,7 @@ namespace Cor.AssetBuilder.Configuration
         public Type AssetType { get; set; }
         
         /// <summary>
-        /// Every asset comes from a collection of resources.
+        /// Every asset comes from a source-set.
         /// ResourceCollection + Build = Asset
         /// Different platforms often use different resources
         /// to build the same assets, shaders are a good example
@@ -92,16 +97,16 @@ namespace Cor.AssetBuilder.Configuration
         /// use different resources to generate their own
         /// variant of the same Asset.
         /// </summary>
-        public List <Source> Sources { get; set; }
+        public List <SourceSet> SourceSets { get; set; }
         
-        public Source GetSourceForPlatform (String platformId)
+        public SourceSet GetSourceForPlatform (String platformId)
         {
-            return Sources.Find (x => x.Platforms.Contains(platformId));
+            return SourceSets.Find (x => x.Platforms.Contains(platformId));
         }
         
-        public Boolean HasSourceForPlatform (String platformId)
+        public Boolean HasSourceSetForPlatform (String platformId)
         {
-            return Sources.Find (x => x.Platforms.Contains(platformId)) != null;
+            return SourceSets.Find (x => x.Platforms.Contains(platformId)) != null;
         }
     }
 }

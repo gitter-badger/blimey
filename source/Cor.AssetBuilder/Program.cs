@@ -114,7 +114,7 @@ namespace Cor.AssetBuilder
                 .ToList ();
        
             var platformIds = assetDefinitions
-                .SelectMany (x => x.Sources)
+                .SelectMany (x => x.SourceSets)
                 .SelectMany (x => x.Platforms)
                 .Distinct ()
                 .ToList ();
@@ -129,7 +129,7 @@ namespace Cor.AssetBuilder
                 var platformAssetDeinitions = assetDefinitions
                     .Where (
                         x =>
-                        x.HasSourceForPlatform (pId))
+                        x.HasSourceSetForPlatform (pId))
                     .ToList ();
                 
                 ProcessAssetsForPlatform (pId, platformAssetDeinitions);
