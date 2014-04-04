@@ -1,56 +1,52 @@
 {
-    "assetId" : "unlit",
-    "assetType" : "Cor.IShader",
-    "assetSettings" : [],
-    "resources" :
-    {
-        "variants" :
-        [
-            {
-                "platforms" : [ "monomac" ],
-                "importer" : "Cor.OGL4ShaderImporter",
-                "sourceFiles" :
-                [
-                    "ogl4/Unlit_PositionNormal.fsh",
-                    "ogl4/Unlit_PositionNormal.vsh",
-                    "ogl4/Unlit_PositionNormalColour.fsh",
-                    "ogl4/Unlit_PositionNormalColour.vsh",
-                    "ogl4/Unlit_PositionNormalTexture.fsh",
-                    "ogl4/Unlit_PositionNormalTexture.vsh",
-                    "ogl4/Unlit_PositionNormalTextureColour.fsh",
-                    "ogl4/Unlit_PositionNormalTextureColour.vsh"
-                ]
-            },
-            {
-                "platforms" : [ "xios", "xdroid" ],
-                "importer" : "Cor.OGLES2ShaderImporter",
-                "sourceFiles" :
-                [
-                    "ogles2/Unlit_PositionNormal.fsh",
-                    "ogles2/Unlit_PositionNormal.vsh",
-                    "ogles2/Unlit_PositionNormalColour.fsh",
-                    "ogles2/Unlit_PositionNormalColour.vsh",
-                    "ogles2/Unlit_PositionNormalTexture.fsh",
-                    "ogles2/Unlit_PositionNormalTexture.vsh",
-                    "ogles2/Unlit_PositionNormalTextureColour.fsh",
-                    "ogles2/Unlit_PositionNormalTextureColour.vsh"
-                ]
-            },
-            {
-                "platforms" : [ "psm" ],
-                "importer" : "Cor.PsmShaderImporter",
-                "sourceFiles" :
-                [
-                    "psm/Unlit_PositionNormal.fsh",
-                    "psm/Unlit_PositionNormal.vsh",
-                    "psm/Unlit_PositionNormalColour.fsh",
-                    "psm/Unlit_PositionNormalColour.vsh",
-                    "psm/Unlit_PositionNormalTexture.fsh",
-                    "psm/Unlit_PositionNormalTexture.vsh",
-                    "psm/Unlit_PositionNormalTextureColour.fsh",
-                    "psm/Unlit_PositionNormalTextureColour.vsh"
-                ]
-            }
-        ]
-    }
+    "AssetId" : "unlit",
+    "AssetType" : "Cor.IShader",
+    "Sources" :
+    [
+        {
+            "Platforms" : [ "monomac" ],
+            "ImporterType" : "Cor.OGL4ShaderImporter",
+            "Files" :
+            [
+                "ogl4/Unlit_PositionNormal.fsh",
+                "ogl4/Unlit_PositionNormal.vsh",
+                "ogl4/Unlit_PositionNormalColour.fsh",
+                "ogl4/Unlit_PositionNormalColour.vsh",
+                "ogl4/Unlit_PositionNormalTexture.fsh",
+                "ogl4/Unlit_PositionNormalTexture.vsh",
+                "ogl4/Unlit_PositionNormalTextureColour.fsh",
+                "ogl4/Unlit_PositionNormalTextureColour.vsh"
+            ]
+        },
+        {
+            "Platforms" : [ "xios", "xdroid" ],
+            "ImporterType" : "Cor.OGLES2ShaderImporter",
+            "Files" :
+            [
+                "ogles2/Unlit_PositionNormal.fsh",
+                "ogles2/Unlit_PositionNormal.vsh",
+                "ogles2/Unlit_PositionNormalColour.fsh",
+                "ogles2/Unlit_PositionNormalColour.vsh",
+                "ogles2/Unlit_PositionNormalTexture.fsh",
+                "ogles2/Unlit_PositionNormalTexture.vsh",
+                "ogles2/Unlit_PositionNormalTextureColour.fsh",
+                "ogles2/Unlit_PositionNormalTextureColour.vsh"
+            ]
+        },
+        {
+            "Platforms" : [ "psm" ],
+            "ImporterType" : "Cor.PsmShaderImporter",
+            "Files" :
+            [
+                "psm/Unlit_PositionNormal.fsh",
+                "psm/Unlit_PositionNormal.vsh",
+                "psm/Unlit_PositionNormalColour.fsh",
+                "psm/Unlit_PositionNormalColour.vsh",
+                "psm/Unlit_PositionNormalTexture.fsh",
+                "psm/Unlit_PositionNormalTexture.vsh",
+                "psm/Unlit_PositionNormalTextureColour.fsh",
+                "psm/Unlit_PositionNormalTextureColour.vsh"
+            ]
+        }
+    ]
 }

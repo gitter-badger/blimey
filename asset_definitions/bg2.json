@@ -1,16 +1,21 @@
 {
-    "assetId" : "bg2",
-    "assetType" : "Cor.Texture2D",
-    "assetSettings" : [ { "format" : "Abacus.Packed.Bgr_5_6_5" } ],
-    "resources" :
-    {
-        "variants" :
-        [
-            {
-                "platforms" : [ "monomac", "xios", "xdroid" ],
-                "importer" : "Cor.PNGImporter",
-                "files" : [ "bg2.png" ]
-            }
-        ]
-    }
+    "AssetId" : "bg2",
+    "AssetType" : "Cor.Texture2D",
+    "Sources" :
+    [
+        {
+            "Platforms" : [ "xios" ],
+            "ImporterType" : "Cor.PNGImporter",
+            "ImporterSettings" : [],
+            "AssetSettings" : [ { "surfaceFormat" : "Cor.SurfaceFormat.PVRTC" } ],
+            "Files" : [ "bg2.png" ]
+        },
+        {
+            "platforms" : [ "monomac" ],
+            "ImporterType" : "Cor.PNGImporter",
+            "ImporterSettings" : [],
+            "AssetSettings" : [ { "surfaceFormat" : "Cor.SurfaceFormat.ARGB" } ],
+            "Files" : [ "bg2.png" ]
+        }
+    ]
 }

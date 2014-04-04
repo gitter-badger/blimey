@@ -1,56 +1,52 @@
 {
-    "assetId" : "vertex_lit",
-    "assetType" : "Cor.IShader",
-    "assetSettings" : [],
-    "resources" :
-    {
-        "variants" :
-        [
-            {
-                "platforms" : [ "monomac" ],
-                "importer" : "Cor.OGL4ShaderImporter",
-                "sourceFiles" :
-                [
-                    "ogl4/VertexLit_PositionNormal.fsh",
-                    "ogl4/VertexLit_PositionNormal.vsh",
-                    "ogl4/VertexLit_PositionNormalColour.fsh",
-                    "ogl4/VertexLit_PositionNormalColour.vsh",
-                    "ogl4/VertexLit_PositionNormalTexture.fsh",
-                    "ogl4/VertexLit_PositionNormalTexture.vsh",
-                    "ogl4/VertexLit_PositionNormalTextureColour.fsh",
-                    "ogl4/VertexLit_PositionNormalTextureColour.vsh"
-                ]
-            },
-            {
-                "platforms" : [ "xios", "xdroid" ],
-                "importer" : "Cor.OGLES2ShaderImporter",
-                "sourceFiles" :
-                [
-                    "ogles2/VertexLit_PositionNormal.fsh",
-                    "ogles2/VertexLit_PositionNormal.vsh",
-                    "ogles2/VertexLit_PositionNormalColour.fsh",
-                    "ogles2/VertexLit_PositionNormalColour.vsh",
-                    "ogles2/VertexLit_PositionNormalTexture.fsh",
-                    "ogles2/VertexLit_PositionNormalTexture.vsh",
-                    "ogles2/VertexLit_PositionNormalTextureColour.fsh",
-                    "ogles2/VertexLit_PositionNormalTextureColour.vsh"
-                ]
-            },
-            {
-                "platforms" : [ "psm" ],
-                "importer" : "Cor.PsmShaderImporter",
-                "sourceFiles" :
-                [
-                    "psm/VertexLit_PositionNormal.fsh",
-                    "psm/VertexLit_PositionNormal.vsh",
-                    "psm/VertexLit_PositionNormalColour.fsh",
-                    "psm/VertexLit_PositionNormalColour.vsh",
-                    "psm/VertexLit_PositionNormalTexture.fsh",
-                    "psm/VertexLit_PositionNormalTexture.vsh",
-                    "psm/VertexLit_PositionNormalTextureColour.fsh",
-                    "psm/VertexLit_PositionNormalTextureColour.vsh"
-                ]
-            }
-        ]
-    }
+    "AssetId" : "pixel_lit",
+    "AssetType" : "Cor.IShader",
+    "Sources" :
+    [
+        {
+            "Platforms" : [ "monomac" ],
+            "ImporterType" : "Cor.OGL4ShaderImporter",
+            "Files" :
+            [
+                "ogl4/VertexLit_PositionNormal.fsh",
+                "ogl4/VertexLit_PositionNormal.vsh",
+                "ogl4/VertexLit_PositionNormalColour.fsh",
+                "ogl4/VertexLit_PositionNormalColour.vsh",
+                "ogl4/VertexLit_PositionNormalTexture.fsh",
+                "ogl4/VertexLit_PositionNormalTexture.vsh",
+                "ogl4/VertexLit_PositionNormalTextureColour.fsh",
+                "ogl4/VertexLit_PositionNormalTextureColour.vsh"
+            ]
+        },
+        {
+            "Platforms" : [ "xios", "xdroid" ],
+            "ImporterType" : "Cor.OGLES2ShaderImporter",
+            "Files" :
+            [
+                "ogles2/VertexLit_PositionNormal.fsh",
+                "ogles2/VertexLit_PositionNormal.vsh",
+                "ogles2/VertexLit_PositionNormalColour.fsh",
+                "ogles2/VertexLit_PositionNormalColour.vsh",
+                "ogles2/VertexLit_PositionNormalTexture.fsh",
+                "ogles2/VertexLit_PositionNormalTexture.vsh",
+                "ogles2/VertexLit_PositionNormalTextureColour.fsh",
+                "ogles2/VertexLit_PositionNormalTextureColour.vsh"
+            ]
+        },
+        {
+            "Platforms" : [ "psm" ],
+            "ImporterType" : "Cor.PsmShaderImporter",
+            "Files" :
+            [
+                "psm/VertexLit_PositionNormal.fsh",
+                "psm/VertexLit_PositionNormal.vsh",
+                "psm/VertexLit_PositionNormalColour.fsh",
+                "psm/VertexLit_PositionNormalColour.vsh",
+                "psm/VertexLit_PositionNormalTexture.fsh",
+                "psm/VertexLit_PositionNormalTexture.vsh",
+                "psm/VertexLit_PositionNormalTextureColour.fsh",
+                "psm/VertexLit_PositionNormalTextureColour.vsh"
+            ]
+        }
+    ]
 }

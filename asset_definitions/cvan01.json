@@ -1,16 +1,21 @@
 {
-    "assetId" : "cvan01",
-    "assetType" : "Cor.Texture2D",
-    "assetSettings" : [ { "format" : "Abacus.Packed.Rgba32" } ],
-    "resources" :
-    {
-        "variants" :
-        [
-            {
-                "platforms" : [ "monomac", "xios", "xdroid" ],
-                "importer" : "Cor.PNGImporter",
-                "files" : [ "cvan01.png" ]
-            }
-        ]
-    }
+    "AssetId" : "cvan01",
+    "AssetType" : "Cor.Texture2D",
+    "Sources" :
+    [
+        {
+            "Platforms" : [ "xios" ],
+            "ImporterType" : "Cor.PNGImporter",
+            "ImporterSettings" : [],
+            "AssetSettings" : [ { "surfaceFormat" : "Cor.SurfaceFormat.PVRTC" } ],
+            "Files" : [ "cvan01.png" ]
+        },
+        {
+            "platforms" : [ "monomac" ],
+            "ImporterType" : "Cor.PNGImporter",
+            "ImporterSettings" : [],
+            "AssetSettings" : [ { "surfaceFormat" : "Cor.SurfaceFormat.ARGB" } ],
+            "Files" : [ "cvan01.png" ]
+        }
+    ]
 }

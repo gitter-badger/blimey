@@ -1,4 +1,5 @@
 {
-    "resources_folder" : "resources/",
-    "asset_definitions_folder" : "asset_definitions/",
+    "ResourcesFolder" : "resources/",
+    "AssetDefinitionsFolder" : "asset_definitions/",
+    "DestinationFolder" : "assets/",
 }
