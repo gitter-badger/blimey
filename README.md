@@ -1,4 +1,4 @@
 assets
 ======
 
-Asset build system.
+The Cor Blimey asset build system.
