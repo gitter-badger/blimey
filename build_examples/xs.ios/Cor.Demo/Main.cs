@@ -37,7 +37,7 @@ using System.Linq;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-namespace Cor.Demo.Xios
+namespace Cor.Demo
 {
 	public class Application
 	{

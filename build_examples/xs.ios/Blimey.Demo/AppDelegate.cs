@@ -30,11 +30,31 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System;
+using Cor;
+using Cor.Platform.Managed.Xios;
 
-[assembly: AssemblyTitle("Cor.Demo")]
-[assembly: ComVisible(false)]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+namespace Blimey.Demo
+{
+	[MonoTouch.Foundation.Register ("AppDelegate")]
+	public partial class AppDelegate
+		: MonoTouch.UIKit.UIApplicationDelegate
+	{
+		CorAppEngine engine;
+
+		// This method is invoked when the application has
+		// loaded its UI and is ready to run
+		public override Boolean FinishedLaunching (
+			MonoTouch.UIKit.UIApplication app,
+			MonoTouch.Foundation.NSDictionary options)
+		{
+			AppSettings settings = Demo.GetAppSettings();
+			IApp game = Demo.GetEntryPoint();
+
+			engine = new CorAppEngine(settings, game);
+			engine.Run();
+
+			return true;
+		}
+	}
+}

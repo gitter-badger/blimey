@@ -30,11 +30,23 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-[assembly: AssemblyTitle("Cor.Demo")]
-[assembly: ComVisible(false)]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+using MonoTouch.Foundation;
+using MonoTouch.UIKit;
+
+namespace Blimey.Demo
+{
+	public class Application
+	{
+		// This is the main entry point of the application.
+		static void Main(string[] args)
+		{
+			// if you want to use a different Application Delegate class from "AppDelegate"
+			// you can specify it here.
+			UIApplication.Main(args, null, "AppDelegate");
+		}
+	}
+}
