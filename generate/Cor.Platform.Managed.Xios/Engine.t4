@@ -1,14 +1,16 @@
     public sealed class Engine
         : ICor
     {
-        TouchScreen touchScreen;
-        AppSettings settings;
-        IApp app;
-        IGraphicsManager graphicsManager;
-        IResourceManager resourceManager;
-        InputManager inputManager;
-        SystemManager systemManager;
-        AudioManager audioManager;
+        readonly TouchScreen touchScreen;
+        readonly AppSettings settings;
+        readonly IApp app;
+        readonly GraphicsManager graphics;
+        readonly ResourceManager resources;
+        readonly InputManager input;
+        readonly SystemManager system;
+        readonly AudioManager audio;
+        readonly LogManager log;
+        readonly AssetManager assets;
 
         internal Engine(
             AppSettings settings,
@@ -21,16 +23,19 @@
 
             this.app = app;
 
+            this.graphics = new GraphicsManager(gfxContext);
 
-            this.graphicsManager = new GraphicsManager(gfxContext);
-
-            this.resourceManager = new ResourceManager();
+            this.resources = new ResourceManager();
 
             this.touchScreen = new TouchScreen(this, view, touches);
 
-            this.systemManager = new SystemManager(touchScreen);
+            this.system = new SystemManager(touchScreen);
 
-            this.inputManager = new InputManager(this, this.touchScreen);
+            this.input = new InputManager(this, this.touchScreen);
+
+            this.log = new LogManager(this.settings.LogSettings);
+            
+            this.assets = new AssetManager(this.graphics, this.resources);
 
             this.app.Initilise(this);
 
@@ -44,57 +49,29 @@
             }
         }
 
-        public IAudioManager Audio
-        {
-            get
-            {
-                return audioManager;
-            }
-        }
+        #region ICor
 
-        public AppSettings Settings
-        {
-            get
-            {
-                return this.settings;
-            }
-        }
+        public IAudioManager Audio { get { return this.audio; } }
 
-        public ISystemManager System
-        {
-            get
-            {
-                return systemManager;
-            }
-        }
+        public IGraphicsManager Graphics { get { return this.graphics; } }
 
-        public IGraphicsManager Graphics
-        { 
-            get
-            {
-                return graphicsManager;
-            }
-        }
+        public IResourceManager Resources { get { return this.resources; } }
 
-        public IResourceManager Resources
-        { 
-            get
-            {
-                return resourceManager;
-            }
-        }
-        
-        public IInputManager Input
-        {
-            get
-            {
-                return inputManager;
-            }
-        }
+        public IInputManager Input { get { return this.input; } }
+
+        public ISystemManager System { get { return this.system; } }
+
+        public LogManager Log { get { return this.log; } }
+
+        public AssetManager Assets { get { return this.assets; } }
+
+        public AppSettings Settings { get { return this.settings; } }
+
+        #endregion
 
         internal Boolean Update(AppTime time)
         {
-            inputManager.Update(time);
+            input.Update(time);
             return app.Update(time);
         }
 

@@ -121,7 +121,7 @@ namespace Cor.Platform.Managed.Xios
 
     public static class MatrixConverter
     {
-        static bool flip = false;
+        const bool flip = false;
 
         // MATRIX
         public static OpenTK.Matrix4 ToOpenTK (this Matrix44 mat)
@@ -129,20 +129,18 @@ namespace Cor.Platform.Managed.Xios
             if( flip )
             {
                 return new OpenTK.Matrix4(
-                    mat.M11, mat.M21, mat.M31, mat.M41,
-                    mat.M12, mat.M22, mat.M32, mat.M42,
-                    mat.M13, mat.M23, mat.M33, mat.M43,
-                    mat.M14, mat.M24, mat.M34, mat.M44
-                    );
+                    mat.R0C0, mat.R1C0, mat.R2C0, mat.R3C0,
+                    mat.R0C1, mat.R1C1, mat.R2C1, mat.R3C1,
+                    mat.R0C2, mat.R1C2, mat.R2C2, mat.R3C2,
+                    mat.R0C3, mat.R1C3, mat.R2C3, mat.R3C3);
             }
             else
             {
                 return new OpenTK.Matrix4(
-                    mat.M11, mat.M12, mat.M13, mat.M14,
-                    mat.M21, mat.M22, mat.M23, mat.M24,
-                    mat.M31, mat.M32, mat.M33, mat.M34,
-                    mat.M41, mat.M42, mat.M43, mat.M44
-                    );
+                    mat.R0C0, mat.R1C0, mat.R2C0, mat.R3C0,
+                    mat.R0C1, mat.R1C1, mat.R2C1, mat.R3C1,
+                    mat.R0C2, mat.R1C2, mat.R2C2, mat.R3C2,
+                    mat.R0C3, mat.R1C3, mat.R2C3, mat.R3C3);
             }
         }
 
@@ -152,20 +150,18 @@ namespace Cor.Platform.Managed.Xios
             if( flip )
             {
                 return new Matrix44(
-                    mat.R0C0, mat.R1C0, mat.R2C0, mat.R3C0,
-                    mat.R0C1, mat.R1C1, mat.R2C1, mat.R3C1,
-                    mat.R0C2, mat.R1C2, mat.R2C2, mat.R3C2,
-                    mat.R0C3, mat.R1C3, mat.R2C3, mat.R3C3
-                    );
+                    mat.M11, mat.M12, mat.M13, mat.M14,
+                    mat.M21, mat.M22, mat.M23, mat.M24,
+                    mat.M31, mat.M32, mat.M33, mat.M34,
+                    mat.M41, mat.M42, mat.M43, mat.M44);
             }
             else
             {
                 return new Matrix44(
-                    mat.R0C0, mat.R0C1, mat.R0C2, mat.R0C3,
-                    mat.R1C0, mat.R1C1, mat.R1C2, mat.R1C3,
-                    mat.R2C0, mat.R2C1, mat.R2C2, mat.R2C3,
-                    mat.R3C0, mat.R3C1, mat.R3C2, mat.R3C3
-                    );
+                    mat.M11, mat.M12, mat.M13, mat.M14,
+                    mat.M21, mat.M22, mat.M23, mat.M24,
+                    mat.M31, mat.M32, mat.M33, mat.M34,
+                    mat.M41, mat.M42, mat.M43, mat.M44);
             }
         }
 
@@ -1002,14 +998,16 @@ namespace Cor.Platform.Managed.Xios
     public sealed class Engine
         : ICor
     {
-        TouchScreen touchScreen;
-        AppSettings settings;
-        IApp app;
-        IGraphicsManager graphicsManager;
-        IResourceManager resourceManager;
-        InputManager inputManager;
-        SystemManager systemManager;
-        AudioManager audioManager;
+        readonly TouchScreen touchScreen;
+        readonly AppSettings settings;
+        readonly IApp app;
+        readonly GraphicsManager graphics;
+        readonly ResourceManager resources;
+        readonly InputManager input;
+        readonly SystemManager system;
+        readonly AudioManager audio;
+        readonly LogManager log;
+        readonly AssetManager assets;
 
         internal Engine(
             AppSettings settings,
@@ -1022,16 +1020,19 @@ namespace Cor.Platform.Managed.Xios
 
             this.app = app;
 
+            this.graphics = new GraphicsManager(gfxContext);
 
-            this.graphicsManager = new GraphicsManager(gfxContext);
-
-            this.resourceManager = new ResourceManager();
+            this.resources = new ResourceManager();
 
             this.touchScreen = new TouchScreen(this, view, touches);
 
-            this.systemManager = new SystemManager(touchScreen);
+            this.system = new SystemManager(touchScreen);
 
-            this.inputManager = new InputManager(this, this.touchScreen);
+            this.input = new InputManager(this, this.touchScreen);
+
+            this.log = new LogManager(this.settings.LogSettings);
+            
+            this.assets = new AssetManager(this.graphics, this.resources);
 
             this.app.Initilise(this);
 
@@ -1045,57 +1046,29 @@ namespace Cor.Platform.Managed.Xios
             }
         }
 
-        public IAudioManager Audio
-        {
-            get
-            {
-                return audioManager;
-            }
-        }
+        #region ICor
 
-        public AppSettings Settings
-        {
-            get
-            {
-                return this.settings;
-            }
-        }
+        public IAudioManager Audio { get { return this.audio; } }
 
-        public ISystemManager System
-        {
-            get
-            {
-                return systemManager;
-            }
-        }
+        public IGraphicsManager Graphics { get { return this.graphics; } }
 
-        public IGraphicsManager Graphics
-        { 
-            get
-            {
-                return graphicsManager;
-            }
-        }
+        public IResourceManager Resources { get { return this.resources; } }
 
-        public IResourceManager Resources
-        { 
-            get
-            {
-                return resourceManager;
-            }
-        }
-        
-        public IInputManager Input
-        {
-            get
-            {
-                return inputManager;
-            }
-        }
+        public IInputManager Input { get { return this.input; } }
+
+        public ISystemManager System { get { return this.system; } }
+
+        public LogManager Log { get { return this.log; } }
+
+        public AssetManager Assets { get { return this.assets; } }
+
+        public AppSettings Settings { get { return this.settings; } }
+
+        #endregion
 
         internal Boolean Update(AppTime time)
         {
-            inputManager.Update(time);
+            input.Update(time);
             return app.Update(time);
         }
 
@@ -1106,53 +1079,6 @@ namespace Cor.Platform.Managed.Xios
 
     }
     
-    public sealed class GeometryBuffer
-        : IGeometryBuffer
-    {
-        IndexBuffer _iBuf;
-        VertexBuffer _vBuf;
-        
-        public GeometryBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount, Int32 indexCount)
-        {
-
-            if(vertexCount == 0)
-            {
-                throw new Exception("A geometry buffer must have verts");
-            }
-
-            if( indexCount != 0 )
-            {
-                _iBuf = new IndexBuffer(indexCount);
-            }
-
-            _vBuf = new VertexBuffer(vertexDeclaration, vertexCount);
-
-        }
-
-        internal void Activate()
-        {
-            _vBuf.Activate();
-
-            if( _iBuf != null )
-                _iBuf.Activate();
-        }
-
-        internal void Deactivate()
-        {
-            _vBuf.Deactivate();
-
-            if( _iBuf != null )
-                _iBuf.Deactivate();
-        }
-
-
-        
-        public IVertexBuffer VertexBuffer { get { return _vBuf; } }
-        public IIndexBuffer IndexBuffer { get { return _iBuf; } }
-
-        internal VertexBuffer OpenTKVertexBuffer { get { return _vBuf; } }
-    }
-
     public sealed class GpuUtils
         : IGpuUtils
     {
@@ -1594,165 +1520,6 @@ namespace Cor.Platform.Managed.Xios
             throw new NotImplementedException();
         }
     }
-    public sealed class IndexBuffer
-        : IIndexBuffer
-        , IDisposable
-    {
-        static Int32 resourceCounter;
-
-        Int32 indexCount;
-        OpenTK.Graphics.ES20.BufferTarget type;
-        UInt32 bufferHandle;
-        OpenTK.Graphics.ES20.BufferUsage bufferUsage;
-
-        public IndexBuffer (Int32 indexCount)
-        {
-            this.indexCount = indexCount;
-
-            this.type = OpenTK.Graphics.ES20.BufferTarget.ElementArrayBuffer;
-
-            this.bufferUsage = OpenTK.Graphics.ES20.BufferUsage.DynamicDraw;
-
-            OpenTK.Graphics.ES20.GL.GenBuffers(1, out this.bufferHandle);
-            //try
-            //{
-            ErrorHandler.Check();
-            //}
-            //catch
-            //{
-                //todo: why is this firing?
-            //}
-
-            if( this.bufferHandle == 0 )
-            {
-                throw new Exception("Failed to generate vert buffer.");
-            }
-
-            this.Activate();
-
-            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
-            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
-            // then content of data are copied to the allocated data store.  The contents of the buffer object data
-            // store can be initialized or updated using the glBufferSubData FN
-            OpenTK.Graphics.ES20.GL.BufferData(
-                this.type,
-                (System.IntPtr) (sizeof(UInt16) * this.indexCount),
-                (System.IntPtr) null,
-                this.bufferUsage);
-
-            ErrorHandler.Check();
-
-            resourceCounter++;
-
-        }
-
-        ~IndexBuffer()
-        {
-            CleanUpNativeResources();
-        }
-
-        void CleanUpManagedResources()
-        {
-
-        }
-
-        void CleanUpNativeResources()
-        {
-            OpenTK.Graphics.ES20.GL.DeleteBuffers(1, ref this.bufferHandle);
-            ErrorHandler.Check();
-
-            bufferHandle = 0;
-
-            resourceCounter--;
-        }
-
-        public void Dispose()
-        {
-            CleanUpManagedResources();
-            CleanUpNativeResources();
-            GC.SuppressFinalize(this);
-        }
-
-        internal void Activate()
-        {
-            OpenTK.Graphics.ES20.GL.BindBuffer(this.type, this.bufferHandle);
-            ErrorHandler.Check();
-        }
-
-        internal void Deactivate()
-        {
-            OpenTK.Graphics.ES20.GL.BindBuffer(this.type, 0);
-            ErrorHandler.Check();
-        }
-
-
-        public void SetData (Int32[] data)
-        {
-
-            if( data.Length != indexCount )
-            {
-                throw new Exception("?");
-            }
-
-            UInt16[] udata = new UInt16[data.Length];
-
-            for(Int32 i = 0; i < data.Length; ++i)
-            {
-                udata[i] = (UInt16) data[i];
-            }
-            
-            this.Activate();
-
-            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
-            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
-            // then content of data are copied to the allocated data store.  The contents of the buffer object data
-            // store can be initialized or updated using the glBufferSubData FN
-            OpenTK.Graphics.ES20.GL.BufferSubData(
-                this.type,
-                (System.IntPtr) 0,
-                (System.IntPtr) (sizeof(UInt16) * this.indexCount),
-                udata);
-
-            udata = null;
-
-            ErrorHandler.Check();
-        }
-
-        public int IndexCount
-        {
-            get
-            {
-                return indexCount;
-            }
-        }
-
-        public void GetData(Int32[] data)
-        {
-            throw new NotImplementedException();    
-        }
-
-        public void GetData(Int16[] data, Int32 startIndex, Int32 elementCount)
-        {
-            throw new NotImplementedException();    
-        }
-
-        public void GetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount)
-        {
-            throw new NotImplementedException();    
-        }
-
-        public void SetData(Int16[] data, Int32 startIndex, Int32 elementCount)
-        {
-            throw new NotImplementedException();    
-        }
-
-        public void SetData(Int32 offsetInBytes, Int16[] data, Int32 startIndex, Int32 elementCount)
-        {
-            throw new NotImplementedException();    
-        }
-
-    }
-
     public sealed class InputManager
         : IInputManager
     {
@@ -2166,6 +1933,16 @@ namespace Cor.Platform.Managed.Xios
                 return (T)(IResource) tex;
             }
             
+            throw new NotImplementedException();
+        }
+
+        public T Open<T>(string path) where T : IDisposable
+        {
+            if(typeof(T) == typeof(StreamReader))
+            {
+                return (T)(IDisposable) new StreamReader(path);
+            }
+
             throw new NotImplementedException();
         }
 
@@ -3128,154 +2905,6 @@ namespace Cor.Platform.Managed.Xios
         }
     }
 
-    //
-    // After the buffer object data store has been initialized or updated using
-    // the glBufferData or the glBufferSubData FN, the client data store is no longer
-    // needed and can be realeased.  For static geometry, applications can free
-    // the client data store and reduce the overall system memory consumed by the application.
-    //
-    public sealed class VertexBuffer
-        : IVertexBuffer
-        , IDisposable
-    {
-        Int32 resourceCounter;
-        VertexDeclaration vertDecl;
-
-        Int32 vertexCount;
-
-        UInt32 bufferHandle;
-
-        OpenTK.Graphics.ES20.BufferTarget type;
-        OpenTK.Graphics.ES20.BufferUsage bufferUsage;
-
-        public VertexBuffer (VertexDeclaration vd, Int32 vertexCount)
-        {
-            this.vertDecl = vd;
-            this.vertexCount = vertexCount;
-
-            this.type = OpenTK.Graphics.ES20.BufferTarget.ArrayBuffer;
-
-            this.bufferUsage = OpenTK.Graphics.ES20.BufferUsage.DynamicDraw;
-
-            OpenTK.Graphics.ES20.GL.GenBuffers(1, out this.bufferHandle);
-            ErrorHandler.Check();
-
-
-            if( this.bufferHandle == 0 )
-            {
-                throw new Exception("Failed to generate vert buffer.");
-            }
-            
-
-            this.Activate();
-
-            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
-            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
-            // then content of data are copied to the allocated data store.  The contents of the buffer object data
-            // store can be initialized or updated using the glBufferSubData FN
-            OpenTK.Graphics.ES20.GL.BufferData(
-                this.type,
-                (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
-                (System.IntPtr) null,
-                this.bufferUsage);
-
-            ErrorHandler.Check();
-
-            resourceCounter++;
-
-        }
-
-        internal void Activate()
-        {
-            OpenTK.Graphics.ES20.GL.BindBuffer(this.type, this.bufferHandle);
-            ErrorHandler.Check();
-        }
-
-        internal void Deactivate()
-        {
-            OpenTK.Graphics.ES20.GL.BindBuffer(this.type, 0);
-            ErrorHandler.Check();
-        }
-
-        ~VertexBuffer()
-        {
-            CleanUpNativeResources();
-        }
-
-        void CleanUpManagedResources()
-        {
-
-        }
-
-        void CleanUpNativeResources()
-        {
-            OpenTK.Graphics.ES20.GL.DeleteBuffers(1, ref this.bufferHandle);
-            ErrorHandler.Check();
-
-            bufferHandle = 0;
-
-            resourceCounter--;
-        }
-
-        public void Dispose()
-        {
-            CleanUpManagedResources();
-            CleanUpNativeResources();
-            GC.SuppressFinalize(this);
-        }
-
-        public void SetData<T> (T[] data)
-            where T: struct, IVertexType
-        {
-            if( data.Length != vertexCount )
-            {
-                throw new Exception("?");
-            }
-            
-            this.Activate();
-
-            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
-            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
-            // then content of data are copied to the allocated data store.  The contents of the buffer object data
-            // store can be initialized or updated using the glBufferSubData FN
-            OpenTK.Graphics.ES20.GL.BufferSubData(
-                this.type,
-                (System.IntPtr) 0,
-                (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
-                data);
-
-            ErrorHandler.Check();
-        }
-
-
-        public Int32 VertexCount
-        {
-            get
-            {
-                return this.vertexCount;
-            }
-        }
-
-        public VertexDeclaration VertexDeclaration 
-        {
-            get
-            {
-                return this.vertDecl;
-            }
-        } 
-
-        public void GetData<T> (T[] data) where T: struct, IVertexType { throw new System.NotSupportedException(); }
-        
-        public void GetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType { throw new System.NotSupportedException(); }
-        
-        public void GetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType { throw new System.NotSupportedException(); }
-        
-        public void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType { throw new System.NotSupportedException(); }
-        
-        public void SetData<T> (Int32 offsetInBytes, T[] data, Int32 startIndex, Int32 elementCount, Int32 vertexStride) where T: struct, IVertexType { throw new System.NotSupportedException(); }
-
-    }
-
     public sealed class CorAppEngine
     {
         OpenGLViewController viewController;
@@ -3931,7 +3560,7 @@ namespace Cor.Platform.Managed.Xios
                         NiceName = "AmbientLightColour",
                         Name = "u_liAmbient",
                         Type = typeof(Rgba32),
-                        DefaultValue = Rgba32.Gray,
+                        DefaultValue = Rgba32.Grey,
                     },
                     new ShaderVariableDefinition()
                     {
@@ -4217,7 +3846,7 @@ namespace Cor.Platform.Managed.Xios
                         NiceName = "AmbientLightColour",
                         Name = "u_liAmbient",
                         Type = typeof(Rgba32),
-                        DefaultValue = Rgba32.Gray,
+                        DefaultValue = Rgba32.Grey,
                     },
                     new ShaderVariableDefinition()
                     {

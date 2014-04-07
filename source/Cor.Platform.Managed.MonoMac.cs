@@ -2356,16 +2356,16 @@ namespace Cor.Platform.Managed.MonoMac
         NSImage nsImage;
 
         int pixelsWide;
-        int pixelsHigh;  
+        int pixelsHigh;
 
         internal static OpenGLTexture CreateFromFile(string path)
         {
             using(var fStream = new FileStream(path, FileMode.Open))
             {
                 var nsImage = NSImage.FromStream( fStream );
-    
+
                 var texture = new OpenGLTexture(nsImage);
-    
+
                 return texture;
             }
         }
@@ -2383,14 +2383,14 @@ namespace Cor.Platform.Managed.MonoMac
         IntPtr RequestImagePixelData (NSImage inImage)
         {
             var imageSize = inImage.Size;
-            
+
             CGBitmapContext ctxt = CreateRgbaBitmapContext (inImage.CGImage);
-            
+
             var rect = new RectangleF (0, 0, imageSize.Width, imageSize.Height);
-            
+
             ctxt.DrawImage (rect, inImage.CGImage);
             var data = ctxt.Data;
-            
+
             return data;
         }
 
@@ -2409,14 +2409,14 @@ namespace Cor.Platform.Managed.MonoMac
                 {
                     throw new Exception ("Memory not allocated.");
                 }
-                
+
                 var context = new CGBitmapContext (
-                    bitmapData, 
-                    pixelsWide, 
-                    pixelsHigh, 
+                    bitmapData,
+                    pixelsWide,
+                    pixelsHigh,
                     8,
-                    bitmapBytesPerRow, 
-                    colorSpace, 
+                    bitmapBytesPerRow,
+                    colorSpace,
                     CGImageAlphaInfo.PremultipliedLast);
 
                 if (context == null)
@@ -2427,7 +2427,7 @@ namespace Cor.Platform.Managed.MonoMac
                 return context;
             }
         }
-        
+
 
 
         public override int Width
@@ -2445,12 +2445,12 @@ namespace Cor.Platform.Managed.MonoMac
             }
         }
 
-        
+
         void CreateTexture2D(int width, int height, IntPtr pixelDataRgba32)
         {
             int textureId = -1;
-            
-            
+
+
             // this sets the unpack alignment.  which is used when reading pixels
             // in the fragment shader.  when the textue data is uploaded via glTexImage2d,
             // the rows of pixels are assumed to be aligned to the value set for GL_UNPACK_ALIGNMENT.
@@ -2460,7 +2460,7 @@ namespace Cor.Platform.Managed.MonoMac
             ErrorHandler.Check();
 
             // the first sept in the application of texture is to create the
-            // texture object.  this is a container object that holds the 
+            // texture object.  this is a container object that holds the
             // texture data.  this function returns a handle to a texture
             // object.
             global::MonoMac.OpenGL.GL.GenTextures(1, out textureId);
@@ -2468,28 +2468,31 @@ namespace Cor.Platform.Managed.MonoMac
 
             this.glTextureId = textureId;
 
-            var textureTarget = global::MonoMac.OpenGL.TextureTarget.Texture2D;            
-            
+            var textureTarget = global::MonoMac.OpenGL.TextureTarget.Texture2D;
+
             // we need to bind the texture object so that we can opperate on it.
             global::MonoMac.OpenGL.GL.BindTexture(textureTarget, textureId);
             ErrorHandler.Check();
 
-            var internalFormat = global::MonoMac.OpenGL.PixelInternalFormat.Rgba;
+            // the incoming texture format
+            // (the format that [pixelDataRgba32] is in)
             var format = global::MonoMac.OpenGL.PixelFormat.Rgba;
-            
+
+            var internalFormat = global::MonoMac.OpenGL.PixelInternalFormat.Rgba;
+
             var textureDataFormat = global::MonoMac.OpenGL.PixelType.UnsignedByte;
-            
+
             // now use the bound texture object to load the image data.
             global::MonoMac.OpenGL.GL.TexImage2D(
-                
+
                 // specifies the texture target, either GL_TEXTURE_2D or one of the cubemap face targets.
                 textureTarget,
-                
+
                 // specifies which mip level to load.  the base level is
                 // specified by 0 following by an increasing level for each
                 // successive mipmap.
                 0,
-                
+
                 // internal format for the texture storage, can be:
                 // - GL_RGBA
                 // - GL_RGB
@@ -2497,30 +2500,30 @@ namespace Cor.Platform.Managed.MonoMac
                 // - GL_LUMINANCE
                 // - GL_ALPHA
                 internalFormat,
-                
+
                 // the width of the image in pixels
                 width,
-                
+
                 // the height of the image in pixels
                 height,
-                
+
                 // boarder - set to zero, only here for compatibility with OpenGL desktop
                 0,
-                
-                // the format of the incoming texture data, in opengl es this 
+
+                // the format of the incoming texture data, in opengl es this
                 // has to be the same as the internal format
                 format,
-                
+
                 // the type of the incoming pixel data, can be:
                 // - unsigned byte
                 // - unsigned short 4444
                 // - unsigned short 5551
                 // - unsigned short 565
                 textureDataFormat, // this refers to each individual channel
-                
-                
+
+
                 pixelDataRgba32
-                
+
                 );
 
             ErrorHandler.Check();
@@ -2536,13 +2539,13 @@ namespace Cor.Platform.Managed.MonoMac
 
             ErrorHandler.Check();
         }
-        
-        
-        
+
+
+
         void DeleteTexture(Texture2D texture)
         {
             int textureId = (texture as OpenGLTexture).glTextureId;
-            
+
             global::MonoMac.OpenGL.GL.DeleteTextures(1, ref textureId);
         }
     }

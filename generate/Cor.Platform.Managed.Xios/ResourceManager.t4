@@ -29,6 +29,16 @@
             throw new NotImplementedException();
         }
 
+        public T Open<T>(string path) where T : IDisposable
+        {
+            if(typeof(T) == typeof(StreamReader))
+            {
+                return (T)(IDisposable) new StreamReader(path);
+            }
+
+            throw new NotImplementedException();
+        }
+
         public IShader LoadShader(ShaderType shaderType)
         {
             if( !shaderCache.ContainsKey(shaderType) )
