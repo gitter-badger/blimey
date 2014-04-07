@@ -102,27 +102,27 @@
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="..\..\..\source\Cor.Demo\BasicApp.cs">
-      <Link>Source\BasicApp.cs</Link>
+      <Link>source\BasicApp.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Cor.Demo\CustomCube_PositionTexture.cs">
-      <Link>Source\CustomCube_PositionTexture.cs</Link>
+      <Link>source\CustomCube_PositionTexture.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Cor.Demo\CustomCylinder_PositionNormalTexture.cs">
-      <Link>Source\CustomCylinder_PositionNormalTexture.cs</Link>
+      <Link>source\CustomCylinder_PositionNormalTexture.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Cor.Demo\CustomShape_PositionColour.cs">
-      <Link>Source\CustomShape_PositionColour.cs</Link>
+      <Link>source\CustomShape_PositionColour.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Cor.Demo\Demo.cs">
-      <Link>Source\Demo.cs</Link>
+      <Link>source\Demo.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Cor.Demo\RandomColours.cs">
-      <Link>Source\RandomColours.cs</Link>
+      <Link>source\RandomColours.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="Source\" />
+    <Folder Include="source\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
