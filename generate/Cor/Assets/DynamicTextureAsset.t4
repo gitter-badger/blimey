@@ -1,0 +1,9 @@
+        public class DynamicTextureAsset<T>
+            : IAsset
+        where T
+            : TextureAsset
+        {
+            public T Texture { get; set; }
+            public List<T> MipMaps { get; set; }
+        }
+

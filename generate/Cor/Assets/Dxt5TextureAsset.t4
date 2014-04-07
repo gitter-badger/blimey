@@ -1,0 +1,24 @@
+        public class Dxt5TexureAsset
+            : DxtTextureAsset
+        {
+            public override Int32 Width
+            {
+                get { throw new NotImplementedException (); }
+            }
+
+            public override Int32 Height
+            {
+                get { throw new NotImplementedException (); }
+            }
+
+            public override SurfaceFormat SurfaceFormat
+            {
+                get { return SurfaceFormat.Dxt5; }
+            }
+
+            public override Byte[] TextureData
+            {
+                get { throw new NotImplementedException (); }
+            }
+        }
+

@@ -1,0 +1,26 @@
+        public class PvrtcTextureAsset
+            : TextureAsset
+        {
+            public Int32 BitsPerPixel { get; set; }
+
+            public override Int32 Width
+            {
+                get { throw new NotImplementedException (); }
+            }
+
+            public override Int32 Height
+            {
+                get { throw new NotImplementedException (); }
+            }
+
+            public override SurfaceFormat SurfaceFormat
+            {
+                get { return SurfaceFormat.Pvrtc; }
+            }
+
+            public override Byte[] TextureData
+            {
+                get { throw new NotImplementedException (); }
+            }
+        }
+

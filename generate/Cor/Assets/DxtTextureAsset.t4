@@ -1,0 +1,6 @@
+        public abstract class DxtTextureAsset
+            : TextureAsset
+        {
+            public Int32 BlockSize { get; set; }
+        }
+

@@ -157,43 +157,54 @@ namespace Cor
 
     #region Assets
 
-<#@ include file="Assets/AssetTypeSerialiser.t4"#>
-<#@ include file="Assets/AssetManager.t4"#>
-<#@ include file="Assets/AssetTypeSerialiserManager.t4"#>
-<#@ include file="Assets/AssetBinaryReader.t4"#>
-<#@ include file="Assets/AssetBinaryWriter.t4"#>
+<#@ include file="Assets/Dxt1TextureAsset.t4"#>
+<#@ include file="Assets/Dxt3TextureAsset.t4"#>
+<#@ include file="Assets/Dxt5TextureAsset.t4"#>
+<#@ include file="Assets/DxtTextureAsset.t4"#>
+<#@ include file="Assets/DynamicTextureAsset.t4"#>
+<#@ include file="Assets/PvrtcTextureAsset.t4"#>
+<#@ include file="Assets/TextureAsset.t4"#>
+    #endregion
+
+    #region AssetSystem
+
+<#@ include file="AssetSystem/AssetTypeSerialiser.t4"#>
+<#@ include file="AssetSystem/AssetManager.t4"#>
+<#@ include file="AssetSystem/AssetTypeSerialiserManager.t4"#>
+<#@ include file="AssetSystem/AssetBinaryReader.t4"#>
+<#@ include file="AssetSystem/AssetBinaryWriter.t4"#>
     #endregion
 
     #region AssetTypeSerialisers
 
-<#@ include file="Assets/TypeSerialisers/System/Int64Serialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/BooleanSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/ByteSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/CharSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/DecimalSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/DoubleSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/Int16Serialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/Int32Serialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/SByteSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/SingleSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/StringSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/TimespanSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/UInt16Serialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/UInt32Serialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/UInt64Serialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/ListSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/NullableSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/EnumSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/ArraySerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/System/DictionarySerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/Abacus/Rgba32Serialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/Abacus/Matrix44Serialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/Abacus/QuaternionSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/Abacus/Vector2Serialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/Abacus/Vector3Serialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/Abacus/Vector4Serialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/Cor/VertexDeclarationSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/Cor/VertexElementSerialiser.t4"#>
-<#@ include file="Assets/TypeSerialisers/Cor/GeometryBufferSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/Int64Serialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/BooleanSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/ByteSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/CharSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/DecimalSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/DoubleSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/Int16Serialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/Int32Serialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/SByteSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/SingleSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/StringSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/TimespanSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/UInt16Serialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/UInt32Serialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/UInt64Serialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/ListSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/NullableSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/EnumSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/ArraySerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/System/DictionarySerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/Abacus/Rgba32Serialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/Abacus/Matrix44Serialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/Abacus/QuaternionSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/Abacus/Vector2Serialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/Abacus/Vector3Serialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/Abacus/Vector4Serialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/Cor/VertexDeclarationSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/Cor/VertexElementSerialiser.t4"#>
+<#@ include file="AssetTypeSerialisers/Cor/GeometryBufferSerialiser.t4"#>
     #endregion
 }

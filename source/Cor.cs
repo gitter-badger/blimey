@@ -105,6 +105,11 @@ namespace Cor
 
     #region Interfaces
 
+        public interface IAsset
+        {
+
+        }
+
     /// <summary>
     /// todo
     /// </summary>
@@ -1744,16 +1749,8 @@ namespace Cor
 
     public enum SurfaceFormat
     {
-        Alpha8,
-        Bgr_5_6_5,
-        Bgra16,
-        Bgra_5_5_5_1,
-        Byte4,
-        Rgba32,
-
-        RgbaPvrtc2Bpp,
-        RgbaPvrtc4Bpp,
-
+        Bitmap,
+        Pvrtc,
         Dxt1,
         Dxt3,
         Dxt5,
@@ -4214,6 +4211,134 @@ namespace Cor
     #endregion
 
     #region Assets
+
+        public class Dxt1TexureAsset
+            : DxtTextureAsset
+        {
+            public override Int32 Width
+            {
+                get { throw new NotImplementedException (); }
+            }
+
+            public override Int32 Height
+            {
+                get { throw new NotImplementedException (); }
+            }
+
+            public override SurfaceFormat SurfaceFormat
+            {
+                get { return SurfaceFormat.Dxt1; }
+            }
+
+            public override Byte[] TextureData
+            {
+                get { throw new NotImplementedException (); }
+            }
+        }
+
+        public class Dxt3TexureAsset
+            : DxtTextureAsset
+        {
+            public override Int32 Width
+            {
+                get { throw new NotImplementedException (); }
+            }
+
+            public override Int32 Height
+            {
+                get { throw new NotImplementedException (); }
+            }
+
+            public override SurfaceFormat SurfaceFormat
+            {
+                get { return SurfaceFormat.Dxt3; }
+            }
+
+            public override Byte[] TextureData
+            {
+                get { throw new NotImplementedException (); }
+            }
+        }
+
+        public class Dxt5TexureAsset
+            : DxtTextureAsset
+        {
+            public override Int32 Width
+            {
+                get { throw new NotImplementedException (); }
+            }
+
+            public override Int32 Height
+            {
+                get { throw new NotImplementedException (); }
+            }
+
+            public override SurfaceFormat SurfaceFormat
+            {
+                get { return SurfaceFormat.Dxt5; }
+            }
+
+            public override Byte[] TextureData
+            {
+                get { throw new NotImplementedException (); }
+            }
+        }
+
+        public abstract class DxtTextureAsset
+            : TextureAsset
+        {
+            public Int32 BlockSize { get; set; }
+        }
+
+        public class DynamicTextureAsset<T>
+            : IAsset
+        where T
+            : TextureAsset
+        {
+            public T Texture { get; set; }
+            public List<T> MipMaps { get; set; }
+        }
+
+        public class PvrtcTextureAsset
+            : TextureAsset
+        {
+            public Int32 BitsPerPixel { get; set; }
+
+            public override Int32 Width
+            {
+                get { throw new NotImplementedException (); }
+            }
+
+            public override Int32 Height
+            {
+                get { throw new NotImplementedException (); }
+            }
+
+            public override SurfaceFormat SurfaceFormat
+            {
+                get { return SurfaceFormat.Pvrtc; }
+            }
+
+            public override Byte[] TextureData
+            {
+                get { throw new NotImplementedException (); }
+            }
+        }
+
+        public abstract class TextureAsset
+            : IAsset
+        {
+            public abstract Int32 Width { get; }
+            public abstract Int32 Height { get; }
+
+            public abstract SurfaceFormat SurfaceFormat { get; }
+
+            public abstract Byte[] TextureData { get; }
+        }
+
+    #endregion
+
+    #region AssetSystem
 
     public abstract class AssetTypeSerialiser
     {
