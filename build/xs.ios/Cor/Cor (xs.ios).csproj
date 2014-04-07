@@ -113,7 +113,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\abacus\build_examples\xs.ios\Abacus\Abacus %28xs.ios%29.csproj">
+    <ProjectReference Include="..\..\..\..\abacus\build\xs.ios\Abacus\Abacus %28xs.ios%29.csproj">
       <Project>{DE5491E6-4DF9-4BBB-9985-E7CD86905D41}</Project>
       <Name>Abacus (xs.ios)</Name>
     </ProjectReference>

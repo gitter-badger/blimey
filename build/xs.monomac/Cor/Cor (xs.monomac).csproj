@@ -64,7 +64,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\abacus\build_examples\xs.monomac\Abacus\Abacus %28xs.monomac%29.csproj">
+    <ProjectReference Include="..\..\..\..\abacus\build\xs.monomac\Abacus\Abacus %28xs.monomac%29.csproj">
       <Project>{97195993-2B6B-434B-8F2C-BD0A4BCDC70A}</Project>
       <Name>Abacus (xs.monomac)</Name>
     </ProjectReference>

@@ -8,7 +8,7 @@
     <ProjectGuid>{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Cor</RootNamespace>
-    <AssemblyName>Cor</AssemblyName>
+    <AssemblyName>Cor_mono40</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,15 +33,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\source\Cor.cs">
+    <Compile Include="..\..\..\source\Cor.cs">
       <Link>Cor.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\..\abacus\build_examples\Abacus\Abacus %28net40%29.csproj">
+    <ProjectReference Include="..\..\..\..\abacus\build\xs.mono40\Abacus\Abacus %28xs.mono40%29.csproj">
       <Project>{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}</Project>
-      <Name>Abacus (net40)</Name>
+      <Name>Abacus (xs.mono40)</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

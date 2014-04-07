@@ -44,7 +44,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\abacus\build_examples\Abacus\Abacus %28psm%29.csproj">
+    <ProjectReference Include="..\..\..\abacus\build\Abacus\Abacus %28psm%29.csproj">
       <Project>{D7DE17E0-DD0E-4AE2-9596-E9BD352DC92D}</Project>
       <Name>Abacus (psm)</Name>
     </ProjectReference>
