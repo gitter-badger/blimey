@@ -101,11 +101,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\abacus\build_examples\xs.ios\Abacus\Abacus %28xs.ios%29.csproj">
+    <ProjectReference Include="..\..\..\..\abacus\build\xs.ios\Abacus\Abacus %28xs.ios%29.csproj">
       <Project>{DE5491E6-4DF9-4BBB-9985-E7CD86905D41}</Project>
       <Name>Abacus (xs.ios)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\cor\build_examples\xs.ios\Cor\Cor %28xs.ios%29.csproj">
+    <ProjectReference Include="..\..\..\..\cor\build\xs.ios\Cor\Cor %28xs.ios%29.csproj">
       <Project>{C8436444-EAAC-4B9A-A8E3-6F8494186F57}</Project>
       <Name>Cor (xs.ios)</Name>
     </ProjectReference>
