@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Demo.Xdroid (xdroid)", "Blimey.Demo.Xdroid\Blimey.Demo.Xdroid (xdroid).csproj", "{896DFA7F-7355-409B-B4EA-2DC12EF9477F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Demo.Xdroid (xdroid)", "Cor.Demo.Xdroid\Cor.Demo.Xdroid (xdroid).csproj", "{BF87212B-A700-4B70-9C49-32CC977A9D10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacus (xdroid)", "..\submodules\abacus\build\Abacus\Abacus (xdroid).csproj", "{C381B68E-E70B-4BA1-BE9B-CA6164C5A881}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor (xdroid)", "..\submodules\cor\build\Cor\Cor (xdroid).csproj", "{CA61A408-7FC3-406A-B135-2D687CBD00C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Demo (xdroid)", "..\submodules\blimey.demo\build\Blimey.Demo\Blimey.Demo (xdroid).csproj", "{3CDFAEE2-5D7A-4259-B1A1-E1632DFF2DF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Demo (xdroid)", "..\submodules\cor.demo\build\Cor.Demo\Cor.Demo (xdroid).csproj", "{DC751E47-B4C1-4E85-ACCC-966D67E18E03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey (xdroid)", "..\submodules\blimey\build\Blimey\Blimey (xdroid).csproj", "{AB35B5C5-79DF-4FA7-A8FB-105DD645550F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Xdroid (xdroid)", "..\submodules\cor.xdroid\build\Cor.Xdroid\Cor.Xdroid (xdroid).csproj", "{76BF38BE-B229-4905-B72E-9D4A0EDFD891}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3CDFAEE2-5D7A-4259-B1A1-E1632DFF2DF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CDFAEE2-5D7A-4259-B1A1-E1632DFF2DF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CDFAEE2-5D7A-4259-B1A1-E1632DFF2DF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CDFAEE2-5D7A-4259-B1A1-E1632DFF2DF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76BF38BE-B229-4905-B72E-9D4A0EDFD891}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76BF38BE-B229-4905-B72E-9D4A0EDFD891}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76BF38BE-B229-4905-B72E-9D4A0EDFD891}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76BF38BE-B229-4905-B72E-9D4A0EDFD891}.Release|Any CPU.Build.0 = Release|Any CPU
+		{896DFA7F-7355-409B-B4EA-2DC12EF9477F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{896DFA7F-7355-409B-B4EA-2DC12EF9477F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{896DFA7F-7355-409B-B4EA-2DC12EF9477F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{896DFA7F-7355-409B-B4EA-2DC12EF9477F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB35B5C5-79DF-4FA7-A8FB-105DD645550F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB35B5C5-79DF-4FA7-A8FB-105DD645550F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB35B5C5-79DF-4FA7-A8FB-105DD645550F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB35B5C5-79DF-4FA7-A8FB-105DD645550F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF87212B-A700-4B70-9C49-32CC977A9D10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF87212B-A700-4B70-9C49-32CC977A9D10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF87212B-A700-4B70-9C49-32CC977A9D10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF87212B-A700-4B70-9C49-32CC977A9D10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C381B68E-E70B-4BA1-BE9B-CA6164C5A881}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C381B68E-E70B-4BA1-BE9B-CA6164C5A881}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C381B68E-E70B-4BA1-BE9B-CA6164C5A881}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C381B68E-E70B-4BA1-BE9B-CA6164C5A881}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA61A408-7FC3-406A-B135-2D687CBD00C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA61A408-7FC3-406A-B135-2D687CBD00C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA61A408-7FC3-406A-B135-2D687CBD00C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA61A408-7FC3-406A-B135-2D687CBD00C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC751E47-B4C1-4E85-ACCC-966D67E18E03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC751E47-B4C1-4E85-ACCC-966D67E18E03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC751E47-B4C1-4E85-ACCC-966D67E18E03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC751E47-B4C1-4E85-ACCC-966D67E18E03}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Cor.Demo.Xdroid\Cor.Demo.Xdroid (xdroid).csproj
+	EndGlobalSection
+EndGlobal

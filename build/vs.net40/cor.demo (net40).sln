@@ -1,0 +1,87 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacus (net40)", "..\submodules\abacus\build\Abacus\Abacus (net40).csproj", "{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey (net40)", "..\submodules\blimey\build\Blimey\Blimey (net40).csproj", "{DCD6F568-67C2-4C18-842B-417ACF84C5FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Demo (net40)", "..\submodules\blimey.demo\build\Blimey.Demo\Blimey.Demo (net40).csproj", "{C56A607A-958A-4A42-905C-50F98A1EFE4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor (net40)", "..\submodules\cor\build\Cor\Cor (net40).csproj", "{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Demo (net40)", "..\submodules\cor.demo\build\Cor.Demo\Cor.Demo (net40).csproj", "{FAC80B38-A913-40E4-8FAE-B80AE15B5D5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Platform.Stub (net40)", "..\submodules\cor.platform.stub\build\Cor.Platform.Stub\Cor.Platform.Stub (net40).csproj", "{D5DF7BE7-78FC-46FA-BC7B-C1DA12B5CEB2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}.Debug|x86.Build.0 = Debug|Any CPU
+		{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}.Release|x86.ActiveCfg = Release|Any CPU
+		{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}.Release|x86.Build.0 = Release|Any CPU
+		{C56A607A-958A-4A42-905C-50F98A1EFE4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C56A607A-958A-4A42-905C-50F98A1EFE4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C56A607A-958A-4A42-905C-50F98A1EFE4A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C56A607A-958A-4A42-905C-50F98A1EFE4A}.Debug|x86.Build.0 = Debug|Any CPU
+		{C56A607A-958A-4A42-905C-50F98A1EFE4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C56A607A-958A-4A42-905C-50F98A1EFE4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C56A607A-958A-4A42-905C-50F98A1EFE4A}.Release|x86.ActiveCfg = Release|Any CPU
+		{C56A607A-958A-4A42-905C-50F98A1EFE4A}.Release|x86.Build.0 = Release|Any CPU
+		{D5DF7BE7-78FC-46FA-BC7B-C1DA12B5CEB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5DF7BE7-78FC-46FA-BC7B-C1DA12B5CEB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5DF7BE7-78FC-46FA-BC7B-C1DA12B5CEB2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D5DF7BE7-78FC-46FA-BC7B-C1DA12B5CEB2}.Debug|x86.Build.0 = Debug|Any CPU
+		{D5DF7BE7-78FC-46FA-BC7B-C1DA12B5CEB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5DF7BE7-78FC-46FA-BC7B-C1DA12B5CEB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5DF7BE7-78FC-46FA-BC7B-C1DA12B5CEB2}.Release|x86.ActiveCfg = Release|Any CPU
+		{D5DF7BE7-78FC-46FA-BC7B-C1DA12B5CEB2}.Release|x86.Build.0 = Release|Any CPU
+		{DCD6F568-67C2-4C18-842B-417ACF84C5FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCD6F568-67C2-4C18-842B-417ACF84C5FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCD6F568-67C2-4C18-842B-417ACF84C5FB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DCD6F568-67C2-4C18-842B-417ACF84C5FB}.Debug|x86.Build.0 = Debug|Any CPU
+		{DCD6F568-67C2-4C18-842B-417ACF84C5FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCD6F568-67C2-4C18-842B-417ACF84C5FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCD6F568-67C2-4C18-842B-417ACF84C5FB}.Release|x86.ActiveCfg = Release|Any CPU
+		{DCD6F568-67C2-4C18-842B-417ACF84C5FB}.Release|x86.Build.0 = Release|Any CPU
+		{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}.Debug|x86.Build.0 = Debug|Any CPU
+		{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}.Release|x86.ActiveCfg = Release|Any CPU
+		{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}.Release|x86.Build.0 = Release|Any CPU
+		{FAC80B38-A913-40E4-8FAE-B80AE15B5D5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAC80B38-A913-40E4-8FAE-B80AE15B5D5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAC80B38-A913-40E4-8FAE-B80AE15B5D5B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FAC80B38-A913-40E4-8FAE-B80AE15B5D5B}.Debug|x86.Build.0 = Debug|Any CPU
+		{FAC80B38-A913-40E4-8FAE-B80AE15B5D5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAC80B38-A913-40E4-8FAE-B80AE15B5D5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAC80B38-A913-40E4-8FAE-B80AE15B5D5B}.Release|x86.ActiveCfg = Release|Any CPU
+		{FAC80B38-A913-40E4-8FAE-B80AE15B5D5B}.Release|x86.Build.0 = Release|Any CPU
+		{39484047-9CD3-48FE-8D58-110ED4D4106D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39484047-9CD3-48FE-8D58-110ED4D4106D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39484047-9CD3-48FE-8D58-110ED4D4106D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39484047-9CD3-48FE-8D58-110ED4D4106D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39484047-9CD3-48FE-8D58-110ED4D4106D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39484047-9CD3-48FE-8D58-110ED4D4106D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39484047-9CD3-48FE-8D58-110ED4D4106D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39484047-9CD3-48FE-8D58-110ED4D4106D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = ..\submodules\blimey.demo\build\Blimey.Demo\Blimey.Demo (net40).csproj
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

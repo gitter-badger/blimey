@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProjectGuid>{7B59701A-59AC-46CC-8D13-30FD09557285}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Blimey.Demo</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>XIOS;DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <MtouchDebug>True</MtouchDebug>
+    <MtouchLink>None</MtouchLink>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
+    <AssemblyName>BlimeyDemo_xs_ios</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+    <DefineConstants>XIOS;</DefineConstants>
+    <AssemblyName>SungiantCorDemoPlatformManagedXios</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG;XIOS;AOT;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <CodesignKey>iPhone Developer: Ashleigh Pook (9L6336R47Y)</CodesignKey>
+    <MtouchDebug>True</MtouchDebug>
+    <IpaPackageName>
+    </IpaPackageName>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7, ARMv7s</MtouchArch>
+    <CodesignProvision>B77A780A-45F1-4792-B935-BAC05C597EFC</CodesignProvision>
+    <CrashReportingApiKey>
+    </CrashReportingApiKey>
+    <AssemblyName>SungiantCorDemoXios</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <DefineConstants>XIOS;AOT;</DefineConstants>
+    <AssemblyName>SungiantCorDemoXios</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <BuildIpa>True</BuildIpa>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <DefineConstants>XIOS;AOT;</DefineConstants>
+    <AssemblyName>SungiantCorDemoXios</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhone\AppStore</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <DefineConstants>XIOS;AOT;</DefineConstants>
+    <AssemblyName>SungiantCorDemoXios</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="monotouch" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.plist" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AppDelegate.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="..\..\..\source\Blimey.Demo\Airport.cs">
+      <Link>source\Airport.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\CaliforniaVan.cs">
+      <Link>source\CaliforniaVan.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\ColourChanger.cs">
+      <Link>source\ColourChanger.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Demo.cs">
+      <Link>source\Demo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\MainMenuScene.cs">
+      <Link>source\MainMenuScene.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\RandomLocalRotate.cs">
+      <Link>source\RandomLocalRotate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\RandomObjectHelper.cs">
+      <Link>source\RandomObjectHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene1.cs">
+      <Link>source\Scene1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene2.cs">
+      <Link>source\Scene2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene3.cs">
+      <Link>source\Scene3.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene4.cs">
+      <Link>source\Scene4.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene5.cs">
+      <Link>source\Scene5.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Properties\" />
+    <Folder Include="Source2\" />
+    <Folder Include="source\" />
+    <Folder Include="source\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Icon.png" />
+    <BundleResource Include="Icon%402x.png" />
+    <BundleResource Include="Icon-72.png" />
+    <BundleResource Include="Icon-72%402x.png" />
+    <BundleResource Include="Icon-Small.png" />
+    <BundleResource Include="Icon-Small%402x.png" />
+    <BundleResource Include="Icon-Small-50.png" />
+    <BundleResource Include="Icon-Small-50%402x.png" />
+    <BundleResource Include="Default.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\submodules\abacus\build\xs.ios\Abacus\Abacus %28xs.ios%29.csproj">
+      <Project>{DE5491E6-4DF9-4BBB-9985-E7CD86905D41}</Project>
+      <Name>Abacus (xs.ios)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\cor\build\xs.ios\Cor\Cor %28xs.ios%29.csproj">
+      <Project>{C8436444-EAAC-4B9A-A8E3-6F8494186F57}</Project>
+      <Name>Cor (xs.ios)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\blimey\build\xs.ios\Blimey\Blimey %28xs.ios%29.csproj">
+      <Project>{461BB256-E834-4D64-AF80-E032446FC086}</Project>
+      <Name>Blimey (xs.ios)</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

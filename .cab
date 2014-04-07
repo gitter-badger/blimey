@@ -1,5 +1,5 @@
 {
     "ResourcesFolder" : "resources/",
-    "AssetDefinitionsFolder" : "asset_definitions/",
+    "AssetDefinitionsFolder" : "pipeline/",
     "DestinationFolder" : "assets/",
 }
