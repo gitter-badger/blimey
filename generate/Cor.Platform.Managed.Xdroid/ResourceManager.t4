@@ -1,5 +1,5 @@
     public class ResourceManager
-        : IResourceManager
+        : IOldResourceManager
     {
         public ResourceManager()
         {
@@ -7,9 +7,9 @@
                 "ResourceManager -> ()");
         }
 
-        #region IResourceManager
+        #region IOldResourceManager
 
-        public T Load<T>(String path) where T : IResource
+        public T Load<T>(String path) where T : IOldResource
         {
             return default(T);
         }

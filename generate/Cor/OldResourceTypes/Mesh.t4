@@ -4,7 +4,7 @@
     /// more than one effect.
     /// </summary>
     public abstract class Mesh
-        : IResource
+        : IOldResource
     {
         /// <summary>
         /// todo

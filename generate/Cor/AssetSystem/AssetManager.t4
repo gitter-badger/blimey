@@ -2,11 +2,11 @@
         : IDisposable
     {
         readonly IGraphicsManager graphics;
-        readonly IResourceManager legacyResources;
+        readonly IOldResourceManager legacyResources;
 
         internal AssetManager (
             IGraphicsManager graphics,
-            IResourceManager legacyResources)
+            IOldResourceManager legacyResources)
         {
             this.graphics = graphics;
             this.legacyResources = legacyResources;

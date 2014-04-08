@@ -23,7 +23,7 @@
         /// asset system.
         /// </summary>
         [Obsolete]
-        IResourceManager Resources { get; }
+        IOldResourceManager Resources { get; }
 
         /// <summary>
         /// Provides access to Cor's input manager.

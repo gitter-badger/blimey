@@ -3,7 +3,7 @@
     /// and track.
     /// </summary>
     [Obsolete]
-    public interface IResource
+    public interface IOldResource
     {
     }
 

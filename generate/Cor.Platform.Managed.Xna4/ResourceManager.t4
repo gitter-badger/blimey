@@ -1,5 +1,5 @@
 ﻿    public class ResourceManager
-        : IResourceManager
+        : IOldResourceManager
     {
         Microsoft.Xna.Framework.Content.ContentManager _content;
 
@@ -18,7 +18,7 @@
         }
 
         public T Load<T>(String uri) where T
-            : IResource
+            : IOldResource
         {
             return default(T);
         }
@@ -32,7 +32,7 @@
                 case ShaderType.Unlit: return _unlit;
                 default: return null;
             }
-            
+
         }
     }
 

@@ -1,5 +1,5 @@
     public class StubResourceManager
-        : IResourceManager
+        : IOldResourceManager
     {
         readonly StubShader stubShader = new StubShader();
 
@@ -9,9 +9,9 @@
                 "StubResourceManager -> ()");
         }
 
-        #region IResourceManager
+        #region IOldResourceManager
 
-        public T Load<T>(String path) where T : IResource
+        public T Load<T>(String path) where T : IOldResource
         {
             return default(T);
         }

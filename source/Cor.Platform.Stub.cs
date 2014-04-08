@@ -49,7 +49,7 @@ namespace Cor.Platform.Stub
     {
         readonly IAudioManager audio;
         readonly IGraphicsManager graphics;
-        readonly IResourceManager resources;
+        readonly IOldResourceManager resources;
         readonly IInputManager input;
         readonly ISystemManager system;
         readonly AppSettings settings;
@@ -80,7 +80,7 @@ namespace Cor.Platform.Stub
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
 
-        public IResourceManager Resources { get { return this.resources; } }
+        public IOldResourceManager Resources { get { return this.resources; } }
 
         public IInputManager Input { get { return this.input; } }
 
@@ -322,7 +322,7 @@ namespace Cor.Platform.Stub
         #endregion
     }
     public class StubResourceManager
-        : IResourceManager
+        : IOldResourceManager
     {
         readonly StubShader stubShader = new StubShader();
 
@@ -332,9 +332,9 @@ namespace Cor.Platform.Stub
                 "StubResourceManager -> ()");
         }
 
-        #region IResourceManager
+        #region IOldResourceManager
 
-        public T Load<T>(String path) where T : IResource
+        public T Load<T>(String path) where T : IOldResource
         {
             return default(T);
         }

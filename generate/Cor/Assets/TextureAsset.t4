@@ -1,11 +1,26 @@
         public abstract class TextureAsset
             : IAsset
         {
-            public abstract Int32 Width { get; }
-            public abstract Int32 Height { get; }
+            public ImageAsset Texture { get; set; }
+            public ImageAsset[] Mipmaps { get; set; }
+        }
 
-            public abstract SurfaceFormat SurfaceFormat { get; }
 
-            public abstract Byte[] TextureData { get; }
+        public class TextureAsset<T>
+            : TextureAsset
+        where T
+            : ImageAsset
+        {
+            public new T Texture
+            {
+                get { return (T) base.Texture; }
+                set { base.Texture = value; }
+            }
+
+            public new T[] Mipmaps
+            {
+                get { return (T[]) base.Mipmaps; }
+                set { base.Mipmaps = value; }
+            }
         }
 

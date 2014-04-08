@@ -1,5 +1,5 @@
-        public class Dxt3TexureAsset
-            : DxtTextureAsset
+        public class Dxt3ImageAsset
+            : DxtImageAsset
         {
             public override Int32 Width
             {

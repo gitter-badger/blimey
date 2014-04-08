@@ -2,16 +2,16 @@
     /// todo
     /// </summary>
     public abstract class Texture2D
-        : IResource
+        : IOldResource
     {
         /// <summary>
         /// todo
         /// </summary>
-        public abstract Int32 Width { get; } 
+        public abstract Int32 Width { get; }
 
         /// <summary>
         /// todo
         /// </summary>
-        public abstract Int32 Height { get; } 
+        public abstract Int32 Height { get; }
     }
 

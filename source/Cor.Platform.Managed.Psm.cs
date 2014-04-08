@@ -770,7 +770,7 @@ namespace Cor.Platform.Managed.MonoMac
     }
 
     public class ResourceManager
-        : IResourceManager
+        : IOldResourceManager
     {
 
         IShader _phong_positionNormal;
@@ -779,30 +779,30 @@ namespace Cor.Platform.Managed.MonoMac
         IShader _unlit_positionTexture;
         IShader _unlit_positionColour;
         IShader _unlit_positionColourTexture;
-        
+
         public ResourceManager(Sce.Pss.Core.Graphics.GraphicsContext gfxContext)
         {
             var program1 = new Sce.Pss.Core.Graphics.ShaderProgram("/Application/Shaders/Phong.cgx");
             _phong_positionNormal = new Phong_PositionNormal(gfxContext, program1);
-            
+
             var program2 = new Sce.Pss.Core.Graphics.ShaderProgram("/Application/Shaders/Gouraud.cgx");
             _gouraud_positionNormal = new Gouraud_PositionNormal(gfxContext, program2);
-            
+
             var program3 = new Sce.Pss.Core.Graphics.ShaderProgram("/Application/Shaders/Unlit_Position.cgx");
             _unlit_position = new Unlit_Position(gfxContext, program3);
-            
+
             var program4 = new Sce.Pss.Core.Graphics.ShaderProgram("/Application/Shaders/Unlit_PositionTexture.cgx");
             _unlit_positionTexture = new Unlit_PositionTexture(gfxContext, program4);
-            
+
             var program5 = new Sce.Pss.Core.Graphics.ShaderProgram("/Application/Shaders/Unlit_PositionColour.cgx");
             _unlit_positionColour = new Unlit_PositionColour(gfxContext, program5);
-            
+
             var program6 = new Sce.Pss.Core.Graphics.ShaderProgram("/Application/Shaders/Unlit_PositionColourTexture.cgx");
             _unlit_positionColourTexture = new Unlit_PositionColourTexture(gfxContext, program6);
-                                                                 
+
         }
 
-        public T Load<T>(Uri uri) where T : IResource
+        public T Load<T>(Uri uri) where T : IOldResource
         {
             return default(T);
         }
@@ -825,9 +825,9 @@ namespace Cor.Platform.Managed.MonoMac
                 case ShaderType.Unlit: return GetUnlitShaderFor(usage);
                 default: return null;
             }
-            
+
         }
-        
+
         IShader GetGouraudShaderFor(HashSet<VertexElementUsage> usage)
         {
             if ( usage.Contains(VertexElementUsage.Position) && usage.Contains(VertexElementUsage.Normal) )

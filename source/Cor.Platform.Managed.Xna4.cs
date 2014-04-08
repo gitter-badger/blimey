@@ -644,12 +644,12 @@ namespace Cor.Platform.Managed.Xna4
             this.input = new InputManager(this);
 
             this.App.Initilise(this);
-            
+
         }
 
         public IGraphicsManager Graphics { get { return graphics;  } }
 
-        public IResourceManager Resources { get { return resources; } }
+        public IOldResourceManager Resources { get { return resources; } }
 
         public IInputManager Input { get { return input; } }
 
@@ -1104,7 +1104,7 @@ namespace Cor.Platform.Managed.Xna4
     }
 
     public class ResourceManager
-        : IResourceManager
+        : IOldResourceManager
     {
         Microsoft.Xna.Framework.Content.ContentManager _content;
 
@@ -1123,7 +1123,7 @@ namespace Cor.Platform.Managed.Xna4
         }
 
         public T Load<T>(String uri) where T
-            : IResource
+            : IOldResource
         {
             return default(T);
         }
@@ -1137,7 +1137,7 @@ namespace Cor.Platform.Managed.Xna4
                 case ShaderType.Unlit: return _unlit;
                 default: return null;
             }
-            
+
         }
     }
 

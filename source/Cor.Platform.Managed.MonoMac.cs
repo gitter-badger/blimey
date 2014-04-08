@@ -109,7 +109,7 @@ namespace Cor.Platform.Managed.MonoMac
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
 
-        public IResourceManager Resources { get { return this.resources; } }
+        public IOldResourceManager Resources { get { return this.resources; } }
 
         public IInputManager Input { get { return this.input; } }
 
@@ -651,7 +651,7 @@ namespace Cor.Platform.Managed.MonoMac
     }
 
     public sealed class ResourceManager
-        : IResourceManager
+        : IOldResourceManager
     {
         Dictionary<ShaderType, IShader> shaderCache;
 
@@ -682,7 +682,7 @@ namespace Cor.Platform.Managed.MonoMac
             return correctPath;
         }
 
-        public T Load<T>(string path) where T : IResource
+        public T Load<T>(string path) where T : IOldResource
         {
             path = GetBundlePath(path);
 
@@ -691,7 +691,7 @@ namespace Cor.Platform.Managed.MonoMac
             {
                 var tex = OpenGLTexture.CreateFromFile(path);
 
-                return (T)(IResource) tex;
+                return (T)(IOldResource) tex;
             }
 
             throw new NotImplementedException();

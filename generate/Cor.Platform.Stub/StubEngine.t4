@@ -3,7 +3,7 @@
     {
         readonly IAudioManager audio;
         readonly IGraphicsManager graphics;
-        readonly IResourceManager resources;
+        readonly IOldResourceManager resources;
         readonly IInputManager input;
         readonly ISystemManager system;
         readonly AppSettings settings;
@@ -34,7 +34,7 @@
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
 
-        public IResourceManager Resources { get { return this.resources; } }
+        public IOldResourceManager Resources { get { return this.resources; } }
 
         public IInputManager Input { get { return this.input; } }
 

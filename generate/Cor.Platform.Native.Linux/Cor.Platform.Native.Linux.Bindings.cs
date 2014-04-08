@@ -99,7 +99,7 @@ namespace Cor.Platform.Native.Linux
     {
         IAudioManager audio;
         IGraphicsManager graphics;
-        IResourceManager resources;
+        IOldResourceManager resources;
         IInputManager input;
         ISystemManager system;
         AppSettings settings;
@@ -122,7 +122,7 @@ namespace Cor.Platform.Native.Linux
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
 
-        public IResourceManager Resources { get { return this.resources; } }
+        public IOldResourceManager Resources { get { return this.resources; } }
 
         public IInputManager Input { get { return this.input; } }
 
@@ -365,16 +365,16 @@ namespace Cor.Platform.Native.Linux
     }
 
     public class NativeResourceManagerBinding
-        : IResourceManager
+        : IOldResourceManager
     {
         public NativeResourceManagerBinding()
 		{
 			NativeBindings.ResourceManager_Create();
         }
 
-        #region IResourceManager
+        #region IOldResourceManager
 
-        public T Load<T>(String path) where T : IResource
+        public T Load<T>(String path) where T : IOldResource
         {
             return default(T);
         }

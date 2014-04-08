@@ -2,12 +2,12 @@
     /// todo
     /// </summary>
     [Obsolete]
-    public interface IResourceManager
+    public interface IOldResourceManager
     {
         /// <summary>
         /// todo
         /// </summary>
-        T Load<T>(String path) where T : IResource;
+        T Load<T>(String path) where T : IOldResource;
 
         /// <summary>
         /// todo

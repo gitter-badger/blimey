@@ -1,8 +1,6 @@
-        public class PvrtcTextureAsset
-            : TextureAsset
+        public class Dxt5ImageAsset
+            : DxtImageAsset
         {
-            public Int32 BitsPerPixel { get; set; }
-
             public override Int32 Width
             {
                 get { throw new NotImplementedException (); }
@@ -15,7 +13,7 @@
 
             public override SurfaceFormat SurfaceFormat
             {
-                get { return SurfaceFormat.Pvrtc; }
+                get { return SurfaceFormat.Dxt5; }
             }
 
             public override Byte[] TextureData

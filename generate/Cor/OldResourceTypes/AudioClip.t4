@@ -2,7 +2,7 @@
     /// todo
     /// </summary>
     public abstract class AudioClip
-        : IResource
+        : IOldResource
     {
         /// <summary>
         /// todo

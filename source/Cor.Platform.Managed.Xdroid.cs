@@ -49,7 +49,7 @@ namespace Cor.Platform.Managed.Xdroid
     {
         IAudioManager audio;
         IGraphicsManager graphics;
-        IResourceManager resources;
+        IOldResourceManager resources;
         IInputManager input;
         ISystemManager system;
         AppSettings settings;
@@ -58,7 +58,7 @@ namespace Cor.Platform.Managed.Xdroid
         {
             Console.WriteLine(
                 "Engine -> ()");
-            
+
             this.audio = new AudioManager();
             this.graphics = new GraphicsManager();
             this.resources = new ResourceManager();
@@ -73,7 +73,7 @@ namespace Cor.Platform.Managed.Xdroid
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
 
-        public IResourceManager Resources { get { return this.resources; } }
+        public IOldResourceManager Resources { get { return this.resources; } }
 
         public IInputManager Input { get { return this.input; } }
 
@@ -318,7 +318,7 @@ namespace Cor.Platform.Managed.Xdroid
     }
 
     public class ResourceManager
-        : IResourceManager
+        : IOldResourceManager
     {
         public ResourceManager()
         {
@@ -326,9 +326,9 @@ namespace Cor.Platform.Managed.Xdroid
                 "ResourceManager -> ()");
         }
 
-        #region IResourceManager
+        #region IOldResourceManager
 
-        public T Load<T>(String path) where T : IResource
+        public T Load<T>(String path) where T : IOldResource
         {
             return default(T);
         }

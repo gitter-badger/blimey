@@ -1,5 +1,5 @@
     public sealed class ResourceManager
-        : IResourceManager
+        : IOldResourceManager
     {
         Dictionary<ShaderType, IShader> shaderCache;
 
@@ -12,7 +12,7 @@
             shaderCache[ShaderType.PixelLit] = CorShaders.CreatePhongPixelLit();
         }
 
-        public T Load<T>(string path) where T : IResource
+        public T Load<T>(string path) where T : IOldResource
         {
             if(!File.Exists(path))
             {
@@ -22,10 +22,10 @@
             if(typeof(T) == typeof(Texture2D))
             {
                 var tex = OglesTexture.CreateFromFile(path);
-                
-                return (T)(IResource) tex;
+
+                return (T)(IOldResource) tex;
             }
-            
+
             throw new NotImplementedException();
         }
 

@@ -1015,7 +1015,7 @@ namespace Cor.Platform.Managed.Xios
             OpenTK.Platform.iPhoneOS.iPhoneOSGameView view,
             OpenTK.Graphics.IGraphicsContext gfxContext,
             Dictionary<Int32, iOSTouchState> touches)
-        {   
+        {
             this.settings = settings;
 
             this.app = app;
@@ -1031,7 +1031,7 @@ namespace Cor.Platform.Managed.Xios
             this.input = new InputManager(this, this.touchScreen);
 
             this.log = new LogManager(this.settings.LogSettings);
-            
+
             this.assets = new AssetManager(this.graphics, this.resources);
 
             this.app.Initilise(this);
@@ -1052,7 +1052,7 @@ namespace Cor.Platform.Managed.Xios
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
 
-        public IResourceManager Resources { get { return this.resources; } }
+        public IOldResourceManager Resources { get { return this.resources; } }
 
         public IInputManager Input { get { return this.input; } }
 
@@ -1078,7 +1078,7 @@ namespace Cor.Platform.Managed.Xios
         }
 
     }
-    
+
     public sealed class GpuUtils
         : IGpuUtils
     {
@@ -1586,17 +1586,17 @@ namespace Cor.Platform.Managed.Xios
 
     internal sealed class OglesTexture
         : Texture2D
-        //, IDisposable todo: IResource pattern for destroying stuff
+        //, IDisposable todo: IOldResource pattern for destroying stuff
     {
         public int glTextureId {get; private set;}
 
         UIImage uiImage;
 
         int pixelsWide;
-        int pixelsHigh;  
+        int pixelsHigh;
 
         internal static OglesTexture CreateFromFile(string path)
-        {   
+        {
             var uiImage = UIImage.FromFile(path);
 
             var texture = new OglesTexture(uiImage);
@@ -1618,14 +1618,14 @@ namespace Cor.Platform.Managed.Xios
         IntPtr RequestImagePixelData (UIImage inImage)
         {
             var imageSize = inImage.Size;
-            
+
             CGBitmapContext ctxt = CreateRgbaBitmapContext (inImage.CGImage);
-            
+
             var rect = new RectangleF (0, 0, imageSize.Width, imageSize.Height);
-            
+
             ctxt.DrawImage (rect, inImage.CGImage);
             var data = ctxt.Data;
-            
+
             return data;
         }
 
@@ -1644,14 +1644,14 @@ namespace Cor.Platform.Managed.Xios
                 {
                     throw new Exception ("Memory not allocated.");
                 }
-                
+
                 var context = new CGBitmapContext (
-                    bitmapData, 
-                    pixelsWide, 
-                    pixelsHigh, 
+                    bitmapData,
+                    pixelsWide,
+                    pixelsHigh,
                     8,
-                    bitmapBytesPerRow, 
-                    colorSpace, 
+                    bitmapBytesPerRow,
+                    colorSpace,
                     CGImageAlphaInfo.PremultipliedLast);
 
                 if (context == null)
@@ -1662,7 +1662,7 @@ namespace Cor.Platform.Managed.Xios
                 return context;
             }
         }
-        
+
 
 
         public override int Width
@@ -1680,12 +1680,12 @@ namespace Cor.Platform.Managed.Xios
             }
         }
 
-        
+
         void CreateTexture2D(int width, int height, IntPtr pixelDataRgba32)
         {
             int textureId = -1;
-            
-            
+
+
             // this sets the unpack alignment.  which is used when reading pixels
             // in the fragment shader.  when the textue data is uploaded via glTexImage2d,
             // the rows of pixels are assumed to be aligned to the value set for GL_UNPACK_ALIGNMENT.
@@ -1695,7 +1695,7 @@ namespace Cor.Platform.Managed.Xios
             ErrorHandler.Check();
 
             // the first sept in the application of texture is to create the
-            // texture object.  this is a container object that holds the 
+            // texture object.  this is a container object that holds the
             // texture data.  this function returns a handle to a texture
             // object.
             OpenTK.Graphics.ES20.GL.GenTextures(1, out textureId);
@@ -1703,32 +1703,32 @@ namespace Cor.Platform.Managed.Xios
 
             this.glTextureId = textureId;
 
-            
+
             var textureTarget = OpenTK.Graphics.ES20.TextureTarget.Texture2D;
-            
-            
+
+
             // we need to bind the texture object so that we can opperate on it.
             OpenTK.Graphics.ES20.GL.BindTexture(textureTarget, textureId);
             ErrorHandler.Check();
 
             var internalFormat = OpenTK.Graphics.ES20.PixelInternalFormat.Rgba;
             var format = OpenTK.Graphics.ES20.PixelFormat.Rgba;
-            
+
             var textureDataFormat = OpenTK.Graphics.ES20.PixelType.UnsignedByte;
-            
-            
-            
+
+
+
             // now use the bound texture object to load the image data.
             OpenTK.Graphics.ES20.GL.TexImage2D(
-                
+
                 // specifies the texture target, either GL_TEXTURE_2D or one of the cubemap face targets.
                 textureTarget,
-                
+
                 // specifies which mip level to load.  the base level is
                 // specified by 0 following by an increasing level for each
                 // successive mipmap.
                 0,
-                
+
                 // internal format for the texture storage, can be:
                 // - GL_RGBA
                 // - GL_RGB
@@ -1736,30 +1736,30 @@ namespace Cor.Platform.Managed.Xios
                 // - GL_LUMINANCE
                 // - GL_ALPHA
                 internalFormat,
-                
+
                 // the width of the image in pixels
                 width,
-                
+
                 // the height of the image in pixels
                 height,
-                
+
                 // boarder - set to zero, only here for compatibility with OpenGL desktop
                 0,
-                
-                // the format of the incoming texture data, in opengl es this 
+
+                // the format of the incoming texture data, in opengl es this
                 // has to be the same as the internal format
                 format,
-                
+
                 // the type of the incoming pixel data, can be:
                 // - unsigned byte
                 // - unsigned short 4444
                 // - unsigned short 5551
                 // - unsigned short 565
                 textureDataFormat, // this refers to each individual channel
-                
-                
+
+
                 pixelDataRgba32
-                
+
                 );
 
             ErrorHandler.Check();
@@ -1775,13 +1775,13 @@ namespace Cor.Platform.Managed.Xios
 
             ErrorHandler.Check();
         }
-        
-        
-        
+
+
+
         void DeleteTexture(Texture2D texture)
         {
             int textureId = (texture as OglesTexture).glTextureId;
-            
+
             OpenTK.Graphics.ES20.GL.DeleteTextures(1, ref textureId);
         }
     }
@@ -1906,7 +1906,7 @@ namespace Cor.Platform.Managed.Xios
     }
 
     public sealed class ResourceManager
-        : IResourceManager
+        : IOldResourceManager
     {
         Dictionary<ShaderType, IShader> shaderCache;
 
@@ -1919,7 +1919,7 @@ namespace Cor.Platform.Managed.Xios
             shaderCache[ShaderType.PixelLit] = CorShaders.CreatePhongPixelLit();
         }
 
-        public T Load<T>(string path) where T : IResource
+        public T Load<T>(string path) where T : IOldResource
         {
             if(!File.Exists(path))
             {
@@ -1929,10 +1929,10 @@ namespace Cor.Platform.Managed.Xios
             if(typeof(T) == typeof(Texture2D))
             {
                 var tex = OglesTexture.CreateFromFile(path);
-                
-                return (T)(IResource) tex;
+
+                return (T)(IOldResource) tex;
             }
-            
+
             throw new NotImplementedException();
         }
 

@@ -1,0 +1,6 @@
+        public abstract class DxtImageAsset
+            : ImageAsset
+        {
+            public Int32 BlockSize { get; set; }
+        }
+

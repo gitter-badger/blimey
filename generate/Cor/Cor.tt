@@ -58,13 +58,13 @@ namespace Cor
 <#@ include file="IAudioManager.t4"#>
 <#@ include file="IGraphicsManager.t4"#>
 <#@ include file="IInputManager.t4"#>
-<#@ include file="IResourceManager.t4"#>
+<#@ include file="IOldResourceManager.t4"#>
 <#@ include file="ISystemManager.t4"#>
 <#@ include file="IApp.t4"#>
 <#@ include file="IDisplayStatus.t4"#>
 <#@ include file="IGpuUtils.t4"#>
 <#@ include file="IPanelSpecification.t4"#>
-<#@ include file="IResource.t4"#>
+<#@ include file="IOldResource.t4"#>
 <#@ include file="IScreenSpecificationBase.t4"#>
 <#@ include file="IGeometryBuffer.t4"#>
 <#@ include file="IVertexBuffer.t4"#>
@@ -136,11 +136,11 @@ namespace Cor
 <#@ include file="Vertices/VertexPositionTextureColour.t4"#>
     #endregion
 
-    #region Resources
+    #region OldResources
 
-<#@ include file="ResourceTypes/AudioClip.t4"#>
-<#@ include file="ResourceTypes/Mesh.t4"#>
-<#@ include file="ResourceTypes/Texture2D.t4"#>
+<#@ include file="OldResourceTypes/AudioClip.t4"#>
+<#@ include file="OldResourceTypes/Mesh.t4"#>
+<#@ include file="OldResourceTypes/Texture2D.t4"#>
     #endregion
 
     #region Internal
@@ -157,12 +157,12 @@ namespace Cor
 
     #region Assets
 
-<#@ include file="Assets/Dxt1TextureAsset.t4"#>
-<#@ include file="Assets/Dxt3TextureAsset.t4"#>
-<#@ include file="Assets/Dxt5TextureAsset.t4"#>
-<#@ include file="Assets/DxtTextureAsset.t4"#>
-<#@ include file="Assets/DynamicTextureAsset.t4"#>
-<#@ include file="Assets/PvrtcTextureAsset.t4"#>
+<#@ include file="Assets/Dxt1ImageAsset.t4"#>
+<#@ include file="Assets/Dxt3ImageAsset.t4"#>
+<#@ include file="Assets/Dxt5ImageAsset.t4"#>
+<#@ include file="Assets/DxtImageAsset.t4"#>
+<#@ include file="Assets/ImageAsset.t4"#>
+<#@ include file="Assets/PvrtcImageAsset.t4"#>
 <#@ include file="Assets/TextureAsset.t4"#>
     #endregion
 

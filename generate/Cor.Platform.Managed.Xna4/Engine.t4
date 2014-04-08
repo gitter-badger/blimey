@@ -27,12 +27,12 @@
             this.input = new InputManager(this);
 
             this.App.Initilise(this);
-            
+
         }
 
         public IGraphicsManager Graphics { get { return graphics;  } }
 
-        public IResourceManager Resources { get { return resources; } }
+        public IOldResourceManager Resources { get { return resources; } }
 
         public IInputManager Input { get { return input; } }
 

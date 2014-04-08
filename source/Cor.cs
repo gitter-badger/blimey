@@ -74,7 +74,7 @@ namespace Cor
         /// asset system.
         /// </summary>
         [Obsolete]
-        IResourceManager Resources { get; }
+        IOldResourceManager Resources { get; }
 
         /// <summary>
         /// Provides access to Cor's input manager.
@@ -370,12 +370,12 @@ namespace Cor
     /// todo
     /// </summary>
     [Obsolete]
-    public interface IResourceManager
+    public interface IOldResourceManager
     {
         /// <summary>
         /// todo
         /// </summary>
-        T Load<T>(String path) where T : IResource;
+        T Load<T>(String path) where T : IOldResource;
 
         /// <summary>
         /// todo
@@ -546,7 +546,7 @@ namespace Cor
     /// and track.
     /// </summary>
     [Obsolete]
-    public interface IResource
+    public interface IOldResource
     {
     }
 
@@ -3911,13 +3911,13 @@ namespace Cor
 
     #endregion
 
-    #region Resources
+    #region OldResources
 
     /// <summary>
     /// todo
     /// </summary>
     public abstract class AudioClip
-        : IResource
+        : IOldResource
     {
         /// <summary>
         /// todo
@@ -3940,7 +3940,7 @@ namespace Cor
     /// more than one effect.
     /// </summary>
     public abstract class Mesh
-        : IResource
+        : IOldResource
     {
         /// <summary>
         /// todo
@@ -3967,17 +3967,17 @@ namespace Cor
     /// todo
     /// </summary>
     public abstract class Texture2D
-        : IResource
+        : IOldResource
     {
         /// <summary>
         /// todo
         /// </summary>
-        public abstract Int32 Width { get; } 
+        public abstract Int32 Width { get; }
 
         /// <summary>
         /// todo
         /// </summary>
-        public abstract Int32 Height { get; } 
+        public abstract Int32 Height { get; }
     }
 
     #endregion
@@ -4212,8 +4212,8 @@ namespace Cor
 
     #region Assets
 
-        public class Dxt1TexureAsset
-            : DxtTextureAsset
+        public class Dxt1ImageAsset
+            : DxtImageAsset
         {
             public override Int32 Width
             {
@@ -4236,8 +4236,8 @@ namespace Cor
             }
         }
 
-        public class Dxt3TexureAsset
-            : DxtTextureAsset
+        public class Dxt3ImageAsset
+            : DxtImageAsset
         {
             public override Int32 Width
             {
@@ -4260,8 +4260,8 @@ namespace Cor
             }
         }
 
-        public class Dxt5TexureAsset
-            : DxtTextureAsset
+        public class Dxt5ImageAsset
+            : DxtImageAsset
         {
             public override Int32 Width
             {
@@ -4284,23 +4284,25 @@ namespace Cor
             }
         }
 
-        public abstract class DxtTextureAsset
-            : TextureAsset
+        public abstract class DxtImageAsset
+            : ImageAsset
         {
             public Int32 BlockSize { get; set; }
         }
 
-        public class DynamicTextureAsset<T>
+        public abstract class ImageAsset
             : IAsset
-        where T
-            : TextureAsset
         {
-            public T Texture { get; set; }
-            public List<T> MipMaps { get; set; }
+            public abstract Int32 Width { get; }
+            public abstract Int32 Height { get; }
+
+            public abstract SurfaceFormat SurfaceFormat { get; }
+
+            public abstract Byte[] TextureData { get; }
         }
 
-        public class PvrtcTextureAsset
-            : TextureAsset
+        public class PvrtcImageAsset
+            : ImageAsset
         {
             public Int32 BitsPerPixel { get; set; }
 
@@ -4328,12 +4330,27 @@ namespace Cor
         public abstract class TextureAsset
             : IAsset
         {
-            public abstract Int32 Width { get; }
-            public abstract Int32 Height { get; }
+            public ImageAsset Texture { get; set; }
+            public ImageAsset[] Mipmaps { get; set; }
+        }
 
-            public abstract SurfaceFormat SurfaceFormat { get; }
 
-            public abstract Byte[] TextureData { get; }
+        public class TextureAsset<T>
+            : TextureAsset
+        where T
+            : ImageAsset
+        {
+            public new T Texture
+            {
+                get { return (T) base.Texture; }
+                set { base.Texture = value; }
+            }
+
+            public new T[] Mipmaps
+            {
+                get { return (T[]) base.Mipmaps; }
+                set { base.Mipmaps = value; }
+            }
         }
 
     #endregion
@@ -4389,11 +4406,11 @@ namespace Cor
         : IDisposable
     {
         readonly IGraphicsManager graphics;
-        readonly IResourceManager legacyResources;
+        readonly IOldResourceManager legacyResources;
 
         internal AssetManager (
             IGraphicsManager graphics,
-            IResourceManager legacyResources)
+            IOldResourceManager legacyResources)
         {
             this.graphics = graphics;
             this.legacyResources = legacyResources;
