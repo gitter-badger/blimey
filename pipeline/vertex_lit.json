@@ -1,7 +1,6 @@
 {
     "AssetId" : "pixel_lit",
-    "AssetType" : "Cor.IShader",
-    "Sources" :
+    "SourceSets" :
     [
         {
             "Platforms" : [ "monomac" ],

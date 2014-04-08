@@ -1,7 +1,6 @@
 {
     "AssetId" : "unlit",
-    "AssetType" : "Cor.IShader",
-    "Sources" :
+    "SourceSets" :
     [
         {
             "Platforms" : [ "monomac" ],

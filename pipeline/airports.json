@@ -1,7 +1,6 @@
 {
     "AssetId" : "airports",
-    "AssetType" : "System.String",
-    "Sources" :
+    "SourceSets" :
     [
         {
             "Platforms" : [ "xios", "monomac" ],

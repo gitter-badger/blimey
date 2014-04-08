@@ -1,7 +1,6 @@
 {
     "AssetId" : "bg3",
-    "AssetType" : "Cor.Texture2D",
-    "Sources" :
+    "SourceSets" :
     [
         {
             "Platforms" : [ "xios" ],

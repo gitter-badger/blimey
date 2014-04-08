@@ -1,20 +1,21 @@
 {
     "AssetId" : "bg1",
-    "AssetType" : "Cor.Texture2D",
-    "Sources" :
+    "SourceSets" :
     [
         {
             "Platforms" : [ "xios" ],
-            "ImporterType" : "Cor.PNGImporter",
-            "ImporterSettings" : [],
-            "AssetSettings" : [ { "surfaceFormat" : "Cor.SurfaceFormat.PVRTC" } ],
+            "ResourceBuilderType" : "Cor.BitmapResourceBuilder, Cor.Assets.Builders",
+            "ResourceBuilderSettings" : [],
+            "AssetBuilderType" : "Cor.TextureAssetBuilder, Cor.Assets.Builders",
+            "AssetBuilderSettings" : [ { "surfaceFormat" : "Cor.SurfaceFormat.Pvrtc" } ],
             "Files" : [ "bg1.png" ]
         },
         {
-            "platforms" : [ "monomac" ],
-            "ImporterType" : "Cor.PNGImporter",
-            "ImporterSettings" : [],
-            "AssetSettings" : [ { "surfaceFormat" : "Cor.SurfaceFormat.ARGB" } ],
+            "Platforms" : [ "monomac" ],
+            "ResourceBuilderType" : "Cor.BitmapResourceBuilder, Cor.Assets.Builders",
+            "ResourceBuilderSettings" : [],
+            "AssetBuilderType" : "Cor.TextureAssetBuilder, Cor.Assets.Builders",
+            "AssetBuilderSettings" : [ { "surfaceFormat" : "Cor.SurfaceFormat.Pvrtc" } ],
             "Files" : [ "bg1.png" ]
         }
     ]
