@@ -39,7 +39,8 @@ namespace Cor
             get { return new [] { ".*" }; }
         }
         
-        public abstract ResourceBuilderOutput BaseImport (ResourceBuilderInput input);
+        public abstract ResourceBuilderOutput 
+        BaseImport (ResourceBuilderInput input);
     }
     
     public abstract class ResourceBuilder <TResource>
@@ -47,11 +48,13 @@ namespace Cor
     where TResource
         : IResource
     {
-        public override ResourceBuilderOutput BaseImport (ResourceBuilderInput input)
+        public override ResourceBuilderOutput 
+        BaseImport (ResourceBuilderInput input)
         {
             return Import (input);
         }
         
-        public abstract ResourceBuilderOutput<TResource> Import (ResourceBuilderInput input);
+        public abstract ResourceBuilderOutput<TResource> 
+        Import (ResourceBuilderInput input);
     }
 }

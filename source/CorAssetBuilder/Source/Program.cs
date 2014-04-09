@@ -5,6 +5,8 @@ using ServiceStack.Text;
 using System.Linq;
 using System.Collections.Generic;
 using Cor;
+using System.Reflection;
+using Cor.Assets.Builders;
 
 namespace CorAssetBuilder
 {
@@ -28,9 +30,9 @@ namespace CorAssetBuilder
         static Configuration.ProjectDefinition projectDefinition;
         
         static string currentPlatform;
-
+        
         public static void Main (string[] args)
-        {
+        {   
             Console.WriteLine ("Cor Asset Builder");
             Console.WriteLine ("=================");
             
@@ -117,6 +119,8 @@ namespace CorAssetBuilder
             if (currentPlatform != null)
                 platformIds = new List<string> { currentPlatform };
             
+            Builders.Init();
+            
             foreach (var platformId in platformIds)
             {
                 var pId = platformId;
@@ -157,12 +161,12 @@ namespace CorAssetBuilder
                 try
                 {
                     //Type assetType = Type.GetType (assetDefinition.AssetType);
-                    Type resourceBuilderType = Type.GetType (sourceset.ResourceBuilderType);
+                    
+                    Type resourceBuilderType = Type.GetType (sourceset.ResourceBuilderType + ",.dll");
                     Type assetBuilderType = Type.GetType (sourceset.AssetBuilderType);
                     
-                    
                     IResource r = BuildResource (resourceBuilderType, sourcefiles, sourceset.ResourceBuilderSettings);
-                    IAsset a = BuildAsset (assetBuilderType, r);
+                    IAsset a = BuildAsset (assetBuilderType, r, sourceset.AssetBuilderSettings);
                     
                     WriteAsset (a, assetfile);
                 }
@@ -200,17 +204,32 @@ namespace CorAssetBuilder
         
         static IAsset BuildAsset (
             Type assetBuilderType,
-            IResource resource)
+            IResource resource,
+            Dictionary<String, String> settings)
         {
             Console.WriteLine ("\t\tabout to build asset with " + assetBuilderType);
             
+            var assetBuilder = Activator.CreateInstance (assetBuilderType) as AssetBuilder;
+            
             var resourceType = assetBuilderType.BaseType ().GenericTypeArguments ()[0];
             var assetType = assetBuilderType.BaseType ().GenericTypeArguments ()[1];
-            
-            
             Console.WriteLine ("\t\tasset type = " + assetType);
             
-            return null;
+            var abiType = typeof (AssetBuilderInput<>);
+            
+            Type genericAbiType = abiType.MakeGenericType(resourceType);
+            var assetBuilderInputObject =  Activator.CreateInstance(genericAbiType);
+            
+            var assetBuilderInput = assetBuilderInputObject as AssetBuilderInput;
+            
+            assetBuilderInput.Resource = resource;
+            assetBuilderInput.AssetBuilderSettings = new AssetBuilderSettings ();
+            assetBuilderInput.AssetBuilderSettings.Settings = settings;
+            
+            var output = assetBuilder.BaseProcess (assetBuilderInput);
+            
+            
+            return output.Asset;
         }
         
         static void WriteAsset (IAsset a, string destination)

@@ -10,11 +10,11 @@ namespace Cor
     /// Takes an bitmap resource and turns it into a Texture asset.
     /// </summary>
     public class TextureAssetBuilder
-        : AssetBuilder <BitmapResource, TextureAsset>
+        : AssetBuilder <ColourmapResource, TextureAsset>
     {
         public override
         AssetBuilderOutput<TextureAsset>
-        Process (AssetBuilderInput <BitmapResource> resource)
+        Process (AssetBuilderInput <ColourmapResource> resource)
         {
             throw new NotImplementedException ();
         }

@@ -52,10 +52,6 @@
       <Project>{6C72B877-5395-4BF1-BE47-0E67D5557168}</Project>
       <Name>Cor.Assets.AssImp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Cor.Assets.Builders\Cor.Assets.Builders.csproj">
-      <Project>{E42ABA06-F20C-48AA-B039-96EA5191377E}</Project>
-      <Name>Cor.Assets.Builders</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Cor.Assets.Pipeline\Cor.Assets.Pipeline.csproj">
       <Project>{60BC671B-7C9C-48C8-9A25-6A4303381C06}</Project>
       <Name>Cor.Assets.Pipeline</Name>
@@ -71,6 +67,10 @@
     <ProjectReference Include="..\..\submodules\cor\build\xs.mono40\Cor\Cor %28xs.mono40%29.csproj">
       <Project>{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}</Project>
       <Name>Cor (xs.mono40)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Cor.Assets.Builders\Cor.Assets.Builders %28xs.monomac%29.csproj">
+      <Project>{E42ABA06-F20C-48AA-B039-96EA5191377E}</Project>
+      <Name>Cor.Assets.Builders (xs.monomac)</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

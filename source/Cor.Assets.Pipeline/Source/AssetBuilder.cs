@@ -11,27 +11,61 @@ namespace Cor
         public Dictionary<String, String> Settings { get; set; }
     }
     
-    public class AssetBuilderInput <TResource>
-    where TResource
-        : IResource
+    public abstract class AssetBuilderInput
     {
-        public TResource Resource { get; set; }
+        public IResource Resource { get; set; }
         public AssetBuilderSettings AssetBuilderSettings { get; set; }
     }
     
+    public class AssetBuilderInput <TResource>
+        : AssetBuilderInput
+    where TResource
+        : IResource
+    {
+        public new TResource Resource
+        { 
+            get { return (TResource) base.Resource; }
+            set { base.Resource = value; }
+        }
+    }
+    
+    public abstract class AssetBuilderOutput
+    {
+        public IAsset Asset { get; set; }
+    }
+    
     public class AssetBuilderOutput <TAsset>
+        : AssetBuilderOutput
     where TAsset
         : IAsset
     {
-        public TAsset Asset { get; set; }
+        public new TAsset Asset
+        { 
+            get { return (TAsset) base.Asset; }
+            set { base.Asset = value; }
+        }
+    }
+    
+    public abstract class AssetBuilder
+    {
+        public abstract AssetBuilderOutput 
+        BaseProcess (AssetBuilderInput resource);
     }
     
     public abstract class AssetBuilder <TFrom, TTo>
+        : AssetBuilder
     where TFrom
         : IResource
     where TTo
         : IAsset
     {
-        public abstract AssetBuilderOutput <TTo> Process (AssetBuilderInput <TFrom> resource);
+        public override AssetBuilderOutput 
+        BaseProcess (AssetBuilderInput resource)
+        {
+            return Process (resource as AssetBuilderInput <TFrom>);
+        }
+        
+        public abstract AssetBuilderOutput <TTo> 
+        Process (AssetBuilderInput <TFrom> resource);
     }
 }

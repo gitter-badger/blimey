@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Assets.AssImp", "Cor.As
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Assets.Pipeline", "Cor.Assets.Pipeline\Cor.Assets.Pipeline.csproj", "{60BC671B-7C9C-48C8-9A25-6A4303381C06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Assets.Builders", "Cor.Assets.Builders\Cor.Assets.Builders.csproj", "{E42ABA06-F20C-48AA-B039-96EA5191377E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Assets.Builders", "Cor.Assets.Builders\Cor.Assets.Builders (xs.monomac).csproj", "{E42ABA06-F20C-48AA-B039-96EA5191377E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorAssetBuilder", "CorAssetBuilder\CorAssetBuilder.csproj", "{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}"
 EndProject
