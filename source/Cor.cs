@@ -1749,11 +1749,44 @@ namespace Cor
 
     public enum SurfaceFormat
     {
-        Bitmap,
-        Pvrtc,
+        // Pixel maps
+        Alpha8,
+        Bgr_5_6_5,
+        Bgra16,
+        Bgra_5_5_5_1,
+        NormalisedByte2,
+        NormalisedByte4,
+        NormalisedShort2,
+        NormalisedShort4,
+        Rg32,
+        Rgba32,
+        Rgba64,
+        Rgba_10_10_10_2,
+        Short2,
+        Short4,
+
+        // Compressed formats
+
         Dxt1,
+        Dxt1a,
         Dxt3,
         Dxt5,
+        RgbPvrtc2Bpp,
+        RgbPvrtc4Bpp,
+        RgbaPvrtc2Bpp,
+        RgbaPvrtc4Bpp,
+
+        // Some extras from MonoGame for future reference
+
+        // BGRA formats are required for compatibility with WPF D3DImage.
+        Bgr32,     // B8G8R8X8
+        Bgra32,    // B8G8R8A8
+
+        // Good explanation of compressed formats for mobile devices (aimed at Android, but describes PVRTC)
+        // http://developer.motorola.com/docstools/library/understanding-texture-compression/
+
+        // Ericcson Texture Compression (Android)
+        RgbEtc1,
     }
 
     #endregion
@@ -4318,7 +4351,7 @@ namespace Cor
 
             public override SurfaceFormat SurfaceFormat
             {
-                get { return SurfaceFormat.Pvrtc; }
+                get { return SurfaceFormat.RgbaPvrtc4Bpp; }
             }
 
             public override Byte[] TextureData
