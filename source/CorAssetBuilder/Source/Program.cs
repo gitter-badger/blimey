@@ -17,60 +17,60 @@ namespace CorAssetBuilder
             var dateTime = new DateTime (1970, 1, 1, 0, 0, 0, 0);
             return dateTime.AddSeconds (epoch);
         }
-        
+
         public static Int32 ToUnixTime(DateTime time)
         {
             var span = time - new DateTime (1970, 1, 1, 0, 0, 0, 0);
             return (Int32) span.TotalSeconds;
         }
     }
-    
+
 	public class Program
 	{
         static Configuration.ProjectDefinition projectDefinition;
-        
+
         static string currentPlatform;
-        
+
         public static void Main (string[] args)
-        {   
+        {
             Console.WriteLine ("Cor Asset Builder");
             Console.WriteLine ("=================");
-            
+
             Console.WriteLine ("");
-            
+
             AssImp.AssImp.PrintVersion ();
 
             Console.WriteLine (
                 "CAB build version: " +
                 File.ReadAllText (
                     Path.Combine (
-                        Environment.GetEnvironmentVariable ("HOME"), 
+                        Environment.GetEnvironmentVariable ("HOME"),
                         ".cba.installation"))
                 .FromJson<Configuration.InstallInfo> ()
                 .InstallDateTime);
 
             Console.WriteLine ("");
-            
-            
-            
+
+
+
             if (args.Length > 0)
             {
                 currentPlatform = args[0];
             }
-            
+
             if (args.Length > 1)
             {
                 Console.WriteLine ("Setting working dir to: " + args [0]);
-                
+
                 if (args [1].Contains ("~/"))
                 {
                     args [1] = args [1].Replace ("~/", "");
                     args [1] = Path.Combine (
-                        Environment.GetEnvironmentVariable ("HOME"), 
+                        Environment.GetEnvironmentVariable ("HOME"),
                         args [1]
                     );
                 }
-                
+
                 Directory.SetCurrentDirectory (args [1]);
                 Console.WriteLine ("");
                 Console.WriteLine (Directory.GetCurrentDirectory () + " $");
@@ -87,8 +87,8 @@ namespace CorAssetBuilder
                 Console.WriteLine ("Failed to find .cab file.");
                 return;
             }
-            
-            projectDefinition = 
+
+            projectDefinition =
                 File.ReadAllText (".cab")
                     .FromJson<Configuration.ProjectDefinition> ();
 
@@ -96,31 +96,31 @@ namespace CorAssetBuilder
             Console.WriteLine ("\tAsset Definitions Folder: " + projectDefinition.AssetDefinitionsFolder);
             Console.WriteLine ("\tDestination Folder: " + projectDefinition.DestinationFolder);
             Console.WriteLine ("");
-            
+
             string[] assetDefinitionFiles = Directory.GetFiles (projectDefinition.AssetDefinitionsFolder);
-            
+
             var assetDefinitions = assetDefinitionFiles
                 .Select (
                     file =>
                     file.ReadAllText ()
                         .FromJson<Configuration.AssetDefinition> ())
                 .ToList ();
-       
+
             var platformIds = assetDefinitions
                 .SelectMany (x => x.SourceSets)
                 .SelectMany (x => x.Platforms)
                 .Distinct ()
                 .ToList ();
-            
+
             Console.WriteLine ("Target Platforms:");
             platformIds.ForEach (x => Console.WriteLine ("\t" + x));
             Console.WriteLine ("");
-            
+
             if (currentPlatform != null)
                 platformIds = new List<string> { currentPlatform };
-            
+
             Builders.Init();
-            
+
             foreach (var platformId in platformIds)
             {
                 var pId = platformId;
@@ -129,13 +129,13 @@ namespace CorAssetBuilder
                         x =>
                         x.HasSourceSetForPlatform (pId))
                     .ToList ();
-                
+
                 ProcessAssetsForPlatform (pId, platformAssetDeinitions);
             }
 		}
-        
+
         static void ProcessAssetsForPlatform (
-            String platformId, 
+            String platformId,
             List<Configuration.AssetDefinition> assetDefinitions)
         {
             Console.WriteLine ("Processing Platform: " + platformId);
@@ -143,98 +143,120 @@ namespace CorAssetBuilder
             foreach (var assetDefinition in assetDefinitions)
             {
                 var sourceset = assetDefinition.GetSourceForPlatform (platformId);
-                
+
                 var sourcefiles = sourceset.Files
                     .Select (x => Path.Combine (projectDefinition.ResourcesFolder, x))
                     .ToList ();
-                
+
                 sourcefiles.ForEach (x => Console.WriteLine ("\t+ " + x));
-                
-                String assetfile = 
+
+                String assetfile =
                     Path.Combine (
-                        projectDefinition.DestinationFolder, 
-                        platformId, 
+                        projectDefinition.DestinationFolder,
+                        platformId,
                         assetDefinition.AssetId + ".cba");
-                
+
                 Console.WriteLine ("\t= " + assetfile);
-                
+
                 try
                 {
                     //Type assetType = Type.GetType (assetDefinition.AssetType);
-                    
-                    Type resourceBuilderType = Type.GetType (sourceset.ResourceBuilderType + ",.dll");
-                    Type assetBuilderType = Type.GetType (sourceset.AssetBuilderType);
-                    
-                    IResource r = BuildResource (resourceBuilderType, sourcefiles, sourceset.ResourceBuilderSettings);
-                    IAsset a = BuildAsset (assetBuilderType, r, sourceset.AssetBuilderSettings);
-                    
+
+                    Type assetImporterType = Type.GetType (sourceset.AssetImporterType + ",.dll");
+                    Type assetProcessorType = Type.GetType (sourceset.AssetProcessorType);
+
+                    IAsset r = BuildResource (assetImporterType, sourcefiles, sourceset.AssetImporterSettings);
+                    IAsset a = BuildAsset (assetProcessorType, r, sourceset.AssetProcessorSettings);
+
                     WriteAsset (a, assetfile);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine ("\t! failed to build: " + ex.GetType () + " - " + ex.Message.Replace(Environment.NewLine, "  "));
                 }
-                
+
                 Console.WriteLine ("");
             }
         }
-        
-        static IResource BuildResource (
-            Type resourceBuilderType,
+
+        static IAsset BuildResource (
+            Type assetImporterType,
             List<String> sourceFiles,
-            Dictionary<String, String> settings)
+            Dictionary<String, Object> settings)
         {
-            Console.WriteLine ("\t\tabout to build resource with " + resourceBuilderType);
-            
-            var resourceBuilder = Activator.CreateInstance (resourceBuilderType) as ResourceBuilder;
-            
-            var resourceBuilderInput = new ResourceBuilderInput ();
-            resourceBuilderInput.Files = sourceFiles;
-            resourceBuilderInput.ResourceBuilderSettings = new ResourceBuilderSettings ();
-            resourceBuilderInput.ResourceBuilderSettings.Settings = settings;
-            var output = resourceBuilder.BaseImport (resourceBuilderInput);
-            
-            var resourceType = resourceBuilderType.BaseType ().GenericTypeArguments ()[0];
-            
-            
+            Console.WriteLine ("\t\tabout to build resource with " + assetImporterType);
+
+            var assetImporter = Activator.CreateInstance (assetImporterType) as AssetImporter;
+
+            var assetImporterInput = new AssetImporterInput ();
+            assetImporterInput.Files = sourceFiles;
+            assetImporterInput.AssetImporterSettings = new AssetImporterSettings ();
+            assetImporterInput.AssetImporterSettings.Settings = settings;
+            var output = assetImporter.BaseImport (assetImporterInput);
+
+            var resourceType = assetImporterType.BaseType ().GenericTypeArguments ()[0];
+
+
             Console.WriteLine ("\t\tresource type = " + resourceType);
-            
-            return output.Resource;
+
+            return output.OutputAsset;
         }
-        
+
         static IAsset BuildAsset (
-            Type assetBuilderType,
-            IResource resource,
-            Dictionary<String, String> settings)
+            Type assetProcessorType,
+            IAsset inputAsset,
+            Dictionary<String, Object> settings)
         {
-            Console.WriteLine ("\t\tabout to build asset with " + assetBuilderType);
-            
-            var assetBuilder = Activator.CreateInstance (assetBuilderType) as AssetBuilder;
-            
-            var resourceType = assetBuilderType.BaseType ().GenericTypeArguments ()[0];
-            var assetType = assetBuilderType.BaseType ().GenericTypeArguments ()[1];
+            Console.WriteLine ("\t\tabout to build asset with " + assetProcessorType);
+
+            var assetProcessor = Activator.CreateInstance (assetProcessorType) as AssetProcessor;
+
+            var resourceType = assetProcessorType.BaseType ().GenericTypeArguments ()[0];
+            var assetType = assetProcessorType.BaseType ().GenericTypeArguments ()[1];
             Console.WriteLine ("\t\tasset type = " + assetType);
-            
-            var abiType = typeof (AssetBuilderInput<>);
-            
+
+            var abiType = typeof (AssetProcessorInput<>);
+
             Type genericAbiType = abiType.MakeGenericType(resourceType);
-            var assetBuilderInputObject =  Activator.CreateInstance(genericAbiType);
-            
-            var assetBuilderInput = assetBuilderInputObject as AssetBuilderInput;
-            
-            assetBuilderInput.Resource = resource;
-            assetBuilderInput.AssetBuilderSettings = new AssetBuilderSettings ();
-            assetBuilderInput.AssetBuilderSettings.Settings = settings;
-            
-            var output = assetBuilder.BaseProcess (assetBuilderInput);
-            
-            
-            return output.Asset;
+            var assetProcessorInputObject =  Activator.CreateInstance(genericAbiType);
+
+            var assetProcessorInput = assetProcessorInputObject as AssetProcessorInput;
+
+            assetProcessorInput.InputAsset = inputAsset;
+            assetProcessorInput.AssetProcessorSettings = new AssetProcessorSettings ();
+            assetProcessorInput.AssetProcessorSettings.Settings = settings;
+
+            var output = assetProcessor.BaseProcess (assetProcessorInput);
+
+
+            return output.OutputAsset;
         }
-        
+
         static void WriteAsset (IAsset a, string destination)
         {
             Console.WriteLine ("\t\tabout to write asset to " + destination);
+            
+            using (var stream = new FileStream (destination, FileMode.OpenOrCreate))
+            {
+                using (var writer = new BinaryWriter (stream))
+                {
+                    var tsdb = new TypeSerialiserDatabase ();
+                    
+                    tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) 'C');
+                    
+                    //var byteSerialiser = new Ser
+                    // file type
+                    writer.Write ((Byte) 'C');
+                    writer.Write ((Byte) 'B');
+                    writer.Write ((Byte) 'A');
+                    
+                    // platform
+                    writer.Write ((Byte) 0);
+                    
+                    writer.Write ((Byte) 1);
+                    
+                }
+            }
         }
 	}
 }

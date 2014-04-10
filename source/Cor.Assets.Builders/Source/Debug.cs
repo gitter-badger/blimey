@@ -5,7 +5,7 @@ namespace Cor.Assets.Builders
 {
     internal static class Debug
     {
-        internal static void DumpToPPM (ColourmapResource cmap, string file)
+        internal static void DumpToPPM (ColourmapAsset cmap, string file)
         {
             using (var writer = new StreamWriter (file))
             {

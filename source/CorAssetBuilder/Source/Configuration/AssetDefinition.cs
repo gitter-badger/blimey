@@ -8,11 +8,11 @@ namespace CorAssetBuilder.Configuration
     //
     // -> Resource Collection Importer + Import Settings
     // = Intermediate Data
-    // - > AssetBuilder + Intermediate Data + Asset Settings
+    // - > AssetProcessor + Intermediate Data + Asset Settings
     // = Asset
-    
+
     /// <summary>
-    /// A resource defines a collection of 
+    /// A resource defines a collection of
     /// files for a given collection of platforms, which
     /// when built yeild set of platform specific asset variants.
     /// </summary>
@@ -23,28 +23,28 @@ namespace CorAssetBuilder.Configuration
         /// are built for.
         /// </summary>]
         public List<String> Platforms { get; set; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public String ResourceBuilderType { get; set; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public Dictionary<String, String> ResourceBuilderSettings { get; set; }
-        
-        
+
         /// <summary>
         ///
         /// </summary>
-        public String AssetBuilderType { get; set; }
-        
+        public String AssetImporterType { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Dictionary<String, Object> AssetImporterSettings { get; set; }
+
+
+        /// <summary>
+        ///
+        /// </summary>
+        public String AssetProcessorType { get; set; }
+
         /// <summary>
         /// Every source-set gets built into an asset.  Once the source-set
         /// has been turned into a resource by the resource-builder
         /// the cor build pipeline then
-        /// uses these AssetBuilderType and the resource to generate
+        /// uses these AssetProcessorType and the resource to generate
         /// the asset.
         /// For example:
         ///   A JPG file -> Texture2D
@@ -58,19 +58,19 @@ namespace CorAssetBuilder.Configuration
         ///  - On xna
         ///    - The same as above but with DXT5 compression.
         /// Another example would be that of compression.  Mobile platforms
-        /// may want a compressed version of an asset whilt other platforms 
+        /// may want a compressed version of an asset whilt other platforms
         /// do not.
         /// </summary>
-        public Dictionary<String, String> AssetBuilderSettings { get; set; }
-        
+        public Dictionary<String, Object> AssetProcessorSettings { get; set; }
+
         /// <summary>
         /// Defines which resource files this resource collection
         /// includes.
         /// </summary>
         public List<String> Files { get; set; }
-        
+
     }
-    
+
     public class AssetDefinition
     {
         /// <summary>
@@ -79,13 +79,13 @@ namespace CorAssetBuilder.Configuration
         /// the asset at run time.
         /// </summary>
         public String AssetId { get; set; }
-        
+
         /// <summary>
         /// The runtime type of the asset.
         /// This is the same for all platforms.
         /// </summary>
         //public String AssetType { get; set; }
-        
+
         /// <summary>
         /// Every asset comes from a source-set.
         /// ResourceCollection + Build = Asset
@@ -97,12 +97,12 @@ namespace CorAssetBuilder.Configuration
         /// variant of the same Asset.
         /// </summary>
         public List <SourceSet> SourceSets { get; set; }
-        
+
         public SourceSet GetSourceForPlatform (String platformId)
         {
             return SourceSets.Find (x => x.Platforms.Contains(platformId));
         }
-        
+
         public Boolean HasSourceSetForPlatform (String platformId)
         {
             return SourceSets.Find (x => x.Platforms.Contains(platformId)) != null;

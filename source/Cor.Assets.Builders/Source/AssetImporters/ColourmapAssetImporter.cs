@@ -14,14 +14,14 @@ using System.IO;
 
 namespace Cor
 {
-    public class ColourmapResourceBuilder
-        : ResourceBuilder <ColourmapResource>
+    public class ColourmapAssetImporter
+        : AssetImporter <ColourmapAsset>
     {
         public override String [] SupportedSourceFileExtensions
         {
             get { return new [] { "png", "jpg", "bmp" }; }
         }
-        
+
         #if OSX
         //Store pixel data as an RGBA Bitmap
         static IntPtr RequestImagePixelData (NSImage inImage)
@@ -34,12 +34,12 @@ namespace Cor
 
             ctxt.DrawImage (rect, inImage.CGImage);
             var data = ctxt.Data;
-            
+
             if (ctxt.BitsPerPixel != 32) throw new Exception ();
-            
+
             return data;
         }
-        
+
         static CGBitmapContext CreateRgbaBitmapContext (CGImage inImage)
         {
             var pixelsWide = inImage.Width;
@@ -74,27 +74,27 @@ namespace Cor
             }
         }
         #endif
-        
 
-        public override ResourceBuilderOutput <ColourmapResource> Import (ResourceBuilderInput input)
+
+        public override AssetImporterOutput <ColourmapAsset> Import (AssetImporterInput input)
         {
-            var output = new ResourceBuilderOutput <ColourmapResource> ();
-            var outputResource = new ColourmapResource ();
-            output.Resource = outputResource;
-            
+            var output = new AssetImporterOutput <ColourmapAsset> ();
+            var outputResource = new ColourmapAsset ();
+            output.OutputAsset = outputResource;
+
             if (input.Files.Count != 1)
                 throw new Exception ("BitmapResourceBuilder only supports one input file.");
-            
+
             if (!File.Exists (input.Files[0]))
                 throw new Exception ("BitmapResourceBuilder cannot find input file.");
-            
-            
+
+
             #if WINDOWS
-            
+
             var bmp = new Bitmap (input.Files[0]);
-            
+
             outputResource.Bitmap = bmp;
-            
+
             var width = outputResource.Bitmap.Width;
             var height = outputResource.Bitmap.Height;
 
@@ -112,27 +112,27 @@ namespace Cor
                 outputResource.Bitmap = bitmap;
             }
 
-            
+
             #elif OSX
-       
+
             using(var fStream = new FileStream (input.Files[0], FileMode.Open))
             {
                 var nsImage = NSImage.FromStream (fStream);
                 IntPtr dataPointer = RequestImagePixelData (nsImage);
-                
-                
+
+
                 int width = (int) nsImage.Size.Width;
                 int height = (int) nsImage.Size.Height;
-                
+
                 int bytecount = width * height * 4;
-                
+
                 byte[] pixdatabytes = new byte [bytecount];
                 Marshal.Copy(dataPointer, pixdatabytes, 0, bytecount);
-                
+
                 var pixmap = new Rgba32[width, height];
-                
+
                 int offset = 0;
-                
+
                 for (int y = 0; y < height; ++y)
                 {
                     for (int x = 0; x < width; ++x)
@@ -144,16 +144,16 @@ namespace Cor
                         pixmap [x, y].A = pixdatabytes [offset++];
                     }
                 }
-                
+
                 outputResource.Data = pixmap;
             }
-            
+
             #else
             throw new NotSupportedException ();
             #endif
-            
+
             //Debug.DumpToPPM (output.Resource, input.Files[0] + "test.ppm");
-            
+
             return output;
         }
 
