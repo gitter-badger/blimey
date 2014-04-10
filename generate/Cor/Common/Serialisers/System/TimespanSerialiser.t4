@@ -1,0 +1,18 @@
+    class TimeSpanSerialiser
+        : TypeSerialiser<TimeSpan>
+    {
+        internal TimeSpanSerialiser () {}
+
+        public override TimeSpan Read(BinaryReader abr)
+        {
+            Int64 ticks = abr.ReadInt64 ();
+
+            return new TimeSpan(ticks);
+        }
+
+        public override void Write(BinaryWriter abw, TimeSpan obj)
+        {
+            abw.Write(obj.Ticks);
+        }
+    }
+

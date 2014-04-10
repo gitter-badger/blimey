@@ -1,0 +1,19 @@
+    public abstract class TypeSerialiser
+    {
+        readonly Type targetType;
+
+        public Type TargetType
+        {
+            get { return this.targetType; }
+        }
+
+        protected TypeSerialiser(Type targetType)
+        {
+            this.targetType = targetType;
+        }
+
+        public abstract Object ReadObject (BinaryReader abr);
+
+        public abstract void WriteObject (BinaryWriter abw, Object obj);
+    }
+

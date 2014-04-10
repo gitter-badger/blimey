@@ -1,0 +1,16 @@
+    class DecimalSerialiser
+        : TypeSerialiser<Decimal>
+    {
+        internal DecimalSerialiser () {}
+
+        public override Decimal Read(BinaryReader abr)
+        {
+            return abr.ReadDecimal ();
+        }
+
+        public override void Write(BinaryWriter abw, Decimal obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

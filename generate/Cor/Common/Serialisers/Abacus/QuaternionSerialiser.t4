@@ -1,0 +1,24 @@
+    class QuaternionSerialiser
+        : TypeSerialiser<Quaternion>
+    {
+        internal QuaternionSerialiser () {}
+
+        public override Quaternion Read(BinaryReader abr)
+        {
+            Single i = abr.ReadSingle();
+            Single j = abr.ReadSingle();
+            Single k = abr.ReadSingle();
+            Single u = abr.ReadSingle();
+
+            return new Quaternion(i, j, k, u);
+        }
+
+        public override void Write(BinaryWriter abw, Quaternion obj)
+        {
+            abw.Write(obj.I);
+            abw.Write(obj.J);
+            abw.Write(obj.K);
+            abw.Write(obj.U);
+        }
+    }
+

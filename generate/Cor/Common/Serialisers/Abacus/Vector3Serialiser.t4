@@ -1,0 +1,22 @@
+    class Vector3Serialiser
+        : TypeSerialiser<Vector3>
+    {
+        internal Vector3Serialiser () {}
+
+        public override Vector3 Read(BinaryReader abr)
+        {
+            Single x = abr.ReadSingle();
+            Single y = abr.ReadSingle();
+            Single z = abr.ReadSingle();
+
+            return new Vector3(x, y, z);
+        }
+
+        public override void Write(BinaryWriter abw, Vector3 obj)
+        {
+            abw.Write(obj.X);
+            abw.Write(obj.Y);
+            abw.Write(obj.Z);
+        }
+    }
+

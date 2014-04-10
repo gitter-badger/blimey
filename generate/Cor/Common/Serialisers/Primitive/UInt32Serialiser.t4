@@ -1,0 +1,16 @@
+    class UInt32Serialiser
+        : TypeSerialiser<UInt32>
+    {
+        internal UInt32Serialiser () {}
+
+        public override UInt32 Read(BinaryReader abr)
+        {
+            return abr.ReadUInt32 ();
+        }
+
+        public override void Write(BinaryWriter abw, UInt32 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

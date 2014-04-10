@@ -1,0 +1,27 @@
+    public sealed class TypeSerialiserDatabase
+    {
+        Dictionary<Type, TypeSerialiser> assetTypeSerialisers;
+
+        public TypeSerialiserDatabase()
+        {
+            assetTypeSerialisers = new Dictionary<Type, TypeSerialiser>();
+        }
+
+        public TypeSerialiser<T> GetTypeSerialiser<T>()
+        {
+            throw new NotImplementedException();
+            //return assetTypeSerialisers[typeof(T)] as TypeSerialiser<T>;
+        }
+
+        public TypeSerialiser GetTypeSerialiser(Type type)
+        {
+            throw new NotImplementedException();
+            //return assetTypeSerialisers[type];
+        }
+
+        public TypeSerialiser GetTypeSerialiserFromId(Int32 id)
+        {
+            throw new NotImplementedException();
+        }
+    }
+

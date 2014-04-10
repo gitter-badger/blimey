@@ -1,0 +1,16 @@
+    class DoubleSerialiser
+        : TypeSerialiser<Double>
+    {
+        internal DoubleSerialiser () {}
+
+        public override Double Read(BinaryReader abr)
+        {
+            return abr.ReadDouble ();
+        }
+
+        public override void Write(BinaryWriter abw, Double obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

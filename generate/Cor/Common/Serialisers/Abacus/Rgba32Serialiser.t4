@@ -1,0 +1,24 @@
+    class Rgba32Serialiser
+        : TypeSerialiser<Rgba32>
+    {
+        internal Rgba32Serialiser () {}
+
+        public override Rgba32 Read(BinaryReader abr)
+        {
+            Byte r = abr.ReadByte();
+            Byte g = abr.ReadByte();
+            Byte b = abr.ReadByte();
+            Byte a = abr.ReadByte();
+
+            return new Rgba32(r, g, b, a);
+        }
+
+        public override void Write(BinaryWriter abw, Rgba32 obj)
+        {
+            abw.Write(obj.R);
+            abw.Write(obj.G);
+            abw.Write(obj.B);
+            abw.Write(obj.A);
+        }
+    }
+

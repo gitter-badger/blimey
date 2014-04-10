@@ -1,0 +1,16 @@
+    class CharSerialiser
+        : TypeSerialiser<Char>
+    {
+        internal CharSerialiser () {}
+
+        public override Char Read(BinaryReader abr)
+        {
+            return abr.ReadChar ();
+        }
+
+        public override void Write(BinaryWriter abw, Char obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

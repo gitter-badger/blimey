@@ -51,97 +51,179 @@ using Abacus.Int32Precision;
 
 namespace Cor
 {
-<#@ include file="ICor.t4"#>
-    #region Interfaces
-
-<#@ include file="IAsset.t4"#>
-<#@ include file="IAudioManager.t4"#>
-<#@ include file="IGraphicsManager.t4"#>
-<#@ include file="IInputManager.t4"#>
-<#@ include file="IOldResourceManager.t4"#>
-<#@ include file="ISystemManager.t4"#>
 <#@ include file="IApp.t4"#>
-<#@ include file="IDisplayStatus.t4"#>
-<#@ include file="IGpuUtils.t4"#>
-<#@ include file="IPanelSpecification.t4"#>
-<#@ include file="IOldResource.t4"#>
-<#@ include file="IScreenSpecificationBase.t4"#>
-<#@ include file="IGeometryBuffer.t4"#>
-<#@ include file="IVertexBuffer.t4"#>
-<#@ include file="IVertexType.t4"#>
-<#@ include file="IIndexBuffer.t4"#>
-<#@ include file="IShader.t4"#>
-<#@ include file="IShaderPass.t4"#>
+
+//----------------------------------------------------------------------------//
+
+    #region Platform
+
+<#@ include file="Platform/ICor.t4"#>
+<#@ include file="Platform/IAsset.t4"#>
+<#@ include file="Platform/IAudioManager.t4"#>
+<#@ include file="Platform/IGraphicsManager.t4"#>
+<#@ include file="Platform/IInputManager.t4"#>
+<#@ include file="Platform/ISystemManager.t4"#>
+<#@ include file="Platform/IDisplayStatus.t4"#>
+<#@ include file="Platform/IGpuUtils.t4"#>
+<#@ include file="Platform/IPanelSpecification.t4"#>
+<#@ include file="Platform/IScreenSpecificationBase.t4"#>
+<#@ include file="Platform/IGeometryBuffer.t4"#>
+<#@ include file="Platform/IVertexBuffer.t4"#>
+<#@ include file="Platform/IVertexType.t4"#>
+<#@ include file="Platform/IIndexBuffer.t4"#>
+<#@ include file="Platform/IShader.t4"#>
+<#@ include file="Platform/IShaderPass.t4"#>
+
+    #region Input
+
+<#@ include file="Platform/Input/IPsmGamepad.t4"#>
+<#@ include file="Platform/Input/IPsmGamepadButtons.t4"#>
+<#@ include file="Platform/Input/IPsmGamepadDPad.t4"#>
+<#@ include file="Platform/Input/IPsmGamepadThumbsticks.t4"#>
+<#@ include file="Platform/Input/IXbox360Gamepad.t4"#>
+<#@ include file="Platform/Input/IXbox360GamepadButtons.t4"#>
+<#@ include file="Platform/Input/IXbox360GamepadDPad.t4"#>
+<#@ include file="Platform/Input/IXbox360GamepadThumbsticks.t4"#>
+<#@ include file="Platform/Input/IXbox360GamepadTriggers.t4"#>
+<#@ include file="Platform/Input/IMultitouchController.t4"#>
+<#@ include file="Platform/Input/IGenericGamepad.t4"#>
+<#@ include file="Platform/Input/IMouse.t4"#>
+<#@ include file="Platform/Input/IKeyboard.t4"#>
+    #endregion
+
+    #region Assets
+
+    #endregion
+
+    #endregion
+
+//----------------------------------------------------------------------------//
+
+    #region Common
+
+    #region Assets
+
+<#@ include file="Common/Assets/ColourmapAsset.t4"#>
+<#@ include file="Common/Assets/MemoryTextureAsset.t4"#>
+<#@ include file="Common/Assets/TextAsset.t4"#>
+<#@ include file="Common/Assets/TextureAsset.t4"#>
     #endregion
 
     #region Enums
 
-<#@ include file="CorEnums/BlendFactor.t4"#>
-<#@ include file="CorEnums/BlendFunction.t4"#>
-<#@ include file="CorEnums/CullMode.t4"#>
-<#@ include file="CorEnums/ButtonState.t4"#>
-<#@ include file="CorEnums/ClearOptions.t4"#>
-<#@ include file="CorEnums/DeviceOrientation.t4"#>
-<#@ include file="CorEnums/PanelType.t4"#>
-<#@ include file="CorEnums/PlayerIndex.t4"#>
-<#@ include file="CorEnums/PrimitiveType.t4"#>
-<#@ include file="CorEnums/ShaderType.t4"#>
-<#@ include file="CorEnums/TouchPhase.t4"#>
-<#@ include file="CorEnums/VertexElementFormat.t4"#>
-<#@ include file="CorEnums/VertexElementUsage.t4"#>
-<#@ include file="CorEnums/KeyState.t4"#>
-<#@ include file="CorEnums/FunctionalKey.t4"#>
-<#@ include file="CorEnums/SurfaceFormat.t4"#>
+<#@ include file="Common/Enums/BlendFactor.t4"#>
+<#@ include file="Common/Enums/BlendFunction.t4"#>
+<#@ include file="Common/Enums/CullMode.t4"#>
+<#@ include file="Common/Enums/ButtonState.t4"#>
+<#@ include file="Common/Enums/ClearOptions.t4"#>
+<#@ include file="Common/Enums/DeviceOrientation.t4"#>
+<#@ include file="Common/Enums/PanelType.t4"#>
+<#@ include file="Common/Enums/PlayerIndex.t4"#>
+<#@ include file="Common/Enums/PrimitiveType.t4"#>
+<#@ include file="Common/Enums/ShaderType.t4"#>
+<#@ include file="Common/Enums/TouchPhase.t4"#>
+<#@ include file="Common/Enums/VertexElementFormat.t4"#>
+<#@ include file="Common/Enums/VertexElementUsage.t4"#>
+<#@ include file="Common/Enums/KeyState.t4"#>
+<#@ include file="Common/Enums/FunctionalKey.t4"#>
+<#@ include file="Common/Enums/SurfaceFormat.t4"#>
+    #endregion
+
+    #region Serialisers
+
+<#@ include file="Common/Serialisers/TypeSerialiser.t4"#>
+<#@ include file="Common/Serialisers/TypeSerialiser.Generic.t4"#>
+
+    #region Primitive Types
+
+<#@ include file="Common/Serialisers/Primitive/Int64Serialiser.t4"#>
+<#@ include file="Common/Serialisers/Primitive/BooleanSerialiser.t4"#>
+<#@ include file="Common/Serialisers/Primitive/ByteSerialiser.t4"#>
+<#@ include file="Common/Serialisers/Primitive/CharSerialiser.t4"#>
+<#@ include file="Common/Serialisers/Primitive/DoubleSerialiser.t4"#>
+<#@ include file="Common/Serialisers/Primitive/Int16Serialiser.t4"#>
+<#@ include file="Common/Serialisers/Primitive/Int32Serialiser.t4"#>
+<#@ include file="Common/Serialisers/Primitive/SByteSerialiser.t4"#>
+<#@ include file="Common/Serialisers/Primitive/SingleSerialiser.t4"#>
+<#@ include file="Common/Serialisers/Primitive/UInt16Serialiser.t4"#>
+<#@ include file="Common/Serialisers/Primitive/UInt32Serialiser.t4"#>
+<#@ include file="Common/Serialisers/Primitive/UInt64Serialiser.t4"#>
+    #endregion
+
+    #region System Types
+
+<#@ include file="Common/Serialisers/System/StringSerialiser.t4"#>
+<#@ include file="Common/Serialisers/System/DecimalSerialiser.t4"#>
+<#@ include file="Common/Serialisers/System/TimespanSerialiser.t4"#>
+<#@ include file="Common/Serialisers/System/ListSerialiser.t4"#>
+<#@ include file="Common/Serialisers/System/NullableSerialiser.t4"#>
+<#@ include file="Common/Serialisers/System/EnumSerialiser.t4"#>
+<#@ include file="Common/Serialisers/System/ArraySerialiser.t4"#>
+<#@ include file="Common/Serialisers/System/DictionarySerialiser.t4"#>
+    #endregion
+
+    #region Abacus Types
+
+<#@ include file="Common/Serialisers/Abacus/Rgba32Serialiser.t4"#>
+<#@ include file="Common/Serialisers/Abacus/Matrix44Serialiser.t4"#>
+<#@ include file="Common/Serialisers/Abacus/QuaternionSerialiser.t4"#>
+<#@ include file="Common/Serialisers/Abacus/Vector2Serialiser.t4"#>
+<#@ include file="Common/Serialisers/Abacus/Vector3Serialiser.t4"#>
+<#@ include file="Common/Serialisers/Abacus/Vector4Serialiser.t4"#>
+    #endregion
+
+    #region Cor Types
+
+<#@ include file="Common/Serialisers/Cor/VertexDeclarationSerialiser.t4"#>
+<#@ include file="Common/Serialisers/Cor/VertexElementSerialiser.t4"#>
+<#@ include file="Common/Serialisers/Cor/GeometryBufferSerialiser.t4"#>
+    #endregion
+
+    #endregion
+
+    #region Systems
+
+<#@ include file="Common/Systems/AssetManager.t4"#>
+<#@ include file="Common/Systems/TypeSerialiserDatabase.t4"#>
     #endregion
 
     #region Types
 
-<#@ include file="CorTypes/AppSettings.t4"#>
-<#@ include file="CorTypes/AppTime.t4"#>
-<#@ include file="CorTypes/VertexDeclaration.t4"#>
-<#@ include file="CorTypes/VertexElement.t4"#>
-<#@ include file="CorTypes/LogManagerSettings.t4"#>
-<#@ include file="CorTypes/LogManager.t4"#>
-    #endregion
-
-    #region Input
-
-<#@ include file="Input/Touch.t4"#>
-<#@ include file="Input/TouchCollection.t4"#>
-<#@ include file="Input/TouchCollectionEnumerator.t4"#>
-<#@ include file="Input/IPsmGamepad.t4"#>
-<#@ include file="Input/IPsmGamepadButtons.t4"#>
-<#@ include file="Input/IPsmGamepadDPad.t4"#>
-<#@ include file="Input/IPsmGamepadThumbsticks.t4"#>
-<#@ include file="Input/IXbox360Gamepad.t4"#>
-<#@ include file="Input/IXbox360GamepadButtons.t4"#>
-<#@ include file="Input/IXbox360GamepadDPad.t4"#>
-<#@ include file="Input/IXbox360GamepadThumbsticks.t4"#>
-<#@ include file="Input/IXbox360GamepadTriggers.t4"#>
-<#@ include file="Input/IMultitouchController.t4"#>
-<#@ include file="Input/IGenericGamepad.t4"#>
-<#@ include file="Input/IMouse.t4"#>
-<#@ include file="Input/IKeyboard.t4"#>
+<#@ include file="Common/Types/AppSettings.t4"#>
+<#@ include file="Common/Types/AppTime.t4"#>
+<#@ include file="Common/Types/VertexDeclaration.t4"#>
+<#@ include file="Common/Types/VertexElement.t4"#>
+<#@ include file="Common/Types/LogManagerSettings.t4"#>
+<#@ include file="Common/Types/LogManager.t4"#>
+<#@ include file="Common/Types/Touch.t4"#>
+<#@ include file="Common/Types/TouchCollection.t4"#>
+<#@ include file="Common/Types/TouchCollectionEnumerator.t4"#>
     #endregion
 
     #region Vertices
 
-<#@ include file="Vertices/VertexPosition.t4"#>
-<#@ include file="Vertices/VertexPositionColour.t4"#>
-<#@ include file="Vertices/VertexPositionNormal.t4"#>
-<#@ include file="Vertices/VertexPositionNormalColour.t4"#>
-<#@ include file="Vertices/VertexPositionNormalTexture.t4"#>
-<#@ include file="Vertices/VertexPositionNormalTextureColour.t4"#>
-<#@ include file="Vertices/VertexPositionTexture.t4"#>
-<#@ include file="Vertices/VertexPositionTextureColour.t4"#>
+<#@ include file="Common/Vertices/VertexPosition.t4"#>
+<#@ include file="Common/Vertices/VertexPositionColour.t4"#>
+<#@ include file="Common/Vertices/VertexPositionNormal.t4"#>
+<#@ include file="Common/Vertices/VertexPositionNormalColour.t4"#>
+<#@ include file="Common/Vertices/VertexPositionNormalTexture.t4"#>
+<#@ include file="Common/Vertices/VertexPositionNormalTextureColour.t4"#>
+<#@ include file="Common/Vertices/VertexPositionTexture.t4"#>
+<#@ include file="Common/Vertices/VertexPositionTextureColour.t4"#>
     #endregion
 
-    #region OldResources
-
-<#@ include file="OldResourceTypes/AudioClip.t4"#>
-<#@ include file="OldResourceTypes/Mesh.t4"#>
-<#@ include file="OldResourceTypes/Texture2D.t4"#>
     #endregion
+
+//----------------------------------------------------------------------------//
+
+    #region Extensions
+
+<#@ include file="Extensions/BinaryReaderExtensions.t4"#>
+<#@ include file="Extensions/BinaryWriterExtensions.t4"#>
+<#@ include file="Extensions/ListExtensions.t4"#>
+    #endregion
+
+//----------------------------------------------------------------------------//
 
     #region Internal
 
@@ -150,61 +232,14 @@ namespace Cor
 <#@ include file="Internal/InternalUtils.t4"#>
     #endregion
 
-    #region Extentions
+//----------------------------------------------------------------------------//
 
-<#@ include file="Extensions/ListExtensions.t4"#>
-    #endregion
+    #region Legacy
 
-    #region Assets
-
-<#@ include file="Assets/Dxt1ImageAsset.t4"#>
-<#@ include file="Assets/Dxt3ImageAsset.t4"#>
-<#@ include file="Assets/Dxt5ImageAsset.t4"#>
-<#@ include file="Assets/DxtImageAsset.t4"#>
-<#@ include file="Assets/ImageAsset.t4"#>
-<#@ include file="Assets/PvrtcImageAsset.t4"#>
-<#@ include file="Assets/TextureAsset.t4"#>
-    #endregion
-
-    #region AssetSystem
-
-<#@ include file="AssetSystem/AssetTypeSerialiser.t4"#>
-<#@ include file="AssetSystem/AssetManager.t4"#>
-<#@ include file="AssetSystem/AssetTypeSerialiserManager.t4"#>
-<#@ include file="AssetSystem/AssetBinaryReader.t4"#>
-<#@ include file="AssetSystem/AssetBinaryWriter.t4"#>
-    #endregion
-
-    #region AssetTypeSerialisers
-
-<#@ include file="AssetTypeSerialisers/System/Int64Serialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/BooleanSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/ByteSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/CharSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/DecimalSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/DoubleSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/Int16Serialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/Int32Serialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/SByteSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/SingleSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/StringSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/TimespanSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/UInt16Serialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/UInt32Serialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/UInt64Serialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/ListSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/NullableSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/EnumSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/ArraySerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/System/DictionarySerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/Abacus/Rgba32Serialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/Abacus/Matrix44Serialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/Abacus/QuaternionSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/Abacus/Vector2Serialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/Abacus/Vector3Serialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/Abacus/Vector4Serialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/Cor/VertexDeclarationSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/Cor/VertexElementSerialiser.t4"#>
-<#@ include file="AssetTypeSerialisers/Cor/GeometryBufferSerialiser.t4"#>
+<#@ include file="Legacy/IOldResource.t4"#>
+<#@ include file="Legacy/IOldResourceManager.t4"#>
+<#@ include file="Legacy/AudioClip.t4"#>
+<#@ include file="Legacy/Mesh.t4"#>
+<#@ include file="Legacy/Texture2D.t4"#>
     #endregion
 }

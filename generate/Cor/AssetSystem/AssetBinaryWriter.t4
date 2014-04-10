@@ -1,9 +1,0 @@
-    public class AssetBinaryWriter
-        : BinaryWriter
-    {
-        internal AssetBinaryWriter(Stream stream)
-            : base(stream)
-        {
-        }
-    }
-

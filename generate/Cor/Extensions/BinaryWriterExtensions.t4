@@ -1,0 +1,8 @@
+    public static class BinaryWriterExtensions
+    {
+        public static void Write7BitEncodedInt32 (this BinaryWriter me, Int32 value)
+        {
+            throw new NotImplementedException ();
+        }
+    }
+

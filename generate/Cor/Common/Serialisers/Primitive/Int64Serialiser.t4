@@ -1,0 +1,16 @@
+    class Int64Serialiser
+        : TypeSerialiser<Int64>
+    {
+        internal Int64Serialiser () {}
+
+        public override Int64 Read(BinaryReader abr)
+        {
+            return abr.ReadInt64 ();
+        }
+
+        public override void Write(BinaryWriter abw, Int64 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

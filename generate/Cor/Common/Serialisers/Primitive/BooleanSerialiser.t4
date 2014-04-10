@@ -1,0 +1,16 @@
+    class BooleanSerialiser
+        : TypeSerialiser<Boolean>
+    {
+        internal BooleanSerialiser () {}
+
+        public override Boolean Read(BinaryReader abr)
+        {
+            return abr.ReadBoolean ();
+        }
+
+        public override void Write(BinaryWriter abw, Boolean obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

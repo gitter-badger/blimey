@@ -1,0 +1,26 @@
+    public abstract class TypeSerialiser<T>
+        : TypeSerialiser
+    {
+        protected TypeSerialiser()
+            : base(typeof(T))
+        {
+
+        }
+
+        public virtual void Initialise (TypeSerialiserDatabase manager) {}
+
+        public override Object ReadObject (BinaryReader abr)
+        {
+            return this.Read (abr);
+        }
+
+        public override void WriteObject (BinaryWriter abw, Object obj)
+        {
+            this.Write (abw, (T) obj);
+        }
+
+        public abstract T Read (BinaryReader abr);
+
+        public abstract void Write (BinaryWriter abw, T obj);
+    }
+

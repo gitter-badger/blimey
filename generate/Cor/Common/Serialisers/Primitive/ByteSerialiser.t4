@@ -1,0 +1,16 @@
+    class ByteSerialiser
+        : TypeSerialiser<Byte>
+    {
+        internal ByteSerialiser () {}
+
+        public override Byte Read(BinaryReader abr)
+        {
+            return abr.ReadByte ();
+        }
+
+        public override void Write(BinaryWriter abw, Byte obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

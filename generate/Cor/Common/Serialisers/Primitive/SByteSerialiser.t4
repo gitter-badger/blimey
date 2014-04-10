@@ -1,0 +1,16 @@
+    class SByteSerialiser
+        : TypeSerialiser<SByte>
+    {
+        internal SByteSerialiser () {}
+
+        public override SByte Read(BinaryReader abr)
+        {
+            return abr.ReadSByte ();
+        }
+
+        public override void Write(BinaryWriter abw, SByte obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

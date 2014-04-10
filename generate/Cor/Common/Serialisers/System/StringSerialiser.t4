@@ -1,0 +1,16 @@
+    class StringSerialiser
+        : TypeSerialiser<String>
+    {
+        internal StringSerialiser () {}
+
+        public override String Read(BinaryReader abr)
+        {
+            return abr.ReadString ();
+        }
+
+        public override void Write(BinaryWriter abw, String obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

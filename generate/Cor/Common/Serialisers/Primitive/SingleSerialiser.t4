@@ -1,0 +1,16 @@
+    class SingleSerialiser
+        : TypeSerialiser<Single>
+    {
+        internal SingleSerialiser () {}
+
+        public override Single Read(BinaryReader abr)
+        {
+            return abr.ReadSingle ();
+        }
+
+        public override void Write(BinaryWriter abw, Single obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

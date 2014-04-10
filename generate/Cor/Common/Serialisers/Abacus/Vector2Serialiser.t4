@@ -1,0 +1,20 @@
+    class Vector2Serialiser
+        : TypeSerialiser<Vector2>
+    {
+        internal Vector2Serialiser () {}
+
+        public override Vector2 Read(BinaryReader abr)
+        {
+            Single x = abr.ReadSingle();
+            Single y = abr.ReadSingle();
+
+            return new Vector2(x, y);
+        }
+
+        public override void Write(BinaryWriter abw, Vector2 obj)
+        {
+            abw.Write(obj.X);
+            abw.Write(obj.Y);
+        }
+    }
+

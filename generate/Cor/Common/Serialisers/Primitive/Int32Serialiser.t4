@@ -1,0 +1,16 @@
+    class Int32Serialiser
+        : TypeSerialiser<Int32>
+    {
+        internal Int32Serialiser () {}
+
+        public override Int32 Read(BinaryReader abr)
+        {
+            return abr.ReadInt32 ();
+        }
+
+        public override void Write(BinaryWriter abw, Int32 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+

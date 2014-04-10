@@ -1,0 +1,12 @@
+        public abstract class TextureAsset
+            : IAsset
+        {
+            public abstract Int32 Width { get; }
+            public abstract Int32 Height { get; }
+
+            public abstract SurfaceFormat SurfaceFormat { get; }
+
+            public abstract Byte[] Primary { get; }
+            public abstract Byte[,] Mipmaps { get; }
+        }
+

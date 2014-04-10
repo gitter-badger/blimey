@@ -1,0 +1,38 @@
+    class NullableSerialiser<T>
+        : TypeSerialiser<T?>
+    where T
+        : struct
+    {
+        TypeSerialiser<T> valueSerialiser;
+
+        internal NullableSerialiser () {}
+
+        public override void Initialise (TypeSerialiserDatabase manager)
+        {
+            valueSerialiser = manager.GetTypeSerialiser<T>();
+        }
+
+        public override T? Read(BinaryReader abr)
+        {
+            if(abr.ReadBoolean())
+            {
+                return valueSerialiser.Read (abr);
+            }
+
+            return null;
+        }
+
+        public override void Write(BinaryWriter abw, T? obj)
+        {
+            if( obj.HasValue )
+            {
+                abw.Write(true);
+                valueSerialiser.Write(abw, obj.Value);
+            }
+            else
+            {
+                abw.Write(false);
+            }
+        }
+    }
+

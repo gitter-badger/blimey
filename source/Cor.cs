@@ -50,6 +50,32 @@ using Abacus.Int32Precision;
 namespace Cor
 {
     /// <summary>
+    /// todo
+    /// </summary>
+    public interface IApp
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        void Initilise(ICor cor);
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        Boolean Update(AppTime time);
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        void Render();
+    }
+
+
+//----------------------------------------------------------------------------//
+
+    #region Platform
+
+    /// <summary>
     /// The Cor! framework provides a user's app access to Cor!
     /// features via this interface.
     /// </summary>
@@ -102,8 +128,6 @@ namespace Cor
         /// </summary>
         AppSettings Settings { get; }
     }
-
-    #region Interfaces
 
         public interface IAsset
         {
@@ -369,28 +393,6 @@ namespace Cor
     /// <summary>
     /// todo
     /// </summary>
-    [Obsolete]
-    public interface IOldResourceManager
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        T Load<T>(String path) where T : IOldResource;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        T Open<T>(String path) where T : IDisposable;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        IShader LoadShader(ShaderType shaderType);
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
     public interface ISystemManager
     {
         /// <summary>
@@ -437,27 +439,11 @@ namespace Cor
         /// todo
         /// </summary>
         IPanelSpecification PanelSpecification { get; }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public interface IApp
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        void Initilise(ICor cor);
 
         /// <summary>
         /// todo
         /// </summary>
-        Boolean Update(AppTime time);
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        void Render();
+        Stream GetAssetStream (String assetId);
     }
 
     /// <summary>
@@ -539,15 +525,6 @@ namespace Cor
         /// todo
         /// </summary>
         PanelType PanelType { get; }
-    }
-
-    /// <summary>
-    /// objects that Cor's! resource manager can load
-    /// and track.
-    /// </summary>
-    [Obsolete]
-    public interface IOldResource
-    {
     }
 
     /// <summary>
@@ -793,6 +770,442 @@ namespace Cor
         /// </summary>
         void Activate (VertexDeclaration vertexDeclaration);
     }
+
+
+    #region Input
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IPsmGamepad
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        IPsmGamepadButtons Buttons { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        IPsmGamepadDPad DPad { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        IPsmGamepadThumbsticks Thumbsticks { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IPsmGamepadButtons
+    {   
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Triangle { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Square { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Circle { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Cross { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Start { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Select { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState LeftShoulder { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState RightShoulder { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IPsmGamepadDPad
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Down { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Left { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Right { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Up { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IPsmGamepadThumbsticks
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        Vector2 Left { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        Vector2 Right { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IXbox360Gamepad
+    {        
+        /// <summary>
+        /// todo
+        /// </summary>
+        IXbox360GamepadButtons Buttons { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        IXbox360GamepadDPad DPad { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        IXbox360GamepadThumbsticks Thumbsticks { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        IXbox360GamepadTriggers Triggers { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IXbox360GamepadButtons
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState A { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState B { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Back { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState LeftShoulder { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState LeftStick { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState RightShoulder { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState RightStick { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Start { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState X { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Y { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IXbox360GamepadDPad
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Down { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Left { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Right { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Up { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IXbox360GamepadThumbsticks
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        Vector2 Left { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        Vector2 Right { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IXbox360GamepadTriggers
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        Single Left { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        Single Right { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IMultiTouchController
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        IPanelSpecification PanelSpecification { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        TouchCollection TouchCollection { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IGenericGamepad
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Down { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Left { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Right { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Up { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState North { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState South { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState East { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState West { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Option { get; }
+        
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Pause { get; }
+    }
+
+    /// <summary>
+    /// todo
+    /// </summary>
+    public interface IMouse
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Left { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Middle { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        ButtonState Right { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        Int32 ScrollWheelValue { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        Int32 X { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        Int32 Y { get; }
+    }
+
+    public interface IKeyboard
+    {
+        FunctionalKey[] GetPressedFunctionalKey ();
+        Boolean IsFunctionalKeyDown (FunctionalKey key);
+        Boolean IsFunctionalKeyUp (FunctionalKey key);
+        KeyState this [FunctionalKey key] { get; }
+
+        Char[] GetPressedCharacterKeys();
+        Boolean IsCharacterKeyDown (Char key);
+        Boolean IsCharacterKeyUp (Char key);
+        KeyState this [Char key] { get; }
+    }
+
+    #endregion
+
+    #region Assets
+
+    #endregion
+
+    #endregion
+
+//----------------------------------------------------------------------------//
+
+    #region Common
+
+    #region Assets
+
+        public class ColourmapAsset
+            : IAsset
+        {
+            public Int32 Width { get { return Data.GetLength (0); } }
+
+            public Int32 Height { get { return Data.GetLength (1); } }
+
+            /// <summary>
+            /// A 32 BPP RGBA pixmap.
+            /// </summary>
+            public Rgba32[,] Data { get; set; }
+        }
+
+        public class MemoryTextureAsset
+            : TextureAsset
+        {
+            // Data allocated in standard system RAM
+            Byte[] primaryData;
+
+            // Data allocated in standard system RAM
+            Byte[,] mipmaps;
+
+            public override Int32 Width { get { throw new NotImplementedException (); } }
+            public override Int32 Height { get { throw new NotImplementedException (); } }
+
+            public override SurfaceFormat SurfaceFormat { get { throw new NotImplementedException (); } }
+
+            public override Byte[] Primary { get { throw new NotImplementedException (); } }
+            public override Byte[,] Mipmaps { get { throw new NotImplementedException (); } }
+        }
+
+        public class TextAsset
+            : IAsset
+        {
+            public String Data { get; set; }
+        }
+
+        public abstract class TextureAsset
+            : IAsset
+        {
+            public abstract Int32 Width { get; }
+            public abstract Int32 Height { get; }
+
+            public abstract SurfaceFormat SurfaceFormat { get; }
+
+            public abstract Byte[] Primary { get; }
+            public abstract Byte[,] Mipmaps { get; }
+        }
 
     #endregion
 
@@ -1791,6 +2204,1036 @@ namespace Cor
 
     #endregion
 
+    #region Serialisers
+
+    public abstract class TypeSerialiser
+    {
+        readonly Type targetType;
+
+        public Type TargetType
+        {
+            get { return this.targetType; }
+        }
+
+        protected TypeSerialiser(Type targetType)
+        {
+            this.targetType = targetType;
+        }
+
+        public abstract Object ReadObject (BinaryReader abr);
+
+        public abstract void WriteObject (BinaryWriter abw, Object obj);
+    }
+
+    public abstract class TypeSerialiser<T>
+        : TypeSerialiser
+    {
+        protected TypeSerialiser()
+            : base(typeof(T))
+        {
+
+        }
+
+        public virtual void Initialise (TypeSerialiserDatabase manager) {}
+
+        public override Object ReadObject (BinaryReader abr)
+        {
+            return this.Read (abr);
+        }
+
+        public override void WriteObject (BinaryWriter abw, Object obj)
+        {
+            this.Write (abw, (T) obj);
+        }
+
+        public abstract T Read (BinaryReader abr);
+
+        public abstract void Write (BinaryWriter abw, T obj);
+    }
+
+
+    #region Primitive Types
+
+    class Int64Serialiser
+        : TypeSerialiser<Int64>
+    {
+        internal Int64Serialiser () {}
+
+        public override Int64 Read(BinaryReader abr)
+        {
+            return abr.ReadInt64 ();
+        }
+
+        public override void Write(BinaryWriter abw, Int64 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class BooleanSerialiser
+        : TypeSerialiser<Boolean>
+    {
+        internal BooleanSerialiser () {}
+
+        public override Boolean Read(BinaryReader abr)
+        {
+            return abr.ReadBoolean ();
+        }
+
+        public override void Write(BinaryWriter abw, Boolean obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class ByteSerialiser
+        : TypeSerialiser<Byte>
+    {
+        internal ByteSerialiser () {}
+
+        public override Byte Read(BinaryReader abr)
+        {
+            return abr.ReadByte ();
+        }
+
+        public override void Write(BinaryWriter abw, Byte obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class CharSerialiser
+        : TypeSerialiser<Char>
+    {
+        internal CharSerialiser () {}
+
+        public override Char Read(BinaryReader abr)
+        {
+            return abr.ReadChar ();
+        }
+
+        public override void Write(BinaryWriter abw, Char obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class DoubleSerialiser
+        : TypeSerialiser<Double>
+    {
+        internal DoubleSerialiser () {}
+
+        public override Double Read(BinaryReader abr)
+        {
+            return abr.ReadDouble ();
+        }
+
+        public override void Write(BinaryWriter abw, Double obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class Int16Serialiser
+        : TypeSerialiser<Int16>
+    {
+        internal Int16Serialiser () {}
+
+        public override Int16 Read(BinaryReader abr)
+        {
+            return abr.ReadInt16 ();
+        }
+
+        public override void Write(BinaryWriter abw, Int16 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class Int32Serialiser
+        : TypeSerialiser<Int32>
+    {
+        internal Int32Serialiser () {}
+
+        public override Int32 Read(BinaryReader abr)
+        {
+            return abr.ReadInt32 ();
+        }
+
+        public override void Write(BinaryWriter abw, Int32 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class SByteSerialiser
+        : TypeSerialiser<SByte>
+    {
+        internal SByteSerialiser () {}
+
+        public override SByte Read(BinaryReader abr)
+        {
+            return abr.ReadSByte ();
+        }
+
+        public override void Write(BinaryWriter abw, SByte obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class SingleSerialiser
+        : TypeSerialiser<Single>
+    {
+        internal SingleSerialiser () {}
+
+        public override Single Read(BinaryReader abr)
+        {
+            return abr.ReadSingle ();
+        }
+
+        public override void Write(BinaryWriter abw, Single obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class UInt16Serialiser
+        : TypeSerialiser<UInt16>
+    {
+        internal UInt16Serialiser () {}
+
+        public override UInt16 Read(BinaryReader abr)
+        {
+            return abr.ReadUInt16 ();
+        }
+
+        public override void Write(BinaryWriter abw, UInt16 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class UInt32Serialiser
+        : TypeSerialiser<UInt32>
+    {
+        internal UInt32Serialiser () {}
+
+        public override UInt32 Read(BinaryReader abr)
+        {
+            return abr.ReadUInt32 ();
+        }
+
+        public override void Write(BinaryWriter abw, UInt32 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class UInt64Serialiser
+        : TypeSerialiser<UInt64>
+    {
+        internal UInt64Serialiser () {}
+
+        public override UInt64 Read(BinaryReader cbr)
+        {
+            return cbr.ReadUInt64 ();
+        }
+
+        public override void Write(BinaryWriter abw, UInt64 obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    #endregion
+
+    #region System Types
+
+    class StringSerialiser
+        : TypeSerialiser<String>
+    {
+        internal StringSerialiser () {}
+
+        public override String Read(BinaryReader abr)
+        {
+            return abr.ReadString ();
+        }
+
+        public override void Write(BinaryWriter abw, String obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class DecimalSerialiser
+        : TypeSerialiser<Decimal>
+    {
+        internal DecimalSerialiser () {}
+
+        public override Decimal Read(BinaryReader abr)
+        {
+            return abr.ReadDecimal ();
+        }
+
+        public override void Write(BinaryWriter abw, Decimal obj)
+        {
+            abw.Write(obj);
+        }
+    }
+
+    class TimeSpanSerialiser
+        : TypeSerialiser<TimeSpan>
+    {
+        internal TimeSpanSerialiser () {}
+
+        public override TimeSpan Read(BinaryReader abr)
+        {
+            Int64 ticks = abr.ReadInt64 ();
+
+            return new TimeSpan(ticks);
+        }
+
+        public override void Write(BinaryWriter abw, TimeSpan obj)
+        {
+            abw.Write(obj.Ticks);
+        }
+    }
+
+    // test reading lists containing different items from a chain of inheritance.
+    class ListSerialiser<T>
+        : TypeSerialiser<List<T>>
+    {
+        TypeSerialiser<T> elementSerialiser;
+
+        TypeSerialiserDatabase manager;
+
+        internal ListSerialiser () {}
+
+        public override void Initialise (TypeSerialiserDatabase manager)
+        {
+            this.manager = manager;
+            elementSerialiser = manager.GetTypeSerialiser<T> ();
+        }
+
+        public override List<T> Read(BinaryReader abr)
+        {
+            UInt32 count = abr.ReadUInt32 ();
+
+            var list = new List<T> ();
+
+            Type objectType = typeof(T);
+
+            if (objectType.IsValueType)
+            {
+                for (Int32 i = 0; i < count; ++i)
+                {
+                    // no inheritance for structs
+                    T item = elementSerialiser.Read (abr);
+                    list.Add(item);
+                }
+            }
+            else
+            {
+                for (Int32 i = 0; i < count; ++i)
+                {
+                    // Get the id of the type reader for this element,
+                    // as this element might not be of Type T, it might be
+                    // polymorphic.
+                    Int32 objectTypeSerialiserId = abr.Read7BitEncodedInt32();
+
+                    if (objectTypeSerialiserId > 0)
+                    {
+                        // Locate the correct serialiser for this element.
+                        TypeSerialiser virtualElementSerialiser =
+                            this.manager.GetTypeSerialiserFromId(objectTypeSerialiserId);
+
+                        //
+                        Object item = virtualElementSerialiser.ReadObject (abr);
+
+                        // add to list then move on
+                        list.Add((T)item);
+                    }
+                    else
+                    {
+                        // the element is null
+                        list.Add(default(T));
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        public override void Write(BinaryWriter abw, List<T> obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class NullableSerialiser<T>
+        : TypeSerialiser<T?>
+    where T
+        : struct
+    {
+        TypeSerialiser<T> valueSerialiser;
+
+        internal NullableSerialiser () {}
+
+        public override void Initialise (TypeSerialiserDatabase manager)
+        {
+            valueSerialiser = manager.GetTypeSerialiser<T>();
+        }
+
+        public override T? Read(BinaryReader abr)
+        {
+            if(abr.ReadBoolean())
+            {
+                return valueSerialiser.Read (abr);
+            }
+
+            return null;
+        }
+
+        public override void Write(BinaryWriter abw, T? obj)
+        {
+            if( obj.HasValue )
+            {
+                abw.Write(true);
+                valueSerialiser.Write(abw, obj.Value);
+            }
+            else
+            {
+                abw.Write(false);
+            }
+        }
+    }
+
+    // EnumSerialiser<T>
+    // test
+    // enum Foo : long { One, Two };
+    // enum Bar : byte { x = 255 };
+    class EnumSerialiser<T>
+        : TypeSerialiser<T>
+    {
+        TypeSerialiser underlyingTypeSerialiser;
+
+        internal EnumSerialiser () {}
+
+        public override void Initialise(TypeSerialiserDatabase manager)
+        {
+            // can we not get this at compile time? -_-
+            // lets stick with Int32 for now
+            Type readerType = Enum.GetUnderlyingType(typeof(T));
+
+            underlyingTypeSerialiser = manager.GetTypeSerialiser(readerType);
+        }
+
+        public override T Read(BinaryReader abr)
+        {
+            Object underlyingValue = underlyingTypeSerialiser.ReadObject(abr);
+
+            return (T) underlyingValue;
+        }
+
+        public override void Write(BinaryWriter abw, T obj)
+        {
+            underlyingTypeSerialiser.WriteObject (abw, obj);
+        }
+    }
+
+    class ArraySerialiser<T>
+        : TypeSerialiser<T[]>
+    {
+        TypeSerialiser<T> elementSerialiser;
+
+        TypeSerialiserDatabase manager;
+
+        internal ArraySerialiser () {}
+
+        public override void Initialise(TypeSerialiserDatabase manager)
+        {
+            this.manager = manager;
+            elementSerialiser = manager.GetTypeSerialiser<T>();
+        }
+
+        public override T[] Read (BinaryReader abr)
+        {
+            UInt32 count = abr.ReadUInt32 ();
+
+            var array = new T[count];
+
+            Type objectType = typeof(T);
+
+            if (objectType.IsValueType)
+            {
+                for (UInt32 i = 0; i < count; ++i)
+                {
+                    array [i] = elementSerialiser.Read (abr);
+                }
+            }
+            else
+            {
+                for (UInt32 i = 0; i < count; ++i)
+                {
+                    // Get the id of the type reader for this element,
+                    // as this element might not be of Type T, it might be
+                    // polymorphic.
+                    Int32 objectTypeSerialiserId = abr.Read7BitEncodedInt32 ();
+
+                    if (objectTypeSerialiserId > 0)
+                    {
+                        // Locate the correct serialiser for this element.
+                        TypeSerialiser virtualElementSerialiser =
+                            this.manager.GetTypeSerialiserFromId (objectTypeSerialiserId);
+
+                        //
+                        Object item = virtualElementSerialiser.ReadObject (abr);
+
+                        // add to array then move on
+                        array [i] = (T)item;
+                    }
+                    else
+                    {
+                        // the element is null
+                        array [i] = default(T);
+                    }
+                }
+            }
+
+            return array;
+        }
+
+        public override void Write(BinaryWriter abw, T[] obj)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    class DictionarySerialiser<TKey, TValue>
+        : TypeSerialiser<Dictionary<TKey, TValue>>
+    {
+        TypeSerialiser<TKey> keySerialiser;
+        TypeSerialiser<TValue> valueSerialiser;
+
+        TypeSerialiserDatabase manager;
+
+        internal DictionarySerialiser () {}
+
+        public override void Initialise(TypeSerialiserDatabase manager)
+        {
+            this.manager = manager;
+            keySerialiser = manager.GetTypeSerialiser<TKey>();
+            valueSerialiser = manager.GetTypeSerialiser<TValue>();
+        }
+
+        public override Dictionary<TKey, TValue> Read(BinaryReader abr)
+        {
+            UInt32 count = abr.ReadUInt32();
+
+            var dictionary = new Dictionary<TKey, TValue>();
+
+            Type keyType = typeof(TKey);
+            Type valueType = typeof(TValue);
+
+            for (UInt32 i = 0; i < count; ++i)
+            {
+                TKey key;
+                TValue value;
+
+                if (keyType.IsValueType)
+                {
+                    key = keySerialiser.Read(abr);
+                }
+                else
+                {
+                    // Get the id of the type reader for this element,
+                    // as this element might not be of Type T, it might be
+                    // polymorphic.
+                    Int32 keyTypeSerialiserId = abr.Read7BitEncodedInt32 ();
+
+                    if (keyTypeSerialiserId > 0)
+                    {
+                        // Locate the correct serialiser for this element.
+                        TypeSerialiser virtualElementSerialiser =
+                            this.manager.GetTypeSerialiserFromId (keyTypeSerialiserId);
+
+                        //
+                        Object item = virtualElementSerialiser.ReadObject (abr);
+
+                        // add to array then move on
+                        key = (TKey)item;
+                    }
+                    else
+                    {
+                        // the element is null
+                        key = default(TKey);
+                    }
+                }
+
+                if (valueType.IsValueType)
+                {
+                    value = valueSerialiser.Read(abr);
+                }
+                else
+                {
+                    // Get the id of the type reader for this element,
+                    // as this element might not be of Type T, it might be
+                    // polymorphic.
+                    Int32 valueTypeSerialiserId = abr.Read7BitEncodedInt32 ();
+
+                    if (valueTypeSerialiserId > 0)
+                    {
+                        // Locate the correct serialiser for this element.
+                        TypeSerialiser virtualElementSerialiser =
+                            this.manager.GetTypeSerialiserFromId (valueTypeSerialiserId);
+
+                        //
+                        Object item = virtualElementSerialiser.ReadObject (abr);
+
+                        // add to array then move on
+                        value = (TValue)item;
+                    }
+                    else
+                    {
+                        // the element is null
+                        value = default(TValue);
+                    }
+                }
+
+                dictionary.Add(key, value);
+            }
+
+            return dictionary;
+        }
+
+        public override void Write(BinaryWriter abw, Dictionary<TKey, TValue> obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    #endregion
+
+    #region Abacus Types
+
+    class Rgba32Serialiser
+        : TypeSerialiser<Rgba32>
+    {
+        internal Rgba32Serialiser () {}
+
+        public override Rgba32 Read(BinaryReader abr)
+        {
+            Byte r = abr.ReadByte();
+            Byte g = abr.ReadByte();
+            Byte b = abr.ReadByte();
+            Byte a = abr.ReadByte();
+
+            return new Rgba32(r, g, b, a);
+        }
+
+        public override void Write(BinaryWriter abw, Rgba32 obj)
+        {
+            abw.Write(obj.R);
+            abw.Write(obj.G);
+            abw.Write(obj.B);
+            abw.Write(obj.A);
+        }
+    }
+
+    class Matrix44Serialiser
+        : TypeSerialiser<Matrix44>
+    {
+        internal Matrix44Serialiser () {}
+
+        public override Matrix44 Read(BinaryReader abr)
+        {
+            Single m11 = abr.ReadSingle();
+            Single m12 = abr.ReadSingle();
+            Single m13 = abr.ReadSingle();
+            Single m14 = abr.ReadSingle();
+
+            Single m21 = abr.ReadSingle();
+            Single m22 = abr.ReadSingle();
+            Single m23 = abr.ReadSingle();
+            Single m24 = abr.ReadSingle();
+
+            Single m31 = abr.ReadSingle();
+            Single m32 = abr.ReadSingle();
+            Single m33 = abr.ReadSingle();
+            Single m34 = abr.ReadSingle();
+
+            Single m41 = abr.ReadSingle();
+            Single m42 = abr.ReadSingle();
+            Single m43 = abr.ReadSingle();
+            Single m44 = abr.ReadSingle();
+
+            return new Matrix44(
+                m11, m12, m13, m14,
+                m21, m22, m23, m24,
+                m31, m32, m33, m34,
+                m41, m42, m43, m44
+            );
+        }
+
+        public override void Write(BinaryWriter abw, Matrix44 obj)
+        {
+            abw.Write(obj.R0C0);
+            abw.Write(obj.R0C1);
+            abw.Write(obj.R0C2);
+            abw.Write(obj.R0C3);
+
+            abw.Write(obj.R1C0);
+            abw.Write(obj.R1C1);
+            abw.Write(obj.R1C2);
+            abw.Write(obj.R1C3);
+
+            abw.Write(obj.R2C0);
+            abw.Write(obj.R2C1);
+            abw.Write(obj.R2C2);
+            abw.Write(obj.R2C3);
+
+            abw.Write(obj.R3C0);
+            abw.Write(obj.R3C1);
+            abw.Write(obj.R3C2);
+            abw.Write(obj.R3C3);
+        }
+    }
+
+    class QuaternionSerialiser
+        : TypeSerialiser<Quaternion>
+    {
+        internal QuaternionSerialiser () {}
+
+        public override Quaternion Read(BinaryReader abr)
+        {
+            Single i = abr.ReadSingle();
+            Single j = abr.ReadSingle();
+            Single k = abr.ReadSingle();
+            Single u = abr.ReadSingle();
+
+            return new Quaternion(i, j, k, u);
+        }
+
+        public override void Write(BinaryWriter abw, Quaternion obj)
+        {
+            abw.Write(obj.I);
+            abw.Write(obj.J);
+            abw.Write(obj.K);
+            abw.Write(obj.U);
+        }
+    }
+
+    class Vector2Serialiser
+        : TypeSerialiser<Vector2>
+    {
+        internal Vector2Serialiser () {}
+
+        public override Vector2 Read(BinaryReader abr)
+        {
+            Single x = abr.ReadSingle();
+            Single y = abr.ReadSingle();
+
+            return new Vector2(x, y);
+        }
+
+        public override void Write(BinaryWriter abw, Vector2 obj)
+        {
+            abw.Write(obj.X);
+            abw.Write(obj.Y);
+        }
+    }
+
+    class Vector3Serialiser
+        : TypeSerialiser<Vector3>
+    {
+        internal Vector3Serialiser () {}
+
+        public override Vector3 Read(BinaryReader abr)
+        {
+            Single x = abr.ReadSingle();
+            Single y = abr.ReadSingle();
+            Single z = abr.ReadSingle();
+
+            return new Vector3(x, y, z);
+        }
+
+        public override void Write(BinaryWriter abw, Vector3 obj)
+        {
+            abw.Write(obj.X);
+            abw.Write(obj.Y);
+            abw.Write(obj.Z);
+        }
+    }
+
+    class Vector4Serialiser
+        : TypeSerialiser<Vector4>
+    {
+        internal Vector4Serialiser () {}
+
+        public override Vector4 Read(BinaryReader abr)
+        {
+            Single x = abr.ReadSingle();
+            Single y = abr.ReadSingle();
+            Single z = abr.ReadSingle();
+            Single w = abr.ReadSingle();
+
+            return new Vector4(x, y, z, w);
+        }
+
+        public override void Write(BinaryWriter abw, Vector4 obj)
+        {
+            abw.Write(obj.X);
+            abw.Write(obj.Y);
+            abw.Write(obj.Z);
+            abw.Write(obj.W);
+        }
+    }
+
+    #endregion
+
+    #region Cor Types
+
+    class VertexDeclarationSerialiser
+        : TypeSerialiser<VertexDeclaration>
+    {
+        TypeSerialiser<VertexElement> vertexElementSerialiser;
+
+        internal VertexDeclarationSerialiser () {}
+
+        public override void Initialise(TypeSerialiserDatabase manager)
+        {
+            vertexElementSerialiser = manager.GetTypeSerialiser<VertexElement>();
+        }
+
+        public override VertexDeclaration Read(BinaryReader abr)
+        {
+            var elementCount = abr.ReadInt32();
+
+            VertexElement[] elements = new VertexElement[elementCount];
+
+            for (Int32 i = 0; i < elementCount; ++i)
+            {
+                VertexElement element = vertexElementSerialiser.Read(abr);
+
+                elements[i] = element;
+            }
+
+            return new VertexDeclaration(elements);
+        }
+
+        public override void Write(BinaryWriter abw, VertexDeclaration obj)
+        {
+            throw new NotImplementedException();/*
+            abr.Write (obj.ElementCount);
+
+            for (Int32 i = 0; i < obj.ElementCount; ++i)
+            {
+                vertexElementSerialiser.Write(abw, obj.Element[i]);
+            }*/
+        }
+    }
+
+    class VertexElementSerialiser
+        : TypeSerialiser<VertexElement>
+    {
+        TypeSerialiser<VertexElementFormat> formatSerialiser;
+        TypeSerialiser<VertexElementUsage> usageSerialiser;
+
+        internal VertexElementSerialiser () {}
+
+        public override void Initialise(TypeSerialiserDatabase manager)
+        {
+            formatSerialiser = manager.GetTypeSerialiser<VertexElementFormat>();
+            usageSerialiser = manager.GetTypeSerialiser<VertexElementUsage>();
+        }
+
+        public override VertexElement Read(BinaryReader abr)
+        {
+            Int32 offset = abr.ReadInt32();
+            VertexElementFormat elementFormat = formatSerialiser.Read(abr);
+            VertexElementUsage elementUsage = usageSerialiser.Read(abr);
+            Int32 usageIndex = abr.ReadInt32();
+
+            return new VertexElement(offset, elementFormat, elementUsage, usageIndex);
+        }
+
+        public override void Write(BinaryWriter abw, VertexElement obj)
+        {
+            throw new NotImplementedException();/*
+            abr.Write(obj.Offset);
+            formatSerialiser.Write(abw, obj.VertexElementFormat);
+            usageSerialiser.Write(abw, obj.VertexElementUsage);
+            abr.Write(obj.UsageIndex);*/
+        }
+    }
+
+
+
+    class GeometryBufferSerialiser
+        : TypeSerialiser<IGeometryBuffer>
+    {
+        TypeSerialiser<VertexDeclaration> vertexDeclSerialiser;
+
+        internal GeometryBufferSerialiser () {}
+
+        public override void Initialise(TypeSerialiserDatabase manager)
+        {
+            vertexDeclSerialiser = manager.GetTypeSerialiser<VertexDeclaration>();
+        }
+
+        public override IGeometryBuffer Read(BinaryReader abr)
+        {
+            VertexDeclaration declaration = vertexDeclSerialiser.Read(abr);
+            Int32 vertexCount = abr.ReadInt32();
+
+            Byte[] vertData = abr.ReadBytes(vertexCount * declaration.VertexStride);
+
+            Int32 indexCount = abr.ReadInt32();
+
+            Byte[] indexData = abr.ReadBytes(vertexCount * sizeof(Int32));
+
+            IGraphicsManager gfx = null;
+
+            IGeometryBuffer buffer = gfx.CreateGeometryBuffer (
+                declaration,
+                vertexCount,
+                indexCount );
+
+            buffer.VertexBuffer.SetRawData (vertData, 0, vertexCount);
+
+            buffer.IndexBuffer.SetRawData (indexData, 0, indexCount);
+
+            return buffer;
+        }
+
+        public override void Write(BinaryWriter abw, IGeometryBuffer obj)
+        {
+            throw new NotImplementedException();/*
+            declaration.Write (abw, obj.VertexDeclaration);
+
+            abw.Write (obj.VertexCount);
+            Byte[] rawVertData = obj.VertexBuffer.GetRawData (0, obj.VertexCount);
+            abw.Write (rawVertData);
+
+            abw.Write (obj.IndexCount);
+            Byte[] rawIndexData = obj.IndexBuffer.GetRawData (0, obj.IndexCount);
+            abw.Write (rawIndexData);*/
+
+        }
+    }
+
+    #endregion
+
+    #endregion
+
+    #region Systems
+
+    public sealed class AssetManager
+        : IDisposable
+    {
+        readonly IGraphicsManager graphics;
+        readonly IOldResourceManager legacyResources;
+        readonly ISystemManager systemManager;
+
+        internal AssetManager (
+            IGraphicsManager graphics,
+            IOldResourceManager legacyResources,
+            ISystemManager systemManager)
+        {
+            this.graphics = graphics;
+            this.legacyResources = legacyResources;
+            this.systemManager = systemManager;
+        }
+
+        public T Load<T> (String assetId)
+//        where T
+//            : IAsset
+        {
+            using (Stream stream = this.systemManager.GetAssetStream (assetId))
+            {
+                using (var br = new BinaryReader (stream))
+                {
+                    var tsdb = new TypeSerialiserDatabase ();
+
+                    Byte f0 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
+                    Byte f1 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
+                    Byte f2 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
+
+                    if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'B')
+                        throw new Exception ();
+
+                    tsdb.GetTypeSerialiser <T> ().Read (br);
+                }
+            }
+
+
+
+            /*
+            if (typeof (T) == typeof (IShader))
+            {
+                if (assetId.Contains ("pixel"))
+                    return (T) legacyResources.LoadShader (ShaderType.PixelLit);
+
+                if (assetId.Contains ("vertex"))
+                    return (T) legacyResources.LoadShader (ShaderType.VertexLit);
+
+                if (assetId.Contains ("unlit"))
+                    return (T) legacyResources.LoadShader (ShaderType.Unlit);
+            }
+
+            if (typeof (T) == typeof (Texture2D))
+            {
+                Texture2D tex = legacyResources.Load<Texture2D> (
+                    "resources/" + assetId.Replace (".cba", "") + ".png");
+
+                return (T) (Object) tex;
+            }
+            */
+
+            throw new NotImplementedException ();
+        }
+
+        public void Unload ()
+        {
+
+        }
+
+        public void Dispose ()
+        {
+
+        }
+    }
+
+    public sealed class TypeSerialiserDatabase
+    {
+        Dictionary<Type, TypeSerialiser> assetTypeSerialisers;
+
+        public TypeSerialiserDatabase()
+        {
+            assetTypeSerialisers = new Dictionary<Type, TypeSerialiser>();
+        }
+
+        public TypeSerialiser<T> GetTypeSerialiser<T>()
+        {
+            throw new NotImplementedException();
+            //return assetTypeSerialisers[typeof(T)] as TypeSerialiser<T>;
+        }
+
+        public TypeSerialiser GetTypeSerialiser(Type type)
+        {
+            throw new NotImplementedException();
+            //return assetTypeSerialisers[type];
+        }
+
+        public TypeSerialiser GetTypeSerialiserFromId(Int32 id)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    #endregion
+
     #region Types
 
     /// <summary>
@@ -2528,10 +3971,6 @@ namespace Cor
         }
     }
 
-    #endregion
-
-    #region Input
-
     /// <summary>
     /// A touch in a single frame definition of a finger on the screen.
     /// </summary>
@@ -2844,376 +4283,6 @@ namespace Cor
                 }
             }
         }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public interface IPsmGamepad
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        IPsmGamepadButtons Buttons { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        IPsmGamepadDPad DPad { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        IPsmGamepadThumbsticks Thumbsticks { get; }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public interface IPsmGamepadButtons
-    {   
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Triangle { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Square { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Circle { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Cross { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Start { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Select { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState LeftShoulder { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState RightShoulder { get; }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public interface IPsmGamepadDPad
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Down { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Left { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Right { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Up { get; }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public interface IPsmGamepadThumbsticks
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        Vector2 Left { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        Vector2 Right { get; }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public interface IXbox360Gamepad
-    {        
-        /// <summary>
-        /// todo
-        /// </summary>
-        IXbox360GamepadButtons Buttons { get; }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        IXbox360GamepadDPad DPad { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        IXbox360GamepadThumbsticks Thumbsticks { get; }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        IXbox360GamepadTriggers Triggers { get; }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public interface IXbox360GamepadButtons
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState A { get; }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState B { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Back { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState LeftShoulder { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState LeftStick { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState RightShoulder { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState RightStick { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Start { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState X { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Y { get; }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public interface IXbox360GamepadDPad
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Down { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Left { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Right { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Up { get; }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public interface IXbox360GamepadThumbsticks
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        Vector2 Left { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        Vector2 Right { get; }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public interface IXbox360GamepadTriggers
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        Single Left { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        Single Right { get; }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public interface IMultiTouchController
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        IPanelSpecification PanelSpecification { get; }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        TouchCollection TouchCollection { get; }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public interface IGenericGamepad
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Down { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Left { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Right { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Up { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState North { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState South { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState East { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState West { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Option { get; }
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Pause { get; }
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public interface IMouse
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Left { get; }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Middle { get; }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        ButtonState Right { get; }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        Int32 ScrollWheelValue { get; }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        Int32 X { get; }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        Int32 Y { get; }
-    }
-
-    public interface IKeyboard
-    {
-        FunctionalKey[] GetPressedFunctionalKey ();
-        Boolean IsFunctionalKeyDown (FunctionalKey key);
-        Boolean IsFunctionalKeyUp (FunctionalKey key);
-        KeyState this [FunctionalKey key] { get; }
-
-        Char[] GetPressedCharacterKeys();
-        Boolean IsCharacterKeyDown (Char key);
-        Boolean IsCharacterKeyUp (Char key);
-        KeyState this [Char key] { get; }
     }
 
     #endregion
@@ -3944,76 +5013,58 @@ namespace Cor
 
     #endregion
 
-    #region OldResources
+    #endregion
 
-    /// <summary>
-    /// todo
-    /// </summary>
-    public abstract class AudioClip
-        : IOldResource
+//----------------------------------------------------------------------------//
+
+    #region Extensions
+
+    public static class BinaryReaderExtensions
     {
-        /// <summary>
-        /// todo
-        /// </summary>
-        public abstract void Play ();
+        public static Int32 Read7BitEncodedInt32(this BinaryReader me)
+        {
+            Int32 result = 0;
+            Int32 bitsRead = 0;
+            Int32 value;
 
-        /// <summary>
-        /// todo
-        /// </summary>
-        public abstract void Stop ();
+            do
+            {
+                value = me.ReadByte();
+                result |= (value & 0x7f) << bitsRead;
+                bitsRead += 7;
+            }
+            while ((value & 0x80) != 0);
 
-        /// <summary>
-        /// todo
-        /// </summary>
-        public abstract Boolean IsPlaying { get; }
-    }
-    /// <summary>
-    /// Each model part represents a piece of geometry that uses one
-    /// single effect. Multiple parts are needed for models that use
-    /// more than one effect.
-    /// </summary>
-    public abstract class Mesh
-        : IOldResource
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        public Int32 TriangleCount;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public Int32 VertexCount;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public abstract VertexDeclaration VertDecl { get; }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public IGeometryBuffer GeomBuffer;
+            return result;
+        }
     }
 
-    /// <summary>
-    /// todo
-    /// </summary>
-    public abstract class Texture2D
-        : IOldResource
+    public static class BinaryWriterExtensions
     {
-        /// <summary>
-        /// todo
-        /// </summary>
-        public abstract Int32 Width { get; }
+        public static void Write7BitEncodedInt32 (this BinaryWriter me, Int32 value)
+        {
+            throw new NotImplementedException ();
+        }
+    }
 
-        /// <summary>
-        /// todo
-        /// </summary>
-        public abstract Int32 Height { get; }
+    public static class ListExtensions
+    {
+        public static string Join<T>(this IEnumerable<T> values, string seperator)
+        {
+            var sb = new StringBuilder();
+            foreach (var value in values)
+            {
+                if (sb.Length > 0)
+                    sb.Append(seperator);
+                sb.Append(value);
+            }
+            return sb.ToString();
+        }
     }
 
     #endregion
+
+//----------------------------------------------------------------------------//
 
     #region Internal
 
@@ -4224,1188 +5275,106 @@ namespace Cor
 
     #endregion
 
-    #region Extentions
+//----------------------------------------------------------------------------//
 
-    public static class ListExtensions
+    #region Legacy
+
+    /// <summary>
+    /// objects that Cor's! resource manager can load
+    /// and track.
+    /// </summary>
+    [Obsolete]
+    public interface IOldResource
     {
-        public static string Join<T>(this IEnumerable<T> values, string seperator)
-        {
-            var sb = new StringBuilder();
-            foreach (var value in values)
-            {
-                if (sb.Length > 0)
-                    sb.Append(seperator);
-                sb.Append(value);
-            }
-            return sb.ToString();
-        }
     }
 
-    #endregion
-
-    #region Assets
-
-        public class Dxt1ImageAsset
-            : DxtImageAsset
-        {
-            public override Int32 Width
-            {
-                get { throw new NotImplementedException (); }
-            }
-
-            public override Int32 Height
-            {
-                get { throw new NotImplementedException (); }
-            }
-
-            public override SurfaceFormat SurfaceFormat
-            {
-                get { return SurfaceFormat.Dxt1; }
-            }
-
-            public override Byte[] TextureData
-            {
-                get { throw new NotImplementedException (); }
-            }
-        }
-
-        public class Dxt3ImageAsset
-            : DxtImageAsset
-        {
-            public override Int32 Width
-            {
-                get { throw new NotImplementedException (); }
-            }
-
-            public override Int32 Height
-            {
-                get { throw new NotImplementedException (); }
-            }
-
-            public override SurfaceFormat SurfaceFormat
-            {
-                get { return SurfaceFormat.Dxt3; }
-            }
-
-            public override Byte[] TextureData
-            {
-                get { throw new NotImplementedException (); }
-            }
-        }
-
-        public class Dxt5ImageAsset
-            : DxtImageAsset
-        {
-            public override Int32 Width
-            {
-                get { throw new NotImplementedException (); }
-            }
-
-            public override Int32 Height
-            {
-                get { throw new NotImplementedException (); }
-            }
-
-            public override SurfaceFormat SurfaceFormat
-            {
-                get { return SurfaceFormat.Dxt5; }
-            }
-
-            public override Byte[] TextureData
-            {
-                get { throw new NotImplementedException (); }
-            }
-        }
-
-        public abstract class DxtImageAsset
-            : ImageAsset
-        {
-            public Int32 BlockSize { get; set; }
-        }
-
-        public abstract class ImageAsset
-            : IAsset
-        {
-            public abstract Int32 Width { get; }
-            public abstract Int32 Height { get; }
-
-            public abstract SurfaceFormat SurfaceFormat { get; }
-
-            public abstract Byte[] TextureData { get; }
-        }
-
-        public class PvrtcImageAsset
-            : ImageAsset
-        {
-            public Int32 BitsPerPixel { get; set; }
-
-            public override Int32 Width
-            {
-                get { throw new NotImplementedException (); }
-            }
-
-            public override Int32 Height
-            {
-                get { throw new NotImplementedException (); }
-            }
-
-            public override SurfaceFormat SurfaceFormat
-            {
-                get { return SurfaceFormat.RgbaPvrtc4Bpp; }
-            }
-
-            public override Byte[] TextureData
-            {
-                get { throw new NotImplementedException (); }
-            }
-        }
-
-        public abstract class TextureAsset
-            : IAsset
-        {
-            public ImageAsset Texture { get; set; }
-            public ImageAsset[] Mipmaps { get; set; }
-        }
-
-
-        public class TextureAsset<T>
-            : TextureAsset
-        where T
-            : ImageAsset
-        {
-            public new T Texture
-            {
-                get { return (T) base.Texture; }
-                set { base.Texture = value; }
-            }
-
-            public new T[] Mipmaps
-            {
-                get { return (T[]) base.Mipmaps; }
-                set { base.Mipmaps = value; }
-            }
-        }
-
-    #endregion
-
-    #region AssetSystem
-
-    public abstract class AssetTypeSerialiser
+    /// <summary>
+    /// todo
+    /// </summary>
+    [Obsolete]
+    public interface IOldResourceManager
     {
-        readonly Type targetType;
+        /// <summary>
+        /// todo
+        /// </summary>
+        T Load<T>(String path) where T : IOldResource;
 
-        public Type TargetType
-        {
-            get { return this.targetType; }
-        }
+        /// <summary>
+        /// todo
+        /// </summary>
+        T Open<T>(String path) where T : IDisposable;
 
-        protected AssetTypeSerialiser(Type targetType)
-        {
-            this.targetType = targetType;
-        }
-
-        protected internal abstract Object BaseRead (AssetBinaryReader abr);
-
-        protected internal abstract void BaseWrite (AssetBinaryWriter abw, Object obj);
+        /// <summary>
+        /// todo
+        /// </summary>
+        IShader LoadShader(ShaderType shaderType);
     }
 
-    public abstract class AssetTypeSerialiser<T>
-        : AssetTypeSerialiser
+    /// <summary>
+    /// todo
+    /// </summary>
+    public abstract class AudioClip
+        : IOldResource
     {
-        protected AssetTypeSerialiser()
-            : base(typeof(T))
-        {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public abstract void Play ();
 
-        }
-        
-        protected internal virtual void Initialise (AssetTypeSerialiserManager manager) {}
+        /// <summary>
+        /// todo
+        /// </summary>
+        public abstract void Stop ();
 
-        protected internal override Object BaseRead (AssetBinaryReader abr)
-        {
-            return this.Read (abr);
-        }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public abstract Boolean IsPlaying { get; }
+    }
+    /// <summary>
+    /// Each model part represents a piece of geometry that uses one
+    /// single effect. Multiple parts are needed for models that use
+    /// more than one effect.
+    /// </summary>
+    public abstract class Mesh
+        : IOldResource
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int32 TriangleCount;
 
-        protected internal override void BaseWrite (AssetBinaryWriter abw, Object obj)
-        {
-            this.Write(abw, (T) obj);
-        }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int32 VertexCount;
 
-        protected internal abstract T Read (AssetBinaryReader abr);
+        /// <summary>
+        /// todo
+        /// </summary>
+        public abstract VertexDeclaration VertDecl { get; }
 
-        protected internal abstract void Write (AssetBinaryWriter abw, T obj);
+        /// <summary>
+        /// todo
+        /// </summary>
+        public IGeometryBuffer GeomBuffer;
     }
 
-    public sealed class AssetManager
-        : IDisposable
+    /// <summary>
+    /// todo
+    /// </summary>
+    public abstract class Texture2D
+        : IOldResource
     {
-        readonly IGraphicsManager graphics;
-        readonly IOldResourceManager legacyResources;
-
-        internal AssetManager (
-            IGraphicsManager graphics,
-            IOldResourceManager legacyResources)
-        {
-            this.graphics = graphics;
-            this.legacyResources = legacyResources;
-        }
-
-        public T Load<T> (String assetId)
-        {
-            if (typeof (T) == typeof (IShader))
-            {
-                if (assetId.Contains ("pixel"))
-                    return (T) legacyResources.LoadShader (ShaderType.PixelLit);
-
-                if (assetId.Contains ("vertex"))
-                    return (T) legacyResources.LoadShader (ShaderType.VertexLit);
-
-                if (assetId.Contains ("unlit"))
-                    return (T) legacyResources.LoadShader (ShaderType.Unlit);
-            }
-
-            if (typeof (T) == typeof (Texture2D))
-            {
-                Texture2D tex = legacyResources.Load<Texture2D> (
-                    "resources/" + assetId.Replace (".cba", "") + ".png");
-
-                return (T) (Object) tex;
-            }
-
-            throw new NotImplementedException ();
-        }
-
-        public void Unload ()
-        {
-
-        }
-
-        public void Dispose ()
-        {
-
-        }
-    }
-
-    public sealed class AssetTypeSerialiserManager
-    {
-        Dictionary<Type, AssetTypeSerialiser> assetTypeSerialisers;
-
-        internal AssetTypeSerialiserManager()
-        {
-            assetTypeSerialisers = new Dictionary<Type, AssetTypeSerialiser>();
-        }
-
-        public AssetTypeSerialiser<T> GetTypeSerialiser<T>()
-        {
-            throw new NotImplementedException();
-            //return assetTypeSerialisers[typeof(T)] as AssetTypeSerialiser<T>;
-        }
-
-        public AssetTypeSerialiser GetTypeSerialiser(Type type)
-        {
-            throw new NotImplementedException();
-            //return assetTypeSerialisers[type];
-        }
-
-        public AssetTypeSerialiser GetTypeSerialiserFromId(Int32 id)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class AssetBinaryReader
-        : BinaryReader
-    {
-        internal AssetBinaryReader(Stream stream)
-            : base(stream)
-        {
-        }
-
-        public Int32 Read7BitEncodedInt32()
-        {
-            Int32 result = 0;
-            Int32 bitsRead = 0;
-            Int32 value;
-
-            do
-            {
-                value = ReadByte();
-                result |= (value & 0x7f) << bitsRead;
-                bitsRead += 7;
-            }
-            while ((value & 0x80) != 0);
-
-            return result;
-        }
-    }
-
-    public class AssetBinaryWriter
-        : BinaryWriter
-    {
-        internal AssetBinaryWriter(Stream stream)
-            : base(stream)
-        {
-        }
-    }
-
-    #endregion
-
-    #region AssetTypeSerialisers
-
-    class Int64Serialiser 
-        : AssetTypeSerialiser<Int64>
-    {
-        internal Int64Serialiser () {}
-
-        protected internal override Int64 Read(AssetBinaryReader abr)
-        {
-            return abr.ReadInt64 ();
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Int64 obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    class BooleanSerialiser 
-        : AssetTypeSerialiser<Boolean>
-    {
-        internal BooleanSerialiser () {}
-
-        protected internal override Boolean Read(AssetBinaryReader abr)
-        {
-            return abr.ReadBoolean ();
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Boolean obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    class ByteSerialiser 
-        : AssetTypeSerialiser<Byte>
-    {
-        internal ByteSerialiser () {}
-
-        protected internal override Byte Read(AssetBinaryReader abr)
-        {
-            return abr.ReadByte ();
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Byte obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    class CharSerialiser 
-        : AssetTypeSerialiser<Char>
-    {
-        internal CharSerialiser () {}
-
-        protected internal override Char Read(AssetBinaryReader abr)
-        {
-            return abr.ReadChar ();
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Char obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    class DecimalSerialiser
-        : AssetTypeSerialiser<Decimal>
-    {
-        internal DecimalSerialiser () {}
-
-        protected internal override Decimal Read(AssetBinaryReader abr)
-        {
-            return abr.ReadDecimal ();
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Decimal obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    class DoubleSerialiser 
-        : AssetTypeSerialiser<Double>
-    {
-        internal DoubleSerialiser () {}
-
-        protected internal override Double Read(AssetBinaryReader abr)
-        {
-            return abr.ReadDouble ();
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Double obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    class Int16Serialiser 
-        : AssetTypeSerialiser<Int16>
-    {
-        internal Int16Serialiser () {}
-
-        protected internal override Int16 Read(AssetBinaryReader abr)
-        {
-            return abr.ReadInt16 ();
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Int16 obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    class Int32Serialiser 
-        : AssetTypeSerialiser<Int32>
-    {
-        internal Int32Serialiser () {}
-
-        protected internal override Int32 Read(AssetBinaryReader abr)
-        {
-            return abr.ReadInt32 ();
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Int32 obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    class SByteSerialiser 
-        : AssetTypeSerialiser<SByte>
-    {
-        internal SByteSerialiser () {}
-
-        protected internal override SByte Read(AssetBinaryReader abr)
-        {
-            return abr.ReadSByte ();
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, SByte obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    class SingleSerialiser 
-        : AssetTypeSerialiser<Single>
-    {
-        internal SingleSerialiser () {}
-
-        protected internal override Single Read(AssetBinaryReader abr)
-        {
-            return abr.ReadSingle ();
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Single obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    class StringSerialiser 
-        : AssetTypeSerialiser<String>
-    {
-        internal StringSerialiser () {}
-
-        protected internal override String Read(AssetBinaryReader abr)
-        {
-            return abr.ReadString ();
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, String obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    class TimeSpanSerialiser 
-        : AssetTypeSerialiser<TimeSpan>
-    {
-        internal TimeSpanSerialiser () {}
-
-        protected internal override TimeSpan Read(AssetBinaryReader abr)
-        {
-            Int64 ticks = abr.ReadInt64 ();
-            
-            return new TimeSpan(ticks);
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, TimeSpan obj)
-        {
-            abw.Write(obj.Ticks);
-        }
-    }
-
-    class UInt16Serialiser 
-        : AssetTypeSerialiser<UInt16>
-    {
-        internal UInt16Serialiser () {}
-
-        protected internal override UInt16 Read(AssetBinaryReader abr)
-        {
-            return abr.ReadUInt16 ();
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, UInt16 obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    class UInt32Serialiser 
-        : AssetTypeSerialiser<UInt32>
-    {
-        internal UInt32Serialiser () {}
-
-        protected internal override UInt32 Read(AssetBinaryReader abr)
-        {
-            return abr.ReadUInt32 ();
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, UInt32 obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    class UInt64Serialiser 
-        : AssetTypeSerialiser<UInt64>
-    {
-        internal UInt64Serialiser () {}
-
-        protected internal override UInt64 Read(AssetBinaryReader cbr)
-        {
-            return cbr.ReadUInt64 ();
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, UInt64 obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    // test reading lists containing different items from a chain of inheritance.
-    class ListSerialiser<T>
-        : AssetTypeSerialiser<List<T>>
-    {
-        AssetTypeSerialiser<T> elementSerialiser;
-
-        AssetTypeSerialiserManager manager;
-
-        internal ListSerialiser () {}
-
-        protected internal override void Initialise (AssetTypeSerialiserManager manager)
-        {
-            this.manager = manager;
-            elementSerialiser = manager.GetTypeSerialiser<T> ();
-        }
-
-        protected internal override List<T> Read(AssetBinaryReader abr)
-        {
-            UInt32 count = abr.ReadUInt32 ();
-
-            var list = new List<T> ();
-
-            Type objectType = typeof(T);
-            
-            if (objectType.IsValueType)
-            {
-                for (Int32 i = 0; i < count; ++i)
-                {
-                    // no inheritance for structs
-                    T item = elementSerialiser.Read (abr);
-                    list.Add(item);
-                }
-            }
-            else
-            {
-                for (Int32 i = 0; i < count; ++i)
-                {
-                    // Get the id of the type reader for this element,
-                    // as this element might not be of Type T, it might be
-                    // polymorphic.
-                    Int32 objectTypeSerialiserId = abr.Read7BitEncodedInt32();
-
-                    if (objectTypeSerialiserId > 0)
-                    {
-                        // Locate the correct serialiser for this element.
-                        AssetTypeSerialiser virtualElementSerialiser = 
-                            this.manager.GetTypeSerialiserFromId(objectTypeSerialiserId);
-                        
-                        //
-                        Object item = virtualElementSerialiser.BaseRead (abr);
-                        
-                        // add to list then move on
-                        list.Add((T)item);
-                    }
-                    else
-                    {
-                        // the element is null
-                        list.Add(default(T));
-                    }
-                }
-            }
-
-            return list;
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, List<T> obj)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    class NullableSerialiser<T>
-        : AssetTypeSerialiser<T?>
-    where T 
-        : struct
-    {
-        AssetTypeSerialiser<T> valueSerialiser;
-
-        internal NullableSerialiser () {}
-
-        protected internal override void Initialise (AssetTypeSerialiserManager manager)
-        {
-            valueSerialiser = manager.GetTypeSerialiser<T>();
-        }
-        
-        protected internal override T? Read(AssetBinaryReader abr)
-        {
-            if(abr.ReadBoolean())
-            {
-                return valueSerialiser.Read (abr);
-            }
-            
-            return null;
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, T? obj)
-        {
-            if( obj.HasValue )
-            {
-                abw.Write(true);
-                valueSerialiser.Write(abw, obj.Value);
-            }
-            else
-            {
-                abw.Write(false);
-            }
-        }
-    }
-
-    // EnumSerialiser<T>
-    // test
-    // enum Foo : long { One, Two };
-    // enum Bar : byte { x = 255 };
-    class EnumSerialiser<T>
-        : AssetTypeSerialiser<T>
-    {
-        AssetTypeSerialiser underlyingTypeSerialiser;
-
-        internal EnumSerialiser () {}
-
-        protected internal override void Initialise(AssetTypeSerialiserManager manager)
-        {
-            // can we not get this at compile time? -_-
-            // lets stick with Int32 for now
-            Type readerType = Enum.GetUnderlyingType(typeof(T));
-
-            underlyingTypeSerialiser = manager.GetTypeSerialiser(readerType);
-        }
-        
-        protected internal override T Read(AssetBinaryReader abr)
-        {
-            Object underlyingValue = underlyingTypeSerialiser.BaseRead(abr);
-
-            return (T) underlyingValue;
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, T obj)
-        {
-            underlyingTypeSerialiser.BaseWrite(abw, obj);
-        }
-    }
-
-    class ArraySerialiser<T>
-        : AssetTypeSerialiser<T[]>
-    {
-        AssetTypeSerialiser<T> elementSerialiser;
-
-        AssetTypeSerialiserManager manager;
-
-        internal ArraySerialiser () {}
-
-        protected internal override void Initialise(AssetTypeSerialiserManager manager)
-        {
-            this.manager = manager;
-            elementSerialiser = manager.GetTypeSerialiser<T>();
-        }
-
-        protected internal override T[] Read (AssetBinaryReader abr)
-        {
-            UInt32 count = abr.ReadUInt32 ();
-
-            var array = new T[count];
-            
-            Type objectType = typeof(T);
-            
-            if (objectType.IsValueType)
-            {
-                for (UInt32 i = 0; i < count; ++i)
-                {
-                    array [i] = elementSerialiser.Read (abr);
-                }
-            }
-            else
-            {
-                for (UInt32 i = 0; i < count; ++i)
-                {
-                    // Get the id of the type reader for this element,
-                    // as this element might not be of Type T, it might be
-                    // polymorphic.
-                    Int32 objectTypeSerialiserId = abr.Read7BitEncodedInt32 ();
-                    
-                    if (objectTypeSerialiserId > 0)
-                    {
-                        // Locate the correct serialiser for this element.
-                        AssetTypeSerialiser virtualElementSerialiser = 
-                            this.manager.GetTypeSerialiserFromId (objectTypeSerialiserId);
-                    
-                        //
-                        Object item = virtualElementSerialiser.BaseRead (abr);
-                    
-                        // add to array then move on
-                        array [i] = (T)item;
-                    }
-                    else
-                    {
-                        // the element is null
-                        array [i] = default(T);
-                    }
-                }
-            }
-            
-            return array;
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, T[] obj)
-        {
-            throw new NotSupportedException();
-        }
-    }
-
-    class DictionarySerialiser<TKey, TValue> 
-        : AssetTypeSerialiser<Dictionary<TKey, TValue>>
-    {
-        AssetTypeSerialiser<TKey> keySerialiser;
-        AssetTypeSerialiser<TValue> valueSerialiser;
-
-        AssetTypeSerialiserManager manager;
-        
-        internal DictionarySerialiser () {}
-
-        protected internal override void Initialise(AssetTypeSerialiserManager manager)
-        {
-            this.manager = manager;
-            keySerialiser = manager.GetTypeSerialiser<TKey>();
-            valueSerialiser = manager.GetTypeSerialiser<TValue>();
-        }
-
-        protected internal override Dictionary<TKey, TValue> Read(AssetBinaryReader abr)
-        {
-            UInt32 count = abr.ReadUInt32();
-
-            var dictionary = new Dictionary<TKey, TValue>();
-
-            Type keyType = typeof(TKey);
-            Type valueType = typeof(TValue);
-
-            for (UInt32 i = 0; i < count; ++i)
-            {
-                TKey key;
-                TValue value;
-
-                if (keyType.IsValueType)
-                {
-                    key = keySerialiser.Read(abr);
-                }
-                else
-                {
-                    // Get the id of the type reader for this element,
-                    // as this element might not be of Type T, it might be
-                    // polymorphic.
-                    Int32 keyTypeSerialiserId = abr.Read7BitEncodedInt32 ();
-                    
-                    if (keyTypeSerialiserId > 0)
-                    {
-                        // Locate the correct serialiser for this element.
-                        AssetTypeSerialiser virtualElementSerialiser = 
-                            this.manager.GetTypeSerialiserFromId (keyTypeSerialiserId);
-                    
-                        //
-                        Object item = virtualElementSerialiser.BaseRead (abr);
-                    
-                        // add to array then move on
-                        key = (TKey)item;
-                    }
-                    else
-                    {
-                        // the element is null
-                        key = default(TKey);
-                    }
-                }
-
-                if (valueType.IsValueType)
-                {
-                    value = valueSerialiser.Read(abr);
-                }
-                else
-                {
-                    // Get the id of the type reader for this element,
-                    // as this element might not be of Type T, it might be
-                    // polymorphic.
-                    Int32 valueTypeSerialiserId = abr.Read7BitEncodedInt32 ();
-                    
-                    if (valueTypeSerialiserId > 0)
-                    {
-                        // Locate the correct serialiser for this element.
-                        AssetTypeSerialiser virtualElementSerialiser = 
-                            this.manager.GetTypeSerialiserFromId (valueTypeSerialiserId);
-                    
-                        //
-                        Object item = virtualElementSerialiser.BaseRead (abr);
-                    
-                        // add to array then move on
-                        value = (TValue)item;
-                    }
-                    else
-                    {
-                        // the element is null
-                        value = default(TValue);
-                    }
-                }
-                
-                dictionary.Add(key, value);
-            }
-
-            return dictionary;
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Dictionary<TKey, TValue> obj)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    class Rgba32Serialiser
-        : AssetTypeSerialiser<Rgba32>
-    {
-        internal Rgba32Serialiser () {}
-
-        protected internal override Rgba32 Read(AssetBinaryReader abr)
-        {
-            Byte r = abr.ReadByte();
-            Byte g = abr.ReadByte();
-            Byte b = abr.ReadByte();
-            Byte a = abr.ReadByte();
-            
-            return new Rgba32(r, g, b, a);
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Rgba32 obj)
-        {
-            abw.Write(obj.R);
-            abw.Write(obj.G);
-            abw.Write(obj.B);
-            abw.Write(obj.A);
-        }
-    }
-
-    class Matrix44Serialiser
-        : AssetTypeSerialiser<Matrix44>
-    {
-        internal Matrix44Serialiser () {}
-
-        protected internal override Matrix44 Read(AssetBinaryReader abr)
-        {
-            Single m11 = abr.ReadSingle();
-            Single m12 = abr.ReadSingle();
-            Single m13 = abr.ReadSingle();
-            Single m14 = abr.ReadSingle();
-
-            Single m21 = abr.ReadSingle();
-            Single m22 = abr.ReadSingle();
-            Single m23 = abr.ReadSingle();
-            Single m24 = abr.ReadSingle();
-
-            Single m31 = abr.ReadSingle();
-            Single m32 = abr.ReadSingle();
-            Single m33 = abr.ReadSingle();
-            Single m34 = abr.ReadSingle();
-
-            Single m41 = abr.ReadSingle();
-            Single m42 = abr.ReadSingle();
-            Single m43 = abr.ReadSingle();
-            Single m44 = abr.ReadSingle();
-
-            return new Matrix44(
-                m11, m12, m13, m14,
-                m21, m22, m23, m24,
-                m31, m32, m33, m34,
-                m41, m42, m43, m44
-            );
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Matrix44 obj)
-        {
-            abw.Write(obj.R0C0);
-            abw.Write(obj.R0C1);
-            abw.Write(obj.R0C2);
-            abw.Write(obj.R0C3);
-
-            abw.Write(obj.R1C0);
-            abw.Write(obj.R1C1);
-            abw.Write(obj.R1C2);
-            abw.Write(obj.R1C3);
-
-            abw.Write(obj.R2C0);
-            abw.Write(obj.R2C1);
-            abw.Write(obj.R2C2);
-            abw.Write(obj.R2C3);
-
-            abw.Write(obj.R3C0);
-            abw.Write(obj.R3C1);
-            abw.Write(obj.R3C2);
-            abw.Write(obj.R3C3);
-        }
-    }
-
-    class QuaternionSerialiser
-        : AssetTypeSerialiser<Quaternion>
-    {
-        internal QuaternionSerialiser () {}
-
-        protected internal override Quaternion Read(AssetBinaryReader abr)
-        {
-            Single i = abr.ReadSingle();
-            Single j = abr.ReadSingle();
-            Single k = abr.ReadSingle();
-            Single u = abr.ReadSingle();
-            
-            return new Quaternion(i, j, k, u);
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Quaternion obj)
-        {
-            abw.Write(obj.I);
-            abw.Write(obj.J);
-            abw.Write(obj.K);
-            abw.Write(obj.U);
-        }
-    }
-
-    class Vector2Serialiser
-        : AssetTypeSerialiser<Vector2>
-    {
-        internal Vector2Serialiser () {}
-
-        protected internal override Vector2 Read(AssetBinaryReader abr)
-        {
-            Single x = abr.ReadSingle();
-            Single y = abr.ReadSingle();
-
-            return new Vector2(x, y);
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Vector2 obj)
-        {
-            abw.Write(obj.X);
-            abw.Write(obj.Y);
-        }
-    }
-
-    class Vector3Serialiser
-        : AssetTypeSerialiser<Vector3>
-    {
-        internal Vector3Serialiser () {}
-
-        protected internal override Vector3 Read(AssetBinaryReader abr)
-        {
-            Single x = abr.ReadSingle();
-            Single y = abr.ReadSingle();
-            Single z = abr.ReadSingle();
-            
-            return new Vector3(x, y, z);
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Vector3 obj)
-        {
-            abw.Write(obj.X);
-            abw.Write(obj.Y);
-            abw.Write(obj.Z);
-        }
-    }
-
-    class Vector4Serialiser
-        : AssetTypeSerialiser<Vector4>
-    {
-        internal Vector4Serialiser () {}
-
-        protected internal override Vector4 Read(AssetBinaryReader abr)
-        {
-            Single x = abr.ReadSingle();
-            Single y = abr.ReadSingle();
-            Single z = abr.ReadSingle();
-            Single w = abr.ReadSingle();
-            
-            return new Vector4(x, y, z, w);
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, Vector4 obj)
-        {
-            abw.Write(obj.X);
-            abw.Write(obj.Y);
-            abw.Write(obj.Z);
-            abw.Write(obj.W);
-        }
-    }
-
-    class VertexDeclarationSerialiser
-        : AssetTypeSerialiser<VertexDeclaration>
-    {
-        AssetTypeSerialiser<VertexElement> vertexElementSerialiser;
-
-        internal VertexDeclarationSerialiser () {}
-
-        protected internal override void Initialise(AssetTypeSerialiserManager manager)
-        {
-            vertexElementSerialiser = manager.GetTypeSerialiser<VertexElement>();
-        }
-
-        protected internal override VertexDeclaration Read(AssetBinaryReader abr)
-        {
-            var elementCount = abr.ReadInt32();
-
-            VertexElement[] elements = new VertexElement[elementCount];
-
-            for (Int32 i = 0; i < elementCount; ++i)
-            {
-                VertexElement element = vertexElementSerialiser.Read(abr);
-
-                elements[i] = element;
-            }
-
-            return new VertexDeclaration(elements);
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, VertexDeclaration obj)
-        {
-            throw new NotImplementedException();/*
-            abr.Write (obj.ElementCount);
-
-            for (Int32 i = 0; i < obj.ElementCount; ++i)
-            {
-                vertexElementSerialiser.Write(abw, obj.Element[i]);
-            }*/
-        }
-    }
-
-    class VertexElementSerialiser
-        : AssetTypeSerialiser<VertexElement>
-    {
-        AssetTypeSerialiser<VertexElementFormat> formatSerialiser;
-        AssetTypeSerialiser<VertexElementUsage> usageSerialiser;
-
-        internal VertexElementSerialiser () {}
-
-        protected internal override void Initialise(AssetTypeSerialiserManager manager)
-        {
-            formatSerialiser = manager.GetTypeSerialiser<VertexElementFormat>();
-            usageSerialiser = manager.GetTypeSerialiser<VertexElementUsage>();
-        }
-
-        protected internal override VertexElement Read(AssetBinaryReader abr)
-        {
-            Int32 offset = abr.ReadInt32();
-            VertexElementFormat elementFormat = formatSerialiser.Read(abr);
-            VertexElementUsage elementUsage = usageSerialiser.Read(abr);
-            Int32 usageIndex = abr.ReadInt32();
-
-            return new VertexElement(offset, elementFormat, elementUsage, usageIndex);
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, VertexElement obj)
-        {
-            throw new NotImplementedException();/*
-            abr.Write(obj.Offset);
-            formatSerialiser.Write(abw, obj.VertexElementFormat);
-            usageSerialiser.Write(abw, obj.VertexElementUsage);
-            abr.Write(obj.UsageIndex);*/
-        }
-    }
-
-
-
-    class GeometryBufferSerialiser
-        : AssetTypeSerialiser<IGeometryBuffer>
-    {
-        AssetTypeSerialiser<VertexDeclaration> vertexDeclSerialiser;
-
-        internal GeometryBufferSerialiser () {}
-
-        protected internal override void Initialise(AssetTypeSerialiserManager manager)
-        {
-            vertexDeclSerialiser = manager.GetTypeSerialiser<VertexDeclaration>();
-        }
-
-        protected internal override IGeometryBuffer Read(AssetBinaryReader abr)
-        {
-            VertexDeclaration declaration = vertexDeclSerialiser.Read(abr);
-            Int32 vertexCount = abr.ReadInt32();
-
-            Byte[] vertData = abr.ReadBytes(vertexCount * declaration.VertexStride);
-
-            Int32 indexCount = abr.ReadInt32();
-
-            Byte[] indexData = abr.ReadBytes(vertexCount * sizeof(Int32));
-
-            IGraphicsManager gfx = null;
-
-            IGeometryBuffer buffer = gfx.CreateGeometryBuffer (
-                declaration,
-                vertexCount,
-                indexCount );
-
-            buffer.VertexBuffer.SetRawData (vertData, 0, vertexCount);
-
-            buffer.IndexBuffer.SetRawData (indexData, 0, indexCount);
-
-            return buffer;
-        }
-
-        protected internal override void Write(AssetBinaryWriter abw, IGeometryBuffer obj)
-        {
-            throw new NotImplementedException();/*
-            declaration.Write (abw, obj.VertexDeclaration);
-
-            abw.Write (obj.VertexCount);
-            Byte[] rawVertData = obj.VertexBuffer.GetRawData (0, obj.VertexCount);
-            abw.Write (rawVertData);
-
-            abw.Write (obj.IndexCount);
-            Byte[] rawIndexData = obj.IndexBuffer.GetRawData (0, obj.IndexCount);
-            abw.Write (rawIndexData);*/
-
-        }
+        /// <summary>
+        /// todo
+        /// </summary>
+        public abstract Int32 Width { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public abstract Int32 Height { get; }
     }
 
     #endregion
