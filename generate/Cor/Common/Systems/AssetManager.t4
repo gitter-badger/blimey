@@ -2,29 +2,25 @@
         : IDisposable
     {
         readonly IGraphicsManager graphics;
-        readonly IOldResourceManager legacyResources;
         readonly ISystemManager systemManager;
 
         internal AssetManager (
             IGraphicsManager graphics,
-            IOldResourceManager legacyResources,
             ISystemManager systemManager)
         {
             this.graphics = graphics;
-            this.legacyResources = legacyResources;
             this.systemManager = systemManager;
         }
 
         public T Load<T> (String assetId)
-//        where T
-//            : IAsset
+        where T
+            : IAsset
         {
             using (Stream stream = this.systemManager.GetAssetStream (assetId))
             {
                 using (var br = new BinaryReader (stream))
                 {
                     var tsdb = new TypeSerialiserDatabase ();
-
                     Byte f0 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
                     Byte f1 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
                     Byte f2 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
@@ -32,35 +28,9 @@
                     if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'B')
                         throw new Exception ();
 
-                    tsdb.GetTypeSerialiser <T> ().Read (br);
+                    return tsdb.GetTypeSerialiser <T> ().Read (br);
                 }
             }
-
-
-
-            /*
-            if (typeof (T) == typeof (IShader))
-            {
-                if (assetId.Contains ("pixel"))
-                    return (T) legacyResources.LoadShader (ShaderType.PixelLit);
-
-                if (assetId.Contains ("vertex"))
-                    return (T) legacyResources.LoadShader (ShaderType.VertexLit);
-
-                if (assetId.Contains ("unlit"))
-                    return (T) legacyResources.LoadShader (ShaderType.Unlit);
-            }
-
-            if (typeof (T) == typeof (Texture2D))
-            {
-                Texture2D tex = legacyResources.Load<Texture2D> (
-                    "resources/" + assetId.Replace (".cba", "") + ".png");
-
-                return (T) (Object) tex;
-            }
-            */
-
-            throw new NotImplementedException ();
         }
 
         public void Unload ()

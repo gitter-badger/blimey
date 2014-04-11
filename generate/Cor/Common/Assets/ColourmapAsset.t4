@@ -1,13 +1,10 @@
-        public class ColourmapAsset
+        public sealed class ColourmapAsset
             : IAsset
         {
+            public Rgba32[,] Data { get; set; }
+
             public Int32 Width { get { return Data.GetLength (0); } }
 
             public Int32 Height { get { return Data.GetLength (1); } }
-
-            /// <summary>
-            /// A 32 BPP RGBA pixmap.
-            /// </summary>
-            public Rgba32[,] Data { get; set; }
         }
 

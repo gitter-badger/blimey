@@ -1,0 +1,7 @@
+        public sealed class ShaderAsset
+            : IAsset
+        {
+            public ShaderDefinition Definition { get; set; }
+            public Byte [,] Data { get; set; }
+        }
+

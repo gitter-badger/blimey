@@ -1,27 +1,28 @@
-    public sealed class TypeSerialiserDatabase
+    public class TypeSerialiserDatabase
     {
-        Dictionary<Type, TypeSerialiser> assetTypeSerialisers;
+        readonly Dictionary<Type, TypeSerialiser> assetTypeSerialisers;
 
         public TypeSerialiserDatabase()
         {
-            assetTypeSerialisers = new Dictionary<Type, TypeSerialiser>();
+            assetTypeSerialisers = new Dictionary<Type, TypeSerialiser> ();
         }
 
         public TypeSerialiser<T> GetTypeSerialiser<T>()
         {
-            throw new NotImplementedException();
-            //return assetTypeSerialisers[typeof(T)] as TypeSerialiser<T>;
+            return GetTypeSerialiser(typeof (T)) as TypeSerialiser<T>;
         }
 
         public TypeSerialiser GetTypeSerialiser(Type type)
         {
-            throw new NotImplementedException();
-            //return assetTypeSerialisers[type];
+            if (!assetTypeSerialisers.ContainsKey (type))
+                assetTypeSerialisers [type] = Activator.CreateInstance (type) as TypeSerialiser;
+
+            return assetTypeSerialisers [type];
         }
 
-        public TypeSerialiser GetTypeSerialiserFromId(Int32 id)
+        public TypeSerialiser GetTypeSerialiserFromId (Int32 id)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException ();
         }
     }
 

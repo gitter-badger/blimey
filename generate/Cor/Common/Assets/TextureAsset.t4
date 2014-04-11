@@ -1,12 +1,15 @@
-        public abstract class TextureAsset
+        public sealed class TextureAsset
             : IAsset
         {
-            public abstract Int32 Width { get; }
-            public abstract Int32 Height { get; }
+            // Data allocated in standard system RAM
+            public Byte[] Data { get; set; }
 
-            public abstract SurfaceFormat SurfaceFormat { get; }
+            // Data allocated in standard system RAM
+            //public Byte[,] Mipmaps { get; set; }
 
-            public abstract Byte[] Primary { get; }
-            public abstract Byte[,] Mipmaps { get; }
+            public Int32 Width { get; set; }
+            public Int32 Height { get; set; }
+
+            public SurfaceFormat SurfaceFormat { get; set; }
         }
 

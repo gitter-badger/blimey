@@ -2349,7 +2349,7 @@ namespace Cor.Platform.Managed.MonoMac
     }
 
     internal sealed class OpenGLTexture
-        : Texture2D
+        : ITexture
     {
         public int glTextureId {get; private set;}
 

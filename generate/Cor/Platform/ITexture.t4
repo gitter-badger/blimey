@@ -1,0 +1,10 @@
+    public interface ITexture
+    {
+        Int32 Width { get; }
+        Int32 Height { get; }
+
+        SurfaceFormat SurfaceFormat { get; }
+
+        Byte[] Primary { get; }
+        Byte[,] Mipmaps { get; }
+    }

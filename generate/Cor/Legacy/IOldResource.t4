@@ -1,9 +1,0 @@
-    /// <summary>
-    /// objects that Cor's! resource manager can load
-    /// and track.
-    /// </summary>
-    [Obsolete]
-    public interface IOldResource
-    {
-    }
-

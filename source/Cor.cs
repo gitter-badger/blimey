@@ -99,8 +99,8 @@ namespace Cor
         /// it will get removed once everything uses the newer
         /// asset system.
         /// </summary>
-        [Obsolete]
-        IOldResourceManager Resources { get; }
+        //[Obsolete]
+        //IOldResourceManager Resources { get; }
 
         /// <summary>
         /// Provides access to Cor's input manager.
@@ -128,11 +128,6 @@ namespace Cor
         /// </summary>
         AppSettings Settings { get; }
     }
-
-        public interface IAsset
-        {
-
-        }
 
     /// <summary>
     /// todo
@@ -189,23 +184,23 @@ namespace Cor
         /// Sets the GPU's current culling mode to the value specified.
         /// </summary>
         void SetCullMode(CullMode cullMode);
-        
+
         /// <summary>
-        /// With the current design the only way you can create geom buffers is 
+        /// With the current design the only way you can create geom buffers is
         /// here.  This is to maintain consistency across platforms by bowing to
         /// the quirks of PlayStation Mobile. Each IGeometryBuffer has vert
         /// data, and optionally index data.  Normally this data would be
         /// seperate, so you can upload one chunk of vert data, and, say, 5 sets
         /// of index data, then achive neat optimisations like switching on
-        /// index data whilst keeping the vert data the same, resulting in  
-        /// defining different shapes, saving on memory and context switching 
+        /// index data whilst keeping the vert data the same, resulting in
+        /// defining different shapes, saving on memory and context switching
         /// (this is how the grass worked on Pure).
         ///
         /// Right now I am endevouring to support PlayStation Mobile so vert and
         /// index buffers are combined into a single geom buffer.
         ///
         /// EDIT: I think this should be split up again.  And the get the Psm
-        ///       runtime to internally create a load of geom-buffers for 
+        ///       runtime to internally create a load of geom-buffers for
         ///       index and vert buffer combinations as they arise...
         ///       Hmmm... Still thinking...
         /// </summary>
@@ -217,71 +212,88 @@ namespace Cor
         /// <summary>
         /// Sets the active geometry buffer.
         /// </summary>
-        void SetActiveGeometryBuffer(IGeometryBuffer buffer);
+        void SetActiveGeometryBuffer (IGeometryBuffer buffer);
+
+        /// <summary>
+        /// Takes a texture asset and uploads it to the GPU Memory.
+        /// Once done you should unload the texture asset.
+        /// </summary>
+        ITexture UploadTexture (Int32 slot, TextureAsset tex);
+
+        /// <summary>
+        /// Removes the texture from the GPU Memory.
+        /// </summary>
+        void UnloadTexture (ITexture texture);
 
         /// <summary>
         /// Sets the active texture for a given slot.
         /// </summary>
-        void SetActiveTexture(Int32 slot, Texture2D tex);
+        void SetActiveTexture (Int32 slot, ITexture tex);
+
+        // Creates a new shader program on the GPU.
+        IShader CreateShader (ShaderAsset asset);
+
+        // Removes a shader program from the GPU.
+        void DestroyShader (IShader shader);
 
         /// <summary>
         /// Defines how we blend colours
         /// </summary>
         void SetBlendEquation(
-            BlendFunction rgbBlendFunction, 
-            BlendFactor sourceRgb, 
+            BlendFunction rgbBlendFunction,
+            BlendFactor sourceRgb,
             BlendFactor destinationRgb,
-            BlendFunction alphaBlendFunction, 
-            BlendFactor sourceAlpha, 
+            BlendFunction alphaBlendFunction,
+            BlendFactor sourceAlpha,
             BlendFactor destinationAlpha
             );
 
         /// <summary>
-        /// Renders a sequence of non-indexed geometric primitives of the 
+        /// Renders a sequence of non-indexed geometric primitives of the
         /// specified type from the active geometry buffer (which sits in GRAM).
         ///
         /// Info: From GRAM - Non-Indexed.
         ///
         /// Arguments:
         ///   primitiveType  -> Describes the type of primitive to render.
-        ///   startVertex    -> Index of the first vertex to load. Beginning at 
-        ///                     startVertex, the correct number of vertices is 
+        ///   startVertex    -> Index of the first vertex to load. Beginning at
+        ///                     startVertex, the correct number of vertices is
         ///                     read out of the vertex buffer.
-        ///   primitiveCount -> Number of primitives to render. The 
-        ///                     primitiveCount is the number of primitives as 
-        ///                     determined by the primitive type. If it is a 
-        ///                     line list, each primitive has two vertices. If 
-        ///                     it is a triangle list, each primitive has three 
+        ///   primitiveCount -> Number of primitives to render. The
+        ///                     primitiveCount is the number of primitives as
+        ///                     determined by the primitive type. If it is a
+        ///                     line list, each primitive has two vertices. If
+        ///                     it is a triangle list, each primitive has three
         ///                      vertices.
         /// </summary>
         void DrawPrimitives(
-            PrimitiveType primitiveType,            
-            Int32 startVertex,                      
-            Int32 primitiveCount );                 
+            PrimitiveType primitiveType,
+            Int32 startVertex,
+            Int32 primitiveCount );
 
         /// <summary>
-        /// Renders a sequence of indexed geometric primitives of the 
+        /// Renders a sequence of indexed geometric primitives of the
         /// specified type from the active geometry buffer (which sits in GRAM).
         ///
         /// Info: From GRAM - Indexed.
         ///
         /// Arguments:
-        ///   primitiveType  -> Describes the type of primitive to render. 
-        ///                     PrimitiveType.PointList is not supported with 
+        ///   primitiveType  -> Describes the type of primitive to render.
+        ///                     PrimitiveType.PointList is not supported with
         ///                     this method.
-        ///   baseVertex     -> Offset to add to each vertex index in the index 
+        ///   baseVertex     -> Offset to add to each vertex index in the index
         ///                     buffer.
-        ///   minVertexIndex -> Minimum vertex index for vertices used during 
-        ///                     the call. The minVertexIndex parameter and all 
-        ///                     of the indices in the index stream are relative 
+        ///   minVertexIndex -> Minimum vertex index for vertices used during
+        ///                     the call. The minVertexIndex parameter and all
+        ///                     of the indices in the index stream are relative
         ///                     to the baseVertex parameter.
-        ///   numVertices    -> Number of vertices used during the call. The 
-        ///                     first vertex is located at index: baseVertex + 
+        ///   numVertices    -> Number of vertices used during the call. The
+        ///                     first vertex is located at index: baseVertex +
         ///                     minVertexIndex.
-        ///   startIndex     -> Location in the index array at which to start 
+        ///   startIndex     -> Location in the index array at which to start
         ///                     reading vertices.
-        ///   primitiveCount -> Number of primitives to render. The number of 
-        ///                     vertices used is a function of primitiveCount 
+        ///   primitiveCount -> Number of primitives to render. The number of
+        ///                     vertices used is a function of primitiveCount
         ///                     and primitiveType.
         /// </summary>
         void DrawIndexedPrimitives (
@@ -301,10 +313,10 @@ namespace Cor
         /// Arguments:
         /// primitiveType     -> Describes the type of primitive to render.
         /// vertexData        -> The vertex data.
-        /// vertexOffset      -> Offset (in vertices) from the beginning of the 
+        /// vertexOffset      -> Offset (in vertices) from the beginning of the
         ///                      buffer to start reading data.
         /// primitiveCount    -> Number of primitives to render.
-        /// vertexDeclaration -> The vertex declaration, which defines 
+        /// vertexDeclaration -> The vertex declaration, which defines
         ///                      per-vertex data.
         /// </summary>
         void DrawUserPrimitives <T> (
@@ -323,14 +335,14 @@ namespace Cor
         /// Arguments:
         /// primitiveType     -> Describes the type of primitive to render.
         /// vertexData        -> The vertex data.
-        /// vertexOffset      -> Offset (in vertices) from the beginning of the 
+        /// vertexOffset      -> Offset (in vertices) from the beginning of the
         ///                      vertex buffer to the first vertex to draw.
         /// numVertices       -> Number of vertices to draw.
         /// indexData         -> The index data.
         /// indexOffset       -> Offset (in indices) from the beginning of the
         ///                      index buffer to the first index to use.
         /// primitiveCount    -> Number of primitives to render.
-        /// vertexDeclaration -> The vertex declaration, which defines 
+        /// vertexDeclaration -> The vertex declaration, which defines
         ///                      per-vertex data.
         /// </summary>
         void DrawUserIndexedPrimitives <T> (
@@ -341,7 +353,7 @@ namespace Cor
             Int32[] indexData,
             Int32 indexOffset,
             Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration ) 
+            VertexDeclaration vertexDeclaration )
             where T : struct, IVertexType;
     }
 
@@ -771,6 +783,16 @@ namespace Cor
         void Activate (VertexDeclaration vertexDeclaration);
     }
 
+    public interface ITexture
+    {
+        Int32 Width { get; }
+        Int32 Height { get; }
+
+        SurfaceFormat SurfaceFormat { get; }
+
+        Byte[] Primary { get; }
+        Byte[,] Mipmaps { get; }
+    }
 
     #region Input
 
@@ -1146,10 +1168,6 @@ namespace Cor
 
     #endregion
 
-    #region Assets
-
-    #endregion
-
     #endregion
 
 //----------------------------------------------------------------------------//
@@ -1158,53 +1176,51 @@ namespace Cor
 
     #region Assets
 
-        public class ColourmapAsset
+        public sealed class ColourmapAsset
             : IAsset
         {
+            public Rgba32[,] Data { get; set; }
+
             public Int32 Width { get { return Data.GetLength (0); } }
 
             public Int32 Height { get { return Data.GetLength (1); } }
-
-            /// <summary>
-            /// A 32 BPP RGBA pixmap.
-            /// </summary>
-            public Rgba32[,] Data { get; set; }
         }
 
-        public class MemoryTextureAsset
-            : TextureAsset
-        {
-            // Data allocated in standard system RAM
-            Byte[] primaryData;
-
-            // Data allocated in standard system RAM
-            Byte[,] mipmaps;
-
-            public override Int32 Width { get { throw new NotImplementedException (); } }
-            public override Int32 Height { get { throw new NotImplementedException (); } }
-
-            public override SurfaceFormat SurfaceFormat { get { throw new NotImplementedException (); } }
-
-            public override Byte[] Primary { get { throw new NotImplementedException (); } }
-            public override Byte[,] Mipmaps { get { throw new NotImplementedException (); } }
-        }
-
-        public class TextAsset
+        public sealed class ShaderAsset
             : IAsset
         {
-            public String Data { get; set; }
+            public ShaderDefinition Definition { get; set; }
+            public Byte [,] Data { get; set; }
         }
 
-        public abstract class TextureAsset
+        public sealed class TextAsset
             : IAsset
         {
-            public abstract Int32 Width { get; }
-            public abstract Int32 Height { get; }
+            public String [] Data { get; set; }
+        }
 
-            public abstract SurfaceFormat SurfaceFormat { get; }
+        public sealed class TextureAsset
+            : IAsset
+        {
+            // Data allocated in standard system RAM
+            public Byte[] Data { get; set; }
 
-            public abstract Byte[] Primary { get; }
-            public abstract Byte[,] Mipmaps { get; }
+            // Data allocated in standard system RAM
+            //public Byte[,] Mipmaps { get; set; }
+
+            public Int32 Width { get; set; }
+            public Int32 Height { get; set; }
+
+            public SurfaceFormat SurfaceFormat { get; set; }
+        }
+
+    #endregion
+
+    #region Interfaces
+
+        public interface IAsset
+        {
+
         }
 
     #endregion
@@ -1529,32 +1545,6 @@ namespace Cor
         /// todo
         /// </summary>
         LineStrip = 3
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public enum ShaderType
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        Unlit,
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        VertexLit,
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        PixelLit,
-        
-        /// <summary>
-        /// todo
-        /// </summary>
-        Toon
     }
 
     /// <summary>
@@ -2251,6 +2241,92 @@ namespace Cor
         public abstract void Write (BinaryWriter abw, T obj);
     }
 
+    #endregion
+
+    #region Shaders
+
+    /// <summary>
+    /// Defines how to create Cor.Xios's implementation
+    /// of IShader.
+    /// </summary>
+    public sealed class ShaderDefinition
+    {
+        /// <summary>
+        /// Defines a global name for this shader
+        /// </summary>
+        public string Name { get; set; }
+
+        /// Defines which passes this shader is made from
+        /// (ex: a toon shader is made for a cel-shading pass
+        /// followed by an edge detection pass)
+        /// </summary>
+        public List<String> PassNames { get; set; }
+
+        /// <summary>
+        /// Lists all of the supported inputs into this shader and
+        /// defines whether or not they are optional to an implementation.
+        /// </summary>
+        public List<ShaderInputDefinition> InputDefinitions { get; set; }
+
+        /// <summary>
+        /// Defines all of the variables supported by this shader.  Every
+        /// variant must support all of the variables.
+        /// </summary>
+        public List<ShaderVariableDefinition> VariableDefinitions { get; set; }
+
+
+        /// <summary>
+        /// ?
+        /// </summary>
+        public List<ShaderSamplerDefinition> SamplerDefinitions { get; set; }
+
+        /// <summary>
+        /// Defines the variants.  Done for optimisation, instead of having one
+        /// massive shader that supports all the the Inputs and attempts to
+        /// process them accordingly, we load slight variants of effectively
+        /// the same shader, then we select the most optimal variant to run
+        /// based upon the VertexDeclaration the calling code is about to draw.
+        /// </summary>
+        public List<ShaderVariantDefinition> VariantDefinitions { get; set; }
+    }
+
+    public sealed class ShaderInputDefinition
+    {
+        public String Name { get; set; }
+        public Type Type { get; set; }
+        public VertexElementUsage Usage { get; set; }
+        public Object DefaultValue { get; set; }
+        public Boolean Optional { get; set; }
+    }
+
+    public sealed class ShaderSamplerDefinition
+    {
+        public String NiceName { get; set; }
+        public String Name { get; set; }
+        public Boolean Optional { get; set; }
+    }
+
+    public sealed class ShaderVariableDefinition
+    {
+        public String NiceName { get; set; }
+        public String Name { get; set; }
+        public Type Type { get; set; }
+        public Object DefaultValue { get; set; }
+    }
+
+    public sealed class ShaderVariantDefinition
+    {
+        public string VariantName { get; set; }
+
+        public List<ShaderVarientPassDefinition> VariantPassDefinitions { get; set; }
+    }
+
+    public sealed class ShaderVarientPassDefinition
+    {
+        public string PassName { get; set; }
+    }
+
+    #endregion
 
     #region Primitive Types
 
@@ -3125,37 +3201,31 @@ namespace Cor
 
     #endregion
 
-    #endregion
-
     #region Systems
 
     public sealed class AssetManager
         : IDisposable
     {
         readonly IGraphicsManager graphics;
-        readonly IOldResourceManager legacyResources;
         readonly ISystemManager systemManager;
 
         internal AssetManager (
             IGraphicsManager graphics,
-            IOldResourceManager legacyResources,
             ISystemManager systemManager)
         {
             this.graphics = graphics;
-            this.legacyResources = legacyResources;
             this.systemManager = systemManager;
         }
 
         public T Load<T> (String assetId)
-//        where T
-//            : IAsset
+        where T
+            : IAsset
         {
             using (Stream stream = this.systemManager.GetAssetStream (assetId))
             {
                 using (var br = new BinaryReader (stream))
                 {
                     var tsdb = new TypeSerialiserDatabase ();
-
                     Byte f0 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
                     Byte f1 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
                     Byte f2 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
@@ -3163,35 +3233,9 @@ namespace Cor
                     if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'B')
                         throw new Exception ();
 
-                    tsdb.GetTypeSerialiser <T> ().Read (br);
+                    return tsdb.GetTypeSerialiser <T> ().Read (br);
                 }
             }
-
-
-
-            /*
-            if (typeof (T) == typeof (IShader))
-            {
-                if (assetId.Contains ("pixel"))
-                    return (T) legacyResources.LoadShader (ShaderType.PixelLit);
-
-                if (assetId.Contains ("vertex"))
-                    return (T) legacyResources.LoadShader (ShaderType.VertexLit);
-
-                if (assetId.Contains ("unlit"))
-                    return (T) legacyResources.LoadShader (ShaderType.Unlit);
-            }
-
-            if (typeof (T) == typeof (Texture2D))
-            {
-                Texture2D tex = legacyResources.Load<Texture2D> (
-                    "resources/" + assetId.Replace (".cba", "") + ".png");
-
-                return (T) (Object) tex;
-            }
-            */
-
-            throw new NotImplementedException ();
         }
 
         public void Unload ()
@@ -3205,30 +3249,31 @@ namespace Cor
         }
     }
 
-    public sealed class TypeSerialiserDatabase
+    public class TypeSerialiserDatabase
     {
-        Dictionary<Type, TypeSerialiser> assetTypeSerialisers;
+        readonly Dictionary<Type, TypeSerialiser> assetTypeSerialisers;
 
         public TypeSerialiserDatabase()
         {
-            assetTypeSerialisers = new Dictionary<Type, TypeSerialiser>();
+            assetTypeSerialisers = new Dictionary<Type, TypeSerialiser> ();
         }
 
         public TypeSerialiser<T> GetTypeSerialiser<T>()
         {
-            throw new NotImplementedException();
-            //return assetTypeSerialisers[typeof(T)] as TypeSerialiser<T>;
+            return GetTypeSerialiser(typeof (T)) as TypeSerialiser<T>;
         }
 
         public TypeSerialiser GetTypeSerialiser(Type type)
         {
-            throw new NotImplementedException();
-            //return assetTypeSerialisers[type];
+            if (!assetTypeSerialisers.ContainsKey (type))
+                assetTypeSerialisers [type] = Activator.CreateInstance (type) as TypeSerialiser;
+
+            return assetTypeSerialisers [type];
         }
 
-        public TypeSerialiser GetTypeSerialiserFromId(Int32 id)
+        public TypeSerialiser GetTypeSerialiserFromId (Int32 id)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException ();
         }
     }
 
@@ -5275,107 +5320,4 @@ namespace Cor
 
     #endregion
 
-//----------------------------------------------------------------------------//
-
-    #region Legacy
-
-    /// <summary>
-    /// objects that Cor's! resource manager can load
-    /// and track.
-    /// </summary>
-    [Obsolete]
-    public interface IOldResource
-    {
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    [Obsolete]
-    public interface IOldResourceManager
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        T Load<T>(String path) where T : IOldResource;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        T Open<T>(String path) where T : IDisposable;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        IShader LoadShader(ShaderType shaderType);
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public abstract class AudioClip
-        : IOldResource
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        public abstract void Play ();
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public abstract void Stop ();
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public abstract Boolean IsPlaying { get; }
-    }
-    /// <summary>
-    /// Each model part represents a piece of geometry that uses one
-    /// single effect. Multiple parts are needed for models that use
-    /// more than one effect.
-    /// </summary>
-    public abstract class Mesh
-        : IOldResource
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        public Int32 TriangleCount;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public Int32 VertexCount;
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public abstract VertexDeclaration VertDecl { get; }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public IGeometryBuffer GeomBuffer;
-    }
-
-    /// <summary>
-    /// todo
-    /// </summary>
-    public abstract class Texture2D
-        : IOldResource
-    {
-        /// <summary>
-        /// todo
-        /// </summary>
-        public abstract Int32 Width { get; }
-
-        /// <summary>
-        /// todo
-        /// </summary>
-        public abstract Int32 Height { get; }
-    }
-
-    #endregion
 }
