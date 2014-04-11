@@ -80,22 +80,6 @@ namespace CorAssetBuilder.Configuration
         /// </summary>
         public String AssetId { get; set; }
 
-        /// <summary>
-        /// The runtime type of the asset.
-        /// This is the same for all platforms.
-        /// </summary>
-        //public String AssetType { get; set; }
-
-        /// <summary>
-        /// Every asset comes from a source-set.
-        /// ResourceCollection + Build = Asset
-        /// Different platforms often use different resources
-        /// to build the same assets, shaders are a good example
-        /// of this, there is a single Asset that represents
-        /// a VertexLit shader, however different platforms
-        /// use different resources to generate their own
-        /// variant of the same Asset.
-        /// </summary>
         public List <SourceSet> SourceSets { get; set; }
 
         public SourceSet GetSourceForPlatform (String platformId)
