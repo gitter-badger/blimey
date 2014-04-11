@@ -21,7 +21,7 @@ namespace Cor
             // Infact, if the asset pipeline only uses system
             // memory textures it removes the dependency on
             // a specific graphics api.
-            var textureAsset = new MemoryTextureAsset ();
+            var textureAsset = new TextureAsset ();
 
             return textureAsset;
         }
