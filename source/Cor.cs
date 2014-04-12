@@ -218,7 +218,7 @@ namespace Cor
         /// Takes a texture asset and uploads it to the GPU Memory.
         /// Once done you should unload the texture asset.
         /// </summary>
-        ITexture UploadTexture (Int32 slot, TextureAsset tex);
+        ITexture UploadTexture (TextureAsset tex);
 
         /// <summary>
         /// Removes the texture from the GPU Memory.
@@ -1196,7 +1196,7 @@ namespace Cor
         public sealed class TextAsset
             : IAsset
         {
-            public String [] Data { get; set; }
+            public String Text { get; set; }
         }
 
         public sealed class TextureAsset

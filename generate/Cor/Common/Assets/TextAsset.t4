@@ -1,6 +1,6 @@
         public sealed class TextAsset
             : IAsset
         {
-            public String [] Data { get; set; }
+            public String Text { get; set; }
         }
 
