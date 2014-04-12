@@ -7,18 +7,25 @@
     /// Draw will cause all shapes to be rendered. This mechanism was chosen because it allows
     /// game code to call the Add* methods wherever is most convenient, rather than having to
     /// add draw methods to all of the necessary objects.
-    /// 
+    ///
     /// Additionally the renderer supports a lifetime for all shapes added. This allows for things
     /// like visualization of raycast bullets. The game would call the AddLine overload with the
     /// lifetime parameter and pass in a positive value. The renderer will then draw that shape
     /// for the given amount of time without any more calls to AddLine being required.
-    /// 
+    ///
     /// The renderer's batching mechanism uses a cache system to avoid garbage and also draws as
     /// many lines in one call to DrawUserPrimitives as possible. If the renderer is trying to draw
     /// more lines than are allowed in the Reach profile, it will break them up into multiple draw
     /// calls to make sure the game continues to work for any game.</remarks>
     public class DebugShapeRenderer
     {
+        public static IShader DebugShader
+        {
+            get { return debugShader; }
+            set { debugShader = value; }
+        }
+
+        static IShader debugShader;
 
         public int NumActiveShapes { get { return activeShapes.Count; } }
 
@@ -42,7 +49,7 @@
             /// </summary>
             public float Lifetime;
         }
-        
+
         // We use a cache system to reuse our DebugShape instances to avoid creating garbage
         readonly List<DebugShape> cachedShapes = new List<DebugShape>();
         readonly List<DebugShape> activeShapes = new List<DebugShape>();
@@ -65,11 +72,16 @@
         public DebugShapeRenderer(ICor cor, List<string> renderPasses)
         {
             this.cor = cor;
-            var shader = cor.Resources.LoadShader(ShaderType.Unlit );
+
+            if (debugShader == null)
+            {
+                // todo, need a better way to configure this.
+                throw new Exception ("DebugShapeRenderer.DebugShader must be set by user.");
+            }
 
             foreach (string pass in renderPasses)
             {
-                var m = new Material(pass, shader);
+                var m = new Material(pass, debugShader);
 
                 m.BlendMode = BlendMode.Default;
                 materials[pass] = m;
@@ -94,7 +106,7 @@
             AddLine(renderPass, d, a, rgba, life);
         }
 
-        
+
         public void AddLine(string renderPass, Vector3 a, Vector3 b, Rgba32 rgba)
         {
             AddLine(renderPass, a, b, rgba, 0f);
@@ -287,11 +299,11 @@
 
 
         }*/
-        
+
         internal void Update(AppTime time)
         {
             // Go through our active shapes and retire any shapes that have expired to the
-            // cache list. 
+            // cache list.
             Boolean resort = false;
             for (int i = this.activeShapes.Count - 1; i >= 0; i--)
             {
@@ -314,7 +326,7 @@
             if (resort)
                 this.cachedShapes.Sort(CachedShapesSort);
         }
-        
+
 
         internal void Render(IGraphicsManager zGfx, string pass, Matrix44 zView, Matrix44 zProjection)
         {
@@ -389,25 +401,25 @@
 
                         FrameStats.DrawUserPrimitivesCount ++;
                         zGfx.DrawUserPrimitives(
-                            PrimitiveType.LineList, 
+                            PrimitiveType.LineList,
                             verts,
                             vertexOffset,
                             linesToDraw,
                             VertexPositionColour.Default.VertexDeclaration
                             );
-    
+
                         // Move our vertex offset ahead based on the lines we drew
                         vertexOffset += linesToDraw * 2;
-    
+
                         // Remove these lines from our total line count
                         lineCount -= linesToDraw;
                     }
                 }
-                
+
                 zGfx.GpuUtils.EndEvent();
             }
         }
-        
+
 
         void InitializeSphere()
         {

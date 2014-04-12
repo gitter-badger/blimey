@@ -123,6 +123,7 @@ namespace Blimey
 
     #region Types
 
+<#@ include file="Types/Mesh.t4"#>
 <#@ include file="Types/BlendMode.t4"#>
 <#@ include file="Types/Material.t4"#>
 <#@ include file="Types/Scene.t4"#>

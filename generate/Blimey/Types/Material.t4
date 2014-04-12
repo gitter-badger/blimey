@@ -2,7 +2,7 @@
     {
         IShader shader;
         string renderPass;
-        
+
         public BlendMode BlendMode { get; set; }
         public string RenderPass { get { return renderPass; } }
 
@@ -22,7 +22,7 @@
             // Right now we need to make sure that the shader variables are all set with this
             // settings this material has defined.
 
-            // We don't know if the shader being used is exclusive to this material, or if it 
+            // We don't know if the shader being used is exclusive to this material, or if it
             // is shared between many.
 
             // Therefore to be 100% sure we could reset every variable on the shader to the defaults,
@@ -79,10 +79,10 @@
             }
 
             shader.ResetSamplerTargets();
-            
+
             int i = 0;
             foreach(var key in textureSamplerSettings.Keys)
-            {           
+            {
                 shader.SetSamplerTarget (key, i);
                 i++;
             }
@@ -119,45 +119,45 @@
         Dictionary<string, Vector4> vector4Settings = new Dictionary<string, Vector4>();
         Dictionary<string, Vector2> scaleSettings = new Dictionary<string, Vector2>();
         Dictionary<string, Vector2> textureOffsetSettings = new Dictionary<string, Vector2>();
-        Dictionary<string, Texture2D> textureSamplerSettings = new Dictionary<string, Texture2D>();
-        
+        Dictionary<string, ITexture> textureSamplerSettings = new Dictionary<string, ITexture>();
+
         public void SetColour(string propertyName, Rgba32 colour)
         {
-            colourSettings[propertyName] = colour; 
+            colourSettings[propertyName] = colour;
         }
 
         public void SetFloat(string propertyName, Single value)
         {
-            floatSettings[propertyName] = value; 
+            floatSettings[propertyName] = value;
         }
 
         public void SetMatrix(string propertyName, Matrix44 matrix)
         {
-            matrixSettings[propertyName] = matrix; 
+            matrixSettings[propertyName] = matrix;
         }
 
         public void SetVector4(string propertyName, Vector4 vector)
         {
-            vector4Settings[propertyName] = vector; 
+            vector4Settings[propertyName] = vector;
         }
 
         public void SetVector3(string propertyName, Vector3 vector)
         {
-            vector3Settings[propertyName] = vector; 
+            vector3Settings[propertyName] = vector;
         }
 
         public void SetTextureOffset(string propertyName, Vector2 offset)
         {
-            textureOffsetSettings[propertyName] = offset; 
+            textureOffsetSettings[propertyName] = offset;
         }
 
         public void SetTextureScale(string propertyName, Vector2 scale)
         {
-            scaleSettings[propertyName] = scale; 
+            scaleSettings[propertyName] = scale;
         }
 
 
-        public void SetTexture(string propertyName, Texture2D texture)
+        public void SetTexture(string propertyName, ITexture texture)
         {
             textureSamplerSettings[propertyName] = texture;
         }

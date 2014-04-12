@@ -1791,18 +1791,25 @@ namespace Blimey
     /// Draw will cause all shapes to be rendered. This mechanism was chosen because it allows
     /// game code to call the Add* methods wherever is most convenient, rather than having to
     /// add draw methods to all of the necessary objects.
-    /// 
+    ///
     /// Additionally the renderer supports a lifetime for all shapes added. This allows for things
     /// like visualization of raycast bullets. The game would call the AddLine overload with the
     /// lifetime parameter and pass in a positive value. The renderer will then draw that shape
     /// for the given amount of time without any more calls to AddLine being required.
-    /// 
+    ///
     /// The renderer's batching mechanism uses a cache system to avoid garbage and also draws as
     /// many lines in one call to DrawUserPrimitives as possible. If the renderer is trying to draw
     /// more lines than are allowed in the Reach profile, it will break them up into multiple draw
     /// calls to make sure the game continues to work for any game.</remarks>
     public class DebugShapeRenderer
     {
+        public static IShader DebugShader
+        {
+            get { return debugShader; }
+            set { debugShader = value; }
+        }
+
+        static IShader debugShader;
 
         public int NumActiveShapes { get { return activeShapes.Count; } }
 
@@ -1826,7 +1833,7 @@ namespace Blimey
             /// </summary>
             public float Lifetime;
         }
-        
+
         // We use a cache system to reuse our DebugShape instances to avoid creating garbage
         readonly List<DebugShape> cachedShapes = new List<DebugShape>();
         readonly List<DebugShape> activeShapes = new List<DebugShape>();
@@ -1849,11 +1856,16 @@ namespace Blimey
         public DebugShapeRenderer(ICor cor, List<string> renderPasses)
         {
             this.cor = cor;
-            var shader = cor.Resources.LoadShader(ShaderType.Unlit );
+
+            if (debugShader == null)
+            {
+                // todo, need a better way to configure this.
+                throw new Exception ("DebugShapeRenderer.DebugShader must be set by user.");
+            }
 
             foreach (string pass in renderPasses)
             {
-                var m = new Material(pass, shader);
+                var m = new Material(pass, debugShader);
 
                 m.BlendMode = BlendMode.Default;
                 materials[pass] = m;
@@ -1878,7 +1890,7 @@ namespace Blimey
             AddLine(renderPass, d, a, rgba, life);
         }
 
-        
+
         public void AddLine(string renderPass, Vector3 a, Vector3 b, Rgba32 rgba)
         {
             AddLine(renderPass, a, b, rgba, 0f);
@@ -2071,11 +2083,11 @@ namespace Blimey
 
 
         }*/
-        
+
         internal void Update(AppTime time)
         {
             // Go through our active shapes and retire any shapes that have expired to the
-            // cache list. 
+            // cache list.
             Boolean resort = false;
             for (int i = this.activeShapes.Count - 1; i >= 0; i--)
             {
@@ -2098,7 +2110,7 @@ namespace Blimey
             if (resort)
                 this.cachedShapes.Sort(CachedShapesSort);
         }
-        
+
 
         internal void Render(IGraphicsManager zGfx, string pass, Matrix44 zView, Matrix44 zProjection)
         {
@@ -2173,25 +2185,25 @@ namespace Blimey
 
                         FrameStats.DrawUserPrimitivesCount ++;
                         zGfx.DrawUserPrimitives(
-                            PrimitiveType.LineList, 
+                            PrimitiveType.LineList,
                             verts,
                             vertexOffset,
                             linesToDraw,
                             VertexPositionColour.Default.VertexDeclaration
                             );
-    
+
                         // Move our vertex offset ahead based on the lines we drew
                         vertexOffset += linesToDraw * 2;
-    
+
                         // Remove these lines from our total line count
                         lineCount -= linesToDraw;
                     }
                 }
-                
+
                 zGfx.GpuUtils.EndEvent();
             }
         }
-        
+
 
         void InitializeSphere()
         {
@@ -4534,7 +4546,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
         Boolean     currentFlipHorizontal;
         Boolean     currentFlipVertical;
         Rgba32      currentColour;
-        Texture2D   currentTexture;
+        ITexture   currentTexture;
 
         // track the desired status of the sprite
         Single      desiredWidth;
@@ -4546,7 +4558,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
         Boolean     desiredFlipHorizontal;
         Boolean     desiredFlipVertical;
         Rgba32      desiredColour;
-        Texture2D   desiredTexture;
+        ITexture   desiredTexture;
 
 
         /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -4568,7 +4580,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
         public Boolean FlipHorizontal { get { return desiredFlipHorizontal; } set { desiredFlipHorizontal = value; } }
         public Boolean FlipVertical { get { return desiredFlipVertical; } set { desiredFlipVertical = value; } }
         public Rgba32 Colour { get { return desiredColour; } set { desiredColour = value; } }
-        public Texture2D Texture { get { return desiredTexture; } set { desiredTexture = value; } }
+        public ITexture Texture { get { return desiredTexture; } set { desiredTexture = value; } }
 
         //--------------------------------------------------------------------//
         public Sprite()
@@ -4612,6 +4624,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
 
             if (spriteShader == null)
             {
+                // todo, need a better way to configure this.
                 throw new Exception ("Sprite.SpriteShader must be set by user.");
             }
 
@@ -4799,6 +4812,28 @@ namespace SunGiant.Framework.Ophelia.Cameras
 
     #region Types
 
+    public abstract class Mesh
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int32 TriangleCount;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Int32 VertexCount;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public abstract VertexDeclaration VertDecl { get; }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public IGeometryBuffer GeomBuffer;
+    }
     // high level wrapper for blending stuff
     public struct BlendMode
         : IEquatable<BlendMode>
@@ -4961,7 +4996,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
     {
         IShader shader;
         string renderPass;
-        
+
         public BlendMode BlendMode { get; set; }
         public string RenderPass { get { return renderPass; } }
 
@@ -4981,7 +5016,7 @@ namespace SunGiant.Framework.Ophelia.Cameras
             // Right now we need to make sure that the shader variables are all set with this
             // settings this material has defined.
 
-            // We don't know if the shader being used is exclusive to this material, or if it 
+            // We don't know if the shader being used is exclusive to this material, or if it
             // is shared between many.
 
             // Therefore to be 100% sure we could reset every variable on the shader to the defaults,
@@ -5038,10 +5073,10 @@ namespace SunGiant.Framework.Ophelia.Cameras
             }
 
             shader.ResetSamplerTargets();
-            
+
             int i = 0;
             foreach(var key in textureSamplerSettings.Keys)
-            {           
+            {
                 shader.SetSamplerTarget (key, i);
                 i++;
             }
@@ -5078,45 +5113,45 @@ namespace SunGiant.Framework.Ophelia.Cameras
         Dictionary<string, Vector4> vector4Settings = new Dictionary<string, Vector4>();
         Dictionary<string, Vector2> scaleSettings = new Dictionary<string, Vector2>();
         Dictionary<string, Vector2> textureOffsetSettings = new Dictionary<string, Vector2>();
-        Dictionary<string, Texture2D> textureSamplerSettings = new Dictionary<string, Texture2D>();
-        
+        Dictionary<string, ITexture> textureSamplerSettings = new Dictionary<string, ITexture>();
+
         public void SetColour(string propertyName, Rgba32 colour)
         {
-            colourSettings[propertyName] = colour; 
+            colourSettings[propertyName] = colour;
         }
 
         public void SetFloat(string propertyName, Single value)
         {
-            floatSettings[propertyName] = value; 
+            floatSettings[propertyName] = value;
         }
 
         public void SetMatrix(string propertyName, Matrix44 matrix)
         {
-            matrixSettings[propertyName] = matrix; 
+            matrixSettings[propertyName] = matrix;
         }
 
         public void SetVector4(string propertyName, Vector4 vector)
         {
-            vector4Settings[propertyName] = vector; 
+            vector4Settings[propertyName] = vector;
         }
 
         public void SetVector3(string propertyName, Vector3 vector)
         {
-            vector3Settings[propertyName] = vector; 
+            vector3Settings[propertyName] = vector;
         }
 
         public void SetTextureOffset(string propertyName, Vector2 offset)
         {
-            textureOffsetSettings[propertyName] = offset; 
+            textureOffsetSettings[propertyName] = offset;
         }
 
         public void SetTextureScale(string propertyName, Vector2 scale)
         {
-            scaleSettings[propertyName] = scale; 
+            scaleSettings[propertyName] = scale;
         }
 
 
-        public void SetTexture(string propertyName, Texture2D texture)
+        public void SetTexture(string propertyName, ITexture texture)
         {
             textureSamplerSettings[propertyName] = texture;
         }

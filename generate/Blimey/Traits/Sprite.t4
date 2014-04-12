@@ -140,7 +140,7 @@
         Boolean     currentFlipHorizontal;
         Boolean     currentFlipVertical;
         Rgba32      currentColour;
-        Texture2D   currentTexture;
+        ITexture   currentTexture;
 
         // track the desired status of the sprite
         Single      desiredWidth;
@@ -152,7 +152,7 @@
         Boolean     desiredFlipHorizontal;
         Boolean     desiredFlipVertical;
         Rgba32      desiredColour;
-        Texture2D   desiredTexture;
+        ITexture   desiredTexture;
 
 
         /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -174,7 +174,7 @@
         public Boolean FlipHorizontal { get { return desiredFlipHorizontal; } set { desiredFlipHorizontal = value; } }
         public Boolean FlipVertical { get { return desiredFlipVertical; } set { desiredFlipVertical = value; } }
         public Rgba32 Colour { get { return desiredColour; } set { desiredColour = value; } }
-        public Texture2D Texture { get { return desiredTexture; } set { desiredTexture = value; } }
+        public ITexture Texture { get { return desiredTexture; } set { desiredTexture = value; } }
 
         //--------------------------------------------------------------------//
         public Sprite()
@@ -218,6 +218,7 @@
 
             if (spriteShader == null)
             {
+                // todo, need a better way to configure this.
                 throw new Exception ("Sprite.SpriteShader must be set by user.");
             }
 
