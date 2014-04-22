@@ -76,13 +76,15 @@ namespace Cor.Platform.Managed.MonoMac
 
         public Engine(
             AppSettings settings,
-            IApp app)
+            IApp app,
+            Int32 width,
+            Int32 height)
         {
             InternalUtils.Log.Info(
                 "Engine -> ()");
 
             this.audio = new AudioManager();
-            this.graphics = new GraphicsManager();
+            this.graphics = new GraphicsManager(width, height);
             this.resources = new ResourceManager();
             this.input = new InputManager();
             this.system = new SystemManager();
@@ -168,18 +170,21 @@ namespace Cor.Platform.Managed.MonoMac
     public sealed class GraphicsManager
         : IGraphicsManager
     {
-        readonly IDisplayStatus displayStatus;
-        readonly IGpuUtils gpuUtils;
+        readonly DisplayStatus displayStatus;
+        readonly MonoMacGpuUtils gpuUtils;
 
         GeometryBuffer currentGeomBuffer;
         CullMode? currentCullMode;
 
-        public GraphicsManager()
+        internal DisplayStatus DisplayStatusImplementation { get { return displayStatus; } }
+
+        public GraphicsManager(Int32 width, Int32 height)
         {
             InternalUtils.Log.Info(
                 "GraphicsManager -> ()");
 
-            this.displayStatus = new DisplayStatus();
+            this.displayStatus = new DisplayStatus(width, height);
+
             this.gpuUtils = new MonoMacGpuUtils();
 
             global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.Blend);
@@ -570,19 +575,31 @@ namespace Cor.Platform.Managed.MonoMac
     public sealed class DisplayStatus
         : IDisplayStatus
     {
-        public DisplayStatus()
+        Int32 width = 0;
+        Int32 height = 0;
+
+        public DisplayStatus(Int32 width, Int32 height)
         {
             InternalUtils.Log.Info(
                 "DisplayStatus -> ()");
+
+            this.width = width;
+            this.height = height;
+        }
+
+        internal void UpdateSize (Int32 width, Int32 height)
+        {
+            this.width = width;
+            this.height = height;
         }
 
         #region IDisplayStatus
 
         public Boolean Fullscreen { get { return true; } }
 
-        public Int32 CurrentWidth { get { return 800; } }
+        public Int32 CurrentWidth { get { return width; } }
 
-        public Int32 CurrentHeight { get { return 600; } }
+        public Int32 CurrentHeight { get { return height; } }
 
         #endregion
     }
@@ -954,6 +971,10 @@ namespace Cor.Platform.Managed.MonoMac
             this.settings = settings;
             this.entryPoint = entryPoint;
 
+            // Make the suface size automatically update when the window
+            // size changes.
+            this.WantsBestResolutionOpenGLSurface = true;
+
             this.AutoresizingMask =
                 global::MonoMac.AppKit.NSViewResizingMask.HeightSizable |
                 global::MonoMac.AppKit.NSViewResizingMask.MaxXMargin |
@@ -961,8 +982,16 @@ namespace Cor.Platform.Managed.MonoMac
                 global::MonoMac.AppKit.NSViewResizingMask.WidthSizable;
         }
 
+        void toggleFullScreen (NSObject sender)
+        {
+            if (WindowState == global::MonoMac.OpenGL.WindowState.Fullscreen)
+                WindowState = global::MonoMac.OpenGL.WindowState.Normal;
+            else
+                WindowState = global::MonoMac.OpenGL.WindowState.Fullscreen;
+        }
+
         // All Setup For OpenGL Goes Here
-        bool InitGL ()
+        bool NotUsedInitGL ()
         {
 
             // Enables Smooth Shading
@@ -985,15 +1014,7 @@ namespace Cor.Platform.Managed.MonoMac
             return true;
         }
 
-        void toggleFullScreen (NSObject sender)
-        {
-            if (WindowState == global::MonoMac.OpenGL.WindowState.Fullscreen)
-                WindowState = global::MonoMac.OpenGL.WindowState.Normal;
-            else
-                WindowState = global::MonoMac.OpenGL.WindowState.Fullscreen;
-        }
-
-        void CreateFrameBuffer()
+        void NotUsedCreateFrameBuffer()
         {
             //
             // Enable the depth buffer
@@ -1018,7 +1039,6 @@ namespace Cor.Platform.Managed.MonoMac
                 global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer,
                 _depthRenderbuffer);
             ErrorHandler.Check();
-
         }
 
         public void StartRunLoop(double updateRate)
@@ -1046,7 +1066,9 @@ namespace Cor.Platform.Managed.MonoMac
         {
             gameEngine = new Engine(
                 this.settings,
-                this.entryPoint
+                this.entryPoint,
+                (Int32) this.Frame.Width,
+                (Int32) this.Frame.Height
                 );
 
             timer.Start();
@@ -1071,8 +1093,15 @@ namespace Cor.Platform.Managed.MonoMac
 
         protected override void OnResize (EventArgs e)
         {
+            // Occurs whenever GameWindow is resized.
+            // Update the OpenGL Viewport and Projection Matrix here. 
+            InternalUtils.Log.Info (
+                "MonoMacGameView.OnResize -> Bounds:" + Bounds + 
+                ", Frame:" + Frame);
 
-            InternalUtils.Log.Info ("MonoMacGameView.OnResize");
+            gameEngine.GraphicsImplementation.DisplayStatusImplementation.UpdateSize (
+                (Int32)Frame.Width, (Int32)Frame.Height);
+
             base.OnResize (e);
         }
 

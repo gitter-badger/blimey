@@ -25,6 +25,10 @@
             this.settings = settings;
             this.entryPoint = entryPoint;
 
+            // Make the suface size automatically update when the window
+            // size changes.
+            this.WantsBestResolutionOpenGLSurface = true;
+
             this.AutoresizingMask =
                 global::MonoMac.AppKit.NSViewResizingMask.HeightSizable |
                 global::MonoMac.AppKit.NSViewResizingMask.MaxXMargin |
@@ -32,8 +36,16 @@
                 global::MonoMac.AppKit.NSViewResizingMask.WidthSizable;
         }
 
+        void toggleFullScreen (NSObject sender)
+        {
+            if (WindowState == global::MonoMac.OpenGL.WindowState.Fullscreen)
+                WindowState = global::MonoMac.OpenGL.WindowState.Normal;
+            else
+                WindowState = global::MonoMac.OpenGL.WindowState.Fullscreen;
+        }
+
         // All Setup For OpenGL Goes Here
-        bool InitGL ()
+        bool NotUsedInitGL ()
         {
 
             // Enables Smooth Shading
@@ -56,15 +68,7 @@
             return true;
         }
 
-        void toggleFullScreen (NSObject sender)
-        {
-            if (WindowState == global::MonoMac.OpenGL.WindowState.Fullscreen)
-                WindowState = global::MonoMac.OpenGL.WindowState.Normal;
-            else
-                WindowState = global::MonoMac.OpenGL.WindowState.Fullscreen;
-        }
-
-        void CreateFrameBuffer()
+        void NotUsedCreateFrameBuffer()
         {
             //
             // Enable the depth buffer
@@ -89,7 +93,6 @@
                 global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer,
                 _depthRenderbuffer);
             ErrorHandler.Check();
-
         }
 
         public void StartRunLoop(double updateRate)
@@ -117,7 +120,9 @@
         {
             gameEngine = new Engine(
                 this.settings,
-                this.entryPoint
+                this.entryPoint,
+                (Int32) this.Frame.Width,
+                (Int32) this.Frame.Height
                 );
 
             timer.Start();
@@ -142,8 +147,15 @@
 
         protected override void OnResize (EventArgs e)
         {
+            // Occurs whenever GameWindow is resized.
+            // Update the OpenGL Viewport and Projection Matrix here. 
+            InternalUtils.Log.Info (
+                "MonoMacGameView.OnResize -> Bounds:" + Bounds + 
+                ", Frame:" + Frame);
 
-            InternalUtils.Log.Info ("MonoMacGameView.OnResize");
+            gameEngine.GraphicsImplementation.DisplayStatusImplementation.UpdateSize (
+                (Int32)Frame.Width, (Int32)Frame.Height);
+
             base.OnResize (e);
         }
 

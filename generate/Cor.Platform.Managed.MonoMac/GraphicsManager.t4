@@ -1,18 +1,21 @@
     public sealed class GraphicsManager
         : IGraphicsManager
     {
-        readonly IDisplayStatus displayStatus;
-        readonly IGpuUtils gpuUtils;
+        readonly DisplayStatus displayStatus;
+        readonly MonoMacGpuUtils gpuUtils;
 
         GeometryBuffer currentGeomBuffer;
         CullMode? currentCullMode;
 
-        public GraphicsManager()
+        internal DisplayStatus DisplayStatusImplementation { get { return displayStatus; } }
+
+        public GraphicsManager(Int32 width, Int32 height)
         {
             InternalUtils.Log.Info(
                 "GraphicsManager -> ()");
 
-            this.displayStatus = new DisplayStatus();
+            this.displayStatus = new DisplayStatus(width, height);
+
             this.gpuUtils = new MonoMacGpuUtils();
 
             global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.Blend);

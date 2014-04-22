@@ -1,19 +1,31 @@
     public sealed class DisplayStatus
         : IDisplayStatus
     {
-        public DisplayStatus()
+        Int32 width = 0;
+        Int32 height = 0;
+
+        public DisplayStatus(Int32 width, Int32 height)
         {
             InternalUtils.Log.Info(
                 "DisplayStatus -> ()");
+
+            this.width = width;
+            this.height = height;
+        }
+
+        internal void UpdateSize (Int32 width, Int32 height)
+        {
+            this.width = width;
+            this.height = height;
         }
 
         #region IDisplayStatus
 
         public Boolean Fullscreen { get { return true; } }
 
-        public Int32 CurrentWidth { get { return 800; } }
+        public Int32 CurrentWidth { get { return width; } }
 
-        public Int32 CurrentHeight { get { return 600; } }
+        public Int32 CurrentHeight { get { return height; } }
 
         #endregion
     }

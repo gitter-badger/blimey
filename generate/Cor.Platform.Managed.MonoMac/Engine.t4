@@ -13,13 +13,15 @@
 
         public Engine(
             AppSettings settings,
-            IApp app)
+            IApp app,
+            Int32 width,
+            Int32 height)
         {
             InternalUtils.Log.Info(
                 "Engine -> ()");
 
             this.audio = new AudioManager();
-            this.graphics = new GraphicsManager();
+            this.graphics = new GraphicsManager(width, height);
             this.resources = new ResourceManager();
             this.input = new InputManager();
             this.system = new SystemManager();
