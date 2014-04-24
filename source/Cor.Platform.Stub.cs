@@ -338,6 +338,7 @@ namespace Cor.Platform.Stub
         {
             throw new NotImplementedException();    
         }
+        
         #endregion
     }
     public class StubPanelSpecification

@@ -222,6 +222,7 @@ namespace Cor.Platform.Managed.MonoMac
                 return (IntPtr) (unchecked (((byte *) pointer) - offset));
             }
         }
+
         void EnableVertAttribs(VertexDeclaration vertDecl, IntPtr pointer)
         {
             var vertElems = vertDecl.GetVertexElements();
@@ -398,12 +399,118 @@ namespace Cor.Platform.Managed.MonoMac
 
         public ITexture UploadTexture (TextureAsset tex)
         {
-            return null;
+            int width = tex.Width;
+            int height = tex.Height;
+
+            if (tex.SurfaceFormat != SurfaceFormat.Rgba32)
+                throw new NotImplementedException ();
+
+            IntPtr pixelDataRgba32 = Marshal.AllocHGlobal(tex.Data.Length);
+            Marshal.Copy(tex.Data, 0, pixelDataRgba32, tex.Data.Length);
+            
+            // Call unmanaged code
+            Marshal.FreeHGlobal(pixelDataRgba32);
+
+            int textureId = -1;
+
+            // this sets the unpack alignment.  which is used when reading pixels
+            // in the fragment shader.  when the textue data is uploaded via glTexImage2d,
+            // the rows of pixels are assumed to be aligned to the value set for GL_UNPACK_ALIGNMENT.
+            // By default, the value is 4, meaning that rows of pixels are assumed to begin
+            // on 4-byte boundaries.  this is a global STATE.
+            global::MonoMac.OpenGL.GL.PixelStore(
+                global::MonoMac.OpenGL.PixelStoreParameter.UnpackAlignment, 4);
+
+            ErrorHandler.Check();
+
+            // the first sept in the application of texture is to create the
+            // texture object.  this is a container object that holds the
+            // texture data.  this function returns a handle to a texture
+            // object.
+            global::MonoMac.OpenGL.GL.GenTextures(1, out textureId);
+            ErrorHandler.Check();
+
+            var textureHandle = new TextureHandle (textureId);
+
+            var textureTarget = global::MonoMac.OpenGL.TextureTarget.Texture2D;
+
+            // we need to bind the texture object so that we can opperate on it.
+            global::MonoMac.OpenGL.GL.BindTexture(textureTarget, textureId);
+            ErrorHandler.Check();
+
+            // the incoming texture format
+            // (the format that [pixelDataRgba32] is in)
+            var format = global::MonoMac.OpenGL.PixelFormat.Rgba;
+
+            var internalFormat = global::MonoMac.OpenGL.PixelInternalFormat.Rgba;
+
+            var textureDataFormat = global::MonoMac.OpenGL.PixelType.UnsignedByte;
+
+            // now use the bound texture object to load the image data.
+            global::MonoMac.OpenGL.GL.TexImage2D(
+
+                // specifies the texture target, either GL_TEXTURE_2D or one of the cubemap face targets.
+                textureTarget,
+
+                // specifies which mip level to load.  the base level is
+                // specified by 0 following by an increasing level for each
+                // successive mipmap.
+                0,
+
+                // internal format for the texture storage, can be:
+                // - GL_RGBA
+                // - GL_RGB
+                // - GL_LUMINANCE_ALPHA
+                // - GL_LUMINANCE
+                // - GL_ALPHA
+                internalFormat,
+
+                // the width of the image in pixels
+                width,
+
+                // the height of the image in pixels
+                height,
+
+                // boarder - set to zero, only here for compatibility with OpenGL desktop
+                0,
+
+                // the format of the incoming texture data, in opengl es this
+                // has to be the same as the internal format
+                format,
+
+                // the type of the incoming pixel data, can be:
+                // - unsigned byte
+                // - unsigned short 4444
+                // - unsigned short 5551
+                // - unsigned short 565
+                textureDataFormat, // this refers to each individual channel
+
+
+                pixelDataRgba32
+
+                );
+
+            ErrorHandler.Check();
+
+            // sets the minification and maginfication filtering modes.  required
+            // because we have not loaded a complete mipmap chain for the texture
+            // so we must select a non mipmapped minification filter.
+            global::MonoMac.OpenGL.GL.TexParameter(textureTarget, global::MonoMac.OpenGL.TextureParameterName.TextureMinFilter, (int) global::MonoMac.OpenGL.All.Nearest );
+
+            ErrorHandler.Check();
+
+            global::MonoMac.OpenGL.GL.TexParameter(textureTarget, global::MonoMac.OpenGL.TextureParameterName.TextureMagFilter, (int) global::MonoMac.OpenGL.All.Nearest );
+
+            ErrorHandler.Check();
+
+            return textureHandle;
         }
 
         public void UnloadTexture (ITexture texture)
         {
-        
+            int textureId = (texture as TextureHandle).glTextureId;
+
+            global::MonoMac.OpenGL.GL.DeleteTextures(1, ref textureId);
         }
 
         public void SetActiveTexture (Int32 slot, ITexture tex)
@@ -411,7 +518,7 @@ namespace Cor.Platform.Managed.MonoMac
             global::MonoMac.OpenGL.TextureUnit oglTexSlot = EnumConverter.ToOpenGLTextureSlot(slot);
             global::MonoMac.OpenGL.GL.ActiveTexture(oglTexSlot);
 
-            var oglt0 = tex as OpenGLTexture;
+            var oglt0 = tex as TextureHandle;
 
             if( oglt0 != null )
             {
@@ -425,12 +532,12 @@ namespace Cor.Platform.Managed.MonoMac
 
         public IShader CreateShader (ShaderAsset asset)
         {
-            return null;
+            throw new NotImplementedException ();
         }
 
         public void DestroyShader (IShader shader)
         {
-
+            throw new NotImplementedException ();
         }
 
         public void SetBlendEquation(
@@ -543,7 +650,6 @@ namespace Cor.Platform.Managed.MonoMac
 
             var glDrawMode = EnumConverter.ToOpenGL(primitiveType);
             var glDrawModeAll = glDrawMode;
-
 
             var bindTarget = global::MonoMac.OpenGL.BufferTarget.ArrayBuffer;
 
@@ -2420,93 +2526,21 @@ namespace Cor.Platform.Managed.MonoMac
         }
     }
 
-    internal sealed class OpenGLTexture
+    internal sealed class TextureHandle
         : ITexture
     {
-        public int glTextureId {get; private set;}
-
-        NSImage nsImage;
-
-        int pixelsWide;
-        int pixelsHigh;
-
-/*
-        internal static OpenGLTexture CreateFromFile(string path)
+        internal TextureHandle (int textureid)
         {
-            using(var fStream = new FileStream(path, FileMode.Open))
-            {
-                var nsImage = NSImage.FromStream( fStream );
-
-                var texture = new OpenGLTexture(nsImage);
-
-                return texture;
-            }
+            glTextureId = textureid;
         }
 
-        private OpenGLTexture(NSImage nsImage)
-        {
-            this.nsImage = nsImage;
-            IntPtr dataPointer = RequestImagePixelData(nsImage);
-
-            CreateTexture2D((int)nsImage.Size.Width, (int)nsImage.Size.Height, dataPointer);
-        }
-
-
-        //Store pixel data as an ARGB Bitmap
-        IntPtr RequestImagePixelData (NSImage inImage)
-        {
-            var imageSize = inImage.Size;
-
-            CGBitmapContext ctxt = CreateRgbaBitmapContext (inImage.CGImage);
-
-            var rect = new RectangleF (0, 0, imageSize.Width, imageSize.Height);
-
-            ctxt.DrawImage (rect, inImage.CGImage);
-            var data = ctxt.Data;
-
-            return data;
-        }
-
-        CGBitmapContext CreateRgbaBitmapContext (CGImage inImage)
-        {
-            pixelsWide = inImage.Width;
-            pixelsHigh = inImage.Height;
-
-            using (var colorSpace = CGColorSpace.CreateDeviceRGB())
-            {
-                var bitmapBytesPerRow = pixelsWide * 4;
-                var bitmapByteCount = bitmapBytesPerRow * pixelsHigh;
-                var bitmapData = Marshal.AllocHGlobal (bitmapByteCount);
-
-                if (bitmapData == IntPtr.Zero)
-                {
-                    throw new Exception ("Memory not allocated.");
-                }
-
-                var context = new CGBitmapContext (
-                    bitmapData,
-                    pixelsWide,
-                    pixelsHigh,
-                    8,
-                    bitmapBytesPerRow,
-                    colorSpace,
-                    CGImageAlphaInfo.PremultipliedLast);
-
-                if (context == null)
-                {
-                    throw new Exception ("Context not created");
-                }
-
-                return context;
-            }
-        }
-*/
+        internal int glTextureId { get; private set; }
 
         public SurfaceFormat SurfaceFormat
         {
             get
             {
-                return SurfaceFormat.Rgba32;
+                throw new NotImplementedException ();
             }
         }
 
@@ -2514,7 +2548,7 @@ namespace Cor.Platform.Managed.MonoMac
         {
             get
             {
-                return null;
+                throw new NotImplementedException ();
             }
         }
 
@@ -2522,7 +2556,7 @@ namespace Cor.Platform.Managed.MonoMac
         {
             get
             {
-                return null;
+                throw new NotImplementedException ();
             }
         }
 
@@ -2530,7 +2564,7 @@ namespace Cor.Platform.Managed.MonoMac
         {
             get
             {
-                return pixelsWide;
+                throw new NotImplementedException ();
             }
         }
 
@@ -2538,112 +2572,8 @@ namespace Cor.Platform.Managed.MonoMac
         {
             get
             {
-                return pixelsHigh;
+                throw new NotImplementedException ();
             }
-        }
-
-
-        void CreateTexture2D(int width, int height, IntPtr pixelDataRgba32)
-        {
-            int textureId = -1;
-
-
-            // this sets the unpack alignment.  which is used when reading pixels
-            // in the fragment shader.  when the textue data is uploaded via glTexImage2d,
-            // the rows of pixels are assumed to be aligned to the value set for GL_UNPACK_ALIGNMENT.
-            // By default, the value is 4, meaning that rows of pixels are assumed to begin
-            // on 4-byte boundaries.  this is a global STATE.
-            global::MonoMac.OpenGL.GL.PixelStore(global::MonoMac.OpenGL.PixelStoreParameter.UnpackAlignment, 4);
-            ErrorHandler.Check();
-
-            // the first sept in the application of texture is to create the
-            // texture object.  this is a container object that holds the
-            // texture data.  this function returns a handle to a texture
-            // object.
-            global::MonoMac.OpenGL.GL.GenTextures(1, out textureId);
-            ErrorHandler.Check();
-
-            this.glTextureId = textureId;
-
-            var textureTarget = global::MonoMac.OpenGL.TextureTarget.Texture2D;
-
-            // we need to bind the texture object so that we can opperate on it.
-            global::MonoMac.OpenGL.GL.BindTexture(textureTarget, textureId);
-            ErrorHandler.Check();
-
-            // the incoming texture format
-            // (the format that [pixelDataRgba32] is in)
-            var format = global::MonoMac.OpenGL.PixelFormat.Rgba;
-
-            var internalFormat = global::MonoMac.OpenGL.PixelInternalFormat.Rgba;
-
-            var textureDataFormat = global::MonoMac.OpenGL.PixelType.UnsignedByte;
-
-            // now use the bound texture object to load the image data.
-            global::MonoMac.OpenGL.GL.TexImage2D(
-
-                // specifies the texture target, either GL_TEXTURE_2D or one of the cubemap face targets.
-                textureTarget,
-
-                // specifies which mip level to load.  the base level is
-                // specified by 0 following by an increasing level for each
-                // successive mipmap.
-                0,
-
-                // internal format for the texture storage, can be:
-                // - GL_RGBA
-                // - GL_RGB
-                // - GL_LUMINANCE_ALPHA
-                // - GL_LUMINANCE
-                // - GL_ALPHA
-                internalFormat,
-
-                // the width of the image in pixels
-                width,
-
-                // the height of the image in pixels
-                height,
-
-                // boarder - set to zero, only here for compatibility with OpenGL desktop
-                0,
-
-                // the format of the incoming texture data, in opengl es this
-                // has to be the same as the internal format
-                format,
-
-                // the type of the incoming pixel data, can be:
-                // - unsigned byte
-                // - unsigned short 4444
-                // - unsigned short 5551
-                // - unsigned short 565
-                textureDataFormat, // this refers to each individual channel
-
-
-                pixelDataRgba32
-
-                );
-
-            ErrorHandler.Check();
-
-            // sets the minification and maginfication filtering modes.  required
-            // because we have not loaded a complete mipmap chain for the texture
-            // so we must select a non mipmapped minification filter.
-            global::MonoMac.OpenGL.GL.TexParameter(textureTarget, global::MonoMac.OpenGL.TextureParameterName.TextureMinFilter, (int) global::MonoMac.OpenGL.All.Nearest );
-
-            ErrorHandler.Check();
-
-            global::MonoMac.OpenGL.GL.TexParameter(textureTarget, global::MonoMac.OpenGL.TextureParameterName.TextureMagFilter, (int) global::MonoMac.OpenGL.All.Nearest );
-
-            ErrorHandler.Check();
-        }
-
-
-
-        void DeleteTexture(ITexture texture)
-        {
-            int textureId = (texture as OpenGLTexture).glTextureId;
-
-            global::MonoMac.OpenGL.GL.DeleteTextures(1, ref textureId);
         }
     }
 

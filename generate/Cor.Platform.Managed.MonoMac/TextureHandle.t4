@@ -1,0 +1,51 @@
+    internal sealed class TextureHandle
+        : ITexture
+    {
+        internal TextureHandle (int textureid)
+        {
+            glTextureId = textureid;
+        }
+
+        internal int glTextureId { get; private set; }
+
+        public SurfaceFormat SurfaceFormat
+        {
+            get
+            {
+                throw new NotImplementedException ();
+            }
+        }
+
+        public Byte[] Primary
+        {
+            get
+            {
+                throw new NotImplementedException ();
+            }
+        }
+
+        public Byte[,] Mipmaps
+        {
+            get
+            {
+                throw new NotImplementedException ();
+            }
+        }
+
+        public int Width
+        {
+            get
+            {
+                throw new NotImplementedException ();
+            }
+        }
+
+        public int Height
+        {
+            get
+            {
+                throw new NotImplementedException ();
+            }
+        }
+    }
+

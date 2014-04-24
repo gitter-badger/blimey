@@ -83,7 +83,7 @@ namespace Cor.Platform.Managed.MonoMac
 <#@ include file="ShaderDefinition.t4"#>
 <#@ include file="ShaderHelper.t4"#>
 <#@ include file="ShaderPass.t4"#>
-<#@ include file="OpenGLTexture.t4"#>
+<#@ include file="TextureHandle.t4"#>
 <#@ include file="Keyboard.t4"#>
 <#@ include file="Mouse.t4"#>
 
