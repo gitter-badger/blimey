@@ -1,0 +1,254 @@
+    internal static class EnumConverter
+    {
+        internal static TextureUnit ToOpenGLTextureSlot(Int32 slot)
+        {
+            switch(slot)
+            {
+                case 0: return TextureUnit.Texture0;
+                case 1: return TextureUnit.Texture1;
+                case 2: return TextureUnit.Texture2;
+                case 3: return  TextureUnit.Texture3;
+                case 4: return TextureUnit.Texture4;
+                case 5: return TextureUnit.Texture5;
+                case 6: return TextureUnit.Texture6;
+                case 7: return TextureUnit.Texture7;
+                case 8: return TextureUnit.Texture8;
+                case 9: return TextureUnit.Texture9;
+                case 10: return TextureUnit.Texture10;
+                case 11: return TextureUnit.Texture11;
+                case 12: return TextureUnit.Texture12;
+                case 13: return TextureUnit.Texture13;
+                case 14: return TextureUnit.Texture14;
+                case 15: return TextureUnit.Texture15;
+                case 16: return TextureUnit.Texture16;
+                case 17: return TextureUnit.Texture17;
+                case 18: return TextureUnit.Texture18;
+                case 19: return TextureUnit.Texture19;
+                case 20: return TextureUnit.Texture20;
+                case 21: return TextureUnit.Texture21;
+                case 22: return TextureUnit.Texture22;
+                case 23: return TextureUnit.Texture23;
+                case 24: return TextureUnit.Texture24;
+                case 25: return TextureUnit.Texture25;
+                case 26: return TextureUnit.Texture26;
+                case 27: return TextureUnit.Texture27;
+                case 28: return TextureUnit.Texture28;
+                case 29: return TextureUnit.Texture29;
+                case 30: return TextureUnit.Texture30;
+            }
+
+            throw new NotSupportedException();
+        }
+
+
+        internal static Type ToType (ActiveAttribType ogl)
+        {
+            switch(ogl)
+            {
+            case ActiveAttribType.Float: return typeof(Single);
+            case ActiveAttribType.FloatMat2: throw new NotSupportedException();
+            case ActiveAttribType.FloatMat3: throw new NotSupportedException();
+            case ActiveAttribType.FloatMat4: return typeof(Abacus.SinglePrecision.Matrix44);
+            case ActiveAttribType.FloatVec2: return typeof(Abacus.SinglePrecision.Vector2);
+            case ActiveAttribType.FloatVec3: return typeof(Abacus.SinglePrecision.Vector3);
+            case ActiveAttribType.FloatVec4: return typeof(Abacus.SinglePrecision.Vector4);
+            }
+
+            throw new NotSupportedException();
+        }
+
+        internal static Type ToType (ActiveUniformType ogl)
+        {
+            switch(ogl)
+            {
+            case ActiveUniformType.Bool: return typeof(Boolean);
+            case ActiveUniformType.BoolVec2: throw new NotSupportedException();
+            case ActiveUniformType.BoolVec3: throw new NotSupportedException();
+            case ActiveUniformType.BoolVec4: throw new NotSupportedException();
+            case ActiveUniformType.Float: return typeof(Single);
+            case ActiveUniformType.FloatMat2: throw new NotSupportedException();
+            case ActiveUniformType.FloatMat3: throw new NotSupportedException();
+            case ActiveUniformType.FloatMat4: return typeof(Abacus.SinglePrecision.Matrix44);
+            case ActiveUniformType.FloatVec2: return typeof(Abacus.SinglePrecision.Vector2);
+            case ActiveUniformType.FloatVec3: return typeof(Abacus.SinglePrecision.Vector3);
+            case ActiveUniformType.FloatVec4: return typeof(Abacus.SinglePrecision.Vector4);
+            case ActiveUniformType.Int: return typeof(Boolean);
+            case ActiveUniformType.IntVec2: throw new NotSupportedException();
+            case ActiveUniformType.IntVec3: throw new NotSupportedException();
+            case ActiveUniformType.IntVec4: throw new NotSupportedException();
+            case ActiveUniformType.Sampler2D: throw new NotSupportedException();
+            case ActiveUniformType.SamplerCube: throw new NotSupportedException();
+            }
+            
+            throw new NotSupportedException();
+        }
+
+        internal static void ToOpenGL (
+            VertexElementFormat blimey,
+            out VertexAttribPointerType dataFormat,
+            out bool normalized,
+            out int size)
+        {
+            normalized = false;
+            size = 0;
+            dataFormat = VertexAttribPointerType.Float;
+
+            switch(blimey)
+            {
+                case VertexElementFormat.Single: 
+                dataFormat = VertexAttribPointerType.Float;
+                    size = 1;
+                    break;
+                case VertexElementFormat.Vector2: 
+                dataFormat = VertexAttribPointerType.Float; 
+                    size = 2;
+                    break;
+                case VertexElementFormat.Vector3: 
+                dataFormat = VertexAttribPointerType.Float; 
+                    size = 3;
+                    break;
+                case VertexElementFormat.Vector4: 
+                dataFormat = VertexAttribPointerType.Float; 
+                    size = 4;
+                    break;
+                case VertexElementFormat.Colour: 
+                dataFormat = VertexAttribPointerType.UnsignedByte; 
+                    normalized = true;
+                    size = 4;
+                    break;
+                case VertexElementFormat.Byte4: throw new Exception("?");
+                case VertexElementFormat.Short2: throw new Exception("?");
+                case VertexElementFormat.Short4: throw new Exception("?");
+                case VertexElementFormat.NormalisedShort2: throw new Exception("?");
+                case VertexElementFormat.NormalisedShort4: throw new Exception("?");
+                case VertexElementFormat.HalfVector2: throw new Exception("?");
+                case VertexElementFormat.HalfVector4: throw new Exception("?");
+            }
+        }
+
+        internal static BlendingFactorSrc ToOpenGLSrc(BlendFactor blimey)
+        {
+            switch(blimey)
+            {
+                case BlendFactor.Zero: return BlendingFactorSrc.Zero;
+                case BlendFactor.One: return BlendingFactorSrc.One;
+                case BlendFactor.SourceColour: return BlendingFactorSrc.Src1Color; // todo: check this src1 stuff
+                case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrc1Color;
+                case BlendFactor.SourceAlpha: return BlendingFactorSrc.SrcAlpha;
+                case BlendFactor.InverseSourceAlpha: return BlendingFactorSrc.OneMinusSrcAlpha;
+                case BlendFactor.DestinationAlpha: return BlendingFactorSrc.DstAlpha;
+                case BlendFactor.InverseDestinationAlpha: return BlendingFactorSrc.OneMinusDstAlpha;
+                case BlendFactor.DestinationColour: return BlendingFactorSrc.DstColor;
+                case BlendFactor.InverseDestinationColour: return BlendingFactorSrc.OneMinusDstColor;
+            }
+
+            throw new Exception();
+        }
+
+        internal static BlendingFactorDest ToOpenGLDest(BlendFactor blimey)
+        {
+            switch(blimey)
+            {
+                case BlendFactor.Zero: return BlendingFactorDest.Zero;
+                case BlendFactor.One: return BlendingFactorDest.One;
+                case BlendFactor.SourceColour: return BlendingFactorDest.SrcColor;
+                case BlendFactor.InverseSourceColour: return BlendingFactorDest.OneMinusSrcColor;
+                case BlendFactor.SourceAlpha: return BlendingFactorDest.SrcAlpha;
+                case BlendFactor.InverseSourceAlpha: return BlendingFactorDest.OneMinusSrcAlpha;
+                case BlendFactor.DestinationAlpha: return BlendingFactorDest.DstAlpha;
+                case BlendFactor.InverseDestinationAlpha: return BlendingFactorDest.OneMinusDstAlpha;
+                case BlendFactor.DestinationColour: return BlendingFactorDest.SrcColor;
+                case BlendFactor.InverseDestinationColour: return BlendingFactorDest.OneMinusSrcColor;
+            }
+            
+            throw new Exception();
+        }
+
+        internal static BlendFactor ToCorDestinationBlendFactor (All ogl)
+        {
+            switch(ogl)
+            {
+                case All.Zero: return BlendFactor.Zero;
+                case All.One: return BlendFactor.One;
+                case All.SrcColor: return BlendFactor.SourceColour;
+                case All.OneMinusSrcColor: return BlendFactor.InverseSourceColour;
+                case All.SrcAlpha: return BlendFactor.SourceAlpha;
+                case All.OneMinusSrcAlpha: return BlendFactor.InverseSourceAlpha;
+                case All.DstAlpha: return BlendFactor.DestinationAlpha;
+                case All.OneMinusDstAlpha: return BlendFactor.InverseDestinationAlpha;
+                case All.DstColor: return BlendFactor.DestinationColour;
+                case All.OneMinusDstColor: return BlendFactor.InverseDestinationColour;
+            }
+
+            throw new Exception();
+        }
+
+        internal static BlendEquationMode ToOpenGL(BlendFunction blimey)
+        {
+            switch(blimey)
+            {
+                case BlendFunction.Add: return BlendEquationMode.FuncAdd;
+                case BlendFunction.Max: throw new NotSupportedException();
+                case BlendFunction.Min: throw new NotSupportedException();
+                case BlendFunction.ReverseSubtract: return BlendEquationMode.FuncReverseSubtract;
+                case BlendFunction.Subtract: return BlendEquationMode.FuncSubtract;
+            }
+            
+            throw new Exception();
+        }
+
+        internal static BlendFunction ToCorDestinationBlendFunction (All ogl)
+        {
+            switch(ogl)
+            {
+                case All.FuncAdd: return BlendFunction.Add;
+                case All.MaxExt: return BlendFunction.Max;
+                case All.MinExt: return BlendFunction.Min;
+                case All.FuncReverseSubtract: return BlendFunction.ReverseSubtract;
+                case All.FuncSubtract: return BlendFunction.Subtract;
+            }
+            
+            throw new Exception();
+        }
+
+        // PRIMITIVE TYPE
+        internal static BeginMode ToOpenGL (PrimitiveType blimey)
+        {
+            switch (blimey) {
+            case PrimitiveType.LineList:
+                return  BeginMode.Lines;
+            case PrimitiveType.LineStrip:
+                return  BeginMode.LineStrip;
+            case PrimitiveType.TriangleList:
+                return  BeginMode.Triangles;
+            case PrimitiveType.TriangleStrip:
+                return  BeginMode.TriangleStrip;
+                    
+            default:
+                throw new Exception ("problem");
+            }
+        }
+
+        internal static PrimitiveType ToCorPrimitiveType (All ogl)
+        {
+            switch (ogl) {
+            case All.Lines:
+                return  PrimitiveType.LineList;
+            case All.LineStrip:
+                return  PrimitiveType.LineStrip;
+            case All.Points:
+                throw new Exception ("Not supported by Cor");
+            case All.TriangleFan:
+                throw new Exception ("Not supported by Cor");
+            case All.Triangles:
+                return  PrimitiveType.TriangleList;
+            case All.TriangleStrip:
+                return  PrimitiveType.TriangleStrip;
+                
+            default:
+                throw new Exception ("problem");
+
+            }
+        }
+    }
+

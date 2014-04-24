@@ -13,11 +13,6 @@
     public interface IGraphicsManager
     {
         /// <summary>
-        /// Provides information about the current back buffer.
-        /// </summary>
-        IDisplayStatus DisplayStatus { get; }
-
-        /// <summary>
         // Debugging utilies, if not supported on your platform, this will
         // still exist, but the functions will do nothing.
         /// </summary>

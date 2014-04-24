@@ -9,6 +9,7 @@
         readonly IApp app;
         readonly LogManager log;
         readonly AssetManager assets;
+        readonly IDisplayStatus displayStatus;
 
         public StubEngine(IApp app, AppSettings settings)
         {
@@ -20,6 +21,7 @@
             this.input = new StubInputManager();
             this.system = new StubSystemManager();
             this.settings = settings;
+            this.displayStatus = new StubDisplayStatus ();
             
             this.log = new LogManager(this.settings.LogSettings);
             this.assets = new AssetManager(this.graphics, this.system);
@@ -33,6 +35,8 @@
         public IAudioManager Audio { get { return this.audio; } }
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
+
+        public IDisplayStatus DisplayStatus { get { return this.displayStatus; } }
 
         public IInputManager Input { get { return this.input; } }
 

@@ -16,6 +16,11 @@
         IGraphicsManager Graphics { get; }
 
         /// <summary>
+        /// Provides information about the current back buffer.
+        /// </summary>
+        IDisplayStatus DisplayStatus { get; }
+
+        /// <summary>
         /// Provides access to Cor's resource manager.
         /// The resource manager loads raw resources into
         /// the engine, avoiding the asset build.  Eventually

@@ -10,7 +10,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -56,6 +56,7 @@ namespace Cor.Platform.Stub
         readonly IApp app;
         readonly LogManager log;
         readonly AssetManager assets;
+        readonly IDisplayStatus displayStatus;
 
         public StubEngine(IApp app, AppSettings settings)
         {
@@ -67,6 +68,7 @@ namespace Cor.Platform.Stub
             this.input = new StubInputManager();
             this.system = new StubSystemManager();
             this.settings = settings;
+            this.displayStatus = new StubDisplayStatus ();
             
             this.log = new LogManager(this.settings.LogSettings);
             this.assets = new AssetManager(this.graphics, this.system);
@@ -80,6 +82,8 @@ namespace Cor.Platform.Stub
         public IAudioManager Audio { get { return this.audio; } }
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
+
+        public IDisplayStatus DisplayStatus { get { return this.displayStatus; } }
 
         public IInputManager Input { get { return this.input; } }
 
@@ -127,7 +131,6 @@ namespace Cor.Platform.Stub
     public class StubGraphicsManager
         : IGraphicsManager
     {
-        readonly IDisplayStatus displayStatus;
         readonly IGpuUtils gpuUtils;
 
         public StubGraphicsManager()
@@ -135,13 +138,10 @@ namespace Cor.Platform.Stub
             InternalUtils.Log.Info(
                 "StubGraphicsManager -> ()");
 
-            this.displayStatus = new StubDisplayStatus ();
             this.gpuUtils = new StubGpuUtils ();
         }
 
         #region IGraphicsManager
-
-        public IDisplayStatus DisplayStatus { get { return this.displayStatus; } }
 
         public IGpuUtils GpuUtils { get { return this.gpuUtils; } }
 

@@ -12,7 +12,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -35,10 +35,20 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
+using System.Globalization;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
+using System.Drawing;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.ConstrainedExecution;
+
+using Abacus;
+using Abacus.Packed;
+using Abacus.SinglePrecision;
+using Abacus.Int32Precision;
 
 #if COR_PLATFORM_MANAGED_XIOS
 using OpenTK.Graphics.ES20;
@@ -52,6 +62,8 @@ using GLBufferUsage = MonoMac.OpenGL.BufferUsageHint;
     Platform not supported.
 #endif
 
+using Boolean = System.Boolean;
+
 namespace Cor.Lib.Managed.Khronos
 {
 <#@ include file="ErrorHandler.t4"#>
@@ -59,4 +71,8 @@ namespace Cor.Lib.Managed.Khronos
 <#@ include file="VertexBuffer.t4"#>
 <#@ include file="IndexBuffer.t4"#>
 <#@ include file="GeometryBuffer.t4"#>
+<#@ include file="GraphicsManager.t4"#>
+<#@ include file="TextureHandle.t4"#>
+<#@ include file="EnumConverter.t4"#>
+<#@ include file="GpuUtils.t4"#>
 }

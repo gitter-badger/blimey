@@ -10,7 +10,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -69,6 +69,7 @@ namespace Cor.Platform.Managed.MonoMac
         readonly InputManager input;
         readonly SystemManager system;
         readonly AppSettings settings;
+        readonly DisplayStatus displayStatus;
         readonly IApp app;
         readonly LogManager log;
         readonly AssetManager assets;
@@ -83,9 +84,10 @@ namespace Cor.Platform.Managed.MonoMac
                 "Engine -> ()");
 
             this.audio = new AudioManager();
-            this.graphics = new GraphicsManager(width, height);
+            this.graphics = new GraphicsManager();
             this.input = new InputManager();
             this.system = new SystemManager();
+            this.displayStatus = new DisplayStatus (width, height);
             this.settings = settings;
             
             this.log = new LogManager(this.settings.LogSettings);
@@ -103,11 +105,15 @@ namespace Cor.Platform.Managed.MonoMac
 
         internal SystemManager SystemImplementation { get { return this.system; } }
 
+        internal DisplayStatus DisplayStatusImplementation { get { return this.displayStatus; } }
+
         #region ICor
 
         public IAudioManager Audio { get { return this.audio; } }
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
+
+        public IDisplayStatus DisplayStatus { get { return this.displayStatus; } }
 
         public IInputManager Input { get { return this.input; } }
 
@@ -163,567 +169,6 @@ namespace Cor.Platform.Managed.MonoMac
         #endregion
     }
 
-    public sealed class GraphicsManager
-        : IGraphicsManager
-    {
-        readonly DisplayStatus displayStatus;
-        readonly MonoMacGpuUtils gpuUtils;
-
-        GeometryBuffer currentGeomBuffer;
-        CullMode? currentCullMode;
-
-        internal DisplayStatus DisplayStatusImplementation { get { return displayStatus; } }
-
-        public GraphicsManager(Int32 width, Int32 height)
-        {
-            InternalUtils.Log.Info(
-                "GraphicsManager -> ()");
-
-            this.displayStatus = new DisplayStatus(width, height);
-
-            this.gpuUtils = new MonoMacGpuUtils();
-
-            global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.Blend);
-            ErrorHandler.Check();
-
-            this.SetBlendEquation(
-                BlendFunction.Add, BlendFactor.SourceAlpha, BlendFactor.InverseSourceAlpha,
-                BlendFunction.Add, BlendFactor.One, BlendFactor.InverseSourceAlpha);
-
-            global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.DepthTest);
-            ErrorHandler.Check();
-
-            global::MonoMac.OpenGL.GL.DepthMask(true);
-            ErrorHandler.Check();
-
-            global::MonoMac.OpenGL.GL.DepthRange(0f, 1f);
-            ErrorHandler.Check();
-
-            global::MonoMac.OpenGL.GL.DepthFunc(global::MonoMac.OpenGL.DepthFunction.Lequal);
-            ErrorHandler.Check();
-
-            SetCullMode (CullMode.CW);
-        }
-
-        [ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
-        static IntPtr Add (IntPtr pointer, int offset)
-        {
-            unsafe
-            {
-                return (IntPtr) (unchecked (((byte *) pointer) + offset));
-            }
-        }
-
-        [ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
-        static IntPtr Subtract (IntPtr pointer, int offset)
-        {
-            unsafe
-            {
-                return (IntPtr) (unchecked (((byte *) pointer) - offset));
-            }
-        }
-
-        void EnableVertAttribs(VertexDeclaration vertDecl, IntPtr pointer)
-        {
-            var vertElems = vertDecl.GetVertexElements();
-
-            IntPtr ptr = pointer;
-
-            int counter = 0;
-            foreach(var elem in vertElems)
-            {
-                global::MonoMac.OpenGL.GL.EnableVertexAttribArray(counter);
-                ErrorHandler.Check();
-
-                //var vertElemUsage = elem.VertexElementUsage;
-                var vertElemFormat = elem.VertexElementFormat;
-                var vertElemOffset = elem.Offset;
-
-                Int32 numComponentsInVertElem = 0;
-                Boolean vertElemNormalized = false;
-                global::MonoMac.OpenGL.VertexAttribPointerType glVertElemFormat;
-
-                EnumConverter.ToOpenGL(vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
-
-                if( counter != 0)
-                {
-                    ptr = Add(ptr, vertElemOffset);
-                }
-
-                global::MonoMac.OpenGL.GL.VertexAttribPointer(
-                    counter,                // index - specifies the generic vertex attribute index.  This value is 0 to
-                                            //         max vertex attributes supported - 1.
-                    numComponentsInVertElem,// size - number of components specified in the vertex array for the
-                                            //        vertex attribute referenced by index.  Valid values are 1 - 4.
-                    glVertElemFormat,       // type - Data format, valid values are GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT,
-                                            //        GL_FLOAT, GL_FIXED, GL_HALF_FLOAT_OES*(Optional feature of es2)
-                    vertElemNormalized,     // normalised - used to indicate whether the non-floating data format type should be normalised
-                                            //              or not when converted to floating point.
-                    vertDecl.VertexStride,  // stride - the components of vertex attribute specified by size are stored sequentially for each
-                                            //          vertex.  stride specifies the delta between data for vertex index 1 and vertex (1 + 1).
-                                            //          If stride is 0, attribute data for all vertices are stored sequentially.
-                                            //          If stride is > 0, then we use the stride valude tas the pitch to get vertex data
-                                            //          for the next index.
-                    ptr
-
-                    );
-
-                ErrorHandler.Check();
-
-                counter++;
-
-            }
-        }
-
-        void DisableVertAttribs(VertexDeclaration vertDecl)
-        {
-            var vertElems = vertDecl.GetVertexElements();
-
-            for(int i = 0; i < vertElems.Length; ++i)
-            {
-                global::MonoMac.OpenGL.GL.DisableVertexAttribArray(i);
-                ErrorHandler.Check();
-            }
-        }
-
-
-        #region IGraphicsManager
-
-        public IDisplayStatus DisplayStatus { get { return this.displayStatus; } }
-
-        public IGpuUtils GpuUtils { get { return this.gpuUtils; } }
-
-        public void Reset()
-        {
-            this.ClearDepthBuffer();
-            this.ClearColourBuffer();
-            this.SetActiveGeometryBuffer(null);
-
-            // todo, here we need to set all the texture slots to point to null
-            this.SetActiveTexture(0, null);
-        }
-
-        public void ClearColourBuffer(Rgba32 col = new Rgba32())
-        {
-            Vector4 c;
-
-            col.UnpackTo(out c);
-
-            global::MonoMac.OpenGL.GL.ClearColor (c.X, c.Y, c.Z, c.W);
-
-            var mask = global::MonoMac.OpenGL.ClearBufferMask.ColorBufferBit;
-
-            global::MonoMac.OpenGL.GL.Clear ( mask );
-
-            ErrorHandler.Check();
-        }
-
-        public void ClearDepthBuffer(Single val = 1)
-        {
-            global::MonoMac.OpenGL.GL.ClearDepth(val);
-
-            var mask = global::MonoMac.OpenGL.ClearBufferMask.DepthBufferBit;
-
-            global::MonoMac.OpenGL.GL.Clear ( mask );
-
-            ErrorHandler.Check();
-        }
-
-        public void SetCullMode(CullMode cullMode)
-        {
-            if (!currentCullMode.HasValue || currentCullMode.Value != cullMode)
-            {
-                if (cullMode == CullMode.None)
-                {
-                    global::MonoMac.OpenGL.GL.Disable (global::MonoMac.OpenGL.EnableCap.CullFace);
-                    ErrorHandler.Check ();
-
-                }
-                else
-                {
-                    global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.CullFace);
-                    ErrorHandler.Check();
-
-                    global::MonoMac.OpenGL.GL.FrontFace(global::MonoMac.OpenGL.FrontFaceDirection.Cw);
-                    ErrorHandler.Check();
-
-                    if (cullMode == CullMode.CW)
-                    {
-                        global::MonoMac.OpenGL.GL.CullFace (global::MonoMac.OpenGL.CullFaceMode.Back);
-                        ErrorHandler.Check ();
-                    }
-                    else if (cullMode == CullMode.CCW)
-                    {
-                        global::MonoMac.OpenGL.GL.CullFace (global::MonoMac.OpenGL.CullFaceMode.Front);
-                        ErrorHandler.Check ();
-                    }
-                    else
-                    {
-                        throw new NotSupportedException();
-                    }
-                }
-
-                currentCullMode = cullMode;
-            }
-        }
-
-        public IGeometryBuffer CreateGeometryBuffer (
-            VertexDeclaration vertexDeclaration,
-            Int32 vertexCount,
-            Int32 indexCount )
-        {
-            return new GeometryBuffer(vertexDeclaration, vertexCount, indexCount);
-        }
-
-        public void SetActiveGeometryBuffer(IGeometryBuffer buffer)
-        {
-            var temp = buffer as GeometryBuffer;
-
-            if( temp != this.currentGeomBuffer )
-            {
-                if( this.currentGeomBuffer != null )
-                {
-                    this.currentGeomBuffer.Deactivate();
-
-                    this.currentGeomBuffer = null;
-                }
-
-                if( temp != null )
-                {
-                    temp.Activate();
-                }
-
-                this.currentGeomBuffer = temp;
-            }
-        }
-
-        public ITexture UploadTexture (TextureAsset tex)
-        {
-            int width = tex.Width;
-            int height = tex.Height;
-
-            if (tex.SurfaceFormat != SurfaceFormat.Rgba32)
-                throw new NotImplementedException ();
-
-            IntPtr pixelDataRgba32 = Marshal.AllocHGlobal(tex.Data.Length);
-            Marshal.Copy(tex.Data, 0, pixelDataRgba32, tex.Data.Length);
-            
-            // Call unmanaged code
-            Marshal.FreeHGlobal(pixelDataRgba32);
-
-            int textureId = -1;
-
-            // this sets the unpack alignment.  which is used when reading pixels
-            // in the fragment shader.  when the textue data is uploaded via glTexImage2d,
-            // the rows of pixels are assumed to be aligned to the value set for GL_UNPACK_ALIGNMENT.
-            // By default, the value is 4, meaning that rows of pixels are assumed to begin
-            // on 4-byte boundaries.  this is a global STATE.
-            global::MonoMac.OpenGL.GL.PixelStore(
-                global::MonoMac.OpenGL.PixelStoreParameter.UnpackAlignment, 4);
-
-            ErrorHandler.Check();
-
-            // the first sept in the application of texture is to create the
-            // texture object.  this is a container object that holds the
-            // texture data.  this function returns a handle to a texture
-            // object.
-            global::MonoMac.OpenGL.GL.GenTextures(1, out textureId);
-            ErrorHandler.Check();
-
-            var textureHandle = new TextureHandle (textureId);
-
-            var textureTarget = global::MonoMac.OpenGL.TextureTarget.Texture2D;
-
-            // we need to bind the texture object so that we can opperate on it.
-            global::MonoMac.OpenGL.GL.BindTexture(textureTarget, textureId);
-            ErrorHandler.Check();
-
-            // the incoming texture format
-            // (the format that [pixelDataRgba32] is in)
-            var format = global::MonoMac.OpenGL.PixelFormat.Rgba;
-
-            var internalFormat = global::MonoMac.OpenGL.PixelInternalFormat.Rgba;
-
-            var textureDataFormat = global::MonoMac.OpenGL.PixelType.UnsignedByte;
-
-            // now use the bound texture object to load the image data.
-            global::MonoMac.OpenGL.GL.TexImage2D(
-
-                // specifies the texture target, either GL_TEXTURE_2D or one of the cubemap face targets.
-                textureTarget,
-
-                // specifies which mip level to load.  the base level is
-                // specified by 0 following by an increasing level for each
-                // successive mipmap.
-                0,
-
-                // internal format for the texture storage, can be:
-                // - GL_RGBA
-                // - GL_RGB
-                // - GL_LUMINANCE_ALPHA
-                // - GL_LUMINANCE
-                // - GL_ALPHA
-                internalFormat,
-
-                // the width of the image in pixels
-                width,
-
-                // the height of the image in pixels
-                height,
-
-                // boarder - set to zero, only here for compatibility with OpenGL desktop
-                0,
-
-                // the format of the incoming texture data, in opengl es this
-                // has to be the same as the internal format
-                format,
-
-                // the type of the incoming pixel data, can be:
-                // - unsigned byte
-                // - unsigned short 4444
-                // - unsigned short 5551
-                // - unsigned short 565
-                textureDataFormat, // this refers to each individual channel
-
-
-                pixelDataRgba32
-
-                );
-
-            ErrorHandler.Check();
-
-            // sets the minification and maginfication filtering modes.  required
-            // because we have not loaded a complete mipmap chain for the texture
-            // so we must select a non mipmapped minification filter.
-            global::MonoMac.OpenGL.GL.TexParameter(textureTarget, global::MonoMac.OpenGL.TextureParameterName.TextureMinFilter, (int) global::MonoMac.OpenGL.All.Nearest );
-
-            ErrorHandler.Check();
-
-            global::MonoMac.OpenGL.GL.TexParameter(textureTarget, global::MonoMac.OpenGL.TextureParameterName.TextureMagFilter, (int) global::MonoMac.OpenGL.All.Nearest );
-
-            ErrorHandler.Check();
-
-            return textureHandle;
-        }
-
-        public void UnloadTexture (ITexture texture)
-        {
-            int textureId = (texture as TextureHandle).glTextureId;
-
-            global::MonoMac.OpenGL.GL.DeleteTextures(1, ref textureId);
-        }
-
-        public void SetActiveTexture (Int32 slot, ITexture tex)
-        {
-            global::MonoMac.OpenGL.TextureUnit oglTexSlot = EnumConverter.ToOpenGLTextureSlot(slot);
-            global::MonoMac.OpenGL.GL.ActiveTexture(oglTexSlot);
-
-            var oglt0 = tex as TextureHandle;
-
-            if( oglt0 != null )
-            {
-                var textureTarget = global::MonoMac.OpenGL.TextureTarget.Texture2D;
-
-                // we need to bind the texture object so that we can opperate on it.
-                global::MonoMac.OpenGL.GL.BindTexture(textureTarget, oglt0.glTextureId);
-                ErrorHandler.Check();
-            }
-        }
-
-        public IShader CreateShader (ShaderAsset asset)
-        {
-            throw new NotImplementedException ();
-        }
-
-        public void DestroyShader (IShader shader)
-        {
-            throw new NotImplementedException ();
-        }
-
-        public void SetBlendEquation(
-            BlendFunction rgbBlendFunction,
-            BlendFactor sourceRgb,
-            BlendFactor destinationRgb,
-            BlendFunction alphaBlendFunction,
-            BlendFactor sourceAlpha,
-            BlendFactor destinationAlpha
-            )
-        {
-            global::MonoMac.OpenGL.GL.BlendEquationSeparate(
-                EnumConverter.ToOpenGL(rgbBlendFunction),
-                EnumConverter.ToOpenGL(alphaBlendFunction) );
-            ErrorHandler.Check();
-
-            global::MonoMac.OpenGL.GL.BlendFuncSeparate(
-                EnumConverter.ToOpenGLSrc(sourceRgb),
-                EnumConverter.ToOpenGLDest(destinationRgb),
-                EnumConverter.ToOpenGLSrc(sourceAlpha),
-                EnumConverter.ToOpenGLDest(destinationAlpha) );
-            ErrorHandler.Check();
-        }
-
-        public void DrawPrimitives(
-            PrimitiveType primitiveType,
-            Int32 startVertex,
-            Int32 primitiveCount )
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DrawIndexedPrimitives (
-            PrimitiveType primitiveType,
-            Int32 baseVertex,
-            Int32 minVertexIndex,
-            Int32 numVertices,
-            Int32 startIndex,
-            Int32 primitiveCount
-            )
-        {
-            if( baseVertex != 0 || minVertexIndex != 0 || startIndex != 0 )
-            {
-                throw new NotImplementedException();
-            }
-
-            var otkpType =  EnumConverter.ToOpenGL(primitiveType);
-            //Int32 numVertsInPrim = numVertices / primitiveCount;
-
-            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn(primitiveType);
-            Int32 count = primitiveCount * nVertsInPrim;
-
-            var vertDecl = currentGeomBuffer.VertexBuffer.VertexDeclaration;
-
-            this.EnableVertAttribs( vertDecl, (IntPtr) 0 );
-
-            global::MonoMac.OpenGL.GL.DrawElements (
-                otkpType,
-                count,
-                global::MonoMac.OpenGL.DrawElementsType.UnsignedShort,
-                (System.IntPtr) 0 );
-
-            ErrorHandler.Check();
-
-            this.DisableVertAttribs(vertDecl);
-        }
-
-        public void DrawUserPrimitives <T> (
-            PrimitiveType primitiveType,
-            T[] vertexData,
-            Int32 vertexOffset,
-            Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration )
-            where T : struct, IVertexType
-        {
-            // do i need to do this? todo: find out
-            this.SetActiveGeometryBuffer(null);
-
-            var vertDecl = vertexData[0].VertexDeclaration;
-
-            //MSDN
-            //
-            //The GCHandle structure is used with the GCHandleType
-            //enumeration to create a handle corresponding to any managed
-            //object. This handle can be one of four types: Weak,
-            //WeakTrackResurrection, Normal, or Pinned. When the handle has
-            //been allocated, you can use it to prevent the managed object
-            //from being collected by the garbage collector when an unmanaged
-            //client holds the only reference. Without such a handle,
-            //the object can be collected by the garbage collector before
-            //completing its work on behalf of the unmanaged client.
-            //
-            //You can also use GCHandle to create a pinned object that
-            //returns a memory address to prevent the garbage collector
-            //from moving the object in memory.
-            //
-            //When the handle goes out of scope you must explicitly release
-            //it by calling the Free method; otherwise, memory leaks may
-            //occur. When you free a pinned handle, the associated object
-            //will be unpinned and will become eligible for garbage
-            //collection, if there are no other references to it.
-            //
-            GCHandle pinnedArray = GCHandle.Alloc(vertexData, GCHandleType.Pinned);
-            IntPtr pointer = pinnedArray.AddrOfPinnedObject();
-
-            if( vertexOffset != 0 )
-            {
-                pointer = Add(pointer, vertexOffset * vertDecl.VertexStride * sizeof(byte));
-            }
-
-            var glDrawMode = EnumConverter.ToOpenGL(primitiveType);
-            var glDrawModeAll = glDrawMode;
-
-            var bindTarget = global::MonoMac.OpenGL.BufferTarget.ArrayBuffer;
-
-            global::MonoMac.OpenGL.GL.BindBuffer(bindTarget, 0);
-            ErrorHandler.Check();
-
-
-            this.EnableVertAttribs( vertDecl, pointer );
-
-            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn(primitiveType);
-            Int32 count = primitiveCount * nVertsInPrim;
-
-            global::MonoMac.OpenGL.GL.DrawArrays(
-                glDrawModeAll, // specifies the primitive to render
-                vertexOffset,  // specifies the starting vertex index in the enabled vertex arrays
-                count ); // specifies the number of indicies to be drawn
-
-            ErrorHandler.Check();
-
-
-            this.DisableVertAttribs(vertDecl);
-
-
-            pinnedArray.Free();
-        }
-
-        public void DrawUserIndexedPrimitives <T> (
-            PrimitiveType primitiveType,
-            T[] vertexData,
-            Int32 vertexOffset,
-            Int32 numVertices,
-            Int32[] indexData,
-            Int32 indexOffset,
-            Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration )
-            where T : struct, IVertexType
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-    }
-
-    public sealed class DisplayStatus
-        : IDisplayStatus
-    {
-        Int32 width = 0;
-        Int32 height = 0;
-
-        public DisplayStatus(Int32 width, Int32 height)
-        {
-            InternalUtils.Log.Info(
-                "DisplayStatus -> ()");
-
-            this.width = width;
-            this.height = height;
-        }
-
-        internal void UpdateSize (Int32 width, Int32 height)
-        {
-            this.width = width;
-            this.height = height;
-        }
-
-        #region IDisplayStatus
-
-        public Boolean Fullscreen { get { return true; } }
-
-        public Int32 CurrentWidth { get { return width; } }
-
-        public Int32 CurrentHeight { get { return height; } }
-
-        #endregion
-    }
     public sealed class InputManager
         : IInputManager
     {
@@ -1248,7 +693,7 @@ namespace Cor.Platform.Managed.MonoMac
                 "MonoMacGameView.OnResize -> Bounds:" + Bounds + 
                 ", Frame:" + Frame);
 
-            gameEngine.GraphicsImplementation.DisplayStatusImplementation.UpdateSize (
+            gameEngine.DisplayStatusImplementation.UpdateSize (
                 (Int32)Frame.Width, (Int32)Frame.Height);
 
             base.OnResize (e);
@@ -1566,292 +1011,6 @@ namespace Cor.Platform.Managed.MonoMac
 
     }
 
-
-    internal static class EnumConverter
-    {
-        internal static global::MonoMac.OpenGL.TextureUnit ToOpenGLTextureSlot(Int32 slot)
-        {
-            switch(slot)
-            {
-                case 0: return global::MonoMac.OpenGL.TextureUnit.Texture0;
-                case 1: return global::MonoMac.OpenGL.TextureUnit.Texture1;
-                case 2: return global::MonoMac.OpenGL.TextureUnit.Texture2;
-                case 3: return  global::MonoMac.OpenGL.TextureUnit.Texture3;
-                case 4: return global::MonoMac.OpenGL.TextureUnit.Texture4;
-                case 5: return global::MonoMac.OpenGL.TextureUnit.Texture5;
-                case 6: return global::MonoMac.OpenGL.TextureUnit.Texture6;
-                case 7: return global::MonoMac.OpenGL.TextureUnit.Texture7;
-                case 8: return global::MonoMac.OpenGL.TextureUnit.Texture8;
-                case 9: return global::MonoMac.OpenGL.TextureUnit.Texture9;
-                case 10: return global::MonoMac.OpenGL.TextureUnit.Texture10;
-                case 11: return global::MonoMac.OpenGL.TextureUnit.Texture11;
-                case 12: return global::MonoMac.OpenGL.TextureUnit.Texture12;
-                case 13: return global::MonoMac.OpenGL.TextureUnit.Texture13;
-                case 14: return global::MonoMac.OpenGL.TextureUnit.Texture14;
-                case 15: return global::MonoMac.OpenGL.TextureUnit.Texture15;
-                case 16: return global::MonoMac.OpenGL.TextureUnit.Texture16;
-                case 17: return global::MonoMac.OpenGL.TextureUnit.Texture17;
-                case 18: return global::MonoMac.OpenGL.TextureUnit.Texture18;
-                case 19: return global::MonoMac.OpenGL.TextureUnit.Texture19;
-                case 20: return global::MonoMac.OpenGL.TextureUnit.Texture20;
-                case 21: return global::MonoMac.OpenGL.TextureUnit.Texture21;
-                case 22: return global::MonoMac.OpenGL.TextureUnit.Texture22;
-                case 23: return global::MonoMac.OpenGL.TextureUnit.Texture23;
-                case 24: return global::MonoMac.OpenGL.TextureUnit.Texture24;
-                case 25: return global::MonoMac.OpenGL.TextureUnit.Texture25;
-                case 26: return global::MonoMac.OpenGL.TextureUnit.Texture26;
-                case 27: return global::MonoMac.OpenGL.TextureUnit.Texture27;
-                case 28: return global::MonoMac.OpenGL.TextureUnit.Texture28;
-                case 29: return global::MonoMac.OpenGL.TextureUnit.Texture29;
-                case 30: return global::MonoMac.OpenGL.TextureUnit.Texture30;
-            }
-
-            throw new NotSupportedException();
-        }
-
-
-        internal static Type ToType (global::MonoMac.OpenGL.ActiveAttribType ogl)
-        {
-            switch(ogl)
-            {
-            case global::MonoMac.OpenGL.ActiveAttribType.Float: return typeof(Single);
-            case global::MonoMac.OpenGL.ActiveAttribType.FloatMat2: throw new NotSupportedException();
-            case global::MonoMac.OpenGL.ActiveAttribType.FloatMat3: throw new NotSupportedException();
-            case global::MonoMac.OpenGL.ActiveAttribType.FloatMat4: return typeof(Matrix44);
-            case global::MonoMac.OpenGL.ActiveAttribType.FloatVec2: return typeof(Vector2);
-            case global::MonoMac.OpenGL.ActiveAttribType.FloatVec3: return typeof(Vector3);
-            case global::MonoMac.OpenGL.ActiveAttribType.FloatVec4: return typeof(Vector4);
-            }
-
-            throw new NotSupportedException();
-        }
-
-        internal static Type ToType (global::MonoMac.OpenGL.ActiveUniformType ogl)
-        {
-            switch(ogl)
-            {
-            case global::MonoMac.OpenGL.ActiveUniformType.Bool: return typeof(Boolean);
-            case global::MonoMac.OpenGL.ActiveUniformType.BoolVec2: throw new NotSupportedException();
-            case global::MonoMac.OpenGL.ActiveUniformType.BoolVec3: throw new NotSupportedException();
-            case global::MonoMac.OpenGL.ActiveUniformType.BoolVec4: throw new NotSupportedException();
-            case global::MonoMac.OpenGL.ActiveUniformType.Float: return typeof(Single);
-            case global::MonoMac.OpenGL.ActiveUniformType.FloatMat2: throw new NotSupportedException();
-            case global::MonoMac.OpenGL.ActiveUniformType.FloatMat3: throw new NotSupportedException();
-            case global::MonoMac.OpenGL.ActiveUniformType.FloatMat4: return typeof(Matrix44);
-            case global::MonoMac.OpenGL.ActiveUniformType.FloatVec2: return typeof(Vector2);
-            case global::MonoMac.OpenGL.ActiveUniformType.FloatVec3: return typeof(Vector3);
-            case global::MonoMac.OpenGL.ActiveUniformType.FloatVec4: return typeof(Vector4);
-            case global::MonoMac.OpenGL.ActiveUniformType.Int: return typeof(Boolean);
-            case global::MonoMac.OpenGL.ActiveUniformType.IntVec2: throw new NotSupportedException();
-            case global::MonoMac.OpenGL.ActiveUniformType.IntVec3: throw new NotSupportedException();
-            case global::MonoMac.OpenGL.ActiveUniformType.IntVec4: throw new NotSupportedException();
-            case global::MonoMac.OpenGL.ActiveUniformType.Sampler2D: throw new NotSupportedException();
-            case global::MonoMac.OpenGL.ActiveUniformType.SamplerCube: throw new NotSupportedException();
-            }
-            
-            throw new NotSupportedException();
-        }
-
-        internal static void ToOpenGL (
-            VertexElementFormat blimey,
-            out global::MonoMac.OpenGL.VertexAttribPointerType dataFormat,
-            out bool normalized,
-            out int size)
-        {
-            normalized = false;
-            size = 0;
-            dataFormat = global::MonoMac.OpenGL.VertexAttribPointerType.Float;
-
-            switch(blimey)
-            {
-                case VertexElementFormat.Single: 
-                dataFormat = global::MonoMac.OpenGL.VertexAttribPointerType.Float;
-                    size = 1;
-                    break;
-                case VertexElementFormat.Vector2: 
-                dataFormat = global::MonoMac.OpenGL.VertexAttribPointerType.Float; 
-                    size = 2;
-                    break;
-                case VertexElementFormat.Vector3: 
-                dataFormat = global::MonoMac.OpenGL.VertexAttribPointerType.Float; 
-                    size = 3;
-                    break;
-                case VertexElementFormat.Vector4: 
-                dataFormat = global::MonoMac.OpenGL.VertexAttribPointerType.Float; 
-                    size = 4;
-                    break;
-                case VertexElementFormat.Colour: 
-                dataFormat = global::MonoMac.OpenGL.VertexAttribPointerType.UnsignedByte; 
-                    normalized = true;
-                    size = 4;
-                    break;
-                case VertexElementFormat.Byte4: throw new Exception("?");
-                case VertexElementFormat.Short2: throw new Exception("?");
-                case VertexElementFormat.Short4: throw new Exception("?");
-                case VertexElementFormat.NormalisedShort2: throw new Exception("?");
-                case VertexElementFormat.NormalisedShort4: throw new Exception("?");
-                case VertexElementFormat.HalfVector2: throw new Exception("?");
-                case VertexElementFormat.HalfVector4: throw new Exception("?");
-            }
-        }
-
-        internal static global::MonoMac.OpenGL.BlendingFactorSrc ToOpenGLSrc(BlendFactor blimey)
-        {
-            switch(blimey)
-            {
-                case BlendFactor.Zero: return global::MonoMac.OpenGL.BlendingFactorSrc.Zero;
-                case BlendFactor.One: return global::MonoMac.OpenGL.BlendingFactorSrc.One;
-                case BlendFactor.SourceColour: return global::MonoMac.OpenGL.BlendingFactorSrc.Src1Color; // todo: check this src1 stuff
-                case BlendFactor.InverseSourceColour: return global::MonoMac.OpenGL.BlendingFactorSrc.OneMinusSrc1Color;
-                case BlendFactor.SourceAlpha: return global::MonoMac.OpenGL.BlendingFactorSrc.SrcAlpha;
-                case BlendFactor.InverseSourceAlpha: return global::MonoMac.OpenGL.BlendingFactorSrc.OneMinusSrcAlpha;
-                case BlendFactor.DestinationAlpha: return global::MonoMac.OpenGL.BlendingFactorSrc.DstAlpha;
-                case BlendFactor.InverseDestinationAlpha: return global::MonoMac.OpenGL.BlendingFactorSrc.OneMinusDstAlpha;
-                case BlendFactor.DestinationColour: return global::MonoMac.OpenGL.BlendingFactorSrc.DstColor;
-                case BlendFactor.InverseDestinationColour: return global::MonoMac.OpenGL.BlendingFactorSrc.OneMinusDstColor;
-            }
-
-            throw new Exception();
-        }
-
-        internal static global::MonoMac.OpenGL.BlendingFactorDest ToOpenGLDest(BlendFactor blimey)
-        {
-            switch(blimey)
-            {
-                case BlendFactor.Zero: return global::MonoMac.OpenGL.BlendingFactorDest.Zero;
-                case BlendFactor.One: return global::MonoMac.OpenGL.BlendingFactorDest.One;
-                case BlendFactor.SourceColour: return global::MonoMac.OpenGL.BlendingFactorDest.SrcColor;
-                case BlendFactor.InverseSourceColour: return global::MonoMac.OpenGL.BlendingFactorDest.OneMinusSrcColor;
-                case BlendFactor.SourceAlpha: return global::MonoMac.OpenGL.BlendingFactorDest.SrcAlpha;
-                case BlendFactor.InverseSourceAlpha: return global::MonoMac.OpenGL.BlendingFactorDest.OneMinusSrcAlpha;
-                case BlendFactor.DestinationAlpha: return global::MonoMac.OpenGL.BlendingFactorDest.DstAlpha;
-                case BlendFactor.InverseDestinationAlpha: return global::MonoMac.OpenGL.BlendingFactorDest.OneMinusDstAlpha;
-                case BlendFactor.DestinationColour: return global::MonoMac.OpenGL.BlendingFactorDest.SrcColor;
-                case BlendFactor.InverseDestinationColour: return global::MonoMac.OpenGL.BlendingFactorDest.OneMinusSrcColor;
-            }
-            
-            throw new Exception();
-        }
-
-        internal static BlendFactor ToCorDestinationBlendFactor (global::MonoMac.OpenGL.All ogl)
-        {
-            switch(ogl)
-            {
-                case global::MonoMac.OpenGL.All.Zero: return BlendFactor.Zero;
-                case global::MonoMac.OpenGL.All.One: return BlendFactor.One;
-                case global::MonoMac.OpenGL.All.SrcColor: return BlendFactor.SourceColour;
-                case global::MonoMac.OpenGL.All.OneMinusSrcColor: return BlendFactor.InverseSourceColour;
-                case global::MonoMac.OpenGL.All.SrcAlpha: return BlendFactor.SourceAlpha;
-                case global::MonoMac.OpenGL.All.OneMinusSrcAlpha: return BlendFactor.InverseSourceAlpha;
-                case global::MonoMac.OpenGL.All.DstAlpha: return BlendFactor.DestinationAlpha;
-                case global::MonoMac.OpenGL.All.OneMinusDstAlpha: return BlendFactor.InverseDestinationAlpha;
-                case global::MonoMac.OpenGL.All.DstColor: return BlendFactor.DestinationColour;
-                case global::MonoMac.OpenGL.All.OneMinusDstColor: return BlendFactor.InverseDestinationColour;
-            }
-
-            throw new Exception();
-        }
-
-        internal static global::MonoMac.OpenGL.BlendEquationMode ToOpenGL(BlendFunction blimey)
-        {
-            switch(blimey)
-            {
-                case BlendFunction.Add: return global::MonoMac.OpenGL.BlendEquationMode.FuncAdd;
-                case BlendFunction.Max: throw new NotSupportedException();
-                case BlendFunction.Min: throw new NotSupportedException();
-                case BlendFunction.ReverseSubtract: return global::MonoMac.OpenGL.BlendEquationMode.FuncReverseSubtract;
-                case BlendFunction.Subtract: return global::MonoMac.OpenGL.BlendEquationMode.FuncSubtract;
-            }
-            
-            throw new Exception();
-        }
-
-        internal static BlendFunction ToCorDestinationBlendFunction (global::MonoMac.OpenGL.All ogl)
-        {
-            switch(ogl)
-            {
-                case global::MonoMac.OpenGL.All.FuncAdd: return BlendFunction.Add;
-                case global::MonoMac.OpenGL.All.MaxExt: return BlendFunction.Max;
-                case global::MonoMac.OpenGL.All.MinExt: return BlendFunction.Min;
-                case global::MonoMac.OpenGL.All.FuncReverseSubtract: return BlendFunction.ReverseSubtract;
-                case global::MonoMac.OpenGL.All.FuncSubtract: return BlendFunction.Subtract;
-            }
-            
-            throw new Exception();
-        }
-
-        // PRIMITIVE TYPE
-        internal static global::MonoMac.OpenGL.BeginMode ToOpenGL (PrimitiveType blimey)
-        {
-            switch (blimey) {
-            case PrimitiveType.LineList:
-                return  global::MonoMac.OpenGL.BeginMode.Lines;
-            case PrimitiveType.LineStrip:
-                return  global::MonoMac.OpenGL.BeginMode.LineStrip;
-            case PrimitiveType.TriangleList:
-                return  global::MonoMac.OpenGL.BeginMode.Triangles;
-            case PrimitiveType.TriangleStrip:
-                return  global::MonoMac.OpenGL.BeginMode.TriangleStrip;
-                    
-            default:
-                throw new Exception ("problem");
-            }
-        }
-
-        internal static PrimitiveType ToCorPrimitiveType (global::MonoMac.OpenGL.All ogl)
-        {
-            switch (ogl) {
-            case global::MonoMac.OpenGL.All.Lines:
-                return  PrimitiveType.LineList;
-            case global::MonoMac.OpenGL.All.LineStrip:
-                return  PrimitiveType.LineStrip;
-            case global::MonoMac.OpenGL.All.Points:
-                throw new Exception ("Not supported by Cor");
-            case global::MonoMac.OpenGL.All.TriangleFan:
-                throw new Exception ("Not supported by Cor");
-            case global::MonoMac.OpenGL.All.Triangles:
-                return  PrimitiveType.TriangleList;
-            case global::MonoMac.OpenGL.All.TriangleStrip:
-                return  PrimitiveType.TriangleStrip;
-                
-            default:
-                throw new Exception ("problem");
-
-            }
-        }
-    }
-
-    public sealed class MonoMacGpuUtils
-        : IGpuUtils
-    {
-        public MonoMacGpuUtils()
-        {
-        }
-
-        #region IGpuUtils
-
-        public Int32 BeginEvent(Rgba32 colour, String eventName)
-        {
-            return 0;
-        }
-
-        public Int32 EndEvent()
-        {
-            return 0;
-        }
-
-        public void SetMarker(Rgba32 colour, String eventName)
-        {
-
-        }
-
-        public void SetRegion(Rgba32 colour, String eventName)
-        {
-
-        }
-
-        #endregion
-    }
     public sealed class StubShader
         : IShader
     {
@@ -2526,57 +1685,6 @@ namespace Cor.Platform.Managed.MonoMac
         }
     }
 
-    internal sealed class TextureHandle
-        : ITexture
-    {
-        internal TextureHandle (int textureid)
-        {
-            glTextureId = textureid;
-        }
-
-        internal int glTextureId { get; private set; }
-
-        public SurfaceFormat SurfaceFormat
-        {
-            get
-            {
-                throw new NotImplementedException ();
-            }
-        }
-
-        public Byte[] Primary
-        {
-            get
-            {
-                throw new NotImplementedException ();
-            }
-        }
-
-        public Byte[,] Mipmaps
-        {
-            get
-            {
-                throw new NotImplementedException ();
-            }
-        }
-
-        public int Width
-        {
-            get
-            {
-                throw new NotImplementedException ();
-            }
-        }
-
-        public int Height
-        {
-            get
-            {
-                throw new NotImplementedException ();
-            }
-        }
-    }
-
     public sealed class Keyboard
         : IKeyboard
     {
@@ -2732,6 +1840,37 @@ namespace Cor.Platform.Managed.MonoMac
         }
     }
 
+    public sealed class DisplayStatus
+        : IDisplayStatus
+    {
+        Int32 width = 0;
+        Int32 height = 0;
+
+        public DisplayStatus(Int32 width, Int32 height)
+        {
+            InternalUtils.Log.Info(
+                "DisplayStatus -> ()");
+
+            this.width = width;
+            this.height = height;
+        }
+
+        internal void UpdateSize (Int32 width, Int32 height)
+        {
+            this.width = width;
+            this.height = height;
+        }
+
+        #region IDisplayStatus
+
+        public Boolean Fullscreen { get { return true; } }
+
+        public Int32 CurrentWidth { get { return width; } }
+
+        public Int32 CurrentHeight { get { return height; } }
+
+        #endregion
+    }
 
     #region OpenGL ES Shaders
 

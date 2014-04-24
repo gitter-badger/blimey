@@ -1,7 +1,6 @@
     public class StubGraphicsManager
         : IGraphicsManager
     {
-        readonly IDisplayStatus displayStatus;
         readonly IGpuUtils gpuUtils;
 
         public StubGraphicsManager()
@@ -9,13 +8,10 @@
             InternalUtils.Log.Info(
                 "StubGraphicsManager -> ()");
 
-            this.displayStatus = new StubDisplayStatus ();
             this.gpuUtils = new StubGpuUtils ();
         }
 
         #region IGraphicsManager
-
-        public IDisplayStatus DisplayStatus { get { return this.displayStatus; } }
 
         public IGpuUtils GpuUtils { get { return this.gpuUtils; } }
 

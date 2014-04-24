@@ -153,7 +153,7 @@
                 "MonoMacGameView.OnResize -> Bounds:" + Bounds + 
                 ", Frame:" + Frame);
 
-            gameEngine.GraphicsImplementation.DisplayStatusImplementation.UpdateSize (
+            gameEngine.DisplayStatusImplementation.UpdateSize (
                 (Int32)Frame.Width, (Int32)Frame.Height);
 
             base.OnResize (e);

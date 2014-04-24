@@ -1,22 +1,17 @@
     public sealed class GraphicsManager
         : IGraphicsManager
     {
-        readonly DisplayStatus displayStatus;
-        readonly MonoMacGpuUtils gpuUtils;
+        readonly GpuUtils gpuUtils;
 
         GeometryBuffer currentGeomBuffer;
         CullMode? currentCullMode;
 
-        internal DisplayStatus DisplayStatusImplementation { get { return displayStatus; } }
-
-        public GraphicsManager(Int32 width, Int32 height)
+        public GraphicsManager()
         {
             InternalUtils.Log.Info(
-                "GraphicsManager -> ()");
+                "Khronos Graphics Manager -> ()");
 
-            this.displayStatus = new DisplayStatus(width, height);
-
-            this.gpuUtils = new MonoMacGpuUtils();
+            this.gpuUtils = new GpuUtils();
 
             global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.Blend);
             ErrorHandler.Check();
@@ -124,8 +119,6 @@
 
         #region IGraphicsManager
 
-        public IDisplayStatus DisplayStatus { get { return this.displayStatus; } }
-
         public IGpuUtils GpuUtils { get { return this.gpuUtils; } }
 
         public void Reset()
@@ -140,7 +133,7 @@
 
         public void ClearColourBuffer(Rgba32 col = new Rgba32())
         {
-            Vector4 c;
+            Abacus.SinglePrecision.Vector4 c;
 
             col.UnpackTo(out c);
 

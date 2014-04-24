@@ -10,7 +10,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -93,6 +93,11 @@ namespace Cor
         IGraphicsManager Graphics { get; }
 
         /// <summary>
+        /// Provides information about the current back buffer.
+        /// </summary>
+        IDisplayStatus DisplayStatus { get; }
+
+        /// <summary>
         /// Provides access to Cor's resource manager.
         /// The resource manager loads raw resources into
         /// the engine, avoiding the asset build.  Eventually
@@ -154,11 +159,6 @@ namespace Cor
     /// </summary>
     public interface IGraphicsManager
     {
-        /// <summary>
-        /// Provides information about the current back buffer.
-        /// </summary>
-        IDisplayStatus DisplayStatus { get; }
-
         /// <summary>
         // Debugging utilies, if not supported on your platform, this will
         // still exist, but the functions will do nothing.

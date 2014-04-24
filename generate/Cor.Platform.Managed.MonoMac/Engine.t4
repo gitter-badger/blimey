@@ -6,6 +6,7 @@
         readonly InputManager input;
         readonly SystemManager system;
         readonly AppSettings settings;
+        readonly DisplayStatus displayStatus;
         readonly IApp app;
         readonly LogManager log;
         readonly AssetManager assets;
@@ -20,9 +21,10 @@
                 "Engine -> ()");
 
             this.audio = new AudioManager();
-            this.graphics = new GraphicsManager(width, height);
+            this.graphics = new GraphicsManager();
             this.input = new InputManager();
             this.system = new SystemManager();
+            this.displayStatus = new DisplayStatus (width, height);
             this.settings = settings;
             
             this.log = new LogManager(this.settings.LogSettings);
@@ -40,11 +42,15 @@
 
         internal SystemManager SystemImplementation { get { return this.system; } }
 
+        internal DisplayStatus DisplayStatusImplementation { get { return this.displayStatus; } }
+
         #region ICor
 
         public IAudioManager Audio { get { return this.audio; } }
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
+
+        public IDisplayStatus DisplayStatus { get { return this.displayStatus; } }
 
         public IInputManager Input { get { return this.input; } }
 
