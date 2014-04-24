@@ -54,7 +54,7 @@ namespace Blimey.Demo
         Single _inputTimer = _doneSomethingTime;
 
         Rgba32 _startCol = Rgba32.Bisque;
-        Rgba32 _endCol = Rgba32.LightGrey;
+        //Rgba32 _endCol = Rgba32.LightGrey;
 
         static Int32 _selectedIndex = 0;
 
@@ -147,7 +147,7 @@ namespace Blimey.Demo
         {
             _returnScene = GetSceneForCurrentSelection();
 
-            var pos = gesture.GetFinishingPosition(TouchPositionSpace.NormalisedEngine);
+            //var pos = gesture.GetFinishingPosition(TouchPositionSpace.NormalisedEngine);
 
         }
 

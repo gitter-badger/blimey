@@ -61,8 +61,8 @@ namespace Blimey.Demo
 
         public static Int32 screenWidth;
         public static Int32 screenHeight;
-        public static Texture2D texVan1;
-        public static Texture2D texVan2;
+        public static ITexture texVan1;
+        public static ITexture texVan2;
 
         public Scene4()
         {
@@ -73,18 +73,24 @@ namespace Blimey.Demo
         {
             gr = new GridRenderer (this.Blimey.DebugShapeRenderer, "Default");
 
-            screenWidth = this.Cor.Graphics.DisplayStatus.CurrentWidth;
-            screenHeight = this.Cor.Graphics.DisplayStatus.CurrentHeight;
+            screenWidth = this.Cor.DisplayStatus.CurrentWidth;
+            screenHeight = this.Cor.DisplayStatus.CurrentHeight;
 
             if (texVan1 == null)
-                texVan1 = this.Cor.Assets.Load<Texture2D> ("cvan01.cba");
+			{
+				var ta = this.Cor.Assets.Load<TextureAsset> ("cvan01.cba");
+				texVan1 = this.Cor.Graphics.UploadTexture (ta);
+			}
 
             if( texVan2 == null )
-                texVan2 = this.Cor.Assets.Load<Texture2D> ("cvan02.cba");
+			{
+				var ta = this.Cor.Assets.Load<TextureAsset> ("cvan02.cba");
+				texVan2 = this.Cor.Graphics.UploadTexture (ta);
+			}
 
-            IShader unlitShader = this.Cor.Assets.Load<IShader> ("unlit.cba");
+            var shaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
 
-            Sprite.SpriteShader = unlitShader;
+			Sprite.SpriteShader = this.Cor.Graphics.CreateShader(shaderAsset);
 
             /*
             var go = this.CreateSceneObject("block");
@@ -138,9 +144,7 @@ namespace Blimey.Demo
 
             //cam.Projection = CameraProjectionType.Orthographic;
             camSo.GetTrait<OrbitAroundSubject>().Speed = -0.01f;
-
-*/
-
+			*/
 
             this.Settings.BackgroundColour = Rgba32.Aquamarine;
 
@@ -182,6 +186,14 @@ namespace Blimey.Demo
         public override void Shutdown()
         {
             this.Blimey.InputEventSystem.Tap -= this.HandleTap;
+
+			// Clean up the things we allocated on the GPU.
+			this.Cor.Graphics.DestroyShader (Sprite.SpriteShader);
+			this.Cor.Graphics.UnloadTexture (texVan1);
+			this.Cor.Graphics.UnloadTexture (texVan2);
+			Sprite.SpriteShader = null;
+			texVan1 = null;
+			texVan2 = null;
         }
 
         public override Scene Update (AppTime time)

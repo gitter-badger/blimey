@@ -52,26 +52,21 @@ namespace Blimey.Demo
 
 		readonly List<Airport> airports = new List<Airport>();
 
+		IShader shader = null;
+
 		public override void Start()
 		{
 			gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Debug");
 
+			var textAsset = this.Cor.Assets.Load<TextAsset> ("airports.cba");
 
-			using (var streamReader = this.Cor.Resources.Open<StreamReader>("resources/airports.dat"))
+			string[] items = textAsset.Text.Split(',');
+
+			if (items.Length == 11)
 			{
-				while (!streamReader.EndOfStream)
-				{
-					string line = streamReader.ReadLine();
-
-					string[] items = line.Split(',');
-
-					if (items.Length == 11)
-					{
-						airports.Add(new Airport(items));
-					}
-				}
-
+				airports.Add(new Airport(items));
 			}
+
 			Console.WriteLine("num airports: " + airports.Count);
 
 
@@ -83,14 +78,16 @@ namespace Blimey.Demo
 			// create a sprite
 			var sphereMesh = new SpherePrimitive(this.Cor.Graphics);
 
-			IShader shader = this.Cor.Assets.Load<IShader> ("vertex_lit.cba");
+			ShaderAsset shaderAsset = this.Cor.Assets.Load<ShaderAsset> ("vertex_lit.cba");
+			
+			shader = this.Cor.Graphics.CreateShader (shaderAsset);
 
             var mat = new Material("Default",shader);
             mat.SetColour("MaterialColour", Rgba32.LightGrey);
 			earthGo = this.CreateSceneObject("earth");
 
 			SceneObject camSo = CreateSceneObject ("Scene 5 Camera");
-			var camTrait = camSo.AddTrait<Camera>();
+			//var camTrait = camSo.AddTrait<Camera>();
 			var lookatTrait = camSo.AddTrait<LookAtSubject>();
 			lookatTrait.Subject = Transform.Origin;
 			var orbitTrait = camSo.AddTrait<OrbitAroundSubject>();
@@ -107,7 +104,9 @@ namespace Blimey.Demo
 			mr.Mesh = sphereMesh;
 			mr.Material = mat;
 
-            IShader shader2 = this.Cor.Assets.Load<IShader> ("unlit.cba");
+			ShaderAsset shaderAsset2 = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
+			
+			IShader shader2 = this.Cor.Graphics.CreateShader (shaderAsset2);
 
 			var mat2 = new Material("Default", shader2);
 			mat2.SetColour("MaterialColour", Rgba32.Blue);
@@ -166,6 +165,10 @@ namespace Blimey.Demo
 		void OnTap(Gesture gesture)
 		{
 			returnScene = new MainMenuScene();
+
+			// Clean up the things we allocated on the GPU.
+			this.Cor.Graphics.DestroyShader (shader);
+			shader = null;
 		}
 	}
 }

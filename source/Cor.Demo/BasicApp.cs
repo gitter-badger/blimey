@@ -188,7 +188,7 @@ namespace Cor.Demo
         IGeometryBuffer shape2GeomBuffer;
         Int32 shape2VertCount;
         Int32 shape2IndexCount;
-        Texture2D shape2Texture;
+		ITexture shape2Texture;
         Matrix44 rotation2;
 
         void LoadShape2 ()
@@ -200,7 +200,8 @@ namespace Cor.Demo
             this.shape2VertCount = vertBuffer.Length;
             this.shape2IndexCount = indexBuffer.Length;
 
-            this.shape2Texture = engine.Assets.Load<Texture2D> ("cvan01.cba");
+			var textureAsset = engine.Assets.Load<TextureAsset> ("cvan01.cba");
+			this.shape2Texture = engine.Graphics.UploadTexture (textureAsset);
 
             this.shape2GeomBuffer = engine.Graphics.CreateGeometryBuffer(
                 CustomCube_PositionTexture.VertexDeclaration,

@@ -63,6 +63,9 @@ namespace Blimey.Demo
 
         SceneObject markerGo;
 
+		// GPU Resources
+		IShader unlitShader = null;
+
         public override void Start()
         {
             this.Settings.BackgroundColour = Rgba32.LightSlateGrey;
@@ -73,8 +76,9 @@ namespace Blimey.Demo
             // create a sprite
             var billboard = new BillboardPrimitive(this.Cor.Graphics);
 
-            IShader unlitShader = this.Cor.Assets.Load<IShader> ("unlit.cba");
+			ShaderAsset unlitShaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
 
+			unlitShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
             billboardGo = this.CreateSceneObject("billboard");
 
             var mr = billboardGo.AddTrait<MeshRenderer>();
@@ -166,7 +170,11 @@ namespace Blimey.Demo
 
         void OnTap(Gesture gesture)
         {
-            returnScene = new MainMenuScene();
+			returnScene = new MainMenuScene();
+
+			// Clean up the things we allocated on the GPU.
+			this.Cor.Graphics.DestroyShader (unlitShader);
+			unlitShader = null;
         }
     }
 }

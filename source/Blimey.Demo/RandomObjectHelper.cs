@@ -86,14 +86,16 @@ namespace Blimey.Demo
             // load a texture
             //Texture tex = null;//scene.Engine.Resources.Load<Texture> (new Uri("\\Textures\\recycle"));
 
-            IShader shader = null;
+            ShaderAsset shaderAsset = null;
 
             if (shaderIndex == 0)
-                shader = scene.Cor.Resources.LoadShader(ShaderType.VertexLit);
+				shaderAsset = scene.Cor.Assets.Load<ShaderAsset>("vertex_lit.cba");
             else if (shaderIndex == 1)
-                shader = scene.Cor.Resources.LoadShader(ShaderType.VertexLit);
+				shaderAsset = scene.Cor.Assets.Load<ShaderAsset>("pixel_lit.cba");
             else
-                shader = scene.Cor.Resources.LoadShader(ShaderType.Unlit);
+				shaderAsset = scene.Cor.Assets.Load<ShaderAsset>("unlit.cba");;
+
+			IShader shader = scene.Cor.Graphics.CreateShader (shaderAsset);
 
             // create a material on the fly
             var mat = new Material(renderPass, shader);
