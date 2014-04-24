@@ -66,7 +66,6 @@ namespace Cor.Platform.Managed.MonoMac
     {
         readonly AudioManager audio;
         readonly GraphicsManager graphics;
-        readonly ResourceManager resources;
         readonly InputManager input;
         readonly SystemManager system;
         readonly AppSettings settings;
@@ -85,21 +84,20 @@ namespace Cor.Platform.Managed.MonoMac
 
             this.audio = new AudioManager();
             this.graphics = new GraphicsManager(width, height);
-            this.resources = new ResourceManager();
             this.input = new InputManager();
             this.system = new SystemManager();
             this.settings = settings;
-            this.app = app;
+            
             this.log = new LogManager(this.settings.LogSettings);
-            this.assets = new AssetManager(this.graphics, this.resources);
+            this.assets = new AssetManager(this.graphics, this.system);
+
+            this.app = app;
             this.app.Initilise(this);
         }
 
         internal AudioManager AudioImplementation { get { return this.audio; } }
 
         internal GraphicsManager GraphicsImplementation { get { return this.graphics; } }
-
-        internal ResourceManager ResourcesImplementation { get { return this.resources; } }
 
         internal InputManager InputImplementation { get { return this.input; } }
 
@@ -110,8 +108,6 @@ namespace Cor.Platform.Managed.MonoMac
         public IAudioManager Audio { get { return this.audio; } }
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
-
-        public IOldResourceManager Resources { get { return this.resources; } }
 
         public IInputManager Input { get { return this.input; } }
 
@@ -400,7 +396,17 @@ namespace Cor.Platform.Managed.MonoMac
             }
         }
 
-        public void SetActiveTexture(Int32 slot, Texture2D tex)
+        public ITexture UploadTexture (TextureAsset tex)
+        {
+            return null;
+        }
+
+        public void UnloadTexture (ITexture texture)
+        {
+        
+        }
+
+        public void SetActiveTexture (Int32 slot, ITexture tex)
         {
             global::MonoMac.OpenGL.TextureUnit oglTexSlot = EnumConverter.ToOpenGLTextureSlot(slot);
             global::MonoMac.OpenGL.GL.ActiveTexture(oglTexSlot);
@@ -415,6 +421,15 @@ namespace Cor.Platform.Managed.MonoMac
                 global::MonoMac.OpenGL.GL.BindTexture(textureTarget, oglt0.glTextureId);
                 ErrorHandler.Check();
             }
+        }
+
+        public IShader CreateShader (ShaderAsset asset)
+        {
+            return null;
+        }
+
+        public void DestroyShader (IShader shader)
+        {
 
         }
 
@@ -667,6 +682,7 @@ namespace Cor.Platform.Managed.MonoMac
         #endregion
     }
 
+/*
     public sealed class ResourceManager
         : IOldResourceManager
     {
@@ -736,7 +752,7 @@ namespace Cor.Platform.Managed.MonoMac
             return shaderCache[shaderType];
         }
     }
-
+*/
     public sealed class PanelSpecification
         : IPanelSpecification
     {
@@ -832,6 +848,24 @@ namespace Cor.Platform.Managed.MonoMac
             }
         }
 
+        static string GetBundlePath(string path)
+        {
+            string rtype = Path.GetExtension(path);
+            string rname = Path.Combine(
+                Path.GetDirectoryName(path),
+                Path.GetFileNameWithoutExtension(path));
+
+            var correctPath =
+                global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource(rname, rtype);
+
+            if(!File.Exists(correctPath))
+            {
+                throw new FileNotFoundException(correctPath);
+            }
+
+            return correctPath;
+        }
+
         #region ISystemManager
 
         public String OperatingSystem { get { return " OS 2013"; } }
@@ -870,6 +904,15 @@ namespace Cor.Platform.Managed.MonoMac
         public IPanelSpecification PanelSpecification
         {
             get { return this.panel; }
+        }
+
+        public Stream GetAssetStream (String assetId)
+        {
+            string path = GetBundlePath(Path.Combine("resources", assetId));
+
+            var fStream = new FileStream(path, FileMode.Open);
+
+            return fStream;
         }
 
         #endregion
@@ -2387,6 +2430,7 @@ namespace Cor.Platform.Managed.MonoMac
         int pixelsWide;
         int pixelsHigh;
 
+/*
         internal static OpenGLTexture CreateFromFile(string path)
         {
             using(var fStream = new FileStream(path, FileMode.Open))
@@ -2456,17 +2500,41 @@ namespace Cor.Platform.Managed.MonoMac
                 return context;
             }
         }
+*/
 
+        public SurfaceFormat SurfaceFormat
+        {
+            get
+            {
+                return SurfaceFormat.Rgba32;
+            }
+        }
 
+        public Byte[] Primary
+        {
+            get
+            {
+                return null;
+            }
+        }
 
-        public override int Width
+        public Byte[,] Mipmaps
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public int Width
         {
             get
             {
                 return pixelsWide;
             }
         }
-        public override int Height
+
+        public int Height
         {
             get
             {
@@ -2571,7 +2639,7 @@ namespace Cor.Platform.Managed.MonoMac
 
 
 
-        void DeleteTexture(Texture2D texture)
+        void DeleteTexture(ITexture texture)
         {
             int textureId = (texture as OpenGLTexture).glTextureId;
 

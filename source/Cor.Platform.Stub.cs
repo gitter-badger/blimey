@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using Abacus;
 using Abacus.Packed;
 using Abacus.SinglePrecision;
@@ -49,7 +50,6 @@ namespace Cor.Platform.Stub
     {
         readonly IAudioManager audio;
         readonly IGraphicsManager graphics;
-        readonly IOldResourceManager resources;
         readonly IInputManager input;
         readonly ISystemManager system;
         readonly AppSettings settings;
@@ -64,13 +64,14 @@ namespace Cor.Platform.Stub
 
             this.audio = new StubAudioManager();
             this.graphics = new StubGraphicsManager();
-            this.resources = new StubResourceManager();
             this.input = new StubInputManager();
             this.system = new StubSystemManager();
             this.settings = settings;
-            this.app = app;
+            
             this.log = new LogManager(this.settings.LogSettings);
-            this.assets = new AssetManager(this.graphics, this.resources);
+            this.assets = new AssetManager(this.graphics, this.system);
+            
+            this.app = app;
             this.app.Initilise(this);
         }
 
@@ -79,8 +80,6 @@ namespace Cor.Platform.Stub
         public IAudioManager Audio { get { return this.audio; } }
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
-
-        public IOldResourceManager Resources { get { return this.resources; } }
 
         public IInputManager Input { get { return this.input; } }
 
@@ -136,8 +135,8 @@ namespace Cor.Platform.Stub
             InternalUtils.Log.Info(
                 "StubGraphicsManager -> ()");
 
-            this.displayStatus = new StubDisplayStatus();
-            this.gpuUtils = new StubGpuUtils();
+            this.displayStatus = new StubDisplayStatus ();
+            this.gpuUtils = new StubGpuUtils ();
         }
 
         #region IGraphicsManager
@@ -174,12 +173,32 @@ namespace Cor.Platform.Stub
             return new StubGeometryBuffer(vertexDeclaration, vertexCount, indexCount);
         }
 
-        public void SetActiveGeometryBuffer(IGeometryBuffer buffer)
+        public void SetActiveGeometryBuffer (IGeometryBuffer buffer)
         {
 
         }
 
-        public void SetActiveTexture(Int32 slot, Texture2D tex)
+        public ITexture UploadTexture (TextureAsset tex)
+        {
+            return null;
+        }
+
+        public void UnloadTexture (ITexture texture)
+        {
+        
+        }
+
+        public void SetActiveTexture (Int32 slot, ITexture tex)
+        {
+        
+        }
+
+        public IShader CreateShader (ShaderAsset asset)
+        {
+            return null;
+        }
+
+        public void DestroyShader (IShader shader)
         {
 
         }
@@ -321,37 +340,6 @@ namespace Cor.Platform.Stub
         }
         #endregion
     }
-    public class StubResourceManager
-        : IOldResourceManager
-    {
-        readonly StubShader stubShader = new StubShader();
-
-        public StubResourceManager()
-        {
-            InternalUtils.Log.Info(
-                "StubResourceManager -> ()");
-        }
-
-        #region IOldResourceManager
-
-        public T Load<T>(String path) where T : IOldResource
-        {
-            return default(T);
-        }
-
-        public T Open<T>(string path) where T : IDisposable
-        {
-            return default(T);
-        }
-
-        public IShader LoadShader(ShaderType shaderType)
-        {
-            return stubShader;
-        }
-
-        #endregion
-    }
-
     public class StubPanelSpecification
         : IPanelSpecification
     {
@@ -517,6 +505,11 @@ namespace Cor.Platform.Stub
         public IPanelSpecification PanelSpecification
         {
             get { return this.panel; }
+        }
+
+        public Stream GetAssetStream (String assetId)
+        {
+            return null;
         }
 
         #endregion

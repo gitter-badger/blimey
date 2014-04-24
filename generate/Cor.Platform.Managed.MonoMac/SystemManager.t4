@@ -30,6 +30,24 @@
             }
         }
 
+        static string GetBundlePath(string path)
+        {
+            string rtype = Path.GetExtension(path);
+            string rname = Path.Combine(
+                Path.GetDirectoryName(path),
+                Path.GetFileNameWithoutExtension(path));
+
+            var correctPath =
+                global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource(rname, rtype);
+
+            if(!File.Exists(correctPath))
+            {
+                throw new FileNotFoundException(correctPath);
+            }
+
+            return correctPath;
+        }
+
         #region ISystemManager
 
         public String OperatingSystem { get { return " OS 2013"; } }
@@ -68,6 +86,15 @@
         public IPanelSpecification PanelSpecification
         {
             get { return this.panel; }
+        }
+
+        public Stream GetAssetStream (String assetId)
+        {
+            string path = GetBundlePath(Path.Combine("resources", assetId));
+
+            var fStream = new FileStream(path, FileMode.Open);
+
+            return fStream;
         }
 
         #endregion

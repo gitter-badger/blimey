@@ -39,6 +39,7 @@ using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using Abacus;
 using Abacus.Packed;
 using Abacus.SinglePrecision;
@@ -51,7 +52,6 @@ namespace Cor.Platform.Stub
 <#@ include file="StubGraphicsManager.t4"#>
 <#@ include file="StubDisplayStatus.t4"#>
 <#@ include file="StubIndexBuffer.t4"#>
-<#@ include file="StubResourceManager.t4"#>
 <#@ include file="StubPanelSpecification.t4"#>
 <#@ include file="StubScreenSpecification.t4"#>
 <#@ include file="StubGeometryBuffer.t4"#>

@@ -1,3 +1,4 @@
+/*
     public sealed class ResourceManager
         : IOldResourceManager
     {
@@ -67,4 +68,4 @@
             return shaderCache[shaderType];
         }
     }
-
+*/

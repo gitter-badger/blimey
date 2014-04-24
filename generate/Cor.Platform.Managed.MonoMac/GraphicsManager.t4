@@ -231,7 +231,17 @@
             }
         }
 
-        public void SetActiveTexture(Int32 slot, Texture2D tex)
+        public ITexture UploadTexture (TextureAsset tex)
+        {
+            return null;
+        }
+
+        public void UnloadTexture (ITexture texture)
+        {
+        
+        }
+
+        public void SetActiveTexture (Int32 slot, ITexture tex)
         {
             global::MonoMac.OpenGL.TextureUnit oglTexSlot = EnumConverter.ToOpenGLTextureSlot(slot);
             global::MonoMac.OpenGL.GL.ActiveTexture(oglTexSlot);
@@ -246,6 +256,15 @@
                 global::MonoMac.OpenGL.GL.BindTexture(textureTarget, oglt0.glTextureId);
                 ErrorHandler.Check();
             }
+        }
+
+        public IShader CreateShader (ShaderAsset asset)
+        {
+            return null;
+        }
+
+        public void DestroyShader (IShader shader)
+        {
 
         }
 

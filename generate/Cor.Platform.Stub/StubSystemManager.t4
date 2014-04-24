@@ -70,6 +70,11 @@
             get { return this.panel; }
         }
 
+        public Stream GetAssetStream (String assetId)
+        {
+            return null;
+        }
+
         #endregion
     }
 

@@ -8,6 +8,7 @@
         int pixelsWide;
         int pixelsHigh;
 
+/*
         internal static OpenGLTexture CreateFromFile(string path)
         {
             using(var fStream = new FileStream(path, FileMode.Open))
@@ -77,17 +78,41 @@
                 return context;
             }
         }
+*/
 
+        public SurfaceFormat SurfaceFormat
+        {
+            get
+            {
+                return SurfaceFormat.Rgba32;
+            }
+        }
 
+        public Byte[] Primary
+        {
+            get
+            {
+                return null;
+            }
+        }
 
-        public override int Width
+        public Byte[,] Mipmaps
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public int Width
         {
             get
             {
                 return pixelsWide;
             }
         }
-        public override int Height
+
+        public int Height
         {
             get
             {
@@ -192,7 +217,7 @@
 
 
 
-        void DeleteTexture(Texture2D texture)
+        void DeleteTexture(ITexture texture)
         {
             int textureId = (texture as OpenGLTexture).glTextureId;
 

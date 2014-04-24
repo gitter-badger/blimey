@@ -3,7 +3,6 @@
     {
         readonly IAudioManager audio;
         readonly IGraphicsManager graphics;
-        readonly IOldResourceManager resources;
         readonly IInputManager input;
         readonly ISystemManager system;
         readonly AppSettings settings;
@@ -18,13 +17,14 @@
 
             this.audio = new StubAudioManager();
             this.graphics = new StubGraphicsManager();
-            this.resources = new StubResourceManager();
             this.input = new StubInputManager();
             this.system = new StubSystemManager();
             this.settings = settings;
-            this.app = app;
+            
             this.log = new LogManager(this.settings.LogSettings);
-            this.assets = new AssetManager(this.graphics, this.resources);
+            this.assets = new AssetManager(this.graphics, this.system);
+            
+            this.app = app;
             this.app.Initilise(this);
         }
 
@@ -33,8 +33,6 @@
         public IAudioManager Audio { get { return this.audio; } }
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
-
-        public IOldResourceManager Resources { get { return this.resources; } }
 
         public IInputManager Input { get { return this.input; } }
 

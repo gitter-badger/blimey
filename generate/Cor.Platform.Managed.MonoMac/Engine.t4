@@ -3,7 +3,6 @@
     {
         readonly AudioManager audio;
         readonly GraphicsManager graphics;
-        readonly ResourceManager resources;
         readonly InputManager input;
         readonly SystemManager system;
         readonly AppSettings settings;
@@ -22,21 +21,20 @@
 
             this.audio = new AudioManager();
             this.graphics = new GraphicsManager(width, height);
-            this.resources = new ResourceManager();
             this.input = new InputManager();
             this.system = new SystemManager();
             this.settings = settings;
-            this.app = app;
+            
             this.log = new LogManager(this.settings.LogSettings);
-            this.assets = new AssetManager(this.graphics, this.resources);
+            this.assets = new AssetManager(this.graphics, this.system);
+
+            this.app = app;
             this.app.Initilise(this);
         }
 
         internal AudioManager AudioImplementation { get { return this.audio; } }
 
         internal GraphicsManager GraphicsImplementation { get { return this.graphics; } }
-
-        internal ResourceManager ResourcesImplementation { get { return this.resources; } }
 
         internal InputManager InputImplementation { get { return this.input; } }
 
@@ -47,8 +45,6 @@
         public IAudioManager Audio { get { return this.audio; } }
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
-
-        public IOldResourceManager Resources { get { return this.resources; } }
 
         public IInputManager Input { get { return this.input; } }
 

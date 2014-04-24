@@ -9,8 +9,8 @@
             InternalUtils.Log.Info(
                 "StubGraphicsManager -> ()");
 
-            this.displayStatus = new StubDisplayStatus();
-            this.gpuUtils = new StubGpuUtils();
+            this.displayStatus = new StubDisplayStatus ();
+            this.gpuUtils = new StubGpuUtils ();
         }
 
         #region IGraphicsManager
@@ -47,12 +47,32 @@
             return new StubGeometryBuffer(vertexDeclaration, vertexCount, indexCount);
         }
 
-        public void SetActiveGeometryBuffer(IGeometryBuffer buffer)
+        public void SetActiveGeometryBuffer (IGeometryBuffer buffer)
         {
 
         }
 
-        public void SetActiveTexture(Int32 slot, Texture2D tex)
+        public ITexture UploadTexture (TextureAsset tex)
+        {
+            return null;
+        }
+
+        public void UnloadTexture (ITexture texture)
+        {
+        
+        }
+
+        public void SetActiveTexture (Int32 slot, ITexture tex)
+        {
+        
+        }
+
+        public IShader CreateShader (ShaderAsset asset)
+        {
+            return null;
+        }
+
+        public void DestroyShader (IShader shader)
         {
 
         }
