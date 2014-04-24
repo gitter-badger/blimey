@@ -57,8 +57,11 @@ namespace Cor.Demo
         {
             this.engine = engine;
 
-            this.unlitEffect = engine.Assets.Load<IShader> ("unlit.cba");
-            this.vertexLitEffect = engine.Assets.Load<IShader> ("pixel_lit.cba");
+            var unlitAsset = engine.Assets.Load<ShaderAsset> ("unlit.cba");
+			var vertexLitAsset = engine.Assets.Load<ShaderAsset> ("pixel_lit.cba");
+
+			this.unlitEffect = engine.Graphics.CreateShader (unlitAsset);
+			this.vertexLitEffect = engine.Graphics.CreateShader (vertexLitAsset);
 
 			this.engine.Log.Info ("Start loading shapes.");
             this.LoadShape1();
@@ -274,7 +277,7 @@ namespace Cor.Demo
         IGeometryBuffer shape3GeomBuffer;
         Int32 shape3VertCount;
         Int32 shape3IndexCount;
-        Texture2D shape3Texture;
+        ITexture shape3Texture;
         Matrix44 rotation3;
 
         void LoadShape3 ()
@@ -286,7 +289,8 @@ namespace Cor.Demo
             this.shape3VertCount = vertBuffer.Length;
             this.shape3IndexCount = indexBuffer.Length;
 
-            this.shape3Texture = engine.Assets.Load<Texture2D> ("bg1.cba");
+            var texAsset = engine.Assets.Load<TextureAsset> ("bg1.cba");
+			this.shape3Texture = engine.Graphics.UploadTexture (texAsset);
 
             this.shape3GeomBuffer = engine.Graphics.CreateGeometryBuffer(
                 CustomCylinder_PositionNormalTexture.VertexDeclaration,
