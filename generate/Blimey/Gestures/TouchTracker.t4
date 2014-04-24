@@ -92,8 +92,8 @@
                         pos.Y = -temp;
                     }
 
-                    Int32 w = this.engine.Graphics.DisplayStatus.CurrentWidth;
-                    Int32 h = this.engine.Graphics.DisplayStatus.CurrentHeight;
+                    Int32 w = this.engine.DisplayStatus.CurrentWidth;
+                    Int32 h = this.engine.DisplayStatus.CurrentHeight;
 
                     //this.engine.System.GetEffectiveDisplaySize(ref w, ref h);
 

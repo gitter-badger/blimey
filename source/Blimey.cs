@@ -10,7 +10,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -2990,8 +2990,8 @@ namespace Blimey
                         pos.Y = -temp;
                     }
 
-                    Int32 w = this.engine.Graphics.DisplayStatus.CurrentWidth;
-                    Int32 h = this.engine.Graphics.DisplayStatus.CurrentHeight;
+                    Int32 w = this.engine.DisplayStatus.CurrentWidth;
+                    Int32 h = this.engine.DisplayStatus.CurrentHeight;
 
                     //this.engine.System.GetEffectiveDisplaySize(ref w, ref h);
 
