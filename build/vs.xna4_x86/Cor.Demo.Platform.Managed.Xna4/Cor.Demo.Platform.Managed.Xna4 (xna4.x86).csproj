@@ -106,7 +106,7 @@
       <Project>{D87E8FF2-EECC-4C5C-88A9-2E2497C34012}</Project>
       <Name>Abacus %28xna4.x86%29</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\submodules\cor.platform.managed.xna4\build\Cor.Platform.Managed.Xna4\Cor.Platform.Managed.Xna4 %28xna4.x86%29.csproj">
+    <ProjectReference Include="..\..\..\submodules\cor.platform.managed.xna4\build\Cor.Platform.Xna4\Cor.Platform.Xna4 %28xna4.x86%29.csproj">
       <Project>{1F19C87D-2A40-4642-A5A4-38346C471FBF}</Project>
       <Name>Cor.Xna4 %28xna4.x86%29</Name>
     </ProjectReference>

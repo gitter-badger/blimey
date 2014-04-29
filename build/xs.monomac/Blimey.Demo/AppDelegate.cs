@@ -35,7 +35,7 @@
 using System;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
-using Cor.Platform.Managed.MonoMac;
+using Cor.Platform.MonoMac;
 
 namespace Blimey.Demo
 {
