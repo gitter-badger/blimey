@@ -11,6 +11,8 @@
     <AssemblyName>Blimey</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <SuppressXamMacUpsell>True</SuppressXamMacUpsell>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
