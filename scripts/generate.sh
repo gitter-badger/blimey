@@ -8,68 +8,68 @@ find ./ ! -type d ! -name _tmp_ -exec sh -c 'expand -t 4 {} > _tmp_ && mv _tmp_ 
 mono-t4 Cor.tt -o ../../source/Cor.cs
 cd $startPath
 
-# Cor.Lib.Managed.Foundation
+# Cor.Lib.Foundation
 # --------------------------
 startPath=`pwd`
-cd ../generate/Cor.Lib.Managed.Foundation
+cd ../generate/Cor.Lib.Foundation
 find ./ ! -type d ! -name _tmp_ -exec sh -c 'expand -t 4 {} > _tmp_ && mv _tmp_ {}' \;
-mono-t4 Cor.Lib.Managed.Foundation.tt -o ../../source/Cor.Lib.Managed.Foundation.cs
+mono-t4 Cor.Lib.Foundation.tt -o ../../source/Cor.Lib.Foundation.cs
 cd $startPath
 
-# Cor.Lib.Managed.Foundation.Tests
+# Cor.Lib.Foundation.Tests
 # --------------------------------
 startPath=`pwd`
-cd ../generate/Cor.Lib.Managed.Foundation.Tests
+cd ../generate/Cor.Lib.Foundation.Tests
 find ./ ! -type d ! -name _tmp_ -exec sh -c 'expand -t 4 {} > _tmp_ && mv _tmp_ {}' \;
-mono-t4 Cor.Lib.Managed.Foundation.Tests.tt -o ../../source/Cor.Lib.Managed.Foundation.Tests.cs
+mono-t4 Cor.Lib.Foundation.Tests.tt -o ../../source/Cor.Lib.Foundation.Tests.cs
 cd $startPath
 
-# Cor.Lib.Managed.Khronos
+# Cor.Lib.Khronos
 # -----------------------
 startPath=`pwd`
-cd ../generate/Cor.Lib.Managed.Khronos
+cd ../generate/Cor.Lib.Khronos
 find ./ ! -type d ! -name _tmp_ -exec sh -c 'expand -t 4 {} > _tmp_ && mv _tmp_ {}' \;
-mono-t4 Cor.Lib.Managed.Khronos.tt -o ../../source/Cor.Lib.Managed.Khronos.cs
+mono-t4 Cor.Lib.Khronos.tt -o ../../source/Cor.Lib.Khronos.cs
 cd $startPath
 
-# Cor.Platform.Managed.MonoMac
+# Cor.Platform.MonoMac
 # ----------------------------
 startPath=`pwd`
-cd ../generate/Cor.Platform.Managed.MonoMac
+cd ../generate/Cor.Platform.MonoMac
 find ./ ! -type d ! -name _tmp_ -exec sh -c 'expand -t 4 {} > _tmp_ && mv _tmp_ {}' \;
-mono-t4 Cor.Platform.Managed.MonoMac.tt -o ../../source/Cor.Platform.Managed.MonoMac.cs
+mono-t4 Cor.Platform.MonoMac.tt -o ../../source/Cor.Platform.MonoMac.cs
 cd $startPath
 
-# Cor.Platform.Managed.Psm
+# Cor.Platform.Psm
 # ------------------------
 startPath=`pwd`
-cd ../generate/Cor.Platform.Managed.Psm
+cd ../generate/Cor.Platform.Psm
 find ./ ! -type d ! -name _tmp_ -exec sh -c 'expand -t 4 {} > _tmp_ && mv _tmp_ {}' \;
-mono-t4 Cor.Platform.Managed.Psm.tt -o ../../source/Cor.Platform.Managed.Psm.cs
+mono-t4 Cor.Platform.Psm.tt -o ../../source/Cor.Platform.Psm.cs
 cd $startPath
 
-# Cor.Platform.Managed.Xdroid
+# Cor.Platform.Xdroid
 # ---------------------------
 startPath=`pwd`
-cd ../generate/Cor.Platform.Managed.Xdroid
+cd ../generate/Cor.Platform.Xdroid
 find ./ ! -type d ! -name _tmp_ -exec sh -c 'expand -t 4 {} > _tmp_ && mv _tmp_ {}' \;
-mono-t4 Cor.Platform.Managed.Xdroid.tt -o ../../source/Cor.Platform.Managed.Xdroid.cs
+mono-t4 Cor.Platform.Xdroid.tt -o ../../source/Cor.Platform.Xdroid.cs
 cd $startPath
 
-# Cor.Platform.Managed.Xios
+# Cor.Platform.Xios
 # -------------------------
 startPath=`pwd`
-cd ../generate/Cor.Platform.Managed.Xios
+cd ../generate/Cor.Platform.Xios
 find ./ ! -type d ! -name _tmp_ -exec sh -c 'expand -t 4 {} > _tmp_ && mv _tmp_ {}' \;
-mono-t4 Cor.Platform.Managed.Xios.tt -o ../../source/Cor.Platform.Managed.Xios.cs
+mono-t4 Cor.Platform.Xios.tt -o ../../source/Cor.Platform.Xios.cs
 cd $startPath
 
-# Cor.Platform.Managed.Xna4
+# Cor.Platform.Xna4
 # -------------------------
 startPath=`pwd`
-cd ../generate/Cor.Platform.Managed.Xna4
+cd ../generate/Cor.Platform.Xna4
 find ./ ! -type d ! -name _tmp_ -exec sh -c 'expand -t 4 {} > _tmp_ && mv _tmp_ {}' \;
-mono-t4 Cor.Platform.Managed.Xna4.tt -o ../../source/Cor.Platform.Managed.Xna4.cs
+mono-t4 Cor.Platform.Xna4.tt -o ../../source/Cor.Platform.Xna4.cs
 cd $startPath
 
 # Cor.Platform.Stub

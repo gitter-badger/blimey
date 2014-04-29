@@ -104,11 +104,11 @@
     <Compile Include="..\..\..\source\Cor.cs">
       <Link>Cor.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Lib.Managed.Khronos.cs">
-      <Link>Cor.Lib.Managed.Khronos.cs</Link>
+    <Compile Include="..\..\..\source\Cor.Lib.Khronos.cs">
+      <Link>Cor.Lib.Khronos.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.Managed.Xios.cs">
-      <Link>Cor.Platform.Managed.Xios.cs</Link>
+    <Compile Include="..\..\..\source\Cor.Platform.Xios.cs">
+      <Link>Cor.Platform.Xios.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Cor.Platform.Stub.cs">
       <Link>Cor.Platform.Stub.cs</Link>

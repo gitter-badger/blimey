@@ -42,7 +42,7 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
-namespace Cor.Platform.Managed.Xdroid
+namespace Cor.Platform.Xdroid
 {
     public class Engine
         : ICor

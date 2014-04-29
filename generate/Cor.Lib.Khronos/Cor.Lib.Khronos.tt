@@ -1,7 +1,7 @@
 <#@ template debug="true" hostspecific="false" language="C#" #>
 <#@ output extension=".cs" #>
 // ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor! PlayStation Mobile Platform Implementation                        │ \\
+// │ Cor.Lib.Khronos                                                │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Brought to you by:                                                     │ \\
 // │          _________                    .__               __             │ \\
@@ -50,25 +50,29 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
-namespace Cor.Platform.Managed.MonoMac
+#if COR_PLATFORM_MANAGED_XIOS
+using OpenTK.Graphics.ES20;
+using GLShaderType = OpenTK.Graphics.ES20.ShaderType;
+using GLBufferUsage = OpenTK.Graphics.ES20.BufferUsage;
+#elif COR_PLATFORM_MANAGED_MONOMAC
+using MonoMac.OpenGL;
+using GLShaderType = MonoMac.OpenGL.ShaderType;
+using GLBufferUsage = MonoMac.OpenGL.BufferUsageHint;
+#else
+    Platform not supported.
+#endif
+
+using Boolean = System.Boolean;
+
+namespace Cor.Lib.Khronos
 {
-<#@ include file="Convert.t4"#>
-<#@ include file="Engine.t4"#>
-<#@ include file="GeometryBuffer.t4"#>
-<#@ include file="GpuUtils.t4"#>
-<#@ include file="GraphicsManager.t4"#>
-<#@ include file="IndexBuffer.t4"#>
-<#@ include file="InputManager.t4"#>
-<#@ include file="PixelLit_PositionNormal.t4"#>
-<#@ include file="ResourceManager.t4"#>
-<#@ include file="SystemManager.t4"#>
-<#@ include file="TouchScreen.t4"#>
-<#@ include file="Unlit_Position.t4"#>
-<#@ include file="Unlit_PositionColour.t4"#>
-<#@ include file="Unlit_PositionColourTexture.t4"#>
-<#@ include file="Unlit_PositionTexture.t4"#>
-<#@ include file="Unlit_PositionTexture.t4"#>
+<#@ include file="ErrorHandler.t4"#>
+<#@ include file="ShaderUtils.t4"#>
 <#@ include file="VertexBuffer.t4"#>
-<#@ include file="VertexLit_PositionNormal.t4"#>
-<#@ include file="VitaControllerImplementation.t4"#>
+<#@ include file="IndexBuffer.t4"#>
+<#@ include file="GeometryBuffer.t4"#>
+<#@ include file="GraphicsManager.t4"#>
+<#@ include file="TextureHandle.t4"#>
+<#@ include file="EnumConverter.t4"#>
+<#@ include file="GpuUtils.t4"#>
 }

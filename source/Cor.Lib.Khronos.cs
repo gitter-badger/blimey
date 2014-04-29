@@ -1,5 +1,5 @@
 ﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor.Lib.Managed.Khronos                                                │ \\
+// │ Cor.Lib.Khronos                                                │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Brought to you by:                                                     │ \\
 // │          _________                    .__               __             │ \\
@@ -62,7 +62,7 @@ using GLBufferUsage = MonoMac.OpenGL.BufferUsageHint;
 
 using Boolean = System.Boolean;
 
-namespace Cor.Lib.Managed.Khronos
+namespace Cor.Lib.Khronos
 {
     public static class ErrorHandler
     {

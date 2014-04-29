@@ -49,7 +49,7 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
-using Cor.Lib.Managed.Khronos;
+using Cor.Lib.Khronos;
 using Cor.Platform.Stub;
 
 using MonoTouch.UIKit;
@@ -57,7 +57,7 @@ using MonoTouch.Foundation;
 using MonoTouch.CoreText;
 using MonoTouch.CoreGraphics;
 
-namespace Cor.Platform.Managed.Xios
+namespace Cor.Platform.Xios
 {
     public sealed class AudioManager
         : IAudioManager

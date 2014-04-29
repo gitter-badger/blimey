@@ -54,11 +54,11 @@
     <Compile Include="..\..\..\source\Cor.Platform.Stub.cs">
       <Link>Cor.Platform.Stub.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.Managed.MonoMac.cs">
-      <Link>Cor.Platform.Managed.MonoMac.cs</Link>
+    <Compile Include="..\..\..\source\Cor.Platform.MonoMac.cs">
+      <Link>Cor.Platform.MonoMac.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Lib.Managed.Khronos.cs">
-      <Link>Cor.Lib.Managed.Khronos.cs</Link>
+    <Compile Include="..\..\..\source\Cor.Lib.Khronos.cs">
+      <Link>Cor.Lib.Khronos.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Cor.cs">
       <Link>Cor.cs</Link>

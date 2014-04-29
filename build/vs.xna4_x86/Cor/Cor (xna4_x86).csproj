@@ -51,7 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cor.cs" />
-    <Compile Include="Cor.Platform.Managed.Xna4.cs" />
+    <Compile Include="Cor.Platform.Xna4.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

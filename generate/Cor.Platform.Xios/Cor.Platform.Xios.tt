@@ -1,7 +1,7 @@
 <#@ template debug="true" hostspecific="false" language="C#" #>
 <#@ output extension=".cs" #>
 // ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor! Xamarin Android Platform Implementation                           │ \\
+// │ Cor! Xamarin iOS Platform Implementation                               │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Brought to you by:                                                     │ \\
 // │          _________                    .__               __             │ \\
@@ -35,27 +35,77 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
-using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.IO;
+using System.Drawing;
+using System.Diagnostics;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
+using System.Linq;
+
 using Abacus;
 using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
-namespace Cor.Platform.Managed.Xdroid
+using Cor.Lib.Khronos;
+using Cor.Platform.Stub;
+
+using MonoTouch.UIKit;
+using MonoTouch.Foundation;
+using MonoTouch.CoreText;
+using MonoTouch.CoreGraphics;
+
+namespace Cor.Platform.Xios
 {
-<#@ include file="Engine.t4"#>
 <#@ include file="AudioManager.t4"#>
-<#@ include file="GraphicsManager.t4"#>
+<#@ include file="Convert.t4"#>
 <#@ include file="DisplayStatus.t4"#>
-<#@ include file="IndexBuffer.t4"#>
+<#@ include file="EAGLView.t4"#>
+<#@ include file="Engine.t4"#>
+<#@ include file="GpuUtils.t4"#>
+<#@ include file="GraphicsManager.t4"#>
 <#@ include file="InputManager.t4"#>
+<#@ include file="iOSTouchState.t4"#>
+<#@ include file="OpenGLTextureWrapper.t4"#>
+<#@ include file="OpenGLViewController.t4"#>
 <#@ include file="ResourceManager.t4"#>
-<#@ include file="PanelSpecification.t4"#>
-<#@ include file="ScreenSpecification.t4"#>
-<#@ include file="GeometryBuffer.t4"#>
+<#@ include file="Shader.t4"#>
+<#@ include file="ShaderDefinition.t4"#>
+<#@ include file="ShaderHelper.t4"#>
+<#@ include file="ShaderPass.t4"#>
 <#@ include file="SystemManager.t4"#>
-<#@ include file="VertexBuffer.t4"#>
+<#@ include file="TouchScreen.t4"#>
+<#@ include file="CorAppEngine.t4"#>
+
+    #region OpenGL ES Shaders
+
+<#@ include file="OglesShader/OglesShader.t4"#>
+<#@ include file="OglesShader/OglesShaderDefinition.t4"#>
+<#@ include file="OglesShader/OglesShaderInput.t4"#>
+<#@ include file="OglesShader/OglesShaderSampler.t4"#>
+<#@ include file="OglesShader/OglesShaderVariable.t4"#>
+
+    #endregion
+
+    #region Shader Definitions
+
+<#@ include file="ShaderDefinition/ShaderInputDefinition.t4"#>
+<#@ include file="ShaderDefinition/ShaderSamplerDefinition.t4"#>
+<#@ include file="ShaderDefinition/ShaderVariableDefinition.t4"#>
+<#@ include file="ShaderDefinition/ShaderVariantDefinition.t4"#>
+<#@ include file="ShaderDefinition/ShaderVariantPassDefinition.t4"#>
+
+    #endregion
+
+    #region Shader Definitions
+
+<#@ include file="CorShaders/PixelLit.t4"#>
+<#@ include file="CorShaders/VertexLit.t4"#>
+<#@ include file="CorShaders/Unlit.t4"#>
+
+    #endregion
 }
