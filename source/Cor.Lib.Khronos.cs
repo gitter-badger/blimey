@@ -49,15 +49,31 @@ using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
 #if COR_PLATFORM_MANAGED_XIOS
+
 using OpenTK.Graphics.ES20;
 using GLShaderType = OpenTK.Graphics.ES20.ShaderType;
 using GLBufferUsage = OpenTK.Graphics.ES20.BufferUsage;
+using ActiveUniformType = OpenTK.Graphics.ES20.ActiveUniformType;
+using KhronosVector2 = OpenTK.Vector2;
+using KhronosVector3 = OpenTK.Vector3;
+using KhronosVector4 = OpenTK.Vector4;
+using KhronosMatrix4 = OpenTK.Matrix4;
+
 #elif COR_PLATFORM_MANAGED_MONOMAC
+
 using MonoMac.OpenGL;
 using GLShaderType = MonoMac.OpenGL.ShaderType;
 using GLBufferUsage = MonoMac.OpenGL.BufferUsageHint;
+using ActiveUniformType = MonoMac.OpenGL.ActiveUniformType;
+using KhronosVector2 = MonoMac.OpenGL.Vector2;
+using KhronosVector3 = MonoMac.OpenGL.Vector3;
+using KhronosVector4 = MonoMac.OpenGL.Vector4;
+using KhronosMatrix4 = MonoMac.OpenGL.Matrix4;
+
 #else
+
     Platform not supported.
+
 #endif
 
 using Boolean = System.Boolean;
@@ -985,23 +1001,23 @@ namespace Cor.Lib.Khronos
 
             this.gpuUtils = new GpuUtils();
 
-            global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.Blend);
+            GL.Enable(EnableCap.Blend);
             ErrorHandler.Check();
 
             this.SetBlendEquation(
                 BlendFunction.Add, BlendFactor.SourceAlpha, BlendFactor.InverseSourceAlpha,
                 BlendFunction.Add, BlendFactor.One, BlendFactor.InverseSourceAlpha);
 
-            global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.DepthTest);
+            GL.Enable(EnableCap.DepthTest);
             ErrorHandler.Check();
 
-            global::MonoMac.OpenGL.GL.DepthMask(true);
+            GL.DepthMask(true);
             ErrorHandler.Check();
 
-            global::MonoMac.OpenGL.GL.DepthRange(0f, 1f);
+            GL.DepthRange(0f, 1f);
             ErrorHandler.Check();
 
-            global::MonoMac.OpenGL.GL.DepthFunc(global::MonoMac.OpenGL.DepthFunction.Lequal);
+            GL.DepthFunc(DepthFunction.Lequal);
             ErrorHandler.Check();
 
             SetCullMode (CullMode.CW);
@@ -1034,7 +1050,7 @@ namespace Cor.Lib.Khronos
             int counter = 0;
             foreach(var elem in vertElems)
             {
-                global::MonoMac.OpenGL.GL.EnableVertexAttribArray(counter);
+                GL.EnableVertexAttribArray(counter);
                 ErrorHandler.Check();
 
                 //var vertElemUsage = elem.VertexElementUsage;
@@ -1043,16 +1059,16 @@ namespace Cor.Lib.Khronos
 
                 Int32 numComponentsInVertElem = 0;
                 Boolean vertElemNormalized = false;
-                global::MonoMac.OpenGL.VertexAttribPointerType glVertElemFormat;
+                VertexAttribPointerType glVertElemFormat;
 
-                EnumConverter.ToOpenGL(vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
+                EnumConverter.ToKhronos(vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
 
                 if( counter != 0)
                 {
                     ptr = Add(ptr, vertElemOffset);
                 }
 
-                global::MonoMac.OpenGL.GL.VertexAttribPointer(
+                GL.VertexAttribPointer(
                     counter,                // index - specifies the generic vertex attribute index.  This value is 0 to
                                             //         max vertex attributes supported - 1.
                     numComponentsInVertElem,// size - number of components specified in the vertex array for the
@@ -1083,7 +1099,7 @@ namespace Cor.Lib.Khronos
 
             for(int i = 0; i < vertElems.Length; ++i)
             {
-                global::MonoMac.OpenGL.GL.DisableVertexAttribArray(i);
+                GL.DisableVertexAttribArray(i);
                 ErrorHandler.Check();
             }
         }
@@ -1109,22 +1125,22 @@ namespace Cor.Lib.Khronos
 
             col.UnpackTo(out c);
 
-            global::MonoMac.OpenGL.GL.ClearColor (c.X, c.Y, c.Z, c.W);
+            GL.ClearColor (c.X, c.Y, c.Z, c.W);
 
-            var mask = global::MonoMac.OpenGL.ClearBufferMask.ColorBufferBit;
+            var mask = ClearBufferMask.ColorBufferBit;
 
-            global::MonoMac.OpenGL.GL.Clear ( mask );
+            GL.Clear ( mask );
 
             ErrorHandler.Check();
         }
 
         public void ClearDepthBuffer(Single val = 1)
         {
-            global::MonoMac.OpenGL.GL.ClearDepth(val);
+            GL.ClearDepth(val);
 
-            var mask = global::MonoMac.OpenGL.ClearBufferMask.DepthBufferBit;
+            var mask = ClearBufferMask.DepthBufferBit;
 
-            global::MonoMac.OpenGL.GL.Clear ( mask );
+            GL.Clear ( mask );
 
             ErrorHandler.Check();
         }
@@ -1135,26 +1151,26 @@ namespace Cor.Lib.Khronos
             {
                 if (cullMode == CullMode.None)
                 {
-                    global::MonoMac.OpenGL.GL.Disable (global::MonoMac.OpenGL.EnableCap.CullFace);
+                    GL.Disable (EnableCap.CullFace);
                     ErrorHandler.Check ();
 
                 }
                 else
                 {
-                    global::MonoMac.OpenGL.GL.Enable(global::MonoMac.OpenGL.EnableCap.CullFace);
+                    GL.Enable(EnableCap.CullFace);
                     ErrorHandler.Check();
 
-                    global::MonoMac.OpenGL.GL.FrontFace(global::MonoMac.OpenGL.FrontFaceDirection.Cw);
+                    GL.FrontFace(FrontFaceDirection.Cw);
                     ErrorHandler.Check();
 
                     if (cullMode == CullMode.CW)
                     {
-                        global::MonoMac.OpenGL.GL.CullFace (global::MonoMac.OpenGL.CullFaceMode.Back);
+                        GL.CullFace (CullFaceMode.Back);
                         ErrorHandler.Check ();
                     }
                     else if (cullMode == CullMode.CCW)
                     {
-                        global::MonoMac.OpenGL.GL.CullFace (global::MonoMac.OpenGL.CullFaceMode.Front);
+                        GL.CullFace (CullFaceMode.Front);
                         ErrorHandler.Check ();
                     }
                     else
@@ -1218,8 +1234,8 @@ namespace Cor.Lib.Khronos
             // the rows of pixels are assumed to be aligned to the value set for GL_UNPACK_ALIGNMENT.
             // By default, the value is 4, meaning that rows of pixels are assumed to begin
             // on 4-byte boundaries.  this is a global STATE.
-            global::MonoMac.OpenGL.GL.PixelStore(
-                global::MonoMac.OpenGL.PixelStoreParameter.UnpackAlignment, 4);
+            GL.PixelStore(
+                PixelStoreParameter.UnpackAlignment, 4);
 
             ErrorHandler.Check();
 
@@ -1227,27 +1243,27 @@ namespace Cor.Lib.Khronos
             // texture object.  this is a container object that holds the
             // texture data.  this function returns a handle to a texture
             // object.
-            global::MonoMac.OpenGL.GL.GenTextures(1, out textureId);
+            GL.GenTextures(1, out textureId);
             ErrorHandler.Check();
 
             var textureHandle = new TextureHandle (textureId);
 
-            var textureTarget = global::MonoMac.OpenGL.TextureTarget.Texture2D;
+            var textureTarget = TextureTarget.Texture2D;
 
             // we need to bind the texture object so that we can opperate on it.
-            global::MonoMac.OpenGL.GL.BindTexture(textureTarget, textureId);
+            GL.BindTexture(textureTarget, textureId);
             ErrorHandler.Check();
 
             // the incoming texture format
             // (the format that [pixelDataRgba32] is in)
-            var format = global::MonoMac.OpenGL.PixelFormat.Rgba;
+            var format = PixelFormat.Rgba;
 
-            var internalFormat = global::MonoMac.OpenGL.PixelInternalFormat.Rgba;
+            var internalFormat = PixelInternalFormat.Rgba;
 
-            var textureDataFormat = global::MonoMac.OpenGL.PixelType.UnsignedByte;
+            var textureDataFormat = PixelType.UnsignedByte;
 
             // now use the bound texture object to load the image data.
-            global::MonoMac.OpenGL.GL.TexImage2D(
+            GL.TexImage2D(
 
                 // specifies the texture target, either GL_TEXTURE_2D or one of the cubemap face targets.
                 textureTarget,
@@ -1295,11 +1311,11 @@ namespace Cor.Lib.Khronos
             // sets the minification and maginfication filtering modes.  required
             // because we have not loaded a complete mipmap chain for the texture
             // so we must select a non mipmapped minification filter.
-            global::MonoMac.OpenGL.GL.TexParameter(textureTarget, global::MonoMac.OpenGL.TextureParameterName.TextureMinFilter, (int) global::MonoMac.OpenGL.All.Nearest );
+            GL.TexParameter(textureTarget, TextureParameterName.TextureMinFilter, (int) All.Nearest );
 
             ErrorHandler.Check();
 
-            global::MonoMac.OpenGL.GL.TexParameter(textureTarget, global::MonoMac.OpenGL.TextureParameterName.TextureMagFilter, (int) global::MonoMac.OpenGL.All.Nearest );
+            GL.TexParameter(textureTarget, TextureParameterName.TextureMagFilter, (int) All.Nearest );
 
             ErrorHandler.Check();
 
@@ -1310,22 +1326,22 @@ namespace Cor.Lib.Khronos
         {
             int textureId = (texture as TextureHandle).glTextureId;
 
-            global::MonoMac.OpenGL.GL.DeleteTextures(1, ref textureId);
+            GL.DeleteTextures(1, ref textureId);
         }
 
         public void SetActiveTexture (Int32 slot, ITexture tex)
         {
-            global::MonoMac.OpenGL.TextureUnit oglTexSlot = EnumConverter.ToOpenGLTextureSlot(slot);
-            global::MonoMac.OpenGL.GL.ActiveTexture(oglTexSlot);
+            TextureUnit oglTexSlot = EnumConverter.ToKhronosTextureSlot(slot);
+            GL.ActiveTexture(oglTexSlot);
 
             var oglt0 = tex as TextureHandle;
 
             if( oglt0 != null )
             {
-                var textureTarget = global::MonoMac.OpenGL.TextureTarget.Texture2D;
+                var textureTarget = TextureTarget.Texture2D;
 
                 // we need to bind the texture object so that we can opperate on it.
-                global::MonoMac.OpenGL.GL.BindTexture(textureTarget, oglt0.glTextureId);
+                GL.BindTexture(textureTarget, oglt0.glTextureId);
                 ErrorHandler.Check();
             }
         }
@@ -1349,16 +1365,16 @@ namespace Cor.Lib.Khronos
             BlendFactor destinationAlpha
             )
         {
-            global::MonoMac.OpenGL.GL.BlendEquationSeparate(
-                EnumConverter.ToOpenGL(rgbBlendFunction),
-                EnumConverter.ToOpenGL(alphaBlendFunction) );
+            GL.BlendEquationSeparate(
+                EnumConverter.ToKhronos(rgbBlendFunction),
+                EnumConverter.ToKhronos(alphaBlendFunction) );
             ErrorHandler.Check();
 
-            global::MonoMac.OpenGL.GL.BlendFuncSeparate(
-                EnumConverter.ToOpenGLSrc(sourceRgb),
-                EnumConverter.ToOpenGLDest(destinationRgb),
-                EnumConverter.ToOpenGLSrc(sourceAlpha),
-                EnumConverter.ToOpenGLDest(destinationAlpha) );
+            GL.BlendFuncSeparate(
+                EnumConverter.ToKhronosSrc(sourceRgb),
+                EnumConverter.ToKhronosDest(destinationRgb),
+                EnumConverter.ToKhronosSrc(sourceAlpha),
+                EnumConverter.ToKhronosDest(destinationAlpha) );
             ErrorHandler.Check();
         }
 
@@ -1384,7 +1400,7 @@ namespace Cor.Lib.Khronos
                 throw new NotImplementedException();
             }
 
-            var otkpType =  EnumConverter.ToOpenGL(primitiveType);
+            var otkpType =  EnumConverter.ToKhronos(primitiveType);
             //Int32 numVertsInPrim = numVertices / primitiveCount;
 
             Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn(primitiveType);
@@ -1394,10 +1410,10 @@ namespace Cor.Lib.Khronos
 
             this.EnableVertAttribs( vertDecl, (IntPtr) 0 );
 
-            global::MonoMac.OpenGL.GL.DrawElements (
+            GL.DrawElements (
                 otkpType,
                 count,
-                global::MonoMac.OpenGL.DrawElementsType.UnsignedShort,
+                DrawElementsType.UnsignedShort,
                 (System.IntPtr) 0 );
 
             ErrorHandler.Check();
@@ -1448,12 +1464,12 @@ namespace Cor.Lib.Khronos
                 pointer = Add(pointer, vertexOffset * vertDecl.VertexStride * sizeof(byte));
             }
 
-            var glDrawMode = EnumConverter.ToOpenGL(primitiveType);
+            var glDrawMode = EnumConverter.ToKhronos(primitiveType);
             var glDrawModeAll = glDrawMode;
 
-            var bindTarget = global::MonoMac.OpenGL.BufferTarget.ArrayBuffer;
+            var bindTarget = BufferTarget.ArrayBuffer;
 
-            global::MonoMac.OpenGL.GL.BindBuffer(bindTarget, 0);
+            GL.BindBuffer(bindTarget, 0);
             ErrorHandler.Check();
 
 
@@ -1462,7 +1478,7 @@ namespace Cor.Lib.Khronos
             Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn(primitiveType);
             Int32 count = primitiveCount * nVertsInPrim;
 
-            global::MonoMac.OpenGL.GL.DrawArrays(
+            GL.DrawArrays(
                 glDrawModeAll, // specifies the primitive to render
                 vertexOffset,  // specifies the starting vertex index in the enabled vertex arrays
                 count ); // specifies the number of indicies to be drawn
@@ -1546,7 +1562,7 @@ namespace Cor.Lib.Khronos
 
     internal static class EnumConverter
     {
-        internal static TextureUnit ToOpenGLTextureSlot(Int32 slot)
+        internal static TextureUnit ToKhronosTextureSlot(Int32 slot)
         {
             switch(slot)
             {
@@ -1629,7 +1645,7 @@ namespace Cor.Lib.Khronos
             throw new NotSupportedException();
         }
 
-        internal static void ToOpenGL (
+        internal static void ToKhronos (
             VertexElementFormat blimey,
             out VertexAttribPointerType dataFormat,
             out bool normalized,
@@ -1672,14 +1688,25 @@ namespace Cor.Lib.Khronos
             }
         }
 
-        internal static BlendingFactorSrc ToOpenGLSrc(BlendFactor blimey)
+        internal static BlendingFactorSrc ToKhronosSrc(BlendFactor blimey)
         {
-            switch(blimey)
+            switch (blimey)
             {
                 case BlendFactor.Zero: return BlendingFactorSrc.Zero;
                 case BlendFactor.One: return BlendingFactorSrc.One;
+
+#if COR_PLATFORM_MANAGED_MONOMAC
+
                 case BlendFactor.SourceColour: return BlendingFactorSrc.Src1Color; // todo: check this src1 stuff
                 case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrc1Color;
+
+#elif COR_PLATFORM_MANAGED_XIOS
+
+                case BlendFactor.SourceColour: return BlendingFactorSrc.SrcColor;
+                case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrcColor;
+
+#endif
+
                 case BlendFactor.SourceAlpha: return BlendingFactorSrc.SrcAlpha;
                 case BlendFactor.InverseSourceAlpha: return BlendingFactorSrc.OneMinusSrcAlpha;
                 case BlendFactor.DestinationAlpha: return BlendingFactorSrc.DstAlpha;
@@ -1691,7 +1718,7 @@ namespace Cor.Lib.Khronos
             throw new Exception();
         }
 
-        internal static BlendingFactorDest ToOpenGLDest(BlendFactor blimey)
+        internal static BlendingFactorDest ToKhronosDest(BlendFactor blimey)
         {
             switch(blimey)
             {
@@ -1729,7 +1756,7 @@ namespace Cor.Lib.Khronos
             throw new Exception();
         }
 
-        internal static BlendEquationMode ToOpenGL(BlendFunction blimey)
+        internal static BlendEquationMode ToKhronos(BlendFunction blimey)
         {
             switch(blimey)
             {
@@ -1758,7 +1785,7 @@ namespace Cor.Lib.Khronos
         }
 
         // PRIMITIVE TYPE
-        internal static BeginMode ToOpenGL (PrimitiveType blimey)
+        internal static BeginMode ToKhronos (PrimitiveType blimey)
         {
             switch (blimey) {
             case PrimitiveType.LineList:
@@ -1794,6 +1821,92 @@ namespace Cor.Lib.Khronos
             default:
                 throw new Exception ("problem");
 
+            }
+        }
+    }
+
+    public static class Vector2Converter
+    {
+        // VECTOR 2
+        public static KhronosVector2 ToKhronos (this Abacus.SinglePrecision.Vector2 vec)
+        {
+            return new KhronosVector2 (vec.X, vec.Y);
+        }
+
+        public static Abacus.SinglePrecision.Vector2 ToAbacus (this KhronosVector2 vec)
+        {
+            return new Abacus.SinglePrecision.Vector2 (vec.X, vec.Y);
+        }
+    }    public static class Vector3Converter
+    {
+        // VECTOR 3
+        public static KhronosVector3 ToKhronos (this Abacus.SinglePrecision.Vector3 vec)
+        {
+            return new KhronosVector3 (vec.X, vec.Y, vec.Z);
+        }
+
+        public static Abacus.SinglePrecision.Vector3 ToAbacus (this KhronosVector3 vec)
+        {
+            return new Abacus.SinglePrecision.Vector3 (vec.X, vec.Y, vec.Z);
+        }
+    }
+    public static class Vector4Converter
+    {
+        // VECTOR 3
+        public static KhronosVector4 ToKhronos (this Abacus.SinglePrecision.Vector4 vec)
+        {
+            return new KhronosVector4 (vec.X, vec.Y, vec.Z, vec.W);
+        }
+
+        public static Abacus.SinglePrecision.Vector4 ToAbacus (this KhronosVector4 vec)
+        {
+            return new Abacus.SinglePrecision.Vector4 (vec.X, vec.Y, vec.Z, vec.W);
+        }
+    }
+
+    public static class Matrix44Converter
+    {
+        const bool flip = false;
+
+        // MATRIX
+        public static KhronosMatrix4 ToKhronos (this Abacus.SinglePrecision.Matrix44 mat)
+        {
+            if( flip )
+            {
+                return new KhronosMatrix4(
+                    mat.R0C0, mat.R1C0, mat.R2C0, mat.R3C0,
+                    mat.R0C1, mat.R1C1, mat.R2C1, mat.R3C1,
+                    mat.R0C2, mat.R1C2, mat.R2C2, mat.R3C2,
+                    mat.R0C3, mat.R1C3, mat.R2C3, mat.R3C3);
+            }
+            else
+            {
+                return new KhronosMatrix4(
+                    mat.R0C0, mat.R1C0, mat.R2C0, mat.R3C0,
+                    mat.R0C1, mat.R1C1, mat.R2C1, mat.R3C1,
+                    mat.R0C2, mat.R1C2, mat.R2C2, mat.R3C2,
+                    mat.R0C3, mat.R1C3, mat.R2C3, mat.R3C3);
+            }
+        }
+
+        public static Abacus.SinglePrecision.Matrix44 ToAbacus (this KhronosMatrix4 mat)
+        {
+
+            if( flip )
+            {
+                return new Abacus.SinglePrecision.Matrix44(
+                    mat.M11, mat.M12, mat.M13, mat.M14,
+                    mat.M21, mat.M22, mat.M23, mat.M24,
+                    mat.M31, mat.M32, mat.M33, mat.M34,
+                    mat.M41, mat.M42, mat.M43, mat.M44);
+            }
+            else
+            {
+                return new Abacus.SinglePrecision.Matrix44(
+                    mat.M11, mat.M12, mat.M13, mat.M14,
+                    mat.M21, mat.M22, mat.M23, mat.M24,
+                    mat.M31, mat.M32, mat.M33, mat.M34,
+                    mat.M41, mat.M42, mat.M43, mat.M44);
             }
         }
     }

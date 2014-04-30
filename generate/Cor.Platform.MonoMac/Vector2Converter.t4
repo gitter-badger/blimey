@@ -1,0 +1,12 @@
+    internal static class Vector2Converter
+    {
+        internal static System.Drawing.PointF ToSystemDrawing(this Vector2 vec)
+        {
+            return new System.Drawing.PointF (vec.X, vec.Y);
+        }
+
+        internal static Vector2 ToAbacus (this System.Drawing.PointF vec)
+        {
+            return new Vector2 (vec.X, vec.Y);
+        }
+    }

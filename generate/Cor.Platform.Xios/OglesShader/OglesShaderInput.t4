@@ -28,7 +28,7 @@
             this.ProgramHandle = programHandle;
             this.AttributeLocation = attLocation;
             this.Name = attribute.Name;
-            this.Type = EnumConverter.ToType(attribute.Type);
+            this.Type = Cor.Lib.Khronos.EnumConverter.ToType(attribute.Type);
             
 
         }

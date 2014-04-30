@@ -62,17 +62,14 @@ using MonoTouch.CoreGraphics;
 namespace Cor.Platform.Xios
 {
 <#@ include file="AudioManager.t4"#>
-<#@ include file="Convert.t4"#>
+<#@ include file="EnumConverter.t4"#>
+<#@ include file="Vector2Converter.t4"#>
 <#@ include file="DisplayStatus.t4"#>
 <#@ include file="EAGLView.t4"#>
 <#@ include file="Engine.t4"#>
-<#@ include file="GpuUtils.t4"#>
-<#@ include file="GraphicsManager.t4"#>
 <#@ include file="InputManager.t4"#>
 <#@ include file="iOSTouchState.t4"#>
-<#@ include file="OpenGLTextureWrapper.t4"#>
 <#@ include file="OpenGLViewController.t4"#>
-<#@ include file="ResourceManager.t4"#>
 <#@ include file="Shader.t4"#>
 <#@ include file="ShaderDefinition.t4"#>
 <#@ include file="ShaderHelper.t4"#>

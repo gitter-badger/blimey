@@ -1,6 +1,6 @@
     internal static class EnumConverter
     {
-        internal static TextureUnit ToOpenGLTextureSlot(Int32 slot)
+        internal static TextureUnit ToKhronosTextureSlot(Int32 slot)
         {
             switch(slot)
             {
@@ -83,7 +83,7 @@
             throw new NotSupportedException();
         }
 
-        internal static void ToOpenGL (
+        internal static void ToKhronos (
             VertexElementFormat blimey,
             out VertexAttribPointerType dataFormat,
             out bool normalized,
@@ -126,14 +126,25 @@
             }
         }
 
-        internal static BlendingFactorSrc ToOpenGLSrc(BlendFactor blimey)
+        internal static BlendingFactorSrc ToKhronosSrc(BlendFactor blimey)
         {
-            switch(blimey)
+            switch (blimey)
             {
                 case BlendFactor.Zero: return BlendingFactorSrc.Zero;
                 case BlendFactor.One: return BlendingFactorSrc.One;
+
+#if COR_PLATFORM_MANAGED_MONOMAC
+
                 case BlendFactor.SourceColour: return BlendingFactorSrc.Src1Color; // todo: check this src1 stuff
                 case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrc1Color;
+
+#elif COR_PLATFORM_MANAGED_XIOS
+
+                case BlendFactor.SourceColour: return BlendingFactorSrc.SrcColor;
+                case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrcColor;
+
+#endif
+
                 case BlendFactor.SourceAlpha: return BlendingFactorSrc.SrcAlpha;
                 case BlendFactor.InverseSourceAlpha: return BlendingFactorSrc.OneMinusSrcAlpha;
                 case BlendFactor.DestinationAlpha: return BlendingFactorSrc.DstAlpha;
@@ -145,7 +156,7 @@
             throw new Exception();
         }
 
-        internal static BlendingFactorDest ToOpenGLDest(BlendFactor blimey)
+        internal static BlendingFactorDest ToKhronosDest(BlendFactor blimey)
         {
             switch(blimey)
             {
@@ -183,7 +194,7 @@
             throw new Exception();
         }
 
-        internal static BlendEquationMode ToOpenGL(BlendFunction blimey)
+        internal static BlendEquationMode ToKhronos(BlendFunction blimey)
         {
             switch(blimey)
             {
@@ -212,7 +223,7 @@
         }
 
         // PRIMITIVE TYPE
-        internal static BeginMode ToOpenGL (PrimitiveType blimey)
+        internal static BeginMode ToKhronos (PrimitiveType blimey)
         {
             switch (blimey) {
             case PrimitiveType.LineList:

@@ -51,15 +51,31 @@ using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
 #if COR_PLATFORM_MANAGED_XIOS
+
 using OpenTK.Graphics.ES20;
 using GLShaderType = OpenTK.Graphics.ES20.ShaderType;
 using GLBufferUsage = OpenTK.Graphics.ES20.BufferUsage;
+using ActiveUniformType = OpenTK.Graphics.ES20.ActiveUniformType;
+using KhronosVector2 = OpenTK.Vector2;
+using KhronosVector3 = OpenTK.Vector3;
+using KhronosVector4 = OpenTK.Vector4;
+using KhronosMatrix4 = OpenTK.Matrix4;
+
 #elif COR_PLATFORM_MANAGED_MONOMAC
+
 using MonoMac.OpenGL;
 using GLShaderType = MonoMac.OpenGL.ShaderType;
 using GLBufferUsage = MonoMac.OpenGL.BufferUsageHint;
+using ActiveUniformType = MonoMac.OpenGL.ActiveUniformType;
+using KhronosVector2 = MonoMac.OpenGL.Vector2;
+using KhronosVector3 = MonoMac.OpenGL.Vector3;
+using KhronosVector4 = MonoMac.OpenGL.Vector4;
+using KhronosMatrix4 = MonoMac.OpenGL.Matrix4;
+
 #else
+
     Platform not supported.
+
 #endif
 
 using Boolean = System.Boolean;
@@ -74,5 +90,9 @@ namespace Cor.Lib.Khronos
 <#@ include file="GraphicsManager.t4"#>
 <#@ include file="TextureHandle.t4"#>
 <#@ include file="EnumConverter.t4"#>
+<#@ include file="Vector2Converter.t4"#>
+<#@ include file="Vector3Converter.t4"#>
+<#@ include file="Vector4Converter.t4"#>
+<#@ include file="Matrix44Converter.t4"#>
 <#@ include file="GpuUtils.t4"#>
 }

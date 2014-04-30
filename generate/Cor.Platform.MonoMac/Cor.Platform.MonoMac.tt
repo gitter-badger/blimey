@@ -66,7 +66,6 @@ namespace Cor.Platform.MonoMac
 <#@ include file="Engine.t4"#>
 <#@ include file="AudioManager.t4"#>
 <#@ include file="InputManager.t4"#>
-<#@ include file="ResourceManager.t4"#>
 <#@ include file="PanelSpecification.t4"#>
 <#@ include file="ScreenSpecification.t4"#>
 <#@ include file="SystemManager.t4"#>
@@ -74,8 +73,7 @@ namespace Cor.Platform.MonoMac
 <#@ include file="OpenGLView.t4"#>
 <#@ include file="MacGameNSWindow.t4"#>
 <#@ include file="MainWindowDelegate.t4"#>
-<#@ include file="Convert.t4"#>
-<#@ include file="StubShader.t4"#>
+<#@ include file="Vector2Converter.t4"#>
 <#@ include file="Shader.t4"#>
 <#@ include file="ShaderDefinition.t4"#>
 <#@ include file="ShaderHelper.t4"#>

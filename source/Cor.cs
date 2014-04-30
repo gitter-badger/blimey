@@ -1189,7 +1189,11 @@ namespace Cor
         public sealed class ShaderAsset
             : IAsset
         {
+            // Platform agnostic definition
             public ShaderDefinition Definition { get; set; }
+
+            // Platform specific binary content.
+            // This contains compiled shaders.
             public Byte [,] Data { get; set; }
         }
 
@@ -1218,10 +1222,7 @@ namespace Cor
 
     #region Interfaces
 
-        public interface IAsset
-        {
-
-        }
+        public interface IAsset {}
 
     #endregion
 

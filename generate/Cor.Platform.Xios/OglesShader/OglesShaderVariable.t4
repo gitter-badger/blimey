@@ -23,7 +23,7 @@
                 
             this.UniformLocation = uniformLocation;
             this.Name = uniform.Name;
-            this.Type = EnumConverter.ToType(uniform.Type);
+            this.Type = Cor.Lib.Khronos.EnumConverter.ToType(uniform.Type);
 
             Console.WriteLine(string.Format(
                 "    Caching Reference to Shader Variable: [Prog={0}, UniIndex={1}, UniLocation={2}, UniName={3}, UniType={4}]",
@@ -45,7 +45,7 @@
             if( t == typeof(Matrix44) )
             {
                 var castValue = (Matrix44) value;
-                var otkValue = MatrixConverter.ToOpenTK(castValue);
+                var otkValue = Matrix44Converter.ToKhronos(castValue);
                 OpenTK.Graphics.ES20.GL.UniformMatrix4( UniformLocation, false, ref otkValue );
             }
             else if( t == typeof(Int32) )

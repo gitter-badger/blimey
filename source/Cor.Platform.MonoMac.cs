@@ -233,77 +233,6 @@ namespace Cor.Platform.MonoMac
         #endregion
     }
 
-/*
-    public sealed class ResourceManager
-        : IOldResourceManager
-    {
-        Dictionary<ShaderType, IShader> shaderCache;
-
-        public ResourceManager()
-        {
-            shaderCache = new Dictionary<ShaderType, IShader>();
-
-            shaderCache[ShaderType.Unlit] = CorShaders.CreateUnlit();
-            shaderCache[ShaderType.VertexLit] = CorShaders.CreatePhongVertexLit();
-            shaderCache[ShaderType.PixelLit] = CorShaders.CreatePhongPixelLit();
-        }
-
-        static string GetBundlePath(string path)
-        {
-            string rtype = Path.GetExtension(path);
-            string rname = Path.Combine(
-                Path.GetDirectoryName(path),
-                Path.GetFileNameWithoutExtension(path));
-
-            var correctPath =
-                global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource(rname, rtype);
-
-            if(!File.Exists(correctPath))
-            {
-                throw new FileNotFoundException(correctPath);
-            }
-
-            return correctPath;
-        }
-
-        public T Load<T>(string path) where T : IOldResource
-        {
-            path = GetBundlePath(path);
-
-
-            if(typeof(T) == typeof(Texture2D))
-            {
-                var tex = OpenGLTexture.CreateFromFile(path);
-
-                return (T)(IOldResource) tex;
-            }
-
-            throw new NotImplementedException();
-        }
-
-        public T Open<T>(string path) where T : IDisposable
-        {
-            path = GetBundlePath(path);
-
-            if(typeof(T) == typeof(StreamReader))
-            {
-                return (T)(IDisposable) new StreamReader(path);
-            }
-
-            throw new NotImplementedException();
-        }
-
-        public IShader LoadShader(ShaderType shaderType)
-        {
-            if( !shaderCache.ContainsKey(shaderType) )
-            {
-                throw new NotImplementedException();
-            }
-
-            return shaderCache[shaderType];
-        }
-    }
-*/
     public sealed class PanelSpecification
         : IPanelSpecification
     {
@@ -907,18 +836,6 @@ namespace Cor.Platform.MonoMac
 
     internal static class Vector2Converter
     {
-        // VECTOR 2
-        internal static global::MonoMac.OpenGL.Vector2 ToOpenGL (this Vector2 vec)
-        {
-            return new global::MonoMac.OpenGL.Vector2 (vec.X, vec.Y);
-        }
-
-        internal static Vector2 ToAbacus (this global::MonoMac.OpenGL.Vector2 vec)
-        {
-            return new Vector2 (vec.X, vec.Y);
-        }
-
-        
         internal static System.Drawing.PointF ToSystemDrawing(this Vector2 vec)
         {
             return new System.Drawing.PointF (vec.X, vec.Y);
@@ -929,128 +846,6 @@ namespace Cor.Platform.MonoMac
             return new Vector2 (vec.X, vec.Y);
         }
     }
-
-    
-    internal static class Vector3Converter
-    {
-        // VECTOR 3
-        internal static global::MonoMac.OpenGL.Vector3 ToOpenGL (this Vector3 vec)
-        {
-            return new global::MonoMac.OpenGL.Vector3 (vec.X, vec.Y, vec.Z);
-        }
-
-        internal static Vector3 ToAbacus (this global::MonoMac.OpenGL.Vector3 vec)
-        {
-            return new Vector3 (vec.X, vec.Y, vec.Z);
-        }
-    }
-    
-    internal static class Vector4Converter
-    {
-        // VECTOR 3
-        internal static global::MonoMac.OpenGL.Vector4 ToOpenGL (this Vector4 vec)
-        {
-            return new global::MonoMac.OpenGL.Vector4 (vec.X, vec.Y, vec.Z, vec.W);
-        }
-
-        internal static Vector4 ToAbacus (this global::MonoMac.OpenGL.Vector4 vec)
-        {
-            return new Vector4 (vec.X, vec.Y, vec.Z, vec.W);
-        }
-    }
-
-    internal static class MatrixConverter
-    {
-        static bool flip = false;
-
-        // MATRIX
-        internal static global::MonoMac.OpenGL.Matrix4 ToOpenGL (this Matrix44 mat)
-        {
-            if( flip )
-            {
-                return new global::MonoMac.OpenGL.Matrix4(
-                    mat.R0C0, mat.R1C0, mat.R2C0, mat.R3C0,
-                    mat.R0C1, mat.R1C1, mat.R2C1, mat.R3C1,
-                    mat.R0C2, mat.R1C2, mat.R2C2, mat.R3C2,
-                    mat.R0C3, mat.R1C3, mat.R2C3, mat.R3C3
-                    );
-            }
-            else
-            {
-                return new global::MonoMac.OpenGL.Matrix4(
-                    mat.R0C0, mat.R0C1, mat.R0C2, mat.R0C3,
-                    mat.R1C0, mat.R1C1, mat.R1C2, mat.R1C3,
-                    mat.R2C0, mat.R2C1, mat.R2C2, mat.R2C3,
-                    mat.R3C0, mat.R3C1, mat.R3C2, mat.R3C3
-                    );
-            }
-        }
-
-        internal static Matrix44 ToAbacus (this global::MonoMac.OpenGL.Matrix4 mat)
-        {
-
-            if( flip )
-            {
-                return new Matrix44(
-                    mat.M11, mat.M21, mat.M31, mat.M41,
-                    mat.M12, mat.M22, mat.M32, mat.M42,
-                    mat.M13, mat.M23, mat.M33, mat.M43,
-                    mat.M14, mat.M24, mat.M34, mat.M44
-                    );
-            }
-            else
-            {
-                return new Matrix44(
-                    mat.M11, mat.M12, mat.M13, mat.M14,
-                    mat.M21, mat.M22, mat.M23, mat.M24,
-                    mat.M31, mat.M32, mat.M33, mat.M34,
-                    mat.M41, mat.M42, mat.M43, mat.M44
-                    );
-            }
-        }
-
-    }
-
-    public sealed class StubShader
-        : IShader
-    {
-        IShaderPass[] passes = new IShaderPass[0];
-        VertexElementUsage[] requiredVertexElements = new VertexElementUsage[0];
-        VertexElementUsage[] optionalVertexElements = new VertexElementUsage[0];
-
-        #region IShader
-
-        public void ResetVariables()
-        {
-            
-        }
-
-        public void ResetSamplerTargets()
-        {
-            
-        }
-
-        public void SetSamplerTarget(String name, Int32 textureSlot)
-        {
-
-        }
-
-        public IShaderPass[] Passes { get { return passes; } }
-
-        public VertexElementUsage[] RequiredVertexElements { get { return requiredVertexElements; } }
-
-        public VertexElementUsage[] OptionalVertexElements { get { return optionalVertexElements; } }
-
-        public String Name { get { return "StubShader"; } }
-
-        public void SetVariable<T>(String name, T value)
-        {
-
-        }
-
-        #endregion
-    }
-
     /// <summary>
     /// The Cor.Xios implementation of Cor's IShader interface.
     /// </summary>
@@ -2011,37 +1806,6 @@ namespace Cor.Platform.MonoMac
             }
         }
 
-        /*
-        static void CheckVariableCompatibility(List<OpenGLShaderVariable> definedVariables )
-        {
-            throw new NotImplementedException();
-        }
-
-        static void CheckInputCompatibility(List<OpenGLShaderInput> definedInputs, Dictionary<string, global::MonoMac.OpenGL.ActiveAttribType> actualAttributes )
-        {
-            // make sure that the shader we just loaded will work with this shader definition
-            if( actualAttributes.Count != definedInputs.Count )
-            {
-                throw new Exception("shader doesn't implement definition");
-            }
-
-            foreach( var key in actualAttributes.Keys )
-            {
-                var item = definedInputs.Find(x => x.Name == key);
-
-                if( item == null )
-                {
-                    throw new Exception("shader doesn't implement definition - missing variable");
-                }
-
-                if( item.Type != EnumConverter.ToType( actualAttributes[key] ) )
-                {
-                    throw new Exception("shader doesn't implement definition - variable is of the wrong type");
-                }
-            }
-        }
-        */
-
         static string GetResourcePath(string path)
         {
             string ext = Path.GetExtension(path);
@@ -2279,7 +2043,7 @@ namespace Cor.Platform.MonoMac
 
             this.UniformLocation = uniformLocation;
             this.Name = uniform.Name;
-            this.Type = EnumConverter.ToType(uniform.Type);
+            this.Type = Cor.Lib.Khronos.EnumConverter.ToType(uniform.Type);
 
             InternalUtils.Log.Info(string.Format(
                 "    Caching Reference to Shader Variable: [Prog={0}, UniIndex={1}, UniLocation={2}, UniName={3}, UniType={4}]",
@@ -2301,7 +2065,7 @@ namespace Cor.Platform.MonoMac
             if( t == typeof(Matrix44) )
             {
                 var castValue = (Matrix44) value;
-                var otkValue = MatrixConverter.ToOpenGL(castValue);
+                var otkValue = Matrix44Converter.ToKhronos(castValue);
                 global::MonoMac.OpenGL.GL.UniformMatrix4( UniformLocation, false, ref otkValue );
             }
             else if( t == typeof(Int32) )

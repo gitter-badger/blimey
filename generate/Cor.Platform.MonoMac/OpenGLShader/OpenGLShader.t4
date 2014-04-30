@@ -135,37 +135,6 @@
             }
         }
 
-        /*
-        static void CheckVariableCompatibility(List<OpenGLShaderVariable> definedVariables )
-        {
-            throw new NotImplementedException();
-        }
-
-        static void CheckInputCompatibility(List<OpenGLShaderInput> definedInputs, Dictionary<string, global::MonoMac.OpenGL.ActiveAttribType> actualAttributes )
-        {
-            // make sure that the shader we just loaded will work with this shader definition
-            if( actualAttributes.Count != definedInputs.Count )
-            {
-                throw new Exception("shader doesn't implement definition");
-            }
-
-            foreach( var key in actualAttributes.Keys )
-            {
-                var item = definedInputs.Find(x => x.Name == key);
-
-                if( item == null )
-                {
-                    throw new Exception("shader doesn't implement definition - missing variable");
-                }
-
-                if( item.Type != EnumConverter.ToType( actualAttributes[key] ) )
-                {
-                    throw new Exception("shader doesn't implement definition - variable is of the wrong type");
-                }
-            }
-        }
-        */
-
         static string GetResourcePath(string path)
         {
             string ext = Path.GetExtension(path);
