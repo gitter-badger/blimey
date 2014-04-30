@@ -10,7 +10,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -35,7 +35,7 @@
 using System;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
-using Cor.Platform.Managed.MonoMac;
+using Cor.Platform.MonoMac;
 
 namespace Cor.Demo
 {

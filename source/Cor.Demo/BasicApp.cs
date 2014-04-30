@@ -10,7 +10,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -56,13 +56,10 @@ namespace Cor.Demo
         {
             this.engine = engine;
 
-            var unlitShaderAsset = engine.Assets.Load<ShaderAsset> ("unlit.cba");
-            this.unlitEffect = engine.Graphics.CreateShader (unlitShaderAsset);
-            engine.Assets.Unload (unlitShaderAsset);
-
-            var vertexLitShaderAsset = engine.Assets.Load<ShaderAsset> ("vertex_lit.cba");
-            this.vertexLitEffect = engine.Graphics.CreateShader (vertexLitShaderAsset);
-            engine.Assets.Unload (vertexLitShaderAsset);
+            var unlitAsset = engine.Assets.Load<ShaderAsset> ("unlit.cba");
+			var vertexLitAsset = engine.Assets.Load<ShaderAsset> ("pixel_lit.cba");
+			this.unlitEffect = engine.Graphics.CreateShader (unlitAsset);
+			this.vertexLitEffect = engine.Graphics.CreateShader (vertexLitAsset);
 
 			this.engine.Log.Info ("Start loading shapes.");
             this.LoadShape1();
@@ -192,7 +189,7 @@ namespace Cor.Demo
         IGeometryBuffer shape2GeomBuffer;
         Int32 shape2VertCount;
         Int32 shape2IndexCount;
-        ITexture shape2Texture;
+		ITexture shape2Texture;
         Matrix44 rotation2;
 
         void LoadShape2 ()
@@ -204,14 +201,8 @@ namespace Cor.Demo
             this.shape2VertCount = vertBuffer.Length;
             this.shape2IndexCount = indexBuffer.Length;
 
-            // Load the texture into main memory.
-            var shape2TextureAsset = engine.Assets.Load<TextureAsset> ("cvan01.cba");
-
-            // Upload it to the GPU.
-            shape2Texture = engine.Graphics.UploadTexture (shape2TextureAsset);
-
-            // Unload it from main memory.
-            engine.Assets.Unload (shape2TextureAsset);
+			var textureAsset = engine.Assets.Load<TextureAsset> ("cvan01.cba");
+			this.shape2Texture = engine.Graphics.UploadTexture (textureAsset);
 
             this.shape2GeomBuffer = engine.Graphics.CreateGeometryBuffer(
                 CustomCube_PositionTexture.VertexDeclaration,
@@ -296,14 +287,8 @@ namespace Cor.Demo
             this.shape3VertCount = vertBuffer.Length;
             this.shape3IndexCount = indexBuffer.Length;
 
-            // Load the texture into main memory.
-            var shape3TextureAsset = engine.Assets.Load<TextureAsset> ("bg1.cba");
-
-            // Upload it to the GPU.
-            shape3Texture = engine.Graphics.UploadTexture (shape3TextureAsset);
-
-            // Unload it from main memory.
-            engine.Assets.Unload (shape3TextureAsset);
+            var texAsset = engine.Assets.Load<TextureAsset> ("bg1.cba");
+			this.shape3Texture = engine.Graphics.UploadTexture (texAsset);
 
             this.shape3GeomBuffer = engine.Graphics.CreateGeometryBuffer(
                 CustomCylinder_PositionNormalTexture.VertexDeclaration,

@@ -10,7 +10,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -49,7 +49,10 @@ namespace Blimey.Demo
         Mesh teapotGPUMesh;
         Int32 teapotCounter;
         GridRenderer gr;
-        SceneObject camSo;
+
+		
+		// GPU Resources.
+		IShader shader = null;
 
         public override void Start()
         {
@@ -57,7 +60,6 @@ namespace Blimey.Demo
 
 
             SceneObject camSo = CreateSceneObject ("Scene 3 Camera");
-            var camTrait = camSo.AddTrait<Camera>();
             var lookatTrait = camSo.AddTrait<LookAtSubject>();
             lookatTrait.Subject = Transform.Origin;
             var orbitTrait = camSo.AddTrait<OrbitAroundSubject>();
@@ -68,17 +70,12 @@ namespace Blimey.Demo
             this.SetRenderPassCameraTo("Debug", camSo);
             this.SetRenderPassCameraTo("Default", camSo);
 
-            //var meshUri = new Uri("");
-            //var mesh = Engine.Resources.Load<Mesh>(meshUri);
-
             _returnScene = this;
             this.Blimey.InputEventSystem.Tap += this.OnTap;
 
             teapotGPUMesh = new TeapotPrimitive(Cor.Graphics);
             gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Debug");
 
-
-            //this.GetRenderPassCamera("Default")
             AddTeapot(0);
             AddTeapot(-1.5f);
             AddTeapot(1.5f);
@@ -101,11 +98,9 @@ namespace Blimey.Demo
             testGO.Transform.LocalScale = new Vector3(scale, scale, scale);
 
 
-            var pixelLitShaderAsset = Cor.Assets.Load<ShaderAsset> ("pixel_lit.cba");
-            IShader shader = Cor.Graphics.CreateShader (pixelLitShaderAsset);
-            Cor.Assets.Unload (pixelLitShaderAsset);
+			ShaderAsset shaderAsset = this.Cor.Assets.Load<ShaderAsset> ("pixel_lit.cba");
 
-
+			shader = this.Cor.Graphics.CreateShader (shaderAsset);
 
             var mat = new Material("Default", shader);
 
@@ -148,7 +143,11 @@ namespace Blimey.Demo
 
         void OnTap(Gesture gesture)
         {
-            _returnScene = new MainMenuScene();
+			_returnScene = new MainMenuScene();
+
+			// Clean up the things we allocated on the GPU.
+			this.Cor.Graphics.DestroyShader (shader);
+			shader = null;
         }
     }
 }

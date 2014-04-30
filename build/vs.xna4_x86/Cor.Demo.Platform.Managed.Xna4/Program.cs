@@ -1,4 +1,4 @@
-using Cor.Platform.Managed.Xna4;
+using Cor.Platform.Xna4;
 
 namespace Cor.Demo.Xna4Kickstart
 {

@@ -10,7 +10,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -58,11 +58,11 @@ namespace Blimey.Demo
 
         Scene _returnScene;
 
-        LookAtSubject las = null;
+		// GPU Resources.
+		IShader shader = null;
 
         public override void Start ()
         {
-            //this.ClearColour = Colour.LightGray;
             gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Default");
 
             _alternateCamera = this.CreateSceneObject("Alternate Camera");
@@ -71,9 +71,6 @@ namespace Blimey.Demo
 
             _alternateCamera.Transform.Position = new Vector3(0.65f, 1f, -2.50f) * 3;
             _alternateCamera.Transform.LookAt(Vector3.Zero);
-
-
-            las = _alternateCamera.AddTrait<LookAtSubject> ();
 
             _objects = RandomObjectHelper.Generate(this);
 
@@ -98,9 +95,8 @@ namespace Blimey.Demo
 
             mr.Mesh = cowMesh;
 
-            var pixelLitShaderAsset = engine.Assets.Load<ShaderAsset> ("pixel_lit.cba");
-            IShader shader = engine.Graphics.CreateShader (pixelLitShaderAsset);
-            engine.Assets.Unload (pixelLitShaderAsset);
+			ShaderAsset shaderAsset = this.Cor.Assets.Load<ShaderAsset> ("pixel_lit.cba");
+			shader = this.Cor.Graphics.CreateShader (shaderAsset);
 
             var mat = new Material("Default", shader);
 
@@ -146,6 +142,10 @@ namespace Blimey.Demo
         {
             _objects = null;
             this.Blimey.InputEventSystem.Tap -= this.OnTap;
+
+			// Clean up the things we allocated on the GPU.
+			this.Cor.Graphics.DestroyShader (shader);
+			shader = null;
         }
 
         void OnTap(Gesture gesture)

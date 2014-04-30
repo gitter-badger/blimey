@@ -10,7 +10,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -63,6 +63,9 @@ namespace Blimey.Demo
 
         SceneObject markerGo;
 
+		// GPU Resources
+		IShader unlitShader = null;
+
         public override void Start()
         {
             this.Settings.BackgroundColour = Rgba32.LightSlateGrey;
@@ -73,10 +76,9 @@ namespace Blimey.Demo
             // create a sprite
             var billboard = new BillboardPrimitive(this.Cor.Graphics);
 
-            var unlitShaderAsset = engine.Assets.Load<ShaderAsset> ("unlit.cba");
-            IShader unlitShader = engine.Graphics.CreateShader (unlitShaderAsset);
-            engine.Assets.Unload (unlitShaderAsset);
+			ShaderAsset unlitShaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
 
+			unlitShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
             billboardGo = this.CreateSceneObject("billboard");
 
             var mr = billboardGo.AddTrait<MeshRenderer>();
@@ -168,7 +170,11 @@ namespace Blimey.Demo
 
         void OnTap(Gesture gesture)
         {
-            returnScene = new MainMenuScene();
+			returnScene = new MainMenuScene();
+
+			// Clean up the things we allocated on the GPU.
+			this.Cor.Graphics.DestroyShader (unlitShader);
+			unlitShader = null;
         }
     }
 }

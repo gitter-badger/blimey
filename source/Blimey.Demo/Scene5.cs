@@ -10,7 +10,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -53,6 +53,8 @@ namespace Blimey.Demo
 
 		readonly List<Airport> airports = new List<Airport>();
 
+		IShader shader = null;
+
 		public override void Start()
 		{
 			gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Debug");
@@ -66,12 +68,15 @@ namespace Blimey.Demo
 			{
 				string[] items = line.Split(',');
 
-				if (items.Length == 11)
-				{
-					airports.Add(new Airport(items));
-				}
+			var textAsset = this.Cor.Assets.Load<TextAsset> ("airports.cba");
+
+			string[] items = textAsset.Text.Split(',');
+
+			if (items.Length == 11)
+			{
+				airports.Add(new Airport(items));
 			}
-		
+
 			Console.WriteLine("num airports: " + airports.Count);
 
 			this.Settings.BackgroundColour = Rgba32.Red;
@@ -82,16 +87,16 @@ namespace Blimey.Demo
 			// create a sprite
 			var sphereMesh = new SpherePrimitive(this.Cor.Graphics);
 
-			var shaderAsset = Cor.Assets.Load<ShaderAsset> ("vertex_lit.cba");
-            IShader shader = Cor.Graphics.CreateShader (shaderAsset);
-            Cor.Assets.Unload (shaderAsset);
+			ShaderAsset shaderAsset = this.Cor.Assets.Load<ShaderAsset> ("vertex_lit.cba");
+			
+			shader = this.Cor.Graphics.CreateShader (shaderAsset);
 
             var mat = new Material("Default",shader);
             mat.SetColour("MaterialColour", Rgba32.LightGrey);
 			earthGo = this.CreateSceneObject("earth");
 
 			SceneObject camSo = CreateSceneObject ("Scene 5 Camera");
-			var camTrait = camSo.AddTrait<Camera>();
+			//var camTrait = camSo.AddTrait<Camera>();
 			var lookatTrait = camSo.AddTrait<LookAtSubject>();
 			lookatTrait.Subject = Transform.Origin;
 			var orbitTrait = camSo.AddTrait<OrbitAroundSubject>();
@@ -108,9 +113,9 @@ namespace Blimey.Demo
 			mr.Mesh = sphereMesh;
 			mr.Material = mat;
 
-			var shader2Asset = Cor.Assets.Load<ShaderAsset> ("unlit.cba");
-            IShader shader2 = Cor.Graphics.CreateShader (shader2Asset);
-            Cor.Assets.Unload (shader2Asset);
+			ShaderAsset shaderAsset2 = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
+			
+			IShader shader2 = this.Cor.Graphics.CreateShader (shaderAsset2);
 
 			var mat2 = new Material("Default", shader2);
 			mat2.SetColour("MaterialColour", Rgba32.Blue);
@@ -169,6 +174,10 @@ namespace Blimey.Demo
 		void OnTap(Gesture gesture)
 		{
 			returnScene = new MainMenuScene();
+
+			// Clean up the things we allocated on the GPU.
+			this.Cor.Graphics.DestroyShader (shader);
+			shader = null;
 		}
 	}
 }

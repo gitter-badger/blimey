@@ -10,7 +10,7 @@
 // │                \/           \//_____/         \/     \/                │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2013 A.J.Pook (http://sungiant.github.com)                 │ \\
+// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
@@ -73,28 +73,24 @@ namespace Blimey.Demo
         {
             gr = new GridRenderer (this.Blimey.DebugShapeRenderer, "Default");
 
-            screenWidth = this.Cor.Graphics.DisplayStatus.CurrentWidth;
-            screenHeight = this.Cor.Graphics.DisplayStatus.CurrentHeight;
+            screenWidth = this.Cor.DisplayStatus.CurrentWidth;
+            screenHeight = this.Cor.DisplayStatus.CurrentHeight;
 
             if (texVan1 == null)
-            {
-                var van1TextureAsset = Cor.Assets.Load<TextureAsset> ("cvan01.cba");
-                texVan1 = Cor.Graphics.UploadTexture (van1TextureAsset);
-                Cor.Assets.Unload (van1TextureAsset);
-            }
+			{
+				var ta = this.Cor.Assets.Load<TextureAsset> ("cvan01.cba");
+				texVan1 = this.Cor.Graphics.UploadTexture (ta);
+			}
 
-            if (texVan2 == null)
-            {
-                var van2TextureAsset = Cor.Assets.Load<TextureAsset> ("cvan02.cba");
-                texVan2 = Cor.Graphics.UploadTexture (van2TextureAsset);
-                Cor.Assets.Unload (van2TextureAsset);
-            }
+            if( texVan2 == null )
+			{
+				var ta = this.Cor.Assets.Load<TextureAsset> ("cvan02.cba");
+				texVan2 = this.Cor.Graphics.UploadTexture (ta);
+			}
 
-            var unlitShaderAsset = Cor.Assets.Load<ShaderAsset> ("unlit.cba");
-            IShader unlitShader = Cor.Graphics.CreateShader (unlitShaderAsset);
-            Cor.Assets.Unload (unlitShaderAsset);
+            var shaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
 
-            Sprite.SpriteShader = unlitShader;
+			Sprite.SpriteShader = this.Cor.Graphics.CreateShader(shaderAsset);
 
             /*
             var go = this.CreateSceneObject("block");
@@ -148,9 +144,7 @@ namespace Blimey.Demo
 
             //cam.Projection = CameraProjectionType.Orthographic;
             camSo.GetTrait<OrbitAroundSubject>().Speed = -0.01f;
-
-*/
-
+			*/
 
             this.Settings.BackgroundColour = Rgba32.Aquamarine;
 
@@ -192,6 +186,14 @@ namespace Blimey.Demo
         public override void Shutdown()
         {
             this.Blimey.InputEventSystem.Tap -= this.HandleTap;
+
+			// Clean up the things we allocated on the GPU.
+			this.Cor.Graphics.DestroyShader (Sprite.SpriteShader);
+			this.Cor.Graphics.UnloadTexture (texVan1);
+			this.Cor.Graphics.UnloadTexture (texVan2);
+			Sprite.SpriteShader = null;
+			texVan1 = null;
+			texVan2 = null;
         }
 
         public override Scene Update (AppTime time)
