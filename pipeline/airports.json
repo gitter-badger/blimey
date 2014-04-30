@@ -4,10 +4,14 @@
     [
         {
             "Platforms" : [ "xios", "monomac" ],
-            "ImporterType" : "Cor.TextImporter",
-            "ImporterSettings" : [],
-            "AssetSettings" : [],
-            "Files" : [ "airports.dat" ]
+            "Importer" :
+            {
+                "Files" : [ "airports.dat" ],
+                "AssetImporterType" : "Cor.TextAssetImporter, Cor.Assets.Builders",
+                "AssetImporterSettings" : []
+            },
+            "Processors" : []
         }
     ]
 }
+

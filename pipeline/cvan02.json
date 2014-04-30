@@ -3,18 +3,20 @@
     "SourceSets" :
     [
         {
-            "Platforms" : [ "xios" ],
-            "ImporterType" : "Cor.PNGImporter",
-            "ImporterSettings" : [],
-            "AssetSettings" : [ { "surfaceFormat" : "Cor.SurfaceFormat.PVRTC" } ],
-            "Files" : [ "cvan02.png" ]
-        },
-        {
-            "platforms" : [ "monomac" ],
-            "ImporterType" : "Cor.PNGImporter",
-            "ImporterSettings" : [],
-            "AssetSettings" : [ { "surfaceFormat" : "Cor.SurfaceFormat.ARGB" } ],
-            "Files" : [ "cvan02.png" ]
+            "Platforms" : [ "xios", "monomac" ],
+            "Importer" :
+            {
+                "Files" : [ "cvan02.png" ],
+                "AssetImporterType" : "Cor.ColourmapAssetImporter, Cor.Assets.Builders",
+                "AssetImporterSettings" : []
+            },
+            "Processors" :
+            [
+                {
+                    "AssetProcessorType" : "Cor.TextureAssetProcessor, Cor.Assets.Builders",
+                    "AssetProcessorSettings" : [ { "SurfaceFormat" : "Rgba32" } ]
+                }
+            ]
         }
     ]
 }

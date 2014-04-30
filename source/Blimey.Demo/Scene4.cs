@@ -61,8 +61,8 @@ namespace Blimey.Demo
 
         public static Int32 screenWidth;
         public static Int32 screenHeight;
-        public static Texture2D texVan1;
-        public static Texture2D texVan2;
+        public static ITexture texVan1;
+        public static ITexture texVan2;
 
         public Scene4()
         {
@@ -77,12 +77,22 @@ namespace Blimey.Demo
             screenHeight = this.Cor.Graphics.DisplayStatus.CurrentHeight;
 
             if (texVan1 == null)
-                texVan1 = this.Cor.Assets.Load<Texture2D> ("cvan01.cba");
+            {
+                var van1TextureAsset = Cor.Assets.Load<TextureAsset> ("cvan01.cba");
+                texVan1 = Cor.Graphics.UploadTexture (van1TextureAsset);
+                Cor.Assets.Unload (van1TextureAsset);
+            }
 
-            if( texVan2 == null )
-                texVan2 = this.Cor.Assets.Load<Texture2D> ("cvan02.cba");
+            if (texVan2 == null)
+            {
+                var van2TextureAsset = Cor.Assets.Load<TextureAsset> ("cvan02.cba");
+                texVan2 = Cor.Graphics.UploadTexture (van2TextureAsset);
+                Cor.Assets.Unload (van2TextureAsset);
+            }
 
-            IShader unlitShader = this.Cor.Assets.Load<IShader> ("unlit.cba");
+            var unlitShaderAsset = Cor.Assets.Load<ShaderAsset> ("unlit.cba");
+            IShader unlitShader = Cor.Graphics.CreateShader (unlitShaderAsset);
+            Cor.Assets.Unload (unlitShaderAsset);
 
             Sprite.SpriteShader = unlitShader;
 

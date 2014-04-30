@@ -98,7 +98,9 @@ namespace Blimey.Demo
 
             mr.Mesh = cowMesh;
 
-            IShader shader = this.Cor.Assets.Load<IShader> ("pixel_lit.cba");
+            var pixelLitShaderAsset = engine.Assets.Load<ShaderAsset> ("pixel_lit.cba");
+            IShader shader = engine.Graphics.CreateShader (pixelLitShaderAsset);
+            engine.Assets.Unload (pixelLitShaderAsset);
 
             var mat = new Material("Default", shader);
 

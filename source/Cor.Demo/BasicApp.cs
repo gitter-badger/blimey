@@ -41,7 +41,6 @@ using System.Collections.Generic;
 
 namespace Cor.Demo
 {
-
     public class BasicApp
         : IApp
     {
@@ -57,8 +56,13 @@ namespace Cor.Demo
         {
             this.engine = engine;
 
-            this.unlitEffect = engine.Assets.Load<IShader> ("unlit.cba");
-            this.vertexLitEffect = engine.Assets.Load<IShader> ("pixel_lit.cba");
+            var unlitShaderAsset = engine.Assets.Load<ShaderAsset> ("unlit.cba");
+            this.unlitEffect = engine.Graphics.CreateShader (unlitShaderAsset);
+            engine.Assets.Unload (unlitShaderAsset);
+
+            var vertexLitShaderAsset = engine.Assets.Load<ShaderAsset> ("vertex_lit.cba");
+            this.vertexLitEffect = engine.Graphics.CreateShader (vertexLitShaderAsset);
+            engine.Assets.Unload (vertexLitShaderAsset);
 
 			this.engine.Log.Info ("Start loading shapes.");
             this.LoadShape1();
@@ -188,7 +192,7 @@ namespace Cor.Demo
         IGeometryBuffer shape2GeomBuffer;
         Int32 shape2VertCount;
         Int32 shape2IndexCount;
-        Texture2D shape2Texture;
+        ITexture shape2Texture;
         Matrix44 rotation2;
 
         void LoadShape2 ()
@@ -200,7 +204,14 @@ namespace Cor.Demo
             this.shape2VertCount = vertBuffer.Length;
             this.shape2IndexCount = indexBuffer.Length;
 
-            this.shape2Texture = engine.Assets.Load<Texture2D> ("cvan01.cba");
+            // Load the texture into main memory.
+            var shape2TextureAsset = engine.Assets.Load<TextureAsset> ("cvan01.cba");
+
+            // Upload it to the GPU.
+            shape2Texture = engine.Graphics.UploadTexture (shape2TextureAsset);
+
+            // Unload it from main memory.
+            engine.Assets.Unload (shape2TextureAsset);
 
             this.shape2GeomBuffer = engine.Graphics.CreateGeometryBuffer(
                 CustomCube_PositionTexture.VertexDeclaration,
@@ -273,7 +284,7 @@ namespace Cor.Demo
         IGeometryBuffer shape3GeomBuffer;
         Int32 shape3VertCount;
         Int32 shape3IndexCount;
-        Texture2D shape3Texture;
+        ITexture shape3Texture;
         Matrix44 rotation3;
 
         void LoadShape3 ()
@@ -285,7 +296,14 @@ namespace Cor.Demo
             this.shape3VertCount = vertBuffer.Length;
             this.shape3IndexCount = indexBuffer.Length;
 
-            this.shape3Texture = engine.Assets.Load<Texture2D> ("bg1.cba");
+            // Load the texture into main memory.
+            var shape3TextureAsset = engine.Assets.Load<TextureAsset> ("bg1.cba");
+
+            // Upload it to the GPU.
+            shape3Texture = engine.Graphics.UploadTexture (shape3TextureAsset);
+
+            // Unload it from main memory.
+            engine.Assets.Unload (shape3TextureAsset);
 
             this.shape3GeomBuffer = engine.Graphics.CreateGeometryBuffer(
                 CustomCylinder_PositionNormalTexture.VertexDeclaration,

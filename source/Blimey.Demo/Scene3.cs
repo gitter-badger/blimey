@@ -101,7 +101,10 @@ namespace Blimey.Demo
             testGO.Transform.LocalScale = new Vector3(scale, scale, scale);
 
 
-            IShader shader = this.Cor.Assets.Load<IShader> ("pixel_lit.cba");
+            var pixelLitShaderAsset = Cor.Assets.Load<ShaderAsset> ("pixel_lit.cba");
+            IShader shader = Cor.Graphics.CreateShader (pixelLitShaderAsset);
+            Cor.Assets.Unload (pixelLitShaderAsset);
+
 
 
             var mat = new Material("Default", shader);

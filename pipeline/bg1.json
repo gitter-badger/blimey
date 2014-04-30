@@ -3,20 +3,21 @@
     "SourceSets" :
     [
         {
-            "Platforms" : [ "xios" ],
-            "ResourceBuilderType" : "Cor.BitmapResourceBuilder, Cor.Assets.Builders",
-            "ResourceBuilderSettings" : [],
-            "AssetBuilderType" : "Cor.TextureAssetBuilder, Cor.Assets.Builders",
-            "AssetBuilderSettings" : [ { "surfaceFormat" : "Cor.SurfaceFormat.Pvrtc" } ],
-            "Files" : [ "bg1.png" ]
-        },
-        {
-            "Platforms" : [ "monomac" ],
-            "ResourceBuilderType" : "Cor.BitmapResourceBuilder, Cor.Assets.Builders",
-            "ResourceBuilderSettings" : [],
-            "AssetBuilderType" : "Cor.TextureAssetBuilder, Cor.Assets.Builders",
-            "AssetBuilderSettings" : [ { "surfaceFormat" : "Cor.SurfaceFormat.Pvrtc" } ],
-            "Files" : [ "bg1.png" ]
+            "Platforms" : [ "xios", "monomac" ],
+            "Importer" :
+            {
+                "Files" : [ "bg1.png" ],
+                "AssetImporterType" : "Cor.ColourmapAssetImporter, Cor.Assets.Builders",
+                "AssetImporterSettings" : []
+            },
+            "Processors" :
+            [
+                {
+                    "AssetProcessorType" : "Cor.TextureAssetProcessor, Cor.Assets.Builders",
+                    "AssetProcessorSettings" : [ { "SurfaceFormat" : "Rgba32" } ]
+                }
+            ]
         }
     ]
 }
+

@@ -39,6 +39,7 @@ using Abacus.SinglePrecision;
 using Cor;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Blimey.Demo
 {
@@ -55,25 +56,23 @@ namespace Blimey.Demo
 		public override void Start()
 		{
 			gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Debug");
-
-
-			using (var streamReader = this.Cor.Resources.Open<StreamReader>("resources/airports.dat"))
+            
+            var lines = Cor.Assets.Load <TextAsset> ("resources/airports.cba")
+                .Text
+                .Split ('\n')
+                .ToList ();
+                
+            foreach (var line in lines)
 			{
-				while (!streamReader.EndOfStream)
+				string[] items = line.Split(',');
+
+				if (items.Length == 11)
 				{
-					string line = streamReader.ReadLine();
-
-					string[] items = line.Split(',');
-
-					if (items.Length == 11)
-					{
-						airports.Add(new Airport(items));
-					}
+					airports.Add(new Airport(items));
 				}
-
 			}
+		
 			Console.WriteLine("num airports: " + airports.Count);
-
 
 			this.Settings.BackgroundColour = Rgba32.Red;
 
@@ -83,7 +82,9 @@ namespace Blimey.Demo
 			// create a sprite
 			var sphereMesh = new SpherePrimitive(this.Cor.Graphics);
 
-			IShader shader = this.Cor.Assets.Load<IShader> ("vertex_lit.cba");
+			var shaderAsset = Cor.Assets.Load<ShaderAsset> ("vertex_lit.cba");
+            IShader shader = Cor.Graphics.CreateShader (shaderAsset);
+            Cor.Assets.Unload (shaderAsset);
 
             var mat = new Material("Default",shader);
             mat.SetColour("MaterialColour", Rgba32.LightGrey);
@@ -107,7 +108,9 @@ namespace Blimey.Demo
 			mr.Mesh = sphereMesh;
 			mr.Material = mat;
 
-            IShader shader2 = this.Cor.Assets.Load<IShader> ("unlit.cba");
+			var shader2Asset = Cor.Assets.Load<ShaderAsset> ("unlit.cba");
+            IShader shader2 = Cor.Graphics.CreateShader (shader2Asset);
+            Cor.Assets.Unload (shader2Asset);
 
 			var mat2 = new Material("Default", shader2);
 			mat2.SetColour("MaterialColour", Rgba32.Blue);
