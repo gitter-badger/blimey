@@ -14,17 +14,21 @@
 
             public List <Type> RequiredSerialisers ()
             {
-                throw new NotImplementedException ();
+                return new List <Type> () 
+                { 
+                    typeof (ArraySerialiser<Byte>),
+                    typeof (ByteSerialiser)
+                };
             }
 
             public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
             {
-                throw new NotImplementedException ();
+                
             }
 
             public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
             {
-                throw new NotImplementedException ();
+                
             }
 
             #endregion

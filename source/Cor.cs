@@ -1191,17 +1191,17 @@ namespace Cor
 
             public List <Type> RequiredSerialisers ()
             {
-                throw new NotImplementedException ();
+                return new List <Type> () {};
             }
 
             public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
             {
-                throw new NotImplementedException ();
+
             }
 
             public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
             {
-                throw new NotImplementedException ();
+                
             }
 
             #endregion
@@ -1223,17 +1223,21 @@ namespace Cor
 
             public List <Type> RequiredSerialisers ()
             {
-                throw new NotImplementedException ();
+                return new List <Type> () 
+                { 
+                    typeof (ArraySerialiser<Byte>),
+                    typeof (ByteSerialiser)
+                };
             }
 
             public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
             {
-                throw new NotImplementedException ();
+                
             }
 
             public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
             {
-                throw new NotImplementedException ();
+                
             }
 
             #endregion
@@ -1286,17 +1290,23 @@ namespace Cor
 
             public List <Type> RequiredSerialisers ()
             {
-                throw new NotImplementedException ();
+                return new List <Type> () 
+                { 
+                    typeof (Int32Serialiser), 
+                    //typeof (SurfaceFormatSerialiser),
+                    typeof (ArraySerialiser<Byte>),
+                    typeof (ByteSerialiser)
+                };
             }
 
             public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
             {
-                throw new NotImplementedException ();
+                
             }
 
             public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
             {
-                throw new NotImplementedException ();
+                
             }
 
             #endregion
@@ -3317,7 +3327,6 @@ namespace Cor
     #region Systems
 
     public sealed class AssetManager
-        : IDisposable
     {
         readonly IGraphicsManager graphics;
         readonly ISystemManager systemManager;
@@ -3332,33 +3341,86 @@ namespace Cor
 
         public T Load<T> (String assetId)
         where T
-            : IAsset
+            : class, IAsset
         {
             using (Stream stream = this.systemManager.GetAssetStream (assetId))
             {
                 using (var br = new BinaryReader (stream))
                 {
+                    ProcessFileHeader (br);
+                    List<Type> requiredTypeSerialisers = 
+                        ProcessMeta (br);
+
                     var tsdb = new TypeSerialiserDatabase ();
-                    Byte f0 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
-                    Byte f1 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
-                    Byte f2 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
 
-                    if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'B')
-                        throw new Exception ();
+                    foreach (Type typeSerialiserType in requiredTypeSerialisers)
+                    {
+                        tsdb.RegisterTypeSerialiser (typeSerialiserType);
+                    }
 
-                    return tsdb.GetTypeSerialiser <T> ().Read (br);
+                    T asset = Activator.CreateInstance (typeof (T)) as T;
+
+                    asset.Serialise (br, tsdb);
+                    return asset;
                 }
             }
         }
 
-        public void Unload ()
+        void ProcessFileHeader (BinaryReader br)
         {
+            var tsdb = new TypeSerialiserDatabase ();
 
+            tsdb.RegisterTypeSerialiser<Byte, ByteSerialiser>();
+
+            // file type
+            Byte f0 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
+            Byte f1 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
+            Byte f2 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
+
+            if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'B')
+                throw new Exception ("Asset file doesn't have the correct header.");
+
+            // file version
+            Byte fileVersion = tsdb.GetTypeSerialiser <Byte> ().Read (br);
+
+            if (fileVersion != 0)
+                throw new Exception ("Only file format version 0 is supported.");
+
+            // platform index
+            Byte platformIndex = tsdb.GetTypeSerialiser <Byte> ().Read (br);
         }
 
-        public void Dispose ()
+        List<Type> ProcessMeta (BinaryReader br)
         {
+            var result = new List<Type> ();
+            var tsdb = new TypeSerialiserDatabase ();
+            tsdb.RegisterTypeSerialiser<Byte, ByteSerialiser>();
+            tsdb.RegisterTypeSerialiser<String, StringSerialiser>();
 
+            Byte numRequiredTypeSerialisers =
+                tsdb.GetTypeSerialiser <Byte> ().Read (br);
+
+            for (Byte i = 0; i < numRequiredTypeSerialisers; ++i)
+            {
+                // Fully qualified  type serialiser name
+                String assemblyQualifiedTypeSerialiserName =
+                    tsdb.GetTypeSerialiser <String> ().Read (br);
+
+                Type t = Type.GetType (assemblyQualifiedTypeSerialiserName);
+
+                if (t == null)
+                    throw new Exception ("Type not found:" + assemblyQualifiedTypeSerialiserName);
+
+                // Type serialiser version
+                Byte version = tsdb.GetTypeSerialiser <Byte> ().Read (br);
+
+                if (version != 0)
+                    throw new NotImplementedException ();
+
+                result.Add (t);
+            }
+
+            return result;
         }
     }
 
@@ -3370,6 +3432,24 @@ namespace Cor
         public TypeSerialiserDatabase()
         {
             assetTypeSerialisers = new Dictionary<Type, TypeSerialiser> ();
+        }
+
+        public void RegisterTypeSerialiser (Type serialiserType)
+        {
+            Type targetType = 
+                serialiserType.BaseType
+                    .GetGenericTypeDefinition()
+                    .GetGenericArguments() [0];
+            
+            MethodInfo mi = typeof(TypeSerialiserDatabase).GetMethod ("RegisterTypeSerialiser");
+            
+            if (mi == null)
+            {
+                throw new Exception ("Failed to find the TypeSerialiserDatabase's RegisterTypeSerialiser method.");    
+            }
+            
+            var gmi = mi.MakeGenericMethod(targetType, serialiserType);
+            gmi.Invoke(this, null);
         }
 
         public void RegisterTypeSerialiser<TTarget, TSerialiser> ()

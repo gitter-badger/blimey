@@ -13,17 +13,17 @@
 
             public List <Type> RequiredSerialisers ()
             {
-                throw new NotImplementedException ();
+                return new List <Type> () {};
             }
 
             public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
             {
-                throw new NotImplementedException ();
+
             }
 
             public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
             {
-                throw new NotImplementedException ();
+                
             }
 
             #endregion

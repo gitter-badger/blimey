@@ -388,7 +388,7 @@ namespace Cor.Platform.MonoMac
 
         public Stream GetAssetStream (String assetId)
         {
-            string path = GetBundlePath(Path.Combine("resources", assetId));
+            string path = GetBundlePath(Path.Combine("assets/monomac", assetId));
 
             var fStream = new FileStream(path, FileMode.Open);
 

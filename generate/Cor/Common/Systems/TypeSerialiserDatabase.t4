@@ -8,6 +8,24 @@
             assetTypeSerialisers = new Dictionary<Type, TypeSerialiser> ();
         }
 
+        public void RegisterTypeSerialiser (Type serialiserType)
+        {
+            Type targetType = 
+                serialiserType.BaseType
+                    .GetGenericTypeDefinition()
+                    .GetGenericArguments() [0];
+            
+            MethodInfo mi = typeof(TypeSerialiserDatabase).GetMethod ("RegisterTypeSerialiser");
+            
+            if (mi == null)
+            {
+                throw new Exception ("Failed to find the TypeSerialiserDatabase's RegisterTypeSerialiser method.");    
+            }
+            
+            var gmi = mi.MakeGenericMethod(targetType, serialiserType);
+            gmi.Invoke(this, null);
+        }
+
         public void RegisterTypeSerialiser<TTarget, TSerialiser> ()
         where TSerialiser : TypeSerialiser <TTarget>
         {
