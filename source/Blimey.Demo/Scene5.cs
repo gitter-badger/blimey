@@ -67,15 +67,12 @@ namespace Blimey.Demo
             foreach (var line in lines)
 			{
 				string[] items = line.Split(',');
-
-			var textAsset = this.Cor.Assets.Load<TextAsset> ("airports.cba");
-
-			string[] items = textAsset.Text.Split(',');
-
-			if (items.Length == 11)
-			{
-				airports.Add(new Airport(items));
-			}
+    
+    			if (items.Length == 11)
+    			{
+    				airports.Add(new Airport(items));
+    			}
+            }
 
 			Console.WriteLine("num airports: " + airports.Count);
 
