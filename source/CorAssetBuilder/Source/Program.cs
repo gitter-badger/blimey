@@ -276,17 +276,7 @@ namespace CorAssetBuilder
             
             foreach (Type typeSerialiserType in requiredTypeSerialisers)
             {
-                Type targetType = typeSerialiserType.BaseType ().GenericTypeArguments () [0];
-                
-                MethodInfo mi = typeof(TypeSerialiserDatabase).GetMethod ("RegisterTypeSerialiser");
-                
-                if (mi == null)
-                {
-                    throw new Exception ("Failed to find the TypeSerialiserDatabase's RegisterTypeSerialiser method.");    
-                }
-                
-                var gmi = mi.MakeGenericMethod(targetType, typeSerialiserType);
-                gmi.Invoke(tsdb, null);
+                tsdb.RegisterTypeSerialiser (typeSerialiserType);
             }
             
             a.Serialise (writer, tsdb);
