@@ -45,7 +45,7 @@ namespace CorAssetBuilder
                 File.ReadAllText (
                     Path.Combine (
                         Environment.GetEnvironmentVariable ("HOME"),
-                        ".cba.installation"))
+						".cab.installation"))
                 .FromJson<Configuration.InstallInfo> ()
                 .InstallDateTime);
 
@@ -154,7 +154,7 @@ namespace CorAssetBuilder
                     Path.Combine (
                         projectDefinition.DestinationFolder,
                         platformId,
-                        assetDefinition.AssetId + ".cba");
+						assetDefinition.AssetId + ".cab");
 
                 Console.WriteLine ("\t= " + assetfile);
 
