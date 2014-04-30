@@ -1,7 +1,7 @@
-    class Int16Serialiser
+    public class Int16Serialiser
         : TypeSerialiser<Int16>
     {
-        internal Int16Serialiser () {}
+        public Int16Serialiser () {}
 
         public override Int16 Read(BinaryReader abr)
         {

@@ -2,12 +2,12 @@
     // test
     // enum Foo : long { One, Two };
     // enum Bar : byte { x = 255 };
-    class EnumSerialiser<T>
+    public class EnumSerialiser<T>
         : TypeSerialiser<T>
     {
         TypeSerialiser underlyingTypeSerialiser;
 
-        internal EnumSerialiser () {}
+        public EnumSerialiser () {}
 
         public override void Initialise(TypeSerialiserDatabase manager)
         {

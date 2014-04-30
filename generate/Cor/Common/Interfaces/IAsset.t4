@@ -1,2 +1,30 @@
-        public interface IAsset {}
+
+        /// <summary>
+        /// Base interface for all assets
+        /// </summary>
+        public interface IAsset
+        {
+            /// <summary>
+            /// A unique id for this asset, if null this asset has not
+            /// been instantiated.
+            /// </summary>
+            String Id { get; }
+
+            /// <summary>
+            /// Defines Which TypeSerialisers does this asset require to
+            /// serialise itself to and from a binary stream.
+            /// </summary>
+            List <Type> RequiredSerialisers ();
+
+            /// <summary>
+            /// Reads this asset from a binary stream.
+            /// </summary>
+            void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb);
+
+
+            /// <summary>
+            /// Writes this asset to a binary stream.
+            /// </summary>
+            void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb);
+        }
 

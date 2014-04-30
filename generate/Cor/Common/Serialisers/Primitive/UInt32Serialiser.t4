@@ -1,7 +1,7 @@
-    class UInt32Serialiser
+    public class UInt32Serialiser
         : TypeSerialiser<UInt32>
     {
-        internal UInt32Serialiser () {}
+        public UInt32Serialiser () {}
 
         public override UInt32 Read(BinaryReader abr)
         {

@@ -6,5 +6,26 @@
             public Int32 Width { get { return Data.GetLength (0); } }
 
             public Int32 Height { get { return Data.GetLength (1); } }
+
+            #region IAsset
+
+            public String Id { get { return null; } }
+
+            public List <Type> RequiredSerialisers ()
+            {
+                throw new NotImplementedException ();
+            }
+
+            public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
+            {
+                throw new NotImplementedException ();
+            }
+
+            public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
+            {
+                throw new NotImplementedException ();
+            }
+
+            #endregion
         }
 

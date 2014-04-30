@@ -7,5 +7,26 @@
             // Platform specific binary content.
             // This contains compiled shaders.
             public Byte [,] Data { get; set; }
+
+            #region IAsset
+
+            public String Id { get { return null; } }
+
+            public List <Type> RequiredSerialisers ()
+            {
+                throw new NotImplementedException ();
+            }
+
+            public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
+            {
+                throw new NotImplementedException ();
+            }
+
+            public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
+            {
+                throw new NotImplementedException ();
+            }
+
+            #endregion
         }
 

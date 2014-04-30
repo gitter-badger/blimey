@@ -1,7 +1,7 @@
-    class DoubleSerialiser
+    public class DoubleSerialiser
         : TypeSerialiser<Double>
     {
-        internal DoubleSerialiser () {}
+        public DoubleSerialiser () {}
 
         public override Double Read(BinaryReader abr)
         {

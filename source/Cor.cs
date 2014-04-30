@@ -1184,6 +1184,27 @@ namespace Cor
             public Int32 Width { get { return Data.GetLength (0); } }
 
             public Int32 Height { get { return Data.GetLength (1); } }
+
+            #region IAsset
+
+            public String Id { get { return null; } }
+
+            public List <Type> RequiredSerialisers ()
+            {
+                throw new NotImplementedException ();
+            }
+
+            public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
+            {
+                throw new NotImplementedException ();
+            }
+
+            public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
+            {
+                throw new NotImplementedException ();
+            }
+
+            #endregion
         }
 
         public sealed class ShaderAsset
@@ -1195,12 +1216,54 @@ namespace Cor
             // Platform specific binary content.
             // This contains compiled shaders.
             public Byte [,] Data { get; set; }
+
+            #region IAsset
+
+            public String Id { get { return null; } }
+
+            public List <Type> RequiredSerialisers ()
+            {
+                throw new NotImplementedException ();
+            }
+
+            public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
+            {
+                throw new NotImplementedException ();
+            }
+
+            public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
+            {
+                throw new NotImplementedException ();
+            }
+
+            #endregion
         }
 
         public sealed class TextAsset
             : IAsset
         {
             public String Text { get; set; }
+
+            #region IAsset
+
+            public String Id { get { return null; } }
+
+            public List <Type> RequiredSerialisers ()
+            {
+                return new List<Type> () { typeof (StringSerialiser) };
+            }
+
+            public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
+            {
+                this.Text = tsdb.GetTypeSerialiser <String> ().Read (br);
+            }
+
+            public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
+            {
+                tsdb.GetTypeSerialiser <String> ().Write (bw, this.Text);
+            }
+
+            #endregion
         }
 
         public sealed class TextureAsset
@@ -1210,19 +1273,68 @@ namespace Cor
             public Byte[] Data { get; set; }
 
             // Data allocated in standard system RAM
-            //public Byte[,] Mipmaps { get; set; }
+            public Byte[,] Mipmaps { get; set; }
 
             public Int32 Width { get; set; }
             public Int32 Height { get; set; }
 
             public SurfaceFormat SurfaceFormat { get; set; }
+
+            #region IAsset
+
+            public String Id { get { return null; } }
+
+            public List <Type> RequiredSerialisers ()
+            {
+                throw new NotImplementedException ();
+            }
+
+            public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
+            {
+                throw new NotImplementedException ();
+            }
+
+            public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
+            {
+                throw new NotImplementedException ();
+            }
+
+            #endregion
         }
 
     #endregion
 
     #region Interfaces
 
-        public interface IAsset {}
+
+        /// <summary>
+        /// Base interface for all assets
+        /// </summary>
+        public interface IAsset
+        {
+            /// <summary>
+            /// A unique id for this asset, if null this asset has not
+            /// been instantiated.
+            /// </summary>
+            String Id { get; }
+
+            /// <summary>
+            /// Defines Which TypeSerialisers does this asset require to
+            /// serialise itself to and from a binary stream.
+            /// </summary>
+            List <Type> RequiredSerialisers ();
+
+            /// <summary>
+            /// Reads this asset from a binary stream.
+            /// </summary>
+            void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb);
+
+
+            /// <summary>
+            /// Writes this asset to a binary stream.
+            /// </summary>
+            void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb);
+        }
 
     #endregion
 
@@ -2331,7 +2443,7 @@ namespace Cor
 
     #region Primitive Types
 
-    class Int64Serialiser
+    public class Int64Serialiser
         : TypeSerialiser<Int64>
     {
         internal Int64Serialiser () {}
@@ -2347,10 +2459,10 @@ namespace Cor
         }
     }
 
-    class BooleanSerialiser
+    public class BooleanSerialiser
         : TypeSerialiser<Boolean>
     {
-        internal BooleanSerialiser () {}
+        public BooleanSerialiser () {}
 
         public override Boolean Read(BinaryReader abr)
         {
@@ -2363,10 +2475,10 @@ namespace Cor
         }
     }
 
-    class ByteSerialiser
+    public class ByteSerialiser
         : TypeSerialiser<Byte>
     {
-        internal ByteSerialiser () {}
+        public ByteSerialiser () {}
 
         public override Byte Read(BinaryReader abr)
         {
@@ -2379,10 +2491,10 @@ namespace Cor
         }
     }
 
-    class CharSerialiser
+    public class CharSerialiser
         : TypeSerialiser<Char>
     {
-        internal CharSerialiser () {}
+        public CharSerialiser () {}
 
         public override Char Read(BinaryReader abr)
         {
@@ -2395,10 +2507,10 @@ namespace Cor
         }
     }
 
-    class DoubleSerialiser
+    public class DoubleSerialiser
         : TypeSerialiser<Double>
     {
-        internal DoubleSerialiser () {}
+        public DoubleSerialiser () {}
 
         public override Double Read(BinaryReader abr)
         {
@@ -2411,10 +2523,10 @@ namespace Cor
         }
     }
 
-    class Int16Serialiser
+    public class Int16Serialiser
         : TypeSerialiser<Int16>
     {
-        internal Int16Serialiser () {}
+        public Int16Serialiser () {}
 
         public override Int16 Read(BinaryReader abr)
         {
@@ -2427,10 +2539,10 @@ namespace Cor
         }
     }
 
-    class Int32Serialiser
+    public class Int32Serialiser
         : TypeSerialiser<Int32>
     {
-        internal Int32Serialiser () {}
+        public Int32Serialiser () {}
 
         public override Int32 Read(BinaryReader abr)
         {
@@ -2443,10 +2555,10 @@ namespace Cor
         }
     }
 
-    class SByteSerialiser
+    public class SByteSerialiser
         : TypeSerialiser<SByte>
     {
-        internal SByteSerialiser () {}
+        public SByteSerialiser () {}
 
         public override SByte Read(BinaryReader abr)
         {
@@ -2459,10 +2571,10 @@ namespace Cor
         }
     }
 
-    class SingleSerialiser
+    public class SingleSerialiser
         : TypeSerialiser<Single>
     {
-        internal SingleSerialiser () {}
+        public SingleSerialiser () {}
 
         public override Single Read(BinaryReader abr)
         {
@@ -2475,10 +2587,10 @@ namespace Cor
         }
     }
 
-    class UInt16Serialiser
+    public class UInt16Serialiser
         : TypeSerialiser<UInt16>
     {
-        internal UInt16Serialiser () {}
+        public UInt16Serialiser () {}
 
         public override UInt16 Read(BinaryReader abr)
         {
@@ -2491,10 +2603,10 @@ namespace Cor
         }
     }
 
-    class UInt32Serialiser
+    public class UInt32Serialiser
         : TypeSerialiser<UInt32>
     {
-        internal UInt32Serialiser () {}
+        public UInt32Serialiser () {}
 
         public override UInt32 Read(BinaryReader abr)
         {
@@ -2507,10 +2619,10 @@ namespace Cor
         }
     }
 
-    class UInt64Serialiser
+    public class UInt64Serialiser
         : TypeSerialiser<UInt64>
     {
-        internal UInt64Serialiser () {}
+        public UInt64Serialiser () {}
 
         public override UInt64 Read(BinaryReader cbr)
         {
@@ -2527,10 +2639,10 @@ namespace Cor
 
     #region System Types
 
-    class StringSerialiser
+    public class StringSerialiser
         : TypeSerialiser<String>
     {
-        internal StringSerialiser () {}
+        public StringSerialiser () {}
 
         public override String Read(BinaryReader abr)
         {
@@ -2543,10 +2655,10 @@ namespace Cor
         }
     }
 
-    class DecimalSerialiser
+    public class DecimalSerialiser
         : TypeSerialiser<Decimal>
     {
-        internal DecimalSerialiser () {}
+        public DecimalSerialiser () {}
 
         public override Decimal Read(BinaryReader abr)
         {
@@ -2559,10 +2671,10 @@ namespace Cor
         }
     }
 
-    class TimeSpanSerialiser
+    public class TimeSpanSerialiser
         : TypeSerialiser<TimeSpan>
     {
-        internal TimeSpanSerialiser () {}
+        public TimeSpanSerialiser () {}
 
         public override TimeSpan Read(BinaryReader abr)
         {
@@ -2578,14 +2690,14 @@ namespace Cor
     }
 
     // test reading lists containing different items from a chain of inheritance.
-    class ListSerialiser<T>
+    public class ListSerialiser<T>
         : TypeSerialiser<List<T>>
     {
         TypeSerialiser<T> elementSerialiser;
 
         TypeSerialiserDatabase manager;
 
-        internal ListSerialiser () {}
+        public ListSerialiser () {}
 
         public override void Initialise (TypeSerialiserDatabase manager)
         {
@@ -2648,14 +2760,14 @@ namespace Cor
         }
     }
 
-    class NullableSerialiser<T>
+    public class NullableSerialiser<T>
         : TypeSerialiser<T?>
     where T
         : struct
     {
         TypeSerialiser<T> valueSerialiser;
 
-        internal NullableSerialiser () {}
+        public NullableSerialiser () {}
 
         public override void Initialise (TypeSerialiserDatabase manager)
         {
@@ -2690,12 +2802,12 @@ namespace Cor
     // test
     // enum Foo : long { One, Two };
     // enum Bar : byte { x = 255 };
-    class EnumSerialiser<T>
+    public class EnumSerialiser<T>
         : TypeSerialiser<T>
     {
         TypeSerialiser underlyingTypeSerialiser;
 
-        internal EnumSerialiser () {}
+        public EnumSerialiser () {}
 
         public override void Initialise(TypeSerialiserDatabase manager)
         {
@@ -2719,14 +2831,14 @@ namespace Cor
         }
     }
 
-    class ArraySerialiser<T>
+    public class ArraySerialiser<T>
         : TypeSerialiser<T[]>
     {
         TypeSerialiser<T> elementSerialiser;
 
         TypeSerialiserDatabase manager;
 
-        internal ArraySerialiser () {}
+        public ArraySerialiser () {}
 
         public override void Initialise(TypeSerialiserDatabase manager)
         {
@@ -2787,7 +2899,7 @@ namespace Cor
         }
     }
 
-    class DictionarySerialiser<TKey, TValue>
+    public class DictionarySerialiser<TKey, TValue>
         : TypeSerialiser<Dictionary<TKey, TValue>>
     {
         TypeSerialiser<TKey> keySerialiser;
@@ -2795,7 +2907,7 @@ namespace Cor
 
         TypeSerialiserDatabase manager;
 
-        internal DictionarySerialiser () {}
+        public DictionarySerialiser () {}
 
         public override void Initialise(TypeSerialiserDatabase manager)
         {
@@ -2894,10 +3006,10 @@ namespace Cor
 
     #region Abacus Types
 
-    class Rgba32Serialiser
+    public class Rgba32Serialiser
         : TypeSerialiser<Rgba32>
     {
-        internal Rgba32Serialiser () {}
+        public Rgba32Serialiser () {}
 
         public override Rgba32 Read(BinaryReader abr)
         {
@@ -2918,10 +3030,10 @@ namespace Cor
         }
     }
 
-    class Matrix44Serialiser
+    public class Matrix44Serialiser
         : TypeSerialiser<Matrix44>
     {
-        internal Matrix44Serialiser () {}
+        public Matrix44Serialiser () {}
 
         public override Matrix44 Read(BinaryReader abr)
         {
@@ -2977,10 +3089,10 @@ namespace Cor
         }
     }
 
-    class QuaternionSerialiser
+    public class QuaternionSerialiser
         : TypeSerialiser<Quaternion>
     {
-        internal QuaternionSerialiser () {}
+        public QuaternionSerialiser () {}
 
         public override Quaternion Read(BinaryReader abr)
         {
@@ -3001,10 +3113,10 @@ namespace Cor
         }
     }
 
-    class Vector2Serialiser
+    public class Vector2Serialiser
         : TypeSerialiser<Vector2>
     {
-        internal Vector2Serialiser () {}
+        public Vector2Serialiser () {}
 
         public override Vector2 Read(BinaryReader abr)
         {
@@ -3021,10 +3133,10 @@ namespace Cor
         }
     }
 
-    class Vector3Serialiser
+    public class Vector3Serialiser
         : TypeSerialiser<Vector3>
     {
-        internal Vector3Serialiser () {}
+        public Vector3Serialiser () {}
 
         public override Vector3 Read(BinaryReader abr)
         {
@@ -3043,10 +3155,10 @@ namespace Cor
         }
     }
 
-    class Vector4Serialiser
+    public class Vector4Serialiser
         : TypeSerialiser<Vector4>
     {
-        internal Vector4Serialiser () {}
+        public Vector4Serialiser () {}
 
         public override Vector4 Read(BinaryReader abr)
         {
@@ -3071,12 +3183,12 @@ namespace Cor
 
     #region Cor Types
 
-    class VertexDeclarationSerialiser
+    public class VertexDeclarationSerialiser
         : TypeSerialiser<VertexDeclaration>
     {
         TypeSerialiser<VertexElement> vertexElementSerialiser;
 
-        internal VertexDeclarationSerialiser () {}
+        public VertexDeclarationSerialiser () {}
 
         public override void Initialise(TypeSerialiserDatabase manager)
         {
@@ -3111,13 +3223,13 @@ namespace Cor
         }
     }
 
-    class VertexElementSerialiser
+    public class VertexElementSerialiser
         : TypeSerialiser<VertexElement>
     {
         TypeSerialiser<VertexElementFormat> formatSerialiser;
         TypeSerialiser<VertexElementUsage> usageSerialiser;
 
-        internal VertexElementSerialiser () {}
+        public VertexElementSerialiser () {}
 
         public override void Initialise(TypeSerialiserDatabase manager)
         {
@@ -3147,12 +3259,12 @@ namespace Cor
 
 
 
-    class GeometryBufferSerialiser
+    public class GeometryBufferSerialiser
         : TypeSerialiser<IGeometryBuffer>
     {
         TypeSerialiser<VertexDeclaration> vertexDeclSerialiser;
 
-        internal GeometryBufferSerialiser () {}
+        public GeometryBufferSerialiser () {}
 
         public override void Initialise(TypeSerialiserDatabase manager)
         {
@@ -3252,6 +3364,7 @@ namespace Cor
 
     public class TypeSerialiserDatabase
     {
+        // Target type to type serialiser implementation.
         readonly Dictionary<Type, TypeSerialiser> assetTypeSerialisers;
 
         public TypeSerialiserDatabase()
@@ -3259,15 +3372,39 @@ namespace Cor
             assetTypeSerialisers = new Dictionary<Type, TypeSerialiser> ();
         }
 
-        public TypeSerialiser<T> GetTypeSerialiser<T>()
+        public void RegisterTypeSerialiser<TTarget, TSerialiser> ()
+        where TSerialiser : TypeSerialiser <TTarget>
         {
-            return GetTypeSerialiser(typeof (T)) as TypeSerialiser<T>;
+            if (assetTypeSerialisers.ContainsKey (typeof(TTarget)))
+            {
+                throw new Exception (
+                    String.Format (
+                        "This type seraliser database already " +
+                        "has a seraliaser:{0} for target type:{1}.",
+                        typeof (TSerialiser),
+                        typeof (TTarget)
+                        ));
+            }
+
+            assetTypeSerialisers [typeof (TTarget)]
+                = Activator.CreateInstance (typeof (TSerialiser))
+                    as TypeSerialiser;
+        }
+
+        public TypeSerialiser<TTarget> GetTypeSerialiser<TTarget>()
+        {
+            return GetTypeSerialiser(typeof (TTarget))
+                as TypeSerialiser<TTarget>;
         }
 
         public TypeSerialiser GetTypeSerialiser(Type type)
         {
             if (!assetTypeSerialisers.ContainsKey (type))
-                assetTypeSerialisers [type] = Activator.CreateInstance (type) as TypeSerialiser;
+                throw new Exception (
+                    String.Format (
+                        "A type serialiser for type:{0} has " +
+                        "not been regisitered",
+                        type));
 
             return assetTypeSerialisers [type];
         }

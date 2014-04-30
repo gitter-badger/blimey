@@ -1,7 +1,7 @@
-    class CharSerialiser
+    public class CharSerialiser
         : TypeSerialiser<Char>
     {
-        internal CharSerialiser () {}
+        public CharSerialiser () {}
 
         public override Char Read(BinaryReader abr)
         {

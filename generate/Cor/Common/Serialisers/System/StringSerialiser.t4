@@ -1,7 +1,7 @@
-    class StringSerialiser
+    public class StringSerialiser
         : TypeSerialiser<String>
     {
-        internal StringSerialiser () {}
+        public StringSerialiser () {}
 
         public override String Read(BinaryReader abr)
         {

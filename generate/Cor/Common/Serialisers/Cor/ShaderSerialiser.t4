@@ -1,9 +1,9 @@
-    class ShaderSerialiser
+    public class ShaderSerialiser
         : TypeSerialiser<IShader>
     {
         TypeSerialiser<ShaderDefinition> ShaderDefinitionSerialiser;
 
-        internal ShaderSerialiser () {}
+        public ShaderSerialiser () {}
 
         public override void Initialise(TypeSerialiserDatabase manager)
         {

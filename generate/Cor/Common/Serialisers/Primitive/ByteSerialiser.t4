@@ -1,7 +1,7 @@
-    class ByteSerialiser
+    public class ByteSerialiser
         : TypeSerialiser<Byte>
     {
-        internal ByteSerialiser () {}
+        public ByteSerialiser () {}
 
         public override Byte Read(BinaryReader abr)
         {

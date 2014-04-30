@@ -1,9 +1,9 @@
-    class TextureSerialiser
+    public class TextureSerialiser
         : TypeSerialiser<ITexture>
     {
         TypeSerialiser<SurfaceFormat> surfaceFormatSerialiser;
 
-        internal TextureSerialiser () {}
+        public TextureSerialiser () {}
 
         public override void Initialise(TypeSerialiserDatabase manager)
         {

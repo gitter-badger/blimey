@@ -1,7 +1,7 @@
-    class DecimalSerialiser
+    public class DecimalSerialiser
         : TypeSerialiser<Decimal>
     {
-        internal DecimalSerialiser () {}
+        public DecimalSerialiser () {}
 
         public override Decimal Read(BinaryReader abr)
         {

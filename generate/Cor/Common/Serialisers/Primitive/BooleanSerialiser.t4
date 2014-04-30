@@ -1,7 +1,7 @@
-    class BooleanSerialiser
+    public class BooleanSerialiser
         : TypeSerialiser<Boolean>
     {
-        internal BooleanSerialiser () {}
+        public BooleanSerialiser () {}
 
         public override Boolean Read(BinaryReader abr)
         {

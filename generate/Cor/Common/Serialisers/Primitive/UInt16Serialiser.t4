@@ -1,7 +1,7 @@
-    class UInt16Serialiser
+    public class UInt16Serialiser
         : TypeSerialiser<UInt16>
     {
-        internal UInt16Serialiser () {}
+        public UInt16Serialiser () {}
 
         public override UInt16 Read(BinaryReader abr)
         {

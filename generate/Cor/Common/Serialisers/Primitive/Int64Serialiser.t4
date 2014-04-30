@@ -1,4 +1,4 @@
-    class Int64Serialiser
+    public class Int64Serialiser
         : TypeSerialiser<Int64>
     {
         internal Int64Serialiser () {}

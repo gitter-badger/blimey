@@ -1,7 +1,7 @@
-    class Matrix44Serialiser
+    public class Matrix44Serialiser
         : TypeSerialiser<Matrix44>
     {
-        internal Matrix44Serialiser () {}
+        public Matrix44Serialiser () {}
 
         public override Matrix44 Read(BinaryReader abr)
         {

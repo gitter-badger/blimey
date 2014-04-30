@@ -5,11 +5,32 @@
             public Byte[] Data { get; set; }
 
             // Data allocated in standard system RAM
-            //public Byte[,] Mipmaps { get; set; }
+            public Byte[,] Mipmaps { get; set; }
 
             public Int32 Width { get; set; }
             public Int32 Height { get; set; }
 
             public SurfaceFormat SurfaceFormat { get; set; }
+
+            #region IAsset
+
+            public String Id { get { return null; } }
+
+            public List <Type> RequiredSerialisers ()
+            {
+                throw new NotImplementedException ();
+            }
+
+            public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
+            {
+                throw new NotImplementedException ();
+            }
+
+            public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
+            {
+                throw new NotImplementedException ();
+            }
+
+            #endregion
         }
 

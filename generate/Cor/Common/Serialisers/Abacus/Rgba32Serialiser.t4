@@ -1,7 +1,7 @@
-    class Rgba32Serialiser
+    public class Rgba32Serialiser
         : TypeSerialiser<Rgba32>
     {
-        internal Rgba32Serialiser () {}
+        public Rgba32Serialiser () {}
 
         public override Rgba32 Read(BinaryReader abr)
         {

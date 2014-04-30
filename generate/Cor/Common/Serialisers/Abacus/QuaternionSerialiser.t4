@@ -1,7 +1,7 @@
-    class QuaternionSerialiser
+    public class QuaternionSerialiser
         : TypeSerialiser<Quaternion>
     {
-        internal QuaternionSerialiser () {}
+        public QuaternionSerialiser () {}
 
         public override Quaternion Read(BinaryReader abr)
         {

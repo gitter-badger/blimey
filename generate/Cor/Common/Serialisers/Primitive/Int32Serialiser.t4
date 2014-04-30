@@ -1,7 +1,7 @@
-    class Int32Serialiser
+    public class Int32Serialiser
         : TypeSerialiser<Int32>
     {
-        internal Int32Serialiser () {}
+        public Int32Serialiser () {}
 
         public override Int32 Read(BinaryReader abr)
         {

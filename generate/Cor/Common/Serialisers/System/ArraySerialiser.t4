@@ -1,11 +1,11 @@
-    class ArraySerialiser<T>
+    public class ArraySerialiser<T>
         : TypeSerialiser<T[]>
     {
         TypeSerialiser<T> elementSerialiser;
 
         TypeSerialiserDatabase manager;
 
-        internal ArraySerialiser () {}
+        public ArraySerialiser () {}
 
         public override void Initialise(TypeSerialiserDatabase manager)
         {

@@ -1,7 +1,7 @@
-    class UInt64Serialiser
+    public class UInt64Serialiser
         : TypeSerialiser<UInt64>
     {
-        internal UInt64Serialiser () {}
+        public UInt64Serialiser () {}
 
         public override UInt64 Read(BinaryReader cbr)
         {

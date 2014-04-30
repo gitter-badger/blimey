@@ -1,12 +1,12 @@
     // test reading lists containing different items from a chain of inheritance.
-    class ListSerialiser<T>
+    public class ListSerialiser<T>
         : TypeSerialiser<List<T>>
     {
         TypeSerialiser<T> elementSerialiser;
 
         TypeSerialiserDatabase manager;
 
-        internal ListSerialiser () {}
+        public ListSerialiser () {}
 
         public override void Initialise (TypeSerialiserDatabase manager)
         {

@@ -1,10 +1,10 @@
-    class VertexElementSerialiser
+    public class VertexElementSerialiser
         : TypeSerialiser<VertexElement>
     {
         TypeSerialiser<VertexElementFormat> formatSerialiser;
         TypeSerialiser<VertexElementUsage> usageSerialiser;
 
-        internal VertexElementSerialiser () {}
+        public VertexElementSerialiser () {}
 
         public override void Initialise(TypeSerialiserDatabase manager)
         {

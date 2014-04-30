@@ -1,7 +1,7 @@
-    class Vector3Serialiser
+    public class Vector3Serialiser
         : TypeSerialiser<Vector3>
     {
-        internal Vector3Serialiser () {}
+        public Vector3Serialiser () {}
 
         public override Vector3 Read(BinaryReader abr)
         {

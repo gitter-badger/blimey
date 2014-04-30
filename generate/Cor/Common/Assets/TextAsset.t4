@@ -2,5 +2,26 @@
             : IAsset
         {
             public String Text { get; set; }
+
+            #region IAsset
+
+            public String Id { get { return null; } }
+
+            public List <Type> RequiredSerialisers ()
+            {
+                return new List<Type> () { typeof (StringSerialiser) };
+            }
+
+            public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
+            {
+                this.Text = tsdb.GetTypeSerialiser <String> ().Read (br);
+            }
+
+            public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
+            {
+                tsdb.GetTypeSerialiser <String> ().Write (bw, this.Text);
+            }
+
+            #endregion
         }
 

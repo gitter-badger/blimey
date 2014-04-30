@@ -1,9 +1,9 @@
-    class VertexDeclarationSerialiser
+    public class VertexDeclarationSerialiser
         : TypeSerialiser<VertexDeclaration>
     {
         TypeSerialiser<VertexElement> vertexElementSerialiser;
 
-        internal VertexDeclarationSerialiser () {}
+        public VertexDeclarationSerialiser () {}
 
         public override void Initialise(TypeSerialiserDatabase manager)
         {

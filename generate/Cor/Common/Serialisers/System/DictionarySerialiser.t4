@@ -1,4 +1,4 @@
-    class DictionarySerialiser<TKey, TValue>
+    public class DictionarySerialiser<TKey, TValue>
         : TypeSerialiser<Dictionary<TKey, TValue>>
     {
         TypeSerialiser<TKey> keySerialiser;
@@ -6,7 +6,7 @@
 
         TypeSerialiserDatabase manager;
 
-        internal DictionarySerialiser () {}
+        public DictionarySerialiser () {}
 
         public override void Initialise(TypeSerialiserDatabase manager)
         {

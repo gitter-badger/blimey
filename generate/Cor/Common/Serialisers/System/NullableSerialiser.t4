@@ -1,11 +1,11 @@
-    class NullableSerialiser<T>
+    public class NullableSerialiser<T>
         : TypeSerialiser<T?>
     where T
         : struct
     {
         TypeSerialiser<T> valueSerialiser;
 
-        internal NullableSerialiser () {}
+        public NullableSerialiser () {}
 
         public override void Initialise (TypeSerialiserDatabase manager)
         {

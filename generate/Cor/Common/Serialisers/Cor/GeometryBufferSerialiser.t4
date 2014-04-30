@@ -1,9 +1,9 @@
-    class GeometryBufferSerialiser
+    public class GeometryBufferSerialiser
         : TypeSerialiser<IGeometryBuffer>
     {
         TypeSerialiser<VertexDeclaration> vertexDeclSerialiser;
 
-        internal GeometryBufferSerialiser () {}
+        public GeometryBufferSerialiser () {}
 
         public override void Initialise(TypeSerialiserDatabase manager)
         {
