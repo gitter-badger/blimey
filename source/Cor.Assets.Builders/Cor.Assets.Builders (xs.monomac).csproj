@@ -54,6 +54,7 @@
     <Compile Include="Source\AssetProcessors\MeshAssetProcessor.cs" />
     <Compile Include="Source\AssetProcessors\TextureAssetProcessor.cs" />
     <Compile Include="Source\AssetImporters\ColourmapAssetImporter.cs" />
+    <Compile Include="Source\AssetImporters\TextAssetImporter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

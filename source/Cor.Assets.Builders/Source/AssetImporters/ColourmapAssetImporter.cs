@@ -83,10 +83,10 @@ namespace Cor
             output.OutputAsset = outputResource;
 
             if (input.Files.Count != 1)
-                throw new Exception ("BitmapResourceBuilder only supports one input file.");
+                throw new Exception ("ColourmapAssetImporter only supports one input file.");
 
             if (!File.Exists (input.Files[0]))
-                throw new Exception ("BitmapResourceBuilder cannot find input file.");
+                throw new Exception ("ColourmapAssetImporter cannot find input file.");
 
 
             #if WINDOWS

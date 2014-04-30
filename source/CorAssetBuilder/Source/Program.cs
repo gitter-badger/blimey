@@ -55,7 +55,7 @@ namespace CorAssetBuilder
 
             if (args.Length > 0)
             {
-                currentPlatform = args[0];
+                currentPlatform = args [0];
             }
 
             if (args.Length > 1)
@@ -101,7 +101,7 @@ namespace CorAssetBuilder
 
             var assetDefinitions = assetDefinitionFiles
                 .Select (
-                    file =>
+                                       file =>
                     file.ReadAllText ()
                         .FromJson<Configuration.AssetDefinition> ())
                 .ToList ();
@@ -119,17 +119,17 @@ namespace CorAssetBuilder
             if (currentPlatform != null)
                 platformIds = new List<string> { currentPlatform };
 
-            Builders.Init();
+            Builders.Init ();
 
             foreach (var platformId in platformIds)
             {
                 var pId = platformId;
                 var platformAssetDeinitions = assetDefinitions
                     .Where (
-                        x =>
+                                                  x =>
                         x.HasSourceSetForPlatform (pId))
                     .ToList ();
-
+                
                 ProcessAssetsForPlatform (pId, platformAssetDeinitions);
             }
 		}
@@ -144,7 +144,7 @@ namespace CorAssetBuilder
             {
                 var sourceset = assetDefinition.GetSourceForPlatform (platformId);
 
-                var sourcefiles = sourceset.Files
+                var sourcefiles = sourceset.Importer.Files
                     .Select (x => Path.Combine (projectDefinition.ResourcesFolder, x))
                     .ToList ();
 
@@ -160,26 +160,41 @@ namespace CorAssetBuilder
 
                 try
                 {
-                    //Type assetType = Type.GetType (assetDefinition.AssetType);
-
-                    Type assetImporterType = Type.GetType (sourceset.AssetImporterType + ",.dll");
-                    Type assetProcessorType = Type.GetType (sourceset.AssetProcessorType);
-
-                    IAsset r = BuildResource (assetImporterType, sourcefiles, sourceset.AssetImporterSettings);
-                    IAsset a = BuildAsset (assetProcessorType, r, sourceset.AssetProcessorSettings);
-
-                    WriteAsset (a, assetfile);
+                    Type assetImporterType = Type.GetType (sourceset.Importer.AssetImporterType + ",.dll");
+                    
+                    if (assetImporterType == null)
+                    {
+                        throw new Exception ("Failed to find Asset Importer Type: " + sourceset.Importer.AssetImporterType);
+                    }
+                    
+                    IAsset ass = ImportAsset (assetImporterType, sourcefiles, sourceset.Importer.AssetImporterSettings);
+                    
+                    foreach (var processor in sourceset.Processors)
+                    {
+                        Type assetProcessorType = Type.GetType (processor.AssetProcessorType);
+                        ass = ProcessAsset (assetProcessorType, ass, processor.AssetProcessorSettings);
+                    }
+                    
+                    WriteAsset (ass, assetfile);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine ("\t! failed to build: " + ex.GetType () + " - " + ex.Message.Replace(Environment.NewLine, "  "));
+                    Console.WriteLine ("\t\t! failed to build: " + ex.GetType () + " - " + ex.Message.Replace (Environment.NewLine, "  "));
+                    
+                    
+                    string st = ex.StackTrace;
+                    string [] sta = st.Split (new String []{Environment.NewLine}, StringSplitOptions.None);
+                    foreach (var x in sta)
+                    {
+                        Console.WriteLine ("\t\t!\t"+x);
+                    }
                 }
 
                 Console.WriteLine ("");
             }
         }
 
-        static IAsset BuildResource (
+        static IAsset ImportAsset (
             Type assetImporterType,
             List<String> sourceFiles,
             Dictionary<String, Object> settings)
@@ -202,7 +217,7 @@ namespace CorAssetBuilder
             return output.OutputAsset;
         }
 
-        static IAsset BuildAsset (
+        static IAsset ProcessAsset (
             Type assetProcessorType,
             IAsset inputAsset,
             Dictionary<String, Object> settings)
@@ -231,8 +246,73 @@ namespace CorAssetBuilder
 
             return output.OutputAsset;
         }
+        
+        static void WriteFileHeader (BinaryWriter writer)
+        {
+            var tsdb = new TypeSerialiserDatabase ();
+            
+            tsdb.RegisterTypeSerialiser<Byte, ByteSerialiser>();
+            
+            // file type
+            tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) 'C');
+            tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) 'B');
+            tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) 'A');
+            
+            // file version
+            tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) 0);
+            
+            // platform index
+            tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) 0);
+            
+            // total filesize
+            // ? why does xna have this ?
+        }
 
-        static void WriteAsset (IAsset a, string destination)
+        static void WriteObjectData (BinaryWriter writer, IAsset a)
+        {
+            List<Type> requiredTypeSerialisers = a.RequiredSerialisers ();
+            
+            var tsdb = new TypeSerialiserDatabase ();
+            
+            foreach (Type typeSerialiserType in requiredTypeSerialisers)
+            {
+                Type targetType = typeSerialiserType.BaseType ().GenericTypeArguments () [0];
+                
+                MethodInfo mi = typeof(TypeSerialiserDatabase).GetMethod ("RegisterTypeSerialiser");
+                
+                if (mi == null)
+                {
+                    throw new Exception ("Failed to find the TypeSerialiserDatabase's RegisterTypeSerialiser method.");    
+                }
+                
+                var gmi = mi.MakeGenericMethod(targetType, typeSerialiserType);
+                gmi.Invoke(tsdb, null);
+            }
+            
+            a.Serialise (writer, tsdb);
+        }
+
+        static void WriteFileMeta (BinaryWriter writer, IAsset a)
+        {
+            List<Type> requiredTypeSerialisers = a.RequiredSerialisers ();
+            
+            var tsdb = new TypeSerialiserDatabase ();
+            tsdb.RegisterTypeSerialiser<Byte, ByteSerialiser>();
+            tsdb.RegisterTypeSerialiser<String, StringSerialiser>();
+            
+            tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) requiredTypeSerialisers.Count);
+            
+            foreach (Type type in requiredTypeSerialisers)
+            {
+                // Fully qualified  type serialiser name
+                tsdb.GetTypeSerialiser <String> ().Write (writer, type.AssemblyQualifiedName );
+                
+                // Type serialiser version
+                tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) 0);
+            }
+        }
+
+        static void WriteAsset (IAsset a, String destination)
         {
             Console.WriteLine ("\t\tabout to write asset to " + destination);
             
@@ -240,21 +320,19 @@ namespace CorAssetBuilder
             {
                 using (var writer = new BinaryWriter (stream))
                 {
-                    var tsdb = new TypeSerialiserDatabase ();
+                    // Cor Binary Asset File Header
+                    //------------------------------------------------------------------------------------------------//
+                    WriteFileHeader (writer);
                     
-                    tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) 'C');
                     
-                    //var byteSerialiser = new Ser
-                    // file type
-                    writer.Write ((Byte) 'C');
-                    writer.Write ((Byte) 'B');
-                    writer.Write ((Byte) 'A');
+                    // Meta data about the types serialisers need to read this type
+                    //------------------------------------------------------------------------------------------------//
+                    WriteFileMeta (writer, a);
                     
-                    // platform
-                    writer.Write ((Byte) 0);
                     
-                    writer.Write ((Byte) 1);
-                    
+                    // Now rtie the object
+                    //------------------------------------------------------------------------------------------------//
+                    WriteObjectData (writer, a);
                 }
             }
         }

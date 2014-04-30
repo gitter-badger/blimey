@@ -12,6 +12,7 @@ cp bin/Debug/CorAssetBuilder.exe /usr/local/bin/cab_app/CorAssetBuilder.exe
 cp bin/Debug/*.dll /usr/local/bin/cab_app/
 cp bin/Debug/*.dylib /usr/local/bin/cab_app/
 cp bin/Debug/*.config /usr/local/bin/cab_app/
+cp bin/Debug/*.mdb /usr/local/bin/cab_app/
 
 TIME="$(date +%s)"
 

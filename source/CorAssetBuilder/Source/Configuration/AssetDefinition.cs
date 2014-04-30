@@ -11,6 +11,39 @@ namespace CorAssetBuilder.Configuration
     // - > AssetProcessor + Intermediate Data + Asset Settings
     // = Asset
 
+    public class Importer
+    {
+        /// <summary>
+        /// Defines which resource files this resource collection
+        /// includes.
+        /// </summary>
+        public List<String> Files { get; set; }
+        
+        /// <summary>
+        /// The importer that will load the resource file and convert it into an Asset.
+        /// </summary>
+        public String AssetImporterType { get; set; }
+
+        /// <summary>
+        /// The settings associated with the asset importer
+        /// </summary>
+        public Dictionary<String, Object> AssetImporterSettings { get; set; }
+    }
+    
+    
+    public class Processor
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        public String AssetProcessorType { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Dictionary<String, Object> AssetProcessorSettings { get; set; }   
+    }
+    
     /// <summary>
     /// A resource defines a collection of
     /// files for a given collection of platforms, which
@@ -23,52 +56,19 @@ namespace CorAssetBuilder.Configuration
         /// are built for.
         /// </summary>]
         public List<String> Platforms { get; set; }
-
+        
         /// <summary>
-        ///
+        /// Every source set needs exactly one importer with take it from
+        /// resource -> asset.
         /// </summary>
-        public String AssetImporterType { get; set; }
-
+        public Importer Importer { get; set; }
+        
         /// <summary>
-        ///
+        /// Optionally a source set can define a pipeline of sequential asset
+        /// processors which get called one by one, each mutating the originally
+        /// imported asset into a new one.
         /// </summary>
-        public Dictionary<String, Object> AssetImporterSettings { get; set; }
-
-
-        /// <summary>
-        ///
-        /// </summary>
-        public String AssetProcessorType { get; set; }
-
-        /// <summary>
-        /// Every source-set gets built into an asset.  Once the source-set
-        /// has been turned into a resource by the resource-builder
-        /// the cor build pipeline then
-        /// uses these AssetProcessorType and the resource to generate
-        /// the asset.
-        /// For example:
-        ///   A JPG file -> Texture2D
-        ///   - On ios
-        ///     - the JPG file is read by the TextureImporter
-        ///     - the imported data is then run through PVRTC compression,
-        ///       which was specified in the AssetSettings
-        ///     - the platform variant of the asset is built (resulting in
-        ///       a .cba file containing a Texture2D definition and the binary
-        ///       PVRTC data.
-        ///  - On xna
-        ///    - The same as above but with DXT5 compression.
-        /// Another example would be that of compression.  Mobile platforms
-        /// may want a compressed version of an asset whilt other platforms
-        /// do not.
-        /// </summary>
-        public Dictionary<String, Object> AssetProcessorSettings { get; set; }
-
-        /// <summary>
-        /// Defines which resource files this resource collection
-        /// includes.
-        /// </summary>
-        public List<String> Files { get; set; }
-
+        public List<Processor> Processors { get; set; }
     }
 
     public class AssetDefinition
