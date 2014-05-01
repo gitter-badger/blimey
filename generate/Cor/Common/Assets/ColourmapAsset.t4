@@ -22,14 +22,14 @@
 
             public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
             {
-                this.Width = tsdb.GetTypeSerialiser <Int32> ().Read (br);
-                this.Height = tsdb.GetTypeSerialiser <Int32> ().Read (br);
+                Int32 width = tsdb.GetTypeSerialiser <Int32> ().Read (br);
+                Int32 height = tsdb.GetTypeSerialiser <Int32> ().Read (br);
 
-                this.Data = new Rgba32[this.Width, this.Height];
+                this.Data = new Rgba32[width, height];
 
-                for (Int32 i = 0; i < this.Width; ++i)
+                for (Int32 i = 0; i < width; ++i)
                 {
-                    for (Int32 j = 0; j < this.Height; ++j)
+                    for (Int32 j = 0; j < height; ++j)
                     {
                         this.Data[i, j] = 
                             tsdb.GetTypeSerialiser <Rgba32> ()
