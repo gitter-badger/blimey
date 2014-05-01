@@ -1,6 +1,6 @@
 {
     "AssetId" : "unlit",
-    "AssetType" : "Cor.ShaderAsset, Cor.Assets.Builders",
+    "AssetType" : "Cor.ShaderAsset, Cor",
     "SourceSets" :
     [
         {

@@ -1,6 +1,6 @@
 {
     "AssetId" : "cvan01",
-    "AssetType" : "Cor.ColourmapAsset, Cor.Assets.Builders",
+    "AssetType" : "Cor.ColourmapAsset, Cor",
     "SourceSets" :
     [
         {

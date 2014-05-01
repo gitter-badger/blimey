@@ -1,6 +1,6 @@
 {
     "AssetId" : "pixel_lit",
-    "AssetType" : "Cor.ShaderAsset, Cor.Assets.Builders",
+    "AssetType" : "Cor.ShaderAsset, Cor",
     "SourceSets" :
     [
         {

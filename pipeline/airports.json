@@ -1,6 +1,6 @@
 {
     "AssetId" : "airports",
-    "AssetType" : "Cor.TextAsset, Cor.Assets.Builders",
+    "AssetType" : "Cor.TextAsset, Cor",
     "SourceSets" :
     [
         {

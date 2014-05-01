@@ -1,6 +1,6 @@
 {
     "AssetId" : "bg1",
-    "AssetType" : "Cor.ColourmapAsset, Cor.Assets.Builders",
+    "AssetType" : "Cor.ColourmapAsset, Cor",
     "SourceSets" :
     [
         {
