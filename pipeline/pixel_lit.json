@@ -7,7 +7,7 @@
             "Platforms" : [ "monomac" ],
             "Importer" :
             {
-                "AssetImporterType" : "Cor.KronosShaderAssetImporter, Cor.Assets.Builders",
+                "AssetImporterType" : "Cor.KhronosShaderImporter, Cor.Assets.Builders",
                 "AssetImporterSettings" : 
                 {
                     "Variant" : "OpenGL 4" 
@@ -30,7 +30,7 @@
             "Platforms" : [ "xios", "xdroid" ],
             "Importer" :
             {
-                "AssetImporterType" : "Cor.KronosShaderAssetImporter, Cor.Assets.Builders",
+                "AssetImporterType" : "Cor.KhronosShaderImporter, Cor.Assets.Builders",
                 "AssetImporterSettings" :
                 {
                     "Variant" : "OpenGL ES 2"
