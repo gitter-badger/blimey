@@ -34,15 +34,23 @@ namespace Cor
 
             if (settings.ContainsKey ("SurfaceFormat"))
             {
-                SurfaceFormat = (SurfaceFormat) settings ["SurfaceFormat"];
+				String sufaceFormatString = (String) settings ["SurfaceFormat"];
+				SurfaceFormat = (SurfaceFormat) Enum.Parse (
+					typeof(SurfaceFormat),
+					sufaceFormatString);
             }
 
             TextureAsset textureAsset = null;
 
             switch (SurfaceFormat)
             {
-                case SurfaceFormat.Rgba32: textureAsset = ProcessRgba32 (input.InputAsset); break;
+                case SurfaceFormat.Rgba32: 
+					textureAsset = ProcessRgba32 (input.InputAsset); break;
             }
+
+			if (textureAsset == null) {
+			throw new Exception ("TextureAssetProcessor => Failed to set texture Asset");
+			}
 
             return new AssetProcessorOutput<TextureAsset> ()
             {

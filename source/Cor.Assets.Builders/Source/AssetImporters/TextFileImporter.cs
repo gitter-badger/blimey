@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Cor
 {
-    public class TextAssetImporter
+    public class TextFileImporter
         : AssetImporter <TextAsset>
     {
         public override String [] SupportedSourceFileExtensions

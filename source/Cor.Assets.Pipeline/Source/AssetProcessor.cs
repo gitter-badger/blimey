@@ -22,7 +22,13 @@ namespace Cor
         public override AssetProcessorOutput
         BaseProcess (AssetProcessorInput input)
         {
-            return Process (input as AssetProcessorInput <TFrom>);
+			var result = Process (input as AssetProcessorInput <TFrom>);
+
+			if (result.OutputAsset == null) {
+				throw new Exception ("Asset processor produced a null asset.");
+			}
+
+			return result;
         }
 
         public abstract AssetProcessorOutput <TTo>

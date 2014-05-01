@@ -24,7 +24,7 @@
         <Variable name="DYLD_FALLBACK_LIBRARY_PATH" value="$(HOME)/lib:/usr/local/lib:/lib:/usr/lib:/Users/ash/repos/sungiant@github/assimp/bin/assimp_Debug_MacOSX" />
       </EnvironmentVariables>
     </EnvironmentVariables>
-    <Commandlineparameters>monomac ~/repos/github/blimey3D/demo/</Commandlineparameters>
+    <Commandlineparameters>monomac ~/repos/ash/demo/</Commandlineparameters>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">

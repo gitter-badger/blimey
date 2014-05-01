@@ -14,7 +14,7 @@ using System.IO;
 
 namespace Cor
 {
-    public class ColourmapAssetImporter
+    public class ImageFileImporter
         : AssetImporter <ColourmapAsset>
     {
         public override String [] SupportedSourceFileExtensions

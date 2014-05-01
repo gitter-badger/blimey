@@ -53,8 +53,12 @@
     <Compile Include="Source\AssetProcessors\HeightmapAssetProcessor.cs" />
     <Compile Include="Source\AssetProcessors\MeshAssetProcessor.cs" />
     <Compile Include="Source\AssetProcessors\TextureAssetProcessor.cs" />
-    <Compile Include="Source\AssetImporters\ColourmapAssetImporter.cs" />
-    <Compile Include="Source\AssetImporters\TextAssetImporter.cs" />
+    <Compile Include="Source\AssetImporters\PsmShaderImporter.cs" />
+    <Compile Include="Source\AssetImporters\KhronosShaderImporter.cs" />
+    <Compile Include="Source\AssetImporters\XnaShaderImporter.cs" />
+    <Compile Include="Source\AssetImporters\XnaBasicEffectDefinitionImporter.cs" />
+    <Compile Include="Source\AssetImporters\ImageFileImporter.cs" />
+    <Compile Include="Source\AssetImporters\TextFileImporter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

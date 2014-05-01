@@ -150,11 +150,19 @@ namespace CorAssetBuilder
 
                 sourcefiles.ForEach (x => Console.WriteLine ("\t+ " + x));
 
+				String destFolder = 
+					Path.Combine (
+	                    projectDefinition.DestinationFolder,
+	                    platformId);
+
+				if (!Directory.Exists (destFolder))
+					Directory.CreateDirectory (destFolder);
+
                 String assetfile =
                     Path.Combine (
                         projectDefinition.DestinationFolder,
                         platformId,
-						assetDefinition.AssetId + ".cab");
+						assetDefinition.AssetId + ".cba");
 
                 Console.WriteLine ("\t= " + assetfile);
 
@@ -179,15 +187,16 @@ namespace CorAssetBuilder
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine ("\t\t! failed to build: " + ex.GetType () + " - " + ex.Message.Replace (Environment.NewLine, "  "));
-                    
-                    
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.WriteLine ("\t\t! FAILED TO BUILD: " + ex.GetType () + " - " + ex.Message.Replace (Environment.NewLine, "  "));
+
                     string st = ex.StackTrace;
                     string [] sta = st.Split (new String []{Environment.NewLine}, StringSplitOptions.None);
                     foreach (var x in sta)
                     {
                         Console.WriteLine ("\t\t!\t"+x);
                     }
+					Console.ResetColor ();
                 }
 
                 Console.WriteLine ("");
@@ -199,7 +208,7 @@ namespace CorAssetBuilder
             List<String> sourceFiles,
             Dictionary<String, Object> settings)
         {
-            Console.WriteLine ("\t\tabout to build resource with " + assetImporterType);
+			Console.WriteLine ("\t\tabout to import resource with " + assetImporterType);
 
             var assetImporter = Activator.CreateInstance (assetImporterType) as AssetImporter;
 
@@ -222,7 +231,7 @@ namespace CorAssetBuilder
             IAsset inputAsset,
             Dictionary<String, Object> settings)
         {
-            Console.WriteLine ("\t\tabout to build asset with " + assetProcessorType);
+			Console.WriteLine ("\t\tabout to process asset with " + assetProcessorType);
 
             var assetProcessor = Activator.CreateInstance (assetProcessorType) as AssetProcessor;
 
@@ -242,7 +251,6 @@ namespace CorAssetBuilder
             assetProcessorInput.AssetProcessorSettings.Settings = settings;
 
             var output = assetProcessor.BaseProcess (assetProcessorInput);
-
 
             return output.OutputAsset;
         }
@@ -276,7 +284,7 @@ namespace CorAssetBuilder
             
             foreach (Type typeSerialiserType in requiredTypeSerialisers)
             {
-                tsdb.RegisterTypeSerialiser (typeSerialiserType);
+				tsdb.RegisterTypeSerialiser (typeSerialiserType);
             }
             
             a.Serialise (writer, tsdb);
@@ -323,6 +331,10 @@ namespace CorAssetBuilder
                     // Now rtie the object
                     //------------------------------------------------------------------------------------------------//
                     WriteObjectData (writer, a);
+
+					Console.ForegroundColor = ConsoleColor.Green;
+					Console.WriteLine ("\t\tBUILT " + destination);
+					Console.ResetColor ();
                 }
             }
         }
