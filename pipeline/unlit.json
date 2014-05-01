@@ -1,13 +1,17 @@
 {
     "AssetId" : "unlit",
+    "AssetType" : "Cor.ShaderAsset, Cor.Assets.Builders",
     "SourceSets" :
     [
         {
             "Platforms" : [ "monomac" ],
             "Importer" :
             {
-                "AssetImporterType" : "CorKronosShaderAssetImporter, Cor.Assets.Builders",
-                "AssetImporterSettings" : [],
+                "AssetImporterType" : "Cor.KronosShaderAssetImporter, Cor.Assets.Builders",
+                "AssetImporterSettings" :
+                {
+                    "Variant" : "OpenGL 4" 
+                },
                 "Files" :
                 [
                     "ogl4/Unlit_PositionNormal.fsh",
@@ -26,8 +30,11 @@
             "Platforms" : [ "xios", "xdroid" ],
             "Importer" :
             {
-                "AssetImporterType" : "Cor.OGLES2ShaderImporter",
-                "AssetImporterSettings" : [],
+                "AssetImporterType" : "Cor.KronosShaderAssetImporter, Cor.Assets.Builders",
+                "AssetImporterSettings" :
+                {
+                    "Variant" : "OpenGL ES 2"
+                },
                 "Files" :
                 [
                     "ogles2/Unlit_PositionNormal.fsh",
@@ -46,18 +53,18 @@
             "Platforms" : [ "psm" ],
             "Importer" :
             {
-                "AssetImporterType" : "Cor.PsmShaderImporter",
-                "AssetImporterSettings" : [],
+                "AssetImporterType" : "Cor.PsmShaderImporter, Cor.Assets.Builders",
+                "AssetImporterSettings" : {},
                 "Files" :
                 [
-                    "psm/Unlit_PositionNormal.fsh",
-                    "psm/Unlit_PositionNormal.vsh",
-                    "psm/Unlit_PositionNormalColour.fsh",
-                    "psm/Unlit_PositionNormalColour.vsh",
-                    "psm/Unlit_PositionNormalTexture.fsh",
-                    "psm/Unlit_PositionNormalTexture.vsh",
-                    "psm/Unlit_PositionNormalTextureColour.fsh",
-                    "psm/Unlit_PositionNormalTextureColour.vsh"
+                    "psm/Unlit_PositionNormal.fcg",
+                    "psm/Unlit_PositionNormal.vcg",
+                    "psm/Unlit_PositionNormalColour.fcg",
+                    "psm/Unlit_PositionNormalColour.vcg",
+                    "psm/Unlit_PositionNormalTexture.fcg",
+                    "psm/Unlit_PositionNormalTexture.vcg",
+                    "psm/Unlit_PositionNormalTextureColour.fcg",
+                    "psm/Unlit_PositionNormalTextureColour.vcg"
                 ]
             },
             "Processors" : []

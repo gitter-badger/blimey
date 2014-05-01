@@ -4,6 +4,7 @@
 [Rr]elease/
 [Tt]est[Rr]esults
 [Tt]est-[Rr]esults/
+assets/
 
 *.userprefs
 *.suo

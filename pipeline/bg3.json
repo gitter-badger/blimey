@@ -1,5 +1,6 @@
 {
     "AssetId" : "bg3",
+    "AssetType" : "Cor.ColourmapAsset, Cor.Assets.Builders",
     "SourceSets" :
     [
         {
@@ -7,14 +8,17 @@
             "Importer" :
             {
                 "Files" : [ "bg3.png" ],
-                "AssetImporterType" : "Cor.ColourmapAssetImporter, Cor.Assets.Builders",
-                "AssetImporterSettings" : []
+                "AssetImporterType" : "Cor.ImageFileImporter, Cor.Assets.Builders",
+                "AssetImporterSettings" : {}
             },
             "Processors" :
             [
                 {
                     "AssetProcessorType" : "Cor.TextureAssetProcessor, Cor.Assets.Builders",
-                    "AssetProcessorSettings" : [ { "SurfaceFormat" : "Rgba32" } ]
+                    "AssetProcessorSettings" :
+                    { 
+                        "SurfaceFormat" : "Rgba32" 
+                    }
                 }
             ]
         }

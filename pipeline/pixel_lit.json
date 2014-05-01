@@ -1,13 +1,17 @@
 {
     "AssetId" : "pixel_lit",
+    "AssetType" : "Cor.ShaderAsset, Cor.Assets.Builders",
     "SourceSets" :
     [
         {
             "Platforms" : [ "monomac" ],
             "Importer" :
             {
-                "AssetImporterType" : "CorKronosShaderAssetImporter, Cor.Assets.Builders",
-                "AssetImporterSettings" : [],
+                "AssetImporterType" : "Cor.KronosShaderAssetImporter, Cor.Assets.Builders",
+                "AssetImporterSettings" : 
+                {
+                    "Variant" : "OpenGL 4" 
+                },
                 "Files" :
                 [
                     "ogl4/PixelLit_PositionNormal.fsh",
@@ -26,8 +30,11 @@
             "Platforms" : [ "xios", "xdroid" ],
             "Importer" :
             {
-                "AssetImporterType" : "Cor.OGLES2ShaderImporter",
-                "AssetImporterSettings" : [],
+                "AssetImporterType" : "Cor.KronosShaderAssetImporter, Cor.Assets.Builders",
+                "AssetImporterSettings" :
+                {
+                    "Variant" : "OpenGL ES 2"
+                },
                 "Files" :
                 [
                     "ogles2/PixelLit_PositionNormal.fsh",
@@ -46,18 +53,18 @@
             "Platforms" : [ "psm" ],
             "Importer" :
             {
-                "AssetImporterType" : "Cor.PsmShaderImporter",
-                "AssetImporterSettings" : [],
+                "AssetImporterType" : "Cor.PsmShaderImporter, Cor.Assets.Builders",
+                "AssetImporterSettings" : {},
                 "Files" :
                 [
-                    "psm/PixelLit_PositionNormal.fsh",
-                    "psm/PixelLit_PositionNormal.vsh",
-                    "psm/PixelLit_PositionNormalColour.fsh",
-                    "psm/PixelLit_PositionNormalColour.vsh",
-                    "psm/PixelLit_PositionNormalTexture.fsh",
-                    "psm/PixelLit_PositionNormalTexture.vsh",
-                    "psm/PixelLit_PositionNormalTextureColour.fsh",
-                    "psm/PixelLit_PositionNormalTextureColour.vsh"
+                    "psm/PixelLit_PositionNormal.fcg",
+                    "psm/PixelLit_PositionNormal.vcg",
+                    "psm/PixelLit_PositionNormalColour.fcg",
+                    "psm/PixelLit_PositionNormalColour.vcg",
+                    "psm/PixelLit_PositionNormalTexture.fcg",
+                    "psm/PixelLit_PositionNormalTexture.vcg",
+                    "psm/PixelLit_PositionNormalTextureColour.fcg",
+                    "psm/PixelLit_PositionNormalTextureColour.vcg"
                 ]
             },
             "Processors" : []

@@ -1,5 +1,6 @@
 {
     "AssetId" : "airports",
+    "AssetType" : "Cor.TextAsset, Cor.Assets.Builders",
     "SourceSets" :
     [
         {
@@ -7,8 +8,8 @@
             "Importer" :
             {
                 "Files" : [ "airports.dat" ],
-                "AssetImporterType" : "Cor.TextAssetImporter, Cor.Assets.Builders",
-                "AssetImporterSettings" : []
+                "AssetImporterType" : "Cor.TextFileImporter, Cor.Assets.Builders",
+                "AssetImporterSettings" : {}
             },
             "Processors" : []
         }
