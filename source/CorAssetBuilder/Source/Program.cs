@@ -303,10 +303,12 @@ namespace CorAssetBuilder
             foreach (Type type in requiredTypeSerialisers)
             {
                 // Fully qualified  type serialiser name
-                tsdb.GetTypeSerialiser <String> ().Write (writer, type.AssemblyQualifiedName );
+                tsdb.GetTypeSerialiser <String> ()
+					.Write (writer, type.AssemblyQualifiedName );
                 
                 // Type serialiser version
-                tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) 0);
+                tsdb.GetTypeSerialiser <Byte> ()
+					.Write (writer, (Byte) 0);
             }
         }
 
