@@ -1,16 +1,18 @@
         public sealed class TextureAsset
             : IAsset
         {
-            // Data allocated in standard system RAM
-            public Byte[] Data { get; set; }
-
-            // Data allocated in standard system RAM
-            public Byte[,] Mipmaps { get; set; }
+            public SurfaceFormat SurfaceFormat { get; set; }
 
             public Int32 Width { get; set; }
             public Int32 Height { get; set; }
 
-            public SurfaceFormat SurfaceFormat { get; set; }
+            // Data allocated in standard system RAM
+            public Byte[] Data { get; set; }
+
+            // Data allocated in standard system RAM
+            // public Byte[,] Mipmaps { get; set; }
+
+            // public Int32 MipmapCount { get { return Data.GetLength (0); } }
 
             #region IAsset
 
@@ -18,23 +20,46 @@
 
             public List <Type> RequiredSerialisers ()
             {
-                return new List <Type> () 
-                { 
-                    typeof (Int32Serialiser), 
-                    //typeof (SurfaceFormatSerialiser),
-                    typeof (ArraySerialiser<Byte>),
-                    typeof (ByteSerialiser)
+                return new List <Type> ()
+                {
+                    typeof (Int32),
+                    typeof (Rgba32)
                 };
             }
 
             public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
             {
-                
+                this.SurfaceFormat = tsdb.GetTypeSerialiser <Enum<SurfaceFormat>> ().Read (br);
+                this.Width = tsdb.GetTypeSerialiser <Int32> ().Read (br);
+                this.Height = tsdb.GetTypeSerialiser <Int32> ().Read (br);
+
+                this.Data = new Rgba32[this.Width * this.Height];
+
+                for (Int32 i = 0; i < this.Width; ++i)
+                {
+                    for (Int32 j = 0; j < this.Height; ++j)
+                    {
+                        this.Data[i + (j*(i-1))] = 
+                            tsdb.GetTypeSerialiser <Rgba32> ()
+                                .Read (br);
+                    }
+                }
             }
 
             public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
             {
-                
+                tsdb.GetTypeSerialiser <Enum<SurfaceFormat>> ().Write (bw, this.SurfaceFormat);
+                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Width);
+                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Height);
+
+                for (Int32 i = 0; i < this.Width; ++i)
+                {
+                    for (Int32 j = 0; j < this.Height; ++j)
+                    {
+                        tsdb.GetTypeSerialiser <Rgba32> ()
+                            .Write (bw, this.Data[i + (j*(i-1))]);
+                    }
+                }
             }
 
             #endregion
