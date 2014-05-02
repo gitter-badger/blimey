@@ -1332,17 +1332,13 @@ namespace Cor
                 this.SurfaceFormat = tsdb.GetTypeSerialiser <SurfaceFormat> ().Read (br);
                 this.Width = tsdb.GetTypeSerialiser <Int32> ().Read (br);
                 this.Height = tsdb.GetTypeSerialiser <Int32> ().Read (br);
+                Int32 byteCount = tsdb.GetTypeSerialiser <Int32> ().Read (br);
 
-                this.Data = new Byte[this.Width * this.Height];
+                this.Data = new Byte[byteCount];
 
-                for (Int32 i = 0; i < this.Width; ++i)
+                for (Int32 i = 0; i < byteCount; ++i)
                 {
-                    for (Int32 j = 0; j < this.Height; ++j)
-                    {
-                        this.Data[i + (this.Width*j)] = 
-                            tsdb.GetTypeSerialiser <Byte> ()
-                                .Read (br);
-                    }
+                    this.Data[i] = tsdb.GetTypeSerialiser <Byte> ().Read (br);
                 }
             }
 
@@ -1351,14 +1347,11 @@ namespace Cor
                 tsdb.GetTypeSerialiser <SurfaceFormat> ().Write (bw, this.SurfaceFormat);
                 tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Width);
                 tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Height);
+                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Data.Length);
 
-                for (Int32 i = 0; i < this.Width; ++i)
+                for (Int32 i = 0; i < this.Data.Length; ++i)
                 {
-                    for (Int32 j = 0; j < this.Height; ++j)
-                    {
-                        tsdb.GetTypeSerialiser <Byte> ()
-                            .Write (bw, this.Data[i + (this.Width*j)]);
-                    }
+                    tsdb.GetTypeSerialiser <Byte> ().Write (bw, this.Data[i]);
                 }
             }
 
