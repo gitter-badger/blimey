@@ -1191,17 +1191,44 @@ namespace Cor
 
             public List <Type> RequiredSerialisers ()
             {
-                return new List <Type> () {};
+                return new List <Type> ()
+                {
+                    typeof (Int32Serialiser),
+                    typeof (Rgba32Serialiser)
+                };
             }
 
             public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
             {
+                Int32 width = tsdb.GetTypeSerialiser <Int32> ().Read (br);
+                Int32 height = tsdb.GetTypeSerialiser <Int32> ().Read (br);
 
+                this.Data = new Rgba32[width, height];
+
+                for (Int32 i = 0; i < width; ++i)
+                {
+                    for (Int32 j = 0; j < height; ++j)
+                    {
+                        this.Data[i, j] = 
+                            tsdb.GetTypeSerialiser <Rgba32> ()
+                                .Read (br);
+                    }
+                }
             }
 
             public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
             {
-                
+                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Width);
+                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Height);
+
+                for (Int32 i = 0; i < this.Width; ++i)
+                {
+                    for (Int32 j = 0; j < this.Height; ++j)
+                    {
+                        tsdb.GetTypeSerialiser <Rgba32> ()
+                            .Write (bw, this.Data[i, j]);
+                    }
+                }
             }
 
             #endregion
@@ -1225,7 +1252,7 @@ namespace Cor
             {
                 return new List <Type> () 
                 { 
-                    typeof (ArraySerialiser<Byte>),
+                    //typeof (ArraySerialiser<Byte>),
                     typeof (ByteSerialiser)
                 };
             }
@@ -1273,16 +1300,18 @@ namespace Cor
         public sealed class TextureAsset
             : IAsset
         {
-            // Data allocated in standard system RAM
-            public Byte[] Data { get; set; }
-
-            // Data allocated in standard system RAM
-            public Byte[,] Mipmaps { get; set; }
+            public SurfaceFormat SurfaceFormat { get; set; }
 
             public Int32 Width { get; set; }
             public Int32 Height { get; set; }
 
-            public SurfaceFormat SurfaceFormat { get; set; }
+            // Data allocated in standard system RAM
+            public Byte[] Data { get; set; }
+
+            // Data allocated in standard system RAM
+            // public Byte[,] Mipmaps { get; set; }
+
+            // public Int32 MipmapCount { get { return Data.GetLength (0); } }
 
             #region IAsset
 
@@ -1290,23 +1319,47 @@ namespace Cor
 
             public List <Type> RequiredSerialisers ()
             {
-                return new List <Type> () 
-                { 
-                    typeof (Int32Serialiser), 
-                    //typeof (SurfaceFormatSerialiser),
-                    typeof (ArraySerialiser<Byte>),
-                    typeof (ByteSerialiser)
+                return new List <Type> ()
+                {
+                    typeof (Int32Serialiser),
+                    typeof (ByteSerialiser),
+                    typeof (EnumSerialiser<SurfaceFormat>)
                 };
             }
 
             public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
             {
-                
+                this.SurfaceFormat = tsdb.GetTypeSerialiser <SurfaceFormat> ().Read (br);
+                this.Width = tsdb.GetTypeSerialiser <Int32> ().Read (br);
+                this.Height = tsdb.GetTypeSerialiser <Int32> ().Read (br);
+
+                this.Data = new Byte[this.Width * this.Height];
+
+                for (Int32 i = 0; i < this.Width; ++i)
+                {
+                    for (Int32 j = 0; j < this.Height; ++j)
+                    {
+                        this.Data[i + (this.Width*j)] = 
+                            tsdb.GetTypeSerialiser <Byte> ()
+                                .Read (br);
+                    }
+                }
             }
 
             public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
             {
-                
+                tsdb.GetTypeSerialiser <SurfaceFormat> ().Write (bw, this.SurfaceFormat);
+                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Width);
+                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Height);
+
+                for (Int32 i = 0; i < this.Width; ++i)
+                {
+                    for (Int32 j = 0; j < this.Height; ++j)
+                    {
+                        tsdb.GetTypeSerialiser <Byte> ()
+                            .Write (bw, this.Data[i + (this.Width*j)]);
+                    }
+                }
             }
 
             #endregion
@@ -2323,6 +2376,8 @@ namespace Cor
     {
         readonly Type targetType;
 
+        public virtual void Initialise (TypeSerialiserDatabase manager) {}
+        
         public Type TargetType
         {
             get { return this.targetType; }
@@ -2346,8 +2401,6 @@ namespace Cor
         {
 
         }
-
-        public virtual void Initialise (TypeSerialiserDatabase manager) {}
 
         public override Object ReadObject (BinaryReader abr)
         {
@@ -3377,7 +3430,7 @@ namespace Cor
             Byte f1 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
             Byte f2 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
 
-            if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'B')
+            if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'A')
                 throw new Exception ("Asset file doesn't have the correct header.");
 
             // file version
@@ -3403,13 +3456,13 @@ namespace Cor
             for (Byte i = 0; i < numRequiredTypeSerialisers; ++i)
             {
                 // Fully qualified  type serialiser name
-                String assemblyQualifiedTypeSerialiserName =
+                String typeSerialiserName =
                     tsdb.GetTypeSerialiser <String> ().Read (br);
 
-                Type t = Type.GetType (assemblyQualifiedTypeSerialiserName);
+                Type t = Type.GetType (typeSerialiserName);
 
                 if (t == null)
-                    throw new Exception ("Type not found:" + assemblyQualifiedTypeSerialiserName);
+                    throw new Exception ("Type not found:" + typeSerialiserName);
 
                 // Type serialiser version
                 Byte version = tsdb.GetTypeSerialiser <Byte> ().Read (br);
@@ -3436,12 +3489,13 @@ namespace Cor
 
         public void RegisterTypeSerialiser (Type serialiserType)
         {
+            Type baseType = 
+                serialiserType.BaseType;
+
             Type targetType = 
-                serialiserType.BaseType
-                    .GetGenericTypeDefinition()
-                    .GetGenericArguments() [0];
+                baseType.GetGenericArguments() [0];
             
-            MethodInfo mi = typeof(TypeSerialiserDatabase).GetMethod ("RegisterTypeSerialiser");
+            MethodInfo mi = typeof(TypeSerialiserDatabase).GetMethod ("RegisterTypeSerialiser", new Type[]{});
             
             if (mi == null)
             {
@@ -3449,7 +3503,15 @@ namespace Cor
             }
             
             var gmi = mi.MakeGenericMethod(targetType, serialiserType);
-            gmi.Invoke(this, null);
+
+            try
+            {
+                gmi.Invoke(this, null);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception ("Failed to call generic RegisterTypeSerialiser with reflection: " + gmi);
+            }
         }
 
         public void RegisterTypeSerialiser<TTarget, TSerialiser> ()
@@ -3466,9 +3528,9 @@ namespace Cor
                         ));
             }
 
-            assetTypeSerialisers [typeof (TTarget)]
-                = Activator.CreateInstance (typeof (TSerialiser))
-                    as TypeSerialiser;
+            var ats = Activator.CreateInstance (typeof (TSerialiser)) as TypeSerialiser;
+            ats.Initialise (this);
+            assetTypeSerialisers [typeof (TTarget)] = ats;
         }
 
         public TypeSerialiser<TTarget> GetTypeSerialiser<TTarget>()

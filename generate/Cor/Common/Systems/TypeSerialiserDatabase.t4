@@ -10,12 +10,13 @@
 
         public void RegisterTypeSerialiser (Type serialiserType)
         {
+            Type baseType = 
+                serialiserType.BaseType;
+
             Type targetType = 
-                serialiserType.BaseType
-                    .GetGenericTypeDefinition()
-                    .GetGenericArguments() [0];
+                baseType.GetGenericArguments() [0];
             
-            MethodInfo mi = typeof(TypeSerialiserDatabase).GetMethod ("RegisterTypeSerialiser");
+            MethodInfo mi = typeof(TypeSerialiserDatabase).GetMethod ("RegisterTypeSerialiser", new Type[]{});
             
             if (mi == null)
             {
@@ -23,7 +24,15 @@
             }
             
             var gmi = mi.MakeGenericMethod(targetType, serialiserType);
-            gmi.Invoke(this, null);
+
+            try
+            {
+                gmi.Invoke(this, null);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception ("Failed to call generic RegisterTypeSerialiser with reflection: " + gmi);
+            }
         }
 
         public void RegisterTypeSerialiser<TTarget, TSerialiser> ()
@@ -40,9 +49,9 @@
                         ));
             }
 
-            assetTypeSerialisers [typeof (TTarget)]
-                = Activator.CreateInstance (typeof (TSerialiser))
-                    as TypeSerialiser;
+            var ats = Activator.CreateInstance (typeof (TSerialiser)) as TypeSerialiser;
+            ats.Initialise (this);
+            assetTypeSerialisers [typeof (TTarget)] = ats;
         }
 
         public TypeSerialiser<TTarget> GetTypeSerialiser<TTarget>()

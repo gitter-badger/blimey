@@ -15,8 +15,8 @@
             {
                 return new List <Type> ()
                 {
-                    typeof (Int32),
-                    typeof (Rgba32)
+                    typeof (Int32Serialiser),
+                    typeof (Rgba32Serialiser)
                 };
             }
 

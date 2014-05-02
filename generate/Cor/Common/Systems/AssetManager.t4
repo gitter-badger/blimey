@@ -49,7 +49,7 @@
             Byte f1 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
             Byte f2 = tsdb.GetTypeSerialiser <Byte> ().Read (br);
 
-            if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'B')
+            if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'A')
                 throw new Exception ("Asset file doesn't have the correct header.");
 
             // file version
@@ -75,13 +75,13 @@
             for (Byte i = 0; i < numRequiredTypeSerialisers; ++i)
             {
                 // Fully qualified  type serialiser name
-                String assemblyQualifiedTypeSerialiserName =
+                String typeSerialiserName =
                     tsdb.GetTypeSerialiser <String> ().Read (br);
 
-                Type t = Type.GetType (assemblyQualifiedTypeSerialiserName);
+                Type t = Type.GetType (typeSerialiserName);
 
                 if (t == null)
-                    throw new Exception ("Type not found:" + assemblyQualifiedTypeSerialiserName);
+                    throw new Exception ("Type not found:" + typeSerialiserName);
 
                 // Type serialiser version
                 Byte version = tsdb.GetTypeSerialiser <Byte> ().Read (br);

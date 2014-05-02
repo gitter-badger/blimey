@@ -16,7 +16,7 @@
             {
                 return new List <Type> () 
                 { 
-                    typeof (ArraySerialiser<Byte>),
+                    //typeof (ArraySerialiser<Byte>),
                     typeof (ByteSerialiser)
                 };
             }

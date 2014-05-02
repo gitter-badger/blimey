@@ -7,8 +7,6 @@
 
         }
 
-        public virtual void Initialise (TypeSerialiserDatabase manager) {}
-
         public override Object ReadObject (BinaryReader abr)
         {
             return this.Read (abr);
