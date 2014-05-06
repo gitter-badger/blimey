@@ -2103,6 +2103,11 @@ namespace Cor.Lib.Khronos
             KrErrorHandler.Check();
         }
     }
+    /// <summary>
+    /// Shader variants could be useful outside of Khronos, PSM defo.
+    /// It'd be good to make this system more generic and make it
+    /// part of Cor.
+    /// </summary>
     public static class KrShaderHelper
     {
         /// <summary>
