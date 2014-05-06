@@ -25,7 +25,7 @@
             this.bufferUsage = GLBufferUsage.DynamicDraw;
 
             GL.GenBuffers(1, out this.bufferHandle);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
 
             if( this.bufferHandle == 0 )
@@ -42,7 +42,7 @@
                 (System.IntPtr) null,
                 this.bufferUsage);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             resourceCounter++;
 
@@ -51,13 +51,13 @@
         internal void Activate()
         {
             GL.BindBuffer(this.type, this.bufferHandle);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
         }
 
         internal void Deactivate()
         {
             GL.BindBuffer(this.type, 0);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
         }
 
         ~VertexBuffer()
@@ -73,7 +73,7 @@
         void CleanUpNativeResources()
         {
             GL.DeleteBuffers(1, ref this.bufferHandle);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             bufferHandle = 0;
 
@@ -208,7 +208,7 @@
                 (System.IntPtr) (this.vertDecl.VertexStride * elementCount),
                 data);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
         }
 
         public T[] GetData<T> (Int32 startIndex, Int32 elementCount)
@@ -232,7 +232,7 @@
                 (System.IntPtr) (this.vertDecl.VertexStride * elementCount),
                 data);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
         }
 
         public Byte[] GetRawData (

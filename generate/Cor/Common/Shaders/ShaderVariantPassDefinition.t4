@@ -1,5 +1,0 @@
-    public sealed class ShaderVarientPassDefinition
-    {
-        public string PassName { get; set; }
-    }
-

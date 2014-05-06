@@ -82,17 +82,27 @@ using Boolean = System.Boolean;
 
 namespace Cor.Lib.Khronos
 {
-<#@ include file="ErrorHandler.t4"#>
-<#@ include file="ShaderUtils.t4"#>
-<#@ include file="VertexBuffer.t4"#>
-<#@ include file="IndexBuffer.t4"#>
 <#@ include file="GeometryBuffer.t4"#>
-<#@ include file="GraphicsManager.t4"#>
-<#@ include file="TextureHandle.t4"#>
-<#@ include file="EnumConverter.t4"#>
-<#@ include file="Vector2Converter.t4"#>
-<#@ include file="Vector3Converter.t4"#>
-<#@ include file="Vector4Converter.t4"#>
-<#@ include file="Matrix44Converter.t4"#>
 <#@ include file="GpuUtils.t4"#>
+<#@ include file="GraphicsManager.t4"#>
+<#@ include file="IndexBuffer.t4"#>
+<#@ include file="ShaderHandle.t4"#>
+<#@ include file="ShaderPassHandle.t4"#>
+<#@ include file="TextureHandle.t4"#>
+<#@ include file="VertexBuffer.t4"#>
+
+<#@ include file="Shading/KrShader.t4"#>
+<#@ include file="Shading/KrShaderInput.t4"#>
+<#@ include file="Shading/KrShaderVariable.t4"#>
+<#@ include file="Shading/KrShaderSampler.t4"#>
+<#@ include file="Shading/KrShaderHelper.t4"#>
+<#@ include file="Shading/KrShaderUtils.t4"#>
+
+<#@ include file="Utilities/KrErrorHandler.t4"#>
+
+<#@ include file="Converters/KrEnumConverter.t4"#>
+<#@ include file="Converters/KrVector2Converter.t4"#>
+<#@ include file="Converters/KrVector3Converter.t4"#>
+<#@ include file="Converters/KrVector4Converter.t4"#>
+<#@ include file="Converters/KrMatrix44Converter.t4"#>
 }

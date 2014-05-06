@@ -1,13 +1,10 @@
     /// <summary>
-    /// The Cor.Xios implementation of Cor's IShader interface.
+    /// Represents a handle to a Khronos GL shader on the GPU.
     /// </summary>
-    public sealed class Shader
+    public sealed class ShaderHandle
         : IShader
         , IDisposable
     {
-        //static Dictionary<string, parp>
-
-
         #region IShader
 
         /// <summary>
@@ -53,7 +50,6 @@
                 {
                     throw new NotSupportedException();
                 }
-
             }
         }
 
@@ -87,7 +83,6 @@
             }
         }
 
-
         /// <summary>
         /// Provides access to the individual passes in this shader.
         /// the calling code can itterate though these and apply them
@@ -108,7 +103,8 @@
         {
             get
             {
-                // todo: an array of vert elem usage doesn't uniquely identify anything...
+                // todo: an array of vert elem usage
+                // doesn't uniquely identify anything...
                 return requiredVertexElements.ToArray();
             }
         }
@@ -121,7 +117,8 @@
         {
             get
             {
-                // todo: an array of vert elem usage doesn't uniquely identify anything...
+                // todo: an array of vert elem usage
+                // doesn't uniquely identify anything...
                 return optionalVertexElements.ToArray();
             }
         }
@@ -145,14 +142,13 @@
 
         #endregion
 
-
         List<VertexElementUsage> requiredVertexElements = new List<VertexElementUsage>();
         List<VertexElementUsage> optionalVertexElements = new List<VertexElementUsage>();
 
-
         /// <summary>
-        /// The <see cref="ShaderPass"/> objects that need to each, in turn,  be individually activated and used to
-        /// draw with to apply the effect of this containing <see cref="Shader"/> object.
+        /// The <see cref="ShaderPass"/> objects that need to each, in turn,
+        /// be individually activated and used to draw with to apply the effect
+        /// of this containing <see cref="Shader"/> object.
         /// </summary>
         List<ShaderPass> passes = new List<ShaderPass>();
 
@@ -168,7 +164,7 @@
         /// Initializes a new instance of the <see cref="Shader"/> class from a
         /// <see cref="ShaderDefinition"/> object.
         /// </summary>
-        internal Shader (ShaderDefinition shaderDefinition)
+        internal ShaderHandle (ShaderDefinition shaderDefinition)
         {
             InternalUtils.Log.Info("\n");
             InternalUtils.Log.Info("\n");
@@ -183,7 +179,8 @@
         }
 
         /// <summary>
-        /// Works out and caches a copy of which shader inputs are required/optional, needed as the
+        /// Works out and caches a copy of which shader
+        /// inputs are required/optional, needed as the
         /// <see cref="IShader"/> interface requires this information.
         /// </summary>
         void CalculateRequiredInputs(ShaderDefinition shaderDefinition)
@@ -202,34 +199,36 @@
         }
 
         /// <summary>
-        /// Triggers the creation of all of this <see cref="Shader"/> object's passes.
+        /// Triggers the creation of all of
+        /// this <see cref="Shader"/> object's passes.
         /// </summary>
         void InitilisePasses(ShaderDefinition shaderDefinition)
         {
-            // This function builds up an in memory object for each shader pass in this shader.
-            // The different shader varients are defined outside of the scope of a conceptual shader pass,
-            // therefore this function must traverse the shader definition and to create shader pass objects
-            // that only contain the varient data for that specific pass.
-
+            // This function builds up an in memory object for each shader
+            // pass in this shader.  The different shader varients are defined
+            // outside of the scope of a conceptual shader pass, therefore this
+            // function must traverse the shader definition and to create
+            // shader pass objects that only contain the varient data
+            // for that specific pass.
 
             // For each named shader pass.
             foreach (var definedPassName in shaderDefinition.PassNames)
             {
-
-                InternalUtils.Log.Info(" Preparing to initilising Shader Pass: " + definedPassName);
-                //
+                InternalUtils.Log.Info(
+                    " Preparing to initilising Shader Pass: " + definedPassName);
 
                 // itterate over the defined pass names, ex: cel, outline...
 
-
-
                 //shaderDefinition.VariantDefinitions
-                //  .Select(x => x.PassDefinitions.Select(y => y.PassName == definedPassName))
+                //  .Select(x => x.PassDefinitions
+                //  .Select(y => y.PassName == definedPassName))
                 //  .ToList();
 
-                // Find all of the variants that are defined in this shader object's definition
+                // Find all of the variants that are defined
+                // in this shader object's definition
                 // that support the current shaderpass.
-                var passVariants___Name_AND_passVariantDefinition = new List<Tuple<string, ShaderVarientPassDefinition>>();
+                var passVariants___Name_AND_passVariantDefinition =
+                    new List<Tuple<string, ShaderVarientPassDefinition>>();
 
                 // itterate over every shader variant in the definition
                 foreach (var shaderVariantDefinition in shaderDefinition.VariantDefinitions)
@@ -237,12 +236,12 @@
                     // each shader varient has a name
                     string shaderVariantName = shaderVariantDefinition.VariantName;
 
-                    // find the pass in the shader variant definition that corresponds to the pass we are
+                    // find the pass in the shader variant definition
+                    // that corresponds to the pass we are
                     // currently trying to initilise.
                     var variantPassDefinition =
                         shaderVariantDefinition.VariantPassDefinitions
                             .Find(x => x.PassName == definedPassName);
-
 
                     // now we have a Variant name, say:
                     //   - Unlit_PositionTextureColour
@@ -251,16 +250,21 @@
                     //   - Shaders/Unlit_PositionTextureColour.vsh
                     //   - Shaders/Unlit_PositionTextureColour.fsh
                     //
-
                     passVariants___Name_AND_passVariantDefinition.Add(
-                        new Tuple<string, ShaderVarientPassDefinition>(shaderVariantName, variantPassDefinition));
-
+                        new Tuple<String, ShaderVarientPassDefinition>(
+                            shaderVariantName, variantPassDefinition));
                 }
 
                 // Create one shader pass for each defined pass name.
-                var shaderPass = new ShaderPass( definedPassName, passVariants___Name_AND_passVariantDefinition );
+                var shaderPass = new ShaderPass (
+                    definedPassName,
+                    passVariants___Name_AND_passVariantDefinition );
 
-                shaderPass.BindAttributes (shaderDefinition.InputDefinitions.Select(x => x.Name).ToList());
+                shaderPass.BindAttributes (
+                    shaderDefinition
+                        .InputDefinitions.Select(x => x.Name)
+                        .ToList());
+
                 shaderPass.Link ();
                 shaderPass.ValidateInputs(shaderDefinition.InputDefinitions);
                 shaderPass.ValidateVariables(shaderDefinition.VariableDefinitions);

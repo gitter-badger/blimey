@@ -1,6 +1,0 @@
-    public sealed class OpenGLShaderDefinition
-    {
-        public string VertexShaderPath { get; set; }
-        public string PixelShaderPath { get; set; }
-    }
-

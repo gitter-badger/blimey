@@ -2448,15 +2448,6 @@ namespace Cor
         /// ?
         /// </summary>
         public List<ShaderSamplerDefinition> SamplerDefinitions { get; set; }
-
-        /// <summary>
-        /// Defines the variants.  Done for optimisation, instead of having one
-        /// massive shader that supports all the the Inputs and attempts to
-        /// process them accordingly, we load slight variants of effectively
-        /// the same shader, then we select the most optimal variant to run
-        /// based upon the VertexDeclaration the calling code is about to draw.
-        /// </summary>
-        public List<ShaderVariantDefinition> VariantDefinitions { get; set; }
     }
 
     public sealed class ShaderInputDefinition
@@ -2481,18 +2472,6 @@ namespace Cor
         public String Name { get; set; }
         public Type Type { get; set; }
         public Object DefaultValue { get; set; }
-    }
-
-    public sealed class ShaderVariantDefinition
-    {
-        public string VariantName { get; set; }
-
-        public List<ShaderVarientPassDefinition> VariantPassDefinitions { get; set; }
-    }
-
-    public sealed class ShaderVarientPassDefinition
-    {
-        public string PassName { get; set; }
     }
 
     #endregion

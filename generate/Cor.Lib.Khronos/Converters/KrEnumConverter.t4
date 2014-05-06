@@ -1,4 +1,4 @@
-    internal static class EnumConverter
+    internal static class KrEnumConverter
     {
         internal static TextureUnit ToKhronosTextureSlot(Int32 slot)
         {
@@ -79,7 +79,7 @@
             case ActiveUniformType.Sampler2D: throw new NotSupportedException();
             case ActiveUniformType.SamplerCube: throw new NotSupportedException();
             }
-            
+
             throw new NotSupportedException();
         }
 
@@ -95,24 +95,24 @@
 
             switch(blimey)
             {
-                case VertexElementFormat.Single: 
+                case VertexElementFormat.Single:
                 dataFormat = VertexAttribPointerType.Float;
                     size = 1;
                     break;
-                case VertexElementFormat.Vector2: 
-                dataFormat = VertexAttribPointerType.Float; 
+                case VertexElementFormat.Vector2:
+                dataFormat = VertexAttribPointerType.Float;
                     size = 2;
                     break;
-                case VertexElementFormat.Vector3: 
-                dataFormat = VertexAttribPointerType.Float; 
+                case VertexElementFormat.Vector3:
+                dataFormat = VertexAttribPointerType.Float;
                     size = 3;
                     break;
-                case VertexElementFormat.Vector4: 
-                dataFormat = VertexAttribPointerType.Float; 
+                case VertexElementFormat.Vector4:
+                dataFormat = VertexAttribPointerType.Float;
                     size = 4;
                     break;
-                case VertexElementFormat.Colour: 
-                dataFormat = VertexAttribPointerType.UnsignedByte; 
+                case VertexElementFormat.Colour:
+                dataFormat = VertexAttribPointerType.UnsignedByte;
                     normalized = true;
                     size = 4;
                     break;
@@ -171,7 +171,7 @@
                 case BlendFactor.DestinationColour: return BlendingFactorDest.SrcColor;
                 case BlendFactor.InverseDestinationColour: return BlendingFactorDest.OneMinusSrcColor;
             }
-            
+
             throw new Exception();
         }
 
@@ -204,7 +204,7 @@
                 case BlendFunction.ReverseSubtract: return BlendEquationMode.FuncReverseSubtract;
                 case BlendFunction.Subtract: return BlendEquationMode.FuncSubtract;
             }
-            
+
             throw new Exception();
         }
 
@@ -218,7 +218,7 @@
                 case All.FuncReverseSubtract: return BlendFunction.ReverseSubtract;
                 case All.FuncSubtract: return BlendFunction.Subtract;
             }
-            
+
             throw new Exception();
         }
 
@@ -234,7 +234,7 @@
                 return  BeginMode.Triangles;
             case PrimitiveType.TriangleStrip:
                 return  BeginMode.TriangleStrip;
-                    
+
             default:
                 throw new Exception ("problem");
             }
@@ -255,7 +255,7 @@
                 return  PrimitiveType.TriangleList;
             case All.TriangleStrip:
                 return  PrimitiveType.TriangleStrip;
-                
+
             default:
                 throw new Exception ("problem");
 

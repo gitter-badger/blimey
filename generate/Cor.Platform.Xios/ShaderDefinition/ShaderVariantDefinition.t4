@@ -1,6 +1,0 @@
-    public class ShaderVariantDefinition
-    {
-        public string VariantName { get; set; }
-        public List<ShaderVarientPassDefinition> VariantPassDefinitions { get; set; }
-    }
-

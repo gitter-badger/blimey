@@ -14,23 +14,23 @@
             this.gpuUtils = new GpuUtils();
 
             GL.Enable(EnableCap.Blend);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             this.SetBlendEquation(
                 BlendFunction.Add, BlendFactor.SourceAlpha, BlendFactor.InverseSourceAlpha,
                 BlendFunction.Add, BlendFactor.One, BlendFactor.InverseSourceAlpha);
 
             GL.Enable(EnableCap.DepthTest);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             GL.DepthMask(true);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             GL.DepthRange(0f, 1f);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             GL.DepthFunc(DepthFunction.Lequal);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             SetCullMode (CullMode.CW);
         }
@@ -63,7 +63,7 @@
             foreach(var elem in vertElems)
             {
                 GL.EnableVertexAttribArray(counter);
-                ErrorHandler.Check();
+                KrErrorHandler.Check();
 
                 //var vertElemUsage = elem.VertexElementUsage;
                 var vertElemFormat = elem.VertexElementFormat;
@@ -73,7 +73,7 @@
                 Boolean vertElemNormalized = false;
                 VertexAttribPointerType glVertElemFormat;
 
-                EnumConverter.ToKhronos(vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
+                KrEnumConverter.ToKhronos(vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
 
                 if( counter != 0)
                 {
@@ -98,7 +98,7 @@
 
                     );
 
-                ErrorHandler.Check();
+                KrErrorHandler.Check();
 
                 counter++;
 
@@ -112,7 +112,7 @@
             for(int i = 0; i < vertElems.Length; ++i)
             {
                 GL.DisableVertexAttribArray(i);
-                ErrorHandler.Check();
+                KrErrorHandler.Check();
             }
         }
 
@@ -143,7 +143,7 @@
 
             GL.Clear ( mask );
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
         }
 
         public void ClearDepthBuffer(Single val = 1)
@@ -154,7 +154,7 @@
 
             GL.Clear ( mask );
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
         }
 
         public void SetCullMode(CullMode cullMode)
@@ -164,26 +164,26 @@
                 if (cullMode == CullMode.None)
                 {
                     GL.Disable (EnableCap.CullFace);
-                    ErrorHandler.Check ();
+                    KrErrorHandler.Check ();
 
                 }
                 else
                 {
                     GL.Enable(EnableCap.CullFace);
-                    ErrorHandler.Check();
+                    KrErrorHandler.Check();
 
                     GL.FrontFace(FrontFaceDirection.Cw);
-                    ErrorHandler.Check();
+                    KrErrorHandler.Check();
 
                     if (cullMode == CullMode.CW)
                     {
                         GL.CullFace (CullFaceMode.Back);
-                        ErrorHandler.Check ();
+                        KrErrorHandler.Check ();
                     }
                     else if (cullMode == CullMode.CCW)
                     {
                         GL.CullFace (CullFaceMode.Front);
-                        ErrorHandler.Check ();
+                        KrErrorHandler.Check ();
                     }
                     else
                     {
@@ -235,7 +235,7 @@
 
             IntPtr pixelDataRgba32 = Marshal.AllocHGlobal(tex.Data.Length);
             Marshal.Copy(tex.Data, 0, pixelDataRgba32, tex.Data.Length);
-            
+
             // Call unmanaged code
             Marshal.FreeHGlobal(pixelDataRgba32);
 
@@ -249,14 +249,14 @@
             GL.PixelStore(
                 PixelStoreParameter.UnpackAlignment, 4);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             // the first sept in the application of texture is to create the
             // texture object.  this is a container object that holds the
             // texture data.  this function returns a handle to a texture
             // object.
             GL.GenTextures(1, out textureId);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             var textureHandle = new TextureHandle (textureId);
 
@@ -264,7 +264,7 @@
 
             // we need to bind the texture object so that we can opperate on it.
             GL.BindTexture(textureTarget, textureId);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             // the incoming texture format
             // (the format that [pixelDataRgba32] is in)
@@ -318,18 +318,18 @@
 
                 );
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             // sets the minification and maginfication filtering modes.  required
             // because we have not loaded a complete mipmap chain for the texture
             // so we must select a non mipmapped minification filter.
             GL.TexParameter(textureTarget, TextureParameterName.TextureMinFilter, (int) All.Nearest );
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             GL.TexParameter(textureTarget, TextureParameterName.TextureMagFilter, (int) All.Nearest );
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             return textureHandle;
         }
@@ -343,7 +343,7 @@
 
         public void SetActiveTexture (Int32 slot, ITexture tex)
         {
-            TextureUnit oglTexSlot = EnumConverter.ToKhronosTextureSlot(slot);
+            TextureUnit oglTexSlot = KrEnumConverter.ToKhronosTextureSlot(slot);
             GL.ActiveTexture(oglTexSlot);
 
             var oglt0 = tex as TextureHandle;
@@ -354,7 +354,7 @@
 
                 // we need to bind the texture object so that we can opperate on it.
                 GL.BindTexture(textureTarget, oglt0.glTextureId);
-                ErrorHandler.Check();
+                KrErrorHandler.Check();
             }
         }
 
@@ -378,16 +378,16 @@
             )
         {
             GL.BlendEquationSeparate(
-                EnumConverter.ToKhronos(rgbBlendFunction),
-                EnumConverter.ToKhronos(alphaBlendFunction) );
-            ErrorHandler.Check();
+                KrEnumConverter.ToKhronos(rgbBlendFunction),
+                KrEnumConverter.ToKhronos(alphaBlendFunction) );
+            KrErrorHandler.Check();
 
             GL.BlendFuncSeparate(
-                EnumConverter.ToKhronosSrc(sourceRgb),
-                EnumConverter.ToKhronosDest(destinationRgb),
-                EnumConverter.ToKhronosSrc(sourceAlpha),
-                EnumConverter.ToKhronosDest(destinationAlpha) );
-            ErrorHandler.Check();
+                KrEnumConverter.ToKhronosSrc(sourceRgb),
+                KrEnumConverter.ToKhronosDest(destinationRgb),
+                KrEnumConverter.ToKhronosSrc(sourceAlpha),
+                KrEnumConverter.ToKhronosDest(destinationAlpha) );
+            KrErrorHandler.Check();
         }
 
         public void DrawPrimitives(
@@ -412,7 +412,7 @@
                 throw new NotImplementedException();
             }
 
-            var otkpType =  EnumConverter.ToKhronos(primitiveType);
+            var otkpType =  KrEnumConverter.ToKhronos(primitiveType);
             //Int32 numVertsInPrim = numVertices / primitiveCount;
 
             Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn(primitiveType);
@@ -428,7 +428,7 @@
                 DrawElementsType.UnsignedShort,
                 (System.IntPtr) 0 );
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             this.DisableVertAttribs(vertDecl);
         }
@@ -476,13 +476,13 @@
                 pointer = Add(pointer, vertexOffset * vertDecl.VertexStride * sizeof(byte));
             }
 
-            var glDrawMode = EnumConverter.ToKhronos(primitiveType);
+            var glDrawMode = KrEnumConverter.ToKhronos(primitiveType);
             var glDrawModeAll = glDrawMode;
 
             var bindTarget = BufferTarget.ArrayBuffer;
 
             GL.BindBuffer(bindTarget, 0);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
 
             this.EnableVertAttribs( vertDecl, pointer );
@@ -495,7 +495,7 @@
                 vertexOffset,  // specifies the starting vertex index in the enabled vertex arrays
                 count ); // specifies the number of indicies to be drawn
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
 
             this.DisableVertAttribs(vertDecl);

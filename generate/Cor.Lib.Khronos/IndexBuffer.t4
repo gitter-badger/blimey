@@ -21,7 +21,7 @@
 
             GL.GenBuffers(1, out this.bufferHandle);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             if( this.bufferHandle == 0 )
             {
@@ -36,7 +36,7 @@
                 (System.IntPtr) null,
                 this.bufferUsage);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             resourceCounter++;
 
@@ -55,7 +55,7 @@
         void CleanUpNativeResources()
         {
             GL.DeleteBuffers(1, ref this.bufferHandle);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             bufferHandle = 0;
 
@@ -120,13 +120,13 @@
         internal void Activate()
         {
             GL.BindBuffer(this.type, this.bufferHandle);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
         }
 
         internal void Deactivate()
         {
             GL.BindBuffer(this.type, 0);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
         }
 
         public int IndexCount
@@ -167,7 +167,7 @@
 
             udata = null;
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
         }
 
         public void GetData(Int32[] data)

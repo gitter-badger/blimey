@@ -1,5 +1,6 @@
     internal sealed class TextureHandle
         : ITexture
+        , IDisposable
     {
         internal TextureHandle (int textureid)
         {
@@ -7,6 +8,11 @@
         }
 
         internal int glTextureId { get; private set; }
+
+        public void Dispose ()
+        {
+
+        }
 
         public SurfaceFormat SurfaceFormat
         {

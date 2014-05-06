@@ -3,7 +3,7 @@
     /// the shader at runtime, not from the ShaderInputDefinition.  This way we can compare the
     /// two and check to see that we have what we are expecting.
     /// </summary>
-    public sealed class OpenGLShaderInput
+    public sealed class KrShaderInput
     {
         int ProgramHandle { get; set; }
         internal int AttributeLocation { get; private set; }
@@ -14,12 +14,12 @@
         public Object DefaultValue { get; private set; }
         public Boolean Optional { get; private set; }
 
-        public OpenGLShaderInput(
+        public KrShaderInput(
             int programHandle, ShaderUtils.ShaderAttribute attribute)
         {
             int attLocation = global::MonoMac.OpenGL.GL.GetAttribLocation(programHandle, attribute.Name);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             InternalUtils.Log.Info(string.Format(
                 "    Binding Shader Input: [Prog={0}, AttIndex={1}, AttLocation={4}, AttName={2}, AttType={3}]",
@@ -28,7 +28,7 @@
             this.ProgramHandle = programHandle;
             this.AttributeLocation = attLocation;
             this.Name = attribute.Name;
-            this.Type = EnumConverter.ToType(attribute.Type);
+            this.Type = KrEnumConverter.ToType(attribute.Type);
 
 
         }

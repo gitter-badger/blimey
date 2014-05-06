@@ -1,16 +1,16 @@
     /// <summary>
     /// Static class to help with horrible shader system.
     /// </summary>
-    public static class ShaderUtils
+    public static class KrShaderUtils
     {
-        public class ShaderUniform
+        public class KrShaderUniform
         {
             public Int32 Index { get; set; }
             public String Name { get; set; }
             public ActiveUniformType Type { get; set; }
         }
 
-        public class ShaderAttribute
+        public class KrShaderAttribute
         {
             public Int32 Index { get; set; }
             public String Name { get; set; }
@@ -25,7 +25,7 @@
             if( programHandle == 0 )
                 throw new Exception("Failed to create shader program");
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             return programHandle;
         }
@@ -89,7 +89,7 @@
             {
                 // Attach vertex shader to program.
                 GL.AttachShader (programHandle, shaderHandle);
-                ErrorHandler.Check();
+                KrErrorHandler.Check();
             }
         }
 
@@ -100,7 +100,7 @@
             if (shaderHandle != 0)
             {
                 GL.DetachShader (programHandle, shaderHandle);
-                ErrorHandler.Check();
+                KrErrorHandler.Check();
             }
         }
 
@@ -112,7 +112,7 @@
             {
                 GL.DeleteShader (shaderHandle);
                 shaderHandle = 0;
-                ErrorHandler.Check();
+                KrErrorHandler.Check();
             }
         }
 
@@ -127,10 +127,11 @@
 #endif
 
                 programHandle = 0;
-                ErrorHandler.Check();
+                KrErrorHandler.Check();
             }
         }
 
+        // This should happen offline.
         public static void CompileShader (
             GLShaderType type,
             String file,
@@ -153,7 +154,7 @@
             // Create an empty vertex shader object
             shaderHandle = GL.CreateShader (type);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             // Replace the source code in the vertex shader object
 #if COR_PLATFORM_MANAGED_XIOS
@@ -168,11 +169,11 @@
                 src);
 #endif
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             GL.CompileShader (shaderHandle);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
 #if DEBUG
             Int32 logLength = 0;
@@ -181,7 +182,7 @@
                 ShaderParameter.InfoLogLength,
                 out logLength);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
             var infoLog = new System.Text.StringBuilder(logLength);
 
             if (logLength > 0)
@@ -207,7 +208,7 @@
                 ShaderParameter.CompileStatus,
                 out status );
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             if (status == 0)
             {
@@ -216,15 +217,15 @@
             }
         }
 
-        public static List<ShaderUniform> GetUniforms (Int32 prog)
+        public static List<KrShaderUniform> GetUniforms (Int32 prog)
         {
 
             int numActiveUniforms = 0;
 
-            var result = new List<ShaderUniform>();
+            var result = new List<KrShaderUniform>();
 
             GL.GetProgram(prog, ProgramParameter.ActiveUniforms, out numActiveUniforms);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             for(int i = 0; i < numActiveUniforms; ++i)
             {
@@ -243,10 +244,10 @@
                     out size,
                     out type,
                     sb);
-                ErrorHandler.Check();
+                KrErrorHandler.Check();
 
                 result.Add(
-                    new ShaderUniform()
+                    new KrShaderUniform()
                     {
                     Index = i,
                     Name = sb.ToString(),
@@ -258,15 +259,15 @@
             return result;
         }
 
-        public static List<ShaderAttribute> GetAttributes (Int32 prog)
+        public static List<KrShaderAttribute> GetAttributes (Int32 prog)
         {
             int numActiveAttributes = 0;
 
-            var result = new List<ShaderAttribute>();
+            var result = new List<KrShaderAttribute>();
 
             // gets the number of active vertex attributes
             GL.GetProgram(prog, ProgramParameter.ActiveAttributes, out numActiveAttributes);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             for(int i = 0; i < numActiveAttributes; ++i)
             {
@@ -284,10 +285,10 @@
                     out size,
                     out type,
                     sb);
-                ErrorHandler.Check();
+                KrErrorHandler.Check();
 
                 result.Add(
-                    new ShaderAttribute()
+                    new KrShaderAttribute()
                     {
                         Index = i,
                         Name = sb.ToString(),
@@ -306,7 +307,7 @@
 
             GL.LinkProgram (prog);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
 #if DEBUG
             Int32 logLength = 0;
@@ -316,7 +317,7 @@
                 ProgramParameter.InfoLogLength,
                 out logLength );
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             if (logLength > 0)
             {
@@ -335,7 +336,7 @@
                 GL.GetProgramInfoLog(prog, out infoLog);
 
 
-                ErrorHandler.Check();
+                KrErrorHandler.Check();
 
                 InternalUtils.Log.Info (string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
             }
@@ -347,7 +348,7 @@
                 ProgramParameter.LinkStatus,
                 out status );
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             if (status == 0)
             {
@@ -362,7 +363,7 @@
         {
             GL.ValidateProgram (programHandle);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             Int32 logLength = 0;
 
@@ -371,7 +372,7 @@
                 ProgramParameter.InfoLogLength,
                 out logLength );
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             if (logLength > 0)
             {
@@ -382,7 +383,7 @@
                     logLength,
                     out logLength, infoLog );
 
-                ErrorHandler.Check();
+                KrErrorHandler.Check();
 
                 InternalUtils.Log.Info (string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
             }
@@ -393,7 +394,7 @@
                 programHandle, ProgramParameter.LinkStatus,
                 out status );
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             if (status == 0)
             {
