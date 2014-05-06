@@ -80,420 +80,1292 @@ using Boolean = System.Boolean;
 
 namespace Cor.Lib.Khronos
 {
-    public static class ErrorHandler
+    public sealed class GeometryBuffer
+        : IGeometryBuffer
     {
-        [Conditional("DEBUG")]
-        public static void Check()
+        IndexBuffer _iBuf;
+        VertexBuffer _vBuf;
+        
+        public GeometryBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount, Int32 indexCount)
         {
-            var ec = GL.GetError();
 
-            if (ec != ErrorCode.NoError)
+            if(vertexCount == 0)
             {
-                throw new Exception( ec.ToString());
+                throw new Exception("A geometry buffer must have verts");
+            }
+
+            if( indexCount != 0 )
+            {
+                _iBuf = new IndexBuffer(indexCount);
+            }
+
+            _vBuf = new VertexBuffer(vertexDeclaration, vertexCount);
+
+        }
+
+        internal void Activate()
+        {
+            _vBuf.Activate();
+
+            if( _iBuf != null )
+                _iBuf.Activate();
+        }
+
+        internal void Deactivate()
+        {
+            _vBuf.Deactivate();
+
+            if( _iBuf != null )
+                _iBuf.Deactivate();
+        }
+
+        public IVertexBuffer VertexBuffer { get { return _vBuf; } }
+        public IIndexBuffer IndexBuffer { get { return _iBuf; } }
+
+        internal VertexBuffer OpenTKVertexBuffer { get { return _vBuf; } }
+    }
+
+    public sealed class GpuUtils
+        : IGpuUtils
+    {
+        public GpuUtils()
+        {
+        }
+
+        #region IGpuUtils
+
+        public Int32 BeginEvent(Rgba32 colour, String eventName)
+        {
+            return 0;
+        }
+
+        public Int32 EndEvent()
+        {
+            return 0;
+        }
+
+        public void SetMarker(Rgba32 colour, String eventName)
+        {
+
+        }
+
+        public void SetRegion(Rgba32 colour, String eventName)
+        {
+
+        }
+
+        #endregion
+    }
+    public sealed class GraphicsManager
+        : IGraphicsManager
+    {
+        readonly GpuUtils gpuUtils;
+
+        GeometryBuffer currentGeomBuffer;
+        CullMode? currentCullMode;
+
+        public GraphicsManager()
+        {
+            InternalUtils.Log.Info(
+                "Khronos Graphics Manager -> ()");
+
+            this.gpuUtils = new GpuUtils();
+
+            GL.Enable(EnableCap.Blend);
+            KrErrorHandler.Check();
+
+            this.SetBlendEquation(
+                BlendFunction.Add, BlendFactor.SourceAlpha, BlendFactor.InverseSourceAlpha,
+                BlendFunction.Add, BlendFactor.One, BlendFactor.InverseSourceAlpha);
+
+            GL.Enable(EnableCap.DepthTest);
+            KrErrorHandler.Check();
+
+            GL.DepthMask(true);
+            KrErrorHandler.Check();
+
+            GL.DepthRange(0f, 1f);
+            KrErrorHandler.Check();
+
+            GL.DepthFunc(DepthFunction.Lequal);
+            KrErrorHandler.Check();
+
+            SetCullMode (CullMode.CW);
+        }
+
+        [ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
+        static IntPtr Add (IntPtr pointer, int offset)
+        {
+            unsafe
+            {
+                return (IntPtr) (unchecked (((byte *) pointer) + offset));
+            }
+        }
+
+        [ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
+        static IntPtr Subtract (IntPtr pointer, int offset)
+        {
+            unsafe
+            {
+                return (IntPtr) (unchecked (((byte *) pointer) - offset));
+            }
+        }
+
+        void EnableVertAttribs(VertexDeclaration vertDecl, IntPtr pointer)
+        {
+            var vertElems = vertDecl.GetVertexElements();
+
+            IntPtr ptr = pointer;
+
+            int counter = 0;
+            foreach(var elem in vertElems)
+            {
+                GL.EnableVertexAttribArray(counter);
+                KrErrorHandler.Check();
+
+                //var vertElemUsage = elem.VertexElementUsage;
+                var vertElemFormat = elem.VertexElementFormat;
+                var vertElemOffset = elem.Offset;
+
+                Int32 numComponentsInVertElem = 0;
+                Boolean vertElemNormalized = false;
+                VertexAttribPointerType glVertElemFormat;
+
+                KrEnumConverter.ToKhronos(vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
+
+                if( counter != 0)
+                {
+                    ptr = Add(ptr, vertElemOffset);
+                }
+
+                GL.VertexAttribPointer(
+                    counter,                // index - specifies the generic vertex attribute index.  This value is 0 to
+                                            //         max vertex attributes supported - 1.
+                    numComponentsInVertElem,// size - number of components specified in the vertex array for the
+                                            //        vertex attribute referenced by index.  Valid values are 1 - 4.
+                    glVertElemFormat,       // type - Data format, valid values are GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT,
+                                            //        GL_FLOAT, GL_FIXED, GL_HALF_FLOAT_OES*(Optional feature of es2)
+                    vertElemNormalized,     // normalised - used to indicate whether the non-floating data format type should be normalised
+                                            //              or not when converted to floating point.
+                    vertDecl.VertexStride,  // stride - the components of vertex attribute specified by size are stored sequentially for each
+                                            //          vertex.  stride specifies the delta between data for vertex index 1 and vertex (1 + 1).
+                                            //          If stride is 0, attribute data for all vertices are stored sequentially.
+                                            //          If stride is > 0, then we use the stride valude tas the pitch to get vertex data
+                                            //          for the next index.
+                    ptr
+
+                    );
+
+                KrErrorHandler.Check();
+
+                counter++;
+
+            }
+        }
+
+        void DisableVertAttribs(VertexDeclaration vertDecl)
+        {
+            var vertElems = vertDecl.GetVertexElements();
+
+            for(int i = 0; i < vertElems.Length; ++i)
+            {
+                GL.DisableVertexAttribArray(i);
+                KrErrorHandler.Check();
+            }
+        }
+
+
+        #region IGraphicsManager
+
+        public IGpuUtils GpuUtils { get { return this.gpuUtils; } }
+
+        public void Reset()
+        {
+            this.ClearDepthBuffer();
+            this.ClearColourBuffer();
+            this.SetActiveGeometryBuffer(null);
+
+            // todo, here we need to set all the texture slots to point to null
+            this.SetActiveTexture(0, null);
+        }
+
+        public void ClearColourBuffer(Rgba32 col = new Rgba32())
+        {
+            Abacus.SinglePrecision.Vector4 c;
+
+            col.UnpackTo(out c);
+
+            GL.ClearColor (c.X, c.Y, c.Z, c.W);
+
+            var mask = ClearBufferMask.ColorBufferBit;
+
+            GL.Clear ( mask );
+
+            KrErrorHandler.Check();
+        }
+
+        public void ClearDepthBuffer(Single val = 1)
+        {
+            GL.ClearDepth(val);
+
+            var mask = ClearBufferMask.DepthBufferBit;
+
+            GL.Clear ( mask );
+
+            KrErrorHandler.Check();
+        }
+
+        public void SetCullMode(CullMode cullMode)
+        {
+            if (!currentCullMode.HasValue || currentCullMode.Value != cullMode)
+            {
+                if (cullMode == CullMode.None)
+                {
+                    GL.Disable (EnableCap.CullFace);
+                    KrErrorHandler.Check ();
+
+                }
+                else
+                {
+                    GL.Enable(EnableCap.CullFace);
+                    KrErrorHandler.Check();
+
+                    GL.FrontFace(FrontFaceDirection.Cw);
+                    KrErrorHandler.Check();
+
+                    if (cullMode == CullMode.CW)
+                    {
+                        GL.CullFace (CullFaceMode.Back);
+                        KrErrorHandler.Check ();
+                    }
+                    else if (cullMode == CullMode.CCW)
+                    {
+                        GL.CullFace (CullFaceMode.Front);
+                        KrErrorHandler.Check ();
+                    }
+                    else
+                    {
+                        throw new NotSupportedException();
+                    }
+                }
+
+                currentCullMode = cullMode;
+            }
+        }
+
+        public IGeometryBuffer CreateGeometryBuffer (
+            VertexDeclaration vertexDeclaration,
+            Int32 vertexCount,
+            Int32 indexCount )
+        {
+            return new GeometryBuffer(vertexDeclaration, vertexCount, indexCount);
+        }
+
+        public void SetActiveGeometryBuffer(IGeometryBuffer buffer)
+        {
+            var temp = buffer as GeometryBuffer;
+
+            if( temp != this.currentGeomBuffer )
+            {
+                if( this.currentGeomBuffer != null )
+                {
+                    this.currentGeomBuffer.Deactivate();
+
+                    this.currentGeomBuffer = null;
+                }
+
+                if( temp != null )
+                {
+                    temp.Activate();
+                }
+
+                this.currentGeomBuffer = temp;
+            }
+        }
+
+        public ITexture UploadTexture (TextureAsset tex)
+        {
+            int width = tex.Width;
+            int height = tex.Height;
+
+            if (tex.SurfaceFormat != SurfaceFormat.Rgba32)
+                throw new NotImplementedException ();
+
+            IntPtr pixelDataRgba32 = Marshal.AllocHGlobal(tex.Data.Length);
+            Marshal.Copy(tex.Data, 0, pixelDataRgba32, tex.Data.Length);
+
+            // Call unmanaged code
+            Marshal.FreeHGlobal(pixelDataRgba32);
+
+            int textureId = -1;
+
+            // this sets the unpack alignment.  which is used when reading pixels
+            // in the fragment shader.  when the textue data is uploaded via glTexImage2d,
+            // the rows of pixels are assumed to be aligned to the value set for GL_UNPACK_ALIGNMENT.
+            // By default, the value is 4, meaning that rows of pixels are assumed to begin
+            // on 4-byte boundaries.  this is a global STATE.
+            GL.PixelStore(
+                PixelStoreParameter.UnpackAlignment, 4);
+
+            KrErrorHandler.Check();
+
+            // the first sept in the application of texture is to create the
+            // texture object.  this is a container object that holds the
+            // texture data.  this function returns a handle to a texture
+            // object.
+            GL.GenTextures(1, out textureId);
+            KrErrorHandler.Check();
+
+            var textureHandle = new TextureHandle (textureId);
+
+            var textureTarget = TextureTarget.Texture2D;
+
+            // we need to bind the texture object so that we can opperate on it.
+            GL.BindTexture(textureTarget, textureId);
+            KrErrorHandler.Check();
+
+            // the incoming texture format
+            // (the format that [pixelDataRgba32] is in)
+            var format = PixelFormat.Rgba;
+
+            var internalFormat = PixelInternalFormat.Rgba;
+
+            var textureDataFormat = PixelType.UnsignedByte;
+
+            // now use the bound texture object to load the image data.
+            GL.TexImage2D(
+
+                // specifies the texture target, either GL_TEXTURE_2D or one of the cubemap face targets.
+                textureTarget,
+
+                // specifies which mip level to load.  the base level is
+                // specified by 0 following by an increasing level for each
+                // successive mipmap.
+                0,
+
+                // internal format for the texture storage, can be:
+                // - GL_RGBA
+                // - GL_RGB
+                // - GL_LUMINANCE_ALPHA
+                // - GL_LUMINANCE
+                // - GL_ALPHA
+                internalFormat,
+
+                // the width of the image in pixels
+                width,
+
+                // the height of the image in pixels
+                height,
+
+                // boarder - set to zero, only here for compatibility with OpenGL desktop
+                0,
+
+                // the format of the incoming texture data, in opengl es this
+                // has to be the same as the internal format
+                format,
+
+                // the type of the incoming pixel data, can be:
+                // - unsigned byte
+                // - unsigned short 4444
+                // - unsigned short 5551
+                // - unsigned short 565
+                textureDataFormat, // this refers to each individual channel
+
+
+                pixelDataRgba32
+
+                );
+
+            KrErrorHandler.Check();
+
+            // sets the minification and maginfication filtering modes.  required
+            // because we have not loaded a complete mipmap chain for the texture
+            // so we must select a non mipmapped minification filter.
+            GL.TexParameter(textureTarget, TextureParameterName.TextureMinFilter, (int) All.Nearest );
+
+            KrErrorHandler.Check();
+
+            GL.TexParameter(textureTarget, TextureParameterName.TextureMagFilter, (int) All.Nearest );
+
+            KrErrorHandler.Check();
+
+            return textureHandle;
+        }
+
+        public void UnloadTexture (ITexture texture)
+        {
+            int textureId = (texture as TextureHandle).glTextureId;
+
+            GL.DeleteTextures(1, ref textureId);
+        }
+
+        public void SetActiveTexture (Int32 slot, ITexture tex)
+        {
+            TextureUnit oglTexSlot = KrEnumConverter.ToKhronosTextureSlot(slot);
+            GL.ActiveTexture(oglTexSlot);
+
+            var oglt0 = tex as TextureHandle;
+
+            if( oglt0 != null )
+            {
+                var textureTarget = TextureTarget.Texture2D;
+
+                // we need to bind the texture object so that we can opperate on it.
+                GL.BindTexture(textureTarget, oglt0.glTextureId);
+                KrErrorHandler.Check();
+            }
+        }
+
+        public IShader CreateShader (ShaderAsset asset)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void DestroyShader (IShader shader)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void SetBlendEquation(
+            BlendFunction rgbBlendFunction,
+            BlendFactor sourceRgb,
+            BlendFactor destinationRgb,
+            BlendFunction alphaBlendFunction,
+            BlendFactor sourceAlpha,
+            BlendFactor destinationAlpha
+            )
+        {
+            GL.BlendEquationSeparate(
+                KrEnumConverter.ToKhronos(rgbBlendFunction),
+                KrEnumConverter.ToKhronos(alphaBlendFunction) );
+            KrErrorHandler.Check();
+
+            GL.BlendFuncSeparate(
+                KrEnumConverter.ToKhronosSrc(sourceRgb),
+                KrEnumConverter.ToKhronosDest(destinationRgb),
+                KrEnumConverter.ToKhronosSrc(sourceAlpha),
+                KrEnumConverter.ToKhronosDest(destinationAlpha) );
+            KrErrorHandler.Check();
+        }
+
+        public void DrawPrimitives(
+            PrimitiveType primitiveType,
+            Int32 startVertex,
+            Int32 primitiveCount )
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DrawIndexedPrimitives (
+            PrimitiveType primitiveType,
+            Int32 baseVertex,
+            Int32 minVertexIndex,
+            Int32 numVertices,
+            Int32 startIndex,
+            Int32 primitiveCount
+            )
+        {
+            if( baseVertex != 0 || minVertexIndex != 0 || startIndex != 0 )
+            {
+                throw new NotImplementedException();
+            }
+
+            var otkpType =  KrEnumConverter.ToKhronos(primitiveType);
+            //Int32 numVertsInPrim = numVertices / primitiveCount;
+
+            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn(primitiveType);
+            Int32 count = primitiveCount * nVertsInPrim;
+
+            var vertDecl = currentGeomBuffer.VertexBuffer.VertexDeclaration;
+
+            this.EnableVertAttribs( vertDecl, (IntPtr) 0 );
+
+            GL.DrawElements (
+                otkpType,
+                count,
+                DrawElementsType.UnsignedShort,
+                (System.IntPtr) 0 );
+
+            KrErrorHandler.Check();
+
+            this.DisableVertAttribs(vertDecl);
+        }
+
+        public void DrawUserPrimitives <T> (
+            PrimitiveType primitiveType,
+            T[] vertexData,
+            Int32 vertexOffset,
+            Int32 primitiveCount,
+            VertexDeclaration vertexDeclaration )
+            where T : struct, IVertexType
+        {
+            // do i need to do this? todo: find out
+            this.SetActiveGeometryBuffer(null);
+
+            var vertDecl = vertexData[0].VertexDeclaration;
+
+            //MSDN
+            //
+            //The GCHandle structure is used with the GCHandleType
+            //enumeration to create a handle corresponding to any managed
+            //object. This handle can be one of four types: Weak,
+            //WeakTrackResurrection, Normal, or Pinned. When the handle has
+            //been allocated, you can use it to prevent the managed object
+            //from being collected by the garbage collector when an unmanaged
+            //client holds the only reference. Without such a handle,
+            //the object can be collected by the garbage collector before
+            //completing its work on behalf of the unmanaged client.
+            //
+            //You can also use GCHandle to create a pinned object that
+            //returns a memory address to prevent the garbage collector
+            //from moving the object in memory.
+            //
+            //When the handle goes out of scope you must explicitly release
+            //it by calling the Free method; otherwise, memory leaks may
+            //occur. When you free a pinned handle, the associated object
+            //will be unpinned and will become eligible for garbage
+            //collection, if there are no other references to it.
+            //
+            GCHandle pinnedArray = GCHandle.Alloc(vertexData, GCHandleType.Pinned);
+            IntPtr pointer = pinnedArray.AddrOfPinnedObject();
+
+            if( vertexOffset != 0 )
+            {
+                pointer = Add(pointer, vertexOffset * vertDecl.VertexStride * sizeof(byte));
+            }
+
+            var glDrawMode = KrEnumConverter.ToKhronos(primitiveType);
+            var glDrawModeAll = glDrawMode;
+
+            var bindTarget = BufferTarget.ArrayBuffer;
+
+            GL.BindBuffer(bindTarget, 0);
+            KrErrorHandler.Check();
+
+
+            this.EnableVertAttribs( vertDecl, pointer );
+
+            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn(primitiveType);
+            Int32 count = primitiveCount * nVertsInPrim;
+
+            GL.DrawArrays(
+                glDrawModeAll, // specifies the primitive to render
+                vertexOffset,  // specifies the starting vertex index in the enabled vertex arrays
+                count ); // specifies the number of indicies to be drawn
+
+            KrErrorHandler.Check();
+
+
+            this.DisableVertAttribs(vertDecl);
+
+
+            pinnedArray.Free();
+        }
+
+        public void DrawUserIndexedPrimitives <T> (
+            PrimitiveType primitiveType,
+            T[] vertexData,
+            Int32 vertexOffset,
+            Int32 numVertices,
+            Int32[] indexData,
+            Int32 indexOffset,
+            Int32 primitiveCount,
+            VertexDeclaration vertexDeclaration )
+            where T : struct, IVertexType
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
+
+    public sealed class IndexBuffer
+        : IIndexBuffer
+        , IDisposable
+    {
+        static Int32 resourceCounter;
+
+        Int32 indexCount;
+        BufferTarget type;
+        UInt32 bufferHandle;
+        GLBufferUsage bufferUsage;
+
+        bool alreadyDisposed;
+
+        public IndexBuffer (Int32 indexCount)
+        {
+            this.indexCount = indexCount;
+
+            this.type = BufferTarget.ElementArrayBuffer;
+
+            this.bufferUsage = GLBufferUsage.DynamicDraw;
+
+            GL.GenBuffers(1, out this.bufferHandle);
+
+            KrErrorHandler.Check();
+
+            if( this.bufferHandle == 0 )
+            {
+                throw new Exception("Failed to generate vert buffer.");
+            }
+
+            this.Activate();
+
+            GL.BufferData(
+                this.type,
+                (System.IntPtr) (sizeof(UInt16) * this.indexCount),
+                (System.IntPtr) null,
+                this.bufferUsage);
+
+            KrErrorHandler.Check();
+
+            resourceCounter++;
+
+        }
+
+        ~IndexBuffer()
+        {
+            RunDispose(false);
+        }
+
+        void CleanUpManagedResources()
+        {
+
+        }
+
+        void CleanUpNativeResources()
+        {
+            GL.DeleteBuffers(1, ref this.bufferHandle);
+            KrErrorHandler.Check();
+
+            bufferHandle = 0;
+
+            resourceCounter--;
+        }
+
+        public void Dispose()
+        {
+            RunDispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public void RunDispose(bool isDisposing)
+        {
+            if (alreadyDisposed)
+                return;
+
+            if (isDisposing)
+            {
+                CleanUpNativeResources ();
+
+            }
+
+            // FREE UNMANAGED STUFF HERE
+            CleanUpManagedResources ();
+
+            alreadyDisposed = true;
+
+        }
+
+        void GetBufferData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount)
+            where T : struct
+        {
+            throw new NotImplementedException();/*
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ibo);
+            GraphicsExtensions.CheckGLError();
+            var elementSizeInByte = Marshal.SizeOf(typeof(T));
+            IntPtr ptr = GL.MapBuffer(BufferTarget.ArrayBuffer, BufferAccess.ReadOnly);
+            // Pointer to the start of data to read in the index buffer
+            ptr = new IntPtr(ptr.ToInt64() + offsetInBytes);
+            if (data is byte[])
+            {
+                byte[] buffer = data as byte[];
+                // If data is already a byte[] we can skip the temporary buffer
+                // Copy from the index buffer to the destination array
+                Marshal.Copy(ptr, buffer, 0, buffer.Length);
+            }
+            else
+            {
+                // Temporary buffer to store the copied section of data
+                byte[] buffer = new byte[elementCount * elementSizeInByte];
+                // Copy from the index buffer to the temporary buffer
+                Marshal.Copy(ptr, buffer, 0, buffer.Length);
+                // Copy from the temporary buffer to the destination array
+                Buffer.BlockCopy(buffer, 0, data, startIndex * elementSizeInByte, elementCount * elementSizeInByte);
+            }
+            GL.UnmapBuffer(BufferTarget.ArrayBuffer);
+            GraphicsExtensions.CheckGLError();
+            */
+        }
+
+        internal void Activate()
+        {
+            GL.BindBuffer(this.type, this.bufferHandle);
+            KrErrorHandler.Check();
+        }
+
+        internal void Deactivate()
+        {
+            GL.BindBuffer(this.type, 0);
+            KrErrorHandler.Check();
+        }
+
+        public int IndexCount
+        {
+            get
+            {
+                return indexCount;
+            }
+        }
+
+
+        public void SetData (Int32[] data)
+        {
+
+            if( data.Length != indexCount )
+            {
+                throw new Exception("?");
+            }
+
+            UInt16[] udata = new UInt16[data.Length];
+
+            for(Int32 i = 0; i < data.Length; ++i)
+            {
+                udata[i] = (UInt16) data[i];
+            }
+
+            this.Activate();
+
+            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
+            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
+            // then content of data are copied to the allocated data store.  The contents of the buffer object data
+            // store can be initialized or updated using the glBufferSubData FN
+            GL.BufferSubData(
+                this.type,
+                (System.IntPtr) 0,
+                (System.IntPtr) (sizeof(UInt16) * this.indexCount),
+                udata);
+
+            udata = null;
+
+            KrErrorHandler.Check();
+        }
+
+        public void GetData(Int32[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetData(Int32[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetData(Int32[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetRawData(Byte[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Byte[] GetRawData(Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// Represents a handle to a Khronos GL shader on the GPU.
+    /// </summary>
+    public sealed class ShaderHandle
+        : IShader
+        , IDisposable
+    {
+        #region IShader
+
+        /// <summary>
+        /// Resets all the shader's variables to their default values.
+        /// </summary>
+        public void ResetVariables()
+        {
+            // the shader definition defines the default values for the variables
+            foreach (var variableDefinition in cachedShaderDefinition.VariableDefinitions)
+            {
+                string varName = variableDefinition.Name;
+                object value = variableDefinition.DefaultValue;
+
+                if( variableDefinition.Type == typeof(Matrix44) )
+                {
+                    this.SetVariable(varName, (Matrix44) value);
+                }
+                else if( variableDefinition.Type == typeof(Int32) )
+                {
+                    this.SetVariable(varName, (Int32) value);
+                }
+                else if( variableDefinition.Type == typeof(Single) )
+                {
+                    this.SetVariable(varName, (Single) value);
+                }
+                else if( variableDefinition.Type == typeof(Vector2) )
+                {
+                    this.SetVariable(varName, (Vector2) value);
+                }
+                else if( variableDefinition.Type == typeof(Vector3) )
+                {
+                    this.SetVariable(varName, (Vector3) value);
+                }
+                else if( variableDefinition.Type == typeof(Vector4) )
+                {
+                    this.SetVariable(varName, (Vector4) value);
+                }
+                else if( variableDefinition.Type == typeof(Rgba32) )
+                {
+                    this.SetVariable(varName, (Rgba32) value);
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Resets all the shader's texture samplers point at texture slot 0.
+        /// </summary>
+        public void ResetSamplerTargets()
+        {
+            foreach (var samplerDefinition in cachedShaderDefinition.SamplerDefinitions)
+            {
+                this.SetSamplerTarget(samplerDefinition.Name, 0);
+            }
+        }
+
+        /// <summary>
+        /// Sets the value of a specified shader variable.
+        /// </summary>
+        public void SetVariable<T>(string name, T value)
+        {
+            passes.ForEach( x => x.SetVariable(name, value));
+        }
+
+        /// <summary>
+        /// Sets the texture slot that a texture sampler should sample from.
+        /// </summary>
+        public void SetSamplerTarget(string name, Int32 textureSlot)
+        {
+            foreach (var pass in passes)
+            {
+                pass.SetSamplerTarget(name, textureSlot);
+            }
+        }
+
+        /// <summary>
+        /// Provides access to the individual passes in this shader.
+        /// the calling code can itterate though these and apply them
+        ///to the graphics context before it makes a draw call.
+        /// </summary>
+        public IShaderPass[] Passes
+        {
+            get
+            {
+                return passes.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Defines which vertex elements are required by this shader.
+        /// </summary>
+        public VertexElementUsage[] RequiredVertexElements
+        {
+            get
+            {
+                // todo: an array of vert elem usage
+                // doesn't uniquely identify anything...
+                return requiredVertexElements.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Defines which vertex elements are optionally used by this
+        /// shader if they happen to be present.
+        /// </summary>
+        public VertexElementUsage[] OptionalVertexElements
+        {
+            get
+            {
+                // todo: an array of vert elem usage
+                // doesn't uniquely identify anything...
+                return optionalVertexElements.ToArray();
+            }
+        }
+
+        public String Name { get; private set; }
+
+        #endregion
+
+        #region IDisposable
+
+        /// <summary>
+        /// Releases all resource used by the <see cref="Cor.MonoTouchRuntime.Shader"/> object.
+        /// </summary>
+        public void Dispose()
+        {
+            foreach (var pass in passes)
+            {
+                pass.Dispose();
+            }
+        }
+
+        #endregion
+
+        List<VertexElementUsage> requiredVertexElements = new List<VertexElementUsage>();
+        List<VertexElementUsage> optionalVertexElements = new List<VertexElementUsage>();
+
+        /// <summary>
+        /// The <see cref="ShaderPass"/> objects that need to each, in turn,
+        /// be individually activated and used to draw with to apply the effect
+        /// of this containing <see cref="Shader"/> object.
+        /// </summary>
+        List<ShaderPassHandle> passes = new List<ShaderPassHandle>();
+
+        /// <summary>
+        /// Cached reference to the <see cref="ShaderDefinition"/> object used
+        /// to create this <see cref="Shader"/> object.
+        /// </summary>
+        readonly ShaderDefinition cachedShaderDefinition;
+
+        public ShaderDefinition ShaderDefinition { get { return cachedShaderDefinition; } }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Shader"/> class from a
+        /// <see cref="ShaderDefinition"/> object.
+        /// </summary>
+        internal ShaderHandle (ShaderDefinition shaderDefinition)
+        {
+            InternalUtils.Log.Info("\n");
+            InternalUtils.Log.Info("\n");
+            InternalUtils.Log.Info("=====================================================================");
+            InternalUtils.Log.Info("Creating Shader: " + shaderDefinition.Name);
+            this.cachedShaderDefinition = shaderDefinition;
+            this.Name = shaderDefinition.Name;
+            CalculateRequiredInputs(shaderDefinition);
+            InitilisePasses (shaderDefinition);
+
+            this.ResetVariables();
+        }
+
+        /// <summary>
+        /// Works out and caches a copy of which shader
+        /// inputs are required/optional, needed as the
+        /// <see cref="IShader"/> interface requires this information.
+        /// </summary>
+        void CalculateRequiredInputs(ShaderDefinition shaderDefinition)
+        {
+            foreach (var input in shaderDefinition.InputDefinitions)
+            {
+                if( input.Optional )
+                {
+                    optionalVertexElements.Add(input.Usage);
+                }
+                else
+                {
+                    requiredVertexElements.Add(input.Usage);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Triggers the creation of all of
+        /// this <see cref="Shader"/> object's passes.
+        /// </summary>
+        void InitilisePasses(ShaderDefinition shaderDefinition)
+        {
+            // This function builds up an in memory object for each shader
+            // pass in this shader.  The different shader varients are defined
+            // outside of the scope of a conceptual shader pass, therefore this
+            // function must traverse the shader definition and to create
+            // shader pass objects that only contain the varient data
+            // for that specific pass.
+
+            // For each named shader pass.
+            foreach (var definedPassName in shaderDefinition.PassNames)
+            {
+                InternalUtils.Log.Info(
+                    " Preparing to initilising Shader Pass: " + definedPassName);
+
+                // itterate over the defined pass names, ex: cel, outline...
+
+                //shaderDefinition.VariantDefinitions
+                //  .Select(x => x.PassDefinitions
+                //  .Select(y => y.PassName == definedPassName))
+                //  .ToList();
+
+                // Find all of the variants that are defined
+                // in this shader object's definition
+                // that support the current shaderpass.
+                var passVariants___Name_AND_passVariantDefinition =
+                    new List<Tuple<string, ShaderVarientPassDefinition>>();
+
+                // itterate over every shader variant in the definition
+                foreach (var shaderVariantDefinition in shaderDefinition.VariantDefinitions)
+                {
+                    // each shader varient has a name
+                    string shaderVariantName = shaderVariantDefinition.VariantName;
+
+                    // find the pass in the shader variant definition
+                    // that corresponds to the pass we are
+                    // currently trying to initilise.
+                    var variantPassDefinition =
+                        shaderVariantDefinition.VariantPassDefinitions
+                            .Find(x => x.PassName == definedPassName);
+
+                    // now we have a Variant name, say:
+                    //   - Unlit_PositionTextureColour
+                    // and a pass definition, say :
+                    //   - Main
+                    //   - Shaders/Unlit_PositionTextureColour.vsh
+                    //   - Shaders/Unlit_PositionTextureColour.fsh
+                    //
+                    passVariants___Name_AND_passVariantDefinition.Add(
+                        new Tuple<String, ShaderVarientPassDefinition>(
+                            shaderVariantName, variantPassDefinition));
+                }
+
+                // Create one shader pass for each defined pass name.
+                var shaderPass = new ShaderPass (
+                    definedPassName,
+                    passVariants___Name_AND_passVariantDefinition );
+
+                shaderPass.BindAttributes (
+                    shaderDefinition
+                        .InputDefinitions.Select(x => x.Name)
+                        .ToList());
+
+                shaderPass.Link ();
+                shaderPass.ValidateInputs(shaderDefinition.InputDefinitions);
+                shaderPass.ValidateVariables(shaderDefinition.VariableDefinitions);
+                shaderPass.ValidateSamplers(shaderDefinition.SamplerDefinitions);
+
+                passes.Add(shaderPass);
             }
         }
     }
 
     /// <summary>
-    /// Static class to help with horrible shader system.
+    /// Represents in individual pass of a Cor.Xios high level Shader object.
     /// </summary>
-    public static class ShaderUtils
+    public sealed class ShaderPassHandle
+        : IShaderPass
+        , IDisposable
     {
-        public class ShaderUniform
+        /// <summary>
+        /// A collection of OpenGL shaders, all with slight variations in their
+        /// input parameters, that are suitable for rendering this ShaderPass object.
+        /// </summary>
+        List<KrShader> Variants { get; set; }
+
+        /// <summary>
+        /// A nice name for the shader pass, for example: Main or Cel -> Outline.
+        /// </summary>
+        public string Name { get; private set; }
+
+        /// <summary>
+        /// Whenever this ShaderPass object gets asked to activate itself whilst a VertexDeclaration it has not seen
+        /// before is active, the best matching shader pass variant is found and then stored in this map to fast
+        /// access.
+        /// </summary>
+        Dictionary<VertexDeclaration, KrShader> BestVariantMap { get; set; }
+
+        Dictionary<String, Object>  currentVariables = new Dictionary<String, Object>();
+        Dictionary<String, Int32>   currentSamplerSlots = new Dictionary<String, Int32>();
+
+        Dictionary<String, bool> logHistory = new Dictionary<String, bool>();
+
+        internal void SetVariable<T>(string name, T value)
         {
-            public Int32 Index { get; set; }
-            public String Name { get; set; }
-            public ActiveUniformType Type { get; set; }
+            currentVariables[name] = value;
         }
 
-        public class ShaderAttribute
+        internal void SetSamplerTarget(string name, Int32 textureSlot)
         {
-            public Int32 Index { get; set; }
-            public String Name { get; set; }
-            public ActiveAttribType Type { get; set; }
+            currentSamplerSlots[name] = textureSlot;
         }
 
-        public static Int32 CreateShaderProgram()
+        public ShaderPassHandle(
+            String passName,
+            List<Tuple<String, ShaderVarientPassDefinition>> passVariants___Name_AND_passVariantDefinition)
         {
-            // Create shader program.
-            Int32 programHandle = GL.CreateProgram ();
+            InternalUtils.Log.Info("Creating ShaderPass: " + passName);
+            this.Name = passName;
+            this.Variants =
+                passVariants___Name_AND_passVariantDefinition
+                    .Select (x => new OpenGLShader (x.Item1, passName, x.Item2.PassDefinition))
+                    .ToList();
 
-            if( programHandle == 0 )
-                throw new Exception("Failed to create shader program");
-
-            ErrorHandler.Check();
-
-            return programHandle;
+            this.BestVariantMap = new Dictionary<VertexDeclaration, OpenGLShader>();
         }
 
-        public static Int32 CreateVertexShader(string path)
+
+        internal void BindAttributes(IList<String> inputNames)
         {
-            Int32 vertShaderHandle;
-
-            if( Path.GetExtension(path) != ".vsh" )
+            foreach (var variant in this.Variants)
             {
-                throw new Exception("Vertex shader [" + path + "] should end with .vsh");
-            }
-
-            if( !File.Exists(path))
-            {
-                throw new Exception("Vertex shader at [" + path + "] does not exist.");
-            }
-
-            ShaderUtils.CompileShader (
-                GLShaderType.VertexShader,
-                path,
-                out vertShaderHandle );
-
-            if( vertShaderHandle == 0 )
-                throw new Exception("Failed to compile vertex shader program");
-
-            return vertShaderHandle;
-        }
-
-        public static Int32 CreateFragmentShader(string path)
-        {
-            Int32 fragShaderHandle;
-
-            if( Path.GetExtension(path) != ".fsh" )
-            {
-                throw new Exception("Fragement shader [" + path + "] should end with .fsh");
-            }
-
-            if( !File.Exists(path))
-            {
-                throw new Exception("Fragement shader at [" + path + "] does not exist.");
-            }
-
-            ShaderUtils.CompileShader (
-                GLShaderType.FragmentShader,
-                path,
-                out fragShaderHandle );
-
-            if( fragShaderHandle == 0 )
-                throw new Exception("Failed to compile fragment shader program");
-
-
-            return fragShaderHandle;
-        }
-
-        public static void AttachShader(
-            Int32 programHandle,
-            Int32 shaderHandle)
-        {
-            if (shaderHandle != 0)
-            {
-                // Attach vertex shader to program.
-                GL.AttachShader (programHandle, shaderHandle);
-                ErrorHandler.Check();
+                variant.BindAttributes(inputNames);
             }
         }
 
-        public static void DetachShader(
-            Int32 programHandle,
-            Int32 shaderHandle )
+        internal void Link()
         {
-            if (shaderHandle != 0)
+            foreach (var variant in this.Variants)
             {
-                GL.DetachShader (programHandle, shaderHandle);
-                ErrorHandler.Check();
+                variant.Link();
             }
         }
 
-        public static void DeleteShader(
-            Int32 programHandle,
-            Int32 shaderHandle )
+        internal void ValidateInputs(List<ShaderInputDefinition> definitions)
         {
-            if (shaderHandle != 0)
+            foreach(var variant in this.Variants)
             {
-                GL.DeleteShader (shaderHandle);
-                shaderHandle = 0;
-                ErrorHandler.Check();
+                variant.ValidateInputs(definitions);
             }
         }
 
-        public static void DestroyShaderProgram (Int32 programHandle)
+        internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
         {
-            if (programHandle != 0)
+            foreach(var variant in this.Variants)
             {
-#if COR_PLATFORM_MANAGED_XIOS
-                GL.DeleteProgram (programHandle);
-#elif COR_PLATFORM_MANAGED_MONOMAC
-                GL.DeleteProgram (1, new int[]{ programHandle } );
-#endif
-
-                programHandle = 0;
-                ErrorHandler.Check();
+                variant.ValidateVariables(definitions);
             }
         }
 
-        public static void CompileShader (
-            GLShaderType type,
-            String file,
-            out Int32 shaderHandle )
+        internal void ValidateSamplers(List<ShaderSamplerDefinition> definitions)
         {
-            String src = string.Empty;
-
-            try
+            foreach(var variant in this.Variants)
             {
-                // Get the data from the text file
-                src = System.IO.File.ReadAllText (file);
-            }
-            catch(Exception e)
-            {
-                InternalUtils.Log.Info(e.Message);
-                shaderHandle = 0;
-                return;
-            }
-
-            // Create an empty vertex shader object
-            shaderHandle = GL.CreateShader (type);
-
-            ErrorHandler.Check();
-
-            // Replace the source code in the vertex shader object
-#if COR_PLATFORM_MANAGED_XIOS
-            GL.ShaderSource (
-                shaderHandle,
-                1,
-                new String[] { src },
-                (Int32[]) null );
-#elif COR_PLATFORM_MANAGED_MONOMAC
-            GL.ShaderSource (
-                shaderHandle,
-                src);
-#endif
-
-            ErrorHandler.Check();
-
-            GL.CompileShader (shaderHandle);
-
-            ErrorHandler.Check();
-
-#if DEBUG
-            Int32 logLength = 0;
-            GL.GetShader (
-                shaderHandle,
-                ShaderParameter.InfoLogLength,
-                out logLength);
-
-            ErrorHandler.Check();
-            var infoLog = new System.Text.StringBuilder(logLength);
-
-            if (logLength > 0)
-            {
-                int temp = 0;
-                GL.GetShaderInfoLog (
-                    shaderHandle,
-                    logLength,
-                    out temp,
-                    infoLog );
-
-                string log = infoLog.ToString();
-
-                InternalUtils.Log.Info(file);
-                InternalUtils.Log.Info (log);
-                InternalUtils.Log.Info(type.ToString());
-            }
-#endif
-            Int32 status = 0;
-
-            GL.GetShader (
-                shaderHandle,
-                ShaderParameter.CompileStatus,
-                out status );
-
-            ErrorHandler.Check();
-
-            if (status == 0)
-            {
-                GL.DeleteShader (shaderHandle);
-                throw new Exception ("Failed to compile " + type.ToString());
+                variant.ValidateSamplers(definitions);
             }
         }
 
-        public static List<ShaderUniform> GetUniforms (Int32 prog)
+
+        public void Activate(VertexDeclaration vertexDeclaration)
         {
-
-            int numActiveUniforms = 0;
-
-            var result = new List<ShaderUniform>();
-
-            GL.GetProgram(prog, ProgramParameter.ActiveUniforms, out numActiveUniforms);
-            ErrorHandler.Check();
-
-            for(int i = 0; i < numActiveUniforms; ++i)
+            if (!BestVariantMap.ContainsKey (vertexDeclaration))
             {
-                var sb = new System.Text.StringBuilder ();
+                BestVariantMap[vertexDeclaration] = ShaderHelper.WorkOutBestVariantFor(vertexDeclaration, Variants);
+            }
+            var bestVariant = BestVariantMap[vertexDeclaration];
+            // select the correct shader pass variant and then activate it
+            bestVariant.Activate ();
 
-                int buffSize = 0;
-                int length = 0;
-                int size = 0;
-                ActiveUniformType type;
+            foreach (var key1 in currentVariables.Keys)
+            {
+                var variable = bestVariant
+                    .Variables
+                    .Find(x => x.NiceName == key1 || x.Name == key1);
 
-                GL.GetActiveUniform(
-                    prog,
-                    i,
-                    64,
-                    out length,
-                    out size,
-                    out type,
-                    sb);
-                ErrorHandler.Check();
+                if( variable == null )
+                {
+                    string warning = "WARNING: missing variable: " + key1;
 
-                result.Add(
-                    new ShaderUniform()
+                    if( !logHistory.ContainsKey(warning) )
                     {
-                    Index = i,
-                    Name = sb.ToString(),
-                    Type = type
+                        InternalUtils.Log.Info(warning);
+
+                        logHistory.Add(warning, true);
                     }
-                );
+                }
+                else
+                {
+                    var val = currentVariables[key1];
+
+                    variable.Set(val);
+                }
             }
 
-            return result;
+            foreach (var key2 in currentSamplerSlots.Keys)
+            {
+                var sampler = bestVariant
+                    .Samplers
+                    .Find(x => x.NiceName == key2 || x.Name == key2);
+
+                if( sampler == null )
+                {
+                    //InternalUtils.Log.Info("missing sampler: " + key2);
+                }
+                else
+                {
+                    var slot = currentSamplerSlots[key2];
+
+                    sampler.SetSlot(slot);
+                }
+            }
         }
 
-        public static List<ShaderAttribute> GetAttributes (Int32 prog)
+        public void Dispose()
         {
-            int numActiveAttributes = 0;
-
-            var result = new List<ShaderAttribute>();
-
-            // gets the number of active vertex attributes
-            GL.GetProgram(prog, ProgramParameter.ActiveAttributes, out numActiveAttributes);
-            ErrorHandler.Check();
-
-            for(int i = 0; i < numActiveAttributes; ++i)
+            foreach (var oglesShader in Variants)
             {
-                var sb = new System.Text.StringBuilder ();
-
-                int buffSize = 0;
-                int length = 0;
-                int size = 0;
-                ActiveAttribType type;
-                GL.GetActiveAttrib(
-                    prog,
-                    i,
-                    64,
-                    out length,
-                    out size,
-                    out type,
-                    sb);
-                ErrorHandler.Check();
-
-                result.Add(
-                    new ShaderAttribute()
-                    {
-                        Index = i,
-                        Name = sb.ToString(),
-                        Type = type
-                    }
-                );
+                oglesShader.Dispose ();
             }
+        }
+    }
 
-            return result;
+    internal sealed class TextureHandle
+        : ITexture
+        , IDisposable
+    {
+        internal TextureHandle (int textureid)
+        {
+            glTextureId = textureid;
         }
 
+        internal int glTextureId { get; private set; }
 
-        public static bool LinkProgram (Int32 prog)
+        public void Dispose ()
         {
-            bool retVal = true;
-
-            GL.LinkProgram (prog);
-
-            ErrorHandler.Check();
-
-#if DEBUG
-            Int32 logLength = 0;
-
-            GL.GetProgram (
-                prog,
-                ProgramParameter.InfoLogLength,
-                out logLength );
-
-            ErrorHandler.Check();
-
-            if (logLength > 0)
-            {
-                retVal = false;
-
-                /*
-                var infoLog = new System.Text.StringBuilder ();
-
-                GL.GetProgramInfoLog (
-                    prog,
-                    logLength,
-                    out logLength,
-                    infoLog );
-                */
-                var infoLog = string.Empty;
-                GL.GetProgramInfoLog(prog, out infoLog);
-
-
-                ErrorHandler.Check();
-
-                InternalUtils.Log.Info (string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
-            }
-#endif
-            Int32 status = 0;
-
-            GL.GetProgram (
-                prog,
-                ProgramParameter.LinkStatus,
-                out status );
-
-            ErrorHandler.Check();
-
-            if (status == 0)
-            {
-                throw new Exception(String.Format("Failed to link program: {0:x}", prog));
-            }
-
-            return retVal;
 
         }
 
-        public static void ValidateProgram (Int32 programHandle)
+        public SurfaceFormat SurfaceFormat
         {
-            GL.ValidateProgram (programHandle);
-
-            ErrorHandler.Check();
-
-            Int32 logLength = 0;
-
-            GL.GetProgram (
-                programHandle,
-                ProgramParameter.InfoLogLength,
-                out logLength );
-
-            ErrorHandler.Check();
-
-            if (logLength > 0)
+            get
             {
-                var infoLog = new System.Text.StringBuilder ();
-
-                GL.GetProgramInfoLog (
-                    programHandle,
-                    logLength,
-                    out logLength, infoLog );
-
-                ErrorHandler.Check();
-
-                InternalUtils.Log.Info (string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
+                throw new NotImplementedException ();
             }
+        }
 
-            Int32 status = 0;
-
-            GL.GetProgram (
-                programHandle, ProgramParameter.LinkStatus,
-                out status );
-
-            ErrorHandler.Check();
-
-            if (status == 0)
+        public Byte[] Primary
+        {
+            get
             {
-                throw new Exception (String.Format("Failed to validate program {0:x}", programHandle));
+                throw new NotImplementedException ();
+            }
+        }
+
+        public Byte[,] Mipmaps
+        {
+            get
+            {
+                throw new NotImplementedException ();
+            }
+        }
+
+        public int Width
+        {
+            get
+            {
+                throw new NotImplementedException ();
+            }
+        }
+
+        public int Height
+        {
+            get
+            {
+                throw new NotImplementedException ();
             }
         }
     }
@@ -525,7 +1397,7 @@ namespace Cor.Lib.Khronos
             this.bufferUsage = GLBufferUsage.DynamicDraw;
 
             GL.GenBuffers(1, out this.bufferHandle);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
 
             if( this.bufferHandle == 0 )
@@ -542,7 +1414,7 @@ namespace Cor.Lib.Khronos
                 (System.IntPtr) null,
                 this.bufferUsage);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             resourceCounter++;
 
@@ -551,13 +1423,13 @@ namespace Cor.Lib.Khronos
         internal void Activate()
         {
             GL.BindBuffer(this.type, this.bufferHandle);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
         }
 
         internal void Deactivate()
         {
             GL.BindBuffer(this.type, 0);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
         }
 
         ~VertexBuffer()
@@ -573,7 +1445,7 @@ namespace Cor.Lib.Khronos
         void CleanUpNativeResources()
         {
             GL.DeleteBuffers(1, ref this.bufferHandle);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             bufferHandle = 0;
 
@@ -708,7 +1580,7 @@ namespace Cor.Lib.Khronos
                 (System.IntPtr) (this.vertDecl.VertexStride * elementCount),
                 data);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
         }
 
         public T[] GetData<T> (Int32 startIndex, Int32 elementCount)
@@ -732,7 +1604,7 @@ namespace Cor.Lib.Khronos
                 (System.IntPtr) (this.vertDecl.VertexStride * elementCount),
                 data);
 
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
         }
 
         public Byte[] GetRawData (
@@ -743,824 +1615,1066 @@ namespace Cor.Lib.Khronos
         }
     }
 
-    public sealed class IndexBuffer
-        : IIndexBuffer
-        , IDisposable
+
+    public sealed class KrShader
+        : IDisposable
     {
-        static Int32 resourceCounter;
+        public List<KrShaderInput> Inputs { get; private set; }
+        public List<KrShaderVariable> Variables { get; private set; }
+        public List<KrShaderSampler> Samplers { get; private set; }
 
-        Int32 indexCount;
-        BufferTarget type;
-        UInt32 bufferHandle;
-        GLBufferUsage bufferUsage;
+        internal string VariantName { get { return variantName; }}
+        Int32 programHandle;
+        Int32 fragShaderHandle;
+        Int32 vertShaderHandle;
 
-        bool alreadyDisposed;
+        // for debugging
+        string variantName;
+        string passName;
 
-        public IndexBuffer (Int32 indexCount)
+        string pixelShaderPath;
+        string vertexShaderPath;
+
+        public override string ToString ()
         {
-            this.indexCount = indexCount;
+            //string a = Inputs.Select(x => x.Name).Join(", ");
+            //string b = Variables.Select(x => x.Name).Join(", ");
 
-            this.type = BufferTarget.ElementArrayBuffer;
+            string a = string.Empty;
 
-            this.bufferUsage = GLBufferUsage.DynamicDraw;
-
-            GL.GenBuffers(1, out this.bufferHandle);
-
-            ErrorHandler.Check();
-
-            if( this.bufferHandle == 0 )
+            for(int i = 0; i < Inputs.Count; ++i)
             {
-                throw new Exception("Failed to generate vert buffer.");
+                a += Inputs[i].Name; if( i + 1 < Inputs.Count ) { a += ", "; }
             }
 
-            this.Activate();
+            string b = string.Empty;
+            for(int i = 0; i < Variables.Count; ++i)
+            {
+                b += Variables[i].Name; if( i + 1 < Variables.Count ) { b += ", "; }
+            }
 
-            GL.BufferData(
-                this.type,
-                (System.IntPtr) (sizeof(UInt16) * this.indexCount),
-                (System.IntPtr) null,
-                this.bufferUsage);
+            return
+                String.Format (
+                    "[KrShader: Variant {0}, Pass {1}: Inputs: [{2}], Variables: [{3}]]",
+                    variantName,
+                    passName,
+                    a,
+                    b);
+        }
 
-            ErrorHandler.Check();
+        internal void ValidateInputs(List<ShaderInputDefinition> definitions)
+        {
+            InternalUtils.Log.Info(
+                String.Format (
+                    "Pass: {1} => ValidateInputs({0})",
+                    variantName,
+                    passName ));
 
-            resourceCounter++;
+            // Make sure that this shader implements all of the non-optional defined inputs.
+            var nonOptionalDefinitions = definitions.Where(y => !y.Optional).ToList();
+
+            foreach(var definition in nonOptionalDefinitions)
+            {
+                var find = Inputs.Find(x => x.Name == definition.Name/* && x.Type == definition.Type */);
+
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+            }
+
+            // Make sure that every implemented input is defined.
+            foreach(var input in Inputs)
+            {
+                var find = definitions.Find(x => x.Name == input.Name
+                    /*&& (x.Type == input.Type || (x.Type == typeof(Rgba32) && input.Type == typeof(Vector4)))*/
+                    );
+
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+                else
+                {
+                    input.RegisterExtraInfo(find);
+                }
+            }
+        }
+
+        internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
+        {
+            InternalUtils.Log.Info(
+                String.Format (
+                    "Pass: {1} => ValidateVariables({0})",
+                    variantName,
+                    passName));
+
+
+            // Make sure that every implemented input is defined.
+            foreach(var variable in Variables)
+            {
+                var find = definitions.Find(
+                    x =>
+                    x.Name == variable.Name //&&
+                    //(x.Type == variable.Type || (x.Type == typeof(Rgba32) && variable.Type == typeof(Vector4)))
+                    );
+
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+                else
+                {
+                    variable.RegisterExtraInfo(find);
+                }
+            }
+        }
+
+        internal void ValidateSamplers(List<ShaderSamplerDefinition> definitions)
+        {
+            InternalUtils.Log.Info(
+                String.Format (
+                    "Pass: {1} => ValidateSamplers({0})",
+                    variantName,
+                    passName ));
+
+            var nonOptionalSamplers =
+                definitions
+                    .Where(y => !y.Optional)
+                    .ToList();
+
+            foreach(var definition in nonOptionalSamplers)
+            {
+                var find = this.Samplers.Find(x => x.Name == definition.Name);
+
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+            }
+
+            // Make sure that every implemented input is defined.
+            foreach(var sampler in this.Samplers)
+            {
+                var find = definitions.Find(x => x.Name == sampler.Name);
+
+                if( find == null )
+                {
+                    throw new Exception("problem");
+                }
+                else
+                {
+                    sampler.RegisterExtraInfo(find);
+                }
+            }
+        }
+
+        static string GetResourcePath(string path)
+        {
+            string ext = Path.GetExtension(path);
+
+            string filename = path.Substring(0, path.Length - ext.Length);
+
+            var resourcePathname =
+                global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (
+                    filename,
+                    ext.Substring(1, ext.Length - 1)
+                );
+
+            if( resourcePathname == null )
+            {
+                throw new Exception("Resource [" + path + "] not found");
+            }
+
+            return resourcePathname;
+        }
+
+        internal KrShader(
+            String variantName,
+            String passName,
+            ShaderDefinition definition)
+        {
+            InternalUtils.Log.Info ("  Creating Pass Variant: " + variantName);
+            this.variantName = variantName;
+            this.passName = passName;
+            this.vertexShaderPath = definition.VertexShaderPath;
+            this.pixelShaderPath = definition.PixelShaderPath;
+
+            //Variables =
+            programHandle = ShaderUtils.CreateShaderProgram ();
+
+            vertShaderHandle = ShaderUtils.CreateVertexShader (GetResourcePath(this.vertexShaderPath));
+            fragShaderHandle = ShaderUtils.CreateFragmentShader (GetResourcePath(this.pixelShaderPath));
+
+            ShaderUtils.AttachShader (programHandle, vertShaderHandle);
+            ShaderUtils.AttachShader (programHandle, fragShaderHandle);
 
         }
 
-        ~IndexBuffer()
+        internal void BindAttributes(IList<String> orderedAttributes)
         {
-            RunDispose(false);
+            int index = 0;
+
+            foreach(var attName in orderedAttributes)
+            {
+                global::MonoMac.OpenGL.GL.BindAttribLocation(programHandle, index, attName);
+                KrErrorHandler.Check();
+                bool success = ShaderUtils.LinkProgram (programHandle);
+                if (success)
+                {
+                    index++;
+                }
+
+            }
         }
 
-        void CleanUpManagedResources()
+        internal void Link()
         {
+            // bind atts here
+            //ShaderUtils.LinkProgram (programHandle);
 
+            InternalUtils.Log.Info("  Finishing linking");
+
+            InternalUtils.Log.Info("  Initilise Attributes");
+            var attributes = ShaderUtils.GetAttributes(programHandle);
+
+            Inputs = attributes
+                .Select(x => new KrShaderInput(programHandle, x))
+                .OrderBy(y => y.AttributeLocation)
+                .ToList();
+
+            String logInputs = "  Inputs : ";
+            foreach (var input in Inputs) {
+                logInputs += input.Name + ", ";
+            }
+            InternalUtils.Log.Info (logInputs);
+
+            InternalUtils.Log.Info("  Initilise Uniforms");
+            var uniforms = ShaderUtils.GetUniforms(programHandle);
+
+
+            Variables = uniforms
+                .Where(y =>
+                       y.Type != global::MonoMac.OpenGL.ActiveUniformType.Sampler2D &&
+                       y.Type != global::MonoMac.OpenGL.ActiveUniformType.SamplerCube)
+                .Select(x => new KrShaderVariable(programHandle, x))
+                .OrderBy(z => z.UniformLocation)
+                .ToList();
+            String logVars = "  Variables : ";
+            foreach (var variable in Variables) {
+                logVars += variable.Name + ", ";
+            }
+            InternalUtils.Log.Info (logVars);
+
+            InternalUtils.Log.Info("  Initilise Samplers");
+            Samplers = uniforms
+                .Where(y =>
+                       y.Type == global::MonoMac.OpenGL.ActiveUniformType.Sampler2D ||
+                       y.Type == global::MonoMac.OpenGL.ActiveUniformType.SamplerCube)
+                .Select(x => new KrShaderSampler(programHandle, x))
+                .OrderBy(z => z.UniformLocation)
+                .ToList();
+
+            #if DEBUG
+            ShaderUtils.ValidateProgram (programHandle);
+            #endif
+
+            ShaderUtils.DetachShader(programHandle, fragShaderHandle);
+            ShaderUtils.DetachShader(programHandle, vertShaderHandle);
+
+            ShaderUtils.DeleteShader(programHandle, fragShaderHandle);
+            ShaderUtils.DeleteShader(programHandle, vertShaderHandle);
         }
 
-        void CleanUpNativeResources()
+        public void Activate ()
         {
-            GL.DeleteBuffers(1, ref this.bufferHandle);
-            ErrorHandler.Check();
-
-            bufferHandle = 0;
-
-            resourceCounter--;
+            global::MonoMac.OpenGL.GL.UseProgram (programHandle);
+            KrErrorHandler.Check ();
         }
 
         public void Dispose()
         {
-            RunDispose(true);
-            GC.SuppressFinalize(this);
+            ShaderUtils.DestroyShaderProgram(programHandle);
+            KrErrorHandler.Check();
+        }
+    }
+
+    /// <summary>
+    /// Represents an Open GL ES shader input, all the data is read dynamically from
+    /// the shader at runtime, not from the ShaderInputDefinition.  This way we can compare the
+    /// two and check to see that we have what we are expecting.
+    /// </summary>
+    public sealed class KrShaderInput
+    {
+        int ProgramHandle { get; set; }
+        internal int AttributeLocation { get; private set; }
+
+        public String Name { get; private set; }
+        public Type Type { get; private set; }
+        public VertexElementUsage Usage { get; private set; }
+        public Object DefaultValue { get; private set; }
+        public Boolean Optional { get; private set; }
+
+        public KrShaderInput(
+            int programHandle, KrShaderUtils.KrShaderAttribute attribute)
+        {
+            int attLocation = global::MonoMac.OpenGL.GL.GetAttribLocation(programHandle, attribute.Name);
+
+            KrErrorHandler.Check();
+
+            InternalUtils.Log.Info(string.Format(
+                "    Binding Shader Input: [Prog={0}, AttIndex={1}, AttLocation={4}, AttName={2}, AttType={3}]",
+                programHandle, attribute.Index, attribute.Name, attribute.Type, attLocation));
+
+            this.ProgramHandle = programHandle;
+            this.AttributeLocation = attLocation;
+            this.Name = attribute.Name;
+            this.Type = KrEnumConverter.ToType(attribute.Type);
+
+
         }
 
-        public void RunDispose(bool isDisposing)
+        internal void RegisterExtraInfo(ShaderInputDefinition definition)
         {
-            if (alreadyDisposed)
-                return;
+            Usage = definition.Usage;
+            DefaultValue = definition.DefaultValue;
+            Optional = definition.Optional;
+        }
+    }
 
-            if (isDisposing)
+    public sealed class KrShaderVariable
+    {
+        int ProgramHandle { get; set; }
+        internal int UniformLocation { get; private set; }
+
+        public String NiceName { get; private set; }
+        public String Name { get; private set; }
+        public Type Type { get; private set; }
+        public Object DefaultValue { get; private set; }
+
+        public KrShaderVariable(
+            int programHandle, 
+            KrShaderUtils.KrShaderUniform uniform)
+        {
+
+            this.ProgramHandle = programHandle;
+
+            int uniformLocation = global::MonoMac.OpenGL.GL.GetUniformLocation(programHandle, uniform.Name);
+
+            KrErrorHandler.Check();
+
+            if( uniformLocation == -1 )
+                throw new Exception();
+
+            this.UniformLocation = uniformLocation;
+            this.Name = uniform.Name;
+            this.Type = Cor.Lib.Khronos.KrEnumConverter.ToType(uniform.Type);
+
+            InternalUtils.Log.Info(
+                String.Format(
+                "    Caching Reference to Shader Variable: [Prog={0}, UniIndex={1}, UniLocation={2}, UniName={3}, UniType={4}]",
+                programHandle,
+                uniform.Index,
+                uniformLocation,
+                uniform.Name,
+                uniform.Type));
+
+        }
+
+        internal void RegisterExtraInfo(ShaderVariableDefinition definition)
+        {
+            NiceName = definition.NiceName;
+            DefaultValue = definition.DefaultValue;
+        }
+
+        public void Set(object value)
+        {
+            //todo this should be using convert turn the data into proper opengl es types.
+            Type t = value.GetType();
+
+            if( t == typeof(Matrix44) )
             {
-                CleanUpNativeResources ();
-
+                var castValue = (Matrix44) value;
+                var otkValue = KrMatrix44Converter.ToKhronos(castValue);
+                global::MonoMac.OpenGL.GL.UniformMatrix4( UniformLocation, false, ref otkValue );
             }
-
-            // FREE UNMANAGED STUFF HERE
-            CleanUpManagedResources ();
-
-            alreadyDisposed = true;
-
-        }
-
-        void GetBufferData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount)
-            where T : struct
-        {
-            throw new NotImplementedException();/*
-            GL.BindBuffer(BufferTarget.ArrayBuffer, ibo);
-            GraphicsExtensions.CheckGLError();
-            var elementSizeInByte = Marshal.SizeOf(typeof(T));
-            IntPtr ptr = GL.MapBuffer(BufferTarget.ArrayBuffer, BufferAccess.ReadOnly);
-            // Pointer to the start of data to read in the index buffer
-            ptr = new IntPtr(ptr.ToInt64() + offsetInBytes);
-            if (data is byte[])
+            else if( t == typeof(Int32) )
             {
-                byte[] buffer = data as byte[];
-                // If data is already a byte[] we can skip the temporary buffer
-                // Copy from the index buffer to the destination array
-                Marshal.Copy(ptr, buffer, 0, buffer.Length);
+                var castValue = (Int32) value;
+                global::MonoMac.OpenGL.GL.Uniform1( UniformLocation, 1, ref castValue );
+            }
+            else if( t == typeof(Single) )
+            {
+                var castValue = (Single) value;
+                global::MonoMac.OpenGL.GL.Uniform1( UniformLocation, 1, ref castValue );
+            }
+            else if( t == typeof(Vector2) )
+            {
+                var castValue = (Vector2) value;
+                global::MonoMac.OpenGL.GL.Uniform2( UniformLocation, 1, ref castValue.X );
+            }
+            else if( t == typeof(Vector3) )
+            {
+                var castValue = (Vector3) value;
+                global::MonoMac.OpenGL.GL.Uniform3( UniformLocation, 1, ref castValue.X );
+            }
+            else if( t == typeof(Vector4) )
+            {
+                var castValue = (Vector4) value;
+                global::MonoMac.OpenGL.GL.Uniform4( UniformLocation, 1, ref castValue.X );
+            }
+            else if( t == typeof(Rgba32) )
+            {
+                var castValue = (Rgba32) value;
+
+                Vector4 vec4Value;
+                castValue.UnpackTo(out vec4Value);
+
+                // does this rgba value need to be packed in to a vector3 or a vector4
+                if( this.Type == typeof(Vector4) )
+                    global::MonoMac.OpenGL.GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
+                else if( this.Type == typeof(Vector3) )
+                    global::MonoMac.OpenGL.GL.Uniform3( UniformLocation, 1, ref vec4Value.X );
+                else
+                    throw new Exception("Not supported");
             }
             else
             {
-                // Temporary buffer to store the copied section of data
-                byte[] buffer = new byte[elementCount * elementSizeInByte];
-                // Copy from the index buffer to the temporary buffer
-                Marshal.Copy(ptr, buffer, 0, buffer.Length);
-                // Copy from the temporary buffer to the destination array
-                Buffer.BlockCopy(buffer, 0, data, startIndex * elementSizeInByte, elementCount * elementSizeInByte);
-            }
-            GL.UnmapBuffer(BufferTarget.ArrayBuffer);
-            GraphicsExtensions.CheckGLError();
-            */
-        }
-
-        internal void Activate()
-        {
-            GL.BindBuffer(this.type, this.bufferHandle);
-            ErrorHandler.Check();
-        }
-
-        internal void Deactivate()
-        {
-            GL.BindBuffer(this.type, 0);
-            ErrorHandler.Check();
-        }
-
-        public int IndexCount
-        {
-            get
-            {
-                return indexCount;
-            }
-        }
-
-
-        public void SetData (Int32[] data)
-        {
-
-            if( data.Length != indexCount )
-            {
-                throw new Exception("?");
+                throw new Exception("Not supported");
             }
 
-            UInt16[] udata = new UInt16[data.Length];
+            KrErrorHandler.Check();
 
-            for(Int32 i = 0; i < data.Length; ++i)
-            {
-                udata[i] = (UInt16) data[i];
-            }
-
-            this.Activate();
-
-            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
-            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
-            // then content of data are copied to the allocated data store.  The contents of the buffer object data
-            // store can be initialized or updated using the glBufferSubData FN
-            GL.BufferSubData(
-                this.type,
-                (System.IntPtr) 0,
-                (System.IntPtr) (sizeof(UInt16) * this.indexCount),
-                udata);
-
-            udata = null;
-
-            ErrorHandler.Check();
-        }
-
-        public void GetData(Int32[] data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetData(Int32[] data, Int32 startIndex, Int32 elementCount)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void GetData(Int32[] data, Int32 startIndex, Int32 elementCount)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetRawData(Byte[] data, Int32 startIndex, Int32 elementCount)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Byte[] GetRawData(Int32 startIndex, Int32 elementCount)
-        {
-            throw new NotImplementedException();
         }
     }
 
-    public sealed class GeometryBuffer
-        : IGeometryBuffer
+    public sealed class KrShaderSampler
     {
-        IndexBuffer _iBuf;
-        VertexBuffer _vBuf;
-        
-        public GeometryBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount, Int32 indexCount)
+        int ProgramHandle { get; set; }
+        internal int UniformLocation { get; private set; }
+
+        public String NiceName { get; set; }
+        public String Name { get; set; }
+
+        public KrShaderSampler(
+            int programHandle, 
+            KrShaderUtils.KrShaderUniform uniform )
         {
+            this.ProgramHandle = programHandle;
 
-            if(vertexCount == 0)
-            {
-                throw new Exception("A geometry buffer must have verts");
-            }
+            int uniformLocation = global::MonoMac.OpenGL.GL.GetUniformLocation(programHandle, uniform.Name);
 
-            if( indexCount != 0 )
-            {
-                _iBuf = new IndexBuffer(indexCount);
-            }
+            KrErrorHandler.Check();
 
-            _vBuf = new VertexBuffer(vertexDeclaration, vertexCount);
 
+            this.UniformLocation = uniformLocation;
+            this.Name = uniform.Name;
         }
 
-        internal void Activate()
+        internal void RegisterExtraInfo(ShaderSamplerDefinition definition)
         {
-            _vBuf.Activate();
-
-            if( _iBuf != null )
-                _iBuf.Activate();
+            NiceName = definition.NiceName;
         }
 
-        internal void Deactivate()
+        public void SetSlot(Int32 slot)
         {
-            _vBuf.Deactivate();
-
-            if( _iBuf != null )
-                _iBuf.Deactivate();
+            // set the sampler texture unit to 0
+            global::MonoMac.OpenGL.GL.Uniform1( this.UniformLocation, slot );
+            KrErrorHandler.Check();
         }
-
-        public IVertexBuffer VertexBuffer { get { return _vBuf; } }
-        public IIndexBuffer IndexBuffer { get { return _iBuf; } }
-
-        internal VertexBuffer OpenTKVertexBuffer { get { return _vBuf; } }
     }
-
-    public sealed class GraphicsManager
-        : IGraphicsManager
+    public static class KrShaderHelper
     {
-        readonly GpuUtils gpuUtils;
-
-        GeometryBuffer currentGeomBuffer;
-        CullMode? currentCullMode;
-
-        public GraphicsManager()
+        /// <summary>
+        /// This function takes a VertexDeclaration and a collection of
+        /// OpenGL shader passes and works out which
+        /// pass is the best fit for the VertexDeclaration.
+        /// </summary>
+        public static KrShader WorkOutBestVariantFor(
+            VertexDeclaration vertexDeclaration,
+            IList<KrShader> variants)
         {
-            InternalUtils.Log.Info(
-                "Khronos Graphics Manager -> ()");
+            InternalUtils.Log.Info("\n");
+            InternalUtils.Log.Info("\n");
+            InternalUtils.Log.Info("=====================================================================");
+            InternalUtils.Log.Info("Working out the best shader variant for: " + vertexDeclaration);
+            InternalUtils.Log.Info("Possible variants:");
 
-            this.gpuUtils = new GpuUtils();
+            int best = 0;
 
-            GL.Enable(EnableCap.Blend);
-            ErrorHandler.Check();
+            int bestNumMatchedVertElems = 0;
+            int bestNumUnmatchedVertElems = 0;
+            int bestNumMissingNonOptionalInputs = 0;
 
-            this.SetBlendEquation(
-                BlendFunction.Add, BlendFactor.SourceAlpha, BlendFactor.InverseSourceAlpha,
-                BlendFunction.Add, BlendFactor.One, BlendFactor.InverseSourceAlpha);
-
-            GL.Enable(EnableCap.DepthTest);
-            ErrorHandler.Check();
-
-            GL.DepthMask(true);
-            ErrorHandler.Check();
-
-            GL.DepthRange(0f, 1f);
-            ErrorHandler.Check();
-
-            GL.DepthFunc(DepthFunction.Lequal);
-            ErrorHandler.Check();
-
-            SetCullMode (CullMode.CW);
-        }
-
-        [ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
-        static IntPtr Add (IntPtr pointer, int offset)
-        {
-            unsafe
+            // foreach variant
+            for (int i = 0; i < variants.Count; ++i)
             {
-                return (IntPtr) (unchecked (((byte *) pointer) + offset));
-            }
-        }
+                // work out how many vert inputs match
 
-        [ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
-        static IntPtr Subtract (IntPtr pointer, int offset)
-        {
-            unsafe
-            {
-                return (IntPtr) (unchecked (((byte *) pointer) - offset));
-            }
-        }
 
-        void EnableVertAttribs(VertexDeclaration vertDecl, IntPtr pointer)
-        {
-            var vertElems = vertDecl.GetVertexElements();
+                var matchResult = CompareShaderInputs(vertexDeclaration, variants[i]);
 
-            IntPtr ptr = pointer;
+                int numMatchedVertElems = matchResult.NumMatchedInputs;
+                int numUnmatchedVertElems = matchResult.NumUnmatchedInputs;
+                int numMissingNonOptionalInputs = matchResult.NumUnmatchedRequiredInputs;
 
-            int counter = 0;
-            foreach(var elem in vertElems)
-            {
-                GL.EnableVertexAttribArray(counter);
-                ErrorHandler.Check();
+                InternalUtils.Log.Info(" - " + variants[i]);
 
-                //var vertElemUsage = elem.VertexElementUsage;
-                var vertElemFormat = elem.VertexElementFormat;
-                var vertElemOffset = elem.Offset;
-
-                Int32 numComponentsInVertElem = 0;
-                Boolean vertElemNormalized = false;
-                VertexAttribPointerType glVertElemFormat;
-
-                EnumConverter.ToKhronos(vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
-
-                if( counter != 0)
+                if( i == 0 )
                 {
-                    ptr = Add(ptr, vertElemOffset);
-                }
-
-                GL.VertexAttribPointer(
-                    counter,                // index - specifies the generic vertex attribute index.  This value is 0 to
-                                            //         max vertex attributes supported - 1.
-                    numComponentsInVertElem,// size - number of components specified in the vertex array for the
-                                            //        vertex attribute referenced by index.  Valid values are 1 - 4.
-                    glVertElemFormat,       // type - Data format, valid values are GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT,
-                                            //        GL_FLOAT, GL_FIXED, GL_HALF_FLOAT_OES*(Optional feature of es2)
-                    vertElemNormalized,     // normalised - used to indicate whether the non-floating data format type should be normalised
-                                            //              or not when converted to floating point.
-                    vertDecl.VertexStride,  // stride - the components of vertex attribute specified by size are stored sequentially for each
-                                            //          vertex.  stride specifies the delta between data for vertex index 1 and vertex (1 + 1).
-                                            //          If stride is 0, attribute data for all vertices are stored sequentially.
-                                            //          If stride is > 0, then we use the stride valude tas the pitch to get vertex data
-                                            //          for the next index.
-                    ptr
-
-                    );
-
-                ErrorHandler.Check();
-
-                counter++;
-
-            }
-        }
-
-        void DisableVertAttribs(VertexDeclaration vertDecl)
-        {
-            var vertElems = vertDecl.GetVertexElements();
-
-            for(int i = 0; i < vertElems.Length; ++i)
-            {
-                GL.DisableVertexAttribArray(i);
-                ErrorHandler.Check();
-            }
-        }
-
-
-        #region IGraphicsManager
-
-        public IGpuUtils GpuUtils { get { return this.gpuUtils; } }
-
-        public void Reset()
-        {
-            this.ClearDepthBuffer();
-            this.ClearColourBuffer();
-            this.SetActiveGeometryBuffer(null);
-
-            // todo, here we need to set all the texture slots to point to null
-            this.SetActiveTexture(0, null);
-        }
-
-        public void ClearColourBuffer(Rgba32 col = new Rgba32())
-        {
-            Abacus.SinglePrecision.Vector4 c;
-
-            col.UnpackTo(out c);
-
-            GL.ClearColor (c.X, c.Y, c.Z, c.W);
-
-            var mask = ClearBufferMask.ColorBufferBit;
-
-            GL.Clear ( mask );
-
-            ErrorHandler.Check();
-        }
-
-        public void ClearDepthBuffer(Single val = 1)
-        {
-            GL.ClearDepth(val);
-
-            var mask = ClearBufferMask.DepthBufferBit;
-
-            GL.Clear ( mask );
-
-            ErrorHandler.Check();
-        }
-
-        public void SetCullMode(CullMode cullMode)
-        {
-            if (!currentCullMode.HasValue || currentCullMode.Value != cullMode)
-            {
-                if (cullMode == CullMode.None)
-                {
-                    GL.Disable (EnableCap.CullFace);
-                    ErrorHandler.Check ();
-
+                    bestNumMatchedVertElems = numMatchedVertElems;
+                    bestNumUnmatchedVertElems = numUnmatchedVertElems;
+                    bestNumMissingNonOptionalInputs = numMissingNonOptionalInputs;
                 }
                 else
                 {
-                    GL.Enable(EnableCap.CullFace);
-                    ErrorHandler.Check();
-
-                    GL.FrontFace(FrontFaceDirection.Cw);
-                    ErrorHandler.Check();
-
-                    if (cullMode == CullMode.CW)
+                    if(
+                        (
+                            numMatchedVertElems > bestNumMatchedVertElems &&
+                            bestNumMissingNonOptionalInputs == 0
+                        )
+                        ||
+                        (
+                            numMatchedVertElems == bestNumMatchedVertElems &&
+                            bestNumMissingNonOptionalInputs == 0 &&
+                            numUnmatchedVertElems < bestNumUnmatchedVertElems
+                        )
+                      )
                     {
-                        GL.CullFace (CullFaceMode.Back);
-                        ErrorHandler.Check ();
+                        bestNumMatchedVertElems = numMatchedVertElems;
+                        bestNumUnmatchedVertElems = numUnmatchedVertElems;
+                        bestNumMissingNonOptionalInputs = numMissingNonOptionalInputs;
+                        best = i;
                     }
-                    else if (cullMode == CullMode.CCW)
+
+                }
+
+            }
+
+            //best = 2;
+            InternalUtils.Log.Info("Chosen variant: " + variants[best].VariantName);
+
+            return variants[best];
+        }
+
+        struct CompareShaderInputsResult
+        {
+            // the nume
+            public int NumMatchedInputs;
+            public int NumUnmatchedInputs;
+            public int NumUnmatchedRequiredInputs;
+        }
+
+        static CompareShaderInputsResult CompareShaderInputs (
+            VertexDeclaration vertexDeclaration,
+            KrShader oglesShader
+            )
+        {
+            var result = new CompareShaderInputsResult();
+
+            var oglesShaderInputsUsed = new List<KrShaderInput>();
+
+            var vertElems = vertexDeclaration.GetVertexElements();
+
+            // itterate over each input defined in the vert decl
+            foreach(var vertElem in vertElems)
+            {
+                var usage = vertElem.VertexElementUsage;
+
+                var format = vertElem.VertexElementFormat;
+                /*
+
+                foreach( var input in oglesShader.Inputs )
+                {
+                    // the vertDecl knows what each input's intended use is,
+                    // so lets match up
+                    if( input.Usage == usage )
                     {
-                        GL.CullFace (CullFaceMode.Front);
-                        ErrorHandler.Check ();
+                        // intended use seems good
+                    }
+                }
+
+                // find all inputs that could match
+                var matchingInputs = oglesShader.Inputs.FindAll(
+                    x =>
+
+                        x.Usage == usage &&
+                        (x.Type == VertexElementFormatHelper.FromEnum(format) ||
+                        ( (x.Type.GetType() == typeof(Vector4)) && (format == VertexElementFormat.Colour) ))
+
+                 );*/
+
+                var matchingInputs = oglesShader.Inputs.FindAll(x => x.Usage == usage);
+
+                // now make sure it's not been used already
+
+                while(matchingInputs.Count > 0)
+                {
+                    var potentialInput = matchingInputs[0];
+
+                    if( oglesShaderInputsUsed.Find(x => x == potentialInput) != null)
+                    {
+                        matchingInputs.RemoveAt(0);
                     }
                     else
                     {
-                        throw new NotSupportedException();
+                        oglesShaderInputsUsed.Add(potentialInput);
+                    }
+                }
+            }
+
+            result.NumMatchedInputs = oglesShaderInputsUsed.Count;
+
+            result.NumUnmatchedInputs = vertElems.Length - result.NumMatchedInputs;
+
+            result.NumUnmatchedRequiredInputs = 0;
+
+            foreach (var input in oglesShader.Inputs)
+            {
+                if(!oglesShaderInputsUsed.Contains(input) )
+                {
+                    if( !input.Optional )
+                    {
+                        result.NumUnmatchedRequiredInputs++;
                     }
                 }
 
-                currentCullMode = cullMode;
-            }
-        }
-
-        public IGeometryBuffer CreateGeometryBuffer (
-            VertexDeclaration vertexDeclaration,
-            Int32 vertexCount,
-            Int32 indexCount )
-        {
-            return new GeometryBuffer(vertexDeclaration, vertexCount, indexCount);
-        }
-
-        public void SetActiveGeometryBuffer(IGeometryBuffer buffer)
-        {
-            var temp = buffer as GeometryBuffer;
-
-            if( temp != this.currentGeomBuffer )
-            {
-                if( this.currentGeomBuffer != null )
-                {
-                    this.currentGeomBuffer.Deactivate();
-
-                    this.currentGeomBuffer = null;
-                }
-
-                if( temp != null )
-                {
-                    temp.Activate();
-                }
-
-                this.currentGeomBuffer = temp;
-            }
-        }
-
-        public ITexture UploadTexture (TextureAsset tex)
-        {
-            int width = tex.Width;
-            int height = tex.Height;
-
-            if (tex.SurfaceFormat != SurfaceFormat.Rgba32)
-                throw new NotImplementedException ();
-
-            IntPtr pixelDataRgba32 = Marshal.AllocHGlobal(tex.Data.Length);
-            Marshal.Copy(tex.Data, 0, pixelDataRgba32, tex.Data.Length);
-            
-            // Call unmanaged code
-            Marshal.FreeHGlobal(pixelDataRgba32);
-
-            int textureId = -1;
-
-            // this sets the unpack alignment.  which is used when reading pixels
-            // in the fragment shader.  when the textue data is uploaded via glTexImage2d,
-            // the rows of pixels are assumed to be aligned to the value set for GL_UNPACK_ALIGNMENT.
-            // By default, the value is 4, meaning that rows of pixels are assumed to begin
-            // on 4-byte boundaries.  this is a global STATE.
-            GL.PixelStore(
-                PixelStoreParameter.UnpackAlignment, 4);
-
-            ErrorHandler.Check();
-
-            // the first sept in the application of texture is to create the
-            // texture object.  this is a container object that holds the
-            // texture data.  this function returns a handle to a texture
-            // object.
-            GL.GenTextures(1, out textureId);
-            ErrorHandler.Check();
-
-            var textureHandle = new TextureHandle (textureId);
-
-            var textureTarget = TextureTarget.Texture2D;
-
-            // we need to bind the texture object so that we can opperate on it.
-            GL.BindTexture(textureTarget, textureId);
-            ErrorHandler.Check();
-
-            // the incoming texture format
-            // (the format that [pixelDataRgba32] is in)
-            var format = PixelFormat.Rgba;
-
-            var internalFormat = PixelInternalFormat.Rgba;
-
-            var textureDataFormat = PixelType.UnsignedByte;
-
-            // now use the bound texture object to load the image data.
-            GL.TexImage2D(
-
-                // specifies the texture target, either GL_TEXTURE_2D or one of the cubemap face targets.
-                textureTarget,
-
-                // specifies which mip level to load.  the base level is
-                // specified by 0 following by an increasing level for each
-                // successive mipmap.
-                0,
-
-                // internal format for the texture storage, can be:
-                // - GL_RGBA
-                // - GL_RGB
-                // - GL_LUMINANCE_ALPHA
-                // - GL_LUMINANCE
-                // - GL_ALPHA
-                internalFormat,
-
-                // the width of the image in pixels
-                width,
-
-                // the height of the image in pixels
-                height,
-
-                // boarder - set to zero, only here for compatibility with OpenGL desktop
-                0,
-
-                // the format of the incoming texture data, in opengl es this
-                // has to be the same as the internal format
-                format,
-
-                // the type of the incoming pixel data, can be:
-                // - unsigned byte
-                // - unsigned short 4444
-                // - unsigned short 5551
-                // - unsigned short 565
-                textureDataFormat, // this refers to each individual channel
-
-
-                pixelDataRgba32
-
-                );
-
-            ErrorHandler.Check();
-
-            // sets the minification and maginfication filtering modes.  required
-            // because we have not loaded a complete mipmap chain for the texture
-            // so we must select a non mipmapped minification filter.
-            GL.TexParameter(textureTarget, TextureParameterName.TextureMinFilter, (int) All.Nearest );
-
-            ErrorHandler.Check();
-
-            GL.TexParameter(textureTarget, TextureParameterName.TextureMagFilter, (int) All.Nearest );
-
-            ErrorHandler.Check();
-
-            return textureHandle;
-        }
-
-        public void UnloadTexture (ITexture texture)
-        {
-            int textureId = (texture as TextureHandle).glTextureId;
-
-            GL.DeleteTextures(1, ref textureId);
-        }
-
-        public void SetActiveTexture (Int32 slot, ITexture tex)
-        {
-            TextureUnit oglTexSlot = EnumConverter.ToKhronosTextureSlot(slot);
-            GL.ActiveTexture(oglTexSlot);
-
-            var oglt0 = tex as TextureHandle;
-
-            if( oglt0 != null )
-            {
-                var textureTarget = TextureTarget.Texture2D;
-
-                // we need to bind the texture object so that we can opperate on it.
-                GL.BindTexture(textureTarget, oglt0.glTextureId);
-                ErrorHandler.Check();
-            }
-        }
-
-        public IShader CreateShader (ShaderAsset asset)
-        {
-            throw new NotImplementedException ();
-        }
-
-        public void DestroyShader (IShader shader)
-        {
-            throw new NotImplementedException ();
-        }
-
-        public void SetBlendEquation(
-            BlendFunction rgbBlendFunction,
-            BlendFactor sourceRgb,
-            BlendFactor destinationRgb,
-            BlendFunction alphaBlendFunction,
-            BlendFactor sourceAlpha,
-            BlendFactor destinationAlpha
-            )
-        {
-            GL.BlendEquationSeparate(
-                EnumConverter.ToKhronos(rgbBlendFunction),
-                EnumConverter.ToKhronos(alphaBlendFunction) );
-            ErrorHandler.Check();
-
-            GL.BlendFuncSeparate(
-                EnumConverter.ToKhronosSrc(sourceRgb),
-                EnumConverter.ToKhronosDest(destinationRgb),
-                EnumConverter.ToKhronosSrc(sourceAlpha),
-                EnumConverter.ToKhronosDest(destinationAlpha) );
-            ErrorHandler.Check();
-        }
-
-        public void DrawPrimitives(
-            PrimitiveType primitiveType,
-            Int32 startVertex,
-            Int32 primitiveCount )
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DrawIndexedPrimitives (
-            PrimitiveType primitiveType,
-            Int32 baseVertex,
-            Int32 minVertexIndex,
-            Int32 numVertices,
-            Int32 startIndex,
-            Int32 primitiveCount
-            )
-        {
-            if( baseVertex != 0 || minVertexIndex != 0 || startIndex != 0 )
-            {
-                throw new NotImplementedException();
             }
 
-            var otkpType =  EnumConverter.ToKhronos(primitiveType);
-            //Int32 numVertsInPrim = numVertices / primitiveCount;
+            InternalUtils.Log.Info(
+                String.Format(
+                    "[{0}, {1}, {2}]",
+                    result.NumMatchedInputs,
+                    result.NumUnmatchedInputs,
+                    result.NumUnmatchedRequiredInputs));
 
-            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn(primitiveType);
-            Int32 count = primitiveCount * nVertsInPrim;
-
-            var vertDecl = currentGeomBuffer.VertexBuffer.VertexDeclaration;
-
-            this.EnableVertAttribs( vertDecl, (IntPtr) 0 );
-
-            GL.DrawElements (
-                otkpType,
-                count,
-                DrawElementsType.UnsignedShort,
-                (System.IntPtr) 0 );
-
-            ErrorHandler.Check();
-
-            this.DisableVertAttribs(vertDecl);
+            return result;
         }
 
-        public void DrawUserPrimitives <T> (
-            PrimitiveType primitiveType,
-            T[] vertexData,
-            Int32 vertexOffset,
-            Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration )
-            where T : struct, IVertexType
-        {
-            // do i need to do this? todo: find out
-            this.SetActiveGeometryBuffer(null);
-
-            var vertDecl = vertexData[0].VertexDeclaration;
-
-            //MSDN
-            //
-            //The GCHandle structure is used with the GCHandleType
-            //enumeration to create a handle corresponding to any managed
-            //object. This handle can be one of four types: Weak,
-            //WeakTrackResurrection, Normal, or Pinned. When the handle has
-            //been allocated, you can use it to prevent the managed object
-            //from being collected by the garbage collector when an unmanaged
-            //client holds the only reference. Without such a handle,
-            //the object can be collected by the garbage collector before
-            //completing its work on behalf of the unmanaged client.
-            //
-            //You can also use GCHandle to create a pinned object that
-            //returns a memory address to prevent the garbage collector
-            //from moving the object in memory.
-            //
-            //When the handle goes out of scope you must explicitly release
-            //it by calling the Free method; otherwise, memory leaks may
-            //occur. When you free a pinned handle, the associated object
-            //will be unpinned and will become eligible for garbage
-            //collection, if there are no other references to it.
-            //
-            GCHandle pinnedArray = GCHandle.Alloc(vertexData, GCHandleType.Pinned);
-            IntPtr pointer = pinnedArray.AddrOfPinnedObject();
-
-            if( vertexOffset != 0 )
-            {
-                pointer = Add(pointer, vertexOffset * vertDecl.VertexStride * sizeof(byte));
-            }
-
-            var glDrawMode = EnumConverter.ToKhronos(primitiveType);
-            var glDrawModeAll = glDrawMode;
-
-            var bindTarget = BufferTarget.ArrayBuffer;
-
-            GL.BindBuffer(bindTarget, 0);
-            ErrorHandler.Check();
-
-
-            this.EnableVertAttribs( vertDecl, pointer );
-
-            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn(primitiveType);
-            Int32 count = primitiveCount * nVertsInPrim;
-
-            GL.DrawArrays(
-                glDrawModeAll, // specifies the primitive to render
-                vertexOffset,  // specifies the starting vertex index in the enabled vertex arrays
-                count ); // specifies the number of indicies to be drawn
-
-            ErrorHandler.Check();
-
-
-            this.DisableVertAttribs(vertDecl);
-
-
-            pinnedArray.Free();
-        }
-
-        public void DrawUserIndexedPrimitives <T> (
-            PrimitiveType primitiveType,
-            T[] vertexData,
-            Int32 vertexOffset,
-            Int32 numVertices,
-            Int32[] indexData,
-            Int32 indexOffset,
-            Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration )
-            where T : struct, IVertexType
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
     }
 
-    internal sealed class TextureHandle
-        : ITexture
+    /// <summary>
+    /// Static class to help with horrible shader system.
+    /// </summary>
+    public static class KrShaderUtils
     {
-        internal TextureHandle (int textureid)
+        public class KrShaderUniform
         {
-            glTextureId = textureid;
+            public Int32 Index { get; set; }
+            public String Name { get; set; }
+            public ActiveUniformType Type { get; set; }
         }
 
-        internal int glTextureId { get; private set; }
-
-        public SurfaceFormat SurfaceFormat
+        public class KrShaderAttribute
         {
-            get
+            public Int32 Index { get; set; }
+            public String Name { get; set; }
+            public ActiveAttribType Type { get; set; }
+        }
+
+        public static Int32 CreateShaderProgram()
+        {
+            // Create shader program.
+            Int32 programHandle = GL.CreateProgram ();
+
+            if( programHandle == 0 )
+                throw new Exception("Failed to create shader program");
+
+            KrErrorHandler.Check();
+
+            return programHandle;
+        }
+
+        public static Int32 CreateVertexShader(string path)
+        {
+            Int32 vertShaderHandle;
+
+            if( Path.GetExtension(path) != ".vsh" )
             {
-                throw new NotImplementedException ();
+                throw new Exception("Vertex shader [" + path + "] should end with .vsh");
+            }
+
+            if( !File.Exists(path))
+            {
+                throw new Exception("Vertex shader at [" + path + "] does not exist.");
+            }
+
+            ShaderUtils.CompileShader (
+                GLShaderType.VertexShader,
+                path,
+                out vertShaderHandle );
+
+            if( vertShaderHandle == 0 )
+                throw new Exception("Failed to compile vertex shader program");
+
+            return vertShaderHandle;
+        }
+
+        public static Int32 CreateFragmentShader(string path)
+        {
+            Int32 fragShaderHandle;
+
+            if( Path.GetExtension(path) != ".fsh" )
+            {
+                throw new Exception("Fragement shader [" + path + "] should end with .fsh");
+            }
+
+            if( !File.Exists(path))
+            {
+                throw new Exception("Fragement shader at [" + path + "] does not exist.");
+            }
+
+            ShaderUtils.CompileShader (
+                GLShaderType.FragmentShader,
+                path,
+                out fragShaderHandle );
+
+            if( fragShaderHandle == 0 )
+                throw new Exception("Failed to compile fragment shader program");
+
+
+            return fragShaderHandle;
+        }
+
+        public static void AttachShader(
+            Int32 programHandle,
+            Int32 shaderHandle)
+        {
+            if (shaderHandle != 0)
+            {
+                // Attach vertex shader to program.
+                GL.AttachShader (programHandle, shaderHandle);
+                KrErrorHandler.Check();
             }
         }
 
-        public Byte[] Primary
+        public static void DetachShader(
+            Int32 programHandle,
+            Int32 shaderHandle )
         {
-            get
+            if (shaderHandle != 0)
             {
-                throw new NotImplementedException ();
+                GL.DetachShader (programHandle, shaderHandle);
+                KrErrorHandler.Check();
             }
         }
 
-        public Byte[,] Mipmaps
+        public static void DeleteShader(
+            Int32 programHandle,
+            Int32 shaderHandle )
         {
-            get
+            if (shaderHandle != 0)
             {
-                throw new NotImplementedException ();
+                GL.DeleteShader (shaderHandle);
+                shaderHandle = 0;
+                KrErrorHandler.Check();
             }
         }
 
-        public int Width
+        public static void DestroyShaderProgram (Int32 programHandle)
         {
-            get
+            if (programHandle != 0)
             {
-                throw new NotImplementedException ();
+#if COR_PLATFORM_MANAGED_XIOS
+                GL.DeleteProgram (programHandle);
+#elif COR_PLATFORM_MANAGED_MONOMAC
+                GL.DeleteProgram (1, new int[]{ programHandle } );
+#endif
+
+                programHandle = 0;
+                KrErrorHandler.Check();
             }
         }
 
-        public int Height
+        // This should happen offline.
+        public static void CompileShader (
+            GLShaderType type,
+            String file,
+            out Int32 shaderHandle )
         {
-            get
+            String src = string.Empty;
+
+            try
             {
-                throw new NotImplementedException ();
+                // Get the data from the text file
+                src = System.IO.File.ReadAllText (file);
+            }
+            catch(Exception e)
+            {
+                InternalUtils.Log.Info(e.Message);
+                shaderHandle = 0;
+                return;
+            }
+
+            // Create an empty vertex shader object
+            shaderHandle = GL.CreateShader (type);
+
+            KrErrorHandler.Check();
+
+            // Replace the source code in the vertex shader object
+#if COR_PLATFORM_MANAGED_XIOS
+            GL.ShaderSource (
+                shaderHandle,
+                1,
+                new String[] { src },
+                (Int32[]) null );
+#elif COR_PLATFORM_MANAGED_MONOMAC
+            GL.ShaderSource (
+                shaderHandle,
+                src);
+#endif
+
+            KrErrorHandler.Check();
+
+            GL.CompileShader (shaderHandle);
+
+            KrErrorHandler.Check();
+
+#if DEBUG
+            Int32 logLength = 0;
+            GL.GetShader (
+                shaderHandle,
+                ShaderParameter.InfoLogLength,
+                out logLength);
+
+            KrErrorHandler.Check();
+            var infoLog = new System.Text.StringBuilder(logLength);
+
+            if (logLength > 0)
+            {
+                int temp = 0;
+                GL.GetShaderInfoLog (
+                    shaderHandle,
+                    logLength,
+                    out temp,
+                    infoLog );
+
+                string log = infoLog.ToString();
+
+                InternalUtils.Log.Info(file);
+                InternalUtils.Log.Info (log);
+                InternalUtils.Log.Info(type.ToString());
+            }
+#endif
+            Int32 status = 0;
+
+            GL.GetShader (
+                shaderHandle,
+                ShaderParameter.CompileStatus,
+                out status );
+
+            KrErrorHandler.Check();
+
+            if (status == 0)
+            {
+                GL.DeleteShader (shaderHandle);
+                throw new Exception ("Failed to compile " + type.ToString());
+            }
+        }
+
+        public static List<KrShaderUniform> GetUniforms (Int32 prog)
+        {
+
+            int numActiveUniforms = 0;
+
+            var result = new List<KrShaderUniform>();
+
+            GL.GetProgram(prog, ProgramParameter.ActiveUniforms, out numActiveUniforms);
+            KrErrorHandler.Check();
+
+            for(int i = 0; i < numActiveUniforms; ++i)
+            {
+                var sb = new System.Text.StringBuilder ();
+
+                int buffSize = 0;
+                int length = 0;
+                int size = 0;
+                ActiveUniformType type;
+
+                GL.GetActiveUniform(
+                    prog,
+                    i,
+                    64,
+                    out length,
+                    out size,
+                    out type,
+                    sb);
+                KrErrorHandler.Check();
+
+                result.Add(
+                    new KrShaderUniform()
+                    {
+                    Index = i,
+                    Name = sb.ToString(),
+                    Type = type
+                    }
+                );
+            }
+
+            return result;
+        }
+
+        public static List<KrShaderAttribute> GetAttributes (Int32 prog)
+        {
+            int numActiveAttributes = 0;
+
+            var result = new List<KrShaderAttribute>();
+
+            // gets the number of active vertex attributes
+            GL.GetProgram(prog, ProgramParameter.ActiveAttributes, out numActiveAttributes);
+            KrErrorHandler.Check();
+
+            for(int i = 0; i < numActiveAttributes; ++i)
+            {
+                var sb = new System.Text.StringBuilder ();
+
+                int buffSize = 0;
+                int length = 0;
+                int size = 0;
+                ActiveAttribType type;
+                GL.GetActiveAttrib(
+                    prog,
+                    i,
+                    64,
+                    out length,
+                    out size,
+                    out type,
+                    sb);
+                KrErrorHandler.Check();
+
+                result.Add(
+                    new KrShaderAttribute()
+                    {
+                        Index = i,
+                        Name = sb.ToString(),
+                        Type = type
+                    }
+                );
+            }
+
+            return result;
+        }
+
+
+        public static bool LinkProgram (Int32 prog)
+        {
+            bool retVal = true;
+
+            GL.LinkProgram (prog);
+
+            KrErrorHandler.Check();
+
+#if DEBUG
+            Int32 logLength = 0;
+
+            GL.GetProgram (
+                prog,
+                ProgramParameter.InfoLogLength,
+                out logLength );
+
+            KrErrorHandler.Check();
+
+            if (logLength > 0)
+            {
+                retVal = false;
+
+                /*
+                var infoLog = new System.Text.StringBuilder ();
+
+                GL.GetProgramInfoLog (
+                    prog,
+                    logLength,
+                    out logLength,
+                    infoLog );
+                */
+                var infoLog = string.Empty;
+                GL.GetProgramInfoLog(prog, out infoLog);
+
+
+                KrErrorHandler.Check();
+
+                InternalUtils.Log.Info (string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
+            }
+#endif
+            Int32 status = 0;
+
+            GL.GetProgram (
+                prog,
+                ProgramParameter.LinkStatus,
+                out status );
+
+            KrErrorHandler.Check();
+
+            if (status == 0)
+            {
+                throw new Exception(String.Format("Failed to link program: {0:x}", prog));
+            }
+
+            return retVal;
+
+        }
+
+        public static void ValidateProgram (Int32 programHandle)
+        {
+            GL.ValidateProgram (programHandle);
+
+            KrErrorHandler.Check();
+
+            Int32 logLength = 0;
+
+            GL.GetProgram (
+                programHandle,
+                ProgramParameter.InfoLogLength,
+                out logLength );
+
+            KrErrorHandler.Check();
+
+            if (logLength > 0)
+            {
+                var infoLog = new System.Text.StringBuilder ();
+
+                GL.GetProgramInfoLog (
+                    programHandle,
+                    logLength,
+                    out logLength, infoLog );
+
+                KrErrorHandler.Check();
+
+                InternalUtils.Log.Info (string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
+            }
+
+            Int32 status = 0;
+
+            GL.GetProgram (
+                programHandle, ProgramParameter.LinkStatus,
+                out status );
+
+            KrErrorHandler.Check();
+
+            if (status == 0)
+            {
+                throw new Exception (String.Format("Failed to validate program {0:x}", programHandle));
             }
         }
     }
 
-    internal static class EnumConverter
+
+    public static class KrErrorHandler
+    {
+        [Conditional("DEBUG")]
+        public static void Check()
+        {
+            var ec = GL.GetError();
+
+            if (ec != ErrorCode.NoError)
+            {
+                throw new Exception( ec.ToString());
+            }
+        }
+    }
+
+
+    internal static class KrEnumConverter
     {
         internal static TextureUnit ToKhronosTextureSlot(Int32 slot)
         {
@@ -1641,7 +2755,7 @@ namespace Cor.Lib.Khronos
             case ActiveUniformType.Sampler2D: throw new NotSupportedException();
             case ActiveUniformType.SamplerCube: throw new NotSupportedException();
             }
-            
+
             throw new NotSupportedException();
         }
 
@@ -1657,24 +2771,24 @@ namespace Cor.Lib.Khronos
 
             switch(blimey)
             {
-                case VertexElementFormat.Single: 
+                case VertexElementFormat.Single:
                 dataFormat = VertexAttribPointerType.Float;
                     size = 1;
                     break;
-                case VertexElementFormat.Vector2: 
-                dataFormat = VertexAttribPointerType.Float; 
+                case VertexElementFormat.Vector2:
+                dataFormat = VertexAttribPointerType.Float;
                     size = 2;
                     break;
-                case VertexElementFormat.Vector3: 
-                dataFormat = VertexAttribPointerType.Float; 
+                case VertexElementFormat.Vector3:
+                dataFormat = VertexAttribPointerType.Float;
                     size = 3;
                     break;
-                case VertexElementFormat.Vector4: 
-                dataFormat = VertexAttribPointerType.Float; 
+                case VertexElementFormat.Vector4:
+                dataFormat = VertexAttribPointerType.Float;
                     size = 4;
                     break;
-                case VertexElementFormat.Colour: 
-                dataFormat = VertexAttribPointerType.UnsignedByte; 
+                case VertexElementFormat.Colour:
+                dataFormat = VertexAttribPointerType.UnsignedByte;
                     normalized = true;
                     size = 4;
                     break;
@@ -1733,7 +2847,7 @@ namespace Cor.Lib.Khronos
                 case BlendFactor.DestinationColour: return BlendingFactorDest.SrcColor;
                 case BlendFactor.InverseDestinationColour: return BlendingFactorDest.OneMinusSrcColor;
             }
-            
+
             throw new Exception();
         }
 
@@ -1766,7 +2880,7 @@ namespace Cor.Lib.Khronos
                 case BlendFunction.ReverseSubtract: return BlendEquationMode.FuncReverseSubtract;
                 case BlendFunction.Subtract: return BlendEquationMode.FuncSubtract;
             }
-            
+
             throw new Exception();
         }
 
@@ -1780,7 +2894,7 @@ namespace Cor.Lib.Khronos
                 case All.FuncReverseSubtract: return BlendFunction.ReverseSubtract;
                 case All.FuncSubtract: return BlendFunction.Subtract;
             }
-            
+
             throw new Exception();
         }
 
@@ -1796,7 +2910,7 @@ namespace Cor.Lib.Khronos
                 return  BeginMode.Triangles;
             case PrimitiveType.TriangleStrip:
                 return  BeginMode.TriangleStrip;
-                    
+
             default:
                 throw new Exception ("problem");
             }
@@ -1817,7 +2931,7 @@ namespace Cor.Lib.Khronos
                 return  PrimitiveType.TriangleList;
             case All.TriangleStrip:
                 return  PrimitiveType.TriangleStrip;
-                
+
             default:
                 throw new Exception ("problem");
 
@@ -1825,7 +2939,7 @@ namespace Cor.Lib.Khronos
         }
     }
 
-    public static class Vector2Converter
+    public static class KrVector2Converter
     {
         // VECTOR 2
         public static KhronosVector2 ToKhronos (this Abacus.SinglePrecision.Vector2 vec)
@@ -1837,7 +2951,8 @@ namespace Cor.Lib.Khronos
         {
             return new Abacus.SinglePrecision.Vector2 (vec.X, vec.Y);
         }
-    }    public static class Vector3Converter
+    }
+    public static class KrVector3Converter
     {
         // VECTOR 3
         public static KhronosVector3 ToKhronos (this Abacus.SinglePrecision.Vector3 vec)
@@ -1850,7 +2965,7 @@ namespace Cor.Lib.Khronos
             return new Abacus.SinglePrecision.Vector3 (vec.X, vec.Y, vec.Z);
         }
     }
-    public static class Vector4Converter
+    public static class KrVector4Converter
     {
         // VECTOR 3
         public static KhronosVector4 ToKhronos (this Abacus.SinglePrecision.Vector4 vec)
@@ -1864,7 +2979,7 @@ namespace Cor.Lib.Khronos
         }
     }
 
-    public static class Matrix44Converter
+    public static class KrMatrix44Converter
     {
         const bool flip = false;
 
@@ -1911,35 +3026,4 @@ namespace Cor.Lib.Khronos
         }
     }
 
-    public sealed class GpuUtils
-        : IGpuUtils
-    {
-        public GpuUtils()
-        {
-        }
-
-        #region IGpuUtils
-
-        public Int32 BeginEvent(Rgba32 colour, String eventName)
-        {
-            return 0;
-        }
-
-        public Int32 EndEvent()
-        {
-            return 0;
-        }
-
-        public void SetMarker(Rgba32 colour, String eventName)
-        {
-
-        }
-
-        public void SetRegion(Rgba32 colour, String eventName)
-        {
-
-        }
-
-        #endregion
-    }
 }

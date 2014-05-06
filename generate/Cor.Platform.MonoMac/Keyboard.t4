@@ -3,7 +3,7 @@
     {
         readonly HashSet<Char> characterKeysThatAreDown = new HashSet<Char>();
         readonly HashSet<FunctionalKey> functionalKeysThatAreDown = new HashSet<FunctionalKey>();
-        
+
         internal void KeyDown (NSEvent theEvent)
         {
             theEvent.Characters
@@ -11,7 +11,7 @@
                 .Where(x => !IsFunctionalKey(x))
                 .ToList ()
                 .ForEach (x => characterKeysThatAreDown.Add(x));
-                
+
             var fKey = GetFunctionalKey(theEvent.KeyCode);
             if( fKey.HasValue ) functionalKeysThatAreDown.Add(fKey.Value);
         }
@@ -23,11 +23,11 @@
                 .Where(x => !IsFunctionalKey(x))
                 .ToList ()
                 .ForEach (x => characterKeysThatAreDown.Remove(x));
-                
+
             var fKey = GetFunctionalKey(theEvent.KeyCode);
             if( fKey.HasValue ) functionalKeysThatAreDown.Remove(fKey.Value);
         }
-        
+
         static FunctionalKey? GetFunctionalKey (UInt16 hardwareIndependantKeyCode)
         {
             if (hardwareIndependantKeyCode == 0x24) return FunctionalKey.Enter;
@@ -37,16 +37,16 @@
             if (hardwareIndependantKeyCode == 0x7d) return FunctionalKey.Down;
             if (hardwareIndependantKeyCode == 0x31) return FunctionalKey.Spacebar;
             if (hardwareIndependantKeyCode == 0x35) return FunctionalKey.Escape;
-            
+
             return null;
         }
-        
+
         static Boolean IsFunctionalKey (Char c)
         {
             if (c == '\r') return true;
             if (c == '\n') return true;
             if (c == '\t') return true;
-            
+
             return false;
         }
 
@@ -71,7 +71,9 @@
         {
             get
             {
-                return functionalKeysThatAreDown.Contains(key) ? KeyState.Down : KeyState.Up;
+                return functionalKeysThatAreDown.Contains(key)
+                    ? KeyState.Down
+                    : KeyState.Up;
             }
         }
 
@@ -79,12 +81,12 @@
         {
             return characterKeysThatAreDown.ToArray();
         }
-        
+
         public Boolean IsCharacterKeyDown (Char key)
         {
             return characterKeysThatAreDown.Contains(key);
         }
-        
+
         public Boolean IsCharacterKeyUp (Char key)
         {
             return !characterKeysThatAreDown.Contains(key);
@@ -94,7 +96,9 @@
         {
             get
             {
-                return characterKeysThatAreDown.Contains(key) ? KeyState.Down : KeyState.Up;
+                return characterKeysThatAreDown.Contains(key)
+                    ? KeyState.Down
+                    : KeyState.Up;
             }
         }
 

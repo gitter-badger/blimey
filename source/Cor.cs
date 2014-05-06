@@ -1191,17 +1191,44 @@ namespace Cor
 
             public List <Type> RequiredSerialisers ()
             {
-                return new List <Type> () {};
+                return new List <Type> ()
+                {
+                    typeof (Int32),
+                    typeof (Rgba32)
+                };
             }
 
             public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
             {
+                this.Width = tsdb.GetTypeSerialiser <Int32> ().Read (br);
+                this.Height = tsdb.GetTypeSerialiser <Int32> ().Read (br);
 
+                this.Data = new Rgba32[this.Width, this.Height];
+
+                for (Int32 i = 0; i < this.Width; ++i)
+                {
+                    for (Int32 j = 0; j < this.Height; ++j)
+                    {
+                        this.Data[i, j] = 
+                            tsdb.GetTypeSerialiser <Rgba32> ()
+                                .Read (br);
+                    }
+                }
             }
 
             public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
             {
-                
+                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Width);
+                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Height);
+
+                for (Int32 i = 0; i < this.Width; ++i)
+                {
+                    for (Int32 j = 0; j < this.Height; ++j)
+                    {
+                        tsdb.GetTypeSerialiser <Rgba32> ()
+                            .Write (bw, this.Data[i, j]);
+                    }
+                }
             }
 
             #endregion
@@ -1273,16 +1300,18 @@ namespace Cor
         public sealed class TextureAsset
             : IAsset
         {
-            // Data allocated in standard system RAM
-            public Byte[] Data { get; set; }
-
-            // Data allocated in standard system RAM
-            public Byte[,] Mipmaps { get; set; }
+            public SurfaceFormat SurfaceFormat { get; set; }
 
             public Int32 Width { get; set; }
             public Int32 Height { get; set; }
 
-            public SurfaceFormat SurfaceFormat { get; set; }
+            // Data allocated in standard system RAM
+            public Byte[] Data { get; set; }
+
+            // Data allocated in standard system RAM
+            // public Byte[,] Mipmaps { get; set; }
+
+            // public Int32 MipmapCount { get { return Data.GetLength (0); } }
 
             #region IAsset
 
@@ -1290,23 +1319,46 @@ namespace Cor
 
             public List <Type> RequiredSerialisers ()
             {
-                return new List <Type> () 
-                { 
-                    typeof (Int32Serialiser), 
-                    //typeof (SurfaceFormatSerialiser),
-                    typeof (ArraySerialiser<Byte>),
-                    typeof (ByteSerialiser)
+                return new List <Type> ()
+                {
+                    typeof (Int32),
+                    typeof (Rgba32)
                 };
             }
 
             public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
             {
-                
+                this.SurfaceFormat = tsdb.GetTypeSerialiser <Enum<SurfaceFormat>> ().Read (br);
+                this.Width = tsdb.GetTypeSerialiser <Int32> ().Read (br);
+                this.Height = tsdb.GetTypeSerialiser <Int32> ().Read (br);
+
+                this.Data = new Rgba32[this.Width * this.Height];
+
+                for (Int32 i = 0; i < this.Width; ++i)
+                {
+                    for (Int32 j = 0; j < this.Height; ++j)
+                    {
+                        this.Data[i + (j*(i-1))] = 
+                            tsdb.GetTypeSerialiser <Rgba32> ()
+                                .Read (br);
+                    }
+                }
             }
 
             public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
             {
-                
+                tsdb.GetTypeSerialiser <Enum<SurfaceFormat>> ().Write (bw, this.SurfaceFormat);
+                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Width);
+                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Height);
+
+                for (Int32 i = 0; i < this.Width; ++i)
+                {
+                    for (Int32 j = 0; j < this.Height; ++j)
+                    {
+                        tsdb.GetTypeSerialiser <Rgba32> ()
+                            .Write (bw, this.Data[i + (j*(i-1))]);
+                    }
+                }
             }
 
             #endregion
@@ -2402,15 +2454,6 @@ namespace Cor
         /// ?
         /// </summary>
         public List<ShaderSamplerDefinition> SamplerDefinitions { get; set; }
-
-        /// <summary>
-        /// Defines the variants.  Done for optimisation, instead of having one
-        /// massive shader that supports all the the Inputs and attempts to
-        /// process them accordingly, we load slight variants of effectively
-        /// the same shader, then we select the most optimal variant to run
-        /// based upon the VertexDeclaration the calling code is about to draw.
-        /// </summary>
-        public List<ShaderVariantDefinition> VariantDefinitions { get; set; }
     }
 
     public sealed class ShaderInputDefinition
@@ -2435,18 +2478,6 @@ namespace Cor
         public String Name { get; set; }
         public Type Type { get; set; }
         public Object DefaultValue { get; set; }
-    }
-
-    public sealed class ShaderVariantDefinition
-    {
-        public string VariantName { get; set; }
-
-        public List<ShaderVarientPassDefinition> VariantPassDefinitions { get; set; }
-    }
-
-    public sealed class ShaderVarientPassDefinition
-    {
-        public string PassName { get; set; }
     }
 
     #endregion

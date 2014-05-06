@@ -1,4 +1,4 @@
-    public static class Vector2Converter
+    public static class KrVector2Converter
     {
         // VECTOR 2
         public static KhronosVector2 ToKhronos (this Abacus.SinglePrecision.Vector2 vec)

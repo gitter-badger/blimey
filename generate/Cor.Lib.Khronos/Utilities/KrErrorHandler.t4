@@ -1,4 +1,4 @@
-    public static class ErrorHandler
+    public static class KrErrorHandler
     {
         [Conditional("DEBUG")]
         public static void Check()

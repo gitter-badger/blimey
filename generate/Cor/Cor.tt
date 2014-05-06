@@ -141,8 +141,6 @@ namespace Cor
 <#@ include file="Common/Shaders/ShaderInputDefinition.t4"#>
 <#@ include file="Common/Shaders/ShaderSamplerDefinition.t4"#>
 <#@ include file="Common/Shaders/ShaderVariableDefinition.t4"#>
-<#@ include file="Common/Shaders/ShaderVariantDefinition.t4"#>
-<#@ include file="Common/Shaders/ShaderVariantPassDefinition.t4"#>
     #endregion
 
     #region Primitive Types
