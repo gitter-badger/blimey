@@ -9,12 +9,12 @@
         public Object DefaultValue { get; private set; }
 
         public KrShaderVariable(
-            int programHandle, ShaderUtils.ShaderUniform uniform)
+            int programHandle, KrShaderUtils.KrShaderUniform uniform)
         {
 
             this.ProgramHandle = programHandle;
 
-            int uniformLocation = global::MonoMac.OpenGL.GL.GetUniformLocation(programHandle, uniform.Name);
+            int uniformLocation = GL.GetUniformLocation(programHandle, uniform.Name);
 
             KrErrorHandler.Check();
 
@@ -51,45 +51,45 @@
             {
                 var castValue = (Matrix44) value;
                 var otkValue = KrMatrix44Converter.ToKhronos(castValue);
-                global::MonoMac.OpenGL.GL.UniformMatrix4( UniformLocation, false, ref otkValue );
+                GL.UniformMatrix4( UniformLocation, false, ref otkValue );
             }
             else if( t == typeof(Int32) )
             {
                 var castValue = (Int32) value;
-                global::MonoMac.OpenGL.GL.Uniform1( UniformLocation, 1, ref castValue );
+                GL.Uniform1( UniformLocation, 1, ref castValue );
             }
             else if( t == typeof(Single) )
             {
                 var castValue = (Single) value;
-                global::MonoMac.OpenGL.GL.Uniform1( UniformLocation, 1, ref castValue );
+                GL.Uniform1( UniformLocation, 1, ref castValue );
             }
-            else if( t == typeof(Vector2) )
+            else if( t == typeof(Abacus.SinglePrecision.Vector2) )
             {
-                var castValue = (Vector2) value;
-                global::MonoMac.OpenGL.GL.Uniform2( UniformLocation, 1, ref castValue.X );
+                var castValue = (Abacus.SinglePrecision.Vector2) value;
+                GL.Uniform2( UniformLocation, 1, ref castValue.X );
             }
-            else if( t == typeof(Vector3) )
+            else if( t == typeof(Abacus.SinglePrecision.Vector3) )
             {
-                var castValue = (Vector3) value;
-                global::MonoMac.OpenGL.GL.Uniform3( UniformLocation, 1, ref castValue.X );
+                var castValue = (Abacus.SinglePrecision.Vector3) value;
+                GL.Uniform3( UniformLocation, 1, ref castValue.X );
             }
-            else if( t == typeof(Vector4) )
+            else if( t == typeof(Abacus.SinglePrecision.Vector4) )
             {
-                var castValue = (Vector4) value;
-                global::MonoMac.OpenGL.GL.Uniform4( UniformLocation, 1, ref castValue.X );
+                var castValue = (Abacus.SinglePrecision.Vector4) value;
+                GL.Uniform4( UniformLocation, 1, ref castValue.X );
             }
             else if( t == typeof(Rgba32) )
             {
                 var castValue = (Rgba32) value;
 
-                Vector4 vec4Value;
+                Abacus.SinglePrecision.Vector4 vec4Value;
                 castValue.UnpackTo(out vec4Value);
 
                 // does this rgba value need to be packed in to a vector3 or a vector4
-                if( this.Type == typeof(Vector4) )
-                    global::MonoMac.OpenGL.GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
-                else if( this.Type == typeof(Vector3) )
-                    global::MonoMac.OpenGL.GL.Uniform3( UniformLocation, 1, ref vec4Value.X );
+                if( this.Type == typeof(Abacus.SinglePrecision.Vector4) )
+                    GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
+                else if( this.Type == typeof(Abacus.SinglePrecision.Vector3) )
+                    GL.Uniform3( UniformLocation, 1, ref vec4Value.X );
                 else
                     throw new Exception("Not supported");
             }

@@ -1,5 +1,5 @@
 ﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor.Lib.Khronos                                                │ \\
+// │ Cor.Lib.Khronos                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Brought to you by:                                                     │ \\
 // │          _________                    .__               __             │ \\
@@ -48,7 +48,7 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
-#if COR_PLATFORM_MANAGED_XIOS
+#if COR_PLATFORM_XIOS
 
 using OpenTK.Graphics.ES20;
 using GLShaderType = OpenTK.Graphics.ES20.ShaderType;
@@ -59,7 +59,7 @@ using KhronosVector3 = OpenTK.Vector3;
 using KhronosVector4 = OpenTK.Vector4;
 using KhronosMatrix4 = OpenTK.Matrix4;
 
-#elif COR_PLATFORM_MANAGED_MONOMAC
+#elif COR_PLATFORM_MONOMAC
 
 using MonoMac.OpenGL;
 using GLShaderType = MonoMac.OpenGL.ShaderType;
@@ -909,17 +909,17 @@ namespace Cor.Lib.Khronos
                 {
                     this.SetVariable(varName, (Single) value);
                 }
-                else if( variableDefinition.Type == typeof(Vector2) )
+                else if( variableDefinition.Type == typeof(Abacus.SinglePrecision.Vector2) )
                 {
-                    this.SetVariable(varName, (Vector2) value);
+                    this.SetVariable(varName, (Abacus.SinglePrecision.Vector2) value);
                 }
-                else if( variableDefinition.Type == typeof(Vector3) )
+                else if( variableDefinition.Type == typeof(Abacus.SinglePrecision.Vector3) )
                 {
-                    this.SetVariable(varName, (Vector3) value);
+                    this.SetVariable(varName, (Abacus.SinglePrecision.Vector3) value);
                 }
-                else if( variableDefinition.Type == typeof(Vector4) )
+                else if( variableDefinition.Type == typeof(Abacus.SinglePrecision.Vector4) )
                 {
-                    this.SetVariable(varName, (Vector4) value);
+                    this.SetVariable(varName, (Abacus.SinglePrecision.Vector4) value);
                 }
                 else if( variableDefinition.Type == typeof(Rgba32) )
                 {
@@ -1029,27 +1029,46 @@ namespace Cor.Lib.Khronos
         /// be individually activated and used to draw with to apply the effect
         /// of this containing <see cref="Shader"/> object.
         /// </summary>
-        List<ShaderPass> passes = new List<ShaderPass>();
+        List<ShaderPassHandle> passes = new List<ShaderPassHandle>();
 
         /// <summary>
-        /// Cached reference to the <see cref="ShaderDefinition"/> object used
+        /// Cached reference to the platform agnostic 
+        /// <see cref="ShaderDefinition"/> object used
         /// to create this <see cref="Shader"/> object.
         /// </summary>
         readonly ShaderDefinition cachedShaderDefinition;
 
-        public ShaderDefinition ShaderDefinition { get { return cachedShaderDefinition; } }
+        public ShaderDefinition ShaderDefinition
+        {
+            get { return cachedShaderDefinition; }
+        }
+
+        /// <summary>
+        /// Defines the variants.  Done for optimisation, instead of having one
+        /// massive shader that supports all the the Inputs and attempts to
+        /// process them accordingly, we load slight variants of effectively 
+        /// the same shader, then we select the most optimal variant to run
+        /// based upon the VertexDeclaration the calling code is about to draw.
+        /// </summary>
+        readonly List<KrShaderVariantDefinition> cachedVariantDefinitions;
+
+        public List<KrShaderVariantDefinition> VariantDefinitions
+        { 
+            get { return cachedVariantDefinitions; }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Shader"/> class from a
         /// <see cref="ShaderDefinition"/> object.
         /// </summary>
-        internal ShaderHandle (ShaderDefinition shaderDefinition)
+        internal ShaderHandle (ShaderDefinition shaderDefinition, List<KrShaderVariantDefinition> platformVariants)
         {
             InternalUtils.Log.Info("\n");
             InternalUtils.Log.Info("\n");
             InternalUtils.Log.Info("=====================================================================");
             InternalUtils.Log.Info("Creating Shader: " + shaderDefinition.Name);
             this.cachedShaderDefinition = shaderDefinition;
+            this.cachedVariantDefinitions = platformVariants;
             this.Name = shaderDefinition.Name;
             CalculateRequiredInputs(shaderDefinition);
             InitilisePasses (shaderDefinition);
@@ -1107,13 +1126,13 @@ namespace Cor.Lib.Khronos
                 // in this shader object's definition
                 // that support the current shaderpass.
                 var passVariants___Name_AND_passVariantDefinition =
-                    new List<Tuple<string, ShaderVarientPassDefinition>>();
+                    new List<Tuple<String, KrShaderVariantPassDefinition>>();
 
                 // itterate over every shader variant in the definition
-                foreach (var shaderVariantDefinition in shaderDefinition.VariantDefinitions)
+                foreach (var shaderVariantDefinition in this.VariantDefinitions)
                 {
                     // each shader varient has a name
-                    string shaderVariantName = shaderVariantDefinition.VariantName;
+                    String shaderVariantName = shaderVariantDefinition.VariantName;
 
                     // find the pass in the shader variant definition
                     // that corresponds to the pass we are
@@ -1130,12 +1149,12 @@ namespace Cor.Lib.Khronos
                     //   - Shaders/Unlit_PositionTextureColour.fsh
                     //
                     passVariants___Name_AND_passVariantDefinition.Add(
-                        new Tuple<String, ShaderVarientPassDefinition>(
+                        new Tuple<String, KrShaderVariantPassDefinition>(
                             shaderVariantName, variantPassDefinition));
                 }
 
                 // Create one shader pass for each defined pass name.
-                var shaderPass = new ShaderPass (
+                var shaderPass = new ShaderPassHandle (
                     definedPassName,
                     passVariants___Name_AND_passVariantDefinition );
 
@@ -1165,7 +1184,7 @@ namespace Cor.Lib.Khronos
         /// A collection of OpenGL shaders, all with slight variations in their
         /// input parameters, that are suitable for rendering this ShaderPass object.
         /// </summary>
-        List<OpenGLShader> Variants { get; set; }
+        List<KrShader> Variants { get; set; }
 
         /// <summary>
         /// A nice name for the shader pass, for example: Main or Cel -> Outline.
@@ -1177,7 +1196,7 @@ namespace Cor.Lib.Khronos
         /// before is active, the best matching shader pass variant is found and then stored in this map to fast
         /// access.
         /// </summary>
-        Dictionary<VertexDeclaration, OpenGLShader> BestVariantMap { get; set; }
+        Dictionary<VertexDeclaration, KrShader> BestVariantMap { get; set; }
 
         Dictionary<String, Object>  currentVariables = new Dictionary<String, Object>();
         Dictionary<String, Int32>   currentSamplerSlots = new Dictionary<String, Int32>();
@@ -1196,16 +1215,16 @@ namespace Cor.Lib.Khronos
 
         public ShaderPassHandle(
             String passName,
-            List<Tuple<String, ShaderVarientPassDefinition>> passVariants___Name_AND_passVariantDefinition)
+            List<Tuple<String, KrShaderVariantPassDefinition>> passVariants___Name_AND_passVariantDefinition)
         {
             InternalUtils.Log.Info("Creating ShaderPass: " + passName);
             this.Name = passName;
             this.Variants =
                 passVariants___Name_AND_passVariantDefinition
-                    .Select (x => new OpenGLShader (x.Item1, passName, x.Item2.PassDefinition))
+                    .Select (x => new KrShader (x.Item1, passName, x.Item2.PassDefinition))
                     .ToList();
 
-            this.BestVariantMap = new Dictionary<VertexDeclaration, OpenGLShader>();
+            this.BestVariantMap = new Dictionary<VertexDeclaration, KrShader>();
         }
 
 
@@ -1254,7 +1273,7 @@ namespace Cor.Lib.Khronos
         {
             if (!BestVariantMap.ContainsKey (vertexDeclaration))
             {
-                BestVariantMap[vertexDeclaration] = ShaderHelper.WorkOutBestVariantFor(vertexDeclaration, Variants);
+                BestVariantMap[vertexDeclaration] = KrShaderHelper.WorkOutBestVariantFor(vertexDeclaration, Variants);
             }
             var bestVariant = BestVariantMap[vertexDeclaration];
             // select the correct shader pass variant and then activate it
@@ -1635,6 +1654,28 @@ namespace Cor.Lib.Khronos
         string pixelShaderPath;
         string vertexShaderPath;
 
+        internal KrShader(
+            String variantName,
+            String passName,
+            KrShaderDefinition definition)
+        {
+            InternalUtils.Log.Info ("  Creating Pass Variant: " + variantName);
+            this.variantName = variantName;
+            this.passName = passName;
+            this.vertexShaderPath = definition.VertexShaderPath;
+            this.pixelShaderPath = definition.PixelShaderPath;
+
+            //Variables =
+            programHandle = KrShaderUtils.CreateShaderProgram ();
+
+            vertShaderHandle = KrShaderUtils.CreateVertexShader (GetResourcePath(this.vertexShaderPath));
+            fragShaderHandle = KrShaderUtils.CreateFragmentShader (GetResourcePath(this.pixelShaderPath));
+
+            KrShaderUtils.AttachShader (programHandle, vertShaderHandle);
+            KrShaderUtils.AttachShader (programHandle, fragShaderHandle);
+
+        }
+
         public override string ToString ()
         {
             //string a = Inputs.Select(x => x.Name).Join(", ");
@@ -1776,7 +1817,11 @@ namespace Cor.Lib.Khronos
             string filename = path.Substring(0, path.Length - ext.Length);
 
             var resourcePathname =
+#               if COR_PLATFORM_XIOS
+                MonoTouch.Foundation.NSBundle.MainBundle.PathForResource (
+#               else
                 global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (
+#               endif
                     filename,
                     ext.Substring(1, ext.Length - 1)
                 );
@@ -1789,37 +1834,15 @@ namespace Cor.Lib.Khronos
             return resourcePathname;
         }
 
-        internal KrShader(
-            String variantName,
-            String passName,
-            KrShaderDefinition definition)
-        {
-            InternalUtils.Log.Info ("  Creating Pass Variant: " + variantName);
-            this.variantName = variantName;
-            this.passName = passName;
-            this.vertexShaderPath = definition.VertexShaderPath;
-            this.pixelShaderPath = definition.PixelShaderPath;
-
-            //Variables =
-            programHandle = ShaderUtils.CreateShaderProgram ();
-
-            vertShaderHandle = ShaderUtils.CreateVertexShader (GetResourcePath(this.vertexShaderPath));
-            fragShaderHandle = ShaderUtils.CreateFragmentShader (GetResourcePath(this.pixelShaderPath));
-
-            ShaderUtils.AttachShader (programHandle, vertShaderHandle);
-            ShaderUtils.AttachShader (programHandle, fragShaderHandle);
-
-        }
-
         internal void BindAttributes(IList<String> orderedAttributes)
         {
             int index = 0;
 
             foreach(var attName in orderedAttributes)
             {
-                global::MonoMac.OpenGL.GL.BindAttribLocation(programHandle, index, attName);
+                GL.BindAttribLocation(programHandle, index, attName);
                 KrErrorHandler.Check();
-                bool success = ShaderUtils.LinkProgram (programHandle);
+                bool success = KrShaderUtils.LinkProgram (programHandle);
                 if (success)
                 {
                     index++;
@@ -1836,7 +1859,7 @@ namespace Cor.Lib.Khronos
             InternalUtils.Log.Info("  Finishing linking");
 
             InternalUtils.Log.Info("  Initilise Attributes");
-            var attributes = ShaderUtils.GetAttributes(programHandle);
+            var attributes = KrShaderUtils.GetAttributes(programHandle);
 
             Inputs = attributes
                 .Select(x => new KrShaderInput(programHandle, x))
@@ -1850,13 +1873,13 @@ namespace Cor.Lib.Khronos
             InternalUtils.Log.Info (logInputs);
 
             InternalUtils.Log.Info("  Initilise Uniforms");
-            var uniforms = ShaderUtils.GetUniforms(programHandle);
+            var uniforms = KrShaderUtils.GetUniforms(programHandle);
 
 
             Variables = uniforms
                 .Where(y =>
-                       y.Type != global::MonoMac.OpenGL.ActiveUniformType.Sampler2D &&
-                       y.Type != global::MonoMac.OpenGL.ActiveUniformType.SamplerCube)
+                       y.Type != ActiveUniformType.Sampler2D &&
+                       y.Type != ActiveUniformType.SamplerCube)
                 .Select(x => new KrShaderVariable(programHandle, x))
                 .OrderBy(z => z.UniformLocation)
                 .ToList();
@@ -1869,32 +1892,32 @@ namespace Cor.Lib.Khronos
             InternalUtils.Log.Info("  Initilise Samplers");
             Samplers = uniforms
                 .Where(y =>
-                       y.Type == global::MonoMac.OpenGL.ActiveUniformType.Sampler2D ||
-                       y.Type == global::MonoMac.OpenGL.ActiveUniformType.SamplerCube)
+                       y.Type == ActiveUniformType.Sampler2D ||
+                       y.Type == ActiveUniformType.SamplerCube)
                 .Select(x => new KrShaderSampler(programHandle, x))
                 .OrderBy(z => z.UniformLocation)
                 .ToList();
 
             #if DEBUG
-            ShaderUtils.ValidateProgram (programHandle);
+            KrShaderUtils.ValidateProgram (programHandle);
             #endif
 
-            ShaderUtils.DetachShader(programHandle, fragShaderHandle);
-            ShaderUtils.DetachShader(programHandle, vertShaderHandle);
+            KrShaderUtils.DetachShader(programHandle, fragShaderHandle);
+            KrShaderUtils.DetachShader(programHandle, vertShaderHandle);
 
-            ShaderUtils.DeleteShader(programHandle, fragShaderHandle);
-            ShaderUtils.DeleteShader(programHandle, vertShaderHandle);
+            KrShaderUtils.DeleteShader(programHandle, fragShaderHandle);
+            KrShaderUtils.DeleteShader(programHandle, vertShaderHandle);
         }
 
         public void Activate ()
         {
-            global::MonoMac.OpenGL.GL.UseProgram (programHandle);
+            GL.UseProgram (programHandle);
             KrErrorHandler.Check ();
         }
 
         public void Dispose()
         {
-            ShaderUtils.DestroyShaderProgram(programHandle);
+            KrShaderUtils.DestroyShaderProgram(programHandle);
             KrErrorHandler.Check();
         }
     }
@@ -1916,9 +1939,9 @@ namespace Cor.Lib.Khronos
         public Boolean Optional { get; private set; }
 
         public KrShaderInput(
-            int programHandle, ShaderUtils.ShaderAttribute attribute)
+            int programHandle, KrShaderUtils.KrShaderAttribute attribute)
         {
-            int attLocation = global::MonoMac.OpenGL.GL.GetAttribLocation(programHandle, attribute.Name);
+            int attLocation = GL.GetAttribLocation(programHandle, attribute.Name);
 
             KrErrorHandler.Check();
 
@@ -1953,12 +1976,12 @@ namespace Cor.Lib.Khronos
         public Object DefaultValue { get; private set; }
 
         public KrShaderVariable(
-            int programHandle, ShaderUtils.ShaderUniform uniform)
+            int programHandle, KrShaderUtils.KrShaderUniform uniform)
         {
 
             this.ProgramHandle = programHandle;
 
-            int uniformLocation = global::MonoMac.OpenGL.GL.GetUniformLocation(programHandle, uniform.Name);
+            int uniformLocation = GL.GetUniformLocation(programHandle, uniform.Name);
 
             KrErrorHandler.Check();
 
@@ -1995,45 +2018,45 @@ namespace Cor.Lib.Khronos
             {
                 var castValue = (Matrix44) value;
                 var otkValue = KrMatrix44Converter.ToKhronos(castValue);
-                global::MonoMac.OpenGL.GL.UniformMatrix4( UniformLocation, false, ref otkValue );
+                GL.UniformMatrix4( UniformLocation, false, ref otkValue );
             }
             else if( t == typeof(Int32) )
             {
                 var castValue = (Int32) value;
-                global::MonoMac.OpenGL.GL.Uniform1( UniformLocation, 1, ref castValue );
+                GL.Uniform1( UniformLocation, 1, ref castValue );
             }
             else if( t == typeof(Single) )
             {
                 var castValue = (Single) value;
-                global::MonoMac.OpenGL.GL.Uniform1( UniformLocation, 1, ref castValue );
+                GL.Uniform1( UniformLocation, 1, ref castValue );
             }
-            else if( t == typeof(Vector2) )
+            else if( t == typeof(Abacus.SinglePrecision.Vector2) )
             {
-                var castValue = (Vector2) value;
-                global::MonoMac.OpenGL.GL.Uniform2( UniformLocation, 1, ref castValue.X );
+                var castValue = (Abacus.SinglePrecision.Vector2) value;
+                GL.Uniform2( UniformLocation, 1, ref castValue.X );
             }
-            else if( t == typeof(Vector3) )
+            else if( t == typeof(Abacus.SinglePrecision.Vector3) )
             {
-                var castValue = (Vector3) value;
-                global::MonoMac.OpenGL.GL.Uniform3( UniformLocation, 1, ref castValue.X );
+                var castValue = (Abacus.SinglePrecision.Vector3) value;
+                GL.Uniform3( UniformLocation, 1, ref castValue.X );
             }
-            else if( t == typeof(Vector4) )
+            else if( t == typeof(Abacus.SinglePrecision.Vector4) )
             {
-                var castValue = (Vector4) value;
-                global::MonoMac.OpenGL.GL.Uniform4( UniformLocation, 1, ref castValue.X );
+                var castValue = (Abacus.SinglePrecision.Vector4) value;
+                GL.Uniform4( UniformLocation, 1, ref castValue.X );
             }
             else if( t == typeof(Rgba32) )
             {
                 var castValue = (Rgba32) value;
 
-                Vector4 vec4Value;
+                Abacus.SinglePrecision.Vector4 vec4Value;
                 castValue.UnpackTo(out vec4Value);
 
                 // does this rgba value need to be packed in to a vector3 or a vector4
-                if( this.Type == typeof(Vector4) )
-                    global::MonoMac.OpenGL.GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
-                else if( this.Type == typeof(Vector3) )
-                    global::MonoMac.OpenGL.GL.Uniform3( UniformLocation, 1, ref vec4Value.X );
+                if( this.Type == typeof(Abacus.SinglePrecision.Vector4) )
+                    GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
+                else if( this.Type == typeof(Abacus.SinglePrecision.Vector3) )
+                    GL.Uniform3( UniformLocation, 1, ref vec4Value.X );
                 else
                     throw new Exception("Not supported");
             }
@@ -2055,15 +2078,14 @@ namespace Cor.Lib.Khronos
         public String NiceName { get; set; }
         public String Name { get; set; }
 
-        public KrnShaderSampler(
-            int programHandle, ShaderUtils.ShaderUniform uniform )
+        public KrShaderSampler(
+            int programHandle, KrShaderUtils.KrShaderUniform uniform )
         {
             this.ProgramHandle = programHandle;
 
-            int uniformLocation = global::MonoMac.OpenGL.GL.GetUniformLocation(programHandle, uniform.Name);
+            int uniformLocation = GL.GetUniformLocation(programHandle, uniform.Name);
 
             KrErrorHandler.Check();
-
 
             this.UniformLocation = uniformLocation;
             this.Name = uniform.Name;
@@ -2077,7 +2099,7 @@ namespace Cor.Lib.Khronos
         public void SetSlot(Int32 slot)
         {
             // set the sampler texture unit to 0
-            global::MonoMac.OpenGL.GL.Uniform1( this.UniformLocation, slot );
+            GL.Uniform1( this.UniformLocation, slot );
             KrErrorHandler.Check();
         }
     }
@@ -2297,7 +2319,7 @@ namespace Cor.Lib.Khronos
                 throw new Exception("Vertex shader at [" + path + "] does not exist.");
             }
 
-            ShaderUtils.CompileShader (
+            KrShaderUtils.CompileShader (
                 GLShaderType.VertexShader,
                 path,
                 out vertShaderHandle );
@@ -2322,7 +2344,7 @@ namespace Cor.Lib.Khronos
                 throw new Exception("Fragement shader at [" + path + "] does not exist.");
             }
 
-            ShaderUtils.CompileShader (
+            KrShaderUtils.CompileShader (
                 GLShaderType.FragmentShader,
                 path,
                 out fragShaderHandle );
@@ -2373,9 +2395,9 @@ namespace Cor.Lib.Khronos
         {
             if (programHandle != 0)
             {
-#if COR_PLATFORM_MANAGED_XIOS
+#if COR_PLATFORM_XIOS
                 GL.DeleteProgram (programHandle);
-#elif COR_PLATFORM_MANAGED_MONOMAC
+#elif COR_PLATFORM_MONOMAC
                 GL.DeleteProgram (1, new int[]{ programHandle } );
 #endif
 
@@ -2410,13 +2432,13 @@ namespace Cor.Lib.Khronos
             KrErrorHandler.Check();
 
             // Replace the source code in the vertex shader object
-#if COR_PLATFORM_MANAGED_XIOS
+#if COR_PLATFORM_XIOS
             GL.ShaderSource (
                 shaderHandle,
                 1,
                 new String[] { src },
                 (Int32[]) null );
-#elif COR_PLATFORM_MANAGED_MONOMAC
+#elif COR_PLATFORM_MONOMAC
             GL.ShaderSource (
                 shaderHandle,
                 src);
@@ -2656,6 +2678,24 @@ namespace Cor.Lib.Khronos
         }
     }
 
+    public sealed class KrShaderDefinition
+    {
+        public string VertexShaderPath { get; set; }
+        public string PixelShaderPath { get; set; }
+    }
+
+    public sealed class KrShaderVariantDefinition
+    {
+        public String VariantName { get; set; }
+        public List<KrShaderVariantPassDefinition> VariantPassDefinitions { get; set; }
+    }
+
+    public sealed class KrShaderVariantPassDefinition
+    {
+        public String PassName { get; set; }
+        public KrShaderDefinition PassDefinition { get; set; }
+    }
+
 
     public static class KrErrorHandler
     {
@@ -2807,12 +2847,12 @@ namespace Cor.Lib.Khronos
                 case BlendFactor.Zero: return BlendingFactorSrc.Zero;
                 case BlendFactor.One: return BlendingFactorSrc.One;
 
-#if COR_PLATFORM_MANAGED_MONOMAC
+#if COR_PLATFORM_MONOMAC
 
                 case BlendFactor.SourceColour: return BlendingFactorSrc.Src1Color; // todo: check this src1 stuff
                 case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrc1Color;
 
-#elif COR_PLATFORM_MANAGED_XIOS
+#elif COR_PLATFORM_XIOS
 
                 case BlendFactor.SourceColour: return BlendingFactorSrc.SrcColor;
                 case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrcColor;

@@ -9,15 +9,13 @@
     <RootNamespace>Cor</RootNamespace>
     <AssemblyName>Cor</AssemblyName>
     <SuppressXamMacUpsell>True</SuppressXamMacUpsell>
-    <ProductVersion>10.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;COR_PLATFORM_MANAGED_MONOMAC;</DefineConstants>
+    <DefineConstants>DEBUG;COR_PLATFORM_MONOMAC;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -41,7 +39,7 @@
     <IncludeMonoRuntime>false</IncludeMonoRuntime>
     <UseSGen>false</UseSGen>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DefineConstants>COR_PLATFORM_MANAGED_MONOMAC;</DefineConstants>
+    <DefineConstants>COR_PLATFORM_MONOMAC;</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -54,14 +52,14 @@
     <Compile Include="..\..\..\source\Cor.Platform.Stub.cs">
       <Link>Cor.Platform.Stub.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.MonoMac.cs">
-      <Link>Cor.Platform.MonoMac.cs</Link>
+    <Compile Include="..\..\..\source\Cor.cs">
+      <Link>Cor.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Cor.Lib.Khronos.cs">
       <Link>Cor.Lib.Khronos.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.cs">
-      <Link>Cor.cs</Link>
+    <Compile Include="..\..\..\source\Cor.Platform.MonoMac.cs">
+      <Link>Cor.Platform.MonoMac.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

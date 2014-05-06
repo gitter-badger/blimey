@@ -20,7 +20,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <MtouchLink>None</MtouchLink>
-    <DefineConstants>COR_PLATFORM_MANAGED_XIOS;</DefineConstants>
+    <DefineConstants>COR_PLATFORM_XIOS;</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
     <MtouchLink>None</MtouchLink>
     <ConsolePause>False</ConsolePause>
-    <DefineConstants>COR_PLATFORM_MANAGED_XIOS;DEBUG;</DefineConstants>
+    <DefineConstants>COR_PLATFORM_XIOS;DEBUG;</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
@@ -40,7 +40,7 @@
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\iPhone\Debug</OutputPath>
-    <DefineConstants>DEBUG;COR_PLATFORM_MANAGED_XIOS;AOT;</DefineConstants>
+    <DefineConstants>DEBUG;COR_PLATFORM_XIOS;AOT;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
@@ -62,7 +62,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
-    <DefineConstants>COR_PLATFORM_MANAGED_XIOS;AOT;</DefineConstants>
+    <DefineConstants>COR_PLATFORM_XIOS;AOT;</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
@@ -74,7 +74,7 @@
     <ConsolePause>False</ConsolePause>
     <BuildIpa>True</BuildIpa>
     <CodesignKey>iPhone Distribution</CodesignKey>
-    <DefineConstants>COR_PLATFORM_MANAGED_XIOS;AOT;</DefineConstants>
+    <DefineConstants>COR_PLATFORM_XIOS;AOT;</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
@@ -85,7 +85,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Distribution</CodesignKey>
-    <DefineConstants>COR_PLATFORM_MANAGED_XIOS;AOT;</DefineConstants>
+    <DefineConstants>COR_PLATFORM_XIOS;AOT;</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>

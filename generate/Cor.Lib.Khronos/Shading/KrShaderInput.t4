@@ -15,9 +15,9 @@
         public Boolean Optional { get; private set; }
 
         public KrShaderInput(
-            int programHandle, ShaderUtils.ShaderAttribute attribute)
+            int programHandle, KrShaderUtils.KrShaderAttribute attribute)
         {
-            int attLocation = global::MonoMac.OpenGL.GL.GetAttribLocation(programHandle, attribute.Name);
+            int attLocation = GL.GetAttribLocation(programHandle, attribute.Name);
 
             KrErrorHandler.Check();
 

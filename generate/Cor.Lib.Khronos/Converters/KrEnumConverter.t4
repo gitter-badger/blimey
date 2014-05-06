@@ -133,12 +133,12 @@
                 case BlendFactor.Zero: return BlendingFactorSrc.Zero;
                 case BlendFactor.One: return BlendingFactorSrc.One;
 
-#if COR_PLATFORM_MANAGED_MONOMAC
+#if COR_PLATFORM_MONOMAC
 
                 case BlendFactor.SourceColour: return BlendingFactorSrc.Src1Color; // todo: check this src1 stuff
                 case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrc1Color;
 
-#elif COR_PLATFORM_MANAGED_XIOS
+#elif COR_PLATFORM_XIOS
 
                 case BlendFactor.SourceColour: return BlendingFactorSrc.SrcColor;
                 case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrcColor;

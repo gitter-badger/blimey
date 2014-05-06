@@ -1,0 +1,6 @@
+    public sealed class KrShaderVariantPassDefinition
+    {
+        public String PassName { get; set; }
+        public KrShaderDefinition PassDefinition { get; set; }
+    }
+

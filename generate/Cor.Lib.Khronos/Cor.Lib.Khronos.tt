@@ -1,7 +1,7 @@
 <#@ template debug="true" hostspecific="false" language="C#" #>
 <#@ output extension=".cs" #>
 // ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor.Lib.Khronos                                                │ \\
+// │ Cor.Lib.Khronos                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Brought to you by:                                                     │ \\
 // │          _________                    .__               __             │ \\
@@ -50,7 +50,7 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
-#if COR_PLATFORM_MANAGED_XIOS
+#if COR_PLATFORM_XIOS
 
 using OpenTK.Graphics.ES20;
 using GLShaderType = OpenTK.Graphics.ES20.ShaderType;
@@ -61,7 +61,7 @@ using KhronosVector3 = OpenTK.Vector3;
 using KhronosVector4 = OpenTK.Vector4;
 using KhronosMatrix4 = OpenTK.Matrix4;
 
-#elif COR_PLATFORM_MANAGED_MONOMAC
+#elif COR_PLATFORM_MONOMAC
 
 using MonoMac.OpenGL;
 using GLShaderType = MonoMac.OpenGL.ShaderType;
@@ -97,6 +97,9 @@ namespace Cor.Lib.Khronos
 <#@ include file="Shading/KrShaderSampler.t4"#>
 <#@ include file="Shading/KrShaderHelper.t4"#>
 <#@ include file="Shading/KrShaderUtils.t4"#>
+<#@ include file="Shading/KrShaderDefinition.t4"#>
+<#@ include file="Shading/KrShaderVariantDefinition.t4"#>
+<#@ include file="Shading/KrShaderVariantPassDefinition.t4"#>
 
 <#@ include file="Utilities/KrErrorHandler.t4"#>
 

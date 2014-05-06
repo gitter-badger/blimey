@@ -513,56 +513,6 @@ namespace Cor.Platform.MonoMac
                 WindowState = global::MonoMac.OpenGL.WindowState.Fullscreen;
         }
 
-        // All Setup For OpenGL Goes Here
-        bool NotUsedInitGL ()
-        {
-
-            // Enables Smooth Shading
-            global::MonoMac.OpenGL.GL.ShadeModel (global::MonoMac.OpenGL.ShadingModel.Smooth);
-            // Set background color to black
-            global::MonoMac.OpenGL.GL.ClearColor (Color.Black);
-
-            // Setup Depth Testing
-
-            // Depth Buffer setup
-            global::MonoMac.OpenGL.GL.ClearDepth (1.0);
-            // Enables Depth testing
-            global::MonoMac.OpenGL.GL.Enable (global::MonoMac.OpenGL.EnableCap.DepthTest);
-            // The type of depth testing to do
-            global::MonoMac.OpenGL.GL.DepthFunc (global::MonoMac.OpenGL.DepthFunction.Lequal);
-
-            // Really Nice Perspective Calculations
-            global::MonoMac.OpenGL.GL.Hint (global::MonoMac.OpenGL.HintTarget.PerspectiveCorrectionHint, global::MonoMac.OpenGL.HintMode.Nicest);
-
-            return true;
-        }
-
-        void NotUsedCreateFrameBuffer()
-        {
-            //
-            // Enable the depth buffer
-            //
-            global::MonoMac.OpenGL.GL.GenRenderbuffers(1, out _depthRenderbuffer);
-            ErrorHandler.Check();
-
-            global::MonoMac.OpenGL.GL.BindRenderbuffer(
-                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer,
-                _depthRenderbuffer);
-            ErrorHandler.Check();
-
-            global::MonoMac.OpenGL.GL.RenderbufferStorage(
-                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer,
-                global::MonoMac.OpenGL.RenderbufferStorage.DepthComponent16,
-                Size.Width, Size.Height);
-            ErrorHandler.Check();
-
-            global::MonoMac.OpenGL.GL.FramebufferRenderbuffer(
-                global::MonoMac.OpenGL.FramebufferTarget.Framebuffer,
-                global::MonoMac.OpenGL.FramebufferAttachment.DepthAttachment,
-                global::MonoMac.OpenGL.RenderbufferTarget.Renderbuffer,
-                _depthRenderbuffer);
-            ErrorHandler.Check();
-        }
 
         public void StartRunLoop(double updateRate)
         {

@@ -6,15 +6,14 @@
         public String NiceName { get; set; }
         public String Name { get; set; }
 
-        public KrnShaderSampler(
-            int programHandle, ShaderUtils.ShaderUniform uniform )
+        public KrShaderSampler(
+            int programHandle, KrShaderUtils.KrShaderUniform uniform )
         {
             this.ProgramHandle = programHandle;
 
-            int uniformLocation = global::MonoMac.OpenGL.GL.GetUniformLocation(programHandle, uniform.Name);
+            int uniformLocation = GL.GetUniformLocation(programHandle, uniform.Name);
 
             KrErrorHandler.Check();
-
 
             this.UniformLocation = uniformLocation;
             this.Name = uniform.Name;
@@ -28,7 +27,7 @@
         public void SetSlot(Int32 slot)
         {
             // set the sampler texture unit to 0
-            global::MonoMac.OpenGL.GL.Uniform1( this.UniformLocation, slot );
+            GL.Uniform1( this.UniformLocation, slot );
             KrErrorHandler.Check();
         }
     }

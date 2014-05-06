@@ -30,17 +30,17 @@
                 {
                     this.SetVariable(varName, (Single) value);
                 }
-                else if( variableDefinition.Type == typeof(Vector2) )
+                else if( variableDefinition.Type == typeof(Abacus.SinglePrecision.Vector2) )
                 {
-                    this.SetVariable(varName, (Vector2) value);
+                    this.SetVariable(varName, (Abacus.SinglePrecision.Vector2) value);
                 }
-                else if( variableDefinition.Type == typeof(Vector3) )
+                else if( variableDefinition.Type == typeof(Abacus.SinglePrecision.Vector3) )
                 {
-                    this.SetVariable(varName, (Vector3) value);
+                    this.SetVariable(varName, (Abacus.SinglePrecision.Vector3) value);
                 }
-                else if( variableDefinition.Type == typeof(Vector4) )
+                else if( variableDefinition.Type == typeof(Abacus.SinglePrecision.Vector4) )
                 {
-                    this.SetVariable(varName, (Vector4) value);
+                    this.SetVariable(varName, (Abacus.SinglePrecision.Vector4) value);
                 }
                 else if( variableDefinition.Type == typeof(Rgba32) )
                 {
@@ -150,27 +150,46 @@
         /// be individually activated and used to draw with to apply the effect
         /// of this containing <see cref="Shader"/> object.
         /// </summary>
-        List<ShaderPass> passes = new List<ShaderPass>();
+        List<ShaderPassHandle> passes = new List<ShaderPassHandle>();
 
         /// <summary>
-        /// Cached reference to the <see cref="ShaderDefinition"/> object used
+        /// Cached reference to the platform agnostic 
+        /// <see cref="ShaderDefinition"/> object used
         /// to create this <see cref="Shader"/> object.
         /// </summary>
         readonly ShaderDefinition cachedShaderDefinition;
 
-        public ShaderDefinition ShaderDefinition { get { return cachedShaderDefinition; } }
+        public ShaderDefinition ShaderDefinition
+        {
+            get { return cachedShaderDefinition; }
+        }
+
+        /// <summary>
+        /// Defines the variants.  Done for optimisation, instead of having one
+        /// massive shader that supports all the the Inputs and attempts to
+        /// process them accordingly, we load slight variants of effectively 
+        /// the same shader, then we select the most optimal variant to run
+        /// based upon the VertexDeclaration the calling code is about to draw.
+        /// </summary>
+        readonly List<KrShaderVariantDefinition> cachedVariantDefinitions;
+
+        public List<KrShaderVariantDefinition> VariantDefinitions
+        { 
+            get { return cachedVariantDefinitions; }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Shader"/> class from a
         /// <see cref="ShaderDefinition"/> object.
         /// </summary>
-        internal ShaderHandle (ShaderDefinition shaderDefinition)
+        internal ShaderHandle (ShaderDefinition shaderDefinition, List<KrShaderVariantDefinition> platformVariants)
         {
             InternalUtils.Log.Info("\n");
             InternalUtils.Log.Info("\n");
             InternalUtils.Log.Info("=====================================================================");
             InternalUtils.Log.Info("Creating Shader: " + shaderDefinition.Name);
             this.cachedShaderDefinition = shaderDefinition;
+            this.cachedVariantDefinitions = platformVariants;
             this.Name = shaderDefinition.Name;
             CalculateRequiredInputs(shaderDefinition);
             InitilisePasses (shaderDefinition);
@@ -228,13 +247,13 @@
                 // in this shader object's definition
                 // that support the current shaderpass.
                 var passVariants___Name_AND_passVariantDefinition =
-                    new List<Tuple<string, ShaderVarientPassDefinition>>();
+                    new List<Tuple<String, KrShaderVariantPassDefinition>>();
 
                 // itterate over every shader variant in the definition
-                foreach (var shaderVariantDefinition in shaderDefinition.VariantDefinitions)
+                foreach (var shaderVariantDefinition in this.VariantDefinitions)
                 {
                     // each shader varient has a name
-                    string shaderVariantName = shaderVariantDefinition.VariantName;
+                    String shaderVariantName = shaderVariantDefinition.VariantName;
 
                     // find the pass in the shader variant definition
                     // that corresponds to the pass we are
@@ -251,12 +270,12 @@
                     //   - Shaders/Unlit_PositionTextureColour.fsh
                     //
                     passVariants___Name_AND_passVariantDefinition.Add(
-                        new Tuple<String, ShaderVarientPassDefinition>(
+                        new Tuple<String, KrShaderVariantPassDefinition>(
                             shaderVariantName, variantPassDefinition));
                 }
 
                 // Create one shader pass for each defined pass name.
-                var shaderPass = new ShaderPass (
+                var shaderPass = new ShaderPassHandle (
                     definedPassName,
                     passVariants___Name_AND_passVariantDefinition );
 

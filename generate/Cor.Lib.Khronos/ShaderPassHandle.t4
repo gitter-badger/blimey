@@ -9,7 +9,7 @@
         /// A collection of OpenGL shaders, all with slight variations in their
         /// input parameters, that are suitable for rendering this ShaderPass object.
         /// </summary>
-        List<OpenGLShader> Variants { get; set; }
+        List<KrShader> Variants { get; set; }
 
         /// <summary>
         /// A nice name for the shader pass, for example: Main or Cel -> Outline.
@@ -21,7 +21,7 @@
         /// before is active, the best matching shader pass variant is found and then stored in this map to fast
         /// access.
         /// </summary>
-        Dictionary<VertexDeclaration, OpenGLShader> BestVariantMap { get; set; }
+        Dictionary<VertexDeclaration, KrShader> BestVariantMap { get; set; }
 
         Dictionary<String, Object>  currentVariables = new Dictionary<String, Object>();
         Dictionary<String, Int32>   currentSamplerSlots = new Dictionary<String, Int32>();
@@ -40,16 +40,16 @@
 
         public ShaderPassHandle(
             String passName,
-            List<Tuple<String, ShaderVarientPassDefinition>> passVariants___Name_AND_passVariantDefinition)
+            List<Tuple<String, KrShaderVariantPassDefinition>> passVariants___Name_AND_passVariantDefinition)
         {
             InternalUtils.Log.Info("Creating ShaderPass: " + passName);
             this.Name = passName;
             this.Variants =
                 passVariants___Name_AND_passVariantDefinition
-                    .Select (x => new OpenGLShader (x.Item1, passName, x.Item2.PassDefinition))
+                    .Select (x => new KrShader (x.Item1, passName, x.Item2.PassDefinition))
                     .ToList();
 
-            this.BestVariantMap = new Dictionary<VertexDeclaration, OpenGLShader>();
+            this.BestVariantMap = new Dictionary<VertexDeclaration, KrShader>();
         }
 
 
@@ -98,7 +98,7 @@
         {
             if (!BestVariantMap.ContainsKey (vertexDeclaration))
             {
-                BestVariantMap[vertexDeclaration] = ShaderHelper.WorkOutBestVariantFor(vertexDeclaration, Variants);
+                BestVariantMap[vertexDeclaration] = KrShaderHelper.WorkOutBestVariantFor(vertexDeclaration, Variants);
             }
             var bestVariant = BestVariantMap[vertexDeclaration];
             // select the correct shader pass variant and then activate it

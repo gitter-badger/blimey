@@ -234,20 +234,20 @@ namespace Cor.Platform.Xios
             // Enable the depth buffer
             //
             OpenTK.Graphics.ES20.GL.GenRenderbuffers(1, out _depthRenderbuffer);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.BindRenderbuffer(OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer, _depthRenderbuffer);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.RenderbufferStorage(OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer, OpenTK.Graphics.ES20.RenderbufferInternalFormat.DepthComponent16, Size.Width, Size.Height);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
             OpenTK.Graphics.ES20.GL.FramebufferRenderbuffer(
                 OpenTK.Graphics.ES20.FramebufferTarget.Framebuffer,
                 OpenTK.Graphics.ES20.FramebufferSlot.DepthAttachment,
                 OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer,
                 _depthRenderbuffer);
-            ErrorHandler.Check();
+            KrErrorHandler.Check();
 
         }
         

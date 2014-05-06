@@ -44,7 +44,7 @@
                 throw new Exception("Vertex shader at [" + path + "] does not exist.");
             }
 
-            ShaderUtils.CompileShader (
+            KrShaderUtils.CompileShader (
                 GLShaderType.VertexShader,
                 path,
                 out vertShaderHandle );
@@ -69,7 +69,7 @@
                 throw new Exception("Fragement shader at [" + path + "] does not exist.");
             }
 
-            ShaderUtils.CompileShader (
+            KrShaderUtils.CompileShader (
                 GLShaderType.FragmentShader,
                 path,
                 out fragShaderHandle );
@@ -120,9 +120,9 @@
         {
             if (programHandle != 0)
             {
-#if COR_PLATFORM_MANAGED_XIOS
+#if COR_PLATFORM_XIOS
                 GL.DeleteProgram (programHandle);
-#elif COR_PLATFORM_MANAGED_MONOMAC
+#elif COR_PLATFORM_MONOMAC
                 GL.DeleteProgram (1, new int[]{ programHandle } );
 #endif
 
@@ -157,13 +157,13 @@
             KrErrorHandler.Check();
 
             // Replace the source code in the vertex shader object
-#if COR_PLATFORM_MANAGED_XIOS
+#if COR_PLATFORM_XIOS
             GL.ShaderSource (
                 shaderHandle,
                 1,
                 new String[] { src },
                 (Int32[]) null );
-#elif COR_PLATFORM_MANAGED_MONOMAC
+#elif COR_PLATFORM_MONOMAC
             GL.ShaderSource (
                 shaderHandle,
                 src);
