@@ -55,7 +55,6 @@ namespace Cor.Demo
         public void Initilise (ICor engine)
         {
             this.engine = engine;
-
             var unlitAsset = engine.Assets.Load<ShaderAsset> ("unlit.cba");
 			var vertexLitAsset = engine.Assets.Load<ShaderAsset> ("pixel_lit.cba");
 			this.unlitEffect = engine.Graphics.CreateShader (unlitAsset);
