@@ -8,12 +8,36 @@
             "Importer" :
             {
                 "AssetImporterType" : "Cor.KhronosShaderImporter, Cor.Assets.Builders",
-                "AssetImporterSettings" : 
+                "AssetImporterSettings" :
                 {
-                    "Variant" : "OpenGL 4" 
+                    "Format" : "OpenGL 4",
+                    "Variants" :
+                    [
+                        {
+                            "Name" : "PositionNormal",
+                            "FragmentShaderIndex" : 1,
+                            "VertexShaderIndex" : 2
+                        },
+                        {
+                            "Name" : "PositionNormalColour",
+                            "FragmentShaderIndex" : 3,
+                            "VertexShaderIndex" : 4
+                        },
+                        {
+                            "Name" : "PositionNormalTexture",
+                            "FragmentShaderIndex" : 5,
+                            "VertexShaderIndex" : 6
+                        },
+                        {
+                            "Name" : "PositionNormalTextureColour",
+                            "FragmentShaderIndex" : 7,
+                            "VertexShaderIndex" : 8
+                        }
+                    ]
                 },
                 "Files" :
                 [
+                    "pixel_lit.sdef",
                     "ogl4/PixelLit_PositionNormal.fsh",
                     "ogl4/PixelLit_PositionNormal.vsh",
                     "ogl4/PixelLit_PositionNormalColour.fsh",
@@ -33,7 +57,7 @@
                 "AssetImporterType" : "Cor.KhronosShaderImporter, Cor.Assets.Builders",
                 "AssetImporterSettings" :
                 {
-                    "Variant" : "OpenGL ES 2"
+                    "Format" : "OpenGL ES 2"
                 },
                 "Files" :
                 [

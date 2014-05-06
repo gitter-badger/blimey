@@ -10,10 +10,11 @@
                 "AssetImporterType" : "Cor.KhronosShaderImporter, Cor.Assets.Builders",
                 "AssetImporterSettings" :
                 {
-                    "Variant" : "OpenGL 4" 
+                    "Variant" : "OpenGL 4",
                 },
                 "Files" :
                 [
+                    "vertex_lit.sdef",
                     "ogl4/VertexLit_PositionNormal.fsh",
                     "ogl4/VertexLit_PositionNormal.vsh",
                     "ogl4/VertexLit_PositionNormalColour.fsh",

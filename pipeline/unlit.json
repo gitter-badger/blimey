@@ -10,10 +10,11 @@
                 "AssetImporterType" : "Cor.KhronosShaderImporter, Cor.Assets.Builders",
                 "AssetImporterSettings" :
                 {
-                    "Variant" : "OpenGL 4" 
+                    "Variant" : "OpenGL 4"
                 },
                 "Files" :
                 [
+                    "unlit.sdef",
                     "ogl4/Unlit_PositionNormal.fsh",
                     "ogl4/Unlit_PositionNormal.vsh",
                     "ogl4/Unlit_PositionNormalColour.fsh",
