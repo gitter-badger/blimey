@@ -44,7 +44,6 @@
     <Compile Include="Source\Configuration\AssetDefinition.cs" />
     <Compile Include="Source\Configuration\InstallInfo.cs" />
     <Compile Include="Source\Configuration\ProjectDefinition.cs" />
-    <Compile Include="Test.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

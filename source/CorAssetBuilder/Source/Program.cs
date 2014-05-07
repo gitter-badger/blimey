@@ -33,7 +33,6 @@ namespace CorAssetBuilder
 
         public static void Main (string[] args)
         {
-			Test.Run ();
             Console.WriteLine ("Cor Asset Builder");
             Console.WriteLine ("=================");
 
