@@ -11,6 +11,7 @@ namespace CorAssetBuilder
 	{
 		public static void Run ()
 		{
+			JsConfig.IncludeTypeInfo = true;
 			var parameter = new ShaderDefinition()
 			{
 				Name = "VertexLit",

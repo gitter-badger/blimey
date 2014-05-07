@@ -76,7 +76,8 @@ namespace Cor
         #endif
 
 
-        public override AssetImporterOutput <ColourmapAsset> Import (AssetImporterInput input)
+		public override AssetImporterOutput <ColourmapAsset> Import (
+			AssetImporterInput input, String platformId)
         {
             var output = new AssetImporterOutput <ColourmapAsset> ();
             var outputResource = new ColourmapAsset ();

@@ -29,7 +29,7 @@ namespace Cor
 
         public override
         AssetProcessorOutput <TextureAsset>
-        Process (AssetProcessorInput <ColourmapAsset> input)
+		Process (AssetProcessorInput <ColourmapAsset> input, String platformId)
         {
             var settings = input.AssetProcessorSettings.Settings;
 

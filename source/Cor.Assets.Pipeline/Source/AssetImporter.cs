@@ -11,7 +11,7 @@ namespace Cor
         }
 
         public abstract AssetImporterOutput
-        BaseImport (AssetImporterInput input);
+		BaseImport (AssetImporterInput input, String platformId);
     }
 
     public abstract class AssetImporter <TAsset>
@@ -20,12 +20,12 @@ namespace Cor
         : IAsset
     {
         public override AssetImporterOutput
-        BaseImport (AssetImporterInput input)
+		BaseImport (AssetImporterInput input, String platformId)
         {
-            return Import (input);
+			return Import (input, platformId);
         }
 
         public abstract AssetImporterOutput<TAsset>
-        Import (AssetImporterInput input);
+		Import (AssetImporterInput input, String platformId);
     }
 }

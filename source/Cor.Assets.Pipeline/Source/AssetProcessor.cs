@@ -9,7 +9,7 @@ namespace Cor
     public abstract class AssetProcessor
     {
         public abstract AssetProcessorOutput
-        BaseProcess (AssetProcessorInput input);
+		BaseProcess (AssetProcessorInput input, String platformId);
     }
 
     public abstract class AssetProcessor <TFrom, TTo>
@@ -20,9 +20,9 @@ namespace Cor
         : IAsset
     {
         public override AssetProcessorOutput
-        BaseProcess (AssetProcessorInput input)
+		BaseProcess (AssetProcessorInput input, String platformId)
         {
-			var result = Process (input as AssetProcessorInput <TFrom>);
+			var result = Process (input as AssetProcessorInput <TFrom>, platformId);
 
 			if (result.OutputAsset == null) {
 				throw new Exception ("Asset processor produced a null asset.");
@@ -32,6 +32,6 @@ namespace Cor
         }
 
         public abstract AssetProcessorOutput <TTo>
-        Process (AssetProcessorInput <TFrom> input);
+		Process (AssetProcessorInput <TFrom> input, String platformId);
     }
 }

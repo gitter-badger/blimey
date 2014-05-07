@@ -177,12 +177,12 @@ namespace CorAssetBuilder
                         throw new Exception ("Failed to find Asset Importer Type: " + sourceset.Importer.AssetImporterType);
                     }
                     
-                    IAsset ass = ImportAsset (assetImporterType, sourcefiles, sourceset.Importer.AssetImporterSettings);
+					IAsset ass = ImportAsset (assetImporterType, sourcefiles, sourceset.Importer.AssetImporterSettings, platformId);
                     
                     foreach (var processor in sourceset.Processors)
                     {
                         Type assetProcessorType = Type.GetType (processor.AssetProcessorType);
-                        ass = ProcessAsset (assetProcessorType, ass, processor.AssetProcessorSettings);
+						ass = ProcessAsset (assetProcessorType, ass, processor.AssetProcessorSettings, platformId);
                     }
                     
                     WriteAsset (ass, assetfile);
@@ -208,7 +208,8 @@ namespace CorAssetBuilder
         static IAsset ImportAsset (
             Type assetImporterType,
             List<String> sourceFiles,
-            Dictionary<String, Object> settings)
+			Dictionary<String, Object> settings,
+			String platformId)
         {
 			Console.WriteLine ("\t\tabout to import resource with " + assetImporterType);
 
@@ -218,7 +219,7 @@ namespace CorAssetBuilder
             assetImporterInput.Files = sourceFiles;
             assetImporterInput.AssetImporterSettings = new AssetImporterSettings ();
             assetImporterInput.AssetImporterSettings.Settings = settings;
-            var output = assetImporter.BaseImport (assetImporterInput);
+			var output = assetImporter.BaseImport (assetImporterInput, platformId);
 
             var resourceType = assetImporterType.BaseType ().GenericTypeArguments ()[0];
 
@@ -231,7 +232,8 @@ namespace CorAssetBuilder
         static IAsset ProcessAsset (
             Type assetProcessorType,
             IAsset inputAsset,
-            Dictionary<String, Object> settings)
+			Dictionary<String, Object> settings,
+			String platformId)
         {
 			Console.WriteLine ("\t\tabout to process asset with " + assetProcessorType);
 
@@ -252,7 +254,7 @@ namespace CorAssetBuilder
             assetProcessorInput.AssetProcessorSettings = new AssetProcessorSettings ();
             assetProcessorInput.AssetProcessorSettings.Settings = settings;
 
-            var output = assetProcessor.BaseProcess (assetProcessorInput);
+			var output = assetProcessor.BaseProcess (assetProcessorInput, platformId);
 
             return output.OutputAsset;
         }

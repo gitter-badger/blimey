@@ -17,7 +17,8 @@ namespace Cor
             get { return new [] { "dat", "txt" }; }
         }
 
-        public override AssetImporterOutput <TextAsset> Import (AssetImporterInput input)
+		public override AssetImporterOutput <TextAsset> Import (
+			AssetImporterInput input, String platformId)
         {
             var output = new AssetImporterOutput <TextAsset> ();
             var outputAsset = new TextAsset ();

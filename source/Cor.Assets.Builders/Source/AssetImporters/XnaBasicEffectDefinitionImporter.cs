@@ -10,7 +10,8 @@ namespace Cor
 			get { return new [] { ".basiceffectdefinition" }; }
 		}
 
-		public override AssetImporterOutput <ShaderAsset> Import (AssetImporterInput input)
+		public override AssetImporterOutput <ShaderAsset> Import (
+			AssetImporterInput input, String platformId)
 		{
 			return new AssetImporterOutput <ShaderAsset> () {
 				OutputAsset = new ShaderAsset ()
