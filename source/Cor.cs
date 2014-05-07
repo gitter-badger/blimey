@@ -1242,7 +1242,7 @@ namespace Cor
 
             // Platform specific binary content.
             // This contains compiled shaders.
-            public Byte [,] Data { get; set; }
+            public Byte[] Data { get; set; }
 
             #region IAsset
 
@@ -1265,18 +1265,21 @@ namespace Cor
                     typeof (ListSerialiser<ShaderSamplerDefinition>),
                     typeof (ListSerialiser<ShaderVariableDefinition>),
                     typeof (ShaderDefinitionSerialiser),
-                    typeof (ByteSerialiser)
+                    typeof (ByteSerialiser),
+                    typeof (ArraySerialiser<Byte>)
                 };
             }
 
             public void Serialise (BinaryReader br, SerialiserDatabase tsdb)
             {
                 this.Definition = tsdb.GetSerialiser <ShaderDefinition> ().Read (br);
+                this.Data = tsdb.GetSerialiser <Byte []> ().Read (br);
             }
 
             public void Serialise (BinaryWriter bw, SerialiserDatabase tsdb)
             {
                 tsdb.GetSerialiser <ShaderDefinition> ().Write (bw, this.Definition);
+                tsdb.GetSerialiser <Byte[]> ().Write (bw, this.Data);
             }
 
             #endregion
@@ -2435,7 +2438,7 @@ namespace Cor
         /// <summary>
         /// Defines a global name for this shader
         /// </summary>
-        public string Name { get; set; }
+        public String Name { get; set; }
 
         /// Defines which passes this shader is made from
         /// (ex: a toon shader is made for a cel-shading pass
@@ -2974,33 +2977,37 @@ namespace Cor
             }
             else
             {
-                /*
                 for (UInt32 i = 0; i < count; ++i)
                 {
                     // Get the id of the type reader for this element,
                     // as this element might not be of Type T, it might be
                     // polymorphic.
+                    String virtualObjectTypeString = abr.ReadString();
+
                     Int32 objectSerialiserId = abr.Read7BitEncodedInt32 ();
 
-                    if (objectSerialiserId > 0)
+                    if (!String.IsNullOrEmpty(virtualObjectTypeString))
                     {
-                        // Locate the correct serialiser for this element.
-                        Serialiser virtualElementSerialiser =
-                            this.manager.GetSerialiserFromId (objectSerialiserId);
+                        Type virtualObjectType = Type.GetType (virtualObjectTypeString); 
 
-                        //
-                        Object item = virtualElementSerialiser.ReadObject (abr);
+                        if (virtualObjectType != null)
+                        {
+                            // Locate the correct serialiser for this element.
+                            Serialiser virtualElementSerialiser =
+                                this.manager.GetSerialiser (virtualObjectType);
 
-                        // add to array then move on
-                        array [i] = (T)item;
+                            //
+                            Object item = virtualElementSerialiser.ReadObject (abr);
+
+                            // add to array then move on
+                            array [i] = (T)item;
+
+                            continue;
+                        }
                     }
-                    else
-                    {
                         // the element is null
-                        array [i] = default(T);
-                    }
+                    array [i] = default(T);
                 }
-                */
             }
 
             return array;
@@ -3008,7 +3015,43 @@ namespace Cor
 
         public override void Write(BinaryWriter abw, T[] obj)
         {
-            throw new NotSupportedException();
+            // Write the item count.
+            abw.Write ( (UInt32) obj.Length);
+
+            Type objectType = typeof(T);
+
+            if (objectType.IsValueType)
+            {
+                for (Int32 i = 0; i < obj.Length; ++i)
+                {
+                    // no inheritance for structs
+                    elementSerialiser.Write (abw, obj[i]);
+                }
+            }
+            else
+            {
+                for (Int32 i = 0; i < obj.Length; ++i)
+                {
+                    // no inheritance for structs
+                    var elem = obj[i];
+
+                    if (elem == null)
+                    {
+                        abw.Write ("");
+                    }
+                    else
+                    {
+                        Type t = elem.GetType ();
+
+                        abw.Write ((String) t.ToString ());
+
+                        Serialiser virtualElementSerialiser =
+                            this.manager.GetSerialiser(t);
+
+                        virtualElementSerialiser.WriteObject (abw, elem);
+                    }
+                }
+            }
         }
     }
 
@@ -3399,15 +3442,12 @@ namespace Cor
 
         public override ShaderDefinition Read(BinaryReader abr)
         {
-            var sd = new ShaderDefinition ()
-            {
-                Name = stringSerialiser.Read (abr),
-                PassNames = stringListSerialiser.Read (abr),
-                InputDefinitions = shaderInputDefinitionListSerialiser.Read (abr),
-                SamplerDefinitions = shaderSamplerDefinitionListSerialiser.Read (abr),
-                VariableDefinitions = shaderVariableDefinitionListSerialiser.Read (abr),
-            };
-
+            var sd = new ShaderDefinition ();
+            sd.Name = stringSerialiser.Read (abr);
+            sd.PassNames = stringListSerialiser.Read (abr);
+            sd.InputDefinitions = shaderInputDefinitionListSerialiser.Read (abr);
+            sd.SamplerDefinitions = shaderSamplerDefinitionListSerialiser.Read (abr);
+            sd.VariableDefinitions = shaderVariableDefinitionListSerialiser.Read (abr);
             return sd;
         }
 
@@ -3443,14 +3483,21 @@ namespace Cor
         {
             var sd = new ShaderInputDefinition ();
 
+            // Name
             sd.Name = stringSerialiser.Read (abr);
-            sd.NiceName = stringSerialiser.Read (abr);
-            Object obj = objectSerialiser.Read (abr);
 
+            // Nice Name
+            sd.NiceName = stringSerialiser.Read (abr);
+
+            // Default Value
+            Object obj = objectSerialiser.Read (abr);
             sd.Type = obj.GetType ();
             sd.DefaultValue = obj;
 
+            // Optional
             sd.Optional = booleanSerialiser.Read (abr);
+
+            // Usage
             sd.Usage = vertexElementUsageSerialiser.Read (abr);
 
             return sd;
@@ -3458,10 +3505,19 @@ namespace Cor
 
         public override void Write(BinaryWriter abw, ShaderInputDefinition obj)
         {
+            // Name
             stringSerialiser.Write (abw, obj.Name);
+
+            // Nice Name
             stringSerialiser.Write (abw, obj.NiceName);
+
+            // Default Value
             objectSerialiser.Write (abw, obj.DefaultValue);
+
+            // Optional
             booleanSerialiser.Write (abw, obj.Optional);
+
+            // Usage
             vertexElementUsageSerialiser.Write (abw, obj.Usage);
         }
     }    public class ShaderSamplerDefinitionSerialiser

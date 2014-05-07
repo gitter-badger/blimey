@@ -6,7 +6,7 @@
 
             // Platform specific binary content.
             // This contains compiled shaders.
-            public Byte [,] Data { get; set; }
+            public Byte[] Data { get; set; }
 
             #region IAsset
 
@@ -29,18 +29,21 @@
                     typeof (ListSerialiser<ShaderSamplerDefinition>),
                     typeof (ListSerialiser<ShaderVariableDefinition>),
                     typeof (ShaderDefinitionSerialiser),
-                    typeof (ByteSerialiser)
+                    typeof (ByteSerialiser),
+                    typeof (ArraySerialiser<Byte>)
                 };
             }
 
             public void Serialise (BinaryReader br, SerialiserDatabase tsdb)
             {
                 this.Definition = tsdb.GetSerialiser <ShaderDefinition> ().Read (br);
+                this.Data = tsdb.GetSerialiser <Byte []> ().Read (br);
             }
 
             public void Serialise (BinaryWriter bw, SerialiserDatabase tsdb)
             {
                 tsdb.GetSerialiser <ShaderDefinition> ().Write (bw, this.Definition);
+                tsdb.GetSerialiser <Byte[]> ().Write (bw, this.Data);
             }
 
             #endregion

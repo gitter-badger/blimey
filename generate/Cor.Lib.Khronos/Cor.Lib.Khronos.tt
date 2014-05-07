@@ -40,7 +40,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using System.Drawing;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
@@ -49,6 +48,12 @@ using Abacus;
 using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
+
+#if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
+
+using System.Drawing;
+
+#endif
 
 #if COR_PLATFORM_XIOS
 
@@ -72,16 +77,19 @@ using KhronosVector3 = MonoMac.OpenGL.Vector3;
 using KhronosVector4 = MonoMac.OpenGL.Vector4;
 using KhronosMatrix4 = MonoMac.OpenGL.Matrix4;
 
-#else
-
-    Platform not supported.
-
 #endif
 
 using Boolean = System.Boolean;
 
 namespace Cor.Lib.Khronos
 {
+<#@ include file="Shading/KrShaderDefinition.t4"#>
+<#@ include file="Shading/KrShaderSourceDefinition.t4"#>
+<#@ include file="Shading/KrShaderVariantDefinition.t4"#>
+<#@ include file="Shading/KrShaderVariantPassDefinition.t4"#>
+
+#if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
+
 <#@ include file="GeometryBuffer.t4"#>
 <#@ include file="GpuUtils.t4"#>
 <#@ include file="GraphicsManager.t4"#>
@@ -97,9 +105,6 @@ namespace Cor.Lib.Khronos
 <#@ include file="Shading/KrShaderSampler.t4"#>
 <#@ include file="Shading/KrShaderHelper.t4"#>
 <#@ include file="Shading/KrShaderUtils.t4"#>
-<#@ include file="Shading/KrShaderDefinition.t4"#>
-<#@ include file="Shading/KrShaderVariantDefinition.t4"#>
-<#@ include file="Shading/KrShaderVariantPassDefinition.t4"#>
 
 <#@ include file="Utilities/KrErrorHandler.t4"#>
 
@@ -108,4 +113,6 @@ namespace Cor.Lib.Khronos
 <#@ include file="Converters/KrVector3Converter.t4"#>
 <#@ include file="Converters/KrVector4Converter.t4"#>
 <#@ include file="Converters/KrMatrix44Converter.t4"#>
+
+#endif
 }

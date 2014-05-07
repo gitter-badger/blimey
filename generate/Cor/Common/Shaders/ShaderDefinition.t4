@@ -7,7 +7,7 @@
         /// <summary>
         /// Defines a global name for this shader
         /// </summary>
-        public string Name { get; set; }
+        public String Name { get; set; }
 
         /// Defines which passes this shader is made from
         /// (ex: a toon shader is made for a cel-shading pass

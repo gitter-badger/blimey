@@ -38,7 +38,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using System.Drawing;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
@@ -47,6 +46,12 @@ using Abacus;
 using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
+
+#if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
+
+using System.Drawing;
+
+#endif
 
 #if COR_PLATFORM_XIOS
 
@@ -70,16 +75,38 @@ using KhronosVector3 = MonoMac.OpenGL.Vector3;
 using KhronosVector4 = MonoMac.OpenGL.Vector4;
 using KhronosMatrix4 = MonoMac.OpenGL.Matrix4;
 
-#else
-
-    Platform not supported.
-
 #endif
 
 using Boolean = System.Boolean;
 
 namespace Cor.Lib.Khronos
 {
+    public sealed class KrShaderDefinition
+    {
+        public List<KrShaderVariantDefinition> VariantDefinitions { get; set; }
+    }
+
+    public sealed class KrShaderSourceDefinition
+    {
+        public string VertexShaderPath { get; set; }
+        public string PixelShaderPath { get; set; }
+    }
+
+    public sealed class KrShaderVariantDefinition
+    {
+        public String VariantName { get; set; }
+        public List<KrShaderVariantPassDefinition> VariantPassDefinitions { get; set; }
+    }
+
+    public sealed class KrShaderVariantPassDefinition
+    {
+        public String PassName { get; set; }
+        public KrShaderSourceDefinition PassDefinition { get; set; }
+    }
+
+
+#if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
+
     public sealed class GeometryBuffer
         : IGeometryBuffer
     {
@@ -2683,24 +2710,6 @@ namespace Cor.Lib.Khronos
         }
     }
 
-    public sealed class KrShaderDefinition
-    {
-        public string VertexShaderPath { get; set; }
-        public string PixelShaderPath { get; set; }
-    }
-
-    public sealed class KrShaderVariantDefinition
-    {
-        public String VariantName { get; set; }
-        public List<KrShaderVariantPassDefinition> VariantPassDefinitions { get; set; }
-    }
-
-    public sealed class KrShaderVariantPassDefinition
-    {
-        public String PassName { get; set; }
-        public KrShaderDefinition PassDefinition { get; set; }
-    }
-
 
     public static class KrErrorHandler
     {
@@ -3069,4 +3078,6 @@ namespace Cor.Lib.Khronos
         }
     }
 
+
+#endif
 }

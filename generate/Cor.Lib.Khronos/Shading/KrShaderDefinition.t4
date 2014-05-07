@@ -1,6 +1,5 @@
     public sealed class KrShaderDefinition
     {
-        public string VertexShaderPath { get; set; }
-        public string PixelShaderPath { get; set; }
+        public List<KrShaderVariantDefinition> VariantDefinitions { get; set; }
     }
 
