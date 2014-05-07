@@ -9,8 +9,6 @@
     <RootNamespace>Cor.Assets.Builders</RootNamespace>
     <AssemblyName>Cor.Assets.Builders</AssemblyName>
     <SuppressXamMacUpsell>True</SuppressXamMacUpsell>
-    <ProductVersion>12.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -78,6 +76,10 @@
     <ProjectReference Include="..\..\submodules\cor\build\xs.mono40\Cor\Cor %28xs.mono40%29.csproj">
       <Project>{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}</Project>
       <Name>Cor (xs.mono40)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\submodules\ServiceStack.Text\src\ServiceStack.Text\ServiceStack.Text.csproj">
+      <Project>{579B3FDB-CDAD-44E1-8417-885C38E49A0E}</Project>
+      <Name>ServiceStack.Text</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

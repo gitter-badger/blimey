@@ -33,6 +33,7 @@ namespace CorAssetBuilder
 
         public static void Main (string[] args)
         {
+			Test.Run ();
             Console.WriteLine ("Cor Asset Builder");
             Console.WriteLine ("=================");
 
@@ -145,6 +146,7 @@ namespace CorAssetBuilder
                 var sourceset = assetDefinition.GetSourceForPlatform (platformId);
 
                 var sourcefiles = sourceset.Importer.Files
+					.Where (x => x != null)
                     .Select (x => Path.Combine (projectDefinition.ResourcesFolder, x))
                     .ToList ();
 
@@ -257,20 +259,20 @@ namespace CorAssetBuilder
         
         static void WriteFileHeader (BinaryWriter writer)
         {
-            var tsdb = new TypeSerialiserDatabase ();
+            var tsdb = new SerialiserDatabase ();
             
-            tsdb.RegisterTypeSerialiser<Byte, ByteSerialiser>();
+            tsdb.RegisterSerialiser<Byte, ByteSerialiser>();
             
             // file type
-            tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) 'C');
-            tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) 'B');
-            tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) 'A');
+            tsdb.GetSerialiser <Byte> ().Write (writer, (Byte) 'C');
+            tsdb.GetSerialiser <Byte> ().Write (writer, (Byte) 'B');
+            tsdb.GetSerialiser <Byte> ().Write (writer, (Byte) 'A');
             
             // file version
-            tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) 0);
+            tsdb.GetSerialiser <Byte> ().Write (writer, (Byte) 0);
             
             // platform index
-            tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) 0);
+            tsdb.GetSerialiser <Byte> ().Write (writer, (Byte) 0);
             
             // total filesize
             // ? why does xna have this ?
@@ -278,13 +280,13 @@ namespace CorAssetBuilder
 
         static void WriteObjectData (BinaryWriter writer, IAsset a)
         {
-            List<Type> requiredTypeSerialisers = a.RequiredSerialisers ();
+            List<Type> requiredSerialisers = a.RequiredSerialisers ();
             
-            var tsdb = new TypeSerialiserDatabase ();
+            var tsdb = new SerialiserDatabase ();
             
-            foreach (Type typeSerialiserType in requiredTypeSerialisers)
+            foreach (Type SerialiserType in requiredSerialisers)
             {
-				tsdb.RegisterTypeSerialiser (typeSerialiserType);
+				tsdb.RegisterSerialiser (SerialiserType);
             }
             
             a.Serialise (writer, tsdb);
@@ -292,25 +294,25 @@ namespace CorAssetBuilder
 
         static void WriteFileMeta (BinaryWriter writer, IAsset a)
         {
-            List<Type> requiredTypeSerialisers = a.RequiredSerialisers ();
+            List<Type> requiredSerialisers = a.RequiredSerialisers ();
             
-            var tsdb = new TypeSerialiserDatabase ();
-            tsdb.RegisterTypeSerialiser<Byte, ByteSerialiser>();
-            tsdb.RegisterTypeSerialiser<String, StringSerialiser>();
+            var tsdb = new SerialiserDatabase ();
+            tsdb.RegisterSerialiser<Byte, ByteSerialiser>();
+            tsdb.RegisterSerialiser<String, StringSerialiser>();
             
-            tsdb.GetTypeSerialiser <Byte> ().Write (writer, (Byte) requiredTypeSerialisers.Count);
+            tsdb.GetSerialiser <Byte> ().Write (writer, (Byte) requiredSerialisers.Count);
             
-            foreach (Type type in requiredTypeSerialisers)
+            foreach (Type type in requiredSerialisers)
             {
 				string typeName =
 					type.ToString ();
 
                 // Fully qualified  type serialiser name
-				tsdb.GetTypeSerialiser <String> ()
+				tsdb.GetSerialiser <String> ()
 					.Write (writer, typeName);
                 
                 // Type serialiser version
-                tsdb.GetTypeSerialiser <Byte> ()
+                tsdb.GetSerialiser <Byte> ()
 					.Write (writer, (Byte) 0);
             }
         }

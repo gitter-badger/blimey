@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>12.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>CorAssetBuilder</RootNamespace>
@@ -46,6 +44,7 @@
     <Compile Include="Source\Configuration\AssetDefinition.cs" />
     <Compile Include="Source\Configuration\InstallInfo.cs" />
     <Compile Include="Source\Configuration\ProjectDefinition.cs" />
+    <Compile Include="Test.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
