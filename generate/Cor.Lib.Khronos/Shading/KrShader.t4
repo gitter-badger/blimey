@@ -20,19 +20,18 @@
         internal KrShader(
             String variantName,
             String passName,
-            KrShaderDefinition definition)
+            String vertexShaderSource,
+            String pixelShaderSource)
         {
             InternalUtils.Log.Info ("  Creating Pass Variant: " + variantName);
             this.variantName = variantName;
             this.passName = passName;
-            this.vertexShaderPath = definition.VertexShaderPath;
-            this.pixelShaderPath = definition.PixelShaderPath;
 
             //Variables =
             programHandle = KrShaderUtils.CreateShaderProgram ();
 
-            vertShaderHandle = KrShaderUtils.CreateVertexShader (GetResourcePath(this.vertexShaderPath));
-            fragShaderHandle = KrShaderUtils.CreateFragmentShader (GetResourcePath(this.pixelShaderPath));
+            vertShaderHandle = KrShaderUtils.CreateVertexShader (vertexShaderSource);
+            fragShaderHandle = KrShaderUtils.CreateFragmentShader (pixelShaderSource);
 
             KrShaderUtils.AttachShader (programHandle, vertShaderHandle);
             KrShaderUtils.AttachShader (programHandle, fragShaderHandle);

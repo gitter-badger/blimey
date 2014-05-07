@@ -545,7 +545,17 @@ namespace Cor.Lib.Khronos
 
         public IShader CreateShader (ShaderAsset asset)
         {
-            throw new NotImplementedException ();
+            ShaderDefinition shaderDefinition = asset.Definition;
+
+            Byte[] data = asset.Data;
+            
+            List<KrShaderVariantDefinition> platformVariants = null;
+
+            var result = new ShaderHandle(
+                shaderDefinition,
+                platformVariants);
+
+            return result;
         }
 
         public void DestroyShader (IShader shader)
@@ -1684,19 +1694,18 @@ namespace Cor.Lib.Khronos
         internal KrShader(
             String variantName,
             String passName,
-            KrShaderDefinition definition)
+            String vertexShaderSource,
+            String pixelShaderSource)
         {
             InternalUtils.Log.Info ("  Creating Pass Variant: " + variantName);
             this.variantName = variantName;
             this.passName = passName;
-            this.vertexShaderPath = definition.VertexShaderPath;
-            this.pixelShaderPath = definition.PixelShaderPath;
 
             //Variables =
             programHandle = KrShaderUtils.CreateShaderProgram ();
 
-            vertShaderHandle = KrShaderUtils.CreateVertexShader (GetResourcePath(this.vertexShaderPath));
-            fragShaderHandle = KrShaderUtils.CreateFragmentShader (GetResourcePath(this.pixelShaderPath));
+            vertShaderHandle = KrShaderUtils.CreateVertexShader (vertexShaderSource);
+            fragShaderHandle = KrShaderUtils.CreateFragmentShader (pixelShaderSource);
 
             KrShaderUtils.AttachShader (programHandle, vertShaderHandle);
             KrShaderUtils.AttachShader (programHandle, fragShaderHandle);
@@ -2337,23 +2346,13 @@ namespace Cor.Lib.Khronos
             return programHandle;
         }
 
-        public static Int32 CreateVertexShader(string path)
+        public static Int32 CreateVertexShader(String source)
         {
             Int32 vertShaderHandle;
 
-            if( Path.GetExtension(path) != ".vsh" )
-            {
-                throw new Exception("Vertex shader [" + path + "] should end with .vsh");
-            }
-
-            if( !File.Exists(path))
-            {
-                throw new Exception("Vertex shader at [" + path + "] does not exist.");
-            }
-
             KrShaderUtils.CompileShader (
                 GLShaderType.VertexShader,
-                path,
+                source,
                 out vertShaderHandle );
 
             if( vertShaderHandle == 0 )
@@ -2362,23 +2361,13 @@ namespace Cor.Lib.Khronos
             return vertShaderHandle;
         }
 
-        public static Int32 CreateFragmentShader(string path)
+        public static Int32 CreateFragmentShader(String source)
         {
             Int32 fragShaderHandle;
 
-            if( Path.GetExtension(path) != ".fsh" )
-            {
-                throw new Exception("Fragement shader [" + path + "] should end with .fsh");
-            }
-
-            if( !File.Exists(path))
-            {
-                throw new Exception("Fragement shader at [" + path + "] does not exist.");
-            }
-
             KrShaderUtils.CompileShader (
                 GLShaderType.FragmentShader,
-                path,
+                source,
                 out fragShaderHandle );
 
             if( fragShaderHandle == 0 )
@@ -2441,23 +2430,9 @@ namespace Cor.Lib.Khronos
         // This should happen offline.
         public static void CompileShader (
             GLShaderType type,
-            String file,
+            String src,
             out Int32 shaderHandle )
         {
-            String src = string.Empty;
-
-            try
-            {
-                // Get the data from the text file
-                src = System.IO.File.ReadAllText (file);
-            }
-            catch(Exception e)
-            {
-                InternalUtils.Log.Info(e.Message);
-                shaderHandle = 0;
-                return;
-            }
-
             // Create an empty vertex shader object
             shaderHandle = GL.CreateShader (type);
 

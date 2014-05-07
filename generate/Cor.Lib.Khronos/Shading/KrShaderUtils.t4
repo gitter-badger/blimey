@@ -30,23 +30,13 @@
             return programHandle;
         }
 
-        public static Int32 CreateVertexShader(string path)
+        public static Int32 CreateVertexShader(String source)
         {
             Int32 vertShaderHandle;
 
-            if( Path.GetExtension(path) != ".vsh" )
-            {
-                throw new Exception("Vertex shader [" + path + "] should end with .vsh");
-            }
-
-            if( !File.Exists(path))
-            {
-                throw new Exception("Vertex shader at [" + path + "] does not exist.");
-            }
-
             KrShaderUtils.CompileShader (
                 GLShaderType.VertexShader,
-                path,
+                source,
                 out vertShaderHandle );
 
             if( vertShaderHandle == 0 )
@@ -55,23 +45,13 @@
             return vertShaderHandle;
         }
 
-        public static Int32 CreateFragmentShader(string path)
+        public static Int32 CreateFragmentShader(String source)
         {
             Int32 fragShaderHandle;
 
-            if( Path.GetExtension(path) != ".fsh" )
-            {
-                throw new Exception("Fragement shader [" + path + "] should end with .fsh");
-            }
-
-            if( !File.Exists(path))
-            {
-                throw new Exception("Fragement shader at [" + path + "] does not exist.");
-            }
-
             KrShaderUtils.CompileShader (
                 GLShaderType.FragmentShader,
-                path,
+                source,
                 out fragShaderHandle );
 
             if( fragShaderHandle == 0 )
@@ -134,23 +114,9 @@
         // This should happen offline.
         public static void CompileShader (
             GLShaderType type,
-            String file,
+            String src,
             out Int32 shaderHandle )
         {
-            String src = string.Empty;
-
-            try
-            {
-                // Get the data from the text file
-                src = System.IO.File.ReadAllText (file);
-            }
-            catch(Exception e)
-            {
-                InternalUtils.Log.Info(e.Message);
-                shaderHandle = 0;
-                return;
-            }
-
             // Create an empty vertex shader object
             shaderHandle = GL.CreateShader (type);
 

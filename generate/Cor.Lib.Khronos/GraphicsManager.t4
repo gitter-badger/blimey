@@ -360,7 +360,17 @@
 
         public IShader CreateShader (ShaderAsset asset)
         {
-            throw new NotImplementedException ();
+            ShaderDefinition shaderDefinition = asset.Definition;
+
+            Byte[] data = asset.Data;
+            
+            List<KrShaderVariantDefinition> platformVariants = null;
+
+            var result = new ShaderHandle(
+                shaderDefinition,
+                platformVariants);
+
+            return result;
         }
 
         public void DestroyShader (IShader shader)
