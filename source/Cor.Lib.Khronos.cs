@@ -1258,7 +1258,10 @@ namespace Cor.Lib.Khronos
             this.Name = passName;
             this.Variants =
                 passVariants___Name_AND_passVariantDefinition
-                    .Select (x => new KrShader (x.Item1, passName, x.Item2.PassDefinition))
+                    .Select (x => new KrShader (
+                        x.Item1, passName, 
+                        x.Item2.PassDefinition.VertexShaderPath,
+                        x.Item2.PassDefinition.PixelShaderPath))
                     .ToList();
 
             this.BestVariantMap = new Dictionary<VertexDeclaration, KrShader>();
@@ -2478,7 +2481,7 @@ namespace Cor.Lib.Khronos
 
                 string log = infoLog.ToString();
 
-                InternalUtils.Log.Info(file);
+                InternalUtils.Log.Info(src);
                 InternalUtils.Log.Info (log);
                 InternalUtils.Log.Info(type.ToString());
             }

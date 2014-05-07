@@ -162,7 +162,7 @@
 
                 string log = infoLog.ToString();
 
-                InternalUtils.Log.Info(file);
+                InternalUtils.Log.Info(src);
                 InternalUtils.Log.Info (log);
                 InternalUtils.Log.Info(type.ToString());
             }
