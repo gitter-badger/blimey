@@ -1,0 +1,61 @@
+{
+    "VariantDefinitions" :
+    [
+    	{
+            "VariantName" = "Unlit_Position",
+            "VariantPassDefinitions" :
+            [
+	            {
+                    "PassName" = "Main",
+                    "PassDefinition" :
+                    {
+                        "VertexShaderPath" = "ogl4/Unlit_Position.vsh",
+                        "PixelShaderPath" = "ogl4/Unlit_Position.fsh",
+                    }
+	            }
+            ]
+        },
+        {
+            "VariantName" = "Unlit_PositionTexture",
+            "VariantPassDefinitions" :
+            [
+	            {
+                    "PassName" = "Main",
+                    "PassDefinition" :
+                    {
+                        "VertexShaderPath" = "ogl4/Unlit_PositionTexture.vsh",
+                        "PixelShaderPath" = "ogl4/Unlit_PositionTexture.fsh",
+                    }
+	            }
+            ]
+        },
+        {
+            "VariantName" = "Unlit_PositionColour",
+            "VariantPassDefinitions" :
+            [
+	            {
+                    "PassName" = "Main",
+                    "PassDefinition" :
+                    {
+                        "VertexShaderPath" = "ogl4/Unlit_PositionColour.vsh",
+                        "PixelShaderPath" = "ogl4/Unlit_PositionColour.fsh",
+                    }
+	            }
+            ]
+        },
+        {
+            "VariantName" = "Unlit_PositionTextureColour",
+            "VariantPassDefinitions" :
+            [
+	            {
+                    "PassName" = "Main",
+                    "PassDefinition" :
+                    {
+                        "VertexShaderPath" = "ogl4/Unlit_PositionTextureColour.vsh",
+                        "PixelShaderPath" = "ogl4/Unlit_PositionTextureColour.fsh",
+                    }
+	            }
+            ]
+        }
+    ]
+}

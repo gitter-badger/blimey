@@ -1,3 +1,75 @@
 {
-
+    "Name": "Unlit",
+    "PassNames": ["Main"],
+    "InputDefinitions": [
+    {
+        "Name": "a_vertPos",
+        "Type": "Abacus.SinglePrecision.Vector3, Abacus",
+        "Usage": "Position",
+        "DefaultValue": 
+        {
+            "__type" : "Abacus.Packed.Vector3, Abacus",
+            "X" : 0,
+            "Y" : 0,
+            "Z" : 0
+        },
+        "Optional": false
+    },
+    {
+        "Name": "a_vertTexcoord",
+        "Type": "Abacus.SinglePrecision.Vector2, Abacus",
+        "Usage": "TextureCoordinate",
+        "DefaultValue": 
+        {
+            "__type" : "Abacus.Packed.Vector2, Abacus",
+            "X" : 0,
+            "Y" : 0
+        },
+        "Optional": true
+    },
+    {
+        "Name": "a_vertColour",
+        "Type": "Abacus.Packed.Rgba32, Abacus",
+        "Usage": "Colour",
+        "DefaultValue": 
+        {
+            "__type" : "Abacus.Packed.Rgba32, Abacus",
+            "R" : 255,
+            "G" : 255,
+            "B" : 255,
+            "A" : 255
+        },
+        "Optional": true
+    }],
+    "VariableDefinitions": [
+    {
+        "NiceName": "MaterialColour",
+        "Name": "u_colour",
+        "Type": "Abacus.Packed.Rgba32, Abacus",
+        "DefaultValue": "{R:255 G:255 B:255 A:255}"
+    },
+    {
+        "NiceName": "World",
+        "Name": "u_world",
+        "Type": "Abacus.SinglePrecision.Matrix44, Abacus",
+        "DefaultValue": "{ {R0C0:1 R0C1:0 R0C2:0 R0C3:0} {R1C0:0 R1C1:1 R1C2:0 R1C3:0} {R2C0:0 R2C1:0 R2C2:1 R2C3:0} {R3C0:0 R3C1:0 R3C2:0 R3C3:1} }"
+    },
+    {
+        "NiceName": "View",
+        "Name": "u_view",
+        "Type": "Abacus.SinglePrecision.Matrix44, Abacus",
+        "DefaultValue": "{ {R0C0:1 R0C1:0 R0C2:0 R0C3:0} {R1C0:0 R1C1:1 R1C2:0 R1C3:0} {R2C0:0 R2C1:0 R2C2:1 R2C3:0} {R3C0:0 R3C1:0 R3C2:0 R3C3:1} }"
+    },
+    {
+        "NiceName": "Projection",
+        "Name": "u_proj",
+        "Type": "Abacus.SinglePrecision.Matrix44, Abacus",
+        "DefaultValue": "{ {R0C0:1 R0C1:0 R0C2:0 R0C3:0} {R1C0:0 R1C1:1 R1C2:0 R1C3:0} {R2C0:0 R2C1:0 R2C2:1 R2C3:0} {R3C0:0 R3C1:0 R3C2:0 R3C3:1} }"
+    }],
+    "SamplerDefinitions": [
+    {
+        "NiceName": "TextureSampler",
+        "Name": "s_tex0",
+        "Optional": true
+    }]
 }

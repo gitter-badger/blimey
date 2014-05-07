@@ -1,3 +1,172 @@
 {
-
+    "Name": "PixelLit",
+    "PassNames": ["Main"],
+    "InputDefinitions": [
+    {
+        "Name": "a_vertPos",
+        "Type": "Abacus.SinglePrecision.Vector3, Abacus",
+        "Usage": "Position",
+        "DefaultValue": "{X:0 Y:0 Z:0}",
+        "Optional": false
+    },
+    {
+        "Name": "a_vertNormal",
+        "Type": "Abacus.SinglePrecision.Vector3, Abacus",
+        "Usage": "Normal",
+        "DefaultValue": "{X:0 Y:0 Z:0}",
+        "Optional": false
+    },
+    {
+        "Name": "a_vertTexcoord",
+        "Type": "Abacus.SinglePrecision.Vector2, Abacus",
+        "Usage": "TextureCoordinate",
+        "DefaultValue": "{X:0 Y:0}",
+        "Optional": true
+    },
+    {
+        "Name": "a_vertColour",
+        "Type": "Abacus.Packed.Rgba32, Abacus",
+        "Usage": "Colour",
+        "DefaultValue": "{R:255 G:255 B:255 A:255}",
+        "Optional": true
+    }],
+    "VariableDefinitions": [
+    {
+        "NiceName": "World",
+        "Name": "u_world",
+        "Type": "Abacus.SinglePrecision.Matrix44, Abacus",
+        "DefaultValue": "{ {R0C0:1 R0C1:0 R0C2:0 R0C3:0} {R1C0:0 R1C1:1 R1C2:0 R1C3:0} {R2C0:0 R2C1:0 R2C2:1 R2C3:0} {R3C0:0 R3C1:0 R3C2:0 R3C3:1} }"
+    },
+    {
+        "NiceName": "View",
+        "Name": "u_view",
+        "Type": "Abacus.SinglePrecision.Matrix44, Abacus",
+        "DefaultValue": "{ {R0C0:1 R0C1:0 R0C2:0 R0C3:0} {R1C0:0 R1C1:1 R1C2:0 R1C3:0} {R2C0:0 R2C1:0 R2C2:1 R2C3:0} {R3C0:0 R3C1:0 R3C2:0 R3C3:1} }"
+    },
+    {
+        "NiceName": "Projection",
+        "Name": "u_proj",
+        "Type": "Abacus.SinglePrecision.Matrix44, Abacus",
+        "DefaultValue": "{ {R0C0:1 R0C1:0 R0C2:0 R0C3:0} {R1C0:0 R1C1:1 R1C2:0 R1C3:0} {R2C0:0 R2C1:0 R2C2:1 R2C3:0} {R3C0:0 R3C1:0 R3C2:0 R3C3:1} }"
+    },
+    {
+        "NiceName": "MaterialColour",
+        "Name": "u_colour",
+        "Type": "Abacus.Packed.Rgba32, Abacus",
+        "DefaultValue": "{R:255 G:255 B:255 A:255}"
+    },
+    {
+        "NiceName": "AmbientLightColour",
+        "Name": "u_liAmbient",
+        "Type": "Abacus.Packed.Rgba32, Abacus",
+        "DefaultValue": "{R:128 G:128 B:128 A:255}"
+    },
+    {
+        "NiceName": "EmissiveColour",
+        "Name": "u_emissiveColour",
+        "Type": "Abacus.Packed.Rgba32, Abacus",
+        "DefaultValue": "{R:0 G:0 B:0 A:255}"
+    },
+    {
+        "NiceName": "SpecularColour",
+        "Name": "u_specularColour",
+        "Type": "Abacus.Packed.Rgba32, Abacus",
+        "DefaultValue": "{R:255 G:255 B:255 A:255}"
+    },
+    {
+        "NiceName": "SpecularPower",
+        "Name": "u_specularPower",
+        "Type": "System.Single, mscorlib",
+        "DefaultValue": 0.7
+    },
+    {
+        "NiceName": "EyePosition",
+        "Name": "u_eyePosition",
+        "Type": "Abacus.SinglePrecision.Vector3, Abacus",
+        "DefaultValue": "{X:0 Y:0 Z:0}"
+    },
+    {
+        "NiceName": "FogEnabled",
+        "Name": "u_fogEnabled",
+        "Type": "System.Single, mscorlib",
+        "DefaultValue": 1
+    },
+    {
+        "NiceName": "FogStart",
+        "Name": "u_fogStart",
+        "Type": "System.Single, mscorlib",
+        "DefaultValue": 100
+    },
+    {
+        "NiceName": "FogEnd",
+        "Name": "u_fogEnd",
+        "Type": "System.Single, mscorlib",
+        "DefaultValue": 1000
+    },
+    {
+        "NiceName": "FogColour",
+        "Name": "u_fogColour",
+        "Type": "Abacus.Packed.Rgba32, Abacus",
+        "DefaultValue": "{R:0 G:0 B:255 A:255}"
+    },
+    {
+        "NiceName": "DirectionalLight0Direction",
+        "Name": "u_li0Dir",
+        "Type": "Abacus.SinglePrecision.Vector3, Abacus",
+        "DefaultValue": "{X:0 Y:-1 Z:0}"
+    },
+    {
+        "NiceName": "DirectionalLight0DiffuseColour",
+        "Name": "u_li0Diffuse",
+        "Type": "Abacus.Packed.Rgba32, Abacus",
+        "DefaultValue": "{R:255 G:0 B:0 A:255}"
+    },
+    {
+        "NiceName": "DirectionalLight0SpecularColour",
+        "Name": "u_li0Spec",
+        "Type": "Abacus.Packed.Rgba32, Abacus",
+        "DefaultValue": "{R:250 G:128 B:114 A:255}"
+    },
+    {
+        "NiceName": "DirectionalLight1Direction",
+        "Name": "u_li1Dir",
+        "Type": "Abacus.SinglePrecision.Vector3, Abacus",
+        "DefaultValue": "{X:0 Y:-1 Z:0}"
+    },
+    {
+        "NiceName": "DirectionalLight1DiffuseColour",
+        "Name": "u_li1Diffuse",
+        "Type": "Abacus.Packed.Rgba32, Abacus",
+        "DefaultValue": "{R:255 G:0 B:0 A:255}"
+    },
+    {
+        "NiceName": "DirectionalLight1SpecularColour",
+        "Name": "u_li1Spec",
+        "Type": "Abacus.Packed.Rgba32, Abacus",
+        "DefaultValue": "{R:250 G:128 B:114 A:255}"
+    },
+    {
+        "NiceName": "DirectionalLight2Direction",
+        "Name": "u_li2Dir",
+        "Type": "Abacus.SinglePrecision.Vector3, Abacus",
+        "DefaultValue": "{X:0 Y:-1 Z:0}"
+    },
+    {
+        "NiceName": "DirectionalLight2DiffuseColour",
+        "Name": "u_li2Diffuse",
+        "Type": "Abacus.Packed.Rgba32, Abacus",
+        "DefaultValue": "{R:255 G:0 B:0 A:255}"
+    },
+    {
+        "NiceName": "DirectionalLight2SpecularColour",
+        "Name": "u_li2Spec",
+        "Type": "Abacus.Packed.Rgba32, Abacus",
+        "DefaultValue": "{R:250 G:128 B:114 A:255}"
+    }],
+    "SamplerDefinitions": [
+    {
+        "NiceName": "TextureSampler",
+        "Name": "s_tex0",
+        "Optional": true
+    }]
 }

@@ -10,19 +10,12 @@
                 "AssetImporterType" : "Cor.KhronosShaderImporter, Cor.Assets.Builders",
                 "AssetImporterSettings" :
                 {
-                    "Variant" : "OpenGL 4",
+                    "Format" : "OpenGL 4",
                 },
                 "Files" :
                 [
                     "vertex_lit.sdef",
-                    "ogl4/VertexLit_PositionNormal.fsh",
-                    "ogl4/VertexLit_PositionNormal.vsh",
-                    "ogl4/VertexLit_PositionNormalColour.fsh",
-                    "ogl4/VertexLit_PositionNormalColour.vsh",
-                    "ogl4/VertexLit_PositionNormalTexture.fsh",
-                    "ogl4/VertexLit_PositionNormalTexture.vsh",
-                    "ogl4/VertexLit_PositionNormalTextureColour.fsh",
-                    "ogl4/VertexLit_PositionNormalTextureColour.vsh"
+                    "vertex_lit.ogl4.pdef"
                 ]
             },
             "Processors" : []
@@ -34,18 +27,12 @@
                 "AssetImporterType" : "Cor.KhronosShaderImporter, Cor.Assets.Builders",
                 "AssetImporterSettings" :
                 {
-                    "Variant" : "OpenGL ES 2"
+                    "Format" : "OpenGL ES 2"
                 },
                 "Files" :
                 [
-                    "ogles2/VertexLit_PositionNormal.fsh",
-                    "ogles2/VertexLit_PositionNormal.vsh",
-                    "ogles2/VertexLit_PositionNormalColour.fsh",
-                    "ogles2/VertexLit_PositionNormalColour.vsh",
-                    "ogles2/VertexLit_PositionNormalTexture.fsh",
-                    "ogles2/VertexLit_PositionNormalTexture.vsh",
-                    "ogles2/VertexLit_PositionNormalTextureColour.fsh",
-                    "ogles2/VertexLit_PositionNormalTextureColour.vsh"
+                    "vertex_lit.sdef",
+                    "vertex_lit.ogles2.pdef"
                 ]
             },
             "Processors" : []
@@ -55,17 +42,14 @@
             "Importer" :
             {
                 "AssetImporterType" : "Cor.PsmShaderImporter, Cor.Assets.Builders",
-                "AssetImporterSettings" : {},
+                "AssetImporterSettings" : 
+                {
+                    "Format" : "PSM"
+                },
                 "Files" :
                 [
-                    "psm/VertexLit_PositionNormal.fcg",
-                    "psm/VertexLit_PositionNormal.vcg",
-                    "psm/VertexLit_PositionNormalColour.fcg",
-                    "psm/VertexLit_PositionNormalColour.vcg",
-                    "psm/VertexLit_PositionNormalTexture.fcg",
-                    "psm/VertexLit_PositionNormalTexture.vcg",
-                    "psm/VertexLit_PositionNormalTextureColour.fcg",
-                    "psm/VertexLit_PositionNormalTextureColour.vcg"
+                    "vertex_lit.sdef",
+                    "vertex_lit.psm.pdef"
                 ]
             },
             "Processors" : []

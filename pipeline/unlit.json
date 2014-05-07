@@ -10,19 +10,12 @@
                 "AssetImporterType" : "Cor.KhronosShaderImporter, Cor.Assets.Builders",
                 "AssetImporterSettings" :
                 {
-                    "Variant" : "OpenGL 4"
+                    "Format" : "OpenGL 4"
                 },
                 "Files" :
                 [
                     "unlit.sdef",
-                    "ogl4/Unlit_PositionNormal.fsh",
-                    "ogl4/Unlit_PositionNormal.vsh",
-                    "ogl4/Unlit_PositionNormalColour.fsh",
-                    "ogl4/Unlit_PositionNormalColour.vsh",
-                    "ogl4/Unlit_PositionNormalTexture.fsh",
-                    "ogl4/Unlit_PositionNormalTexture.vsh",
-                    "ogl4/Unlit_PositionNormalTextureColour.fsh",
-                    "ogl4/Unlit_PositionNormalTextureColour.vsh"
+                    "unlit.ogl4.pdef",
                 ]
             },
             "Processors" : []
@@ -34,18 +27,12 @@
                 "AssetImporterType" : "Cor.KhronosShaderImporter, Cor.Assets.Builders",
                 "AssetImporterSettings" :
                 {
-                    "Variant" : "OpenGL ES 2"
+                    "Format" : "OpenGL ES 2"
                 },
                 "Files" :
                 [
-                    "ogles2/Unlit_PositionNormal.fsh",
-                    "ogles2/Unlit_PositionNormal.vsh",
-                    "ogles2/Unlit_PositionNormalColour.fsh",
-                    "ogles2/Unlit_PositionNormalColour.vsh",
-                    "ogles2/Unlit_PositionNormalTexture.fsh",
-                    "ogles2/Unlit_PositionNormalTexture.vsh",
-                    "ogles2/Unlit_PositionNormalTextureColour.fsh",
-                    "ogles2/Unlit_PositionNormalTextureColour.vsh"
+                    "unlit.sdef",
+                    "unlit.ogles2.pdef",
                 ]
             },
             "Processors" : []
@@ -55,17 +42,14 @@
             "Importer" :
             {
                 "AssetImporterType" : "Cor.PsmShaderImporter, Cor.Assets.Builders",
-                "AssetImporterSettings" : {},
+                "AssetImporterSettings" :
+                {
+                    "Format" : "PSM"
+                },
                 "Files" :
                 [
-                    "psm/Unlit_PositionNormal.fcg",
-                    "psm/Unlit_PositionNormal.vcg",
-                    "psm/Unlit_PositionNormalColour.fcg",
-                    "psm/Unlit_PositionNormalColour.vcg",
-                    "psm/Unlit_PositionNormalTexture.fcg",
-                    "psm/Unlit_PositionNormalTexture.vcg",
-                    "psm/Unlit_PositionNormalTextureColour.fcg",
-                    "psm/Unlit_PositionNormalTextureColour.vcg"
+                    "unlit.sdef",
+                    "unlit.psm.pdef",
                 ]
             },
             "Processors" : []

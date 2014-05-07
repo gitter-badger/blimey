@@ -10,42 +10,12 @@
                 "AssetImporterType" : "Cor.KhronosShaderImporter, Cor.Assets.Builders",
                 "AssetImporterSettings" :
                 {
-                    "Format" : "OpenGL 4",
-                    "Variants" :
-                    [
-                        {
-                            "Name" : "PositionNormal",
-                            "FragmentShaderIndex" : 1,
-                            "VertexShaderIndex" : 2
-                        },
-                        {
-                            "Name" : "PositionNormalColour",
-                            "FragmentShaderIndex" : 3,
-                            "VertexShaderIndex" : 4
-                        },
-                        {
-                            "Name" : "PositionNormalTexture",
-                            "FragmentShaderIndex" : 5,
-                            "VertexShaderIndex" : 6
-                        },
-                        {
-                            "Name" : "PositionNormalTextureColour",
-                            "FragmentShaderIndex" : 7,
-                            "VertexShaderIndex" : 8
-                        }
-                    ]
+                    "Format" : "OpenGL 4"
                 },
                 "Files" :
                 [
                     "pixel_lit.sdef",
-                    "ogl4/PixelLit_PositionNormal.fsh",
-                    "ogl4/PixelLit_PositionNormal.vsh",
-                    "ogl4/PixelLit_PositionNormalColour.fsh",
-                    "ogl4/PixelLit_PositionNormalColour.vsh",
-                    "ogl4/PixelLit_PositionNormalTexture.fsh",
-                    "ogl4/PixelLit_PositionNormalTexture.vsh",
-                    "ogl4/PixelLit_PositionNormalTextureColour.fsh",
-                    "ogl4/PixelLit_PositionNormalTextureColour.vsh"
+                    "pixel_lit.ogl4.pdef"
                 ]
             },
             "Processors" : []
@@ -61,14 +31,8 @@
                 },
                 "Files" :
                 [
-                    "ogles2/PixelLit_PositionNormal.fsh",
-                    "ogles2/PixelLit_PositionNormal.vsh",
-                    "ogles2/PixelLit_PositionNormalColour.fsh",
-                    "ogles2/PixelLit_PositionNormalColour.vsh",
-                    "ogles2/PixelLit_PositionNormalTexture.fsh",
-                    "ogles2/PixelLit_PositionNormalTexture.vsh",
-                    "ogles2/PixelLit_PositionNormalTextureColour.fsh",
-                    "ogles2/PixelLit_PositionNormalTextureColour.vsh"
+                    "pixel_lit.sdef",
+                    "pixel_lit.ogles2.pdef"
                 ]
             },
             "Processors" : []
@@ -78,17 +42,14 @@
             "Importer" :
             {
                 "AssetImporterType" : "Cor.PsmShaderImporter, Cor.Assets.Builders",
-                "AssetImporterSettings" : {},
+                "AssetImporterSettings" :
+                {
+                    "Format" : "PSM"
+                },
                 "Files" :
                 [
-                    "psm/PixelLit_PositionNormal.fcg",
-                    "psm/PixelLit_PositionNormal.vcg",
-                    "psm/PixelLit_PositionNormalColour.fcg",
-                    "psm/PixelLit_PositionNormalColour.vcg",
-                    "psm/PixelLit_PositionNormalTexture.fcg",
-                    "psm/PixelLit_PositionNormalTexture.vcg",
-                    "psm/PixelLit_PositionNormalTextureColour.fcg",
-                    "psm/PixelLit_PositionNormalTextureColour.vcg"
+                    "pixel_lit.sdef",
+                    "pixel_lit.psm.pdef"
                 ]
             },
             "Processors" : []

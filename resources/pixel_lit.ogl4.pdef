@@ -1,0 +1,61 @@
+{
+    "VariantDefinitions" :
+    [
+    	{
+            "VariantName" = "PixelLit_PositionNormal",
+            "VariantPassDefinitions" :
+            [
+	            {
+                    "PassName" = "Main",
+                    "PassDefinition" :
+                    {
+                        "VertexShaderPath" = "ogl4/PixelLit_PositionNormal.vsh",
+                        "PixelShaderPath" = "ogl4/PixelLit_PositionNormal.fsh",
+                    }
+	            }
+            ]
+        },
+        {
+            "VariantName" = "PixelLit_PositionNormalTexture",
+            "VariantPassDefinitions" :
+            [
+	            {
+                    "PassName" = "Main",
+                    "PassDefinition" :
+                    {
+                        "VertexShaderPath" = "ogl4/PixelLit_PositionNormalTexture.vsh",
+                        "PixelShaderPath" = "ogl4/PixelLit_PositionNormalTexture.fsh",
+                    }
+	            }
+            ]
+        },
+        {
+            "VariantName" = "PixelLit_PositionNormalColour",
+            "VariantPassDefinitions" :
+            [
+	            {
+                    "PassName" = "Main",
+                    "PassDefinition" :
+                    {
+                        "VertexShaderPath" = "ogl4/PixelLit_PositionNormalColour.vsh",
+                        "PixelShaderPath" = "ogl4/PixelLit_PositionNormalColour.fsh",
+                    }
+	            }
+            ]
+        },
+        {
+            "VariantName" = "PixelLit_PositionNormalTextureColour",
+            "VariantPassDefinitions" :
+            [
+	            {
+                    "PassName" = "Main",
+                    "PassDefinition" :
+                    {
+                        "VertexShaderPath" = "ogl4/PixelLit_PositionNormalTextureColour.vsh",
+                        "PixelShaderPath" = "ogl4/PixelLit_PositionNormalTextureColour.fsh",
+                    }
+	            }
+            ]
+        }
+    ]
+}

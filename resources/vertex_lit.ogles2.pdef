@@ -1,0 +1,61 @@
+{
+    "VariantDefinitions" :
+    [
+    	{
+            "VariantName" = "VertexLit_PositionNormal",
+            "VariantPassDefinitions" :
+            [
+	            {
+                    "PassName" = "Main",
+                    "PassDefinition" :
+                    {
+                        "VertexShaderPath" = "ogles2/VertexLit_PositionNormal.vsh",
+                        "PixelShaderPath" = "ogles2/VertexLit_PositionNormal.fsh",
+                    }
+	            }
+            ]
+        },
+        {
+            "VariantName" = "VertexLit_PositionNormalTexture",
+            "VariantPassDefinitions" :
+            [
+	            {
+                    "PassName" = "Main",
+                    "PassDefinition" :
+                    {
+                        "VertexShaderPath" = "ogles2/VertexLit_PositionNormalTexture.vsh",
+                        "PixelShaderPath" = "ogles2/VertexLit_PositionNormalTexture.fsh",
+                    }
+	            }
+            ]
+        },
+        {
+            "VariantName" = "VertexLit_PositionNormalColour",
+            "VariantPassDefinitions" :
+            [
+	            {
+                    "PassName" = "Main",
+                    "PassDefinition" :
+                    {
+                        "VertexShaderPath" = "ogles2/VertexLit_PositionNormalColour.vsh",
+                        "PixelShaderPath" = "ogles2/VertexLit_PositionNormalColour.fsh",
+                    }
+	            }
+            ]
+        },
+        {
+            "VariantName" = "VertexLit_PositionNormalTextureColour",
+            "VariantPassDefinitions" :
+            [
+	            {
+                    "PassName" = "Main",
+                    "PassDefinition" :
+                    {
+                        "VertexShaderPath" = "ogles2/VertexLit_PositionNormalTextureColour.vsh",
+                        "PixelShaderPath" = "ogles2/VertexLit_PositionNormalTextureColour.fsh",
+                    }
+	            }
+            ]
+        }
+    ]
+}
