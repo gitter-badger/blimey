@@ -20,14 +20,21 @@
         {
             var sd = new ShaderInputDefinition ();
 
+            // Name
             sd.Name = stringSerialiser.Read (abr);
-            sd.NiceName = stringSerialiser.Read (abr);
-            Object obj = objectSerialiser.Read (abr);
 
+            // Nice Name
+            sd.NiceName = stringSerialiser.Read (abr);
+
+            // Default Value
+            Object obj = objectSerialiser.Read (abr);
             sd.Type = obj.GetType ();
             sd.DefaultValue = obj;
 
+            // Optional
             sd.Optional = booleanSerialiser.Read (abr);
+
+            // Usage
             sd.Usage = vertexElementUsageSerialiser.Read (abr);
 
             return sd;
@@ -35,10 +42,19 @@
 
         public override void Write(BinaryWriter abw, ShaderInputDefinition obj)
         {
+            // Name
             stringSerialiser.Write (abw, obj.Name);
+
+            // Nice Name
             stringSerialiser.Write (abw, obj.NiceName);
+
+            // Default Value
             objectSerialiser.Write (abw, obj.DefaultValue);
+
+            // Optional
             booleanSerialiser.Write (abw, obj.Optional);
+
+            // Usage
             vertexElementUsageSerialiser.Write (abw, obj.Usage);
         }
     }
