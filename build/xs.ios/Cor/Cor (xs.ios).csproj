@@ -9,8 +9,6 @@
     <RootNamespace>Cor</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>Cor</AssemblyName>
-    <ProductVersion>10.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -97,7 +95,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="shaders\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -119,84 +116,5 @@
       <Project>{DE5491E6-4DF9-4BBB-9985-E7CD86905D41}</Project>
       <Name>Abacus (xs.ios)</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="..\..\..\shaders\xios\PixelLit_PositionNormal.fsh">
-      <Link>shaders\PixelLit_PositionNormal.fsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\PixelLit_PositionNormal.vsh">
-      <Link>shaders\PixelLit_PositionNormal.vsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\PixelLit_PositionNormalColour.fsh">
-      <Link>shaders\PixelLit_PositionNormalColour.fsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\PixelLit_PositionNormalColour.vsh">
-      <Link>shaders\PixelLit_PositionNormalColour.vsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\PixelLit_PositionNormalTexture.fsh">
-      <Link>shaders\PixelLit_PositionNormalTexture.fsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\PixelLit_PositionNormalTexture.vsh">
-      <Link>shaders\PixelLit_PositionNormalTexture.vsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\PixelLit_PositionNormalTextureColour.fsh">
-      <Link>shaders\PixelLit_PositionNormalTextureColour.fsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\PixelLit_PositionNormalTextureColour.vsh">
-      <Link>shaders\PixelLit_PositionNormalTextureColour.vsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\Unlit_Position.fsh">
-      <Link>shaders\Unlit_Position.fsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\Unlit_Position.vsh">
-      <Link>shaders\Unlit_Position.vsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\Unlit_PositionColour.fsh">
-      <Link>shaders\Unlit_PositionColour.fsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\Unlit_PositionColour.vsh">
-      <Link>shaders\Unlit_PositionColour.vsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\Unlit_PositionTexture.fsh">
-      <Link>shaders\Unlit_PositionTexture.fsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\Unlit_PositionTexture.vsh">
-      <Link>shaders\Unlit_PositionTexture.vsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\Unlit_PositionTextureColour.fsh">
-      <Link>shaders\Unlit_PositionTextureColour.fsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\Unlit_PositionTextureColour.vsh">
-      <Link>shaders\Unlit_PositionTextureColour.vsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\VertexLit_PositionNormal.fsh">
-      <Link>shaders\VertexLit_PositionNormal.fsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\VertexLit_PositionNormal.vsh">
-      <Link>shaders\VertexLit_PositionNormal.vsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\VertexLit_PositionNormalColour.fsh">
-      <Link>shaders\VertexLit_PositionNormalColour.fsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\VertexLit_PositionNormalColour.vsh">
-      <Link>shaders\VertexLit_PositionNormalColour.vsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\VertexLit_PositionNormalTexture.fsh">
-      <Link>shaders\VertexLit_PositionNormalTexture.fsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\VertexLit_PositionNormalTexture.vsh">
-      <Link>shaders\VertexLit_PositionNormalTexture.vsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\VertexLit_PositionNormalTextureColour.fsh">
-      <Link>shaders\VertexLit_PositionNormalTextureColour.fsh</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\shaders\xios\VertexLit_PositionNormalTextureColour.vsh">
-      <Link>shaders\VertexLit_PositionNormalTextureColour.vsh</Link>
-    </BundleResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\shaders\xios\Unlit_Position.rfx">
-      <Link>shaders\Unlit_Position.rfx</Link>
-    </None>
   </ItemGroup>
 </Project>
