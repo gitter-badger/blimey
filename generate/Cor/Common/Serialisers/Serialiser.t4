@@ -1,15 +1,15 @@
-    public abstract class TypeSerialiser
+    public abstract class Serialiser
     {
         readonly Type targetType;
 
-        public virtual void Initialise (TypeSerialiserDatabase manager) {}
+        public virtual void Initialise (SerialiserDatabase manager) {}
         
         public Type TargetType
         {
             get { return this.targetType; }
         }
 
-        protected TypeSerialiser(Type targetType)
+        protected Serialiser(Type targetType)
         {
             this.targetType = targetType;
         }

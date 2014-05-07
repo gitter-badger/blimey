@@ -131,8 +131,8 @@ namespace Cor
 
     #region Serialisers
 
-<#@ include file="Common/Serialisers/TypeSerialiser.t4"#>
-<#@ include file="Common/Serialisers/TypeSerialiser.Generic.t4"#>
+<#@ include file="Common/Serialisers/Serialiser.t4"#>
+<#@ include file="Common/Serialisers/Serialiser.Generic.t4"#>
     #endregion
 
     #region Shaders
@@ -169,6 +169,8 @@ namespace Cor
 <#@ include file="Common/Serialisers/System/EnumSerialiser.t4"#>
 <#@ include file="Common/Serialisers/System/ArraySerialiser.t4"#>
 <#@ include file="Common/Serialisers/System/DictionarySerialiser.t4"#>
+<#@ include file="Common/Serialisers/System/TypeSerialiser.t4"#>
+<#@ include file="Common/Serialisers/System/ObjectSerialiser.t4"#>
     #endregion
 
     #region Abacus Types
@@ -183,15 +185,16 @@ namespace Cor
 
     #region Cor Types
 
-<#@ include file="Common/Serialisers/Cor/VertexDeclarationSerialiser.t4"#>
-<#@ include file="Common/Serialisers/Cor/VertexElementSerialiser.t4"#>
-<#@ include file="Common/Serialisers/Cor/GeometryBufferSerialiser.t4"#>
+<#@ include file="Common/Serialisers/Cor/ShaderDefinitionSerialiser.t4"#>
+<#@ include file="Common/Serialisers/Cor/ShaderInputDefinitionSerialiser.t4"#>
+<#@ include file="Common/Serialisers/Cor/ShaderSamplerDefinitionSerialiser.t4"#>
+<#@ include file="Common/Serialisers/Cor/ShaderVariableDefinitionSerialiser.t4"#>
     #endregion
 
     #region Systems
 
 <#@ include file="Common/Systems/AssetManager.t4"#>
-<#@ include file="Common/Systems/TypeSerialiserDatabase.t4"#>
+<#@ include file="Common/Systems/SerialiserDatabase.t4"#>
     #endregion
 
     #region Types

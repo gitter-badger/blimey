@@ -1,15 +1,15 @@
     public class NullableSerialiser<T>
-        : TypeSerialiser<T?>
+        : Serialiser<T?>
     where T
         : struct
     {
-        TypeSerialiser<T> valueSerialiser;
+        Serialiser<T> valueSerialiser;
 
         public NullableSerialiser () {}
 
-        public override void Initialise (TypeSerialiserDatabase manager)
+        public override void Initialise (SerialiserDatabase manager)
         {
-            valueSerialiser = manager.GetTypeSerialiser<T>();
+            valueSerialiser = manager.GetSerialiser<T>();
         }
 
         public override T? Read(BinaryReader abr)

@@ -1,5 +1,5 @@
     public class Int64Serialiser
-        : TypeSerialiser<Int64>
+        : Serialiser<Int64>
     {
         internal Int64Serialiser () {}
 

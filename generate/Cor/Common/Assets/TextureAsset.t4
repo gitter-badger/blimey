@@ -28,31 +28,31 @@
                 };
             }
 
-            public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
+            public void Serialise (BinaryReader br, SerialiserDatabase tsdb)
             {
-                this.SurfaceFormat = tsdb.GetTypeSerialiser <SurfaceFormat> ().Read (br);
-                this.Width = tsdb.GetTypeSerialiser <Int32> ().Read (br);
-                this.Height = tsdb.GetTypeSerialiser <Int32> ().Read (br);
-                Int32 byteCount = tsdb.GetTypeSerialiser <Int32> ().Read (br);
+                this.SurfaceFormat = tsdb.GetSerialiser <SurfaceFormat> ().Read (br);
+                this.Width = tsdb.GetSerialiser <Int32> ().Read (br);
+                this.Height = tsdb.GetSerialiser <Int32> ().Read (br);
+                Int32 byteCount = tsdb.GetSerialiser <Int32> ().Read (br);
 
                 this.Data = new Byte[byteCount];
 
                 for (Int32 i = 0; i < byteCount; ++i)
                 {
-                    this.Data[i] = tsdb.GetTypeSerialiser <Byte> ().Read (br);
+                    this.Data[i] = tsdb.GetSerialiser <Byte> ().Read (br);
                 }
             }
 
-            public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
+            public void Serialise (BinaryWriter bw, SerialiserDatabase tsdb)
             {
-                tsdb.GetTypeSerialiser <SurfaceFormat> ().Write (bw, this.SurfaceFormat);
-                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Width);
-                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Height);
-                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Data.Length);
+                tsdb.GetSerialiser <SurfaceFormat> ().Write (bw, this.SurfaceFormat);
+                tsdb.GetSerialiser <Int32> ().Write (bw, this.Width);
+                tsdb.GetSerialiser <Int32> ().Write (bw, this.Height);
+                tsdb.GetSerialiser <Int32> ().Write (bw, this.Data.Length);
 
                 for (Int32 i = 0; i < this.Data.Length; ++i)
                 {
-                    tsdb.GetTypeSerialiser <Byte> ().Write (bw, this.Data[i]);
+                    tsdb.GetSerialiser <Byte> ().Write (bw, this.Data[i]);
                 }
             }
 

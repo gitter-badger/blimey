@@ -1,22 +1,24 @@
     public class DictionarySerialiser<TKey, TValue>
-        : TypeSerialiser<Dictionary<TKey, TValue>>
+        : Serialiser<Dictionary<TKey, TValue>>
     {
-        TypeSerialiser<TKey> keySerialiser;
-        TypeSerialiser<TValue> valueSerialiser;
+        Serialiser<TKey> keySerialiser;
+        Serialiser<TValue> valueSerialiser;
 
-        TypeSerialiserDatabase manager;
+        SerialiserDatabase manager;
 
         public DictionarySerialiser () {}
 
-        public override void Initialise(TypeSerialiserDatabase manager)
+        public override void Initialise(SerialiserDatabase manager)
         {
             this.manager = manager;
-            keySerialiser = manager.GetTypeSerialiser<TKey>();
-            valueSerialiser = manager.GetTypeSerialiser<TValue>();
+            keySerialiser = manager.GetSerialiser<TKey>();
+            valueSerialiser = manager.GetSerialiser<TValue>();
         }
 
         public override Dictionary<TKey, TValue> Read(BinaryReader abr)
         {
+            throw new NotImplementedException ();
+            /*
             UInt32 count = abr.ReadUInt32();
 
             var dictionary = new Dictionary<TKey, TValue>();
@@ -38,13 +40,13 @@
                     // Get the id of the type reader for this element,
                     // as this element might not be of Type T, it might be
                     // polymorphic.
-                    Int32 keyTypeSerialiserId = abr.Read7BitEncodedInt32 ();
+                    Int32 keySerialiserId = abr.Read7BitEncodedInt32 ();
 
-                    if (keyTypeSerialiserId > 0)
+                    if (keySerialiserId > 0)
                     {
                         // Locate the correct serialiser for this element.
-                        TypeSerialiser virtualElementSerialiser =
-                            this.manager.GetTypeSerialiserFromId (keyTypeSerialiserId);
+                        Serialiser virtualElementSerialiser =
+                            this.manager.GetSerialiserFromId (keySerialiserId);
 
                         //
                         Object item = virtualElementSerialiser.ReadObject (abr);
@@ -68,13 +70,13 @@
                     // Get the id of the type reader for this element,
                     // as this element might not be of Type T, it might be
                     // polymorphic.
-                    Int32 valueTypeSerialiserId = abr.Read7BitEncodedInt32 ();
+                    Int32 valueSerialiserId = abr.Read7BitEncodedInt32 ();
 
-                    if (valueTypeSerialiserId > 0)
+                    if (valueSerialiserId > 0)
                     {
                         // Locate the correct serialiser for this element.
-                        TypeSerialiser virtualElementSerialiser =
-                            this.manager.GetTypeSerialiserFromId (valueTypeSerialiserId);
+                        Serialiser virtualElementSerialiser =
+                            this.manager.GetSerialiserFromId (valueSerialiserId);
 
                         //
                         Object item = virtualElementSerialiser.ReadObject (abr);
@@ -93,6 +95,7 @@
             }
 
             return dictionary;
+            */
         }
 
         public override void Write(BinaryWriter abw, Dictionary<TKey, TValue> obj)

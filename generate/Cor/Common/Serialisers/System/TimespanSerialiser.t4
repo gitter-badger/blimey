@@ -1,5 +1,5 @@
     public class TimeSpanSerialiser
-        : TypeSerialiser<TimeSpan>
+        : Serialiser<TimeSpan>
     {
         public TimeSpanSerialiser () {}
 

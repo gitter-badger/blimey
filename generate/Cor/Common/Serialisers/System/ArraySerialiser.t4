@@ -1,16 +1,16 @@
     public class ArraySerialiser<T>
-        : TypeSerialiser<T[]>
+        : Serialiser<T[]>
     {
-        TypeSerialiser<T> elementSerialiser;
+        Serialiser<T> elementSerialiser;
 
-        TypeSerialiserDatabase manager;
+        SerialiserDatabase manager;
 
         public ArraySerialiser () {}
 
-        public override void Initialise(TypeSerialiserDatabase manager)
+        public override void Initialise(SerialiserDatabase manager)
         {
             this.manager = manager;
-            elementSerialiser = manager.GetTypeSerialiser<T>();
+            elementSerialiser = manager.GetSerialiser<T>();
         }
 
         public override T[] Read (BinaryReader abr)
@@ -30,18 +30,19 @@
             }
             else
             {
+                /*
                 for (UInt32 i = 0; i < count; ++i)
                 {
                     // Get the id of the type reader for this element,
                     // as this element might not be of Type T, it might be
                     // polymorphic.
-                    Int32 objectTypeSerialiserId = abr.Read7BitEncodedInt32 ();
+                    Int32 objectSerialiserId = abr.Read7BitEncodedInt32 ();
 
-                    if (objectTypeSerialiserId > 0)
+                    if (objectSerialiserId > 0)
                     {
                         // Locate the correct serialiser for this element.
-                        TypeSerialiser virtualElementSerialiser =
-                            this.manager.GetTypeSerialiserFromId (objectTypeSerialiserId);
+                        Serialiser virtualElementSerialiser =
+                            this.manager.GetSerialiserFromId (objectSerialiserId);
 
                         //
                         Object item = virtualElementSerialiser.ReadObject (abr);
@@ -55,6 +56,7 @@
                         array [i] = default(T);
                     }
                 }
+                */
             }
 
             return array;

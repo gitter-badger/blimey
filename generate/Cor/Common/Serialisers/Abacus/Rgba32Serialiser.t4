@@ -1,5 +1,5 @@
     public class Rgba32Serialiser
-        : TypeSerialiser<Rgba32>
+        : Serialiser<Rgba32>
     {
         public Rgba32Serialiser () {}
 

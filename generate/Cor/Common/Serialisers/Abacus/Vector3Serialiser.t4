@@ -1,5 +1,5 @@
     public class Vector3Serialiser
-        : TypeSerialiser<Vector3>
+        : Serialiser<Vector3>
     {
         public Vector3Serialiser () {}
 

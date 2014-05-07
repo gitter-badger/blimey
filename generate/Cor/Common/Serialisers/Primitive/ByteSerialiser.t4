@@ -1,5 +1,5 @@
     public class ByteSerialiser
-        : TypeSerialiser<Byte>
+        : Serialiser<Byte>
     {
         public ByteSerialiser () {}
 

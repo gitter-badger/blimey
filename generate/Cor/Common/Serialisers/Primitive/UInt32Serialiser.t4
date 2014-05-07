@@ -1,5 +1,5 @@
     public class UInt32Serialiser
-        : TypeSerialiser<UInt32>
+        : Serialiser<UInt32>
     {
         public UInt32Serialiser () {}
 

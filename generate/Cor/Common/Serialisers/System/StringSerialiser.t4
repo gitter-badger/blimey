@@ -1,5 +1,5 @@
     public class StringSerialiser
-        : TypeSerialiser<String>
+        : Serialiser<String>
     {
         public StringSerialiser () {}
 

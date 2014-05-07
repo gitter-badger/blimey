@@ -1,5 +1,5 @@
     public class Int16Serialiser
-        : TypeSerialiser<Int16>
+        : Serialiser<Int16>
     {
         public Int16Serialiser () {}
 

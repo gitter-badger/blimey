@@ -1,7 +1,7 @@
-    public abstract class TypeSerialiser<T>
-        : TypeSerialiser
+    public abstract class Serialiser<T>
+        : Serialiser
     {
-        protected TypeSerialiser()
+        protected Serialiser()
             : base(typeof(T))
         {
 

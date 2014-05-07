@@ -1,0 +1,36 @@
+    public class ShaderVariableDefinitionSerialiser
+        : Serialiser<ShaderVariableDefinition>
+    {
+        Serialiser<String> stringSerialiser;
+        Serialiser<Object> objectSerialiser;
+        
+        public ShaderVariableDefinitionSerialiser () {}
+
+        public override void Initialise(SerialiserDatabase manager)
+        {
+            stringSerialiser = manager.GetSerialiser<String>();
+            objectSerialiser = manager.GetSerialiser<Object>();
+        }
+
+        public override ShaderVariableDefinition Read(BinaryReader abr)
+        {
+            var sd = new ShaderVariableDefinition ();
+
+            sd.Name = stringSerialiser.Read (abr);
+            sd.NiceName = stringSerialiser.Read (abr);
+            Object obj = objectSerialiser.Read (abr);
+
+            sd.Type = obj.GetType ();
+            sd.DefaultValue = obj;
+
+            return sd;
+        }
+
+        public override void Write(BinaryWriter abw, ShaderVariableDefinition obj)
+        {
+            stringSerialiser.Write (abw, obj.Name);
+            stringSerialiser.Write (abw, obj.NiceName);
+            objectSerialiser.Write (abw, obj.DefaultValue);
+        }
+    }
+

@@ -1,0 +1,62 @@
+    public class ObjectSerialiser
+        : Serialiser<Object>
+    {
+        SerialiserDatabase manager;
+
+        public ObjectSerialiser () {}
+
+        public override void Initialise (SerialiserDatabase manager)
+        {
+            this.manager = manager;
+        }
+
+        public override Object Read(BinaryReader abr)
+        {
+            String virtualObjectTypeString = abr.ReadString();
+
+            Type virtualObjectType = Type.GetType (virtualObjectTypeString);
+
+            // Locate the correct serialiser for this element.
+            Serialiser virtualElementSerialiser =
+                this.manager.GetSerialiser(virtualObjectType);
+
+            if (!virtualObjectType.IsValueType)
+            {
+                Boolean hasValue = abr.ReadBoolean ();
+
+                if (!hasValue)
+                {
+                    return null;
+                }
+            }
+
+            Object item = virtualElementSerialiser.ReadObject (abr);
+
+            return item;
+        }
+
+        public override void Write(BinaryWriter abw, Object obj)
+        {
+            Type t = obj.GetType ();
+
+            Serialiser virtualElementSerialiser =
+                this.manager.GetSerialiser(t);
+
+            // Alway write the string as we don't know what type this is.
+            abw.Write ((String) t.ToString ());
+
+
+            if (!t.IsValueType)
+            {
+                if (obj == null)
+                {
+                    // if false the value is null
+                    abw.Write ((Boolean) false);
+                    return;
+                }
+            }
+
+            virtualElementSerialiser.WriteObject (abw, obj);
+        }
+    }
+

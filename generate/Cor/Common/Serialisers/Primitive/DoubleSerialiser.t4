@@ -1,5 +1,5 @@
     public class DoubleSerialiser
-        : TypeSerialiser<Double>
+        : Serialiser<Double>
     {
         public DoubleSerialiser () {}
 

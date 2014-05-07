@@ -1,5 +1,5 @@
     public class Matrix44Serialiser
-        : TypeSerialiser<Matrix44>
+        : Serialiser<Matrix44>
     {
         public Matrix44Serialiser () {}
 

@@ -1,5 +1,13 @@
     public sealed class ShaderInputDefinition
     {
+        String niceName;
+
+        public String NiceName
+        {
+            get { return (niceName == null) ? Name : niceName; }
+            set { niceName = value; }
+        }
+        
         public String Name { get; set; }
         public Type Type { get; set; }
         public VertexElementUsage Usage { get; set; }

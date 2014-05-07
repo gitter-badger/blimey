@@ -20,10 +20,10 @@
                 };
             }
 
-            public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
+            public void Serialise (BinaryReader br, SerialiserDatabase tsdb)
             {
-                Int32 width = tsdb.GetTypeSerialiser <Int32> ().Read (br);
-                Int32 height = tsdb.GetTypeSerialiser <Int32> ().Read (br);
+                Int32 width = tsdb.GetSerialiser <Int32> ().Read (br);
+                Int32 height = tsdb.GetSerialiser <Int32> ().Read (br);
 
                 this.Data = new Rgba32[width, height];
 
@@ -32,22 +32,22 @@
                     for (Int32 j = 0; j < height; ++j)
                     {
                         this.Data[i, j] = 
-                            tsdb.GetTypeSerialiser <Rgba32> ()
+                            tsdb.GetSerialiser <Rgba32> ()
                                 .Read (br);
                     }
                 }
             }
 
-            public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
+            public void Serialise (BinaryWriter bw, SerialiserDatabase tsdb)
             {
-                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Width);
-                tsdb.GetTypeSerialiser <Int32> ().Write (bw, this.Height);
+                tsdb.GetSerialiser <Int32> ().Write (bw, this.Width);
+                tsdb.GetSerialiser <Int32> ().Write (bw, this.Height);
 
                 for (Int32 i = 0; i < this.Width; ++i)
                 {
                     for (Int32 j = 0; j < this.Height; ++j)
                     {
-                        tsdb.GetTypeSerialiser <Rgba32> ()
+                        tsdb.GetSerialiser <Rgba32> ()
                             .Write (bw, this.Data[i, j]);
                     }
                 }

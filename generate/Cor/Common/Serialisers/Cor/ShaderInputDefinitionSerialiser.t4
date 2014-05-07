@@ -1,0 +1,44 @@
+    public class ShaderInputDefinitionSerialiser
+        : Serialiser<ShaderInputDefinition>
+    {
+        Serialiser<String> stringSerialiser;
+        Serialiser<Object> objectSerialiser;
+        Serialiser<Boolean> booleanSerialiser;
+        Serialiser<VertexElementUsage> vertexElementUsageSerialiser;
+        
+        public ShaderInputDefinitionSerialiser () {}
+
+        public override void Initialise(SerialiserDatabase manager)
+        {
+            stringSerialiser = manager.GetSerialiser<String>();
+            objectSerialiser = manager.GetSerialiser<Object>();
+            booleanSerialiser = manager.GetSerialiser<Boolean>();
+            vertexElementUsageSerialiser= manager.GetSerialiser<VertexElementUsage>();
+        }
+
+        public override ShaderInputDefinition Read(BinaryReader abr)
+        {
+            var sd = new ShaderInputDefinition ();
+
+            sd.Name = stringSerialiser.Read (abr);
+            sd.NiceName = stringSerialiser.Read (abr);
+            Object obj = objectSerialiser.Read (abr);
+
+            sd.Type = obj.GetType ();
+            sd.DefaultValue = obj;
+
+            sd.Optional = booleanSerialiser.Read (abr);
+            sd.Usage = vertexElementUsageSerialiser.Read (abr);
+
+            return sd;
+        }
+
+        public override void Write(BinaryWriter abw, ShaderInputDefinition obj)
+        {
+            stringSerialiser.Write (abw, obj.Name);
+            stringSerialiser.Write (abw, obj.NiceName);
+            objectSerialiser.Write (abw, obj.DefaultValue);
+            booleanSerialiser.Write (abw, obj.Optional);
+            vertexElementUsageSerialiser.Write (abw, obj.Usage);
+        }
+    }

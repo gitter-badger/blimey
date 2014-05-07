@@ -1,6 +1,13 @@
     public sealed class ShaderSamplerDefinition
     {
-        public String NiceName { get; set; }
+        String niceName;
+
+        public String NiceName
+        {
+            get { return (niceName == null) ? Name : niceName; }
+            set { niceName = value; }
+        }
+        
         public String Name { get; set; }
         public Boolean Optional { get; set; }
     }

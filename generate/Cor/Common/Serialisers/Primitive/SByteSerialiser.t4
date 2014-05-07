@@ -1,5 +1,5 @@
     public class SByteSerialiser
-        : TypeSerialiser<SByte>
+        : Serialiser<SByte>
     {
         public SByteSerialiser () {}
 

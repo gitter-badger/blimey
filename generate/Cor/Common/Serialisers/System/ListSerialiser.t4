@@ -1,17 +1,17 @@
     // test reading lists containing different items from a chain of inheritance.
     public class ListSerialiser<T>
-        : TypeSerialiser<List<T>>
+        : Serialiser<List<T>>
     {
-        TypeSerialiser<T> elementSerialiser;
+        Serialiser<T> elementSerialiser;
 
-        TypeSerialiserDatabase manager;
+        SerialiserDatabase manager;
 
         public ListSerialiser () {}
 
-        public override void Initialise (TypeSerialiserDatabase manager)
+        public override void Initialise (SerialiserDatabase manager)
         {
             this.manager = manager;
-            elementSerialiser = manager.GetTypeSerialiser<T> ();
+            elementSerialiser = manager.GetSerialiser<T> ();
         }
 
         public override List<T> Read(BinaryReader abr)
@@ -38,25 +38,31 @@
                     // Get the id of the type reader for this element,
                     // as this element might not be of Type T, it might be
                     // polymorphic.
-                    Int32 objectTypeSerialiserId = abr.Read7BitEncodedInt32();
+                    String virtualObjectTypeString = abr.ReadString();
 
-                    if (objectTypeSerialiserId > 0)
+                    if (!String.IsNullOrEmpty(virtualObjectTypeString))
                     {
-                        // Locate the correct serialiser for this element.
-                        TypeSerialiser virtualElementSerialiser =
-                            this.manager.GetTypeSerialiserFromId(objectTypeSerialiserId);
+                        Type virtualObjectType = Type.GetType (virtualObjectTypeString); 
 
-                        //
-                        Object item = virtualElementSerialiser.ReadObject (abr);
+                        if (virtualObjectType != null)
+                        {
+                            // Locate the correct serialiser for this element.
+                            Serialiser virtualElementSerialiser =
+                                this.manager.GetSerialiser(virtualObjectType);
 
-                        // add to list then move on
-                        list.Add((T)item);
+                            //
+                            Object item = virtualElementSerialiser.ReadObject (abr);
+
+                            // add to list then move on
+                            list.Add((T) item);
+
+                            continue;
+                        }
                     }
-                    else
-                    {
-                        // the element is null
-                        list.Add(default(T));
-                    }
+
+                    //otherwise
+                    // the element is null
+                    list.Add(default(T));
                 }
             }
 
@@ -65,7 +71,43 @@
 
         public override void Write(BinaryWriter abw, List<T> obj)
         {
-            throw new NotImplementedException();
+            // Write the item count.
+            abw.Write ( (UInt32) obj.Count);
+
+            Type objectType = typeof(T);
+
+            if (objectType.IsValueType)
+            {
+                for (Int32 i = 0; i < obj.Count; ++i)
+                {
+                    // no inheritance for structs
+                    elementSerialiser.Write (abw, obj[i]);
+                }
+            }
+            else
+            {
+                for (Int32 i = 0; i < obj.Count; ++i)
+                {
+                    // no inheritance for structs
+                    var elem = obj[i];
+
+                    if (elem == null)
+                    {
+                        abw.Write ("");
+                    }
+                    else
+                    {
+                        Type t = elem.GetType ();
+
+                        abw.Write ((String) t.ToString ());
+
+                        Serialiser virtualElementSerialiser =
+                            this.manager.GetSerialiser(t);
+
+                        virtualElementSerialiser.WriteObject (abw, elem);
+                    }
+                }
+            }
         }
     }
 

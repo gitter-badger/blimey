@@ -1,0 +1,16 @@
+    public class TypeSerialiser
+        : Serialiser<Type>
+    {
+        public TypeSerialiser () {}
+
+        public override Type Read(BinaryReader abr)
+        {
+            return Type.GetType (abr.ReadString ());
+        }
+
+        public override void Write(BinaryWriter abw, Type obj)
+        {
+            abw.Write(obj.ToString ());
+        }
+    }
+

@@ -1,5 +1,5 @@
     public class BooleanSerialiser
-        : TypeSerialiser<Boolean>
+        : Serialiser<Boolean>
     {
         public BooleanSerialiser () {}
 

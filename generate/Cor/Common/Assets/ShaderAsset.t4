@@ -16,19 +16,31 @@
             {
                 return new List <Type> () 
                 { 
-                    //typeof (ArraySerialiser<Byte>),
+                    typeof (StringSerialiser),
+                    typeof (Int32Serialiser),
+                    typeof (BooleanSerialiser),
+                    typeof (ObjectSerialiser),
+                    typeof (EnumSerialiser<VertexElementUsage>),
+                    typeof (ShaderInputDefinitionSerialiser),
+                    typeof (ShaderSamplerDefinitionSerialiser),
+                    typeof (ShaderVariableDefinitionSerialiser),
+                    typeof (ListSerialiser<String>),
+                    typeof (ListSerialiser<ShaderInputDefinition>),
+                    typeof (ListSerialiser<ShaderSamplerDefinition>),
+                    typeof (ListSerialiser<ShaderVariableDefinition>),
+                    typeof (ShaderDefinitionSerialiser),
                     typeof (ByteSerialiser)
                 };
             }
 
-            public void Serialise (BinaryReader br, TypeSerialiserDatabase tsdb)
+            public void Serialise (BinaryReader br, SerialiserDatabase tsdb)
             {
-                
+                this.Definition = tsdb.GetSerialiser <ShaderDefinition> ().Read (br);
             }
 
-            public void Serialise (BinaryWriter bw, TypeSerialiserDatabase tsdb)
+            public void Serialise (BinaryWriter bw, SerialiserDatabase tsdb)
             {
-                
+                tsdb.GetSerialiser <ShaderDefinition> ().Write (bw, this.Definition);
             }
 
             #endregion
