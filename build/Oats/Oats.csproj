@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Oats</RootNamespace>
+    <AssemblyName>Oats</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\source\BinaryPrimitiveSerialiser.cs">
+      <Link>Source\BinaryPrimitiveSerialiser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Exception.cs">
+      <Link>Source\Exception.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\IPrimitiveSerialiser.cs">
+      <Link>Source\IPrimitiveSerialiser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\ObjectExtensions.cs">
+      <Link>Source\ObjectExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\SerialisationChannel.cs">
+      <Link>Source\SerialisationChannel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Serialiser.cs">
+      <Link>Source\Serialiser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\SerialiserDatabase.cs">
+      <Link>Source\SerialiserDatabase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\SystemSerialisers.cs">
+      <Link>Source\SystemSerialisers.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Source\" />
+  </ItemGroup>
+</Project>
