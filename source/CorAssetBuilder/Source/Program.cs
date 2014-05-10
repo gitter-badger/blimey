@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Cor;
 using System.Reflection;
 using Cor.Assets.Builders;
+using Oats;
 
 namespace CorAssetBuilder
 {
@@ -258,87 +259,41 @@ namespace CorAssetBuilder
             return output.OutputAsset;
         }
         
-        static void WriteFileHeader (BinaryWriter writer)
+		static void WriteFileHeader (ISerialisationChannel sc)
         {
-            var tsdb = new SerialiserDatabase ();
+			// file type
+			sc.Write <Byte> ((Byte)'C');
+			sc.Write <Byte> ((Byte)'B');
+			sc.Write <Byte> ((Byte)'A');
             
-            tsdb.RegisterSerialiser<Byte, ByteSerialiser>();
+			// file version
+			sc.Write <Byte> ((Byte)0);
             
-            // file type
-            tsdb.GetSerialiser <Byte> ().Write (writer, (Byte) 'C');
-            tsdb.GetSerialiser <Byte> ().Write (writer, (Byte) 'B');
-            tsdb.GetSerialiser <Byte> ().Write (writer, (Byte) 'A');
-            
-            // file version
-            tsdb.GetSerialiser <Byte> ().Write (writer, (Byte) 0);
-            
-            // platform index
-            tsdb.GetSerialiser <Byte> ().Write (writer, (Byte) 0);
+			// platform index
+			sc.Write <Byte> ((Byte)0);
             
             // total filesize
             // ? why does xna have this ?
         }
-
-        static void WriteObjectData (BinaryWriter writer, IAsset a)
-        {
-            List<Type> requiredSerialisers = a.RequiredSerialisers ();
-            
-            var tsdb = new SerialiserDatabase ();
-            
-            foreach (Type SerialiserType in requiredSerialisers)
-            {
-				tsdb.RegisterSerialiser (SerialiserType);
-            }
-            
-            a.Serialise (writer, tsdb);
-        }
-
-        static void WriteFileMeta (BinaryWriter writer, IAsset a)
-        {
-            List<Type> requiredSerialisers = a.RequiredSerialisers ();
-            
-            var tsdb = new SerialiserDatabase ();
-            tsdb.RegisterSerialiser<Byte, ByteSerialiser>();
-            tsdb.RegisterSerialiser<String, StringSerialiser>();
-            
-            tsdb.GetSerialiser <Byte> ().Write (writer, (Byte) requiredSerialisers.Count);
-            
-            foreach (Type type in requiredSerialisers)
-            {
-				string typeName =
-					type.ToString ();
-
-                // Fully qualified  type serialiser name
-				tsdb.GetSerialiser <String> ()
-					.Write (writer, typeName);
-                
-                // Type serialiser version
-                tsdb.GetSerialiser <Byte> ()
-					.Write (writer, (Byte) 0);
-            }
-        }
-
+			
         static void WriteAsset (IAsset a, String destination)
         {
             Console.WriteLine ("\t\tabout to write asset to " + destination);
             
             using (var stream = new FileStream (destination, FileMode.OpenOrCreate))
             {
-                using (var writer = new BinaryWriter (stream))
+				using (var sc = new SerialisationChannel
+					<BinaryPrimitiveReader, BinaryPrimitiveWriter> 
+						(SerialiserDatabase.Instance, stream, SerialisationChannelMode.Write))
                 {
                     // Cor Binary Asset File Header
                     //------------------------------------------------------------------------------------------------//
-                    WriteFileHeader (writer);
+					WriteFileHeader (sc);
                     
-                    
-                    // Meta data about the types serialisers need to read this type
+					// Now write the object
                     //------------------------------------------------------------------------------------------------//
-                    WriteFileMeta (writer, a);
-                    
-                    
-                    // Now rtie the object
-                    //------------------------------------------------------------------------------------------------//
-                    WriteObjectData (writer, a);
+					Type assetType = a.GetType ();
+					sc.WriteReflective (assetType, a);
 
 					Console.ForegroundColor = ConsoleColor.Green;
 					Console.WriteLine ("\t\tBUILT " + destination);

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using ServiceStack.Text;
+using Oats;
+using System.Collections.Generic;
 
 namespace Cor
 {
@@ -21,83 +23,97 @@ namespace Cor
 			if (!File.Exists (input.Files[0]) || !File.Exists (input.Files[1]))
 				throw new Exception ("ShaderAsset cannot find the input files.");
 
+			String format = (String) input.AssetImporterSettings.Settings ["Format"];
+
+
 			String commonShaderDef = File.ReadAllText (input.Files [0]);
 			String platformShaderDef = File.ReadAllText (input.Files [1]);
 
-			ShaderDefinition shaderDefinition = commonShaderDef.FromJson <ShaderDefinition> ();
+			// Import the platform agnostic shader definition.
+			ShaderDefinition shaderDefinition = commonShaderDef.FromXml <ShaderDefinition> ();
 
-			String format = (String) input.AssetImporterSettings.Settings ["Format"];
-
-			var sdb = new SerialiserDatabase ();
-			sdb.RegisterSerialiser<String, StringSerialiser> ();
-			sdb.RegisterSerialiser<Int32, Int32Serialiser> ();
-
-
-
+			// Import the KR Shader definition.
 			var krShaderDef = 
 				platformShaderDef.FromJson<Cor.Lib.Khronos.KrShaderDefinition> ();
 
-			using (var memStream = new MemoryStream ())
+
+
+
+
+			// BEGIN KHRONOS PLATFORM SPECIFIC RUNTIME DATA FORMAT ------------------------ //
+
+			// Create platform specific runtime shader binary data
+			// from the platform specific shader definition.
+			List<Byte> platformSpecificData = 
+				new List<Byte> ();
+
+			string path = Path.GetFullPath (input.Files [1]);
+			path = Path.GetDirectoryName (path);
+
+			// : Num Variants
+			platformSpecificData.AddRange (
+				krShaderDef.VariantDefinitions.Count.ToBinary<Int32> ());
+
+			foreach (var vdef in krShaderDef.VariantDefinitions) 
 			{
-				using (var bw = new BinaryWriter (memStream))
+				// : Variant Name
+				platformSpecificData.AddRange (
+					vdef.VariantName.ToBinary<String> ());
+				
+				// : Num Variant Pass Definitions
+				platformSpecificData.AddRange (
+					vdef.VariantPassDefinitions.Count.ToBinary<Int32> ());
+
+				foreach (var pdef in vdef.VariantPassDefinitions) 
 				{
-					string path = Path.GetFullPath (input.Files [1]);
+					// : Pass Name
+					platformSpecificData.AddRange (
+						pdef.PassName.ToBinary<String> ());
 
-					path = Path.GetDirectoryName (path);
+					string vpath = Path.Combine (
+						path, 
+						pdef.PassDefinition.VertexShaderPath);
 
-					sdb.GetSerialiser <Int32> ().Write (bw, krShaderDef.VariantDefinitions.Count);
+					string ppath = Path.Combine (
+		               path, 
+		               pdef.PassDefinition.PixelShaderPath);
 
-					foreach (var vdef in krShaderDef.VariantDefinitions)
-					{
-						//Console.WriteLine ("VariantName: " + vdef.VariantName);
-
-
-						sdb.GetSerialiser <String> ().Write (bw, vdef.VariantName);
-						sdb.GetSerialiser <Int32> ().Write (bw, vdef.VariantPassDefinitions.Count);
-
-						foreach (var pdef in vdef.VariantPassDefinitions) {
-							//Console.WriteLine ("PassName: " + pdef.PassName);
-
-							sdb.GetSerialiser <String> ().Write (bw, pdef.PassName);
-
-							string vpath = Path.Combine (
-								path, 
-								pdef.PassDefinition.VertexShaderPath);
-
-							string ppath = Path.Combine (
-								path, 
-								pdef.PassDefinition.PixelShaderPath);
-
-							if (!File.Exists (vpath)) {
-								throw new Exception ("Could not find: " + vpath);
-							}
-							if (!File.Exists (ppath)) {
-								throw new Exception ("Could not find: " + ppath);
-							}
-
-							String vertexShaderSource = File.ReadAllText (vpath);
-							String pixelShaderSource = File.ReadAllText (ppath);
-
-							sdb.GetSerialiser <String> ().Write (bw, vertexShaderSource);
-							sdb.GetSerialiser <String> ().Write (bw, pixelShaderSource);
-
-							//Console.WriteLine ("VertexShaderSource: " + vertexShaderSource);
-							//Console.WriteLine ("PixelShaderSource: " + pixelShaderSource);
-
-						}
+					if (!File.Exists (vpath)) {
+						throw new Exception ("Could not find: " + vpath);
 					}
+
+					if (!File.Exists (ppath)) {
+						throw new Exception ("Could not find: " + ppath);
+					}
+
+					String vertexShaderSource = File.ReadAllText (vpath);
+					String pixelShaderSource = File.ReadAllText (ppath);
+
+					// : Vertex Shader Source
+					platformSpecificData.AddRange (
+						vertexShaderSource.ToBinary<String> ());
+
+					// : Pixel Shader Source
+					platformSpecificData.AddRange (
+						pixelShaderSource.ToBinary<String> ());
 				}
-
-				var shaderAsset = new ShaderAsset () {
-					Definition = shaderDefinition,
-					Data = memStream.GetBuffer ()
-					};
-
-				return new AssetImporterOutput <ShaderAsset> () {
-					OutputAsset = shaderAsset
-				};
 			}
+				
+
+			// END KHRONOS PLATFORM SPECIFIC RUNTIME DATA FORMAT -------------------------- //
+
+			// Make our in memory result
+			var result = new ShaderAsset () {
+				Definition = shaderDefinition,
+				Data = platformSpecificData.ToArray ()
+			};
+
+
+			return new AssetImporterOutput <ShaderAsset> () {
+				OutputAsset = result
+			};
 		}
+
 	}
 }
 

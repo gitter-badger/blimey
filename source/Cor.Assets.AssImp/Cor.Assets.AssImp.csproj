@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{6C72B877-5395-4BF1-BE47-0E67D5557168}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Cor.Assets.AssImp</RootNamespace>
