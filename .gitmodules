@@ -10,3 +10,6 @@
 	path = submodules/blimey
 	url = git@github.com:blimey3D/blimey.git
 	branch = development
+[submodule "submodules/oats"]
+	path = submodules/oats
+	url = git@github.com:ajpook/oats.git

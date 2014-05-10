@@ -1,172 +1,258 @@
-{
-    "Name": "VertexLit",
-    "PassNames": ["Main"],
-    "InputDefinitions": [
-    {
-        "Name": "a_vertPos",
-        "Type": "Abacus.SinglePrecision.Vector3, Abacus",
-        "Usage": "Position",
-        "DefaultValue": "{X:0 Y:0 Z:0}",
-        "Optional": false
-    },
-    {
-        "Name": "a_vertNormal",
-        "Type": "Abacus.SinglePrecision.Vector3, Abacus",
-        "Usage": "Normal",
-        "DefaultValue": "{X:0 Y:0 Z:0}",
-        "Optional": false
-    },
-    {
-        "Name": "a_vertTexcoord",
-        "Type": "Abacus.SinglePrecision.Vector2, Abacus",
-        "Usage": "TextureCoordinate",
-        "DefaultValue": "{X:0 Y:0}",
-        "Optional": true
-    },
-    {
-        "Name": "a_vertColour",
-        "Type": "Abacus.Packed.Rgba32, Abacus",
-        "Usage": "Colour",
-        "DefaultValue": "{R:255 G:255 B:255 A:255}",
-        "Optional": true
-    }],
-    "VariableDefinitions": [
-    {
-        "NiceName": "World",
-        "Name": "u_world",
-        "Type": "Abacus.SinglePrecision.Matrix44, Abacus",
-        "DefaultValue": "{ {R0C0:1 R0C1:0 R0C2:0 R0C3:0} {R1C0:0 R1C1:1 R1C2:0 R1C3:0} {R2C0:0 R2C1:0 R2C2:1 R2C3:0} {R3C0:0 R3C1:0 R3C2:0 R3C3:1} }"
-    },
-    {
-        "NiceName": "View",
-        "Name": "u_view",
-        "Type": "Abacus.SinglePrecision.Matrix44, Abacus",
-        "DefaultValue": "{ {R0C0:1 R0C1:0 R0C2:0 R0C3:0} {R1C0:0 R1C1:1 R1C2:0 R1C3:0} {R2C0:0 R2C1:0 R2C2:1 R2C3:0} {R3C0:0 R3C1:0 R3C2:0 R3C3:1} }"
-    },
-    {
-        "NiceName": "Projection",
-        "Name": "u_proj",
-        "Type": "Abacus.SinglePrecision.Matrix44, Abacus",
-        "DefaultValue": "{ {R0C0:1 R0C1:0 R0C2:0 R0C3:0} {R1C0:0 R1C1:1 R1C2:0 R1C3:0} {R2C0:0 R2C1:0 R2C2:1 R2C3:0} {R3C0:0 R3C1:0 R3C2:0 R3C3:1} }"
-    },
-    {
-        "NiceName": "MaterialColour",
-        "Name": "u_colour",
-        "Type": "Abacus.Packed.Rgba32, Abacus",
-        "DefaultValue": "{R:255 G:255 B:255 A:255}"
-    },
-    {
-        "NiceName": "AmbientLightColour",
-        "Name": "u_liAmbient",
-        "Type": "Abacus.Packed.Rgba32, Abacus",
-        "DefaultValue": "{R:128 G:128 B:128 A:255}"
-    },
-    {
-        "NiceName": "EmissiveColour",
-        "Name": "u_emissiveColour",
-        "Type": "Abacus.Packed.Rgba32, Abacus",
-        "DefaultValue": "{R:0 G:0 B:0 A:255}"
-    },
-    {
-        "NiceName": "SpecularColour",
-        "Name": "u_specularColour",
-        "Type": "Abacus.Packed.Rgba32, Abacus",
-        "DefaultValue": "{R:255 G:255 B:255 A:255}"
-    },
-    {
-        "NiceName": "SpecularPower",
-        "Name": "u_specularPower",
-        "Type": "System.Single, mscorlib",
-        "DefaultValue": 0.7
-    },
-    {
-        "NiceName": "EyePosition",
-        "Name": "u_eyePosition",
-        "Type": "Abacus.SinglePrecision.Vector3, Abacus",
-        "DefaultValue": "{X:0 Y:0 Z:0}"
-    },
-    {
-        "NiceName": "FogEnabled",
-        "Name": "u_fogEnabled",
-        "Type": "System.Single, mscorlib",
-        "DefaultValue": 1
-    },
-    {
-        "NiceName": "FogStart",
-        "Name": "u_fogStart",
-        "Type": "System.Single, mscorlib",
-        "DefaultValue": 100
-    },
-    {
-        "NiceName": "FogEnd",
-        "Name": "u_fogEnd",
-        "Type": "System.Single, mscorlib",
-        "DefaultValue": 1000
-    },
-    {
-        "NiceName": "FogColour",
-        "Name": "u_fogColour",
-        "Type": "Abacus.Packed.Rgba32, Abacus",
-        "DefaultValue": "{R:0 G:0 B:255 A:255}"
-    },
-    {
-        "NiceName": "DirectionalLight0Direction",
-        "Name": "u_li0Dir",
-        "Type": "Abacus.SinglePrecision.Vector3, Abacus",
-        "DefaultValue": "{X:0 Y:-1 Z:0}"
-    },
-    {
-        "NiceName": "DirectionalLight0DiffuseColour",
-        "Name": "u_li0Diffuse",
-        "Type": "Abacus.Packed.Rgba32, Abacus",
-        "DefaultValue": "{R:255 G:0 B:0 A:255}"
-    },
-    {
-        "NiceName": "DirectionalLight0SpecularColour",
-        "Name": "u_li0Spec",
-        "Type": "Abacus.Packed.Rgba32, Abacus",
-        "DefaultValue": "{R:250 G:128 B:114 A:255}"
-    },
-    {
-        "NiceName": "DirectionalLight1Direction",
-        "Name": "u_li1Dir",
-        "Type": "Abacus.SinglePrecision.Vector3, Abacus",
-        "DefaultValue": "{X:0 Y:-1 Z:0}"
-    },
-    {
-        "NiceName": "DirectionalLight1DiffuseColour",
-        "Name": "u_li1Diffuse",
-        "Type": "Abacus.Packed.Rgba32, Abacus",
-        "DefaultValue": "{R:255 G:0 B:0 A:255}"
-    },
-    {
-        "NiceName": "DirectionalLight1SpecularColour",
-        "Name": "u_li1Spec",
-        "Type": "Abacus.Packed.Rgba32, Abacus",
-        "DefaultValue": "{R:250 G:128 B:114 A:255}"
-    },
-    {
-        "NiceName": "DirectionalLight2Direction",
-        "Name": "u_li2Dir",
-        "Type": "Abacus.SinglePrecision.Vector3, Abacus",
-        "DefaultValue": "{X:0 Y:-1 Z:0}"
-    },
-    {
-        "NiceName": "DirectionalLight2DiffuseColour",
-        "Name": "u_li2Diffuse",
-        "Type": "Abacus.Packed.Rgba32, Abacus",
-        "DefaultValue": "{R:255 G:0 B:0 A:255}"
-    },
-    {
-        "NiceName": "DirectionalLight2SpecularColour",
-        "Name": "u_li2Spec",
-        "Type": "Abacus.Packed.Rgba32, Abacus",
-        "DefaultValue": "{R:250 G:128 B:114 A:255}"
-    }],
-    "SamplerDefinitions": [
-    {
-        "NiceName": "TextureSampler",
-        "Name": "s_tex0",
-        "Optional": true
-    }]
-}
+<?xml version="1.0" encoding="utf-8"?>
+<ShaderDefinition xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/Cor">
+<InputDefinitions>
+    <ShaderInputDefinition>
+        <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">
+        <d4p1:X>0</d4p1:X>
+        <d4p1:Y>0</d4p1:Y>
+        <d4p1:Z>0</d4p1:Z>
+    </DefaultValue>
+    <Name>a_vertPos</Name>
+    <NiceName>a_vertPos</NiceName>
+    <Optional>false</Optional>
+    <Usage>Position</Usage>
+</ShaderInputDefinition>
+<ShaderInputDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">
+    <d4p1:X>0</d4p1:X>
+    <d4p1:Y>0</d4p1:Y>
+    <d4p1:Z>0</d4p1:Z>
+</DefaultValue>
+<Name>a_vertNormal</Name>
+<NiceName>a_vertNormal</NiceName>
+<Optional>false</Optional>
+<Usage>Normal</Usage>
+</ShaderInputDefinition>
+<ShaderInputDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector2">
+    <d4p1:X>0</d4p1:X>
+    <d4p1:Y>0</d4p1:Y>
+</DefaultValue>
+<Name>a_vertTexcoord</Name>
+<NiceName>a_vertTexcoord</NiceName>
+<Optional>true</Optional>
+<Usage>TextureCoordinate</Usage>
+</ShaderInputDefinition>
+<ShaderInputDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.Packed" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4294967295</d4p1:packedValue>
+</DefaultValue>
+<Name>a_vertColour</Name>
+<NiceName>a_vertColour</NiceName>
+<Optional>true</Optional>
+<Usage>Colour</Usage>
+</ShaderInputDefinition>
+</InputDefinitions>
+<Name>VertexLit</Name>
+<PassNames xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+<d2p1:string>Main</d2p1:string>
+</PassNames>
+<SamplerDefinitions>
+    <ShaderSamplerDefinition>
+        <Name>s_tex0</Name>
+        <NiceName>TextureSampler</NiceName>
+        <Optional>true</Optional>
+    </ShaderSamplerDefinition>
+</SamplerDefinitions>
+<VariableDefinitions>
+    <ShaderVariableDefinition>
+        <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Matrix44">
+        <d4p1:R0C0>1</d4p1:R0C0>
+        <d4p1:R0C1>0</d4p1:R0C1>
+        <d4p1:R0C2>0</d4p1:R0C2>
+        <d4p1:R0C3>0</d4p1:R0C3>
+        <d4p1:R1C0>0</d4p1:R1C0>
+        <d4p1:R1C1>1</d4p1:R1C1>
+        <d4p1:R1C2>0</d4p1:R1C2>
+        <d4p1:R1C3>0</d4p1:R1C3>
+        <d4p1:R2C0>0</d4p1:R2C0>
+        <d4p1:R2C1>0</d4p1:R2C1>
+        <d4p1:R2C2>1</d4p1:R2C2>
+        <d4p1:R2C3>0</d4p1:R2C3>
+        <d4p1:R3C0>0</d4p1:R3C0>
+        <d4p1:R3C1>0</d4p1:R3C1>
+        <d4p1:R3C2>0</d4p1:R3C2>
+        <d4p1:R3C3>1</d4p1:R3C3>
+    </DefaultValue>
+    <Name>u_world</Name>
+    <NiceName>World</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Matrix44">
+    <d4p1:R0C0>1</d4p1:R0C0>
+    <d4p1:R0C1>0</d4p1:R0C1>
+    <d4p1:R0C2>0</d4p1:R0C2>
+    <d4p1:R0C3>0</d4p1:R0C3>
+    <d4p1:R1C0>0</d4p1:R1C0>
+    <d4p1:R1C1>1</d4p1:R1C1>
+    <d4p1:R1C2>0</d4p1:R1C2>
+    <d4p1:R1C3>0</d4p1:R1C3>
+    <d4p1:R2C0>0</d4p1:R2C0>
+    <d4p1:R2C1>0</d4p1:R2C1>
+    <d4p1:R2C2>1</d4p1:R2C2>
+    <d4p1:R2C3>0</d4p1:R2C3>
+    <d4p1:R3C0>0</d4p1:R3C0>
+    <d4p1:R3C1>0</d4p1:R3C1>
+    <d4p1:R3C2>0</d4p1:R3C2>
+    <d4p1:R3C3>1</d4p1:R3C3>
+</DefaultValue>
+<Name>u_view</Name>
+<NiceName>View</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Matrix44">
+    <d4p1:R0C0>1</d4p1:R0C0>
+    <d4p1:R0C1>0</d4p1:R0C1>
+    <d4p1:R0C2>0</d4p1:R0C2>
+    <d4p1:R0C3>0</d4p1:R0C3>
+    <d4p1:R1C0>0</d4p1:R1C0>
+    <d4p1:R1C1>1</d4p1:R1C1>
+    <d4p1:R1C2>0</d4p1:R1C2>
+    <d4p1:R1C3>0</d4p1:R1C3>
+    <d4p1:R2C0>0</d4p1:R2C0>
+    <d4p1:R2C1>0</d4p1:R2C1>
+    <d4p1:R2C2>1</d4p1:R2C2>
+    <d4p1:R2C3>0</d4p1:R2C3>
+    <d4p1:R3C0>0</d4p1:R3C0>
+    <d4p1:R3C1>0</d4p1:R3C1>
+    <d4p1:R3C2>0</d4p1:R3C2>
+    <d4p1:R3C3>1</d4p1:R3C3>
+</DefaultValue>
+<Name>u_proj</Name>
+<NiceName>Projection</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.Packed" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4294967295</d4p1:packedValue>
+</DefaultValue>
+<Name>u_colour</Name>
+<NiceName>MaterialColour</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.Packed" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4286611584</d4p1:packedValue>
+</DefaultValue>
+<Name>u_liAmbient</Name>
+<NiceName>AmbientLightColour</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.Packed" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4278190080</d4p1:packedValue>
+</DefaultValue>
+<Name>u_emissiveColour</Name>
+<NiceName>EmissiveColour</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.Packed" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4294967295</d4p1:packedValue>
+</DefaultValue>
+<Name>u_specularColour</Name>
+<NiceName>SpecularColour</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://www.w3.org/2001/XMLSchema" i:type="d4p1:float">0.7</DefaultValue>
+    <Name>u_specularPower</Name>
+    <NiceName>SpecularPower</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">
+    <d4p1:X>0</d4p1:X>
+    <d4p1:Y>0</d4p1:Y>
+    <d4p1:Z>0</d4p1:Z>
+</DefaultValue>
+<Name>u_eyePosition</Name>
+<NiceName>EyePosition</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://www.w3.org/2001/XMLSchema" i:type="d4p1:float">1</DefaultValue>
+    <Name>u_fogEnabled</Name>
+    <NiceName>FogEnabled</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://www.w3.org/2001/XMLSchema" i:type="d4p1:float">100</DefaultValue>
+    <Name>u_fogStart</Name>
+    <NiceName>FogStart</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://www.w3.org/2001/XMLSchema" i:type="d4p1:float">1000</DefaultValue>
+    <Name>u_fogEnd</Name>
+    <NiceName>FogEnd</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.Packed" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4294901760</d4p1:packedValue>
+</DefaultValue>
+<Name>u_fogColour</Name>
+<NiceName>FogColour</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">
+    <d4p1:X>0</d4p1:X>
+    <d4p1:Y>-1</d4p1:Y>
+    <d4p1:Z>0</d4p1:Z>
+</DefaultValue>
+<Name>u_li0Dir</Name>
+<NiceName>DirectionalLight0Direction</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.Packed" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4278190335</d4p1:packedValue>
+</DefaultValue>
+<Name>u_li0Diffuse</Name>
+<NiceName>DirectionalLight0DiffuseColour</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.Packed" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4285694202</d4p1:packedValue>
+</DefaultValue>
+<Name>u_li0Spec</Name>
+<NiceName>DirectionalLight0SpecularColour</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">
+    <d4p1:X>0</d4p1:X>
+    <d4p1:Y>-1</d4p1:Y>
+    <d4p1:Z>0</d4p1:Z>
+</DefaultValue>
+<Name>u_li1Dir</Name>
+<NiceName>DirectionalLight1Direction</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.Packed" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4278190335</d4p1:packedValue>
+</DefaultValue>
+<Name>u_li1Diffuse</Name>
+<NiceName>DirectionalLight1DiffuseColour</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.Packed" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4285694202</d4p1:packedValue>
+</DefaultValue>
+<Name>u_li1Spec</Name>
+<NiceName>DirectionalLight1SpecularColour</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">
+    <d4p1:X>0</d4p1:X>
+    <d4p1:Y>-1</d4p1:Y>
+    <d4p1:Z>0</d4p1:Z>
+</DefaultValue>
+<Name>u_li2Dir</Name>
+<NiceName>DirectionalLight2Direction</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.Packed" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4278190335</d4p1:packedValue>
+</DefaultValue>
+<Name>u_li2Diffuse</Name>
+<NiceName>DirectionalLight2DiffuseColour</NiceName>
+</ShaderVariableDefinition>
+<ShaderVariableDefinition>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.Packed" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4285694202</d4p1:packedValue>
+</DefaultValue>
+<Name>u_li2Spec</Name>
+<NiceName>DirectionalLight2SpecularColour</NiceName>
+</ShaderVariableDefinition>
+</VariableDefinitions>
+</ShaderDefinition>

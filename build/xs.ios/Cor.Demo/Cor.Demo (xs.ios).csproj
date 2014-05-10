@@ -7,8 +7,6 @@
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
     <RootNamespace>Cor.Demo</RootNamespace>
-    <ProductVersion>12.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>True</DebugSymbols>
@@ -126,6 +124,7 @@
   <ItemGroup>
     <Folder Include="source\" />
     <Folder Include="Properties\" />
+    <Folder Include="assets\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Icon.png" />
@@ -137,6 +136,33 @@
     <BundleResource Include="Icon-Small-50.png" />
     <BundleResource Include="Icon-Small-50%402x.png" />
     <BundleResource Include="Default.png" />
+    <BundleResource Include="..\..\..\assets\xios\airports.cba">
+      <Link>assets\xios\airports.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\bg1.cba">
+      <Link>assets\xios\bg1.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\bg2.cba">
+      <Link>assets\xios\bg2.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\bg3.cba">
+      <Link>assets\xios\bg3.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\cvan01.cba">
+      <Link>assets\xios\cvan01.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\cvan02.cba">
+      <Link>assets\xios\cvan02.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\pixel_lit.cba">
+      <Link>assets\xios\pixel_lit.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\unlit.cba">
+      <Link>assets\xios\unlit.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\vertex_lit.cba">
+      <Link>assets\xios\vertex_lit.cba</Link>
+    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\submodules\abacus\build\xs.ios\Abacus\Abacus %28xs.ios%29.csproj">
