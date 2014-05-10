@@ -49,6 +49,8 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
+using Oats;
+
 namespace Cor
 {
 <#@ include file="IApp.t4"#>
@@ -99,6 +101,7 @@ namespace Cor
 
     #region Assets
 
+<#@ include file="Common/Assets/Asset.t4"#>
 <#@ include file="Common/Assets/ColourmapAsset.t4"#>
 <#@ include file="Common/Assets/ShaderAsset.t4"#>
 <#@ include file="Common/Assets/TextAsset.t4"#>
@@ -129,12 +132,6 @@ namespace Cor
 <#@ include file="Common/Enums/SurfaceFormat.t4"#>
     #endregion
 
-    #region Serialisers
-
-<#@ include file="Common/Serialisers/Serialiser.t4"#>
-<#@ include file="Common/Serialisers/Serialiser.Generic.t4"#>
-    #endregion
-
     #region Shaders
 
 <#@ include file="Common/Shaders/ShaderDefinition.t4"#>
@@ -143,58 +140,35 @@ namespace Cor
 <#@ include file="Common/Shaders/ShaderVariableDefinition.t4"#>
     #endregion
 
-    #region Primitive Types
-
-<#@ include file="Common/Serialisers/Primitive/Int64Serialiser.t4"#>
-<#@ include file="Common/Serialisers/Primitive/BooleanSerialiser.t4"#>
-<#@ include file="Common/Serialisers/Primitive/ByteSerialiser.t4"#>
-<#@ include file="Common/Serialisers/Primitive/CharSerialiser.t4"#>
-<#@ include file="Common/Serialisers/Primitive/DoubleSerialiser.t4"#>
-<#@ include file="Common/Serialisers/Primitive/Int16Serialiser.t4"#>
-<#@ include file="Common/Serialisers/Primitive/Int32Serialiser.t4"#>
-<#@ include file="Common/Serialisers/Primitive/SByteSerialiser.t4"#>
-<#@ include file="Common/Serialisers/Primitive/SingleSerialiser.t4"#>
-<#@ include file="Common/Serialisers/Primitive/UInt16Serialiser.t4"#>
-<#@ include file="Common/Serialisers/Primitive/UInt32Serialiser.t4"#>
-<#@ include file="Common/Serialisers/Primitive/UInt64Serialiser.t4"#>
-    #endregion
-
-    #region System Types
-
-<#@ include file="Common/Serialisers/System/StringSerialiser.t4"#>
-<#@ include file="Common/Serialisers/System/DecimalSerialiser.t4"#>
-<#@ include file="Common/Serialisers/System/TimespanSerialiser.t4"#>
-<#@ include file="Common/Serialisers/System/ListSerialiser.t4"#>
-<#@ include file="Common/Serialisers/System/NullableSerialiser.t4"#>
-<#@ include file="Common/Serialisers/System/EnumSerialiser.t4"#>
-<#@ include file="Common/Serialisers/System/ArraySerialiser.t4"#>
-<#@ include file="Common/Serialisers/System/DictionarySerialiser.t4"#>
-<#@ include file="Common/Serialisers/System/TypeSerialiser.t4"#>
-<#@ include file="Common/Serialisers/System/ObjectSerialiser.t4"#>
-    #endregion
+    #region Serialisers
 
     #region Abacus Types
 
-<#@ include file="Common/Serialisers/Abacus/Rgba32Serialiser.t4"#>
-<#@ include file="Common/Serialisers/Abacus/Matrix44Serialiser.t4"#>
-<#@ include file="Common/Serialisers/Abacus/QuaternionSerialiser.t4"#>
-<#@ include file="Common/Serialisers/Abacus/Vector2Serialiser.t4"#>
-<#@ include file="Common/Serialisers/Abacus/Vector3Serialiser.t4"#>
-<#@ include file="Common/Serialisers/Abacus/Vector4Serialiser.t4"#>
+<#@ include file="Common/OatsSerialisers/Abacus/Matrix44Serialiser.t4"#>
+<#@ include file="Common/OatsSerialisers/Abacus/QuaternionSerialiser.t4"#>
+<#@ include file="Common/OatsSerialisers/Abacus/Rgba32Serialiser.t4"#>
+<#@ include file="Common/OatsSerialisers/Abacus/Vector2Serialiser.t4"#>
+<#@ include file="Common/OatsSerialisers/Abacus/Vector3Serialiser.t4"#>
+<#@ include file="Common/OatsSerialisers/Abacus/Vector4Serialiser.t4"#>
     #endregion
 
     #region Cor Types
 
-<#@ include file="Common/Serialisers/Cor/ShaderDefinitionSerialiser.t4"#>
-<#@ include file="Common/Serialisers/Cor/ShaderInputDefinitionSerialiser.t4"#>
-<#@ include file="Common/Serialisers/Cor/ShaderSamplerDefinitionSerialiser.t4"#>
-<#@ include file="Common/Serialisers/Cor/ShaderVariableDefinitionSerialiser.t4"#>
+<#@ include file="Common/OatsSerialisers/Assets/ColourmapAssetSerialiser.t4"#>
+<#@ include file="Common/OatsSerialisers/Assets/ShaderAssetSerialiser.t4"#>
+<#@ include file="Common/OatsSerialisers/Assets/TextAssetSerialiser.t4"#>
+<#@ include file="Common/OatsSerialisers/Assets/TextureAssetSerialiser.t4"#>
+<#@ include file="Common/OatsSerialisers/Shaders/ShaderDefinitionSerialiser.t4"#>
+<#@ include file="Common/OatsSerialisers/Shaders/ShaderInputDefinitionSerialiser.t4"#>
+<#@ include file="Common/OatsSerialisers/Shaders/ShaderSamplerDefinitionSerialiser.t4"#>
+<#@ include file="Common/OatsSerialisers/Shaders/ShaderVariableDefinitionSerialiser.t4"#>
+    #endregion
+
     #endregion
 
     #region Systems
 
 <#@ include file="Common/Systems/AssetManager.t4"#>
-<#@ include file="Common/Systems/SerialiserDatabase.t4"#>
     #endregion
 
     #region Types

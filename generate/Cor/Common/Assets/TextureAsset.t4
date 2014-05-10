@@ -1,5 +1,5 @@
         public sealed class TextureAsset
-            : IAsset
+            : Asset
         {
             public SurfaceFormat SurfaceFormat { get; set; }
 
@@ -13,49 +13,5 @@
             // public Byte[,] Mipmaps { get; set; }
 
             // public Int32 MipmapCount { get { return Data.GetLength (0); } }
-
-            #region IAsset
-
-            public String Id { get { return null; } }
-
-            public List <Type> RequiredSerialisers ()
-            {
-                return new List <Type> ()
-                {
-                    typeof (Int32Serialiser),
-                    typeof (ByteSerialiser),
-                    typeof (EnumSerialiser<SurfaceFormat>)
-                };
-            }
-
-            public void Serialise (BinaryReader br, SerialiserDatabase tsdb)
-            {
-                this.SurfaceFormat = tsdb.GetSerialiser <SurfaceFormat> ().Read (br);
-                this.Width = tsdb.GetSerialiser <Int32> ().Read (br);
-                this.Height = tsdb.GetSerialiser <Int32> ().Read (br);
-                Int32 byteCount = tsdb.GetSerialiser <Int32> ().Read (br);
-
-                this.Data = new Byte[byteCount];
-
-                for (Int32 i = 0; i < byteCount; ++i)
-                {
-                    this.Data[i] = tsdb.GetSerialiser <Byte> ().Read (br);
-                }
-            }
-
-            public void Serialise (BinaryWriter bw, SerialiserDatabase tsdb)
-            {
-                tsdb.GetSerialiser <SurfaceFormat> ().Write (bw, this.SurfaceFormat);
-                tsdb.GetSerialiser <Int32> ().Write (bw, this.Width);
-                tsdb.GetSerialiser <Int32> ().Write (bw, this.Height);
-                tsdb.GetSerialiser <Int32> ().Write (bw, this.Data.Length);
-
-                for (Int32 i = 0; i < this.Data.Length; ++i)
-                {
-                    tsdb.GetSerialiser <Byte> ().Write (bw, this.Data[i]);
-                }
-            }
-
-            #endregion
         }
 

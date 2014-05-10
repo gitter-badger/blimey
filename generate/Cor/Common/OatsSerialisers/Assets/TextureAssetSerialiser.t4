@@ -1,0 +1,36 @@
+    public class TextureAssetSerialiser
+        : Serialiser<TextureAsset>
+    {
+        public override TextureAsset Read (ISerialisationChannel ss)
+        {
+            var asset = new TextureAsset ();
+            
+            asset.SurfaceFormat = ss.Read <SurfaceFormat> ();
+            asset.Width = ss.Read <Int32> ();
+            asset.Height = ss.Read <Int32> ();
+            Int32 byteCount = ss.Read <Int32> ();
+
+            asset.Data = new Byte[byteCount];
+
+            for (Int32 i = 0; i < byteCount; ++i)
+            {
+                asset.Data[i] = ss.Read <Byte> ();
+            }
+
+            return asset;
+        }
+
+        public override void Write (ISerialisationChannel ss, TextureAsset obj)
+        {
+            ss.Write <SurfaceFormat> (obj.SurfaceFormat);
+            ss.Write <Int32> (obj.Width);
+            ss.Write <Int32> (obj.Height);
+            ss.Write <Int32> (obj.Data.Length);
+
+            for (Int32 i = 0; i < obj.Data.Length; ++i)
+            {
+                ss.Write <Byte> (obj.Data[i]);
+            }
+        }
+    }
+

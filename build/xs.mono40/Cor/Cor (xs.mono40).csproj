@@ -44,5 +44,9 @@
       <Project>{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}</Project>
       <Name>Abacus (xs.mono40)</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\oats\build\Oats\Oats.csproj">
+      <Project>{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}</Project>
+      <Name>Oats</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

@@ -1,6 +1,33 @@
     public sealed class ShaderVariableDefinition
     {
         String niceName;
+        Type defaultType;
+        Object defaultValue;
+
+        public ShaderVariableDefinition ()
+        {
+            this.Name = String.Empty;
+        }
+
+        // Defines which Cor! Types the DefaultValue can be set to.
+        // The order of this list is important as the Cor Serialisation
+        // of this class depends upon indexing into it.
+        public static Type [] SupportedTypes
+        { 
+            get
+            {
+                return new [] 
+                {
+                    typeof (Matrix44),
+                    typeof (Int32),
+                    typeof (Single),
+                    typeof (Abacus.SinglePrecision.Vector2),
+                    typeof (Abacus.SinglePrecision.Vector3),
+                    typeof (Abacus.SinglePrecision.Vector4),
+                    typeof (Rgba32)
+                };
+            }
+        }
 
         public String NiceName
         {
@@ -9,7 +36,25 @@
         }
         
         public String Name { get; set; }
-        public Type Type { get; set; }
-        public Object DefaultValue { get; set; }
+
+        public Type Type
+        {
+            get { return defaultType; }
+        }
+        public Object DefaultValue
+        {
+            get { return defaultValue; }
+            set
+            {
+                Type t = value.GetType ();
+                if (!SupportedTypes.ToList ().Contains (t))
+                {
+                    throw new Exception ();
+                }
+
+                defaultType = t;
+                defaultValue = value;
+            }
+        }
     }
 

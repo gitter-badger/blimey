@@ -17,82 +17,36 @@
         {
             using (Stream stream = this.systemManager.GetAssetStream (assetId))
             {
-                using (var br = new BinaryReader (stream))
+                using (var channel = 
+                    new SerialisationChannel
+                    <BinaryPrimitiveReader, BinaryPrimitiveWriter> 
+                    (SerialiserDatabase.Instance, stream, SerialisationChannelMode.Read)) 
                 {
-                    ProcessFileHeader (br);
-                    List<Type> requiredSerialisers = 
-                        ProcessMeta (br);
-
-                    var tsdb = new SerialiserDatabase ();
-
-                    foreach (Type typeSerialiserType in requiredSerialisers)
-                    {
-                        tsdb.RegisterSerialiser (typeSerialiserType);
-                    }
-
-                    T asset = Activator.CreateInstance (typeof (T)) as T;
-
-                    asset.Serialise (br, tsdb);
+                    ProcessFileHeader (channel);
+                    T asset = channel.Read <T> ();
                     return asset;
                 }
             }
         }
 
-        void ProcessFileHeader (BinaryReader br)
+        void ProcessFileHeader (ISerialisationChannel sc)
         {
-            var tsdb = new SerialiserDatabase ();
-
-            tsdb.RegisterSerialiser<Byte, ByteSerialiser>();
-
             // file type
-            Byte f0 = tsdb.GetSerialiser <Byte> ().Read (br);
-            Byte f1 = tsdb.GetSerialiser <Byte> ().Read (br);
-            Byte f2 = tsdb.GetSerialiser <Byte> ().Read (br);
+            Byte f0 = sc.Read <Byte> ();
+            Byte f1 = sc.Read <Byte> ();
+            Byte f2 = sc.Read <Byte> ();
 
             if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'A')
                 throw new Exception ("Asset file doesn't have the correct header.");
 
             // file version
-            Byte fileVersion = tsdb.GetSerialiser <Byte> ().Read (br);
+            Byte fileVersion = sc.Read <Byte> ();
 
             if (fileVersion != 0)
                 throw new Exception ("Only file format version 0 is supported.");
 
             // platform index
-            Byte platformIndex = tsdb.GetSerialiser <Byte> ().Read (br);
-        }
-
-        List<Type> ProcessMeta (BinaryReader br)
-        {
-            var result = new List<Type> ();
-            var tsdb = new SerialiserDatabase ();
-            tsdb.RegisterSerialiser<Byte, ByteSerialiser>();
-            tsdb.RegisterSerialiser<String, StringSerialiser>();
-
-            Byte numRequiredSerialisers =
-                tsdb.GetSerialiser <Byte> ().Read (br);
-
-            for (Byte i = 0; i < numRequiredSerialisers; ++i)
-            {
-                // Fully qualified  type serialiser name
-                String typeSerialiserName =
-                    tsdb.GetSerialiser <String> ().Read (br);
-
-                Type t = Type.GetType (typeSerialiserName);
-
-                if (t == null)
-                    throw new Exception ("Type not found:" + typeSerialiserName);
-
-                // Type serialiser version
-                Byte version = tsdb.GetSerialiser <Byte> ().Read (br);
-
-                if (version != 0)
-                    throw new NotImplementedException ();
-
-                result.Add (t);
-            }
-
-            return result;
+            Byte platformIndex = sc.Read <Byte> ();
         }
     }
 

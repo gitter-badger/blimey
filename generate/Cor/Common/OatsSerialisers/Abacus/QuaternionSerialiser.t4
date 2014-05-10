@@ -1,0 +1,22 @@
+    public class QuaternionSerialiser
+        : Serialiser<Quaternion>
+    {
+        public override Quaternion Read(ISerialisationChannel ss)
+        {
+            Single i = ss.Read <Single> ();
+            Single j = ss.Read <Single> ();
+            Single k = ss.Read <Single> ();
+            Single u = ss.Read <Single> ();
+
+            return new Quaternion(i, j, k, u);
+        }
+
+        public override void Write(ISerialisationChannel ss, Quaternion obj)
+        {
+            ss.Write <Single> (obj.I);
+            ss.Write <Single> (obj.J);
+            ss.Write <Single> (obj.K);
+            ss.Write <Single> (obj.U);
+        }
+    }
+

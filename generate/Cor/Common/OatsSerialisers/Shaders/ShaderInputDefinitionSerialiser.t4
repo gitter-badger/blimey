@@ -1,0 +1,62 @@
+    public class ShaderInputDefinitionSerialiser
+        : Serialiser<ShaderInputDefinition>
+    {
+        public override ShaderInputDefinition Read (ISerialisationChannel ss)
+        {
+            var sid = new ShaderInputDefinition ();
+
+            // Name
+            sid.Name = ss.Read <String> ();
+
+            // Nice Name
+            sid.NiceName = ss.Read <String> ();
+
+            // Optional
+            sid.Optional = ss.Read <Boolean> ();
+
+            // Usage
+            sid.Usage = ss.Read <VertexElementUsage> ();
+
+            // Null
+            if (ss.Read <Boolean> ())
+            {
+                // Default Value
+                Byte typeIndex = ss.Read <Byte> ();
+                Type defaultValueType = ShaderInputDefinition.SupportedTypes [typeIndex];
+                sid.DefaultValue = ss.ReadReflective (defaultValueType);
+            }
+
+            return sid;
+        }
+
+        public override void Write (ISerialisationChannel ss, ShaderInputDefinition sid)
+        {
+            // Name
+            ss.Write <String> (sid.Name);
+
+            // Nice Name
+            ss.Write <String> (sid.NiceName);
+
+            // Optional
+            ss.Write <Boolean> (sid.Optional);
+
+            // Usage
+            ss.Write <VertexElementUsage> (sid.Usage);
+
+            // Null
+            ss.Write <Boolean> (sid.DefaultValue != null);
+
+            // Default Value
+            if (sid.DefaultValue != null)
+            {
+                Type defaultValueType = sid.DefaultValue.GetType ();
+                Byte typeIndex = (Byte)
+                ShaderInputDefinition.SupportedTypes
+                    .ToList ()
+                    .IndexOf (defaultValueType);
+
+                ss.Write<Byte> (typeIndex);
+                ss.WriteReflective (defaultValueType, sid.DefaultValue);
+            }
+        }
+    }

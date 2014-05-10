@@ -1,0 +1,17 @@
+    public class Vector2Serialiser
+        : Serialiser<Vector2>
+    {
+        public override Vector2 Read(ISerialisationChannel ss)
+        {
+            Single x = ss.Read <Single> ();
+            Single y = ss.Read <Single> ();
+
+            return new Vector2(x, y);
+        }
+
+        public override void Write(ISerialisationChannel ss, Vector2 obj)
+        {
+            ss.Write <Single> (obj.X);
+            ss.Write <Single> (obj.Y);
+        }
+    }

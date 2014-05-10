@@ -9,22 +9,5 @@
             /// been instantiated.
             /// </summary>
             String Id { get; }
-
-            /// <summary>
-            /// Defines Which Serialisers does this asset require to
-            /// serialise itself to and from a binary stream.
-            /// </summary>
-            List <Type> RequiredSerialisers ();
-
-            /// <summary>
-            /// Reads this asset from a binary stream.
-            /// </summary>
-            void Serialise (BinaryReader br, SerialiserDatabase tsdb);
-
-
-            /// <summary>
-            /// Writes this asset to a binary stream.
-            /// </summary>
-            void Serialise (BinaryWriter bw, SerialiserDatabase tsdb);
         }
 

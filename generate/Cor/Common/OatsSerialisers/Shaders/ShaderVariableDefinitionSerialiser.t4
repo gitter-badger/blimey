@@ -1,0 +1,50 @@
+    public class ShaderVariableDefinitionSerialiser
+        : Serialiser<ShaderVariableDefinition>
+    {
+        public override ShaderVariableDefinition Read (ISerialisationChannel ss)
+        {
+            var svd = new ShaderVariableDefinition ();
+
+            // Name
+            svd.Name = ss.Read <String> ();
+
+            // Nice Name
+            svd.NiceName = ss.Read <String> ();
+            
+            // Null
+            if (ss.Read <Boolean> ())
+            {
+                Byte typeIndex = ss.Read <Byte> ();
+                Type defaultValueType = ShaderVariableDefinition.SupportedTypes [typeIndex];
+                svd.DefaultValue = ss.ReadReflective (defaultValueType);
+            }
+
+            return svd;
+        }
+
+        public override void Write (ISerialisationChannel ss, ShaderVariableDefinition svd)
+        {
+            // Name
+            ss.Write <String> (svd.Name);
+
+            // Nice Name
+            ss.Write <String> (svd.NiceName);
+
+            // Null
+            ss.Write <Boolean> (svd.DefaultValue != null);
+
+            // Default Value
+            if (svd.DefaultValue != null)
+            {
+                Type defaultValueType = svd.DefaultValue.GetType ();
+                Byte typeIndex = (Byte) 
+                    ShaderVariableDefinition.SupportedTypes
+                    .ToList ()
+                    .IndexOf (defaultValueType);
+
+                ss.Write<Byte> (typeIndex);
+                ss.WriteReflective (defaultValueType, svd.DefaultValue);
+            }
+        }
+    }
+

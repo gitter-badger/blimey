@@ -1,0 +1,13 @@
+    public abstract class Asset
+        : IAsset
+    {
+        String id;
+
+        public Asset ()
+        {
+            id = new Guid ().ToString ();
+        }
+
+        public String Id { get { return id; } }
+    }
+

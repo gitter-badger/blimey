@@ -47,6 +47,8 @@ using Abacus.Packed;
 using Abacus.SinglePrecision;
 using Abacus.Int32Precision;
 
+using Oats;
+
 namespace Cor
 {
     /// <summary>
@@ -1176,66 +1178,31 @@ namespace Cor
 
     #region Assets
 
+    public abstract class Asset
+        : IAsset
+    {
+        String id;
+
+        public Asset ()
+        {
+            id = new Guid ().ToString ();
+        }
+
+        public String Id { get { return id; } }
+    }
+
         public sealed class ColourmapAsset
-            : IAsset
+            : Asset
         {
             public Rgba32[,] Data { get; set; }
 
             public Int32 Width { get { return Data.GetLength (0); } }
 
             public Int32 Height { get { return Data.GetLength (1); } }
-
-            #region IAsset
-
-            public String Id { get { return null; } }
-
-            public List <Type> RequiredSerialisers ()
-            {
-                return new List <Type> ()
-                {
-                    typeof (Int32Serialiser),
-                    typeof (Rgba32Serialiser)
-                };
-            }
-
-            public void Serialise (BinaryReader br, SerialiserDatabase tsdb)
-            {
-                Int32 width = tsdb.GetSerialiser <Int32> ().Read (br);
-                Int32 height = tsdb.GetSerialiser <Int32> ().Read (br);
-
-                this.Data = new Rgba32[width, height];
-
-                for (Int32 i = 0; i < width; ++i)
-                {
-                    for (Int32 j = 0; j < height; ++j)
-                    {
-                        this.Data[i, j] = 
-                            tsdb.GetSerialiser <Rgba32> ()
-                                .Read (br);
-                    }
-                }
-            }
-
-            public void Serialise (BinaryWriter bw, SerialiserDatabase tsdb)
-            {
-                tsdb.GetSerialiser <Int32> ().Write (bw, this.Width);
-                tsdb.GetSerialiser <Int32> ().Write (bw, this.Height);
-
-                for (Int32 i = 0; i < this.Width; ++i)
-                {
-                    for (Int32 j = 0; j < this.Height; ++j)
-                    {
-                        tsdb.GetSerialiser <Rgba32> ()
-                            .Write (bw, this.Data[i, j]);
-                    }
-                }
-            }
-
-            #endregion
         }
 
         public sealed class ShaderAsset
-            : IAsset
+            : Asset
         {
             // Platform agnostic definition
             public ShaderDefinition Definition { get; set; }
@@ -1243,77 +1210,16 @@ namespace Cor
             // Platform specific binary content.
             // This contains compiled shaders.
             public Byte[] Data { get; set; }
-
-            #region IAsset
-
-            public String Id { get { return null; } }
-
-            public List <Type> RequiredSerialisers ()
-            {
-                return new List <Type> () 
-                { 
-                    typeof (StringSerialiser),
-                    typeof (Int32Serialiser),
-                    typeof (BooleanSerialiser),
-                    typeof (ObjectSerialiser),
-                    typeof (EnumSerialiser<VertexElementUsage>),
-                    typeof (ShaderInputDefinitionSerialiser),
-                    typeof (ShaderSamplerDefinitionSerialiser),
-                    typeof (ShaderVariableDefinitionSerialiser),
-                    typeof (ListSerialiser<String>),
-                    typeof (ListSerialiser<ShaderInputDefinition>),
-                    typeof (ListSerialiser<ShaderSamplerDefinition>),
-                    typeof (ListSerialiser<ShaderVariableDefinition>),
-                    typeof (ShaderDefinitionSerialiser),
-                    typeof (ByteSerialiser),
-                    typeof (ArraySerialiser<Byte>)
-                };
-            }
-
-            public void Serialise (BinaryReader br, SerialiserDatabase tsdb)
-            {
-                this.Definition = tsdb.GetSerialiser <ShaderDefinition> ().Read (br);
-                this.Data = tsdb.GetSerialiser <Byte []> ().Read (br);
-            }
-
-            public void Serialise (BinaryWriter bw, SerialiserDatabase tsdb)
-            {
-                tsdb.GetSerialiser <ShaderDefinition> ().Write (bw, this.Definition);
-                tsdb.GetSerialiser <Byte[]> ().Write (bw, this.Data);
-            }
-
-            #endregion
         }
 
         public sealed class TextAsset
-            : IAsset
+            : Asset
         {
             public String Text { get; set; }
-
-            #region IAsset
-
-            public String Id { get { return null; } }
-
-            public List <Type> RequiredSerialisers ()
-            {
-                return new List<Type> () { typeof (StringSerialiser) };
-            }
-
-            public void Serialise (BinaryReader br, SerialiserDatabase tsdb)
-            {
-                this.Text = tsdb.GetSerialiser <String> ().Read (br);
-            }
-
-            public void Serialise (BinaryWriter bw, SerialiserDatabase tsdb)
-            {
-                tsdb.GetSerialiser <String> ().Write (bw, this.Text);
-            }
-
-            #endregion
         }
 
         public sealed class TextureAsset
-            : IAsset
+            : Asset
         {
             public SurfaceFormat SurfaceFormat { get; set; }
 
@@ -1327,50 +1233,6 @@ namespace Cor
             // public Byte[,] Mipmaps { get; set; }
 
             // public Int32 MipmapCount { get { return Data.GetLength (0); } }
-
-            #region IAsset
-
-            public String Id { get { return null; } }
-
-            public List <Type> RequiredSerialisers ()
-            {
-                return new List <Type> ()
-                {
-                    typeof (Int32Serialiser),
-                    typeof (ByteSerialiser),
-                    typeof (EnumSerialiser<SurfaceFormat>)
-                };
-            }
-
-            public void Serialise (BinaryReader br, SerialiserDatabase tsdb)
-            {
-                this.SurfaceFormat = tsdb.GetSerialiser <SurfaceFormat> ().Read (br);
-                this.Width = tsdb.GetSerialiser <Int32> ().Read (br);
-                this.Height = tsdb.GetSerialiser <Int32> ().Read (br);
-                Int32 byteCount = tsdb.GetSerialiser <Int32> ().Read (br);
-
-                this.Data = new Byte[byteCount];
-
-                for (Int32 i = 0; i < byteCount; ++i)
-                {
-                    this.Data[i] = tsdb.GetSerialiser <Byte> ().Read (br);
-                }
-            }
-
-            public void Serialise (BinaryWriter bw, SerialiserDatabase tsdb)
-            {
-                tsdb.GetSerialiser <SurfaceFormat> ().Write (bw, this.SurfaceFormat);
-                tsdb.GetSerialiser <Int32> ().Write (bw, this.Width);
-                tsdb.GetSerialiser <Int32> ().Write (bw, this.Height);
-                tsdb.GetSerialiser <Int32> ().Write (bw, this.Data.Length);
-
-                for (Int32 i = 0; i < this.Data.Length; ++i)
-                {
-                    tsdb.GetSerialiser <Byte> ().Write (bw, this.Data[i]);
-                }
-            }
-
-            #endregion
         }
 
     #endregion
@@ -1388,23 +1250,6 @@ namespace Cor
             /// been instantiated.
             /// </summary>
             String Id { get; }
-
-            /// <summary>
-            /// Defines Which Serialisers does this asset require to
-            /// serialise itself to and from a binary stream.
-            /// </summary>
-            List <Type> RequiredSerialisers ();
-
-            /// <summary>
-            /// Reads this asset from a binary stream.
-            /// </summary>
-            void Serialise (BinaryReader br, SerialiserDatabase tsdb);
-
-
-            /// <summary>
-            /// Writes this asset to a binary stream.
-            /// </summary>
-            void Serialise (BinaryWriter bw, SerialiserDatabase tsdb);
         }
 
     #endregion
@@ -2378,55 +2223,6 @@ namespace Cor
 
     #endregion
 
-    #region Serialisers
-
-    public abstract class Serialiser
-    {
-        readonly Type targetType;
-
-        public virtual void Initialise (SerialiserDatabase manager) {}
-        
-        public Type TargetType
-        {
-            get { return this.targetType; }
-        }
-
-        protected Serialiser(Type targetType)
-        {
-            this.targetType = targetType;
-        }
-
-        public abstract Object ReadObject (BinaryReader abr);
-
-        public abstract void WriteObject (BinaryWriter abw, Object obj);
-    }
-
-    public abstract class Serialiser<T>
-        : Serialiser
-    {
-        protected Serialiser()
-            : base(typeof(T))
-        {
-
-        }
-
-        public override Object ReadObject (BinaryReader abr)
-        {
-            return this.Read (abr);
-        }
-
-        public override void WriteObject (BinaryWriter abw, Object obj)
-        {
-            this.Write (abw, (T) obj);
-        }
-
-        public abstract T Read (BinaryReader abr);
-
-        public abstract void Write (BinaryWriter abw, T obj);
-    }
-
-    #endregion
-
     #region Shaders
 
     /// <summary>
@@ -2468,6 +2264,33 @@ namespace Cor
     public sealed class ShaderInputDefinition
     {
         String niceName;
+        Type defaultType;
+        Object defaultValue;
+
+        public ShaderInputDefinition ()
+        {
+            this.Name = String.Empty;
+        }
+
+        // Defines which Cor! Types the DefaultValue can be set to.
+        // The order of this list is important as the Cor Serialisation
+        // of this class depends upon indexing into it.
+        public static Type [] SupportedTypes
+        { 
+            get
+            {
+                return new [] 
+                {
+                    typeof (Matrix44),
+                    typeof (Int32),
+                    typeof (Single),
+                    typeof (Abacus.SinglePrecision.Vector2),
+                    typeof (Abacus.SinglePrecision.Vector3),
+                    typeof (Abacus.SinglePrecision.Vector4),
+                    typeof (Rgba32)
+                };
+            }
+        }
 
         public String NiceName
         {
@@ -2476,15 +2299,40 @@ namespace Cor
         }
         
         public String Name { get; set; }
-        public Type Type { get; set; }
+
         public VertexElementUsage Usage { get; set; }
-        public Object DefaultValue { get; set; }
+
+        public Type Type
+        {
+            get { return defaultType; }
+        }
+        public Object DefaultValue
+        {
+            get { return defaultValue; }
+            set
+            {
+                Type t = value.GetType ();
+                if (!SupportedTypes.ToList ().Contains (t))
+                {
+                    throw new Exception ();
+                }
+
+                defaultType = t;
+                defaultValue = value;
+            }
+        }
+
         public Boolean Optional { get; set; }
     }
 
     public sealed class ShaderSamplerDefinition
     {
         String niceName;
+
+        public ShaderSamplerDefinition ()
+        {
+            this.Name = String.Empty;
+        }
 
         public String NiceName
         {
@@ -2499,6 +2347,33 @@ namespace Cor
     public sealed class ShaderVariableDefinition
     {
         String niceName;
+        Type defaultType;
+        Object defaultValue;
+
+        public ShaderVariableDefinition ()
+        {
+            this.Name = String.Empty;
+        }
+
+        // Defines which Cor! Types the DefaultValue can be set to.
+        // The order of this list is important as the Cor Serialisation
+        // of this class depends upon indexing into it.
+        public static Type [] SupportedTypes
+        { 
+            get
+            {
+                return new [] 
+                {
+                    typeof (Matrix44),
+                    typeof (Int32),
+                    typeof (Single),
+                    typeof (Abacus.SinglePrecision.Vector2),
+                    typeof (Abacus.SinglePrecision.Vector3),
+                    typeof (Abacus.SinglePrecision.Vector4),
+                    typeof (Rgba32)
+                };
+            }
+        }
 
         public String NiceName
         {
@@ -2507,792 +2382,58 @@ namespace Cor
         }
         
         public String Name { get; set; }
-        public Type Type { get; set; }
-        public Object DefaultValue { get; set; }
-    }
 
-    #endregion
-
-    #region Primitive Types
-
-    public class Int64Serialiser
-        : Serialiser<Int64>
-    {
-        internal Int64Serialiser () {}
-
-        public override Int64 Read(BinaryReader abr)
+        public Type Type
         {
-            return abr.ReadInt64 ();
+            get { return defaultType; }
         }
-
-        public override void Write(BinaryWriter abw, Int64 obj)
+        public Object DefaultValue
         {
-            abw.Write(obj);
-        }
-    }
+            get { return defaultValue; }
+            set
+            {
+                Type t = value.GetType ();
+                if (!SupportedTypes.ToList ().Contains (t))
+                {
+                    throw new Exception ();
+                }
 
-    public class BooleanSerialiser
-        : Serialiser<Boolean>
-    {
-        public BooleanSerialiser () {}
-
-        public override Boolean Read(BinaryReader abr)
-        {
-            return abr.ReadBoolean ();
-        }
-
-        public override void Write(BinaryWriter abw, Boolean obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    public class ByteSerialiser
-        : Serialiser<Byte>
-    {
-        public ByteSerialiser () {}
-
-        public override Byte Read(BinaryReader abr)
-        {
-            return abr.ReadByte ();
-        }
-
-        public override void Write(BinaryWriter abw, Byte obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    public class CharSerialiser
-        : Serialiser<Char>
-    {
-        public CharSerialiser () {}
-
-        public override Char Read(BinaryReader abr)
-        {
-            return abr.ReadChar ();
-        }
-
-        public override void Write(BinaryWriter abw, Char obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    public class DoubleSerialiser
-        : Serialiser<Double>
-    {
-        public DoubleSerialiser () {}
-
-        public override Double Read(BinaryReader abr)
-        {
-            return abr.ReadDouble ();
-        }
-
-        public override void Write(BinaryWriter abw, Double obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    public class Int16Serialiser
-        : Serialiser<Int16>
-    {
-        public Int16Serialiser () {}
-
-        public override Int16 Read(BinaryReader abr)
-        {
-            return abr.ReadInt16 ();
-        }
-
-        public override void Write(BinaryWriter abw, Int16 obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    public class Int32Serialiser
-        : Serialiser<Int32>
-    {
-        public Int32Serialiser () {}
-
-        public override Int32 Read(BinaryReader abr)
-        {
-            return abr.ReadInt32 ();
-        }
-
-        public override void Write(BinaryWriter abw, Int32 obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    public class SByteSerialiser
-        : Serialiser<SByte>
-    {
-        public SByteSerialiser () {}
-
-        public override SByte Read(BinaryReader abr)
-        {
-            return abr.ReadSByte ();
-        }
-
-        public override void Write(BinaryWriter abw, SByte obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    public class SingleSerialiser
-        : Serialiser<Single>
-    {
-        public SingleSerialiser () {}
-
-        public override Single Read(BinaryReader abr)
-        {
-            return abr.ReadSingle ();
-        }
-
-        public override void Write(BinaryWriter abw, Single obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    public class UInt16Serialiser
-        : Serialiser<UInt16>
-    {
-        public UInt16Serialiser () {}
-
-        public override UInt16 Read(BinaryReader abr)
-        {
-            return abr.ReadUInt16 ();
-        }
-
-        public override void Write(BinaryWriter abw, UInt16 obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    public class UInt32Serialiser
-        : Serialiser<UInt32>
-    {
-        public UInt32Serialiser () {}
-
-        public override UInt32 Read(BinaryReader abr)
-        {
-            return abr.ReadUInt32 ();
-        }
-
-        public override void Write(BinaryWriter abw, UInt32 obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    public class UInt64Serialiser
-        : Serialiser<UInt64>
-    {
-        public UInt64Serialiser () {}
-
-        public override UInt64 Read(BinaryReader cbr)
-        {
-            return cbr.ReadUInt64 ();
-        }
-
-        public override void Write(BinaryWriter abw, UInt64 obj)
-        {
-            abw.Write(obj);
+                defaultType = t;
+                defaultValue = value;
+            }
         }
     }
 
     #endregion
 
-    #region System Types
-
-    public class StringSerialiser
-        : Serialiser<String>
-    {
-        public StringSerialiser () {}
-
-        public override String Read(BinaryReader abr)
-        {
-            return abr.ReadString ();
-        }
-
-        public override void Write(BinaryWriter abw, String obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    public class DecimalSerialiser
-        : Serialiser<Decimal>
-    {
-        public DecimalSerialiser () {}
-
-        public override Decimal Read(BinaryReader abr)
-        {
-            return abr.ReadDecimal ();
-        }
-
-        public override void Write(BinaryWriter abw, Decimal obj)
-        {
-            abw.Write(obj);
-        }
-    }
-
-    public class TimeSpanSerialiser
-        : Serialiser<TimeSpan>
-    {
-        public TimeSpanSerialiser () {}
-
-        public override TimeSpan Read(BinaryReader abr)
-        {
-            Int64 ticks = abr.ReadInt64 ();
-
-            return new TimeSpan(ticks);
-        }
-
-        public override void Write(BinaryWriter abw, TimeSpan obj)
-        {
-            abw.Write(obj.Ticks);
-        }
-    }
-
-    // test reading lists containing different items from a chain of inheritance.
-    public class ListSerialiser<T>
-        : Serialiser<List<T>>
-    {
-        Serialiser<T> elementSerialiser;
-
-        SerialiserDatabase manager;
-
-        public ListSerialiser () {}
-
-        public override void Initialise (SerialiserDatabase manager)
-        {
-            this.manager = manager;
-            elementSerialiser = manager.GetSerialiser<T> ();
-        }
-
-        public override List<T> Read(BinaryReader abr)
-        {
-            UInt32 count = abr.ReadUInt32 ();
-
-            var list = new List<T> ();
-
-            Type objectType = typeof(T);
-
-            if (objectType.IsValueType)
-            {
-                for (Int32 i = 0; i < count; ++i)
-                {
-                    // no inheritance for structs
-                    T item = elementSerialiser.Read (abr);
-                    list.Add(item);
-                }
-            }
-            else
-            {
-                for (Int32 i = 0; i < count; ++i)
-                {
-                    // Get the id of the type reader for this element,
-                    // as this element might not be of Type T, it might be
-                    // polymorphic.
-                    String virtualObjectTypeString = abr.ReadString();
-
-                    if (!String.IsNullOrEmpty(virtualObjectTypeString))
-                    {
-                        Type virtualObjectType = Type.GetType (virtualObjectTypeString); 
-
-                        if (virtualObjectType != null)
-                        {
-                            // Locate the correct serialiser for this element.
-                            Serialiser virtualElementSerialiser =
-                                this.manager.GetSerialiser(virtualObjectType);
-
-                            //
-                            Object item = virtualElementSerialiser.ReadObject (abr);
-
-                            // add to list then move on
-                            list.Add((T) item);
-
-                            continue;
-                        }
-                    }
-
-                    //otherwise
-                    // the element is null
-                    list.Add(default(T));
-                }
-            }
-
-            return list;
-        }
-
-        public override void Write(BinaryWriter abw, List<T> obj)
-        {
-            // Write the item count.
-            abw.Write ( (UInt32) obj.Count);
-
-            Type objectType = typeof(T);
-
-            if (objectType.IsValueType)
-            {
-                for (Int32 i = 0; i < obj.Count; ++i)
-                {
-                    // no inheritance for structs
-                    elementSerialiser.Write (abw, obj[i]);
-                }
-            }
-            else
-            {
-                for (Int32 i = 0; i < obj.Count; ++i)
-                {
-                    // no inheritance for structs
-                    var elem = obj[i];
-
-                    if (elem == null)
-                    {
-                        abw.Write ("");
-                    }
-                    else
-                    {
-                        Type t = elem.GetType ();
-
-                        abw.Write ((String) t.ToString ());
-
-                        Serialiser virtualElementSerialiser =
-                            this.manager.GetSerialiser(t);
-
-                        virtualElementSerialiser.WriteObject (abw, elem);
-                    }
-                }
-            }
-        }
-    }
-
-    public class NullableSerialiser<T>
-        : Serialiser<T?>
-    where T
-        : struct
-    {
-        Serialiser<T> valueSerialiser;
-
-        public NullableSerialiser () {}
-
-        public override void Initialise (SerialiserDatabase manager)
-        {
-            valueSerialiser = manager.GetSerialiser<T>();
-        }
-
-        public override T? Read(BinaryReader abr)
-        {
-            if(abr.ReadBoolean())
-            {
-                return valueSerialiser.Read (abr);
-            }
-
-            return null;
-        }
-
-        public override void Write(BinaryWriter abw, T? obj)
-        {
-            if( obj.HasValue )
-            {
-                abw.Write(true);
-                valueSerialiser.Write(abw, obj.Value);
-            }
-            else
-            {
-                abw.Write(false);
-            }
-        }
-    }
-
-    // EnumSerialiser<T>
-    // test
-    // enum Foo : long { One, Two };
-    // enum Bar : byte { x = 255 };
-    public class EnumSerialiser<T>
-        : Serialiser<T>
-    {
-        Serialiser underlyingSerialiser;
-
-        public EnumSerialiser () {}
-
-        public override void Initialise(SerialiserDatabase manager)
-        {
-            // can we not get this at compile time? -_-
-            // lets stick with Int32 for now
-            Type readerType = Enum.GetUnderlyingType(typeof(T));
-
-            underlyingSerialiser = manager.GetSerialiser(readerType);
-        }
-
-        public override T Read(BinaryReader abr)
-        {
-            Object underlyingValue = underlyingSerialiser.ReadObject(abr);
-
-            return (T) underlyingValue;
-        }
-
-        public override void Write(BinaryWriter abw, T obj)
-        {
-            underlyingSerialiser.WriteObject (abw, obj);
-        }
-    }
-
-    public class ArraySerialiser<T>
-        : Serialiser<T[]>
-    {
-        Serialiser<T> elementSerialiser;
-
-        SerialiserDatabase manager;
-
-        public ArraySerialiser () {}
-
-        public override void Initialise(SerialiserDatabase manager)
-        {
-            this.manager = manager;
-            elementSerialiser = manager.GetSerialiser<T>();
-        }
-
-        public override T[] Read (BinaryReader abr)
-        {
-            UInt32 count = abr.ReadUInt32 ();
-
-            var array = new T[count];
-
-            Type objectType = typeof(T);
-
-            if (objectType.IsValueType)
-            {
-                for (UInt32 i = 0; i < count; ++i)
-                {
-                    array [i] = elementSerialiser.Read (abr);
-                }
-            }
-            else
-            {
-                for (UInt32 i = 0; i < count; ++i)
-                {
-                    // Get the id of the type reader for this element,
-                    // as this element might not be of Type T, it might be
-                    // polymorphic.
-                    String virtualObjectTypeString = abr.ReadString();
-
-                    Int32 objectSerialiserId = abr.Read7BitEncodedInt32 ();
-
-                    if (!String.IsNullOrEmpty(virtualObjectTypeString))
-                    {
-                        Type virtualObjectType = Type.GetType (virtualObjectTypeString); 
-
-                        if (virtualObjectType != null)
-                        {
-                            // Locate the correct serialiser for this element.
-                            Serialiser virtualElementSerialiser =
-                                this.manager.GetSerialiser (virtualObjectType);
-
-                            //
-                            Object item = virtualElementSerialiser.ReadObject (abr);
-
-                            // add to array then move on
-                            array [i] = (T)item;
-
-                            continue;
-                        }
-                    }
-                        // the element is null
-                    array [i] = default(T);
-                }
-            }
-
-            return array;
-        }
-
-        public override void Write(BinaryWriter abw, T[] obj)
-        {
-            // Write the item count.
-            abw.Write ( (UInt32) obj.Length);
-
-            Type objectType = typeof(T);
-
-            if (objectType.IsValueType)
-            {
-                for (Int32 i = 0; i < obj.Length; ++i)
-                {
-                    // no inheritance for structs
-                    elementSerialiser.Write (abw, obj[i]);
-                }
-            }
-            else
-            {
-                for (Int32 i = 0; i < obj.Length; ++i)
-                {
-                    // no inheritance for structs
-                    var elem = obj[i];
-
-                    if (elem == null)
-                    {
-                        abw.Write ("");
-                    }
-                    else
-                    {
-                        Type t = elem.GetType ();
-
-                        abw.Write ((String) t.ToString ());
-
-                        Serialiser virtualElementSerialiser =
-                            this.manager.GetSerialiser(t);
-
-                        virtualElementSerialiser.WriteObject (abw, elem);
-                    }
-                }
-            }
-        }
-    }
-
-    public class DictionarySerialiser<TKey, TValue>
-        : Serialiser<Dictionary<TKey, TValue>>
-    {
-        Serialiser<TKey> keySerialiser;
-        Serialiser<TValue> valueSerialiser;
-
-        SerialiserDatabase manager;
-
-        public DictionarySerialiser () {}
-
-        public override void Initialise(SerialiserDatabase manager)
-        {
-            this.manager = manager;
-            keySerialiser = manager.GetSerialiser<TKey>();
-            valueSerialiser = manager.GetSerialiser<TValue>();
-        }
-
-        public override Dictionary<TKey, TValue> Read(BinaryReader abr)
-        {
-            throw new NotImplementedException ();
-            /*
-            UInt32 count = abr.ReadUInt32();
-
-            var dictionary = new Dictionary<TKey, TValue>();
-
-            Type keyType = typeof(TKey);
-            Type valueType = typeof(TValue);
-
-            for (UInt32 i = 0; i < count; ++i)
-            {
-                TKey key;
-                TValue value;
-
-                if (keyType.IsValueType)
-                {
-                    key = keySerialiser.Read(abr);
-                }
-                else
-                {
-                    // Get the id of the type reader for this element,
-                    // as this element might not be of Type T, it might be
-                    // polymorphic.
-                    Int32 keySerialiserId = abr.Read7BitEncodedInt32 ();
-
-                    if (keySerialiserId > 0)
-                    {
-                        // Locate the correct serialiser for this element.
-                        Serialiser virtualElementSerialiser =
-                            this.manager.GetSerialiserFromId (keySerialiserId);
-
-                        //
-                        Object item = virtualElementSerialiser.ReadObject (abr);
-
-                        // add to array then move on
-                        key = (TKey)item;
-                    }
-                    else
-                    {
-                        // the element is null
-                        key = default(TKey);
-                    }
-                }
-
-                if (valueType.IsValueType)
-                {
-                    value = valueSerialiser.Read(abr);
-                }
-                else
-                {
-                    // Get the id of the type reader for this element,
-                    // as this element might not be of Type T, it might be
-                    // polymorphic.
-                    Int32 valueSerialiserId = abr.Read7BitEncodedInt32 ();
-
-                    if (valueSerialiserId > 0)
-                    {
-                        // Locate the correct serialiser for this element.
-                        Serialiser virtualElementSerialiser =
-                            this.manager.GetSerialiserFromId (valueSerialiserId);
-
-                        //
-                        Object item = virtualElementSerialiser.ReadObject (abr);
-
-                        // add to array then move on
-                        value = (TValue)item;
-                    }
-                    else
-                    {
-                        // the element is null
-                        value = default(TValue);
-                    }
-                }
-
-                dictionary.Add(key, value);
-            }
-
-            return dictionary;
-            */
-        }
-
-        public override void Write(BinaryWriter abw, Dictionary<TKey, TValue> obj)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class TypeSerialiser
-        : Serialiser<Type>
-    {
-        public TypeSerialiser () {}
-
-        public override Type Read(BinaryReader abr)
-        {
-            return Type.GetType (abr.ReadString ());
-        }
-
-        public override void Write(BinaryWriter abw, Type obj)
-        {
-            abw.Write(obj.ToString ());
-        }
-    }
-
-    public class ObjectSerialiser
-        : Serialiser<Object>
-    {
-        SerialiserDatabase manager;
-
-        public ObjectSerialiser () {}
-
-        public override void Initialise (SerialiserDatabase manager)
-        {
-            this.manager = manager;
-        }
-
-        public override Object Read(BinaryReader abr)
-        {
-            String virtualObjectTypeString = abr.ReadString();
-
-            Type virtualObjectType = Type.GetType (virtualObjectTypeString);
-
-            // Locate the correct serialiser for this element.
-            Serialiser virtualElementSerialiser =
-                this.manager.GetSerialiser(virtualObjectType);
-
-            if (!virtualObjectType.IsValueType)
-            {
-                Boolean hasValue = abr.ReadBoolean ();
-
-                if (!hasValue)
-                {
-                    return null;
-                }
-            }
-
-            Object item = virtualElementSerialiser.ReadObject (abr);
-
-            return item;
-        }
-
-        public override void Write(BinaryWriter abw, Object obj)
-        {
-            Type t = obj.GetType ();
-
-            Serialiser virtualElementSerialiser =
-                this.manager.GetSerialiser(t);
-
-            // Alway write the string as we don't know what type this is.
-            abw.Write ((String) t.ToString ());
-
-
-            if (!t.IsValueType)
-            {
-                if (obj == null)
-                {
-                    // if false the value is null
-                    abw.Write ((Boolean) false);
-                    return;
-                }
-            }
-
-            virtualElementSerialiser.WriteObject (abw, obj);
-        }
-    }
-
-    #endregion
+    #region Serialisers
 
     #region Abacus Types
 
-    public class Rgba32Serialiser
-        : Serialiser<Rgba32>
-    {
-        public Rgba32Serialiser () {}
-
-        public override Rgba32 Read(BinaryReader abr)
-        {
-            Byte r = abr.ReadByte();
-            Byte g = abr.ReadByte();
-            Byte b = abr.ReadByte();
-            Byte a = abr.ReadByte();
-
-            return new Rgba32(r, g, b, a);
-        }
-
-        public override void Write(BinaryWriter abw, Rgba32 obj)
-        {
-            abw.Write(obj.R);
-            abw.Write(obj.G);
-            abw.Write(obj.B);
-            abw.Write(obj.A);
-        }
-    }
-
     public class Matrix44Serialiser
-        : Serialiser<Matrix44>
+        : Serialiser <Matrix44>
     {
-        public Matrix44Serialiser () {}
-
-        public override Matrix44 Read(BinaryReader abr)
+        public override Matrix44 Read (ISerialisationChannel ss)
         {
-            Single m11 = abr.ReadSingle();
-            Single m12 = abr.ReadSingle();
-            Single m13 = abr.ReadSingle();
-            Single m14 = abr.ReadSingle();
+            Single m11 = ss.Read <Single> ();
+            Single m12 = ss.Read <Single> ();
+            Single m13 = ss.Read <Single> ();
+            Single m14 = ss.Read <Single> ();
 
-            Single m21 = abr.ReadSingle();
-            Single m22 = abr.ReadSingle();
-            Single m23 = abr.ReadSingle();
-            Single m24 = abr.ReadSingle();
+            Single m21 = ss.Read <Single> ();
+            Single m22 = ss.Read <Single> ();
+            Single m23 = ss.Read <Single> ();
+            Single m24 = ss.Read <Single> ();
 
-            Single m31 = abr.ReadSingle();
-            Single m32 = abr.ReadSingle();
-            Single m33 = abr.ReadSingle();
-            Single m34 = abr.ReadSingle();
+            Single m31 = ss.Read <Single> ();
+            Single m32 = ss.Read <Single> ();
+            Single m33 = ss.Read <Single> ();
+            Single m34 = ss.Read <Single> ();
 
-            Single m41 = abr.ReadSingle();
-            Single m42 = abr.ReadSingle();
-            Single m43 = abr.ReadSingle();
-            Single m44 = abr.ReadSingle();
+            Single m41 = ss.Read <Single> ();
+            Single m42 = ss.Read <Single> ();
+            Single m43 = ss.Read <Single> ();
+            Single m44 = ss.Read <Single> ();
 
             return new Matrix44(
                 m11, m12, m13, m14,
@@ -3302,292 +2443,470 @@ namespace Cor
             );
         }
 
-        public override void Write(BinaryWriter abw, Matrix44 obj)
+        public override void Write (ISerialisationChannel ss, Matrix44 obj)
         {
-            abw.Write(obj.R0C0);
-            abw.Write(obj.R0C1);
-            abw.Write(obj.R0C2);
-            abw.Write(obj.R0C3);
+            ss.Write <Single> (obj.R0C0);
+            ss.Write <Single> (obj.R0C1);
+            ss.Write <Single> (obj.R0C2);
+            ss.Write <Single> (obj.R0C3);
 
-            abw.Write(obj.R1C0);
-            abw.Write(obj.R1C1);
-            abw.Write(obj.R1C2);
-            abw.Write(obj.R1C3);
+            ss.Write <Single> (obj.R1C0);
+            ss.Write <Single> (obj.R1C1);
+            ss.Write <Single> (obj.R1C2);
+            ss.Write <Single> (obj.R1C3);
 
-            abw.Write(obj.R2C0);
-            abw.Write(obj.R2C1);
-            abw.Write(obj.R2C2);
-            abw.Write(obj.R2C3);
+            ss.Write <Single> (obj.R2C0);
+            ss.Write <Single> (obj.R2C1);
+            ss.Write <Single> (obj.R2C2);
+            ss.Write <Single> (obj.R2C3);
 
-            abw.Write(obj.R3C0);
-            abw.Write(obj.R3C1);
-            abw.Write(obj.R3C2);
-            abw.Write(obj.R3C3);
+            ss.Write <Single> (obj.R3C0);
+            ss.Write <Single> (obj.R3C1);
+            ss.Write <Single> (obj.R3C2);
+            ss.Write <Single> (obj.R3C3);
         }
     }
 
     public class QuaternionSerialiser
         : Serialiser<Quaternion>
     {
-        public QuaternionSerialiser () {}
-
-        public override Quaternion Read(BinaryReader abr)
+        public override Quaternion Read(ISerialisationChannel ss)
         {
-            Single i = abr.ReadSingle();
-            Single j = abr.ReadSingle();
-            Single k = abr.ReadSingle();
-            Single u = abr.ReadSingle();
+            Single i = ss.Read <Single> ();
+            Single j = ss.Read <Single> ();
+            Single k = ss.Read <Single> ();
+            Single u = ss.Read <Single> ();
 
             return new Quaternion(i, j, k, u);
         }
 
-        public override void Write(BinaryWriter abw, Quaternion obj)
+        public override void Write(ISerialisationChannel ss, Quaternion obj)
         {
-            abw.Write(obj.I);
-            abw.Write(obj.J);
-            abw.Write(obj.K);
-            abw.Write(obj.U);
+            ss.Write <Single> (obj.I);
+            ss.Write <Single> (obj.J);
+            ss.Write <Single> (obj.K);
+            ss.Write <Single> (obj.U);
         }
     }
 
-    public class Vector2Serialiser
+    public class Rgba32Serialiser
+        : Serialiser<Rgba32>
+    {
+        public override Rgba32 Read(ISerialisationChannel ss)
+        {
+            Byte r = ss.Read <Byte> ();
+            Byte g = ss.Read <Byte> ();
+            Byte b = ss.Read <Byte> ();
+            Byte a = ss.Read <Byte> ();
+
+            return new Rgba32(r, g, b, a);
+        }
+
+        public override void Write(ISerialisationChannel ss, Rgba32 obj)
+        {
+            ss.Write <Byte> (obj.R);
+            ss.Write <Byte> (obj.G);
+            ss.Write <Byte> (obj.B);
+            ss.Write <Byte> (obj.A);
+        }
+    }    public class Vector2Serialiser
         : Serialiser<Vector2>
     {
-        public Vector2Serialiser () {}
-
-        public override Vector2 Read(BinaryReader abr)
+        public override Vector2 Read(ISerialisationChannel ss)
         {
-            Single x = abr.ReadSingle();
-            Single y = abr.ReadSingle();
+            Single x = ss.Read <Single> ();
+            Single y = ss.Read <Single> ();
 
             return new Vector2(x, y);
         }
 
-        public override void Write(BinaryWriter abw, Vector2 obj)
+        public override void Write(ISerialisationChannel ss, Vector2 obj)
         {
-            abw.Write(obj.X);
-            abw.Write(obj.Y);
+            ss.Write <Single> (obj.X);
+            ss.Write <Single> (obj.Y);
         }
-    }
-
-    public class Vector3Serialiser
+    }    public class Vector3Serialiser
         : Serialiser<Vector3>
     {
-        public Vector3Serialiser () {}
-
-        public override Vector3 Read(BinaryReader abr)
+        public override Vector3 Read(ISerialisationChannel ss)
         {
-            Single x = abr.ReadSingle();
-            Single y = abr.ReadSingle();
-            Single z = abr.ReadSingle();
+            Single x = ss.Read <Single> ();
+            Single y = ss.Read <Single> ();
+            Single z = ss.Read <Single> ();
 
             return new Vector3(x, y, z);
         }
 
-        public override void Write(BinaryWriter abw, Vector3 obj)
+        public override void Write(ISerialisationChannel ss, Vector3 obj)
         {
-            abw.Write(obj.X);
-            abw.Write(obj.Y);
-            abw.Write(obj.Z);
+            ss.Write <Single> (obj.X);
+            ss.Write <Single> (obj.Y);
+            ss.Write <Single> (obj.Z);
         }
-    }
-
-    public class Vector4Serialiser
+    }    public class Vector4Serialiser
         : Serialiser<Vector4>
     {
-        public Vector4Serialiser () {}
-
-        public override Vector4 Read(BinaryReader abr)
+        public override Vector4 Read(ISerialisationChannel ss)
         {
-            Single x = abr.ReadSingle();
-            Single y = abr.ReadSingle();
-            Single z = abr.ReadSingle();
-            Single w = abr.ReadSingle();
+            Single x = ss.Read <Single> ();
+            Single y = ss.Read <Single> ();
+            Single z = ss.Read <Single> ();
+            Single w = ss.Read <Single> ();
 
             return new Vector4(x, y, z, w);
         }
 
-        public override void Write(BinaryWriter abw, Vector4 obj)
+        public override void Write(ISerialisationChannel ss, Vector4 obj)
         {
-            abw.Write(obj.X);
-            abw.Write(obj.Y);
-            abw.Write(obj.Z);
-            abw.Write(obj.W);
+            ss.Write <Single> (obj.X);
+            ss.Write <Single> (obj.Y);
+            ss.Write <Single> (obj.Z);
+            ss.Write <Single> (obj.W);
+        }
+    }    #endregion
+
+    #region Cor Types
+
+    public class ColourmapAssetSerialiser
+        : Serialiser<ColourmapAsset>
+    {
+        public override ColourmapAsset Read (ISerialisationChannel ss)
+        {
+            var asset = new ColourmapAsset ();
+
+            Int32 width = ss.Read <Int32> ();
+            Int32 height = ss.Read <Int32> ();
+
+            asset.Data = new Rgba32[width, height];
+
+            for (Int32 i = 0; i < width; ++i)
+            {
+                for (Int32 j = 0; j < height; ++j)
+                {
+                    asset.Data[i, j] = 
+                        ss.Read <Rgba32> ();
+                }
+            }
+
+            return asset;
+        }
+
+        public override void Write (ISerialisationChannel ss, ColourmapAsset obj)
+        {
+            ss.Write <Int32> (obj.Width);
+            ss.Write <Int32> (obj.Height);
+
+            for (Int32 i = 0; i < obj.Width; ++i)
+            {
+                for (Int32 j = 0; j < obj.Height; ++j)
+                {
+                    ss.Write <Rgba32> (obj.Data[i, j]);
+                }
+            }
         }
     }
 
-    #endregion
+    public class ShaderAssetSerialiser
+        : Serialiser<ShaderAsset>
+    {
+        public override ShaderAsset Read (ISerialisationChannel ss)
+        {
+            var asset = new ShaderAsset ();
+            
+            asset.Definition = ss.Read <ShaderDefinition> ();
 
-    #region Cor Types
+            UInt32 dataLength = ss.Read <UInt32> ();
+
+            asset.Data = new Byte [dataLength];
+
+            for (UInt32 i = 0; i < dataLength; ++ i)
+                asset.Data[i] = ss.Read <Byte> ();
+
+            return asset;
+        }
+
+        public override void Write (ISerialisationChannel ss, ShaderAsset obj)
+        {
+            ss.Write <ShaderDefinition> (obj.Definition);
+            ss.Write <UInt32> ( (UInt32) obj.Data.LongLength);
+
+            for (UInt32 i = 0; i < obj.Data.Length; ++ i)
+                ss.Write <Byte> (obj.Data [i] );
+        }
+    }
+
+    public class TextAssetSerialiser
+        : Serialiser<TextAsset>
+    {
+        public override TextAsset Read (ISerialisationChannel ss)
+        {
+            var asset = new TextAsset ();
+
+            asset.Text = ss.Read <String> ();
+
+            return asset;
+        }
+
+        public override void Write (ISerialisationChannel ss, TextAsset obj)
+        {
+            ss.Write <String> (obj.Text);
+        }
+    }
+
+    public class TextureAssetSerialiser
+        : Serialiser<TextureAsset>
+    {
+        public override TextureAsset Read (ISerialisationChannel ss)
+        {
+            var asset = new TextureAsset ();
+            
+            asset.SurfaceFormat = ss.Read <SurfaceFormat> ();
+            asset.Width = ss.Read <Int32> ();
+            asset.Height = ss.Read <Int32> ();
+            Int32 byteCount = ss.Read <Int32> ();
+
+            asset.Data = new Byte[byteCount];
+
+            for (Int32 i = 0; i < byteCount; ++i)
+            {
+                asset.Data[i] = ss.Read <Byte> ();
+            }
+
+            return asset;
+        }
+
+        public override void Write (ISerialisationChannel ss, TextureAsset obj)
+        {
+            ss.Write <SurfaceFormat> (obj.SurfaceFormat);
+            ss.Write <Int32> (obj.Width);
+            ss.Write <Int32> (obj.Height);
+            ss.Write <Int32> (obj.Data.Length);
+
+            for (Int32 i = 0; i < obj.Data.Length; ++i)
+            {
+                ss.Write <Byte> (obj.Data[i]);
+            }
+        }
+    }
 
     public class ShaderDefinitionSerialiser
         : Serialiser<ShaderDefinition>
     {
-        Serialiser<String> stringSerialiser;
-        Serialiser<List<String>> stringListSerialiser;
-        Serialiser<List<ShaderInputDefinition>> shaderInputDefinitionListSerialiser;
-        Serialiser<List<ShaderSamplerDefinition>> shaderSamplerDefinitionListSerialiser;
-        Serialiser<List<ShaderVariableDefinition>> shaderVariableDefinitionListSerialiser;
-
-        public ShaderDefinitionSerialiser () {}
-
-        public override void Initialise(SerialiserDatabase manager)
-        {
-            stringSerialiser = manager.GetSerialiser<String>();
-            stringListSerialiser = manager.GetSerialiser<List<String>>();
-            shaderInputDefinitionListSerialiser = manager.GetSerialiser<List<ShaderInputDefinition>>();
-            shaderSamplerDefinitionListSerialiser = manager.GetSerialiser<List<ShaderSamplerDefinition>>();
-            shaderVariableDefinitionListSerialiser = manager.GetSerialiser<List<ShaderVariableDefinition>>();
-        }
-
-        public override ShaderDefinition Read(BinaryReader abr)
+        public override ShaderDefinition Read (ISerialisationChannel ss)
         {
             var sd = new ShaderDefinition ();
-            sd.Name = stringSerialiser.Read (abr);
-            sd.PassNames = stringListSerialiser.Read (abr);
-            sd.InputDefinitions = shaderInputDefinitionListSerialiser.Read (abr);
-            sd.SamplerDefinitions = shaderSamplerDefinitionListSerialiser.Read (abr);
-            sd.VariableDefinitions = shaderVariableDefinitionListSerialiser.Read (abr);
+
+            sd.Name =                   ss.Read <String> ();
+            sd.PassNames =              new List <String> ();
+            sd.InputDefinitions =       new List <ShaderInputDefinition> ();
+            sd.SamplerDefinitions =     new List <ShaderSamplerDefinition> ();
+            sd.VariableDefinitions =    new List <ShaderVariableDefinition> ();
+
+            Int32 numPassNames = (Int32) ss.Read <Byte> ();
+            Int32 numInputDefintions = (Int32) ss.Read <Byte> ();
+            Int32 numSamplerDefinitions = (Int32) ss.Read <Byte> ();
+            Int32 numVariableDefinitions = (Int32) ss.Read <Byte> ();
+
+            for (Int32 i = 0; i < numPassNames; ++i)
+            {
+                var passName = ss.Read <String> ();
+                sd.PassNames.Add (passName);
+            }
+
+            for (Int32 i = 0; i < numInputDefintions; ++i)
+            {
+                var inputDef = ss.Read <ShaderInputDefinition> ();
+                sd.InputDefinitions.Add (inputDef);
+            }
+
+            for (Int32 i = 0; i < numSamplerDefinitions; ++i)
+            {
+                var samplerDef = ss.Read <ShaderSamplerDefinition> ();
+                sd.SamplerDefinitions.Add (samplerDef);
+            }
+
+            for (Int32 i = 0; i < numVariableDefinitions; ++i)
+            {
+                var variableDef = ss.Read <ShaderVariableDefinition> ();
+                sd.VariableDefinitions.Add (variableDef);
+            }
+
             return sd;
         }
 
-        public override void Write(BinaryWriter abw, ShaderDefinition obj)
+        public override void Write(ISerialisationChannel ss, ShaderDefinition sd)
         {
-            stringSerialiser.Write (abw, obj.Name);
-            stringListSerialiser.Write (abw, obj.PassNames);
-            shaderInputDefinitionListSerialiser.Write (abw, obj.InputDefinitions);
-            shaderSamplerDefinitionListSerialiser.Write (abw, obj.SamplerDefinitions);
-            shaderVariableDefinitionListSerialiser.Write (abw, obj.VariableDefinitions);
+            if (sd.InputDefinitions.Count > Byte.MaxValue ||
+                sd.SamplerDefinitions.Count > Byte.MaxValue ||
+                sd.VariableDefinitions.Count > Byte.MaxValue ||
+                sd.PassNames.Count > Byte.MaxValue)
+            {
+                throw new SerialisationException ("Too much!");
+            }
+
+            ss.Write <String> (sd.Name);
+
+            ss.Write <Byte> ((Byte) sd.PassNames.Count);
+            ss.Write <Byte> ((Byte) sd.InputDefinitions.Count);
+            ss.Write <Byte> ((Byte) sd.SamplerDefinitions.Count);
+            ss.Write <Byte> ((Byte) sd.VariableDefinitions.Count);
+
+            foreach (String passName in sd.PassNames)
+            {
+                ss.Write <String> (passName);
+            }
+
+            foreach (var inputDef in sd.InputDefinitions)
+            {
+                ss.Write <ShaderInputDefinition> (inputDef);
+            }
+
+            foreach (var samplerDef in sd.SamplerDefinitions)
+            {
+                ss.Write <ShaderSamplerDefinition> (samplerDef);
+            }
+
+            foreach (var variableDef in sd.VariableDefinitions)
+            {
+                ss.Write <ShaderVariableDefinition> (variableDef);
+            }
         }
     }
 
     public class ShaderInputDefinitionSerialiser
         : Serialiser<ShaderInputDefinition>
     {
-        Serialiser<String> stringSerialiser;
-        Serialiser<Object> objectSerialiser;
-        Serialiser<Boolean> booleanSerialiser;
-        Serialiser<VertexElementUsage> vertexElementUsageSerialiser;
-        
-        public ShaderInputDefinitionSerialiser () {}
-
-        public override void Initialise(SerialiserDatabase manager)
+        public override ShaderInputDefinition Read (ISerialisationChannel ss)
         {
-            stringSerialiser = manager.GetSerialiser<String>();
-            objectSerialiser = manager.GetSerialiser<Object>();
-            booleanSerialiser = manager.GetSerialiser<Boolean>();
-            vertexElementUsageSerialiser= manager.GetSerialiser<VertexElementUsage>();
-        }
-
-        public override ShaderInputDefinition Read(BinaryReader abr)
-        {
-            var sd = new ShaderInputDefinition ();
+            var sid = new ShaderInputDefinition ();
 
             // Name
-            sd.Name = stringSerialiser.Read (abr);
+            sid.Name = ss.Read <String> ();
 
             // Nice Name
-            sd.NiceName = stringSerialiser.Read (abr);
-
-            // Default Value
-            Object obj = objectSerialiser.Read (abr);
-            sd.Type = obj.GetType ();
-            sd.DefaultValue = obj;
+            sid.NiceName = ss.Read <String> ();
 
             // Optional
-            sd.Optional = booleanSerialiser.Read (abr);
+            sid.Optional = ss.Read <Boolean> ();
 
             // Usage
-            sd.Usage = vertexElementUsageSerialiser.Read (abr);
+            sid.Usage = ss.Read <VertexElementUsage> ();
 
-            return sd;
+            // Null
+            if (ss.Read <Boolean> ())
+            {
+                // Default Value
+                Byte typeIndex = ss.Read <Byte> ();
+                Type defaultValueType = ShaderInputDefinition.SupportedTypes [typeIndex];
+                sid.DefaultValue = ss.ReadReflective (defaultValueType);
+            }
+
+            return sid;
         }
 
-        public override void Write(BinaryWriter abw, ShaderInputDefinition obj)
+        public override void Write (ISerialisationChannel ss, ShaderInputDefinition sid)
         {
             // Name
-            stringSerialiser.Write (abw, obj.Name);
+            ss.Write <String> (sid.Name);
 
             // Nice Name
-            stringSerialiser.Write (abw, obj.NiceName);
-
-            // Default Value
-            objectSerialiser.Write (abw, obj.DefaultValue);
+            ss.Write <String> (sid.NiceName);
 
             // Optional
-            booleanSerialiser.Write (abw, obj.Optional);
+            ss.Write <Boolean> (sid.Optional);
 
             // Usage
-            vertexElementUsageSerialiser.Write (abw, obj.Usage);
+            ss.Write <VertexElementUsage> (sid.Usage);
+
+            // Null
+            ss.Write <Boolean> (sid.DefaultValue != null);
+
+            // Default Value
+            if (sid.DefaultValue != null)
+            {
+                Type defaultValueType = sid.DefaultValue.GetType ();
+                Byte typeIndex = (Byte)
+                ShaderInputDefinition.SupportedTypes
+                    .ToList ()
+                    .IndexOf (defaultValueType);
+
+                ss.Write<Byte> (typeIndex);
+                ss.WriteReflective (defaultValueType, sid.DefaultValue);
+            }
         }
     }    public class ShaderSamplerDefinitionSerialiser
         : Serialiser<ShaderSamplerDefinition>
     {
-        Serialiser<String> stringSerialiser;
-        Serialiser<Boolean> booleanSerialiser;
-
-        public ShaderSamplerDefinitionSerialiser () {}
-
-        public override void Initialise(SerialiserDatabase manager)
+        public override ShaderSamplerDefinition Read (ISerialisationChannel ss)
         {
-            stringSerialiser = manager.GetSerialiser<String>();
-            booleanSerialiser = manager.GetSerialiser<Boolean>();
+            var ssd = new ShaderSamplerDefinition ();
+
+            ssd.Name =           ss.Read <String> ();
+            ssd.NiceName =       ss.Read <String> ();
+            ssd.Optional =       ss.Read <Boolean> ();
+
+            return ssd;
         }
 
-        public override ShaderSamplerDefinition Read(BinaryReader abr)
+        public override void Write (ISerialisationChannel ss, ShaderSamplerDefinition ssd)
         {
-            var sd = new ShaderSamplerDefinition ();
-
-            sd.Name = stringSerialiser.Read (abr);
-            sd.NiceName = stringSerialiser.Read (abr);
-            sd.Optional = booleanSerialiser.Read (abr);
-            
-            return sd;
-        }
-
-        public override void Write(BinaryWriter abw, ShaderSamplerDefinition obj)
-        {
-            stringSerialiser.Write (abw, obj.Name);
-            stringSerialiser.Write (abw, obj.NiceName);
-            booleanSerialiser.Write (abw, obj.Optional);
+            ss.Write <String> (ssd.Name);
+            ss.Write <String> (ssd.NiceName);
+            ss.Write <Boolean> (ssd.Optional);
         }
     }
 
     public class ShaderVariableDefinitionSerialiser
         : Serialiser<ShaderVariableDefinition>
     {
-        Serialiser<String> stringSerialiser;
-        Serialiser<Object> objectSerialiser;
-        
-        public ShaderVariableDefinitionSerialiser () {}
-
-        public override void Initialise(SerialiserDatabase manager)
+        public override ShaderVariableDefinition Read (ISerialisationChannel ss)
         {
-            stringSerialiser = manager.GetSerialiser<String>();
-            objectSerialiser = manager.GetSerialiser<Object>();
+            var svd = new ShaderVariableDefinition ();
+
+            // Name
+            svd.Name = ss.Read <String> ();
+
+            // Nice Name
+            svd.NiceName = ss.Read <String> ();
+            
+            // Null
+			if (ss.Read <Boolean> ())
+            {
+                Byte typeIndex = ss.Read <Byte> ();
+                Type defaultValueType = ShaderVariableDefinition.SupportedTypes [typeIndex];
+                svd.DefaultValue = ss.ReadReflective (defaultValueType);
+            }
+
+            return svd;
         }
 
-        public override ShaderVariableDefinition Read(BinaryReader abr)
+        public override void Write (ISerialisationChannel ss, ShaderVariableDefinition svd)
         {
-            var sd = new ShaderVariableDefinition ();
+            // Name
+            ss.Write <String> (svd.Name);
 
-            sd.Name = stringSerialiser.Read (abr);
-            sd.NiceName = stringSerialiser.Read (abr);
-            Object obj = objectSerialiser.Read (abr);
+            // Nice Name
+            ss.Write <String> (svd.NiceName);
 
-            sd.Type = obj.GetType ();
-            sd.DefaultValue = obj;
+            // Null
+            ss.Write <Boolean> (svd.DefaultValue != null);
 
-            return sd;
-        }
+            // Default Value
+            if (svd.DefaultValue != null)
+            {
+                Type defaultValueType = svd.DefaultValue.GetType ();
+                Byte typeIndex = (Byte) 
+                    ShaderVariableDefinition.SupportedTypes
+                    .ToList ()
+                    .IndexOf (defaultValueType);
 
-        public override void Write(BinaryWriter abw, ShaderVariableDefinition obj)
-        {
-            stringSerialiser.Write (abw, obj.Name);
-            stringSerialiser.Write (abw, obj.NiceName);
-            objectSerialiser.Write (abw, obj.DefaultValue);
+                ss.Write<Byte> (typeIndex);
+                ss.WriteReflective (defaultValueType, svd.DefaultValue);
+            }
         }
     }
+
+    #endregion
 
     #endregion
 
@@ -3612,170 +2931,36 @@ namespace Cor
         {
             using (Stream stream = this.systemManager.GetAssetStream (assetId))
             {
-                using (var br = new BinaryReader (stream))
+                using (var channel = 
+                    new SerialisationChannel
+                    <BinaryPrimitiveReader, BinaryPrimitiveWriter> 
+                    (SerialiserDatabase.Instance, stream, SerialisationChannelMode.Read)) 
                 {
-                    ProcessFileHeader (br);
-                    List<Type> requiredSerialisers = 
-                        ProcessMeta (br);
-
-                    var tsdb = new SerialiserDatabase ();
-
-                    foreach (Type typeSerialiserType in requiredSerialisers)
-                    {
-                        tsdb.RegisterSerialiser (typeSerialiserType);
-                    }
-
-                    T asset = Activator.CreateInstance (typeof (T)) as T;
-
-                    asset.Serialise (br, tsdb);
+                    ProcessFileHeader (channel);
+                    T asset = channel.Read <T> ();
                     return asset;
                 }
             }
         }
 
-        void ProcessFileHeader (BinaryReader br)
+        void ProcessFileHeader (ISerialisationChannel sc)
         {
-            var tsdb = new SerialiserDatabase ();
-
-            tsdb.RegisterSerialiser<Byte, ByteSerialiser>();
-
             // file type
-            Byte f0 = tsdb.GetSerialiser <Byte> ().Read (br);
-            Byte f1 = tsdb.GetSerialiser <Byte> ().Read (br);
-            Byte f2 = tsdb.GetSerialiser <Byte> ().Read (br);
+            Byte f0 = sc.Read <Byte> ();
+            Byte f1 = sc.Read <Byte> ();
+            Byte f2 = sc.Read <Byte> ();
 
             if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'A')
                 throw new Exception ("Asset file doesn't have the correct header.");
 
             // file version
-            Byte fileVersion = tsdb.GetSerialiser <Byte> ().Read (br);
+            Byte fileVersion = sc.Read <Byte> ();
 
             if (fileVersion != 0)
                 throw new Exception ("Only file format version 0 is supported.");
 
             // platform index
-            Byte platformIndex = tsdb.GetSerialiser <Byte> ().Read (br);
-        }
-
-        List<Type> ProcessMeta (BinaryReader br)
-        {
-            var result = new List<Type> ();
-            var tsdb = new SerialiserDatabase ();
-            tsdb.RegisterSerialiser<Byte, ByteSerialiser>();
-            tsdb.RegisterSerialiser<String, StringSerialiser>();
-
-            Byte numRequiredSerialisers =
-                tsdb.GetSerialiser <Byte> ().Read (br);
-
-            for (Byte i = 0; i < numRequiredSerialisers; ++i)
-            {
-                // Fully qualified  type serialiser name
-                String typeSerialiserName =
-                    tsdb.GetSerialiser <String> ().Read (br);
-
-                Type t = Type.GetType (typeSerialiserName);
-
-                if (t == null)
-                    throw new Exception ("Type not found:" + typeSerialiserName);
-
-                // Type serialiser version
-                Byte version = tsdb.GetSerialiser <Byte> ().Read (br);
-
-                if (version != 0)
-                    throw new NotImplementedException ();
-
-                result.Add (t);
-            }
-
-            return result;
-        }
-    }
-
-    public class SerialiserDatabase
-    {
-        // Target type to type serialiser implementation.
-        readonly Dictionary<Type, Serialiser> assetSerialisers;
-
-        public SerialiserDatabase()
-        {
-            assetSerialisers = new Dictionary<Type, Serialiser> ();
-        }
-
-        public void RegisterSerialiser (Type serialiserType)
-        {
-            Type baseType = 
-                serialiserType.BaseType;
-
-            Type targetType = 
-                baseType.GetGenericArguments() [0];
-            
-            MethodInfo mi = typeof(SerialiserDatabase).GetMethod ("RegisterSerialiser", new Type[]{});
-            
-            if (mi == null)
-            {
-                throw new Exception ("Failed to find the SerialiserDatabase's RegisterSerialiser method.");    
-            }
-            
-            var gmi = mi.MakeGenericMethod(targetType, serialiserType);
-
-            try
-            {
-                gmi.Invoke(this, null);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception (
-                    "Failed to call generic RegisterSerialiser " +
-                    "with reflection: " + gmi + " --> " + ex.InnerException);
-            }
-        }
-
-        public void RegisterSerialiser<TTarget, TSerialiser> ()
-        where TSerialiser : Serialiser <TTarget>
-        {
-            if (assetSerialisers.ContainsKey (typeof(TTarget)))
-            {
-                var existingSerialiser = assetSerialisers[typeof(TTarget)];
-
-                if (existingSerialiser.GetType () != typeof (TSerialiser))
-                {
-                    throw new Exception (
-                        String.Format (
-                            "This type seraliser database already " +
-                            "has a seraliaser:{0} for target type:{1}, " +
-                            "which is different to the serialiser you are registering of type {2}.",
-                            existingSerialiser.GetType (),
-                            typeof (TTarget),
-                            typeof (TSerialiser)
-                            ));
-                }
-                else
-                {
-                    return;
-                }                
-            }
-
-            var ats = Activator.CreateInstance (typeof (TSerialiser)) as Serialiser;
-            ats.Initialise (this);
-            assetSerialisers [typeof (TTarget)] = ats;
-        }
-
-        public Serialiser<TTarget> GetSerialiser<TTarget>()
-        {
-            return GetSerialiser(typeof (TTarget))
-                as Serialiser<TTarget>;
-        }
-
-        public Serialiser GetSerialiser(Type type)
-        {
-            if (!assetSerialisers.ContainsKey (type))
-                throw new Exception (
-                    String.Format (
-                        "A type serialiser for type:{0} has " +
-                        "not been regisitered",
-                        type));
-
-            return assetSerialisers [type];
+            Byte platformIndex = sc.Read <Byte> ();
         }
     }
 

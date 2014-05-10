@@ -1,5 +1,5 @@
         public sealed class ShaderAsset
-            : IAsset
+            : Asset
         {
             // Platform agnostic definition
             public ShaderDefinition Definition { get; set; }
@@ -7,45 +7,5 @@
             // Platform specific binary content.
             // This contains compiled shaders.
             public Byte[] Data { get; set; }
-
-            #region IAsset
-
-            public String Id { get { return null; } }
-
-            public List <Type> RequiredSerialisers ()
-            {
-                return new List <Type> () 
-                { 
-                    typeof (StringSerialiser),
-                    typeof (Int32Serialiser),
-                    typeof (BooleanSerialiser),
-                    typeof (ObjectSerialiser),
-                    typeof (EnumSerialiser<VertexElementUsage>),
-                    typeof (ShaderInputDefinitionSerialiser),
-                    typeof (ShaderSamplerDefinitionSerialiser),
-                    typeof (ShaderVariableDefinitionSerialiser),
-                    typeof (ListSerialiser<String>),
-                    typeof (ListSerialiser<ShaderInputDefinition>),
-                    typeof (ListSerialiser<ShaderSamplerDefinition>),
-                    typeof (ListSerialiser<ShaderVariableDefinition>),
-                    typeof (ShaderDefinitionSerialiser),
-                    typeof (ByteSerialiser),
-                    typeof (ArraySerialiser<Byte>)
-                };
-            }
-
-            public void Serialise (BinaryReader br, SerialiserDatabase tsdb)
-            {
-                this.Definition = tsdb.GetSerialiser <ShaderDefinition> ().Read (br);
-                this.Data = tsdb.GetSerialiser <Byte []> ().Read (br);
-            }
-
-            public void Serialise (BinaryWriter bw, SerialiserDatabase tsdb)
-            {
-                tsdb.GetSerialiser <ShaderDefinition> ().Write (bw, this.Definition);
-                tsdb.GetSerialiser <Byte[]> ().Write (bw, this.Data);
-            }
-
-            #endregion
         }
 

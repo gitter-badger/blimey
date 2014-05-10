@@ -2,6 +2,11 @@
     {
         String niceName;
 
+        public ShaderSamplerDefinition ()
+        {
+            this.Name = String.Empty;
+        }
+
         public String NiceName
         {
             get { return (niceName == null) ? Name : niceName; }

@@ -1,58 +1,10 @@
         public sealed class ColourmapAsset
-            : IAsset
+            : Asset
         {
             public Rgba32[,] Data { get; set; }
 
             public Int32 Width { get { return Data.GetLength (0); } }
 
             public Int32 Height { get { return Data.GetLength (1); } }
-
-            #region IAsset
-
-            public String Id { get { return null; } }
-
-            public List <Type> RequiredSerialisers ()
-            {
-                return new List <Type> ()
-                {
-                    typeof (Int32Serialiser),
-                    typeof (Rgba32Serialiser)
-                };
-            }
-
-            public void Serialise (BinaryReader br, SerialiserDatabase tsdb)
-            {
-                Int32 width = tsdb.GetSerialiser <Int32> ().Read (br);
-                Int32 height = tsdb.GetSerialiser <Int32> ().Read (br);
-
-                this.Data = new Rgba32[width, height];
-
-                for (Int32 i = 0; i < width; ++i)
-                {
-                    for (Int32 j = 0; j < height; ++j)
-                    {
-                        this.Data[i, j] = 
-                            tsdb.GetSerialiser <Rgba32> ()
-                                .Read (br);
-                    }
-                }
-            }
-
-            public void Serialise (BinaryWriter bw, SerialiserDatabase tsdb)
-            {
-                tsdb.GetSerialiser <Int32> ().Write (bw, this.Width);
-                tsdb.GetSerialiser <Int32> ().Write (bw, this.Height);
-
-                for (Int32 i = 0; i < this.Width; ++i)
-                {
-                    for (Int32 j = 0; j < this.Height; ++j)
-                    {
-                        tsdb.GetSerialiser <Rgba32> ()
-                            .Write (bw, this.Data[i, j]);
-                    }
-                }
-            }
-
-            #endregion
         }
 
