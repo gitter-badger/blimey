@@ -3,51 +3,27 @@ using System.IO;
 
 namespace Oats
 {
-	public class BinaryPrimitiveSerialiser
-		: IPrimitiveSerialiser <Byte[]>
+	public class BinaryPrimitiveWriter
+		: IPrimitiveWriter
 		, IDisposable
 	{
-		MemoryStream memoryStream;
 	    BinaryWriter binaryWriter;
-		BinaryReader binaryReader;
 
-		public BinaryPrimitiveSerialiser ()
+		public BinaryPrimitiveWriter (Stream stream)
 		{
-			memoryStream = new MemoryStream ();
-			binaryWriter = new BinaryWriter (memoryStream);
-			binaryReader = new BinaryReader (memoryStream);
+			binaryWriter = new BinaryWriter (stream);
 		}
 
 		#region IDisposable
 
 		public void Dispose ()
 		{
-			if (binaryWriter != null)
-				binaryWriter.Dispose ();
-
-			if (binaryReader != null)
-				binaryReader.Dispose ();
-
-			memoryStream.Dispose ();
+			binaryWriter.Dispose ();
 		}
 
 		#endregion
 
-		#region IPrimitiveSerialiser <Byte[]>
-
-		public Byte[] GetData ()
-		{
-			Byte[] binary = memoryStream.GetBuffer ();
-
-			return binary;
-		}
-
-		public void SetData (Byte[] binary)
-		{
-			memoryStream = new MemoryStream (binary);
-			binaryWriter = new BinaryWriter (memoryStream);
-			binaryReader = new BinaryReader (memoryStream);
-		}
+		#region IPrimitiveWriter
 
 		public void Write (Boolean value) { binaryWriter.Write (value); }
 		public void Write (Byte value) { binaryWriter.Write (value); }
@@ -61,6 +37,31 @@ namespace Oats
 		public void Write (UInt16 value) { binaryWriter.Write (value); }
 		public void Write (UInt32 value) { binaryWriter.Write (value); }
 		public void Write (UInt64 value) { binaryWriter.Write (value); }
+
+		#endregion
+	}
+
+	public class BinaryPrimitiveReader
+		: IPrimitiveReader
+		, IDisposable
+	{
+		BinaryReader binaryReader;
+
+		public BinaryPrimitiveReader (Stream stream)
+		{
+			binaryReader = new BinaryReader (stream);
+		}
+
+		#region IDisposable
+
+		public void Dispose ()
+		{
+			binaryReader.Dispose ();
+		}
+
+		#endregion
+
+		#region IPrimitiveReader
 
 		public Boolean ReadBoolean () { return binaryReader.ReadBoolean(); }
 		public Byte ReadByte () { return binaryReader.ReadByte();; }

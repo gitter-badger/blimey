@@ -1,12 +1,40 @@
 ﻿using NUnit.Framework;
 using System;
 using Oats;
+using NUnit.Framework.SyntaxHelpers;
+using System.IO;
 
 namespace Oats.Tests
 {
 	[TestFixture ()]
 	public class Tests
 	{
+		[Test ()]
+		public void TestCustomStream ()
+		{
+			var exampleShaderDefinition = TestObjects.ShaderSamplerDefinition;
+
+			Byte[] bytes = exampleShaderDefinition.ToBinary <ShaderSamplerDefinition> ();
+
+			var db = SerialiserDatabase.Instance;
+
+			using (Stream stream = new MemoryStream (bytes))
+			{
+				Serialiser <ShaderSamplerDefinition> serialiser = 
+					db.GetSerialiser <ShaderSamplerDefinition> ();
+
+				using (var channel = 
+					new SerialisationChannel
+					<BinaryPrimitiveReader, BinaryPrimitiveWriter> (db, stream, SerialisationChannelMode.Read))
+				{
+					ShaderSamplerDefinition ssd = serialiser.Read (channel);
+
+					Assert.That (ssd, Is.EqualTo (exampleShaderDefinition));
+				}
+			}
+		}
+
+
 		[Test ()]
 		public void TestShaderSamplerDefinitionSerialiser ()
 		{

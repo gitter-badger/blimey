@@ -1,12 +1,10 @@
 ﻿using System;
+using System.IO;
 
 namespace Oats
 {
-	public interface IPrimitiveSerialiser <T>
+	public interface IPrimitiveWriter
 	{
-		void SetData (T binary);
-		T GetData ();
-
 		void Write (Boolean value);
 		void Write (Byte value);
 		void Write (Char value);
@@ -19,7 +17,10 @@ namespace Oats
 		void Write (UInt16 value);
 		void Write (UInt32 value);
 		void Write (UInt64 value);
+	}
 
+	public interface IPrimitiveReader
+	{
 		Boolean ReadBoolean ();
 		Byte ReadByte ();
 		Char ReadChar ();

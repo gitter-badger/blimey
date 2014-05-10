@@ -16,13 +16,19 @@ namespace Oats
 
 			Serialiser <T> serialiser = db.GetSerialiser <T> ();
 
-			using (var channel = 
-				new SerialisationChannel
-					<Byte[], BinaryPrimitiveSerialiser> (db))
+			using (var stream = new MemoryStream ())
 			{
-				serialiser.Write (channel, o);
 
-				return channel.GetData ();
+				using (var channel = 
+					      new SerialisationChannel
+					<BinaryPrimitiveReader, BinaryPrimitiveWriter> 
+						(db, stream, SerialisationChannelMode.Write)) 
+				{
+					serialiser.Write (channel, o);
+
+					return stream.GetBuffer ();
+				}
+
 			}
 		}
 
@@ -32,13 +38,17 @@ namespace Oats
 
 			Serialiser <T> serialiser = db.GetSerialiser <T> ();
 
-			using (var channel = 
-				new SerialisationChannel
-					<Byte[], BinaryPrimitiveSerialiser> (db, bytes))
+			using (var stream = new MemoryStream (bytes))
 			{
-				Object o = serialiser.Read (channel);
+				using (var channel = 
+					      new SerialisationChannel
+					<BinaryPrimitiveReader, BinaryPrimitiveWriter> 
+						(db, stream, SerialisationChannelMode.Read))
+				{
+					Object o = serialiser.Read (channel);
 
-				return (T) o;
+					return (T) o;
+				}
 			}
 		}
 	}
