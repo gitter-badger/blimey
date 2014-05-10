@@ -181,9 +181,29 @@ namespace Oats
 			}
 			else
 			{
-				var serialiser = serialiserDatabase.GetSerialiser <T> ();
+				Serialiser <T> serialiser = null;
+				try
+				{
+					// locate the correct serialiser
+					serialiser = serialiserDatabase.GetSerialiser <T> ();
+				}
+				catch (Exception ex)
+				{
+					throw new SerialisationException (
+						"Failed to get serialiser for type: " + 
+						typeof (T) );
+				}
 
-				serialiser.Write (this, value);
+				try
+				{
+					serialiser.Write (this, value);
+				}
+				catch (Exception ex)
+				{
+					throw new SerialisationException (
+						"Failed to use serialiser " + serialiser.GetType () + 
+						" to write: " + value);
+				}
 
 				return;
 			}
@@ -248,10 +268,30 @@ namespace Oats
 			}
 			else
 			{
-				// locate the correct serialiser
-				var serialiser = serialiserDatabase.GetSerialiser <T> ();
+				Serialiser <T> serialiser = null;
+				try
+				{
+					// locate the correct serialiser
+					serialiser = serialiserDatabase.GetSerialiser <T> ();
+				}
+				catch (Exception ex)
+				{
+					throw new SerialisationException (
+						"Failed to get serialiser for type: " + 
+						typeof (T) );
+				}
 
-				return serialiser.Read (this);
+				try
+				{
+					T result = serialiser.Read (this);
+					return result;
+				}
+				catch (Exception ex)
+				{
+					throw new SerialisationException (
+						"Failed to use serialiser " + serialiser.GetType () + 
+						" to read");
+				}
 			}
 		}
 	}
