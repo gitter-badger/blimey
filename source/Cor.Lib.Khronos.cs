@@ -45,7 +45,8 @@ using System.Runtime.ConstrainedExecution;
 using Abacus;
 using Abacus.Packed;
 using Abacus.SinglePrecision;
-using Abacus.Int32Precision;
+
+using Oats;
 
 #if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
 
@@ -549,7 +550,54 @@ namespace Cor.Lib.Khronos
 
             Byte[] data = asset.Data;
             
-            List<KrShaderVariantDefinition> platformVariants = null;
+            List<KrShaderVariantDefinition> platformVariants = new List<KrShaderVariantDefinition> ();
+
+            using (var memoryStream = new MemoryStream (data)) {
+
+                using (var sc = new SerialisationChannel 
+                    <BinaryPrimitiveReader, BinaryPrimitiveWriter> (
+                        SerialiserDatabase.Instance, 
+                        memoryStream, 
+                        SerialisationChannelMode.Read))
+                {
+                    // : Num Variants
+                    Int32 numPlatformVariants = sc.Read <Int32> ();
+
+
+                    for (Int32 i = 0; i < numPlatformVariants; ++i) 
+                    {
+                        var variant = new KrShaderVariantDefinition ();
+
+                        // : Variant Name
+                        variant.VariantName = sc.Read<String> ();
+
+                        // : Num Variant Pass Definitions
+                        Int32 numPassDefs = sc.Read <Int32> ();
+
+                        variant.VariantPassDefinitions = new List<KrShaderVariantPassDefinition> ();
+
+                        for (Int32 j = 0; j < numPassDefs; ++j) 
+                        {
+                            var pass = new KrShaderVariantPassDefinition ();
+
+                            // : Pass Name
+                            pass.PassName = sc.Read<String> ();
+
+                            pass.PassDefinition = new KrShaderSourceDefinition ();
+
+                            // : Vertex Shader Source
+                            pass.PassDefinition.VertexShaderPath = sc.Read<String> ();
+
+                            // : Pixel Shader Source
+                            pass.PassDefinition.PixelShaderPath = sc.Read<String> ();
+
+                            variant.VariantPassDefinitions.Add (pass);
+                        }
+
+                        platformVariants.Add (variant);
+                    }
+                }
+            }
 
             var result = new ShaderHandle(
                 shaderDefinition,

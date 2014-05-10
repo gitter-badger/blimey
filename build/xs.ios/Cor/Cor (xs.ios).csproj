@@ -116,5 +116,9 @@
       <Project>{DE5491E6-4DF9-4BBB-9985-E7CD86905D41}</Project>
       <Name>Abacus (xs.ios)</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\oats\build\Oats\Oats %28xs.ios%29.csproj">
+      <Project>{58F253D1-DFD7-4D31-AA36-96A7EB3DCC09}</Project>
+      <Name>Oats (xs.ios)</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

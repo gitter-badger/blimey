@@ -47,7 +47,8 @@ using System.Runtime.ConstrainedExecution;
 using Abacus;
 using Abacus.Packed;
 using Abacus.SinglePrecision;
-using Abacus.Int32Precision;
+
+using Oats;
 
 #if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
 

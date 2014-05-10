@@ -148,10 +148,33 @@
             }
         }
 
-        public Stream GetAssetStream (String assetId)
+        static string GetResourcePath(string path)
         {
-            throw new NotImplementedException ();
+            string ext = Path.GetExtension(path);
+
+            string filename = path.Substring(0, path.Length - ext.Length);
+
+            var resourcePathname =
+                MonoTouch.Foundation.NSBundle.MainBundle.PathForResource (
+                    filename,
+                    ext.Substring(1, ext.Length - 1)
+                );
+
+            if( resourcePathname == null )
+            {
+                throw new Exception("Resource [" + path + "] not found");
+            }
+
+            return resourcePathname;
         }
 
+        public Stream GetAssetStream (String assetId)
+        {
+            string path = GetResourcePath(Path.Combine("assets/xios", assetId));
+
+            var fStream = new FileStream(path, FileMode.Open);
+
+            return fStream;
+        }
     }
 

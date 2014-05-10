@@ -2870,7 +2870,7 @@ namespace Cor
             svd.NiceName = ss.Read <String> ();
             
             // Null
-			if (ss.Read <Boolean> ())
+            if (ss.Read <Boolean> ())
             {
                 Byte typeIndex = ss.Read <Byte> ();
                 Type defaultValueType = ShaderVariableDefinition.SupportedTypes [typeIndex];
