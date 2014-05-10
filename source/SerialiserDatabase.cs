@@ -196,6 +196,10 @@ namespace Oats
 				}
 			}
 
+			if (!assetSerialisers.ContainsKey (targetype)) {
+				throw new Exception ("Expected an asset of type " + targetype + " to have been registered.");
+			}
+
 			return assetSerialisers [targetype];
 		}
 	}

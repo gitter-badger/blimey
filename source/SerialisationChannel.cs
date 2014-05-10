@@ -95,7 +95,18 @@ namespace Oats
 
 			var gmi = mi.MakeGenericMethod(type);
 
-			gmi.Invoke(this, new [] { value });
+			try
+			{
+				gmi.Invoke(this, new [] { value });
+			}
+			catch (Exception ex)
+			{
+				throw new Exception (
+					"Failed to invoke Write for type [" + type + "]" +
+					" with value [" + value + "]" + 
+					"\n" + ex.Message + 
+					"\n" + ex.InnerException.Message);
+			}
 		}
 
 		public void Write <T> (T value)
