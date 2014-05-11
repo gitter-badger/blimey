@@ -422,7 +422,8 @@
 
         public void DestroyShader (IShader shader)
         {
-            throw new NotImplementedException ();
+            var handle = (ShaderHandle) shader;
+            handle.Dispose ();
         }
 
         public void SetBlendEquation(
