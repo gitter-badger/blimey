@@ -1803,13 +1803,13 @@ namespace Blimey
     /// calls to make sure the game continues to work for any game.</remarks>
     public class DebugShapeRenderer
     {
-        public static IShader DebugShader
+        public IShader DebugShader
         {
             get { return debugShader; }
-            set { debugShader = value; }
+            set { debugShader = value; Init (); }
         }
 
-        static IShader debugShader;
+        IShader debugShader;
 
         public int NumActiveShapes { get { return activeShapes.Count; } }
 
@@ -1849,20 +1849,23 @@ namespace Blimey
         const int sphereLineCount = (sphereResolution + 1) * 3;
         Vector3[] unitSphere;
 
-        Dictionary<string, Material> materials = new Dictionary<string, Material>();
+        readonly Dictionary<string, Material> materials = new Dictionary<string, Material>();
 
-        ICor cor;
+        readonly ICor cor;
+
+        readonly List<string> renderPasses;
 
         public DebugShapeRenderer(ICor cor, List<string> renderPasses)
         {
             this.cor = cor;
+            this.renderPasses = renderPasses;
 
-            if (debugShader == null)
-            {
-                // todo, need a better way to configure this.
-                throw new Exception ("DebugShapeRenderer.DebugShader must be set by user.");
-            }
+            // Create our unit sphere vertices
+            InitializeSphere();
+        }
 
+        void Init ()
+        {
             foreach (string pass in renderPasses)
             {
                 var m = new Material(pass, debugShader);
@@ -1872,9 +1875,6 @@ namespace Blimey
                 m.SetColour("MaterialColour", Rgba32.White);
 
             }
-
-            // Create our unit sphere vertices
-            InitializeSphere();
         }
 
         public void AddQuad(string renderPass, Vector3 a, Vector3 b, Vector3 c, Vector3 d, Rgba32 rgba)
@@ -1927,163 +1927,7 @@ namespace Blimey
             shape.Vertices[4] = new VertexPositionColour(c, rgba);
             shape.Vertices[5] = new VertexPositionColour(a, rgba);
         }
-        /*
-        public void AddBoundingFrustum(string renderPass, BoundingFrustum frustum, Rgba32 rgba)
-        {
-            AddBoundingFrustum(renderPass, frustum, rgba, 0f);
-        }
-
-        public void AddBoundingFrustum(string renderPass, BoundingFrustum frustum, Rgba32 rgba, float life)
-        {
-            // Get a DebugShape we can use to draw the frustum
-            DebugShape shape = GetShapeForLines(12, life);
-            shape.RenderPass = renderPass;
-
-            // Get the corners of the frustum
-            corners = frustum.GetCorners();
-
-            // Fill in the vertices for the bottom of the frustum
-            shape.Vertices[0] = new VertexPositionColour(corners[0], rgba);
-            shape.Vertices[1] = new VertexPositionColour(corners[1], rgba);
-            shape.Vertices[2] = new VertexPositionColour(corners[1], rgba);
-            shape.Vertices[3] = new VertexPositionColour(corners[2], rgba);
-            shape.Vertices[4] = new VertexPositionColour(corners[2], rgba);
-            shape.Vertices[5] = new VertexPositionColour(corners[3], rgba);
-            shape.Vertices[6] = new VertexPositionColour(corners[3], rgba);
-            shape.Vertices[7] = new VertexPositionColour(corners[0], rgba);
-
-            // Fill in the vertices for the top of the frustum
-            shape.Vertices[8] = new VertexPositionColour(corners[4], rgba);
-            shape.Vertices[9] = new VertexPositionColour(corners[5], rgba);
-            shape.Vertices[10] = new VertexPositionColour(corners[5], rgba);
-            shape.Vertices[11] = new VertexPositionColour(corners[6], rgba);
-            shape.Vertices[12] = new VertexPositionColour(corners[6], rgba);
-            shape.Vertices[13] = new VertexPositionColour(corners[7], rgba);
-            shape.Vertices[14] = new VertexPositionColour(corners[7], rgba);
-            shape.Vertices[15] = new VertexPositionColour(corners[4], rgba);
-
-            // Fill in the vertices for the vertical sides of the frustum
-            shape.Vertices[16] = new VertexPositionColour(corners[0], rgba);
-            shape.Vertices[17] = new VertexPositionColour(corners[4], rgba);
-            shape.Vertices[18] = new VertexPositionColour(corners[1], rgba);
-            shape.Vertices[19] = new VertexPositionColour(corners[5], rgba);
-            shape.Vertices[20] = new VertexPositionColour(corners[2], rgba);
-            shape.Vertices[21] = new VertexPositionColour(corners[6], rgba);
-            shape.Vertices[22] = new VertexPositionColour(corners[3], rgba);
-            shape.Vertices[23] = new VertexPositionColour(corners[7], rgba);
-        }
-
-        public void AddBoundingBox(string renderPass, BoundingBox box, Rgba32 col)
-        {
-            AddBoundingBox(renderPass, box, col, 0f);
-        }
-
-        public void AddBoundingBox(string renderPass, BoundingBox box, Rgba32 col, float life)
-        {
-            // Get a DebugShape we can use to draw the box
-            DebugShape shape = GetShapeForLines(12, life);
-            shape.RenderPass = renderPass;
-
-            // Get the corners of the box
-            corners = box.GetCorners();
-
-            // Fill in the vertices for the bottom of the box
-            shape.Vertices[0] = new VertexPositionColour(corners[0], col);
-            shape.Vertices[1] = new VertexPositionColour(corners[1], col);
-            shape.Vertices[2] = new VertexPositionColour(corners[1], col);
-            shape.Vertices[3] = new VertexPositionColour(corners[2], col);
-            shape.Vertices[4] = new VertexPositionColour(corners[2], col);
-            shape.Vertices[5] = new VertexPositionColour(corners[3], col);
-            shape.Vertices[6] = new VertexPositionColour(corners[3], col);
-            shape.Vertices[7] = new VertexPositionColour(corners[0], col);
-
-            // Fill in the vertices for the top of the box
-            shape.Vertices[8] = new VertexPositionColour(corners[4], col);
-            shape.Vertices[9] = new VertexPositionColour(corners[5], col);
-            shape.Vertices[10] = new VertexPositionColour(corners[5], col);
-            shape.Vertices[11] = new VertexPositionColour(corners[6], col);
-            shape.Vertices[12] = new VertexPositionColour(corners[6], col);
-            shape.Vertices[13] = new VertexPositionColour(corners[7], col);
-            shape.Vertices[14] = new VertexPositionColour(corners[7], col);
-            shape.Vertices[15] = new VertexPositionColour(corners[4], col);
-
-            // Fill in the vertices for the vertical sides of the box
-            shape.Vertices[16] = new VertexPositionColour(corners[0], col);
-            shape.Vertices[17] = new VertexPositionColour(corners[4], col);
-            shape.Vertices[18] = new VertexPositionColour(corners[1], col);
-            shape.Vertices[19] = new VertexPositionColour(corners[5], col);
-            shape.Vertices[20] = new VertexPositionColour(corners[2], col);
-            shape.Vertices[21] = new VertexPositionColour(corners[6], col);
-            shape.Vertices[22] = new VertexPositionColour(corners[3], col);
-            shape.Vertices[23] = new VertexPositionColour(corners[7], col);
-        }
-
-        public void AddBoundingSphere(string renderPass, BoundingSphere sphere, Rgba32 col)
-        {
-            AddBoundingSphere(renderPass, sphere, col, 0f);
-        }
-
-        public void AddBoundingSphere(string renderPass, BoundingSphere sphere, Rgba32 col, float life)
-        {
-            // Get a DebugShape we can use to draw the sphere
-            DebugShape shape = GetShapeForLines(sphereLineCount, life);
-            shape.RenderPass = renderPass;
-
-            // Iterate our unit sphere vertices
-            for (int i = 0; i < unitSphere.Length; i++)
-            {
-                // Compute the vertex position by transforming the point by the radius and center of the sphere
-                Vector3 vertPos = unitSphere[i] * sphere.Radius + sphere.Center;
-
-                // Add the vertex to the shape
-                shape.Vertices[i] = new VertexPositionColour(vertPos, col);
-            }
-        }
-        */
-        /*
-        public void AddRect(string renderPass, Rectangle rect, Single z, Rgba32 colour, Single life = 0f)
-        {
-            Int32 width = this.cor.Graphics.DisplayStatus.CurrentWidth;
-            Int32 height = this.cor.Graphics.DisplayStatus.CurrentHeight;
-
-            this.cor.System.GetEffectiveDisplaySize(ref width, ref height);
-
-            Single l = (Single) rect.Left / (Single) width;
-            Single r = (Single) rect.Right / (Single) width;
-            Single t = (Single) rect.Top / (Single) height;
-            Single b = (Single) rect.Bottom / (Single) height;
-
-            this.AddLine(
-                renderPass,
-                new Vector3(l, t, z),
-                new Vector3(r, t, z),
-                colour,
-                life );
-
-            this.AddLine(
-                renderPass,
-                new Vector3(l, b, z),
-                new Vector3(r, b, z),
-                colour,
-                life );
-
-            this.AddLine(
-                renderPass,
-                new Vector3(l, b, z),
-                new Vector3(l, t, z),
-                colour,
-                life );
-
-            this.AddLine(
-                renderPass,
-                new Vector3(r, b, z),
-                new Vector3(r, t, z),
-                colour,
-                life );
-
-
-        }*/
-
+        
         internal void Update(AppTime time)
         {
             // Go through our active shapes and retire any shapes that have expired to the
