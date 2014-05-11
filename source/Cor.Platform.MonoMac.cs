@@ -184,7 +184,7 @@ namespace Cor.Platform.MonoMac
 
         TouchScreenImplementation touchScreen;
 
-        public InputManager()
+        public InputManager(ICor engine)
         {
             InternalUtils.Log.Info(
                 "InputManager -> ()");
