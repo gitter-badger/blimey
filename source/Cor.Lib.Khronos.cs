@@ -608,7 +608,8 @@ namespace Cor.Lib.Khronos
 
         public void DestroyShader (IShader shader)
         {
-            throw new NotImplementedException ();
+            var handle = (ShaderHandle) shader;
+            handle.Dispose ();
         }
 
         public void SetBlendEquation(
@@ -1739,9 +1740,6 @@ namespace Cor.Lib.Khronos
         string variantName;
         string passName;
 
-        string pixelShaderPath;
-        string vertexShaderPath;
-
         internal KrShader(
             String variantName,
             String passName,
@@ -2467,10 +2465,17 @@ namespace Cor.Lib.Khronos
         {
             if (programHandle != 0)
             {
-#if COR_PLATFORM_XIOS
+#if             COR_PLATFORM_XIOS
                 GL.DeleteProgram (programHandle);
-#elif COR_PLATFORM_MONOMAC
-                GL.DeleteProgram (1, new int[]{ programHandle } );
+#elif           COR_PLATFORM_MONOMAC
+                try
+                {
+                    GL.DeleteProgram (1, ref programHandle );
+                }
+                catch (Exception ex)
+                {
+                    InternalUtils.Log.Error ("FUCK! (It seems like OpenTK is broken): " + ex.Message);
+                }
 #endif
 
                 programHandle = 0;
@@ -3059,48 +3064,22 @@ namespace Cor.Lib.Khronos
 
     public static class KrMatrix44Converter
     {
-        const bool flip = false;
-
-        // MATRIX
         public static KhronosMatrix4 ToKhronos (this Abacus.SinglePrecision.Matrix44 mat)
         {
-            if( flip )
-            {
-                return new KhronosMatrix4(
-                    mat.R0C0, mat.R1C0, mat.R2C0, mat.R3C0,
-                    mat.R0C1, mat.R1C1, mat.R2C1, mat.R3C1,
-                    mat.R0C2, mat.R1C2, mat.R2C2, mat.R3C2,
-                    mat.R0C3, mat.R1C3, mat.R2C3, mat.R3C3);
-            }
-            else
-            {
-                return new KhronosMatrix4(
-                    mat.R0C0, mat.R1C0, mat.R2C0, mat.R3C0,
-                    mat.R0C1, mat.R1C1, mat.R2C1, mat.R3C1,
-                    mat.R0C2, mat.R1C2, mat.R2C2, mat.R3C2,
-                    mat.R0C3, mat.R1C3, mat.R2C3, mat.R3C3);
-            }
+            return new KhronosMatrix4(
+                mat.R0C0, mat.R0C1, mat.R0C2, mat.R0C3,
+                mat.R1C0, mat.R1C1, mat.R1C2, mat.R1C3,
+                mat.R2C0, mat.R2C1, mat.R2C2, mat.R2C3,
+                mat.R3C0, mat.R3C1, mat.R3C2, mat.R3C3);
         }
 
         public static Abacus.SinglePrecision.Matrix44 ToAbacus (this KhronosMatrix4 mat)
         {
-
-            if( flip )
-            {
-                return new Abacus.SinglePrecision.Matrix44(
-                    mat.M11, mat.M12, mat.M13, mat.M14,
-                    mat.M21, mat.M22, mat.M23, mat.M24,
-                    mat.M31, mat.M32, mat.M33, mat.M34,
-                    mat.M41, mat.M42, mat.M43, mat.M44);
-            }
-            else
-            {
-                return new Abacus.SinglePrecision.Matrix44(
-                    mat.M11, mat.M12, mat.M13, mat.M14,
-                    mat.M21, mat.M22, mat.M23, mat.M24,
-                    mat.M31, mat.M32, mat.M33, mat.M34,
-                    mat.M41, mat.M42, mat.M43, mat.M44);
-            }
+            return new Abacus.SinglePrecision.Matrix44(
+                mat.M11, mat.M12, mat.M13, mat.M14,
+                mat.M21, mat.M22, mat.M23, mat.M24,
+                mat.M31, mat.M32, mat.M33, mat.M34,
+                mat.M41, mat.M42, mat.M43, mat.M44);
         }
     }
 

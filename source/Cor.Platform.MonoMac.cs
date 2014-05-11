@@ -478,8 +478,6 @@ namespace Cor.Platform.MonoMac
         Int64 frameCounter = -1;
         TimeSpan previousTimeSpan;
 
-        uint _depthRenderbuffer;
-
         readonly AppSettings settings;
         readonly IApp entryPoint;
         readonly Stopwatch timer = new Stopwatch();
@@ -558,7 +556,7 @@ namespace Cor.Platform.MonoMac
             }
             catch(Exception ex)
             {
-                InternalUtils.Log.Error("Failed to render frame:" + ex.Message);
+				InternalUtils.Log.Error("Failed to render frame:" + ex.Message );
             }
 
             base.OnRenderFrame (e);
