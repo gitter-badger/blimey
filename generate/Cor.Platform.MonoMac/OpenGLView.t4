@@ -9,8 +9,6 @@
         Int64 frameCounter = -1;
         TimeSpan previousTimeSpan;
 
-        uint _depthRenderbuffer;
-
         readonly AppSettings settings;
         readonly IApp entryPoint;
         readonly Stopwatch timer = new Stopwatch();
