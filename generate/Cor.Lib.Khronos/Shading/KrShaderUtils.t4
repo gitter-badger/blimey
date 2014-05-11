@@ -100,10 +100,17 @@
         {
             if (programHandle != 0)
             {
-#if COR_PLATFORM_XIOS
+#if             COR_PLATFORM_XIOS
                 GL.DeleteProgram (programHandle);
-#elif COR_PLATFORM_MONOMAC
-                GL.DeleteProgram (1, new int[]{ programHandle } );
+#elif           COR_PLATFORM_MONOMAC
+                try
+                {
+                    GL.DeleteProgram (1, ref programHandle );
+                }
+                catch (Exception ex)
+                {
+                    InternalUtils.Log.Error ("FUCK! (It seems like OpenTK is broken): " + ex.Message);
+                }
 #endif
 
                 programHandle = 0;
