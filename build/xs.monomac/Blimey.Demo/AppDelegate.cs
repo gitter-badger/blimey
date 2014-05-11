@@ -47,6 +47,7 @@ namespace Blimey.Demo
         public override void FinishedLaunching (NSObject notification)
         {
             var appSettings = Demo.GetAppSettings();
+			appSettings.MouseGeneratesTouches = true;
             var appEntryPoint = Demo.GetEntryPoint();
 
             engine = new MonoMacApp(appSettings, appEntryPoint);

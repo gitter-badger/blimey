@@ -56,7 +56,7 @@ namespace Cor.Demo
         {
             this.engine = engine;
             var unlitAsset = engine.Assets.Load<ShaderAsset> ("unlit.cba");
-			var vertexLitAsset = engine.Assets.Load<ShaderAsset> ("pixel_lit.cba");
+			var vertexLitAsset = engine.Assets.Load<ShaderAsset> ("vertex_lit.cba");
 			this.unlitEffect = engine.Graphics.CreateShader (unlitAsset);
 			this.vertexLitEffect = engine.Graphics.CreateShader (vertexLitAsset);
 

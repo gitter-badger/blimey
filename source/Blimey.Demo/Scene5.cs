@@ -43,6 +43,21 @@ using System.Linq;
 
 namespace Blimey.Demo
 {
+	public static class ListExtensions
+	{
+		public static void Shuffle<T>(this IList<T> list)  
+		{  
+			Random rng = new Random();  
+			int n = list.Count;  
+			while (n > 1) {  
+				n--;  
+				int k = rng.Next(n + 1);  
+				T value = list[k];  
+				list[k] = list[n];  
+				list[n] = value;  
+			}  
+		}
+	}
 	public class Scene5
 		: Scene
 	{
@@ -51,15 +66,16 @@ namespace Blimey.Demo
 
 		GridRenderer gr;
 
-		readonly List<Airport> airports = new List<Airport>();
+		List<Airport> airports = new List<Airport>();
 
 		IShader shader = null;
+		IShader shader2 = null;
 
 		public override void Start()
 		{
 			gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Debug");
             
-            var lines = Cor.Assets.Load <TextAsset> ("resources/airports.cba")
+            var lines = Cor.Assets.Load <TextAsset> ("airports.cba")
                 .Text
                 .Split ('\n')
                 .ToList ();
@@ -74,6 +90,10 @@ namespace Blimey.Demo
     			}
             }
 
+			airports.Shuffle ();
+
+			airports = airports.GetRange (0, 50);
+
 			Console.WriteLine("num airports: " + airports.Count);
 
 			this.Settings.BackgroundColour = Rgba32.Red;
@@ -85,7 +105,6 @@ namespace Blimey.Demo
 			var sphereMesh = new SpherePrimitive(this.Cor.Graphics);
 
 			ShaderAsset shaderAsset = this.Cor.Assets.Load<ShaderAsset> ("vertex_lit.cba");
-			
 			shader = this.Cor.Graphics.CreateShader (shaderAsset);
 
             var mat = new Material("Default",shader);
@@ -111,8 +130,7 @@ namespace Blimey.Demo
 			mr.Material = mat;
 
 			ShaderAsset shaderAsset2 = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
-			
-			IShader shader2 = this.Cor.Graphics.CreateShader (shaderAsset2);
+			shader2 = this.Cor.Graphics.CreateShader (shaderAsset2);
 
 			var mat2 = new Material("Default", shader2);
 			mat2.SetColour("MaterialColour", Rgba32.Blue);
@@ -152,6 +170,8 @@ namespace Blimey.Demo
 		public override void Shutdown()
 		{
 			this.Blimey.InputEventSystem.Tap -= this.OnTap;
+			this.Cor.Graphics.DestroyShader (shader2);
+			this.Cor.Graphics.DestroyShader (shader);
 		}
 
 		public override Scene Update(AppTime time)

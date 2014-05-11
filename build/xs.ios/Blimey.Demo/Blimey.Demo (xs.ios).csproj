@@ -142,6 +142,7 @@
   <ItemGroup>
     <Folder Include="Properties\" />
     <Folder Include="source\" />
+    <Folder Include="assets\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Icon.png" />
@@ -153,6 +154,33 @@
     <BundleResource Include="Icon-Small-50.png" />
     <BundleResource Include="Icon-Small-50%402x.png" />
     <BundleResource Include="Default.png" />
+    <BundleResource Include="..\..\..\assets\xios\airports.cba">
+      <Link>assets\xios\airports.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\bg1.cba">
+      <Link>assets\xios\bg1.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\bg2.cba">
+      <Link>assets\xios\bg2.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\bg3.cba">
+      <Link>assets\xios\bg3.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\cvan01.cba">
+      <Link>assets\xios\cvan01.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\cvan02.cba">
+      <Link>assets\xios\cvan02.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\pixel_lit.cba">
+      <Link>assets\xios\pixel_lit.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\unlit.cba">
+      <Link>assets\xios\unlit.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\vertex_lit.cba">
+      <Link>assets\xios\vertex_lit.cba</Link>
+    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\submodules\abacus\build\xs.ios\Abacus\Abacus %28xs.ios%29.csproj">

@@ -274,6 +274,6 @@ Global
 		{721349D4-249A-48DE-839E-E7E3CA528BA6} = {CE368F0D-EE8D-46A2-801D-08709BD2B0D9}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = xs.monomac\Cor.Demo\Cor.Demo (xs.monomac).csproj
+		StartupItem = xs.monomac\Blimey.Demo\Blimey.Demo (xs.monomac).csproj
 	EndGlobalSection
 EndGlobal

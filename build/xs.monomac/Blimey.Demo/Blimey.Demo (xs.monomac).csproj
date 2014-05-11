@@ -117,28 +117,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="resources\" />
     <Folder Include="assets\" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="..\..\..\resources\airports.dat">
-      <Link>resources\airports.dat</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\resources\bg1.png">
-      <Link>resources\bg1.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\resources\bg2.png">
-      <Link>resources\bg2.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\resources\bg3.png">
-      <Link>resources\bg3.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\resources\cvan01.png">
-      <Link>resources\cvan01.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\resources\cvan02.png">
-      <Link>resources\cvan02.png</Link>
-    </BundleResource>
     <BundleResource Include="..\..\..\assets\monomac\airports.cba">
       <Link>assets\monomac\airports.cba</Link>
     </BundleResource>

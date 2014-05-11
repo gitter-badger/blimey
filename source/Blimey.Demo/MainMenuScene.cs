@@ -67,6 +67,11 @@ namespace Blimey.Demo
         {
             _returnScene = this;
 
+			// set up the debug renderer
+			ShaderAsset shaderAsset = this.Cor.Assets.Load<ShaderAsset>("unlit.cba");
+			this.Blimey.DebugShapeRenderer.DebugShader = 
+				this.Cor.Graphics.CreateShader (shaderAsset);
+
             this.Settings.BackgroundColour = _startCol;
 
             var cubeModel = new CubePrimitive(this.Cor.Graphics);
