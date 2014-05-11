@@ -77,4 +77,5 @@ namespace Cor.Platform.MonoMac
 <#@ include file="Keyboard.t4"#>
 <#@ include file="Mouse.t4"#>
 <#@ include file="DisplayStatus.t4"#>
+<#@ include file="TouchScreenImplementation.t4"#>
 }

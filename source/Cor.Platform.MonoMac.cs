@@ -83,12 +83,13 @@ namespace Cor.Platform.MonoMac
             InternalUtils.Log.Info(
                 "Engine -> ()");
 
+            this.settings = settings;
+
             this.audio = new AudioManager();
             this.graphics = new GraphicsManager();
-            this.input = new InputManager();
+            this.input = new InputManager(this);
             this.system = new SystemManager();
             this.displayStatus = new DisplayStatus (width, height);
-            this.settings = settings;
             
             this.log = new LogManager(this.settings.LogSettings);
             this.assets = new AssetManager(this.graphics, this.system);
@@ -130,6 +131,7 @@ namespace Cor.Platform.MonoMac
 
         internal Boolean Update(AppTime time)
         {
+            InputImplementation.Update (time);
             return app.Update(time);
         }
 
@@ -180,6 +182,8 @@ namespace Cor.Platform.MonoMac
         readonly IMultiTouchController multiTouchController = new StubMultiTouchController();
         readonly IGenericGamepad genericGamepad = new StubGenericGamepad();
 
+        TouchScreenImplementation touchScreen;
+
         public InputManager()
         {
             InternalUtils.Log.Info(
@@ -187,6 +191,11 @@ namespace Cor.Platform.MonoMac
 
             keyboard = new Keyboard();
             mouse = new Mouse();
+
+            if (engine.Settings.MouseGeneratesTouches)
+            {
+                touchScreen = new TouchScreenImplementation(engine);
+            }
         }
 
         internal Keyboard KeyboardImplemenatation { get { return keyboard; } }
@@ -231,6 +240,14 @@ namespace Cor.Platform.MonoMac
         }
 
         #endregion
+
+        public void Update(AppTime time)
+        {
+            if (touchScreen != null)
+            {
+                touchScreen.Update(time);
+            }
+        }
     }
 
     public sealed class PanelSpecification
@@ -556,7 +573,7 @@ namespace Cor.Platform.MonoMac
             }
             catch(Exception ex)
             {
-				InternalUtils.Log.Error("Failed to render frame:" + ex.Message );
+                InternalUtils.Log.Error("Failed to render frame:" + ex.Message);
             }
 
             base.OnRenderFrame (e);
@@ -687,12 +704,12 @@ namespace Cor.Platform.MonoMac
         // Mouse //-----------------------------------------------------------//
         public override void MouseDown (NSEvent theEvent)
         {
-            base.MouseDown (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.LeftMouseDown (theEvent);
         }
 
         public override void MouseUp (NSEvent theEvent)
         {
-            base.MouseUp (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.LeftMouseUp (theEvent);
         }
 
         public override void MouseDragged (NSEvent theEvent)
@@ -702,12 +719,12 @@ namespace Cor.Platform.MonoMac
 
         public override void RightMouseDown (NSEvent theEvent)
         {
-            base.RightMouseDown (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.RightMouseDown (theEvent);
         }
 
         public override void RightMouseUp (NSEvent theEvent)
         {
-            base.RightMouseUp (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.RightMouseUp (theEvent);
         }
 
         public override void RightMouseDragged (NSEvent theEvent)
@@ -717,13 +734,13 @@ namespace Cor.Platform.MonoMac
 
         public override void OtherMouseDown (NSEvent theEvent)
         {
-            base.OtherMouseDown (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.MiddleMouseDown (theEvent);
         }
 
 
         public override void OtherMouseUp (NSEvent theEvent)
         {
-            base.OtherMouseUp (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.MiddletMouseUp (theEvent);
         }
 
         public override void OtherMouseDragged (NSEvent theEvent)
@@ -733,12 +750,12 @@ namespace Cor.Platform.MonoMac
 
         public override void ScrollWheel (NSEvent theEvent)
         {
-            base.ScrollWheel (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.ScrollWheel (theEvent);
         }
 
         public override void MouseMoved (NSEvent theEvent)
         {
-            base.MouseMoved (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.MouseMoved (theEvent);
         }
     }
     public sealed class MacGameNSWindow 
@@ -904,53 +921,61 @@ namespace Cor.Platform.MonoMac
     public sealed class Mouse
         : IMouse
     {
-        public ButtonState Left
+        public void LeftMouseUp (NSEvent theEvent)
         {
-            get
-            {
-                return ButtonState.Released;
-            }
+            left = ButtonState.Released;
         }
 
-        public ButtonState Middle
+        public void LeftMouseDown (NSEvent theEvent)
         {
-            get
-            {
-                return ButtonState.Released;
-            }
+            left = ButtonState.Pressed;
         }
 
-        public ButtonState Right
+        public void MiddletMouseUp (NSEvent theEvent)
         {
-            get
-            {
-                return ButtonState.Released;
-            }
+            middle = ButtonState.Released;
         }
 
-        public Int32 ScrollWheelValue
+        public void MiddleMouseDown (NSEvent theEvent)
         {
-            get
-            {
-                return 0;
-            }
+            middle = ButtonState.Pressed;
         }
 
-        public Int32 X
+        public void RightMouseUp (NSEvent theEvent)
         {
-            get
-            {
-                return 0;
-            }
+            right = ButtonState.Released;
         }
 
-        public Int32 Y
+        public void RightMouseDown (NSEvent theEvent)
         {
-            get
-            {
-                return 0;
-            }
+            right = ButtonState.Pressed;
         }
+
+        public void ScrollWheel (NSEvent theEvent)
+        {
+            //throw new NotImplementedException ();
+        }
+
+        public void MouseMoved (NSEvent theEvent)
+        {
+            x = theEvent.AbsoluteX;
+            y = theEvent.AbsoluteY;
+        }
+
+        ButtonState left = ButtonState.Released;
+        ButtonState middle = ButtonState.Released;
+        ButtonState right = ButtonState.Released;
+        Int32 scrollWheelValue = 0;
+        Int32 x = 0;
+        Int32 y = 0;
+
+        public ButtonState Left { get { return left; } }
+        public ButtonState Middle { get { return middle; } }
+        public ButtonState Right { get { return right; } }
+        public Int32 ScrollWheelValue { get { return scrollWheelValue; } }
+        public Int32 X { get { return x; } }
+        public Int32 Y { get { return y; } }
+
     }
 
     public sealed class DisplayStatus
@@ -983,5 +1008,79 @@ namespace Cor.Platform.MonoMac
         public Int32 CurrentHeight { get { return height; } }
 
         #endregion
+    }
+    public class TouchScreenImplementation
+        : IMultiTouchController
+    {
+        bool doneFirstUpdateFlag = false;
+
+        readonly ICor cor;
+        ButtonState previousMouseLeftState;
+        readonly TouchCollection collection = new TouchCollection();
+
+        internal TouchScreenImplementation(ICor cor)
+        {
+            this.cor = cor;
+        }
+
+        public TouchCollection TouchCollection
+        {
+            get { return this.collection; }
+        }
+
+        public IPanelSpecification PanelSpecification { get { return (cor.System as SystemManager).PanelSpecification; } }
+
+        internal void Update(AppTime time)
+        {
+            this.collection.ClearBuffer();
+
+            if( doneFirstUpdateFlag )
+            {
+                bool pressedThisFrame = (this.cor.Input.Mouse.Left == ButtonState.Pressed);
+                bool pressedLastFrame = (previousMouseLeftState == ButtonState.Pressed);
+
+                Int32 id = -42;
+                Vector2 pos = new Vector2(this.cor.Input.Mouse.X, this.cor.Input.Mouse.Y);
+
+                Int32 w = cor.DisplayStatus.CurrentWidth;
+                Int32 h = cor.DisplayStatus.CurrentHeight;
+
+                pos.X = pos.X / (Single)w;
+                pos.Y = pos.Y / (Single)h;
+
+                pos -= new Vector2(0.5f, 0.5f);
+
+                pos.Y = -pos.Y;
+
+                var state = TouchPhase.Invalid;
+                
+                if (pressedThisFrame && !pressedLastFrame)
+                {
+                    // new press
+                    state = TouchPhase.JustPressed;
+                }
+                else if (pressedLastFrame && pressedThisFrame)
+                {
+                    // press in progress
+                    state = TouchPhase.Active;
+                }
+                else if (pressedLastFrame && !pressedThisFrame)
+                {
+                    // released
+                    state = TouchPhase.JustReleased;
+                }
+
+                if (state != TouchPhase.Invalid)
+                {
+                    this.collection.RegisterTouch(id, pos, state, time.FrameNumber, time.Elapsed);
+                }
+            }
+            else
+            {
+                doneFirstUpdateFlag = true;
+            }
+
+            previousMouseLeftState = this.cor.Input.Mouse.Left;
+        }
     }
 }

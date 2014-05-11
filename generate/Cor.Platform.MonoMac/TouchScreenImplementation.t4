@@ -1,0 +1,74 @@
+    public class TouchScreenImplementation
+        : IMultiTouchController
+    {
+        bool doneFirstUpdateFlag = false;
+
+        readonly ICor cor;
+        ButtonState previousMouseLeftState;
+        readonly TouchCollection collection = new TouchCollection();
+
+        internal TouchScreenImplementation(ICor cor)
+        {
+            this.cor = cor;
+        }
+
+        public TouchCollection TouchCollection
+        {
+            get { return this.collection; }
+        }
+
+        public IPanelSpecification PanelSpecification { get { return (cor.System as SystemManager).PanelSpecification; } }
+
+        internal void Update(AppTime time)
+        {
+            this.collection.ClearBuffer();
+
+            if( doneFirstUpdateFlag )
+            {
+                bool pressedThisFrame = (this.cor.Input.Mouse.Left == ButtonState.Pressed);
+                bool pressedLastFrame = (previousMouseLeftState == ButtonState.Pressed);
+
+                Int32 id = -42;
+                Vector2 pos = new Vector2(this.cor.Input.Mouse.X, this.cor.Input.Mouse.Y);
+
+                Int32 w = cor.DisplayStatus.CurrentWidth;
+                Int32 h = cor.DisplayStatus.CurrentHeight;
+
+                pos.X = pos.X / (Single)w;
+                pos.Y = pos.Y / (Single)h;
+
+                pos -= new Vector2(0.5f, 0.5f);
+
+                pos.Y = -pos.Y;
+
+                var state = TouchPhase.Invalid;
+                
+                if (pressedThisFrame && !pressedLastFrame)
+                {
+                    // new press
+                    state = TouchPhase.JustPressed;
+                }
+                else if (pressedLastFrame && pressedThisFrame)
+                {
+                    // press in progress
+                    state = TouchPhase.Active;
+                }
+                else if (pressedLastFrame && !pressedThisFrame)
+                {
+                    // released
+                    state = TouchPhase.JustReleased;
+                }
+
+                if (state != TouchPhase.Invalid)
+                {
+                    this.collection.RegisterTouch(id, pos, state, time.FrameNumber, time.Elapsed);
+                }
+            }
+            else
+            {
+                doneFirstUpdateFlag = true;
+            }
+
+            previousMouseLeftState = this.cor.Input.Mouse.Left;
+        }
+    }

@@ -9,6 +9,8 @@
         readonly IMultiTouchController multiTouchController = new StubMultiTouchController();
         readonly IGenericGamepad genericGamepad = new StubGenericGamepad();
 
+        TouchScreenImplementation touchScreen;
+
         public InputManager()
         {
             InternalUtils.Log.Info(
@@ -16,6 +18,11 @@
 
             keyboard = new Keyboard();
             mouse = new Mouse();
+
+            if (engine.Settings.MouseGeneratesTouches)
+            {
+                touchScreen = new TouchScreenImplementation(engine);
+            }
         }
 
         internal Keyboard KeyboardImplemenatation { get { return keyboard; } }
@@ -60,5 +67,13 @@
         }
 
         #endregion
+
+        public void Update(AppTime time)
+        {
+            if (touchScreen != null)
+            {
+                touchScreen.Update(time);
+            }
+        }
     }
 

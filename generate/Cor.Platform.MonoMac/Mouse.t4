@@ -1,52 +1,60 @@
     public sealed class Mouse
         : IMouse
     {
-        public ButtonState Left
+        public void LeftMouseUp (NSEvent theEvent)
         {
-            get
-            {
-                return ButtonState.Released;
-            }
+            left = ButtonState.Released;
         }
 
-        public ButtonState Middle
+        public void LeftMouseDown (NSEvent theEvent)
         {
-            get
-            {
-                return ButtonState.Released;
-            }
+            left = ButtonState.Pressed;
         }
 
-        public ButtonState Right
+        public void MiddletMouseUp (NSEvent theEvent)
         {
-            get
-            {
-                return ButtonState.Released;
-            }
+            middle = ButtonState.Released;
         }
 
-        public Int32 ScrollWheelValue
+        public void MiddleMouseDown (NSEvent theEvent)
         {
-            get
-            {
-                return 0;
-            }
+            middle = ButtonState.Pressed;
         }
 
-        public Int32 X
+        public void RightMouseUp (NSEvent theEvent)
         {
-            get
-            {
-                return 0;
-            }
+            right = ButtonState.Released;
         }
 
-        public Int32 Y
+        public void RightMouseDown (NSEvent theEvent)
         {
-            get
-            {
-                return 0;
-            }
+            right = ButtonState.Pressed;
         }
+
+        public void ScrollWheel (NSEvent theEvent)
+        {
+            //throw new NotImplementedException ();
+        }
+
+        public void MouseMoved (NSEvent theEvent)
+        {
+            x = theEvent.AbsoluteX;
+            y = theEvent.AbsoluteY;
+        }
+
+        ButtonState left = ButtonState.Released;
+        ButtonState middle = ButtonState.Released;
+        ButtonState right = ButtonState.Released;
+        Int32 scrollWheelValue = 0;
+        Int32 x = 0;
+        Int32 y = 0;
+
+        public ButtonState Left { get { return left; } }
+        public ButtonState Middle { get { return middle; } }
+        public ButtonState Right { get { return right; } }
+        public Int32 ScrollWheelValue { get { return scrollWheelValue; } }
+        public Int32 X { get { return x; } }
+        public Int32 Y { get { return y; } }
+
     }
 

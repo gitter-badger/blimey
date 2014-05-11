@@ -218,12 +218,12 @@
         // Mouse //-----------------------------------------------------------//
         public override void MouseDown (NSEvent theEvent)
         {
-            base.MouseDown (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.LeftMouseDown (theEvent);
         }
 
         public override void MouseUp (NSEvent theEvent)
         {
-            base.MouseUp (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.LeftMouseUp (theEvent);
         }
 
         public override void MouseDragged (NSEvent theEvent)
@@ -233,12 +233,12 @@
 
         public override void RightMouseDown (NSEvent theEvent)
         {
-            base.RightMouseDown (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.RightMouseDown (theEvent);
         }
 
         public override void RightMouseUp (NSEvent theEvent)
         {
-            base.RightMouseUp (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.RightMouseUp (theEvent);
         }
 
         public override void RightMouseDragged (NSEvent theEvent)
@@ -248,13 +248,13 @@
 
         public override void OtherMouseDown (NSEvent theEvent)
         {
-            base.OtherMouseDown (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.MiddleMouseDown (theEvent);
         }
 
 
         public override void OtherMouseUp (NSEvent theEvent)
         {
-            base.OtherMouseUp (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.MiddletMouseUp (theEvent);
         }
 
         public override void OtherMouseDragged (NSEvent theEvent)
@@ -264,11 +264,11 @@
 
         public override void ScrollWheel (NSEvent theEvent)
         {
-            base.ScrollWheel (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.ScrollWheel (theEvent);
         }
 
         public override void MouseMoved (NSEvent theEvent)
         {
-            base.MouseMoved (theEvent);
+            this.gameEngine.InputImplementation.MouseImplemenatation.MouseMoved (theEvent);
         }
     }

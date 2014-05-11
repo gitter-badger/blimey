@@ -20,12 +20,13 @@
             InternalUtils.Log.Info(
                 "Engine -> ()");
 
+            this.settings = settings;
+
             this.audio = new AudioManager();
             this.graphics = new GraphicsManager();
-            this.input = new InputManager();
+            this.input = new InputManager(this);
             this.system = new SystemManager();
             this.displayStatus = new DisplayStatus (width, height);
-            this.settings = settings;
             
             this.log = new LogManager(this.settings.LogSettings);
             this.assets = new AssetManager(this.graphics, this.system);
@@ -67,6 +68,7 @@
 
         internal Boolean Update(AppTime time)
         {
+            InputImplementation.Update (time);
             return app.Update(time);
         }
 
