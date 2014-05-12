@@ -33,13 +33,10 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\source\BinaryPrimitiveSerialiser.cs">
-      <Link>Source\BinaryPrimitiveSerialiser.cs</Link>
+      <Link>Source\BinaryStreamSerialiser.cs</Link>
     </Compile>
     <Compile Include="..\..\source\Exception.cs">
       <Link>Source\Exception.cs</Link>
-    </Compile>
-    <Compile Include="..\..\source\IPrimitiveSerialiser.cs">
-      <Link>Source\IPrimitiveSerialiser.cs</Link>
     </Compile>
     <Compile Include="..\..\source\ObjectExtensions.cs">
       <Link>Source\ObjectExtensions.cs</Link>
@@ -53,12 +50,23 @@
     <Compile Include="..\..\source\SerialiserDatabase.cs">
       <Link>Source\SerialiserDatabase.cs</Link>
     </Compile>
-    <Compile Include="..\..\source\SystemSerialisers.cs">
-      <Link>Source\SystemSerialisers.cs</Link>
+    <Compile Include="Source\Serialisers\DecimalSerialiser.cs" />
+    <Compile Include="Source\Serialisers\ListSerialiser.cs" />
+    <Compile Include="Source\Serialisers\TypeSerialiser.cs" />
+    <Compile Include="Source\Serialisers\NullableSerialiser.cs" />
+    <Compile Include="Source\Serialisers\EnumSerialiser.cs" />
+    <Compile Include="Source\Serialisers\ArraySerialiser.cs" />
+    <Compile Include="Source\Serialisers\StringSerialiser.cs" />
+    <Compile Include="Source\Serialisers\TimeSpanSerialiser.cs" />
+    <Compile Include="Source\SerialisationChannelMode.cs" />
+    <Compile Include="Source\ISerialisationChannel.cs" />
+    <Compile Include="..\..\source\IPrimitiveSerialiser.cs">
+      <Link>Source\IStreamSerialiser.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Source\" />
+    <Folder Include="Source\Serialisers\" />
   </ItemGroup>
 </Project>

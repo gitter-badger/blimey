@@ -30,17 +30,28 @@
     <Reference Include="System" />
     <Reference Include="nunit.framework" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="TestObjects.cs" />
-    <Compile Include="TestTypes.cs" />
-    <Compile Include="TestTypesSerialisers.cs" />
-    <Compile Include="Tests.cs" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\Oats\Oats.csproj">
       <Project>{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}</Project>
       <Name>Oats</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Source\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\tests\TestObjects.cs">
+      <Link>Source\TestObjects.cs</Link>
+    </Compile>
+    <Compile Include="..\..\tests\Tests.cs">
+      <Link>Source\Tests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\tests\TestTypes.cs">
+      <Link>Source\TestTypes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\tests\TestTypesSerialisers.cs">
+      <Link>Source\TestTypesSerialisers.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

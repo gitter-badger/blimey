@@ -42,6 +42,9 @@ namespace Oats
 		// Target type to type serialiser implementation.
 		readonly Dictionary<Type, Serialiser> assetSerialisers;
 
+		// target type -> serialiser type
+		List <Type> genericTypeSerialisers = new List<Type> ();
+
 		MethodInfo registerSerialiserMethodInfo;
 
 		private SerialiserDatabase(Boolean autoRegister)
@@ -98,6 +101,10 @@ namespace Oats
 						{
 							RegisterSerialiserReflective (serialiserType);
 							Console.WriteLine ("SerialiserDatabase: Automatically registered -> " + serialiserType.Name);
+						}
+						else
+						{
+							genericTypeSerialisers.Add (serialiserType);
 						}
 					}
 				}
@@ -179,11 +186,23 @@ namespace Oats
 					}
 					else if (targetype.IsArray)
 					{
-						throw new NotImplementedException ();
+						Type t = targetype.GetElementType();
+
+						var serialiser = typeof(ArraySerialiser<>).MakeGenericType (t);
+						RegisterSerialiserReflective (serialiser);
 					}
 					else if (targetype.IsGenericType)
 					{
-						throw new NotImplementedException ();
+						Type gt = targetype.GetGenericTypeDefinition ();
+
+						if (genericTypeSerialisers.Contains (gt))
+						{
+							Type t = targetype.GetGenericArguments () [0];
+
+							Type serialiserType = gt.MakeGenericType (t);
+							RegisterSerialiserReflective (serialiserType);
+							Console.WriteLine ("SerialiserDatabase: Automatically registered -> " + serialiserType.Name);
+						}
 					}
 				}
 				else {

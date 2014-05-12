@@ -2,6 +2,29 @@
 
 namespace Oats.Tests
 {
+	public class Animal
+	{
+		public String AnimalString { get; set; }
+	}
+
+	public class Mammel
+		: Animal
+	{
+		public String MammelString { get; set; }
+	}
+
+	public class Boar
+		: Mammel
+	{
+		public String BoarString { get; set; }
+	}
+
+	public class Bear
+		: Mammel
+	{
+		public String BearString { get; set; }
+	}
+
 	public enum SamplerMode
 	{
 		X,

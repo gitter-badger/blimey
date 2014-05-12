@@ -1,37 +1,18 @@
 ﻿using System;
 using System.Reflection;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Oats
 {
-	public enum SerialisationChannelMode
-	{
-		Read,
-		Write
-	}
-
-	public interface ISerialisationChannel
-		: IDisposable
-	{
-		SerialisationChannelMode Mode { get; }
-
-		void 		WriteReflective 	(Type type, Object value);
-		void 		Write 		<T> 	(T value);
-
-		Object 		ReadReflective 		(Type type);
-		T 			Read 		<T> 	();
-	}
-
-	public class SerialisationChannel <TPrimitiveReader, TPrimitiveWriter>
+	public class SerialisationChannel <TStreamSerialiser>
 		: ISerialisationChannel
-	where TPrimitiveReader
-		: IPrimitiveReader
-	where TPrimitiveWriter
-		: IPrimitiveWriter
+	where TStreamSerialiser
+		: IStreamSerialiser
 	{
 		readonly SerialiserDatabase serialiserDatabase;
-		readonly TPrimitiveReader primitiveReader;
-		readonly IPrimitiveWriter primitiveWriter;
+		readonly IStreamSerialiser streamSerialiser;
 		readonly SerialisationChannelMode mode;
 
 		public SerialisationChannelMode Mode { get { return mode; } }
@@ -45,28 +26,17 @@ namespace Oats
 
 			this.mode = mode;
 
-			if (mode == SerialisationChannelMode.Read)
-			{
-				this.primitiveReader = 
-					(TPrimitiveReader)
-					Activator.CreateInstance (
-						typeof(TPrimitiveReader), 
-						new Object [] { stream });
-			}
+			this.streamSerialiser = 
+				(TStreamSerialiser)
+				Activator.CreateInstance (
+					typeof(TStreamSerialiser));
 
-			if (mode == SerialisationChannelMode.Write)
-			{
-				this.primitiveWriter = 
-					(TPrimitiveWriter)
-						Activator.CreateInstance (
-							typeof(TPrimitiveWriter), 
-							new Object [] { stream });
-			}
+			this.streamSerialiser.Initialise (stream, mode);
 		}
 
 		public void Dispose ()
 		{
-			var tryDispose = new Object[] { primitiveReader, primitiveWriter };
+			var tryDispose = new Object[] { streamSerialiser };
 
 			foreach (Object item in tryDispose) {
 				if (item != null) {
@@ -77,18 +47,9 @@ namespace Oats
 			}
 		}
 
-		static Boolean IsSerialisablePrimitiveType<T> ()
-		{
-			if (typeof(T) == typeof (IntPtr)) return false;
-			if (typeof(T) == typeof (UIntPtr)) return false;
-
-			return typeof(T).IsPrimitive;
-		}
-
-
 		public void WriteReflective (Type type, Object value)
 		{
-			Type thisType = typeof(SerialisationChannel <TPrimitiveReader, TPrimitiveWriter>);
+			Type thisType = typeof(SerialisationChannel <TStreamSerialiser>);
 			MethodInfo mi = thisType
 				.GetMethod (
 					"Write");
@@ -116,68 +77,21 @@ namespace Oats
 				throw new SerialisationException ("This serialisation stream is for writing only.");
 			}
 
-			if (IsSerialisablePrimitiveType<T>())
+			// Deal with nulls
+			if (!typeof(T).IsValueType)
 			{
-				if (typeof(T) == typeof(Boolean)) {
-					primitiveWriter.Write ( (Boolean)(Object) value);
-					return;
-				}
+				// Write some extra data
+				streamSerialiser.Write <Boolean> (value != null);
 
-
-				if (typeof(T) == typeof(Byte)) {
-					primitiveWriter.Write ( (Byte)(Object) value);
+				// early out if null.
+				if (value == null)
 					return;
-				}
+			}
 
-				if (typeof(T) == typeof(Char)) {
-					primitiveWriter.Write ( (Char)(Object) value);
-					return;
-				}
-
-				if (typeof(T) == typeof(Double)) {
-					primitiveWriter.Write ( (Double)(Object) value);
-					return;
-				}
-
-				if (typeof(T) == typeof(Int16)) {
-					primitiveWriter.Write ( (Int16)(Object) value);
-					return;
-				}
-
-				if (typeof(T) == typeof(Int32)) {
-					primitiveWriter.Write ( (Int32)(Object) value);
-					return;
-				}
-
-				if (typeof(T) == typeof(Int64)) {
-					primitiveWriter.Write ( (Int64)(Object) value);
-					return;
-				}
-
-				if (typeof(T) == typeof(SByte)) {
-					primitiveWriter.Write ( (SByte)(Object) value);
-					return;
-				}
-
-				if (typeof(T) == typeof(Single)) {
-					primitiveWriter.Write ( (Single)(Object) value);
-					return;
-				}
-
-				if (typeof(T) == typeof(UInt16)) {
-					primitiveWriter.Write ( (UInt16)(Object) value);
-					return;
-				}
-
-				if (typeof(T) == typeof(UInt32)) {
-					primitiveWriter.Write ( (UInt32)(Object) value);
-					return;
-				}
-
-				if (typeof(T) == typeof(UInt64)) {
-					primitiveWriter.Write ( (UInt64)(Object) value);
-					return;
-				}
+			if (streamSerialiser.SupportedTypes.Contains (typeof (T)))
+			{
+				streamSerialiser.Write <T> (value);
+				return;
 			}
 			else
 			{
@@ -190,20 +104,20 @@ namespace Oats
 				catch (Exception ex)
 				{
 					throw new SerialisationException (
-						"Failed to get serialiser for type: " + 
-						typeof (T) );
+						"No serialiser registed for type: " + 
+						typeof (T) + " --> " + ex.Message );
 				}
 
-				try
-				{
+				//try
+				//{
 					serialiser.Write (this, value);
-				}
-				catch (Exception ex)
-				{
-					throw new SerialisationException (
-						"Failed to use serialiser " + serialiser.GetType () + 
-						" to write: " + value);
-				}
+				//}
+				//catch (Exception ex)
+				//{
+				//	throw new SerialisationException (
+				//		"Failed to use serialiser " + serialiser.GetType () + 
+				//		" to write: " + value + " --> " + ex.Message);
+				//}
 
 				return;
 			}
@@ -211,7 +125,7 @@ namespace Oats
 
 		public Object ReadReflective (Type type)
 		{
-			MethodInfo mi = typeof(SerialisationChannel <TPrimitiveReader, TPrimitiveWriter>)
+			MethodInfo mi = typeof(SerialisationChannel <TStreamSerialiser>)
 				.GetMethod ("Read", new Type[]{});
 
 			var gmi = mi.MakeGenericMethod(type);
@@ -226,45 +140,18 @@ namespace Oats
 				throw new Exception ("This serialisation stream is for reading only.");
 			}
 
-			if(IsSerialisablePrimitiveType<T>())
+			if (!typeof(T).IsValueType)
 			{
-				if (typeof(T) == typeof (Boolean))
-					return (T) (Object) primitiveReader.ReadBoolean ();
+				//classes can be null perhaps it's null
+				if (streamSerialiser.Read <Boolean> () == false)
+				{
+					return default (T);
+				}
+			}
 
-				if (typeof(T) == typeof (Byte))     
-					return (T) (Object) primitiveReader.ReadByte ();
-
-				if (typeof(T) == typeof (Char))     
-					return (T) (Object) primitiveReader.ReadChar ();
-
-				if (typeof(T) == typeof (Double))   
-					return (T) (Object) primitiveReader.ReadDouble ();
-
-				if (typeof(T) == typeof (Int16))    
-					return (T) (Object) primitiveReader.ReadInt16 ();
-
-				if (typeof(T) == typeof (Int32))    
-					return (T) (Object) primitiveReader.ReadInt32 ();
-
-				if (typeof(T) == typeof (Int64))    
-					return (T) (Object) primitiveReader.ReadInt64 ();
-
-				if (typeof(T) == typeof (SByte))    
-					return (T) (Object) primitiveReader.ReadSByte ();
-
-				if (typeof(T) == typeof (Single))   
-					return (T) (Object) primitiveReader.ReadSingle ();
-
-				if (typeof(T) == typeof (UInt16))   
-					return (T) (Object) primitiveReader.ReadUInt16 ();
-
-				if (typeof(T) == typeof (UInt32))   
-					return (T) (Object) primitiveReader.ReadUInt32 ();
-
-				if (typeof(T) == typeof (UInt64))   
-					return (T) (Object) primitiveReader.ReadUInt64 ();
-
-				throw new Exception ();
+			if (streamSerialiser.SupportedTypes.Contains (typeof (T)))
+			{
+				return streamSerialiser.Read <T> ();
 			}
 			else
 			{
@@ -274,7 +161,7 @@ namespace Oats
 					// locate the correct serialiser
 					serialiser = serialiserDatabase.GetSerialiser <T> ();
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
 					throw new SerialisationException (
 						"Failed to get serialiser for type: " + 
@@ -286,7 +173,7 @@ namespace Oats
 					T result = serialiser.Read (this);
 					return result;
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
 					throw new SerialisationException (
 						"Failed to use serialiser " + serialiser.GetType () + 

@@ -16,16 +16,13 @@ namespace Oats
 
 			using (var stream = new MemoryStream ())
 			{
-				using (var channel = 
-					      new SerialisationChannel
-					<BinaryPrimitiveReader, BinaryPrimitiveWriter> 
-						(db, stream, SerialisationChannelMode.Write)) 
+				using (var channel = new SerialisationChannel<BinaryStreamSerialiser> 
+					(db, stream, SerialisationChannelMode.Write)) 
 				{
 					channel.Write<T> (o);
 
 					return stream.GetBuffer ();
 				}
-
 			}
 		}
 
@@ -35,10 +32,8 @@ namespace Oats
 
 			using (var stream = new MemoryStream (bytes))
 			{
-				using (var channel = 
-					      new SerialisationChannel
-					<BinaryPrimitiveReader, BinaryPrimitiveWriter> 
-						(db, stream, SerialisationChannelMode.Read))
+				using (var channel = new SerialisationChannel <BinaryStreamSerialiser> 
+					(db, stream, SerialisationChannelMode.Read))
 				{
 					Object o = channel.Read<T> ();
 
