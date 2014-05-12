@@ -1,6 +1,6 @@
 [submodule "submodules/cor"]
 	path = submodules/cor
-	url = git@github.com:blimey3D/cor.git
+url=https://github.com:blimey3D/cor.git
 	branch = development
 [submodule "submodules/ServiceStack.Text"]
 	path = submodules/ServiceStack.Text
@@ -8,8 +8,8 @@
 	branch = v3
 [submodule "submodules/abacus"]
 	path = submodules/abacus
-	url = git@github.com:abacus3D/abacus.git
+url=https://github.com/abacus3D/abacus.git
 	branch = development
 [submodule "submodules/oats"]
 	path = submodules/oats
-	url = git@github.com:ajpook/oats.git
+url=https://github.com:ajpook/oats.git
