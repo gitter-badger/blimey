@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
 using Oats;
-using NUnit.Framework.SyntaxHelpers;
 using System.IO;
 using System.Collections.Generic;
 
