@@ -11,18 +11,28 @@ namespace Oats
 	where TStreamSerialiser
 		: IStreamSerialiser
 	{
-		readonly SerialiserDatabase serialiserDatabase;
+		readonly ISerialiserProvider serialiserProvider;
 		readonly IStreamSerialiser streamSerialiser;
-		readonly SerialisationChannelMode mode;
+		readonly ChannelMode mode;
 
-		public SerialisationChannelMode Mode { get { return mode; } }
-
+		public ChannelMode Mode { get { return mode; } }
+	
 		public SerialisationChannel (
-			SerialiserDatabase serialiserDatabase,
 			Stream stream,
-			SerialisationChannelMode mode)
+			ChannelMode mode,
+			SerialiserCollection serialiserCollection = null)
 		{
-			this.serialiserDatabase = serialiserDatabase;
+			if (serialiserCollection == null)
+			{
+				// the user has not provided their own serialiser collection
+				// so we will generate them one on the fly.
+                // First lets create them an empty collection.
+				serialiserProvider = new AutoSerialiserProvider ();
+			}
+			else
+			{
+				this.serialiserProvider = serialiserCollection;
+			}
 
 			this.mode = mode;
 
@@ -62,7 +72,7 @@ namespace Oats
 			}
 			catch (Exception ex)
 			{
-				throw new Exception (
+				throw new SerialisationException (
 					"Failed to invoke Write for type [" + type + "]" +
 					" with value [" + value + "]" + 
 					"\n" + ex.Message + 
@@ -72,9 +82,10 @@ namespace Oats
 
 		public void Write <T> (T value)
 		{
-			if (mode != SerialisationChannelMode.Write) 
+			if (mode != ChannelMode.Write) 
 			{
-				throw new SerialisationException ("This serialisation stream is for writing only.");
+				throw new SerialisationException (
+					"This serialisation stream is for writing only.");
 			}
 
 			// Deal with nulls
@@ -99,26 +110,16 @@ namespace Oats
 				try
 				{
 					// locate the correct serialiser
-					serialiser = serialiserDatabase.GetSerialiser <T> ();
+					serialiser = serialiserProvider.GetSerialiser <T> ();
 				}
 				catch (Exception ex)
 				{
 					throw new SerialisationException (
-						"No serialiser registed for type: " + 
+						"No serialiser registered for type: " + 
 						typeof (T) + " --> " + ex.Message );
 				}
-
-				//try
-				//{
-					serialiser.Write (this, value);
-				//}
-				//catch (Exception ex)
-				//{
-				//	throw new SerialisationException (
-				//		"Failed to use serialiser " + serialiser.GetType () + 
-				//		" to write: " + value + " --> " + ex.Message);
-				//}
-
+					
+				serialiser.Write (this, value);
 				return;
 			}
 		}
@@ -135,9 +136,10 @@ namespace Oats
 
 		public T Read <T> ()
 		{
-			if (mode != SerialisationChannelMode.Read)
+			if (mode != ChannelMode.Read)
 			{
-				throw new Exception ("This serialisation stream is for reading only.");
+				throw new SerialisationException (
+					"This serialisation stream is for reading only.");
 			}
 
 			if (!typeof(T).IsValueType)
@@ -159,7 +161,7 @@ namespace Oats
 				try
 				{
 					// locate the correct serialiser
-					serialiser = serialiserDatabase.GetSerialiser <T> ();
+					serialiser = serialiserProvider.GetSerialiser <T> ();
 				}
 				catch (Exception)
 				{
@@ -168,17 +170,8 @@ namespace Oats
 						typeof (T) );
 				}
 
-				try
-				{
-					T result = serialiser.Read (this);
-					return result;
-				}
-				catch (Exception)
-				{
-					throw new SerialisationException (
-						"Failed to use serialiser " + serialiser.GetType () + 
-						" to read");
-				}
+				T result = serialiser.Read (this);
+				return result;
 			}
 		}
 	}

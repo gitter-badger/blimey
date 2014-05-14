@@ -12,12 +12,10 @@ namespace Oats
 		{
 			T o = (T) obj;
 
-			var db = SerialiserDatabase.Instance;
-
 			using (var stream = new MemoryStream ())
 			{
 				using (var channel = new SerialisationChannel<BinaryStreamSerialiser> 
-					(db, stream, SerialisationChannelMode.Write)) 
+					(stream, ChannelMode.Write)) 
 				{
 					channel.Write<T> (o);
 
@@ -28,12 +26,10 @@ namespace Oats
 
 		public static T FromBinary <T> (this Byte[] bytes)
 		{
-			var db = SerialiserDatabase.Instance;
-
 			using (var stream = new MemoryStream (bytes))
 			{
 				using (var channel = new SerialisationChannel <BinaryStreamSerialiser> 
-					(db, stream, SerialisationChannelMode.Read))
+					(stream, ChannelMode.Read))
 				{
 					Object o = channel.Read<T> ();
 

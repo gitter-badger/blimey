@@ -93,13 +93,13 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\source\BinaryPrimitiveSerialiser.cs">
-      <Link>Source\BinaryPrimitiveSerialiser.cs</Link>
+      <Link>Source\BinaryStreamSerialiser.cs</Link>
     </Compile>
     <Compile Include="..\..\source\Exception.cs">
       <Link>Source\Exception.cs</Link>
     </Compile>
-    <Compile Include="..\..\source\IPrimitiveSerialiser.cs">
-      <Link>Source\IPrimitiveSerialiser.cs</Link>
+    <Compile Include="..\..\source\TypeExtensions.cs">
+      <Link>Source\TypeExtensions.cs</Link>
     </Compile>
     <Compile Include="..\..\source\ObjectExtensions.cs">
       <Link>Source\ObjectExtensions.cs</Link>
@@ -110,11 +110,56 @@
     <Compile Include="..\..\source\Serialiser.cs">
       <Link>Source\Serialiser.cs</Link>
     </Compile>
-    <Compile Include="..\..\source\SerialiserDatabase.cs">
-      <Link>Source\SerialiserDatabase.cs</Link>
+    <Compile Include="..\..\source\Serialisers\DecimalSerialiser.cs">
+      <Link>Source\Serialisers\DecimalSerialiser.cs</Link>
     </Compile>
-    <Compile Include="..\..\source\SystemSerialisers.cs">
-      <Link>Source\SystemSerialisers.cs</Link>
+    <Compile Include="..\..\source\Serialisers\ListSerialiser.cs">
+      <Link>Source\Serialisers\ListSerialiser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Serialisers\TypeSerialiser.cs">
+      <Link>Source\Serialisers\TypeSerialiser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Serialisers\NullableSerialiser.cs">
+      <Link>Source\Serialisers\NullableSerialiser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Serialisers\EnumSerialiser.cs">
+      <Link>Source\Serialisers\EnumSerialiser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Serialisers\ArraySerialiser.cs">
+      <Link>Source\Serialisers\ArraySerialiser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Serialisers\StringSerialiser.cs">
+      <Link>Source\Serialisers\StringSerialiser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Serialisers\TimeSpanSerialiser.cs">
+      <Link>Source\Serialisers\TimeSpanSerialiser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\ISerialisationChannel.cs">
+      <Link>Source\ISerialisationChannel.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\IPrimitiveSerialiser.cs">
+      <Link>Source\IStreamSerialiser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Serialisers\DictionarySerialiser.cs">
+      <Link>Source\Serialisers\DictionarySerialiser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\AutoSerialiserProvider.cs">
+      <Link>Source\AutoSerialiserProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\ISerialiserProvider.cs">
+      <Link>Source\ISerialiserProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\SerialiserActivator.cs">
+      <Link>Source\SerialiserActivator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\SerialiserTypeFinder.cs">
+      <Link>Source\SerialiserTypeFinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\ChannelMode.cs">
+      <Link>Source\ChannelMode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\SerialiserCollection.cs">
+      <Link>Source\SerialiserCollection.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

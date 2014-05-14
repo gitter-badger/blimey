@@ -14,14 +14,12 @@ namespace Oats.Tests
 		public void TestCustomStream ()
 		{
 			var exampleShaderDefinition = TestObjects.ShaderSamplerDefinition;
-			var db = SerialiserDatabase.Instance;
-
 			Byte[] bytes = null;
 
 			using (MemoryStream stream = new MemoryStream ())
 			{
 				using (var channel = new SerialisationChannel <BinaryStreamSerialiser> (
-					db, stream, SerialisationChannelMode.Write))
+					stream, ChannelMode.Write))
 				{
 					channel.Write <ShaderSamplerDefinition> (exampleShaderDefinition);
 				}
@@ -33,7 +31,7 @@ namespace Oats.Tests
 			using (MemoryStream stream = new MemoryStream (bytes))
 			{
 				using (var channel = new SerialisationChannel <BinaryStreamSerialiser> (
-					db, stream, SerialisationChannelMode.Read))
+					stream, ChannelMode.Read))
 				{
 					ShaderSamplerDefinition ssd = channel.Read <ShaderSamplerDefinition> ();
 
@@ -91,7 +89,7 @@ namespace Oats.Tests
 
 			Byte [] binary = lst.ToBinary <List <Animal>> ();
 
-			List <Animal> results = binary.FromBinary<List <Animal>> ();
+			List <Animal> results = binary.FromBinary <List <Animal>> ();
 
 			Assert.That (results.Count == lst.Count);
 		}
@@ -136,6 +134,30 @@ namespace Oats.Tests
 				{
 					Assert.That (results [i] != null);
 					Assert.That (animals [i].AnimalString, Is.EqualTo (results [i].AnimalString));
+
+					if (animals [i] is Mammel)
+					{
+						Assert.That (
+							(animals [i] as Mammel).MammelString, 
+							Is.EqualTo (
+								(results [i] as Mammel).MammelString));
+					}
+
+					if (animals [i] is Bear)
+					{
+						Assert.That (
+							(animals [i] as Bear).BearString, 
+							Is.EqualTo (
+								(results [i] as Bear).BearString));
+					}
+
+					if (animals [i] is Boar)
+					{
+						Assert.That (
+							(animals [i] as Boar).BoarString, 
+							Is.EqualTo (
+								(results [i] as Boar).BoarString));
+					}
 				}
 				else
 				{

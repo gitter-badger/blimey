@@ -25,10 +25,6 @@ namespace Oats
 
 		public override void Write (ISerialisationChannel sc, String str)
 		{
-			if (str == null)
-				throw new SerialisationException (
-					"Not expected, the Serialisation Channel should deal with nulls.");
-
 			Byte[] encoded = Encoding.UTF8.GetBytes (str);
 
 			sc.Write <UInt32> ( (UInt32) encoded.Length);

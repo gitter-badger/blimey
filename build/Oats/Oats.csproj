@@ -38,6 +38,9 @@
     <Compile Include="..\..\source\Exception.cs">
       <Link>Source\Exception.cs</Link>
     </Compile>
+    <Compile Include="..\..\source\TypeExtensions.cs">
+      <Link>Source\TypeExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\..\source\ObjectExtensions.cs">
       <Link>Source\ObjectExtensions.cs</Link>
     </Compile>
@@ -46,9 +49,6 @@
     </Compile>
     <Compile Include="..\..\source\Serialiser.cs">
       <Link>Source\Serialiser.cs</Link>
-    </Compile>
-    <Compile Include="..\..\source\SerialiserDatabase.cs">
-      <Link>Source\SerialiserDatabase.cs</Link>
     </Compile>
     <Compile Include="..\..\source\Serialisers\DecimalSerialiser.cs">
       <Link>Source\Serialisers\DecimalSerialiser.cs</Link>
@@ -74,14 +74,32 @@
     <Compile Include="..\..\source\Serialisers\TimeSpanSerialiser.cs">
       <Link>Source\Serialisers\TimeSpanSerialiser.cs</Link>
     </Compile>
-    <Compile Include="..\..\source\SerialisationChannelMode.cs">
-      <Link>Source\Serialisers\SerialisationChannelMode.cs</Link>
-    </Compile>
     <Compile Include="..\..\source\ISerialisationChannel.cs">
-      <Link>Source\Serialisers\ISerialisationChannel.cs</Link>
+      <Link>Source\ISerialisationChannel.cs</Link>
     </Compile>
     <Compile Include="..\..\source\IPrimitiveSerialiser.cs">
       <Link>Source\IStreamSerialiser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\Serialisers\DictionarySerialiser.cs">
+      <Link>Source\Serialisers\DictionarySerialiser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\AutoSerialiserProvider.cs">
+      <Link>Source\AutoSerialiserProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\ISerialiserProvider.cs">
+      <Link>Source\ISerialiserProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\SerialiserActivator.cs">
+      <Link>Source\SerialiserActivator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\SerialiserTypeFinder.cs">
+      <Link>Source\SerialiserTypeFinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\ChannelMode.cs">
+      <Link>Source\ChannelMode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\source\SerialiserCollection.cs">
+      <Link>Source\SerialiserCollection.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

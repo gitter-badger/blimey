@@ -7,7 +7,7 @@ namespace Oats
 	{
 		public override T[] Read (ISerialisationChannel sc)
 		{
-			UInt32 count = sc.Read<UInt32> ();
+			Int32 count = sc.Read<Int32> ();
 
 			var array = new T[count];
 
@@ -15,18 +15,18 @@ namespace Oats
 
 			if (objectType.IsValueType)
 			{
-				for (UInt32 i = 0; i < count; ++i)
+				for (Int32 i = 0; i < count; ++i)
 				{
 					array [i] = sc.Read <T> ();
 				}
 			}
 			else
 			{
-				for (UInt32 i = 0; i < count; ++i)
+				for (Int32 i = 0; i < count; ++i)
 				{
-					// Get the id of the type reader for this element,
-					// as this element might not be of Type T, it might be
-					// polymorphic.
+					// Get the actual type for this element
+                    // as it might not be of Type T, it might be
+                    // polymorphic.
 					Type polymorphicType = sc.Read<Type>();
 
 					if (polymorphicType == null)
@@ -46,7 +46,7 @@ namespace Oats
 		public override void Write (ISerialisationChannel sc, T[] obj)
 		{
 			// Write the item count.
-			sc.Write ((UInt32) obj.Length);
+			sc.Write ((Int32) obj.Length);
 
 			Type objectType = typeof(T);
 

@@ -61,6 +61,15 @@ namespace Oats.Tests
 				(this.SamplerMode == other.SamplerMode));
 		}
 
+		public override int GetHashCode ()
+		{
+			return (
+				this.Name.GetHashCode () ^ 
+				this.NiceName.GetHashCode () ^
+				this.Optional.GetHashCode () ^
+				this.SamplerMode.GetHashCode ());
+		}
+
 		public override Boolean Equals(object obj)
 		{
 			Boolean flag = false;

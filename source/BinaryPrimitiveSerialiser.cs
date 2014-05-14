@@ -23,12 +23,12 @@ namespace Oats
 
 		#endregion
 
-		public void Initialise (Stream stream, SerialisationChannelMode mode)
+		public void Initialise (Stream stream, ChannelMode mode)
 		{
-			if (mode == SerialisationChannelMode.Read)
+			if (mode == ChannelMode.Read)
 				binaryReader = new BinaryReader (stream);
 
-			if (mode == SerialisationChannelMode.Write)
+			if (mode == ChannelMode.Write)
 				binaryWriter = new BinaryWriter (stream);
 		}
 

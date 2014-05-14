@@ -2,7 +2,7 @@
 
 namespace Oats
 {
-	public enum SerialisationChannelMode
+	public enum ChannelMode
 	{
 		Read,
 		Write

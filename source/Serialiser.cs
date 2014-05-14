@@ -27,7 +27,6 @@ namespace Oats
 		protected Serialiser()
 			: base(typeof(T))
 		{
-
 		}
 
 		public override Object ReadObject (ISerialisationChannel sc)

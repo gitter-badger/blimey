@@ -7,18 +7,15 @@ namespace Oats
 	{
 		public override Type Read (ISerialisationChannel sc)
 		{
-			String fullName = sc.Read <String> ();
-			return Type.GetType (fullName);
+			String typeName = sc.Read <String> ();
+			Type t = Type.GetType (typeName);
+			return t;
 		}
 
-		public override void Write (ISerialisationChannel sc, Type obj)
+		public override void Write (ISerialisationChannel sc, Type t)
 		{
-			if (obj == null)
-				throw new SerialisationException (
-					"Not expected, the Serialisation Channel should deal with nulls.");
-
-			String fullName = obj.FullName + ", " + obj.Namespace;
-			sc.Write(fullName);
+			String typeName = t.FullName + ", " + t.Namespace;
+			sc.Write(typeName);
 		}
 	}
 }

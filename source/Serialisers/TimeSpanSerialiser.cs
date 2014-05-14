@@ -14,10 +14,6 @@ namespace Oats
 
 		public override void Write (ISerialisationChannel sc, TimeSpan obj)
 		{
-			if (obj == null)
-				throw new SerialisationException (
-					"Not expected, the Serialisation Channel should deal with nulls.");
-
 			sc.Write<Int64> (obj.Ticks);
 		}
 	}
