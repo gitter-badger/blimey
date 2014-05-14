@@ -105,7 +105,7 @@ namespace Oats
 			if (serialiserInstance != null)
 			{
 				serialiserCollection.AddSerialiser (serialiserInstance);
-				Console.WriteLine ("SerialiserDatabase: Automatically registered -> " + serialiserInstance.GetType().Name);
+				// Console.WriteLine ("SerialiserDatabase: Automatically registered -> " + serialiserInstance.GetType().ToString ());
 			}
 		}
 
