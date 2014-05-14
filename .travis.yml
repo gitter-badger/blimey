@@ -4,6 +4,9 @@ before_install:
 install:
     sudo apt-get -y install mono-complete;
 
+before_script:
+    cd scripts;
+
 script:
     sh build.sh && exit 1;
     sh test.sh && exit 1;
