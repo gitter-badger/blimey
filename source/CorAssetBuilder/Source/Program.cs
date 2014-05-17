@@ -98,11 +98,14 @@ namespace CorAssetBuilder
             Console.WriteLine ("\tDestination Folder: " + projectDefinition.DestinationFolder);
             Console.WriteLine ("");
 
-            string[] assetDefinitionFiles = Directory.GetFiles (projectDefinition.AssetDefinitionsFolder);
+            string[] assetDefinitionFiles = Directory
+				.GetFiles (projectDefinition.AssetDefinitionsFolder)
+				.Where (x => !Path.GetFileName(x).StartsWith("."))
+				.ToArray ();
 
             var assetDefinitions = assetDefinitionFiles
                 .Select (
-                                       file =>
+                    file =>
                     file.ReadAllText ()
                         .FromJson<Configuration.AssetDefinition> ())
                 .ToList ();
