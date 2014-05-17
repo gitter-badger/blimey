@@ -34,12 +34,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\Oats\Oats.csproj">
-      <Project>{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}</Project>
-      <Name>Oats</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Source\" />
   </ItemGroup>
   <ItemGroup>
@@ -55,5 +49,11 @@
     <Compile Include="..\..\tests\TestTypesSerialisers.cs">
       <Link>Source\TestTypesSerialisers.cs</Link>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Oats\Oats %28xs.mono40%29.csproj">
+      <Project>{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}</Project>
+      <Name>Oats (xs.mono40)</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
