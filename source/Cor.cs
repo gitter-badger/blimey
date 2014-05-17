@@ -2933,8 +2933,8 @@ namespace Cor
             {
                 using (var channel = 
                     new SerialisationChannel
-                    <BinaryPrimitiveReader, BinaryPrimitiveWriter> 
-                    (SerialiserDatabase.Instance, stream, SerialisationChannelMode.Read)) 
+					<BinaryStreamSerialiser> 
+                    (stream, ChannelMode.Read)) 
                 {
                     ProcessFileHeader (channel);
                     T asset = channel.Read <T> ();

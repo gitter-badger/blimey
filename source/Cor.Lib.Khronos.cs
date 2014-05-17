@@ -555,10 +555,9 @@ namespace Cor.Lib.Khronos
             using (var memoryStream = new MemoryStream (data)) {
 
                 using (var sc = new SerialisationChannel 
-                    <BinaryPrimitiveReader, BinaryPrimitiveWriter> (
-                        SerialiserDatabase.Instance, 
+					<BinaryStreamSerialiser> (
                         memoryStream, 
-                        SerialisationChannelMode.Read))
+                        ChannelMode.Read))
                 {
                     // : Num Variants
                     Int32 numPlatformVariants = sc.Read <Int32> ();
