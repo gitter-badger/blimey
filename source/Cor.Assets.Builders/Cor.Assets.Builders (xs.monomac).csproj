@@ -81,9 +81,9 @@
       <Project>{579B3FDB-CDAD-44E1-8417-885C38E49A0E}</Project>
       <Name>ServiceStack.Text</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\submodules\oats\build\Oats\Oats.csproj">
+    <ProjectReference Include="..\..\submodules\oats\build\Oats\Oats %28xs.mono40%29.csproj">
       <Project>{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}</Project>
-      <Name>Oats</Name>
+      <Name>Oats (xs.mono40)</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

@@ -71,9 +71,9 @@
       <Project>{E42ABA06-F20C-48AA-B039-96EA5191377E}</Project>
       <Name>Cor.Assets.Builders (xs.monomac)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\submodules\oats\build\Oats\Oats.csproj">
+    <ProjectReference Include="..\..\submodules\oats\build\Oats\Oats %28xs.mono40%29.csproj">
       <Project>{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}</Project>
-      <Name>Oats</Name>
+      <Name>Oats (xs.mono40)</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

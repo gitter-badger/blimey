@@ -47,8 +47,8 @@ namespace Cor
 			using (var memorySteam = new MemoryStream ()) {
 
 				using (var sc = new SerialisationChannel 
-					<BinaryPrimitiveReader, BinaryPrimitiveWriter>
-					(SerialiserDatabase.Instance, memorySteam, SerialisationChannelMode.Write))
+					<BinaryStreamSerialiser>
+					(memorySteam, ChannelMode.Write))
 				{
 
 					string path = Path.GetFullPath (input.Files [1]);

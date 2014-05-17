@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Assets.Builders (xs.mon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorAssetBuilder", "CorAssetBuilder\CorAssetBuilder.csproj", "{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oats", "..\submodules\oats\build\Oats\Oats.csproj", "{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oats (xs.mono40)", "..\submodules\oats\build\Oats\Oats (xs.mono40).csproj", "{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

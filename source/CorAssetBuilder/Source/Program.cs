@@ -286,8 +286,8 @@ namespace CorAssetBuilder
             using (var stream = new FileStream (destination, FileMode.OpenOrCreate))
             {
 				using (var sc = new SerialisationChannel
-					<BinaryPrimitiveReader, BinaryPrimitiveWriter> 
-						(SerialiserDatabase.Instance, stream, SerialisationChannelMode.Write))
+					<BinaryStreamSerialiser> 
+						(stream, ChannelMode.Write))
                 {
                     // Cor Binary Asset File Header
                     //------------------------------------------------------------------------------------------------//
