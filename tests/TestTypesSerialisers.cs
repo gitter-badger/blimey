@@ -1,7 +1,88 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Oats.Tests
 {
+	public class FooSerialiser
+		: Serialiser<Foo>
+	{
+		public override Foo Read (ISerialisationChannel ss)
+		{
+			var f = new Foo ();
+			f.FooColour =      ss.Read <Colour> ();
+			f.Message =        ss.Read <String> ();
+			return f;
+		}
+
+		public override void Write (ISerialisationChannel ss, Foo f)
+		{
+			ss.Write <Colour> (f.FooColour);
+			ss.Write <String> (f.Message);
+		}
+	}
+
+	public class BarSerialiser
+		: Serialiser<Bar>
+	{
+		public override Bar Read (ISerialisationChannel ss)
+		{
+			var b = new Bar ();
+			b.BarColour =      ss.Read <Colour> ();
+			b.FooColour =      ss.Read <Colour> ();
+			b.Message =        ss.Read <String> ();
+			return b;
+		}
+
+		public override void Write (ISerialisationChannel ss, Bar b)
+		{
+			ss.Write <Colour> (b.BarColour);
+			ss.Write <Colour> (b.FooColour);
+			ss.Write <String> (b.Message);
+		}
+	}
+
+	public class ColourSerialiser
+		: Serialiser<Colour>
+	{
+		public override Colour Read (ISerialisationChannel ss)
+		{
+			var c = new Colour ();
+			c.A = ((Single) ss.Read <Byte> ()) / 255f;
+			c.R = ((Single) ss.Read <Byte> ()) / 255f;
+			c.G = ((Single) ss.Read <Byte> ()) / 255f;
+			c.B = ((Single) ss.Read <Byte> ()) / 255f;
+			return c;
+		}
+
+		public override void Write (ISerialisationChannel ss, Colour c)
+		{
+			ss.Write <Byte> ((Byte)(c.A * 255f));
+			ss.Write <Byte> ((Byte)(c.R * 255f));
+			ss.Write <Byte> ((Byte)(c.G * 255f));
+			ss.Write <Byte> ((Byte)(c.B * 255f));
+		}
+	}
+
+	public class ReadmeExampleSerialiser
+		: Serialiser<ReadmeExample>
+	{
+		public override ReadmeExample Read (ISerialisationChannel ss)
+		{
+			var rme = new ReadmeExample ();
+			rme.Data =      	ss.Read <List <Foo>> ();
+			rme.Colour =      	ss.Read <Colour> ();
+			rme.Version =       ss.Read <Int32> ();
+			return rme;
+		}
+
+		public override void Write (ISerialisationChannel ss, ReadmeExample rme)
+		{
+			ss.Write <List <Foo>> (rme.Data);
+			ss.Write <Colour> (rme.Colour);
+			ss.Write <Int32> (rme.Version);
+		}
+	}
+
 	public class AnimalSerialiser
 		: Serialiser<Animal>
 	{

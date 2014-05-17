@@ -39,17 +39,28 @@ namespace Oats.Tests
 			}
 		}
 
+		[Test ()]
+		public void TestReadmeExample ()
+		{
+			var obj = TestObjects.ReadmeExample;
+
+			Byte[] bytes = obj.ToBinary <ReadmeExample> ();
+
+			ReadmeExample a = bytes.FromBinary <ReadmeExample> ();
+
+			Assert.That (a, Is.EqualTo (obj));
+		}
 
 		[Test ()]
 		public void TestShaderSamplerDefinitionSerialiser ()
 		{
-			var exampleShaderDefinition = TestObjects.ShaderSamplerDefinition;
+			var obj = TestObjects.ShaderSamplerDefinition;
 
-			Byte[] bytes = exampleShaderDefinition.ToBinary <ShaderSamplerDefinition> ();
+			Byte[] bytes = obj.ToBinary <ShaderSamplerDefinition> ();
 
 			ShaderSamplerDefinition a = bytes.FromBinary <ShaderSamplerDefinition> ();
 
-			Assert.That (a, Is.EqualTo (exampleShaderDefinition));
+			Assert.That (a, Is.EqualTo (obj));
 		}
 
 		[Test ()]
