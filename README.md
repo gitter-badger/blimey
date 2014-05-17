@@ -75,15 +75,7 @@ Next lets create an object:
         }
     };
 
-Now lets ask Oats to serialise that object into binary:
-
-    Byte[] bytes = obj.ToBinary <Example> ();
-
-And back to an object:
-
-    Example a = bytes.FromBinary <Example> ();
-
-Oats is an explict serialisation libary, so before we can run the code above without hitting exceptions, we need to tell Oat how we want it to serialise objects of our custom types, this is done by defining serialisers:
+Oats is an explict serialisation libary, so before we can ask Oats to serialise our object, we need to tell Oats how we want it to deal with objects of our custom types, this is done by defining serialisers:
 
     public class FooSerialiser
         : Serialiser<Foo>
@@ -165,4 +157,10 @@ Oats is an explict serialisation libary, so before we can run the code above wit
         }
     }
 
+Now that we have explicitly defined how we want our types to be serialised we can ask Oats to serialise that object into binary:
 
+    Byte[] bytes = example.ToBinary <Example> ();
+
+And we can ask Oats to deserialise the binary back to an object:
+
+    Example a = bytes.FromBinary <Example> ();
