@@ -5361,8 +5361,10 @@ namespace SunGiant.Framework.Ophelia.Cameras
         void InitDefault()
         {
             /// BIG TODO, ADD AWAY TO MAKE RENDER PASSES SHARE THE SAME CAMERA!!!!!
-            /// SO DEBUG AND DEFAULT CAN USER THE SAME
-            AddRenderPass("Debug", RenderPassSettings.Default);
+			/// SO DEBUG AND DEFAULT CAN USER THE SAME
+			var debugPassSettings = RenderPassSettings.Default;
+			debugPassSettings.ClearDepthBuffer = true;
+			AddRenderPass("Debug", debugPassSettings);
 
             var defaultPassSettings = RenderPassSettings.Default;
             defaultPassSettings.EnableDefaultLighting = true;
