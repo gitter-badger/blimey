@@ -88,6 +88,32 @@ namespace Oats.Tests
 		}
 
 		[Test ()]
+		public void TestToChecksum ()
+		{
+			ShaderSamplerDefinition exampleObject = TestObjects.ShaderSamplerDefinition;
+
+			// make a new object
+			Byte[] b = exampleObject.ToBinary<ShaderSamplerDefinition> ();
+			ShaderSamplerDefinition newExampleObject = b.FromBinary<ShaderSamplerDefinition> ();
+
+			// Sanity check
+			Assert.That (newExampleObject, Is.EqualTo (exampleObject));
+
+			// test that both yeild the same checksum
+			Byte[] chk1 = exampleObject.ToChecksum <ShaderSamplerDefinition> ();
+			Byte[] chk2 = newExampleObject.ToChecksum <ShaderSamplerDefinition> ();
+			Assert.That (chk1, Is.EqualTo (chk2));
+
+			// now change the new object a little
+			newExampleObject.Name = "Leeroy Jee-ee-ee-een-kins!";
+
+			// test that the changes yeild a new checksum
+			Byte[] chk3 = newExampleObject.ToChecksum <ShaderSamplerDefinition> ();
+			Assert.That (chk1 != chk3);
+
+		}
+
+		[Test ()]
 		public void TestAutoRegisterListSerialiser ()
 		{
 			var lst = new List <Animal> ()

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography;
 
 namespace Oats
 {
@@ -37,7 +38,14 @@ namespace Oats
 				}
 			}
 		}
+
+		public static Byte[] ToChecksum <T> (this Object obj)
+		{
+			Byte[] binary = obj.ToBinary <T> ();
+			HashAlgorithm hashAlgorithm = new MD5CryptoServiceProvider ();
+			Byte[] hash = hashAlgorithm.ComputeHash (binary);
+
+			return hash;
+		}
 	}
-
-
 }
