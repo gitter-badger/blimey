@@ -79,8 +79,8 @@ namespace Blimey
 
         public Boolean Update(AppTime time)
         {
-            FrameStats.SlowLog ();
-            FrameStats.Reset ();
+			//FrameStats.SlowLog ();
+			FrameStats.Reset ();
 
             using (new ProfilingTimer(t => FrameStats.UpdateTime += t))
             {
