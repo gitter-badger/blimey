@@ -58,8 +58,8 @@ namespace Blimey.Demo
         {
             this.Settings.BackgroundColour = Rgba32.Black;
 
-
             SceneObject camSo = CreateSceneObject ("Scene 3 Camera");
+			camSo.AddTrait <Camera> ();
             var lookatTrait = camSo.AddTrait<LookAtSubject>();
             lookatTrait.Subject = Transform.Origin;
             var orbitTrait = camSo.AddTrait<OrbitAroundSubject>();
@@ -68,12 +68,17 @@ namespace Blimey.Demo
             camSo.Transform.LocalPosition = new Vector3(1f,0.5f,5f);
 
             this.SetRenderPassCameraTo("Debug", camSo);
-            this.SetRenderPassCameraTo("Default", camSo);
+			this.SetRenderPassCameraTo("Default", camSo);
 
             _returnScene = this;
             this.Blimey.InputEventSystem.Tap += this.OnTap;
 
             teapotGPUMesh = new TeapotPrimitive(Cor.Graphics);
+
+			// set up the debug renderer
+			ShaderAsset shaderAsset = this.Cor.Assets.Load<ShaderAsset>("unlit.cba");
+			this.Blimey.DebugShapeRenderer.DebugShader = 
+				this.Cor.Graphics.CreateShader (shaderAsset);
             gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Debug");
 
             AddTeapot(0);

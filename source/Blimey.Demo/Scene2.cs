@@ -69,6 +69,11 @@ namespace Blimey.Demo
         public override void Start()
         {
             this.Settings.BackgroundColour = Rgba32.LightSlateGrey;
+
+			// set up the debug renderer
+			ShaderAsset unlitShaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
+			this.Blimey.DebugShapeRenderer.DebugShader = 
+				this.Cor.Graphics.CreateShader (unlitShaderAsset);
             gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Default", 1f, 10);
 
             returnScene = this;
@@ -76,7 +81,6 @@ namespace Blimey.Demo
             // create a sprite
             var billboard = new BillboardPrimitive(this.Cor.Graphics);
 
-			ShaderAsset unlitShaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
 
 			unlitShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
             billboardGo = this.CreateSceneObject("billboard");

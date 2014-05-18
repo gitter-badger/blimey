@@ -63,6 +63,11 @@ namespace Blimey.Demo
 
         public override void Start ()
         {
+			// set up the debug renderer
+			ShaderAsset shaderAsset = this.Cor.Assets.Load<ShaderAsset>("unlit.cba");
+			this.Blimey.DebugShapeRenderer.DebugShader = 
+				this.Cor.Graphics.CreateShader (shaderAsset);
+
             gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Default");
 
             _alternateCamera = this.CreateSceneObject("Alternate Camera");

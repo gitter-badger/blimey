@@ -73,6 +73,9 @@ namespace Blimey.Demo
 
 		public override void Start()
 		{
+			ShaderAsset unlitShaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
+			this.Blimey.DebugShapeRenderer.DebugShader = 
+				this.Cor.Graphics.CreateShader (unlitShaderAsset);
 			gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Debug");
             
             var lines = Cor.Assets.Load <TextAsset> ("airports.cba")
@@ -112,7 +115,7 @@ namespace Blimey.Demo
 			earthGo = this.CreateSceneObject("earth");
 
 			SceneObject camSo = CreateSceneObject ("Scene 5 Camera");
-			//var camTrait = camSo.AddTrait<Camera>();
+			camSo.AddTrait<Camera>();
 			var lookatTrait = camSo.AddTrait<LookAtSubject>();
 			lookatTrait.Subject = Transform.Origin;
 			var orbitTrait = camSo.AddTrait<OrbitAroundSubject>();
@@ -160,7 +163,7 @@ namespace Blimey.Demo
 
 				Vector3 r; Vector3.Transform(ref pos, ref rot, out r);
 				so.Transform.Position = r;
-				so.Transform.LocalScale = new Vector3(0.005f, 0.005f, 0.005f);
+				so.Transform.LocalScale = new Vector3(0.015f, 0.015f, 0.015f);
 
 			}
 

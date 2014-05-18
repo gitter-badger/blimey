@@ -71,6 +71,9 @@ namespace Blimey.Demo
 
         public override void Start ()
         {
+			ShaderAsset unlitShaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
+			this.Blimey.DebugShapeRenderer.DebugShader = 
+				this.Cor.Graphics.CreateShader (unlitShaderAsset);
             gr = new GridRenderer (this.Blimey.DebugShapeRenderer, "Default");
 
             screenWidth = this.Cor.DisplayStatus.CurrentWidth;
