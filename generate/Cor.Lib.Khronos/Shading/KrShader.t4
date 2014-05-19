@@ -20,7 +20,7 @@
             String vertexShaderSource,
             String pixelShaderSource)
         {
-            InternalUtils.Log.Info ("  Creating Pass Variant: " + variantName);
+            InternalUtils.Log.Info ("GFX", "  Creating Pass Variant: " + variantName);
             this.variantName = variantName;
             this.passName = passName;
 
@@ -64,7 +64,7 @@
 
         internal void ValidateInputs(List<ShaderInputDefinition> definitions)
         {
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info ("GFX", 
                 String.Format (
                     "Pass: {1} => ValidateInputs({0})",
                     variantName,
@@ -103,7 +103,7 @@
 
         internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
         {
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info ("GFX", 
                 String.Format (
                     "Pass: {1} => ValidateVariables({0})",
                     variantName,
@@ -132,7 +132,7 @@
 
         internal void ValidateSamplers(List<ShaderSamplerDefinition> definitions)
         {
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info ("GFX", 
                 String.Format (
                     "Pass: {1} => ValidateSamplers({0})",
                     variantName,
@@ -215,9 +215,9 @@
             // bind atts here
             //ShaderUtils.LinkProgram (programHandle);
 
-            InternalUtils.Log.Info("  Finishing linking");
+            InternalUtils.Log.Info ("GFX", "  Finishing linking");
 
-            InternalUtils.Log.Info("  Initilise Attributes");
+            InternalUtils.Log.Info ("GFX", "  Initilise Attributes");
             var attributes = KrShaderUtils.GetAttributes(programHandle);
 
             Inputs = attributes
@@ -229,9 +229,9 @@
             foreach (var input in Inputs) {
                 logInputs += input.Name + ", ";
             }
-            InternalUtils.Log.Info (logInputs);
+            InternalUtils.Log.Info ("GFX", logInputs);
 
-            InternalUtils.Log.Info("  Initilise Uniforms");
+            InternalUtils.Log.Info ("GFX", "  Initilise Uniforms");
             var uniforms = KrShaderUtils.GetUniforms(programHandle);
 
 
@@ -246,9 +246,9 @@
             foreach (var variable in Variables) {
                 logVars += variable.Name + ", ";
             }
-            InternalUtils.Log.Info (logVars);
+            InternalUtils.Log.Info ("GFX", logVars);
 
-            InternalUtils.Log.Info("  Initilise Samplers");
+            InternalUtils.Log.Info ("GFX", "  Initilise Samplers");
             Samplers = uniforms
                 .Where(y =>
                        y.Type == ActiveUniformType.Sampler2D ||

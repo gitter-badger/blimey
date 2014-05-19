@@ -42,7 +42,7 @@
             String passName,
             List<Tuple<String, KrShaderVariantPassDefinition>> passVariants___Name_AND_passVariantDefinition)
         {
-            InternalUtils.Log.Info("Creating ShaderPass: " + passName);
+            InternalUtils.Log.Info ("GFX", "Creating ShaderPass: " + passName);
             this.Name = passName;
             this.Variants =
                 passVariants___Name_AND_passVariantDefinition
@@ -119,7 +119,7 @@
 
                     if( !logHistory.ContainsKey(warning) )
                     {
-                        InternalUtils.Log.Info(warning);
+                        InternalUtils.Log.Info ("GFX", warning);
 
                         logHistory.Add(warning, true);
                     }
@@ -140,7 +140,7 @@
 
                 if( sampler == null )
                 {
-                    //InternalUtils.Log.Info("missing sampler: " + key2);
+                    //InternalUtils.Log.Info ("GFX", "missing sampler: " + key2);
                 }
                 else
                 {

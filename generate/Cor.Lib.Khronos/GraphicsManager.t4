@@ -8,7 +8,7 @@
 
         public GraphicsManager()
         {
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info ("GFX", 
                 "Khronos Graphics Manager -> ()");
 
             this.gpuUtils = new GpuUtils();

@@ -169,9 +169,9 @@
 
                 string log = infoLog.ToString();
 
-                InternalUtils.Log.Info(src);
-                InternalUtils.Log.Info (log);
-                InternalUtils.Log.Info(type.ToString());
+                InternalUtils.Log.Info ("GFX", src);
+                InternalUtils.Log.Info ("GFX", log);
+                InternalUtils.Log.Info ("GFX", type.ToString());
             }
 #endif
             Int32 status = 0;
@@ -311,7 +311,7 @@
 
                 KrErrorHandler.Check();
 
-                InternalUtils.Log.Info (string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
+                InternalUtils.Log.Info ("GFX", string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
             }
 #endif
             Int32 status = 0;
@@ -358,7 +358,7 @@
 
                 KrErrorHandler.Check();
 
-                InternalUtils.Log.Info (string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
+                InternalUtils.Log.Info ("GFX", string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
             }
 
             Int32 status = 0;

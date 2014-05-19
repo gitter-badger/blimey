@@ -21,7 +21,7 @@
 
             KrErrorHandler.Check();
 
-            InternalUtils.Log.Info(string.Format(
+            InternalUtils.Log.Info ("GFX", string.Format(
                 "    Binding Shader Input: [Prog={0}, AttIndex={1}, AttLocation={4}, AttName={2}, AttType={3}]",
                 programHandle, attribute.Index, attribute.Name, attribute.Type, attLocation));
 

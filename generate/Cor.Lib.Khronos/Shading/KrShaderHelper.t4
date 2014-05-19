@@ -14,11 +14,11 @@
             VertexDeclaration vertexDeclaration,
             IList<KrShader> variants)
         {
-            InternalUtils.Log.Info("\n");
-            InternalUtils.Log.Info("\n");
-            InternalUtils.Log.Info("=====================================================================");
-            InternalUtils.Log.Info("Working out the best shader variant for: " + vertexDeclaration);
-            InternalUtils.Log.Info("Possible variants:");
+            InternalUtils.Log.Info ("GFX", "\n");
+            InternalUtils.Log.Info ("GFX", "\n");
+            InternalUtils.Log.Info ("GFX", "=====================================================================");
+            InternalUtils.Log.Info ("GFX", "Working out the best shader variant for: " + vertexDeclaration);
+            InternalUtils.Log.Info ("GFX", "Possible variants:");
 
             int best = 0;
 
@@ -38,7 +38,7 @@
                 int numUnmatchedVertElems = matchResult.NumUnmatchedInputs;
                 int numMissingNonOptionalInputs = matchResult.NumUnmatchedRequiredInputs;
 
-                InternalUtils.Log.Info(" - " + variants[i]);
+                InternalUtils.Log.Info ("GFX", " - " + variants[i]);
 
                 if( i == 0 )
                 {
@@ -72,7 +72,7 @@
             }
 
             //best = 2;
-            InternalUtils.Log.Info("Chosen variant: " + variants[best].VariantName);
+            InternalUtils.Log.Info ("GFX", "Chosen variant: " + variants[best].VariantName);
 
             return variants[best];
         }
@@ -161,7 +161,7 @@
 
             }
 
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info ("GFX", 
                 String.Format(
                     "[{0}, {1}, {2}]",
                     result.NumMatchedInputs,

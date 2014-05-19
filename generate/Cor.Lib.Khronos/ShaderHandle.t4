@@ -184,10 +184,10 @@
         /// </summary>
         internal ShaderHandle (ShaderDefinition shaderDefinition, List<KrShaderVariantDefinition> platformVariants)
         {
-            InternalUtils.Log.Info("\n");
-            InternalUtils.Log.Info("\n");
-            InternalUtils.Log.Info("=====================================================================");
-            InternalUtils.Log.Info("Creating Shader: " + shaderDefinition.Name);
+            InternalUtils.Log.Info ("GFX", "\n");
+            InternalUtils.Log.Info ("GFX", "\n");
+            InternalUtils.Log.Info ("GFX", "=====================================================================");
+            InternalUtils.Log.Info ("GFX", "Creating Shader: " + shaderDefinition.Name);
             this.cachedShaderDefinition = shaderDefinition;
             this.cachedVariantDefinitions = platformVariants;
             this.Name = shaderDefinition.Name;
@@ -233,7 +233,7 @@
             // For each named shader pass.
             foreach (var definedPassName in shaderDefinition.PassNames)
             {
-                InternalUtils.Log.Info(
+                InternalUtils.Log.Info ("GFX", 
                     " Preparing to initilising Shader Pass: " + definedPassName);
 
                 // itterate over the defined pass names, ex: cel, outline...

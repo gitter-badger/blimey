@@ -194,7 +194,7 @@ namespace Cor.Lib.Khronos
 
         public GraphicsManager()
         {
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info ("GFX", 
                 "Khronos Graphics Manager -> ()");
 
             this.gpuUtils = new GpuUtils();
@@ -555,7 +555,7 @@ namespace Cor.Lib.Khronos
             using (var memoryStream = new MemoryStream (data)) {
 
                 using (var sc = new SerialisationChannel 
-					<BinaryStreamSerialiser> (
+                    <BinaryStreamSerialiser> (
                         memoryStream, 
                         ChannelMode.Read))
                 {
@@ -1148,10 +1148,10 @@ namespace Cor.Lib.Khronos
         /// </summary>
         internal ShaderHandle (ShaderDefinition shaderDefinition, List<KrShaderVariantDefinition> platformVariants)
         {
-            InternalUtils.Log.Info("\n");
-            InternalUtils.Log.Info("\n");
-            InternalUtils.Log.Info("=====================================================================");
-            InternalUtils.Log.Info("Creating Shader: " + shaderDefinition.Name);
+            InternalUtils.Log.Info ("GFX", "\n");
+            InternalUtils.Log.Info ("GFX", "\n");
+            InternalUtils.Log.Info ("GFX", "=====================================================================");
+            InternalUtils.Log.Info ("GFX", "Creating Shader: " + shaderDefinition.Name);
             this.cachedShaderDefinition = shaderDefinition;
             this.cachedVariantDefinitions = platformVariants;
             this.Name = shaderDefinition.Name;
@@ -1197,7 +1197,7 @@ namespace Cor.Lib.Khronos
             // For each named shader pass.
             foreach (var definedPassName in shaderDefinition.PassNames)
             {
-                InternalUtils.Log.Info(
+                InternalUtils.Log.Info ("GFX", 
                     " Preparing to initilising Shader Pass: " + definedPassName);
 
                 // itterate over the defined pass names, ex: cel, outline...
@@ -1302,7 +1302,7 @@ namespace Cor.Lib.Khronos
             String passName,
             List<Tuple<String, KrShaderVariantPassDefinition>> passVariants___Name_AND_passVariantDefinition)
         {
-            InternalUtils.Log.Info("Creating ShaderPass: " + passName);
+            InternalUtils.Log.Info ("GFX", "Creating ShaderPass: " + passName);
             this.Name = passName;
             this.Variants =
                 passVariants___Name_AND_passVariantDefinition
@@ -1379,7 +1379,7 @@ namespace Cor.Lib.Khronos
 
                     if( !logHistory.ContainsKey(warning) )
                     {
-                        InternalUtils.Log.Info(warning);
+                        InternalUtils.Log.Info ("GFX", warning);
 
                         logHistory.Add(warning, true);
                     }
@@ -1400,7 +1400,7 @@ namespace Cor.Lib.Khronos
 
                 if( sampler == null )
                 {
-                    //InternalUtils.Log.Info("missing sampler: " + key2);
+                    //InternalUtils.Log.Info ("GFX", "missing sampler: " + key2);
                 }
                 else
                 {
@@ -1745,7 +1745,7 @@ namespace Cor.Lib.Khronos
             String vertexShaderSource,
             String pixelShaderSource)
         {
-            InternalUtils.Log.Info ("  Creating Pass Variant: " + variantName);
+            InternalUtils.Log.Info ("GFX", "  Creating Pass Variant: " + variantName);
             this.variantName = variantName;
             this.passName = passName;
 
@@ -1789,7 +1789,7 @@ namespace Cor.Lib.Khronos
 
         internal void ValidateInputs(List<ShaderInputDefinition> definitions)
         {
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info ("GFX", 
                 String.Format (
                     "Pass: {1} => ValidateInputs({0})",
                     variantName,
@@ -1828,7 +1828,7 @@ namespace Cor.Lib.Khronos
 
         internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
         {
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info ("GFX", 
                 String.Format (
                     "Pass: {1} => ValidateVariables({0})",
                     variantName,
@@ -1857,7 +1857,7 @@ namespace Cor.Lib.Khronos
 
         internal void ValidateSamplers(List<ShaderSamplerDefinition> definitions)
         {
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info ("GFX", 
                 String.Format (
                     "Pass: {1} => ValidateSamplers({0})",
                     variantName,
@@ -1940,9 +1940,9 @@ namespace Cor.Lib.Khronos
             // bind atts here
             //ShaderUtils.LinkProgram (programHandle);
 
-            InternalUtils.Log.Info("  Finishing linking");
+            InternalUtils.Log.Info ("GFX", "  Finishing linking");
 
-            InternalUtils.Log.Info("  Initilise Attributes");
+            InternalUtils.Log.Info ("GFX", "  Initilise Attributes");
             var attributes = KrShaderUtils.GetAttributes(programHandle);
 
             Inputs = attributes
@@ -1954,9 +1954,9 @@ namespace Cor.Lib.Khronos
             foreach (var input in Inputs) {
                 logInputs += input.Name + ", ";
             }
-            InternalUtils.Log.Info (logInputs);
+            InternalUtils.Log.Info ("GFX", logInputs);
 
-            InternalUtils.Log.Info("  Initilise Uniforms");
+            InternalUtils.Log.Info ("GFX", "  Initilise Uniforms");
             var uniforms = KrShaderUtils.GetUniforms(programHandle);
 
 
@@ -1971,9 +1971,9 @@ namespace Cor.Lib.Khronos
             foreach (var variable in Variables) {
                 logVars += variable.Name + ", ";
             }
-            InternalUtils.Log.Info (logVars);
+            InternalUtils.Log.Info ("GFX", logVars);
 
-            InternalUtils.Log.Info("  Initilise Samplers");
+            InternalUtils.Log.Info ("GFX", "  Initilise Samplers");
             Samplers = uniforms
                 .Where(y =>
                        y.Type == ActiveUniformType.Sampler2D ||
@@ -2029,7 +2029,7 @@ namespace Cor.Lib.Khronos
 
             KrErrorHandler.Check();
 
-            InternalUtils.Log.Info(string.Format(
+            InternalUtils.Log.Info ("GFX", string.Format(
                 "    Binding Shader Input: [Prog={0}, AttIndex={1}, AttLocation={4}, AttName={2}, AttType={3}]",
                 programHandle, attribute.Index, attribute.Name, attribute.Type, attLocation));
 
@@ -2076,7 +2076,7 @@ namespace Cor.Lib.Khronos
             this.Name = uniform.Name;
             this.Type = Cor.Lib.Khronos.KrEnumConverter.ToType(uniform.Type);
 
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info ("GFX", 
                 String.Format(
                 "    Caching Reference to Shader Variable: [Prog={0}, UniIndex={1}, UniLocation={2}, UniName={3}, UniType={4}]",
                 programHandle,
@@ -2203,11 +2203,11 @@ namespace Cor.Lib.Khronos
             VertexDeclaration vertexDeclaration,
             IList<KrShader> variants)
         {
-            InternalUtils.Log.Info("\n");
-            InternalUtils.Log.Info("\n");
-            InternalUtils.Log.Info("=====================================================================");
-            InternalUtils.Log.Info("Working out the best shader variant for: " + vertexDeclaration);
-            InternalUtils.Log.Info("Possible variants:");
+            InternalUtils.Log.Info ("GFX", "\n");
+            InternalUtils.Log.Info ("GFX", "\n");
+            InternalUtils.Log.Info ("GFX", "=====================================================================");
+            InternalUtils.Log.Info ("GFX", "Working out the best shader variant for: " + vertexDeclaration);
+            InternalUtils.Log.Info ("GFX", "Possible variants:");
 
             int best = 0;
 
@@ -2227,7 +2227,7 @@ namespace Cor.Lib.Khronos
                 int numUnmatchedVertElems = matchResult.NumUnmatchedInputs;
                 int numMissingNonOptionalInputs = matchResult.NumUnmatchedRequiredInputs;
 
-                InternalUtils.Log.Info(" - " + variants[i]);
+                InternalUtils.Log.Info ("GFX", " - " + variants[i]);
 
                 if( i == 0 )
                 {
@@ -2261,7 +2261,7 @@ namespace Cor.Lib.Khronos
             }
 
             //best = 2;
-            InternalUtils.Log.Info("Chosen variant: " + variants[best].VariantName);
+            InternalUtils.Log.Info ("GFX", "Chosen variant: " + variants[best].VariantName);
 
             return variants[best];
         }
@@ -2350,7 +2350,7 @@ namespace Cor.Lib.Khronos
 
             }
 
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info ("GFX", 
                 String.Format(
                     "[{0}, {1}, {2}]",
                     result.NumMatchedInputs,
@@ -2533,9 +2533,9 @@ namespace Cor.Lib.Khronos
 
                 string log = infoLog.ToString();
 
-                InternalUtils.Log.Info(src);
-                InternalUtils.Log.Info (log);
-                InternalUtils.Log.Info(type.ToString());
+                InternalUtils.Log.Info ("GFX", src);
+                InternalUtils.Log.Info ("GFX", log);
+                InternalUtils.Log.Info ("GFX", type.ToString());
             }
 #endif
             Int32 status = 0;
@@ -2675,7 +2675,7 @@ namespace Cor.Lib.Khronos
 
                 KrErrorHandler.Check();
 
-                InternalUtils.Log.Info (string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
+                InternalUtils.Log.Info ("GFX", string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
             }
 #endif
             Int32 status = 0;
@@ -2722,7 +2722,7 @@ namespace Cor.Lib.Khronos
 
                 KrErrorHandler.Check();
 
-                InternalUtils.Log.Info (string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
+                InternalUtils.Log.Info ("GFX", string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
             }
 
             Int32 status = 0;

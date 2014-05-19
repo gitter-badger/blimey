@@ -25,7 +25,7 @@
             this.Name = uniform.Name;
             this.Type = Cor.Lib.Khronos.KrEnumConverter.ToType(uniform.Type);
 
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info ("GFX", 
                 String.Format(
                 "    Caching Reference to Shader Variable: [Prog={0}, UniIndex={1}, UniLocation={2}, UniName={3}, UniType={4}]",
                 programHandle,
