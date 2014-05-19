@@ -182,7 +182,8 @@ namespace Blimey.Demo
 			gr.Update ();
 
 			if (Cor.Input.GenericGamepad.East == ButtonState.Pressed ||
-			    Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape))
+				Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape) ||
+				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
 			{
 				returnScene = new MainMenuScene ();
 			}

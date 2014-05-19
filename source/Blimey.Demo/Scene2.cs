@@ -164,7 +164,8 @@ namespace Blimey.Demo
             markerGo.Transform.Position = target.Position + new Vector3 (0f, 0.2f, 0f);
 
             if (Cor.Input.GenericGamepad.East == ButtonState.Pressed ||
-                Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape))
+				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
+					Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
             {
                 returnScene = new MainMenuScene();
             }
