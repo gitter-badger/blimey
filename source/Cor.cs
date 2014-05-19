@@ -2933,7 +2933,7 @@ namespace Cor
             {
                 using (var channel = 
                     new SerialisationChannel
-					<BinaryStreamSerialiser> 
+                    <BinaryStreamSerialiser> 
                     (stream, ChannelMode.Read)) 
                 {
                     ProcessFileHeader (channel);
@@ -3467,6 +3467,8 @@ namespace Cor
             this.tag = tag;
 
             this.enabledLogChannels = new HashSet<String>();
+            this.enabledLogChannels.Add ("Default");
+            //this.enabledLogChannels.Add ("GFX");
 
             this.logWriters = new List<LogManager.WriteLogDelegate>()
             {
@@ -3482,6 +3484,8 @@ namespace Cor
             String time,
             String[] lines)
         {
+            if (!this.enabledLogChannels.Contains (channel)) return;
+
             String startString = String.Format(
                 "[{3}][{1}][{0}][{2}] ",
                 time,
