@@ -41,8 +41,8 @@
                 ref camUp,
                 out _view);
 
-            Single width = (Single) this.Cor.System.CurrentDisplaySize.X;
-            Single height = (Single) this.Cor.System.CurrentDisplaySize.Y;
+            Single width = (Single) this.Cor.DisplayStatus.CurrentWidth;
+            Single height = (Single)this.Cor.DisplayStatus.CurrentHeight;
 
             if (Projection == CameraProjectionType.Orthographic)
             {
