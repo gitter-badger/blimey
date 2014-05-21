@@ -47,20 +47,26 @@ namespace Oats.Tests
 	{
 		public Colour BarColour { get; set; }
 
+		public Bar () {}
+
+		public Bar (Foo f)
+		{
+			this.FooColour = f.FooColour;
+			this.Message = f.Message;
+		}
+
 		public override int GetHashCode ()
 		{
 			return (
-				this.BarColour.GetHashCode () ^ 
-				this.FooColour.GetHashCode () ^ 
+				base.GetHashCode () ^ 
 				this.Message.GetHashCode ());
 		}
 
 		public Boolean Equals(Bar other)
 		{
 			return (
-				(this.BarColour == other.BarColour) &&
-				(this.FooColour == other.FooColour) && 
-				(this.Message == other.Message));
+				(base.Equals (other)) && 
+				(this.BarColour == other.BarColour));
 		}
 
 		public override Boolean Equals(object obj)

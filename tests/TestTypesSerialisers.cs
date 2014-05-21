@@ -26,18 +26,16 @@ namespace Oats.Tests
 	{
 		public override Bar Read (ISerialisationChannel ss)
 		{
-			var b = new Bar ();
-			b.BarColour =      ss.Read <Colour> ();
-			b.FooColour =      ss.Read <Colour> ();
-			b.Message =        ss.Read <String> ();
+			var f = ss.Read <Foo> ();
+			var b = new Bar (f);
+			b.BarColour = ss.Read <Colour> ();
 			return b;
 		}
 
 		public override void Write (ISerialisationChannel ss, Bar b)
 		{
+			ss.Write <Foo> (b);
 			ss.Write <Colour> (b.BarColour);
-			ss.Write <Colour> (b.FooColour);
-			ss.Write <String> (b.Message);
 		}
 	}
 
