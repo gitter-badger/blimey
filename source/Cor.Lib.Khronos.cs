@@ -276,7 +276,7 @@ namespace Cor.Lib.Khronos
                     vertElemNormalized,     // normalised - used to indicate whether the non-floating data format type should be normalised
                                             //              or not when converted to floating point.
                     vertDecl.VertexStride,  // stride - the components of vertex attribute specified by size are stored sequentially for each
-                                            //          vertex.  stride specifies the delta between data for vertex index 1 and vertex (1 + 1).
+											//          vertex.  stride specifies the delta between data for vertex index i and vertex (i + 1).
                                             //          If stride is 0, attribute data for all vertices are stored sequentially.
                                             //          If stride is > 0, then we use the stride valude tas the pitch to get vertex data
                                             //          for the next index.
