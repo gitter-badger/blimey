@@ -147,6 +147,12 @@
     <BundleResource Include="..\..\..\assets\monomac\vertex_lit.cba">
       <Link>assets\monomac\vertex_lit.cba</Link>
     </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\blimey_fnt_tex.cba">
+      <Link>assets\monomac\blimey_fnt_tex.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\blimey_fnt_uv.cba">
+      <Link>assets\monomac\blimey_fnt_uv.cba</Link>
+    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\submodules\abacus\build\xs.monomac\Abacus\Abacus %28xs.monomac%29.csproj">

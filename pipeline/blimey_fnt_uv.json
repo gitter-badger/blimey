@@ -1,0 +1,18 @@
+{
+    "AssetId" : "blimey_fnt_uv",
+    "AssetType" : "Cor.TextAsset, Cor",
+    "SourceSets" :
+    [
+        {
+            "Platforms" : [ "xios", "monomac" ],
+            "Importer" :
+            {
+                "Files" : [ "blimey.fnt" ],
+                "AssetImporterType" : "Cor.TextFileImporter, Cor.Assets.Builders",
+                "AssetImporterSettings" : {}
+            },
+            "Processors" : []
+        }
+    ]
+}
+

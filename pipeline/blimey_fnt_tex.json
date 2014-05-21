@@ -1,0 +1,27 @@
+{
+    "AssetId" : "blimey_fnt_tex",
+    "AssetType" : "Cor.ColourmapAsset, Cor",
+    "SourceSets" :
+    [
+        {
+            "Platforms" : [ "xios", "monomac" ],
+            "Importer" :
+            {
+                "Files" : [ "blimey.png" ],
+                "AssetImporterType" : "Cor.ImageFileImporter, Cor.Assets.Builders",
+                "AssetImporterSettings" : {}
+            },
+            "Processors" :
+            [
+                {
+                    "AssetProcessorType" : "Cor.TextureAssetProcessor, Cor.Assets.Builders",
+                    "AssetProcessorSettings" :
+                    { 
+                        "SurfaceFormat" : "Rgba32" 
+                    }
+                }
+            ]
+        }
+    ]
+}
+
