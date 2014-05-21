@@ -1934,7 +1934,52 @@ namespace Blimey
             shape.Vertices[4] = new VertexPositionColour(c, rgba);
             shape.Vertices[5] = new VertexPositionColour(a, rgba);
         }
-        
+	        
+		public void AddBoundingBox(string renderPass, BoundingBox box, Rgba32 col)
+		{
+			AddBoundingBox(renderPass, box, col, 0f);
+		}
+
+		public void AddBoundingBox(string renderPass, BoundingBox box, Rgba32 col, float life)
+		{
+			// Get a DebugShape we can use to draw the box
+			DebugShape shape = GetShapeForLines(12, life);
+			shape.RenderPass = renderPass;
+
+			// Get the corners of the box
+			corners = box.GetCorners();
+
+			// Fill in the vertices for the bottom of the box
+			shape.Vertices[0] = new VertexPositionColour(corners[0], col);
+			shape.Vertices[1] = new VertexPositionColour(corners[1], col);
+			shape.Vertices[2] = new VertexPositionColour(corners[1], col);
+			shape.Vertices[3] = new VertexPositionColour(corners[2], col);
+			shape.Vertices[4] = new VertexPositionColour(corners[2], col);
+			shape.Vertices[5] = new VertexPositionColour(corners[3], col);
+			shape.Vertices[6] = new VertexPositionColour(corners[3], col);
+			shape.Vertices[7] = new VertexPositionColour(corners[0], col);
+
+			// Fill in the vertices for the top of the box
+			shape.Vertices[8] = new VertexPositionColour(corners[4], col);
+			shape.Vertices[9] = new VertexPositionColour(corners[5], col);
+			shape.Vertices[10] = new VertexPositionColour(corners[5], col);
+			shape.Vertices[11] = new VertexPositionColour(corners[6], col);
+			shape.Vertices[12] = new VertexPositionColour(corners[6], col);
+			shape.Vertices[13] = new VertexPositionColour(corners[7], col);
+			shape.Vertices[14] = new VertexPositionColour(corners[7], col);
+			shape.Vertices[15] = new VertexPositionColour(corners[4], col);
+
+			// Fill in the vertices for the vertical sides of the box
+			shape.Vertices[16] = new VertexPositionColour(corners[0], col);
+			shape.Vertices[17] = new VertexPositionColour(corners[4], col);
+			shape.Vertices[18] = new VertexPositionColour(corners[1], col);
+			shape.Vertices[19] = new VertexPositionColour(corners[5], col);
+			shape.Vertices[20] = new VertexPositionColour(corners[2], col);
+			shape.Vertices[21] = new VertexPositionColour(corners[6], col);
+			shape.Vertices[22] = new VertexPositionColour(corners[3], col);
+			shape.Vertices[23] = new VertexPositionColour(corners[7], col);
+		}
+
         internal void Update(AppTime time)
         {
             // Go through our active shapes and retire any shapes that have expired to the
@@ -5480,4 +5525,138 @@ namespace SunGiant.Framework.Ophelia.Cameras
 
 
     #endregion
+
+        public sealed class DebugRenderer
+        : Trait
+    {
+        public Rgba32 Colour { get; set; }
+        public String RenderPass { get; set; }
+
+        public DebugRenderer ()
+        {
+            this.Colour = Rgba32.Red;
+            this.RenderPass = "Debug";
+        }
+
+        public override void OnUpdate (Cor.AppTime time)
+        {
+            BoundingBox b;
+
+            //fuck
+            //this.Parent.Transform.Position
+            b.Min = this.Parent.Transform.Location.Translation - (this.Parent.Transform.Scale / 2f);
+            b.Max = this.Parent.Transform.Location.Translation + (this.Parent.Transform.Scale / 2f);
+
+            this.Parent.Owner.Blimey.DebugShapeRenderer.AddBoundingBox (RenderPass, b, Colour);
+        }
+    }
+
+    public struct BoundingBox 
+        : IEquatable<BoundingBox>
+    {
+        public const int CornerCount = 8;
+
+        public Vector3 Min;
+        public Vector3 Max;
+
+        public Vector3[] GetCorners ()
+        {
+            return new Vector3[]
+            { 
+                new Vector3 (this.Min.X, this.Max.Y, this.Max.Z), 
+                new Vector3 (this.Max.X, this.Max.Y, this.Max.Z), 
+                new Vector3 (this.Max.X, this.Min.Y, this.Max.Z), 
+                new Vector3 (this.Min.X, this.Min.Y, this.Max.Z), 
+                new Vector3 (this.Min.X, this.Max.Y, this.Min.Z), 
+                new Vector3 (this.Max.X, this.Max.Y, this.Min.Z), 
+                new Vector3 (this.Max.X, this.Min.Y, this.Min.Z), 
+                new Vector3 (this.Min.X, this.Min.Y, this.Min.Z)
+            };
+        }
+
+        public void GetCorners (Vector3[] corners)
+        {
+            if (corners == null) {
+                throw new ArgumentNullException ("corners");
+            }
+            if (corners.Length < 8) {
+                throw new ArgumentOutOfRangeException ("NotEnoughCorners");
+            }
+            corners [0].X = this.Min.X;
+            corners [0].Y = this.Max.Y;
+            corners [0].Z = this.Max.Z;
+
+            corners [1].X = this.Max.X;
+            corners [1].Y = this.Max.Y;
+            corners [1].Z = this.Max.Z;
+
+            corners [2].X = this.Max.X;
+            corners [2].Y = this.Min.Y;
+            corners [2].Z = this.Max.Z;
+
+            corners [3].X = this.Min.X;
+            corners [3].Y = this.Min.Y;
+            corners [3].Z = this.Max.Z;
+
+            corners [4].X = this.Min.X;
+            corners [4].Y = this.Max.Y;
+            corners [4].Z = this.Min.Z;
+
+            corners [5].X = this.Max.X;
+            corners [5].Y = this.Max.Y;
+            corners [5].Z = this.Min.Z;
+
+            corners [6].X = this.Max.X;
+            corners [6].Y = this.Min.Y;
+            corners [6].Z = this.Min.Z;
+
+            corners [7].X = this.Min.X;
+            corners [7].Y = this.Min.Y;
+            corners [7].Z = this.Min.Z;
+        }
+
+        public BoundingBox (Vector3 min, Vector3 max)
+        {
+            this.Min = min;
+            this.Max = max;
+        }
+
+        public Boolean Equals (BoundingBox other)
+        {
+            return ((this.Min == other.Min) && (this.Max == other.Max));
+        }
+
+        public override Boolean Equals (object obj)
+        {
+            Boolean flag = false;
+            if (obj is BoundingBox) {
+                flag = this.Equals ((BoundingBox)obj);
+            }
+            return flag;
+        }
+
+        public override Int32 GetHashCode ()
+        {
+            return (this.Min.GetHashCode () + this.Max.GetHashCode ());
+        }
+
+        public override String ToString ()
+        {
+            return string.Format ("{{Min:{0} Max:{1}}}", new object[] { this.Min.ToString (), this.Max.ToString () });
+        }
+
+
+        public static Boolean operator == (BoundingBox a, BoundingBox b)
+        {
+            return a.Equals (b);
+        }
+
+        public static Boolean operator != (BoundingBox a, BoundingBox b)
+        {
+            if (!(a.Min != b.Min)) {
+                return (a.Max != b.Max);
+            }
+            return true;
+        }
+    }
 }
