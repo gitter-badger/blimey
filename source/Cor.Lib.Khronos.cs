@@ -2206,7 +2206,7 @@ namespace Cor.Lib.Khronos
             InternalUtils.Log.Info ("GFX", "\n");
             InternalUtils.Log.Info ("GFX", "\n");
             InternalUtils.Log.Info ("GFX", "=====================================================================");
-            InternalUtils.Log.Info ("GFX", "Working out the best shader variant for: " + vertexDeclaration);
+			InternalUtils.Log.Info ("GFX", "Working out the best shader variant for: " + vertexDeclaration);
             InternalUtils.Log.Info ("GFX", "Possible variants:");
 
             int best = 0;
