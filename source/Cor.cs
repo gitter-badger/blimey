@@ -3222,17 +3222,17 @@ namespace Cor
 
             for(int i = 0; i < _elements.Length; ++i)
             {
-                s += _elements[i];
+				s += _elements[i]._usage;
 
                 if( i + 1 < _elements.Length )
                 {
-                    s += ", "; 
+                    s += ","; 
                 }
 
             }
 
             return string.Format (
-                "[VertexDeclaration: Elements={0}, Stride={1}]", 
+				"[VertexDeclaration: Elements=({0}), Stride={1}]", 
                 s, 
                 _vertexStride);
         }
