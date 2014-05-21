@@ -1,8 +1,0 @@
-    internal struct iOSTouchState
-    {
-        public Int32 Handle;
-        public System.Drawing.PointF Location;
-        public MonoTouch.UIKit.UITouchPhase Phase;
-        public Int64 LastUpdated;
-    }
-

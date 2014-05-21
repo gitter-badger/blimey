@@ -1,6 +1,0 @@
-        public sealed class TextAsset
-            : Asset
-        {
-            public String Text { get; set; }
-        }
-

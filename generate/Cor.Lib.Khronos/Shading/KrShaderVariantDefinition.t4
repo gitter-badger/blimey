@@ -1,6 +1,0 @@
-    public sealed class KrShaderVariantDefinition
-    {
-        public String VariantName { get; set; }
-        public List<KrShaderVariantPassDefinition> VariantPassDefinitions { get; set; }
-    }
-

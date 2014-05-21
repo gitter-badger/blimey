@@ -1,5 +1,0 @@
-    public sealed class KrShaderDefinition
-    {
-        public List<KrShaderVariantDefinition> VariantDefinitions { get; set; }
-    }
-
