@@ -21,7 +21,7 @@
             "Processors" : []
         },
         {
-            "Platforms" : [ "xios", "xdroid" ],
+            "Platforms" : [ "xios" ],
             "Importer" :
             {
                 "AssetImporterType" : "Cor.KhronosShaderImporter, Cor.Assets.Builders",
@@ -33,23 +33,6 @@
                 [
                     "pixel_lit.sdef",
                     "pixel_lit.ogles2.pdef"
-                ]
-            },
-            "Processors" : []
-        },
-        {
-            "Platforms" : [ "psm" ],
-            "Importer" :
-            {
-                "AssetImporterType" : "Cor.PsmShaderImporter, Cor.Assets.Builders",
-                "AssetImporterSettings" :
-                {
-                    "Format" : "PSM"
-                },
-                "Files" :
-                [
-                    "pixel_lit.sdef",
-                    "pixel_lit.psm.pdef"
                 ]
             },
             "Processors" : []
