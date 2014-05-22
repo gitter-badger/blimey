@@ -76,8 +76,8 @@ namespace Blimey.Demo
 				this.Cor.Graphics.CreateShader (unlitShaderAsset);
             gr = new GridRenderer (this.Blimey.DebugShapeRenderer, "Default");
 
-            screenWidth = this.Cor.DisplayStatus.CurrentWidth;
-            screenHeight = this.Cor.DisplayStatus.CurrentHeight;
+			screenWidth = this.Cor.AppStatus.Width;
+			screenHeight = this.Cor.AppStatus.Height;
 
             if (texVan1 == null)
 			{

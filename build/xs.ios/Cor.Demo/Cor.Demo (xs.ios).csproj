@@ -119,6 +119,9 @@
     <Compile Include="..\..\..\source\Cor.Demo\RandomColours.cs">
       <Link>source\RandomColours.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\source\Cor.Demo\CustomBillboard_PositionTextureColour.cs">
+      <Link>source\CustomBillboard_PositionTextureColour.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

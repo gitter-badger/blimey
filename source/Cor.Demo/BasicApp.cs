@@ -38,37 +38,46 @@ using Abacus.SinglePrecision;
 using Abacus.Packed;
 using Cor;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Cor.Demo
 {
     public class BasicApp
         : IApp
     {
-        ICor engine;
-
         IShader unlitEffect;
-        IShader vertexLitEffect;
+		IShader vertexLitEffect;
+		IShader pixelLitEffect;
+		ITexture checkerTexture;
+		ITexture vanTexture;
 
         Rgba32 colour = Rgba32.DarkRed;
         Single changeColourTime = 1f;
 
-        public void Initilise (ICor engine)
+		public void Start (ICor engine)
         {
-            this.engine = engine;
             var unlitAsset = engine.Assets.Load<ShaderAsset> ("unlit.cba");
 			var vertexLitAsset = engine.Assets.Load<ShaderAsset> ("vertex_lit.cba");
+			var pixelLitAsset = engine.Assets.Load<ShaderAsset> ("pixel_lit.cba");
 			this.unlitEffect = engine.Graphics.CreateShader (unlitAsset);
 			this.vertexLitEffect = engine.Graphics.CreateShader (vertexLitAsset);
+			this.pixelLitEffect = engine.Graphics.CreateShader (pixelLitAsset);
 
-			this.engine.Log.Info ("Start loading shapes.");
-            this.LoadShape1();
-            this.LoadShape2();
-            this.LoadShape3();
-			this.LoadShape4();
-			this.engine.Log.Info ("Finished loading");
+			var checkerTextureAsset = engine.Assets.Load<TextureAsset> ("bg1.cba");
+			this.checkerTexture = engine.Graphics.UploadTexture (checkerTextureAsset);
+
+			var vanTextureAsset = engine.Assets.Load<TextureAsset> ("cvan01.cba");
+			this.vanTexture = engine.Graphics.UploadTexture (vanTextureAsset);
+
+			engine.Log.Info ("Start loading shapes.");
+			this.LoadShape1(engine);
+			this.LoadShape2(engine);
+			this.LoadShape3(engine);
+			this.LoadShape4(engine);
+			engine.Log.Info ("Finished loading");
         }
 
-        public Boolean Update(AppTime time)
+		public Boolean Update(ICor engine, AppTime time)
         {
             if(time.Elapsed > changeColourTime)
             {
@@ -85,25 +94,31 @@ namespace Cor.Demo
 
             Matrix44.CreateFromYawPitchRoll( ref delta, ref delta, ref delta, out this.rotation3);
 
-            Matrix44.CreateFromAxisAngle(ref a, ref delta,  out this.rotation4);
-
             return false;
         }
 
-        public void Render()
+		public void Render(ICor engine)
         {
-            this.engine.Graphics.ClearColourBuffer(colour);
-            this.engine.Graphics.ClearDepthBuffer(1f);
+            engine.Graphics.ClearColourBuffer(colour);
+            engine.Graphics.ClearDepthBuffer(1f);
 
-            if (this.shape1GeomBuffer == null)
-                return;
 
-            this.RenderShape1();
-            this.RenderShape2();
-            this.RenderShape3();
-            this.RenderShape4();
+			this.RenderShape1(engine);
+			this.RenderShape2(engine);
+			this.RenderShape3(engine);
+			this.RenderShape4(engine);
 
         }
+
+		public void Stop(ICor engine)
+		{
+			engine.Graphics.DestroyShader (this.unlitEffect);
+			engine.Graphics.DestroyShader (this.vertexLitEffect);
+			engine.Graphics.DestroyShader (this.pixelLitEffect);
+
+			engine.Graphics.UnloadTexture (this.checkerTexture);
+			engine.Graphics.UnloadTexture (this.vanTexture);
+		}
 
         #region shape1
 
@@ -112,7 +127,7 @@ namespace Cor.Demo
         Int32 shape1IndexCount;
         Matrix44 rotation1;
 
-        void LoadShape1()
+		void LoadShape1(ICor engine)
         {
             var vertBuffer = CustomShape_PositionColour.VertArray;
 
@@ -136,11 +151,11 @@ namespace Cor.Demo
             indexBuffer = null;
         }
 
-        void RenderShape1()
+		void RenderShape1(ICor engine)
         {
-            this.engine.Graphics.GpuUtils.BeginEvent(Rgba32.Red, "Render Shape 1");
+            engine.Graphics.GpuUtils.BeginEvent(Rgba32.Red, "Render Shape 1");
 
-            this.engine.Graphics.SetActiveGeometryBuffer(this.shape1GeomBuffer);
+            engine.Graphics.SetActiveGeometryBuffer(this.shape1GeomBuffer);
 
             Matrix44 worldScale = Matrix44.CreateScale(0.5f);
 
@@ -161,7 +176,6 @@ namespace Cor.Demo
                 -1f, 1f, -1f, 1f, 1f, -1f);
 
             // set the variable on the shader to our desired variables
-            //unlitEffect.ResetVariables ();
             unlitEffect.ResetVariables ();
             unlitEffect.SetVariable ("World", world);
             unlitEffect.SetVariable ("View", view);
@@ -172,12 +186,12 @@ namespace Cor.Demo
             {
                 effectPass.Activate(VertexPositionColour.Default.VertexDeclaration);
 
-                this.engine.Graphics.DrawIndexedPrimitives (
+                engine.Graphics.DrawIndexedPrimitives (
                     PrimitiveType.TriangleList, 0, 0,
                     this.shape1VertCount, 0, this.shape1IndexCount / 3);
             }
 
-            this.engine.Graphics.GpuUtils.EndEvent();
+            engine.Graphics.GpuUtils.EndEvent();
         }
 
         #endregion
@@ -188,10 +202,9 @@ namespace Cor.Demo
         IGeometryBuffer shape2GeomBuffer;
         Int32 shape2VertCount;
         Int32 shape2IndexCount;
-		ITexture shape2Texture;
         Matrix44 rotation2;
 
-        void LoadShape2 ()
+		void LoadShape2 (ICor engine)
         {
             var vertBuffer = CustomCube_PositionTexture.VertArray;
 
@@ -199,9 +212,6 @@ namespace Cor.Demo
 
             this.shape2VertCount = vertBuffer.Length;
             this.shape2IndexCount = indexBuffer.Length;
-
-			var textureAsset = engine.Assets.Load<TextureAsset> ("cvan01.cba");
-			this.shape2Texture = engine.Graphics.UploadTexture (textureAsset);
 
             this.shape2GeomBuffer = engine.Graphics.CreateGeometryBuffer(
                 CustomCube_PositionTexture.VertexDeclaration,
@@ -218,11 +228,11 @@ namespace Cor.Demo
             indexBuffer = null;
         }
 
-        void RenderShape2()
+		void RenderShape2(ICor engine)
         {
-            this.engine.Graphics.GpuUtils.BeginEvent(Rgba32.Red, "Render Shape 2");
+            engine.Graphics.GpuUtils.BeginEvent(Rgba32.Red, "Render Shape 2");
 
-            this.engine.Graphics.SetActiveGeometryBuffer(this.shape2GeomBuffer);
+            engine.Graphics.SetActiveGeometryBuffer(this.shape2GeomBuffer);
 
             Matrix44 worldScale = Matrix44.CreateScale(0.5f);
 
@@ -251,19 +261,19 @@ namespace Cor.Demo
             unlitEffect.SetVariable ("MaterialColour", Rgba32.White);
             unlitEffect.SetSamplerTarget ("TextureSampler", 0);
 
-            this.engine.Graphics.SetActiveTexture(0, this.shape2Texture);
+            engine.Graphics.SetActiveTexture(0, this.vanTexture);
 
 
             foreach (var effectPass in this.unlitEffect.Passes)
             {
                 effectPass.Activate (CustomCube_PositionTexture.VertexDeclaration);
 
-                this.engine.Graphics.DrawIndexedPrimitives (
+                engine.Graphics.DrawIndexedPrimitives (
                     PrimitiveType.TriangleList, 0, 0,
                     this.shape2VertCount, 0, this.shape2IndexCount / 3);
             }
 
-            this.engine.Graphics.GpuUtils.EndEvent();
+            engine.Graphics.GpuUtils.EndEvent();
         }
 
         #endregion
@@ -274,10 +284,9 @@ namespace Cor.Demo
         IGeometryBuffer shape3GeomBuffer;
         Int32 shape3VertCount;
         Int32 shape3IndexCount;
-        ITexture shape3Texture;
         Matrix44 rotation3;
 
-        void LoadShape3 ()
+		void LoadShape3 (ICor engine)
         {
             var vertBuffer = CustomCylinder_PositionNormalTexture.VertArray;
 
@@ -285,9 +294,6 @@ namespace Cor.Demo
 
             this.shape3VertCount = vertBuffer.Length;
             this.shape3IndexCount = indexBuffer.Length;
-
-            var texAsset = engine.Assets.Load<TextureAsset> ("bg1.cba");
-			this.shape3Texture = engine.Graphics.UploadTexture (texAsset);
 
             this.shape3GeomBuffer = engine.Graphics.CreateGeometryBuffer(
                 CustomCylinder_PositionNormalTexture.VertexDeclaration,
@@ -304,11 +310,11 @@ namespace Cor.Demo
             indexBuffer = null;
         }
 
-        void RenderShape3()
+		void RenderShape3(ICor engine)
         {
-            this.engine.Graphics.GpuUtils.BeginEvent(Rgba32.Red, "Render Shape 3");
+            engine.Graphics.GpuUtils.BeginEvent(Rgba32.Red, "Render Shape 3");
 
-            this.engine.Graphics.SetActiveGeometryBuffer(this.shape3GeomBuffer);
+            engine.Graphics.SetActiveGeometryBuffer(this.shape3GeomBuffer);
 
             Matrix44 worldScale = Matrix44.CreateScale(0.5f);
 
@@ -330,25 +336,25 @@ namespace Cor.Demo
                 -1f, 1f, -1f, 1f, 1f, -1f);
 
             // set the variable on the shader to our desired variables
-            vertexLitEffect.ResetVariables ();
-            vertexLitEffect.SetVariable ("World", world);
-            vertexLitEffect.SetVariable ("View", view);
-            vertexLitEffect.SetVariable ("Projection", proj);
-            vertexLitEffect.SetVariable ("MaterialColour", Rgba32.White);
-            vertexLitEffect.SetSamplerTarget ("TextureSampler", 0);
+			pixelLitEffect.ResetVariables ();
+			pixelLitEffect.SetVariable ("World", world);
+			pixelLitEffect.SetVariable ("View", view);
+			pixelLitEffect.SetVariable ("Projection", proj);
+			pixelLitEffect.SetVariable ("MaterialColour", Rgba32.White);
+			pixelLitEffect.SetSamplerTarget ("TextureSampler", 0);
 
-            this.engine.Graphics.SetActiveTexture(0, this.shape3Texture);
+            engine.Graphics.SetActiveTexture(0, this.checkerTexture);
 
-            foreach (var effectPass in this.vertexLitEffect.Passes)
+			foreach (var effectPass in this.pixelLitEffect.Passes)
             {
                 effectPass.Activate (CustomCylinder_PositionNormalTexture.VertexDeclaration);
 
-                this.engine.Graphics.DrawIndexedPrimitives (
+                engine.Graphics.DrawIndexedPrimitives (
                     PrimitiveType.TriangleList, 0, 0,
                     this.shape3VertCount, 0, this.shape3IndexCount / 3);
             }
 
-            this.engine.Graphics.GpuUtils.EndEvent();
+            engine.Graphics.GpuUtils.EndEvent();
         }
 
         #endregion
@@ -359,24 +365,33 @@ namespace Cor.Demo
         IGeometryBuffer shape4GeomBuffer;
         Int32 shape4VertCount;
         Int32 shape4IndexCount;
-        Matrix44 rotation4;
 
-        void LoadShape4()
+		void LoadShape4(ICor engine)
         {
-            var vertBuffer = CustomShape_PositionColour.VertArray;
-
-            var indexBuffer = CustomShape_PositionColour.IndexArray;
-
+			var vertBuffer = CustomBillboard_PositionTextureColour.VertArray;
+			var indexBuffer = CustomBillboard_PositionTextureColour.IndexArray;
 
             this.shape4VertCount = vertBuffer.Length;
             this.shape4IndexCount = indexBuffer.Length;
 
-            this.shape4GeomBuffer = engine.Graphics.CreateGeometryBuffer(
-                VertexPositionColour.Default.VertexDeclaration, this.shape4VertCount, this.shape4IndexCount);
+            this.shape4GeomBuffer = 
+				engine.Graphics.CreateGeometryBuffer(
+					VertexPositionTextureColour.Default.VertexDeclaration, 
+					this.shape4VertCount, 
+					this.shape4IndexCount);
 
             if (this.shape4GeomBuffer != null)
             {
-                this.shape4GeomBuffer.VertexBuffer.SetData(vertBuffer);
+				GCHandle pinnedArray = GCHandle.Alloc(vertBuffer, GCHandleType.Pinned);
+				IntPtr pointer = pinnedArray.AddrOfPinnedObject();
+
+				byte[] bytes = new byte[vertBuffer.Length * vertBuffer [0].VertexDeclaration.VertexStride];
+
+				Marshal.Copy(pointer, bytes, 0, bytes.Length);
+
+				this.shape4GeomBuffer.VertexBuffer.SetRawData(bytes, 0, vertBuffer.Length);
+
+				pinnedArray.Free ();
                 this.shape4GeomBuffer.IndexBuffer.SetData(indexBuffer);
             }
 
@@ -385,18 +400,18 @@ namespace Cor.Demo
             indexBuffer = null;
         }
 
-        void RenderShape4()
+		void RenderShape4(ICor engine)
         {
-            this.engine.Graphics.GpuUtils.BeginEvent(Rgba32.Red, "Render Shape 4");
+            engine.Graphics.GpuUtils.BeginEvent(Rgba32.Red, "Render Shape 4");
 
-            this.engine.Graphics.SetActiveGeometryBuffer(this.shape4GeomBuffer);
+            engine.Graphics.SetActiveGeometryBuffer(this.shape4GeomBuffer);
 
             Matrix44 worldScale = Matrix44.CreateScale(0.5f);
 
             Matrix44 shape4Translation =
                 Matrix44.CreateTranslation(0.5f, -0.5f, 0f);
 
-            var world = worldScale * this.rotation4;
+            var world = worldScale;
             world = world * shape4Translation;
 
             var a = Vector3.UnitZ; var b = Vector3.Forward; var c = Vector3.Up;
@@ -406,26 +421,31 @@ namespace Cor.Demo
                 ref c,
                 out view);
 
+
             Matrix44 proj =
                 Matrix44.CreateOrthographicOffCenter(-1f, 1f, -1f, 1f, 1f, -1f);
 
             // set the variable on the shader to our desired variables
-            unlitEffect.ResetVariables ();
-            unlitEffect.SetVariable ("World", world);
-            unlitEffect.SetVariable ("View", view);
-            unlitEffect.SetVariable ("Projection", proj);
-            unlitEffect.SetVariable ("MaterialColour", Rgba32.Green);
+			unlitEffect.ResetVariables ();
+			unlitEffect.SetVariable ("World", world);
+			unlitEffect.SetVariable ("View", view);
+			unlitEffect.SetVariable ("Projection", proj);
+			unlitEffect.SetVariable ("MaterialColour", Rgba32.White);
+			unlitEffect.SetSamplerTarget ("TextureSampler", 0);
 
-            foreach (var effectPass in this.unlitEffect.Passes)
+			engine.Graphics.SetActiveTexture(0, this.vanTexture);
+			engine.Graphics.SetActiveGeometryBuffer(this.shape4GeomBuffer);
+
+			foreach (var effectPass in this.unlitEffect.Passes)
             {
-                effectPass.Activate(VertexPositionColour.Default.VertexDeclaration);
+				effectPass.Activate(VertexPositionTextureColour.Default.VertexDeclaration);
 
-                this.engine.Graphics.DrawIndexedPrimitives (
+                engine.Graphics.DrawIndexedPrimitives (
                     PrimitiveType.TriangleList, 0, 0,
                     this.shape4VertCount, 0, this.shape4IndexCount / 3);
             }
 
-            this.engine.Graphics.GpuUtils.EndEvent();
+            engine.Graphics.GpuUtils.EndEvent();
         }
 
         #endregion
