@@ -64,7 +64,7 @@ namespace Blimey
             this.startScene = startScene;
         }
 
-        public void Initilise(ICor cor)
+		public void Start(ICor cor)
         {
             this.cor = cor;
 
@@ -77,7 +77,7 @@ namespace Blimey
             this.sceneManager = new SceneManager(this.cor, startScene);
         }
 
-        public Boolean Update(AppTime time)
+		public Boolean Update(ICor cor, AppTime time)
         {
 			//FrameStats.SlowLog ();
 			FrameStats.Reset ();
@@ -91,7 +91,7 @@ namespace Blimey
             }
         }
 
-        public void Render()
+		public void Render(ICor cor)
         {
             using (new ProfilingTimer(t => FrameStats.RenderTime += t))
             {
@@ -100,6 +100,10 @@ namespace Blimey
                 this.sceneManager.Render();
             }
         }
+
+		public void Stop (ICor cor)
+		{
+		}
     }
 
     internal class BlimeyContext
@@ -608,9 +612,9 @@ namespace Blimey
 
     internal class LoggingHelper
     {
-        ISystemManager sys;
+		ISystemInformation sys;
 
-        internal LoggingHelper(ISystemManager sys)
+		internal LoggingHelper(ISystemInformation sys)
         {
             this.sys = sys;
             Teletype.OpenChannel("Blimey");
@@ -2857,11 +2861,11 @@ namespace Blimey
                     if(engine.System.CurrentOrientation == DeviceOrientation.Default ||
                        engine.System.CurrentOrientation == DeviceOrientation.Upsidedown)
                     {
-                        multiplier = new Vector2(panelSpec.PanelPhysicalSize.X, panelSpec.PanelPhysicalSize.Y);
+				multiplier = new Vector2(panelSpec.PanelPhysicalSize.Value.X, panelSpec.PanelPhysicalSize.Value.Y);
                     }
                     else
                     {
-                        multiplier = new Vector2(panelSpec.PanelPhysicalSize.Y, panelSpec.PanelPhysicalSize.X);
+				multiplier = new Vector2(panelSpec.PanelPhysicalSize.Value.Y, panelSpec.PanelPhysicalSize.Value.X);
                     }
 
                     break;
@@ -2886,8 +2890,8 @@ namespace Blimey
                         pos.Y = -temp;
                     }
 
-                    Int32 w = this.engine.DisplayStatus.CurrentWidth;
-                    Int32 h = this.engine.DisplayStatus.CurrentHeight;
+					Int32 w = this.engine.AppStatus.Width;
+					Int32 h = this.engine.AppStatus.Height;
 
                     //this.engine.System.GetEffectiveDisplaySize(ref w, ref h);
 
@@ -3853,8 +3857,8 @@ namespace Blimey
                 ref camUp,
                 out _view);
 
-			Single width = (Single) this.Cor.DisplayStatus.CurrentWidth;
-			Single height = (Single)this.Cor.DisplayStatus.CurrentHeight;
+			Single width = (Single) this.Cor.AppStatus.Width;
+			Single height = (Single)this.Cor.AppStatus.Height;
 
             if (Projection == CameraProjectionType.Orthographic)
             {
