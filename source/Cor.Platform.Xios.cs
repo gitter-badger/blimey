@@ -1,36 +1,34 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor! Xamarin iOS Platform Implementation                               │ \\
-// ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Brought to you by:                                                     │ \\
-// │          _________                    .__               __             │ \\
-// │         /   _____/__ __  ____    ____ |__|____    _____/  |_           │ \\
-// │         \_____  \|  |  \/    \  / ___\|  \__  \  /    \   __\          │ \\
-// │         /        \  |  /   |  \/ /_/  >  |/ __ \|   |  \  |            │ \\
-// │        /_______  /____/|___|  /\___  /|__(____  /___|  /__|            │ \\
-// │                \/           \//_____/         \/     \/                │ \\
-// │                                                                        │ \\
-// ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
-// ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
-// │ a copy of this software and associated documentation files (the        │ \\
-// │ "Software"), to deal in the Software without restriction, including    │ \\
-// │ without limitation the rights to use, copy, modify, merge, publish,    │ \\
-// │ distribute, sublicense, and/or sellcopies of the Software, and to      │ \\
-// │ permit persons to whom the Software is furnished to do so, subject to  │ \\
-// │ the following conditions:                                              │ \\
-// │                                                                        │ \\
-// │ The above copyright notice and this permission notice shall be         │ \\
-// │ included in all copies or substantial portions of the Software.        │ \\
-// │                                                                        │ \\
-// │ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,        │ \\
-// │ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF     │ \\
-// │ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. │ \\
-// │ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY   │ \\
-// │ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,   │ \\
-// │ TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE       │ \\
-// │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
-// └────────────────────────────────────────────────────────────────────────┘ \\
+﻿// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ \\
+// │ Cor! Xamarin iOS Platform Implementation                                                                       │ \\
+// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
+// │                     Brought to you by:                                                                         │ \\
+// │                              _________                    .__               __                                 │ \\
+// │                             /   _____/__ __  ____    ____ |__|____    _____/  |_                               │ \\
+// │                             \_____  \|  |  \/    \  / ___\|  \__  \  /    \   __\                              │ \\
+// │                             /        \  |  /   |  \/ /_/  >  |/ __ \|   |  \  |                                │ \\
+// │                            /_______  /____/|___|  /\___  /|__(____  /___|  /__|                                │ \\
+// │                                    \/           \//_____/         \/     \/                                    │ \\
+// │                                                                                                                │ \\
+// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
+// │ Copyright © 2008-2014 A.J.Pook (http://ajpook.github.io)                                                       │ \\
+// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
+// │ Authors: A.J.Pook                                                                                              │ \\
+// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
+// │ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated   │ \\
+// │ documentation files (the "Software"), to deal in the Software without restriction, including without           │ \\
+// │ limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sellcopies of the   │ \\
+// │ Software, and to permit persons to whom the Software is furnished to do so, subject to the following           │ \\
+// │ conditions:                                                                                                    │ \\
+// │                                                                                                                │ \\
+// │ The above copyright notice and this permission notice shall be included in all copies or substantial portions  │ \\
+// │ of the Software.                                                                                               │ \\
+// │                                                                                                                │ \\
+// │ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED  │ \\
+// │ TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL │ \\
+// │ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  │ \\
+// │ CONTRACT, TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        │ \\
+// │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
+// └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
 using System.Globalization;
@@ -112,10 +110,10 @@ namespace Cor.Platform.Xios
         }
     }
 
-    public sealed class DisplayStatus
-        : IDisplayStatus
+    public sealed class AppStatus
+		: IAppStatus
     {
-        public Boolean Fullscreen
+		public Boolean? Fullscreen
         {
             get
             {
@@ -124,7 +122,7 @@ namespace Cor.Platform.Xios
             }
         }
 
-        public Int32 CurrentWidth
+		public Int32 Width
         {
             get
             {
@@ -132,7 +130,7 @@ namespace Cor.Platform.Xios
             }
         }
 
-        public Int32 CurrentHeight
+		public Int32 Height
         {
             get
             {
@@ -492,9 +490,9 @@ namespace Cor.Platform.Xios
         readonly IApp app;
         readonly GraphicsManager graphics;
         readonly InputManager input;
-        readonly SystemManager system;
+        readonly SystemInformation system;
         readonly AudioManager audio;
-        readonly DisplayStatus displayStatus;
+        readonly AppStatus appStatus;
         readonly LogManager log;
         readonly AssetManager assets;
 
@@ -513,17 +511,17 @@ namespace Cor.Platform.Xios
 
             this.touchScreen = new TouchScreen(this, view, touches);
 
-            this.system = new SystemManager(touchScreen);
+            this.system = new SystemInformation(touchScreen);
 
             this.input = new InputManager(this, this.touchScreen);
 
-            this.displayStatus = new DisplayStatus ();
+            this.appStatus = new AppStatus ();
 
             this.log = new LogManager(this.settings.LogSettings);
 
             this.assets = new AssetManager(this.graphics, this.system);
 
-            this.app.Initilise(this);
+			this.app.Start(this);
 
         }
 
@@ -543,9 +541,9 @@ namespace Cor.Platform.Xios
 
         public IInputManager Input { get { return this.input; } }
 
-        public ISystemManager System { get { return this.system; } }
+		public ISystemInformation System { get { return this.system; } }
 
-        public IDisplayStatus DisplayStatus { get { return this.displayStatus; } }
+		public IAppStatus AppStatus { get { return this.appStatus; } }
 
         public LogManager Log { get { return this.log; } }
 
@@ -558,12 +556,12 @@ namespace Cor.Platform.Xios
         internal Boolean Update(AppTime time)
         {
             input.Update(time);
-            return app.Update(time);
+			return app.Update(this, time);
         }
 
         internal void Render()
         {
-            app.Render();
+			app.Render(this);
         }
 
     }
@@ -751,12 +749,12 @@ namespace Cor.Platform.Xios
         }
     }
 
-    public sealed class SystemManager
-        : ISystemManager
+    public sealed class SystemInformation
+		: ISystemInformation
     {
         TouchScreen screen;
 
-        public SystemManager(TouchScreen screen)
+        public SystemInformation(TouchScreen screen)
         {
             this.screen = screen;
 
@@ -991,8 +989,8 @@ namespace Cor.Platform.Xios
                 // todo: this needs to be current display res, not just the screen specs
 
 
-                pos.X = pos.X / engine.System.CurrentDisplaySize.X;
-                pos.Y = pos.Y / engine.System.CurrentDisplaySize.Y;
+				pos.X = pos.X / engine.AppStatus.Width;
+				pos.Y = pos.Y / engine.AppStatus.Height;
 
                 pos -= new Vector2(0.5f, 0.5f);
 
@@ -1021,7 +1019,7 @@ namespace Cor.Platform.Xios
 
 
 
-        public Vector2 PanelPhysicalSize
+		public Vector2? PanelPhysicalSize
         {
             get
             {
@@ -1031,11 +1029,11 @@ namespace Cor.Platform.Xios
             }
         }
 
-        public float PanelPhysicalAspectRatio
+		public float? PanelPhysicalAspectRatio
         {
             get
             {
-                return PanelPhysicalSize.X / PanelPhysicalSize.Y;
+				return PanelPhysicalSize.Value.X / PanelPhysicalSize.Value.Y;
             }
         }
         public PanelType PanelType

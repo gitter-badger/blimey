@@ -1,36 +1,34 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor! Mono Mac Platform Implementation                                  │ \\
-// ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Brought to you by:                                                     │ \\
-// │          _________                    .__               __             │ \\
-// │         /   _____/__ __  ____    ____ |__|____    _____/  |_           │ \\
-// │         \_____  \|  |  \/    \  / ___\|  \__  \  /    \   __\          │ \\
-// │         /        \  |  /   |  \/ /_/  >  |/ __ \|   |  \  |            │ \\
-// │        /_______  /____/|___|  /\___  /|__(____  /___|  /__|            │ \\
-// │                \/           \//_____/         \/     \/                │ \\
-// │                                                                        │ \\
-// ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
-// ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
-// │ a copy of this software and associated documentation files (the        │ \\
-// │ "Software"), to deal in the Software without restriction, including    │ \\
-// │ without limitation the rights to use, copy, modify, merge, publish,    │ \\
-// │ distribute, sublicense, and/or sellcopies of the Software, and to      │ \\
-// │ permit persons to whom the Software is furnished to do so, subject to  │ \\
-// │ the following conditions:                                              │ \\
-// │                                                                        │ \\
-// │ The above copyright notice and this permission notice shall be         │ \\
-// │ included in all copies or substantial portions of the Software.        │ \\
-// │                                                                        │ \\
-// │ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,        │ \\
-// │ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF     │ \\
-// │ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. │ \\
-// │ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY   │ \\
-// │ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,   │ \\
-// │ TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE       │ \\
-// │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
-// └────────────────────────────────────────────────────────────────────────┘ \\
+﻿// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ \\
+// │ Cor! Mono Mac Platform Implementation                                                                          │ \\
+// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
+// │                     Brought to you by:                                                                         │ \\
+// │                              _________                    .__               __                                 │ \\
+// │                             /   _____/__ __  ____    ____ |__|____    _____/  |_                               │ \\
+// │                             \_____  \|  |  \/    \  / ___\|  \__  \  /    \   __\                              │ \\
+// │                             /        \  |  /   |  \/ /_/  >  |/ __ \|   |  \  |                                │ \\
+// │                            /_______  /____/|___|  /\___  /|__(____  /___|  /__|                                │ \\
+// │                                    \/           \//_____/         \/     \/                                    │ \\
+// │                                                                                                                │ \\
+// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
+// │ Copyright © 2008-2014 A.J.Pook (http://ajpook.github.io)                                                       │ \\
+// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
+// │ Authors: A.J.Pook                                                                                              │ \\
+// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
+// │ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated   │ \\
+// │ documentation files (the "Software"), to deal in the Software without restriction, including without           │ \\
+// │ limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sellcopies of the   │ \\
+// │ Software, and to permit persons to whom the Software is furnished to do so, subject to the following           │ \\
+// │ conditions:                                                                                                    │ \\
+// │                                                                                                                │ \\
+// │ The above copyright notice and this permission notice shall be included in all copies or substantial portions  │ \\
+// │ of the Software.                                                                                               │ \\
+// │                                                                                                                │ \\
+// │ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED  │ \\
+// │ TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL │ \\
+// │ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  │ \\
+// │ CONTRACT, TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        │ \\
+// │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
+// └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
 using System.Globalization;
@@ -67,9 +65,9 @@ namespace Cor.Platform.MonoMac
         readonly AudioManager audio;
         readonly GraphicsManager graphics;
         readonly InputManager input;
-        readonly SystemManager system;
+		readonly SystemInformation system;
         readonly AppSettings settings;
-        readonly DisplayStatus displayStatus;
+        readonly AppStatus appStatus;
         readonly IApp app;
         readonly LogManager log;
         readonly AssetManager assets;
@@ -88,14 +86,14 @@ namespace Cor.Platform.MonoMac
             this.audio = new AudioManager();
             this.graphics = new GraphicsManager();
             this.input = new InputManager(this);
-            this.system = new SystemManager();
-            this.displayStatus = new DisplayStatus (width, height);
+			this.system = new SystemInformation();
+            this.appStatus = new AppStatus (width, height);
             
             this.log = new LogManager(this.settings.LogSettings);
             this.assets = new AssetManager(this.graphics, this.system);
 
             this.app = app;
-            this.app.Initilise(this);
+			this.app.Start(this);
         }
 
         internal AudioManager AudioImplementation { get { return this.audio; } }
@@ -104,9 +102,9 @@ namespace Cor.Platform.MonoMac
 
         internal InputManager InputImplementation { get { return this.input; } }
 
-        internal SystemManager SystemImplementation { get { return this.system; } }
+		internal SystemInformation SystemImplementation { get { return this.system; } }
 
-        internal DisplayStatus DisplayStatusImplementation { get { return this.displayStatus; } }
+        internal AppStatus DisplayStatusImplementation { get { return this.appStatus; } }
 
         #region ICor
 
@@ -114,11 +112,11 @@ namespace Cor.Platform.MonoMac
 
         public IGraphicsManager Graphics { get { return this.graphics; } }
 
-        public IDisplayStatus DisplayStatus { get { return this.displayStatus; } }
+		public IAppStatus AppStatus { get { return this.appStatus; } }
 
         public IInputManager Input { get { return this.input; } }
 
-        public ISystemManager System { get { return this.system; } }
+		public ISystemInformation System { get { return this.system; } }
 
         public LogManager Log { get { return this.log; } }
 
@@ -132,12 +130,12 @@ namespace Cor.Platform.MonoMac
         internal Boolean Update(AppTime time)
         {
             InputImplementation.Update (time);
-            return app.Update(time);
+			return app.Update(this, time);
         }
 
         internal void Render()
         {
-            app.Render();
+			app.Render(this);
         }
     }
 
@@ -261,14 +259,14 @@ namespace Cor.Platform.MonoMac
 
         #region IPanelSpecification
 
-        public Vector2 PanelPhysicalSize
+		public Vector2? PanelPhysicalSize
         {
-            get { return new Vector2(0.20f, 0.15f ); }
+			get { return null; }
         }
 
-        public Single PanelPhysicalAspectRatio
+		public Single? PanelPhysicalAspectRatio
         {
-            get { return PanelPhysicalSize.X / PanelPhysicalSize.Y; }
+			get { return null; }
         }
 
         public PanelType PanelType { get { return PanelType.TouchScreen; } }
@@ -313,13 +311,13 @@ namespace Cor.Platform.MonoMac
         #endregion
     }
 
-    public sealed class SystemManager
-        : ISystemManager
+	public sealed class SystemInformation
+		: ISystemInformation
     {
         readonly IScreenSpecification screen;
         readonly IPanelSpecification panel;
 
-        public SystemManager()
+		public SystemInformation()
         {
             InternalUtils.Log.Info(
                 "SystemManager -> ()");
@@ -1022,13 +1020,13 @@ namespace Cor.Platform.MonoMac
 
     }
 
-    public sealed class DisplayStatus
-        : IDisplayStatus
+    public sealed class AppStatus
+		: IAppStatus
     {
         Int32 width = 0;
         Int32 height = 0;
 
-        public DisplayStatus(Int32 width, Int32 height)
+        public AppStatus(Int32 width, Int32 height)
         {
             InternalUtils.Log.Info(
                 "DisplayStatus -> ()");
@@ -1045,11 +1043,11 @@ namespace Cor.Platform.MonoMac
 
         #region IDisplayStatus
 
-        public Boolean Fullscreen { get { return true; } }
+		public Boolean? Fullscreen { get { return true; } }
 
-        public Int32 CurrentWidth { get { return width; } }
+        public Int32 Width { get { return width; } }
 
-        public Int32 CurrentHeight { get { return height; } }
+        public Int32 Height { get { return height; } }
 
         #endregion
     }
@@ -1072,7 +1070,7 @@ namespace Cor.Platform.MonoMac
             get { return this.collection; }
         }
 
-        public IPanelSpecification PanelSpecification { get { return (cor.System as SystemManager).PanelSpecification; } }
+		public IPanelSpecification PanelSpecification { get { return (cor.System as SystemInformation).PanelSpecification; } }
 
         internal void Update(AppTime time)
         {
@@ -1086,8 +1084,8 @@ namespace Cor.Platform.MonoMac
                 Int32 id = -42;
                 Vector2 pos = new Vector2(this.cor.Input.Mouse.X, this.cor.Input.Mouse.Y);
 
-                Int32 w = cor.DisplayStatus.CurrentWidth;
-                Int32 h = cor.DisplayStatus.CurrentHeight;
+				Int32 w = cor.AppStatus.Width;
+				Int32 h = cor.AppStatus.Height;
 
                 pos.X = pos.X / (Single)w;
                 pos.Y = pos.Y / (Single)h;
