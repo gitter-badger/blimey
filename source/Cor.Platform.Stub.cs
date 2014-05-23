@@ -703,35 +703,48 @@ namespace Cor.Platform.Stub
         #endregion
     }
 
+	public sealed class StubGenericGamepadDPad
+		: IGamepadDPad
+	{
+		public ButtonState Down { get { return ButtonState.Released; } }
+
+		public ButtonState Left { get { return ButtonState.Released; } }
+
+		public ButtonState Right { get { return ButtonState.Released; } }
+
+		public ButtonState Up { get { return ButtonState.Released; } }
+	}
+
+	public sealed class StubGenericGamepadButtons
+		: IGenericGamepadButtons
+	{
+		public ButtonState North { get { return ButtonState.Released; } }
+
+		public ButtonState South { get { return ButtonState.Released; } }
+
+		public ButtonState East { get { return ButtonState.Released; } }
+
+		public ButtonState West { get { return ButtonState.Released; } }
+
+		public ButtonState Option { get { return ButtonState.Released; } }
+
+		public ButtonState Pause { get { return ButtonState.Released; } }
+	}
+
     public sealed class StubGenericGamepad
         : IGenericGamepad
     {
         public StubGenericGamepad()
         {
             InternalUtils.Log.Info("StubGenericGamepad -> ()");
+			DPad = new StubGenericGamepadDPad ();
+			Buttons = new StubGenericGamepadButtons ();
         }
 
         #region IGenericGamepad
 
-        public ButtonState Down { get { return ButtonState.Released; } }
-
-        public ButtonState Left { get { return ButtonState.Released; } }
-
-        public ButtonState Right { get { return ButtonState.Released; } }
-
-        public ButtonState Up { get { return ButtonState.Released; } }
-
-        public ButtonState North { get { return ButtonState.Released; } }
-
-        public ButtonState South { get { return ButtonState.Released; } }
-
-        public ButtonState East { get { return ButtonState.Released; } }
-
-        public ButtonState West { get { return ButtonState.Released; } }
-
-        public ButtonState Option { get { return ButtonState.Released; } }
-
-        public ButtonState Pause { get { return ButtonState.Released; } }
+		public IGamepadDPad DPad { get; private set; }
+		public IGenericGamepadButtons Buttons { get; private set; }
 
         #endregion
     }
@@ -808,8 +821,8 @@ namespace Cor.Platform.Stub
         : IPsmGamepad
     {
         readonly IPsmGamepadButtons psmGamepadButtons = new StubPsmGamepadButtons();
-        readonly IPsmGamepadDPad psmGamepadDPad = new StubPsmGamepadDPad();
-        readonly IPsmGamepadThumbsticks psmGamepadThumbsticks = new StubPsmGamepadThumbsticks();
+        readonly IGamepadDPad psmGamepadDPad = new StubPsmGamepadDPad();
+        readonly IGamepadThumbsticks psmGamepadThumbsticks = new StubPsmGamepadThumbsticks();
 
         public StubPsmGamepad()
         {
@@ -819,8 +832,8 @@ namespace Cor.Platform.Stub
         #region IPsmGamepad
 
         public IPsmGamepadButtons Buttons { get { return psmGamepadButtons; } }
-        public IPsmGamepadDPad DPad  { get { return psmGamepadDPad; } }
-        public IPsmGamepadThumbsticks Thumbsticks { get { return psmGamepadThumbsticks; } }
+        public IGamepadDPad DPad  { get { return psmGamepadDPad; } }
+        public IGamepadThumbsticks Thumbsticks { get { return psmGamepadThumbsticks; } }
 
         #endregion
     }
@@ -848,7 +861,7 @@ namespace Cor.Platform.Stub
     }
 
     public sealed class StubPsmGamepadDPad
-        : IPsmGamepadDPad
+        : IGamepadDPad
     {
         public StubPsmGamepadDPad()
         {
@@ -866,7 +879,7 @@ namespace Cor.Platform.Stub
     }
 
     public sealed class StubPsmGamepadThumbsticks
-        : IPsmGamepadThumbsticks
+        : IGamepadThumbsticks
     {
         public StubPsmGamepadThumbsticks()
         {
@@ -885,9 +898,9 @@ namespace Cor.Platform.Stub
         : IXbox360Gamepad
     {
         readonly IXbox360GamepadButtons buttons = new StubXbox360GamepadButtons();
-        readonly IXbox360GamepadDPad dPad = new StubXbox360GamepadDPad();
-        readonly IXbox360GamepadThumbsticks thumbsticks = new StubXbox360GamepadThumbsticks();
-        readonly IXbox360GamepadTriggers triggers = new StubXbox360GamepadTriggers();
+        readonly IGamepadDPad dPad = new StubXbox360GamepadDPad();
+        readonly IGamepadThumbsticks thumbsticks = new StubXbox360GamepadThumbsticks();
+		readonly IGamepadTriggerPair triggers = new StubXbox360GamepadTriggers();
 
         public StubXbox360Gamepad()
         {
@@ -897,9 +910,9 @@ namespace Cor.Platform.Stub
         #region IXbox360Gamepad
 
         public IXbox360GamepadButtons Buttons { get { return buttons; } }
-        public IXbox360GamepadDPad DPad { get { return dPad; } }
-        public IXbox360GamepadThumbsticks Thumbsticks { get { return thumbsticks; } }
-        public IXbox360GamepadTriggers Triggers { get { return triggers; } }
+        public IGamepadDPad DPad { get { return dPad; } }
+        public IGamepadThumbsticks Thumbsticks { get { return thumbsticks; } }
+		public IGamepadTriggerPair Triggers { get { return triggers; } }
 
         #endregion
     }
@@ -929,7 +942,7 @@ namespace Cor.Platform.Stub
     }
 
     public sealed class StubXbox360GamepadDPad
-        : IXbox360GamepadDPad
+        : IGamepadDPad
     {
         public StubXbox360GamepadDPad()
         {
@@ -947,7 +960,7 @@ namespace Cor.Platform.Stub
     }
 
     public sealed class StubXbox360GamepadThumbsticks
-        : IXbox360GamepadThumbsticks
+        : IGamepadThumbsticks
     {
         public StubXbox360GamepadThumbsticks()
         {
@@ -963,7 +976,7 @@ namespace Cor.Platform.Stub
     }
 
     public sealed class StubXbox360GamepadTriggers
-        : IXbox360GamepadTriggers
+		: IGamepadTriggerPair
     {
         public StubXbox360GamepadTriggers()
         {

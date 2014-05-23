@@ -962,7 +962,6 @@ namespace Cor.Platform.MonoMac
         public Int32 ScrollWheelValue { get { return scrollWheelValue; } }
         public Int32 X { get { return x; } }
         public Int32 Y { get { return y; } }
-
     }
 
     

@@ -894,61 +894,170 @@ namespace Cor
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// 
+    /// Represents the state of a generic gamepad.  This represents a subset of features supported by most
+    /// modern gamepads / gamepad emulators.  It can be useful for simple apps that do not require complex inputs,
+    /// instead of deciding how to handle each specific controller, instead they can simply use this common interface.
     /// </summary>
-    public interface IPsmGamepad
+    public interface IGenericGamepad
     {
         /// <summary>
-        /// 
+        /// Represents the state of the buttons.
         /// </summary>
-        IPsmGamepadButtons Buttons { get; }
+        IGenericGamepadButtons Buttons { get; }
         
         /// <summary>
-        /// 
+        /// Represents the state of the D-Pad.
         /// </summary>
-        IPsmGamepadDPad DPad { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        IPsmGamepadThumbsticks Thumbsticks { get; }
+        IGamepadDPad DPad { get; }
     }
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// Represents the state of the buttons on a Psm Gamepad.
+    /// Represents the state of a PlayStation Mobile Gamepad.
     /// </summary>
-    public interface IPsmGamepadButtons
-    {   
+    public interface IPsmGamepad
+    {
         /// <summary>
-        /// Represents the state of the Triangle button.
+        /// Represents the state of the buttons.
         /// </summary>
-        ButtonState Triangle { get; }
+        IPsmGamepadButtons Buttons { get; }
         
         /// <summary>
-        /// Represents the state of the Square button.
+        /// Represents the state of the D-Pad.
         /// </summary>
-        ButtonState Square { get; }
+        IGamepadDPad DPad { get; }
         
         /// <summary>
-        /// Represents the state of the Circle button.
+        /// Represents the state of the analogue thumbsticks.
         /// </summary>
-        ButtonState Circle { get; }
+        IGamepadThumbsticks Thumbsticks { get; }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// Represents the state of an Xbox 360 gamepad.
+    /// </summary>
+    public interface IXbox360Gamepad
+    {        
+        /// <summary>
+        /// Represents the state of the buttons.
+        /// </summary>
+        IXbox360GamepadButtons Buttons { get; }
+
+        /// <summary>
+        /// Represents the state of the D-Pad.
+        /// </summary>
+        IGamepadDPad DPad { get; }
         
         /// <summary>
-        /// Represents the state of the Cross button.
+        /// Represents the state of the analogue thumbsticks.
         /// </summary>
-        ButtonState Cross { get; }
+        IGamepadThumbsticks Thumbsticks { get; }
+
+        /// <summary>
+        /// Represents the state of the analogue triggers.
+        /// </summary>
+        IGamepadTriggerPair Triggers { get; }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// Represents the state of the buttons on an Xbox 360 gamepad.
+    /// </summary>
+    public interface IXbox360GamepadButtons
+    {
+        /// <summary>
+        /// Represents the state of the A button.
+        /// </summary>
+        ButtonState A { get; }
+
+        /// <summary>
+        /// Represents the state of the B button.
+        /// </summary>
+        ButtonState B { get; }
         
         /// <summary>
-        /// Represents the state of the Start button.
+        /// Represents the state of the back button.
+        /// </summary>
+        ButtonState Back { get; }
+        
+        /// <summary>
+        /// Represents the state of the left shoulder button.
+        /// </summary>
+        ButtonState LeftShoulder { get; }
+        
+        /// <summary>
+        /// Represents the state of the left analogue stick's click button thing.
+        /// </summary>
+        ButtonState LeftStick { get; }
+        
+        /// <summary>
+        /// Represents the state of the right shoulder button.
+        /// </summary>
+        ButtonState RightShoulder { get; }
+        
+        /// <summary>
+        /// Represents the state of the right analogue stick's click button thing.
+        /// </summary>
+        ButtonState RightStick { get; }
+        
+        /// <summary>
+        /// Represents the state of the start button.
         /// </summary>
         ButtonState Start { get; }
         
         /// <summary>
-        /// Represents the state of the Select button.
+        /// Represents the state of the X button.
+        /// </summary>
+        ButtonState X { get; }
+        
+        /// <summary>
+        /// Represents the state of the Y button.
+        /// </summary>
+        ButtonState Y { get; }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// Represents the state of the buttons on a PlayStation Mobile Gamepad.
+    /// </summary>
+    public interface IPsmGamepadButtons
+    {   
+        /// <summary>
+        /// Represents the state of the triangle button.
+        /// </summary>
+        ButtonState Triangle { get; }
+        
+        /// <summary>
+        /// Represents the state of the square button.
+        /// </summary>
+        ButtonState Square { get; }
+        
+        /// <summary>
+        /// Represents the state of the circle button.
+        /// </summary>
+        ButtonState Circle { get; }
+        
+        /// <summary>
+        /// Represents the state of the cross button.
+        /// </summary>
+        ButtonState Cross { get; }
+        
+        /// <summary>
+        /// Represents the state of the start button.
+        /// </summary>
+        ButtonState Start { get; }
+        
+        /// <summary>
+        /// Represents the state of the select button.
         /// </summary>
         ButtonState Select { get; }
         
@@ -967,27 +1076,27 @@ namespace Cor
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// 
+    /// Represents the state of the D-Pad on a gamepad.
     /// </summary>
-    public interface IPsmGamepadDPad
+    public interface IGamepadDPad
     {
         /// <summary>
-        /// 
+        /// Represents the state of the down button.
         /// </summary>
         ButtonState Down { get; }
         
         /// <summary>
-        /// 
+        /// Represents the state of the left button.
         /// </summary>
         ButtonState Left { get; }
         
         /// <summary>
-        /// 
+        /// Represents the state of the right button.
         /// </summary>
         ButtonState Right { get; }
         
         /// <summary>
-        /// 
+        /// Represents the state of the up button.
         /// </summary>
         ButtonState Up { get; }
     }
@@ -996,17 +1105,19 @@ namespace Cor
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// 
+    /// Represents the state of the analogue thumbsticks on a gamepad.
     /// </summary>
-    public interface IPsmGamepadThumbsticks
+    public interface IGamepadThumbsticks
     {
         /// <summary>
-        /// 
+        /// Represents the state of the left thumbstick, the X and Y values of the returned Vector2 are both in the
+        /// range of -1.0 to 1.0 with 0.0 representing no movement.
         /// </summary>
         Vector2 Left { get; }
         
         /// <summary>
-        /// 
+        /// Represents the state of the right thumbstick, the X and Y values of the returned Vector2 are both in the
+        /// range of -1.0 to 1.0 with 0.0 representing no movement.
         /// </summary>
         Vector2 Right { get; }
     }
@@ -1015,145 +1126,9 @@ namespace Cor
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// 
+    /// Represents the state of a pair of triggers on a gamepad.
     /// </summary>
-    public interface IXbox360Gamepad
-    {        
-        /// <summary>
-        /// 
-        /// </summary>
-        IXbox360GamepadButtons Buttons { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        IXbox360GamepadDPad DPad { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        IXbox360GamepadThumbsticks Thumbsticks { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        IXbox360GamepadTriggers Triggers { get; }
-    }
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IXbox360GamepadButtons
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState A { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState B { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState Back { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState LeftShoulder { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState LeftStick { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState RightShoulder { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState RightStick { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState Start { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState X { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState Y { get; }
-    }
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IXbox360GamepadDPad
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState Down { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState Left { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState Right { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState Up { get; }
-    }
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IXbox360GamepadThumbsticks
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        Vector2 Left { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        Vector2 Right { get; }
-    }
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IXbox360GamepadTriggers
+    public interface IGamepadTriggerPair
     {
         /// <summary>
         /// 
@@ -1187,59 +1162,39 @@ namespace Cor
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
+    
     /// <summary>
     /// 
     /// </summary>
-    public interface IGenericGamepad
+    public interface IGenericGamepadButtons
     {
         /// <summary>
-        /// 
-        /// </summary>
-        ButtonState Down { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState Left { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState Right { get; }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        ButtonState Up { get; }
-        
-        /// <summary>
-        /// 
+        /// Represents the state of the north button.
         /// </summary>
         ButtonState North { get; }
         
         /// <summary>
-        /// 
+        /// Represents the state of the south button.
         /// </summary>
         ButtonState South { get; }
         
         /// <summary>
-        /// 
+        /// Represents the state of the east button.
         /// </summary>
         ButtonState East { get; }
         
         /// <summary>
-        /// 
+        /// Represents the state of the west button.
         /// </summary>
         ButtonState West { get; }
         
         /// <summary>
-        /// 
+        /// Represents the state of the option button.
         /// </summary>
         ButtonState Option { get; }
         
         /// <summary>
-        /// 
+        /// Represents the state of the pause button.
         /// </summary>
         ButtonState Pause { get; }
     }
