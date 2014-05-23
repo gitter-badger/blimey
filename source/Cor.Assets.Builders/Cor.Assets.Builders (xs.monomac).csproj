@@ -43,6 +43,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Core" />
     <Reference Include="MonoMac, Version=0.0.0.0, Culture=neutral" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
