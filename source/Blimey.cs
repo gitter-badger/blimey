@@ -1371,14 +1371,42 @@ namespace Blimey
             newOrientation.Forward = lookAtVector;
 
             Vector3 newRight; 
-            Vector3.Cross(ref lookAtVector, ref worldUp, out newRight);
-            Vector3.Normalise(ref newRight, out newRight);
+			Vector3.Cross(ref lookAtVector, ref worldUp, out newRight);
+
+			Single epsilon; RealMaths.Epsilon(out epsilon);
+
+			Single newRightLengthSquared =
+				(newRight.X * newRight.X) +
+				(newRight.Y * newRight.Y) +
+				(newRight.Z * newRight.Z);
+
+			if (newRightLengthSquared <= epsilon ||
+				Single.IsInfinity (newRightLengthSquared)) {
+				newRight = Vector3.Zero;
+			} else {
+				Vector3.Normalise(ref newRight, out newRight);
+
+			}
 
             newOrientation.Right = newRight;
 
             Vector3 newUp;
-            Vector3.Cross(ref newRight, ref lookAtVector, out newUp);
-            Vector3.Normalise(ref newUp, out newUp);
+			Vector3.Cross(ref newRight, ref lookAtVector, out newUp);
+
+			Single newUpLengthSquared =
+				(newUp.X * newUp.X) +
+				(newUp.Y * newUp.Y) +
+				(newUp.Z * newUp.Z);
+
+
+			if (newUpLengthSquared <= epsilon ||
+				Single.IsInfinity (newUpLengthSquared)) {
+				newUp = Vector3.Zero;
+			} else {
+				Vector3.Normalise(ref newUp, out newUp);
+
+			}
+
             newOrientation.Up = newUp;
 
             Quaternion rotation;
