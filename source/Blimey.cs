@@ -70,7 +70,7 @@ namespace Blimey
 
             fps = new FpsHelper();
             frameBuffer = new FrameBufferHelper(this.cor.Graphics);
-            log = new LoggingHelper(this.cor.System);
+            log = new LoggingHelper(this.cor.Host);
             log.Heading();
             log.SystemDetails();
 
@@ -612,11 +612,11 @@ namespace Blimey
 
     internal class LoggingHelper
     {
-		ISystemInformation sys;
+		IHost host;
 
-		internal LoggingHelper(ISystemInformation sys)
+		internal LoggingHelper(IHost host)
         {
-            this.sys = sys;
+            this.host = host;
             Teletype.OpenChannel("Blimey");
             Teletype.OpenChannel("Blimey.Engine");
             Teletype.OpenChannel("Blimey.Input");
@@ -642,21 +642,17 @@ namespace Blimey
         }
 
         internal void SystemDetails()
-        {
-            Teletype.WriteLine("Blimey.Engine", "Operating System: " + sys.OperatingSystem);
-            Teletype.WriteLine("Blimey.Engine", "Device Name: " + sys.DeviceName);
-            Teletype.WriteLine("Blimey.Engine", "Device Model: " + sys.DeviceModel);
-            Teletype.WriteLine("Blimey.Engine", "System Name: " + sys.SystemName);
-            Teletype.WriteLine("Blimey.Engine", "System Version: " + sys.SystemVersion);
+		{
+			Teletype.WriteLine("Blimey.Engine", "Machine: " + host.Machine);
+            Teletype.WriteLine("Blimey.Engine", "Operating System: " + host.OperatingSystem);
+			Teletype.WriteLine("Blimey.Engine", "VirtualMachine: " + host.VirtualMachine);
             Teletype.WriteLine(
                 "Blimey.Engine",
                 "Screen Spec: w: " + 
-                sys.ScreenSpecification.ScreenResolutionWidth +
+                host.ScreenSpecification.ScreenResolutionWidth +
                 " h: " + 
-                sys.ScreenSpecification.ScreenResolutionHeight
+                host.ScreenSpecification.ScreenResolutionHeight
                 );
-
-            Teletype.WriteLine("Blimey.Engine", "System Version: " + sys.SystemVersion);
         }
     }
 
@@ -2528,8 +2524,8 @@ namespace Blimey
                 {
                     tracker = new TouchTracker(
                         this.engine, 
-                        this.engine.System.ScreenSpecification,
-                        this.engine.System.PanelSpecification, 
+                        this.engine.Host.ScreenSpecification,
+                        this.engine.Host.PanelSpecification, 
                         touch.ID );
 
                     touchTrackers.Add(tracker);
@@ -2858,8 +2854,8 @@ namespace Blimey
             {
                 case TouchPositionSpace.RealWorld:
 
-                    if(engine.System.CurrentOrientation == DeviceOrientation.Default ||
-                       engine.System.CurrentOrientation == DeviceOrientation.Upsidedown)
+                    if(engine.Host.CurrentOrientation == DeviceOrientation.Default ||
+                       engine.Host.CurrentOrientation == DeviceOrientation.Upsidedown)
                     {
 				multiplier = new Vector2(panelSpec.PanelPhysicalSize.Value.X, panelSpec.PanelPhysicalSize.Value.Y);
                     }
@@ -2872,18 +2868,18 @@ namespace Blimey
 
                 case TouchPositionSpace.Screen:
 
-                    if (this.engine.System.CurrentOrientation == DeviceOrientation.Upsidedown )
+                    if (this.engine.Host.CurrentOrientation == DeviceOrientation.Upsidedown )
                     {
                         pos.Y = - pos.Y;
                         pos.X = - pos.X;
                     }
-                    else if (this.engine.System.CurrentOrientation == DeviceOrientation.Leftside )
+                    else if (this.engine.Host.CurrentOrientation == DeviceOrientation.Leftside )
                     {
                         Single temp = pos.X;
                         pos.X = -pos.Y;
                         pos.Y = temp;
                     }
-                    else if(this.engine.System.CurrentOrientation == DeviceOrientation.Rightside )
+                    else if(this.engine.Host.CurrentOrientation == DeviceOrientation.Rightside )
                     {
                         Single temp = pos.X;
                         pos.X = pos.Y;
