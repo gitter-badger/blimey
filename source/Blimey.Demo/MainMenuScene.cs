@@ -74,37 +74,41 @@ namespace Blimey.Demo
 
             this.Settings.BackgroundColour = _startCol;
 
-            var cubeModel = new CubePrimitive(this.Cor.Graphics);
-            var cylinderModel = new CylinderPrimitive(this.Cor.Graphics);
-            var torusModel = new TorusPrimitive(this.Cor.Graphics);
+			//var cubeModel = new CubePrimitive(this.Cor.Graphics);
+			//var cylinderModel = new CylinderPrimitive(this.Cor.Graphics);
+			//var torusModel = new TorusPrimitive(this.Cor.Graphics);
             var teaPotModel = new TeapotPrimitive(this.Cor.Graphics);
-            var sphereModel = new SpherePrimitive(this.Cor.Graphics);
+			//var sphereModel = new SpherePrimitive(this.Cor.Graphics);
 
-            var cube = RandomObjectHelper.CreateShapeGO(this, "Gui", cubeModel, 1);
-            var cylinder = RandomObjectHelper.CreateShapeGO(this, "Gui", cylinderModel, 1);
-            var torus = RandomObjectHelper.CreateShapeGO(this, "Gui", torusModel, 2);
-            var teaPot = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 2);
-            var sphere = RandomObjectHelper.CreateShapeGO(this, "Gui", sphereModel, 2);
+			var so1 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
+			var so2 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
+			var so3 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
+			var so4 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
+			var so5 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
+			var so6 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
 
-            teaPot.Transform.LocalPosition = new Vector3(-0.3f, 0f, 0f);
-            cube.Transform.LocalPosition = new Vector3(-0.15f, 0f, 0f);
-            cylinder.Transform.LocalPosition = new Vector3(0f, 0f, 0f);
-            torus.Transform.LocalPosition = new Vector3(0.15f, 0f, 0f);
-            sphere.Transform.LocalPosition = new Vector3(0.3f, 0f, 0f);
-
-
-            _menuItemMaterials.Add(teaPot.GetTrait<MeshRenderer>().Material);
-            _menuItemMaterials.Add(cube.GetTrait<MeshRenderer>().Material);
-            _menuItemMaterials.Add(cylinder.GetTrait<MeshRenderer>().Material);
-            _menuItemMaterials.Add(torus.GetTrait<MeshRenderer>().Material);
-            _menuItemMaterials.Add(sphere.GetTrait<MeshRenderer>().Material);
+			so1.Transform.LocalPosition = new Vector3(-0.25f, 0f, 0f);
+			so2.Transform.LocalPosition = new Vector3(-0.15f, 0f, 0f);
+			so3.Transform.LocalPosition = new Vector3(-0.05f, 0f, 0f);
+			so4.Transform.LocalPosition = new Vector3(+0.05f, 0f, 0f);
+			so5.Transform.LocalPosition = new Vector3(+0.15f, 0f, 0f);
+			so6.Transform.LocalPosition = new Vector3(+0.25f, 0f, 0f);
 
 
-            _menuSceneObjects.Add(teaPot);
-            _menuSceneObjects.Add(cube);
-            _menuSceneObjects.Add(cylinder);
-            _menuSceneObjects.Add(torus);
-            _menuSceneObjects.Add(sphere);
+			_menuItemMaterials.Add(so1.GetTrait<MeshRenderer>().Material);
+			_menuItemMaterials.Add(so2.GetTrait<MeshRenderer>().Material);
+			_menuItemMaterials.Add(so3.GetTrait<MeshRenderer>().Material);
+			_menuItemMaterials.Add(so4.GetTrait<MeshRenderer>().Material);
+			_menuItemMaterials.Add(so5.GetTrait<MeshRenderer>().Material);
+			_menuItemMaterials.Add(so6.GetTrait<MeshRenderer>().Material);
+
+
+			_menuSceneObjects.Add(so1);
+			_menuSceneObjects.Add(so2);
+			_menuSceneObjects.Add(so3);
+			_menuSceneObjects.Add(so4);
+			_menuSceneObjects.Add(so5);
+			_menuSceneObjects.Add(so6);
 
             /*
             var orthoCameraGo = this.CreateSceneObject("Ortho Camera");
@@ -172,14 +176,14 @@ namespace Blimey.Demo
         {
             if (_inputTimer == 0f)
             {
-                if (Cor.Input.GenericGamepad.Left == ButtonState.Pressed ||
+				if (Cor.Input.GenericGamepad.DPad.Down == ButtonState.Pressed ||
                     Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Left))
                 {
                     this.DecreaseSelected();
                     _inputTimer = _doneSomethingTime;
                 }
 
-                if (Cor.Input.GenericGamepad.Right == ButtonState.Pressed ||
+				if (Cor.Input.GenericGamepad.DPad.Right == ButtonState.Pressed ||
                     Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Right))
                 {
                     this.IncreaseSelected();
@@ -187,7 +191,7 @@ namespace Blimey.Demo
 
                 }
 
-                if (Cor.Input.GenericGamepad.South == ButtonState.Pressed ||
+				if (Cor.Input.GenericGamepad.Buttons.South == ButtonState.Pressed ||
                     Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Enter))
                 {
                     return GetSceneForCurrentSelection();
@@ -214,6 +218,9 @@ namespace Blimey.Demo
 
 			if (_selectedIndex == 4)
 				return new Scene5();
+
+			if (_selectedIndex == 5)
+				return new Scene6();
 
             return this;
         }

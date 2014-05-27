@@ -129,7 +129,7 @@ namespace Blimey.Demo
 
         public override Scene Update(AppTime time)
         {
-            if (Cor.Input.GenericGamepad.East == ButtonState.Pressed ||
+			if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
 				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
 					Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
             {

@@ -211,14 +211,14 @@ namespace Blimey.Demo
 
             if (timer == 0f)
             {
-                if (Cor.Input.GenericGamepad.East == ButtonState.Pressed ||
+				if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
 					Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape) ||
 					Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
                 {
                     _returnScene = new MainMenuScene ();
                 }
 
-                if (Cor.Input.GenericGamepad.North == ButtonState.Pressed ||
+				if (Cor.Input.GenericGamepad.Buttons.North == ButtonState.Pressed ||
                 Cor.Input.Keyboard.IsCharacterKeyDown ('d'))
                 {
                     debugLinesOn = !debugLinesOn;

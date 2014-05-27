@@ -15,6 +15,8 @@ void main()
 	gl_Position = u_proj * u_view * u_world * a_vertPos;
 	
 	v_texCoord = a_vertTexcoord;
-	
-	v_tint = a_vertColour * u_colour;
+	vec4 c = a_vertColour;
+    c.a = 1.0;
+
+	v_tint = c * u_colour;
 }

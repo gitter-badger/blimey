@@ -95,7 +95,7 @@ namespace Blimey.Demo
 
 			airports.Shuffle ();
 
-			airports = airports.GetRange (0, 50);
+			airports = airports.GetRange (0, 250);
 
 			Console.WriteLine("num airports: " + airports.Count);
 
@@ -144,10 +144,12 @@ namespace Blimey.Demo
 
                 so.Transform.Parent = earthGo.Transform;
 
-
-				var somr = so.AddTrait<MeshRenderer>();
-				somr.Mesh = sphereMesh;
-				somr.Material = mat2;
+				var sodr = so.AddTrait<DebugRenderer>();
+				//sodr.RenderPass = "Default";
+				sodr.Colour = Rgba32.Blue;
+				//var somr = so.AddTrait<MeshRenderer>();
+				//somr.Mesh = sphereMesh;
+				//somr.Material = mat2;
 
 				var lat = airport.Latitude;
 				var lon = airport.Longitude;
@@ -181,7 +183,7 @@ namespace Blimey.Demo
 		{
 			gr.Update ();
 
-			if (Cor.Input.GenericGamepad.East == ButtonState.Pressed ||
+			if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
 				Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape) ||
 				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
 			{

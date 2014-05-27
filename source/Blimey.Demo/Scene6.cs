@@ -1,4 +1,4 @@
-// ┌────────────────────────────────────────────────────────────────────────┐ \\
+﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ Blimey - Fast, efficient, high level engine built upon Cor & Abacus    │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Brought to you by:                                                     │ \\
@@ -41,146 +41,80 @@ using System.Collections.Generic;
 
 namespace Blimey.Demo
 {
-    public class Scene2
-        : Scene
-    {
-        Scene returnScene;
-        SceneObject billboardGo;
-
-        GridRenderer gr;
-
-        LookAtSubject las;
-
-        SceneObject cam;
-
-        Transform target;
-
-
-        float timer = timeWindow;
-        const float timeWindow = 5f;
-        bool x = true;
-        bool goOut = true;
-
-        SceneObject markerGo;
-
-		// GPU Resources
+	public class Scene6
+		: Scene
+	{
+		Scene returnScene;
+		GridRenderer gr;
 		IShader unlitShader = null;
+		ITexture fntTex = null;
 
-        public override void Start()
-        {
-            this.Settings.BackgroundColour = Rgba32.LightSlateGrey;
+		public override void Start()
+		{
+			this.Settings.BackgroundColour = Rgba32.DarkSlateGrey;
 
 			// set up the debug renderer
 			ShaderAsset unlitShaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
 			this.Blimey.DebugShapeRenderer.DebugShader = 
 				this.Cor.Graphics.CreateShader (unlitShaderAsset);
-            gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Default", 1f, 10);
+			gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Default", 1f, 10);
 
-            returnScene = this;
+			Sprite.SpriteShader = this.Cor.Graphics.CreateShader(unlitShaderAsset);
 
-            // create a sprite
-            var billboard = new BillboardPrimitive(this.Cor.Graphics);
+			TextAsset fntUvAsset = this.Cor.Assets.Load <TextAsset> ("blimey_fnt_uv.cba");
 
+			Console.WriteLine (fntUvAsset.Text);
+
+			TextureAsset fntTexAsset = this.Cor.Assets.Load <TextureAsset> ("blimey_fnt_tex.cba");
+
+			fntTex = this.Cor.Graphics.UploadTexture (fntTexAsset);
+
+			returnScene = this;
+
+			var cam = this.GetRenderPassCamera ("Default");
+			cam.GetTrait <OrbitAroundSubject> ().Active = false;
+
+			// create a sprite
+			var so = this.CreateSceneObject ("fnt_spr");
+
+			var spr = so.AddTrait <Sprite> ();
+			spr.Width = 256f;
+			spr.Height = 256f;
+			spr.Texture = fntTex;
+			spr.Material.Offset = new Vector2 (0.5f, 0.5f);
+			spr.Material.SetColour ("MaterialColour", Rgba32.Yellow);
 
 			unlitShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
-            billboardGo = this.CreateSceneObject("billboard");
+			this.Blimey.InputEventSystem.Tap += this.OnTap;
+		}
 
-            var mr = billboardGo.AddTrait<MeshRenderer>();
-            mr.Mesh = billboard;
-            mr.Material = new Material("Default", unlitShader);
-            mr.Material.SetColour("MaterialColour", RandomGenerator.Default.GetRandomColour());
+		public override void Shutdown()
+		{
+			this.Blimey.InputEventSystem.Tap -= this.OnTap;
+		}
 
-            target = billboardGo.Transform;
-
-            markerGo = CreateSceneObject ("marker");
-
-            markerGo.Transform.LocalScale = new Vector3 (0.05f, 0.05f, 0.05f);
-
-            var markerMR = markerGo.AddTrait<MeshRenderer> ();
-            markerMR.Mesh = new CubePrimitive(this.Cor.Graphics);
-            markerMR.Material = new Material("Default", unlitShader);
-            markerMR.Material.SetColour("MaterialColour", Rgba32.Red);
-
-            cam = this.GetRenderPassCamera ("Default");
-
-            this.DestroySceneObject(this.GetRenderPassCamera ("Debug"));
-            this.DestroySceneObject(this.GetRenderPassCamera ("Gui"));
-
-            this.SetRenderPassCameraTo ("Debug", cam);
-            cam.Transform.Position = new Vector3(2, 1, 5);
-            cam.RemoveTrait<OrbitAroundSubject> ();
-
-            las = cam.GetTrait<LookAtSubject> ();
-            las.Subject = billboardGo.Transform;
-
-            this.Blimey.InputEventSystem.Tap += this.OnTap;
-        }
-
-        public override void Shutdown()
-        {
-            this.Blimey.InputEventSystem.Tap -= this.OnTap;
-        }
-
-        public override Scene Update(AppTime time)
-        {
-            gr.Update ();
-
-            timer -= time.Delta;
-
-            if (timer < 0f)
-            {
-                timer = timeWindow;
-
-                goOut = !goOut;
-
-                if (goOut)
-                    x = !x;
-            }
-
-            float f = timer / timeWindow;
-
-            if (goOut)
-                f = 1f - f;
-
-            f = f * 2f;
-
-            target.Position = new Vector3 (
-                x ? f : 0f,
-                0,
-                x ? 0f : f);
-
-            this.Blimey.DebugShapeRenderer.AddLine (
-                "Default",
-                target.Position,
-                target.Position + new Vector3 (0f, 10f, 0f),
-                Rgba32.Orange);
-
-            this.Blimey.DebugShapeRenderer.AddLine (
-                "Default",
-                las.Subject.Position,
-                new Vector3(cam.Transform.Position.X, 0f, cam.Transform.Position.Z),
-                Rgba32.Lime);
-
-            markerGo.Transform.Position = target.Position + new Vector3 (0f, 0.2f, 0f);
+		public override Scene Update(AppTime time)
+		{
+			gr.Update ();
 
 			if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
 				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
-					Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
-            {
-                returnScene = new MainMenuScene();
-            }
+				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
+			{
+				returnScene = new MainMenuScene();
+			}
 
-            return returnScene;
-        }
+			return returnScene;
+		}
 
-        void OnTap(Gesture gesture)
-        {
+		void OnTap(Gesture gesture)
+		{
 			returnScene = new MainMenuScene();
 
 			// Clean up the things we allocated on the GPU.
 			this.Cor.Graphics.DestroyShader (unlitShader);
 			unlitShader = null;
-        }
-    }
+		}
+	}
 }
 

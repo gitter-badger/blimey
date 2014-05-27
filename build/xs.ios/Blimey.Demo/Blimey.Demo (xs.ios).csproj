@@ -137,6 +137,9 @@
     <Compile Include="..\..\..\source\Blimey.Demo\Scene5.cs">
       <Link>source\Scene5.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene6.cs">
+      <Link>source\Scene6.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
