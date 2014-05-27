@@ -30,76 +30,72 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-using System;
-using System.Runtime.InteropServices;
-using System.Globalization;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using Abacus;
-using Abacus.Packed;
-using Abacus.SinglePrecision;
-using Abacus.Int32Precision;
-
 namespace Cor.Platform.Stub
 {
+    using System;
+    using System.Runtime.InteropServices;
+    using System.Globalization;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.IO;
+    using Abacus;
+    using Abacus.Packed;
+    using Abacus.SinglePrecision;
+    using Abacus.Int32Precision;
+
     public class StubEngine
         : ICor
     {
         readonly IAudioManager audio;
         readonly IGraphicsManager graphics;
         readonly IInputManager input;
-		readonly ISystemInformation system;
+		readonly IHost host;
         readonly AppSettings settings;
         readonly IApp app;
         readonly LogManager log;
         readonly AssetManager assets;
 		readonly IAppStatus appStatus;
+		readonly ISystem system;
 
-        public StubEngine(IApp app, AppSettings settings)
+		public StubEngine (IApp app, AppSettings settings)
         {
-            InternalUtils.Log.Info(
-                "StubEngine -> ()");
+			InternalUtils.Log.Info ("StubEngine -> ()");
 
-            this.audio = new StubAudioManager();
-            this.graphics = new StubGraphicsManager();
-            this.input = new StubInputManager();
-            this.system = new StubSystemInformation();
+			this.audio = new StubAudioManager ();
+			this.graphics = new StubGraphicsManager ();
+			this.input = new StubInputManager ();
+			this.host = new StubHost ();
             this.settings = settings;
             this.appStatus = new StubAppStatus ();
-            
-            this.log = new LogManager(this.settings.LogSettings);
-            this.assets = new AssetManager(this.graphics, this.system);
-            
+			this.system = new StubSystem ();
+            this.log = new LogManager (this.settings.LogSettings);
+			this.assets = new AssetManager (this.graphics, this.system);
             this.app = app;
-			this.app.Start(this);
+			this.app.Start (this);
         }
 
         #region ICor
 
         public IAudioManager Audio { get { return this.audio; } }
-
         public IGraphicsManager Graphics { get { return this.graphics; } }
-
 		public IAppStatus AppStatus { get { return this.appStatus; } }
-
         public IInputManager Input { get { return this.input; } }
-
-		public ISystemInformation System { get { return this.system; } }
-
+		public IHost Host { get { return this.host; } }
+		public ISystem System { get { return this.system; } }
         public LogManager Log { get { return this.log; } }
-
         public AssetManager Assets { get { return this.assets; } }
-
         public AppSettings Settings { get { return this.settings; } }
 
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class StubAudioManager
         : IAudioManager
     {
-        public Single volume = 1f;
+		Single volume = 1f;
 
         public Single Volume
         {
@@ -107,119 +103,63 @@ namespace Cor.Platform.Stub
             set
             {
                 this.volume = value;
-
-                InternalUtils.Log.Info(
-                    "StubAudioManager -> Setting Volume:" + value);
+				InternalUtils.Log.Info ("StubAudioManager -> Setting Volume:" + value);
             }
         }
 
         #region IAudioManager
 
-        public StubAudioManager()
+		public StubAudioManager ()
         {
-            InternalUtils.Log.Info(
-                "StubAudioManager -> ()");
-
+			InternalUtils.Log.Info ("StubAudioManager -> ()");
             this.volume = 1f;
         }
 
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class StubGraphicsManager
         : IGraphicsManager
     {
         readonly IGpuUtils gpuUtils;
 
-        public StubGraphicsManager()
+		public StubGraphicsManager ()
         {
-            InternalUtils.Log.Info(
-                "StubGraphicsManager -> ()");
-
+			InternalUtils.Log.Info ("StubGraphicsManager -> ()");
             this.gpuUtils = new StubGpuUtils ();
         }
 
         #region IGraphicsManager
 
         public IGpuUtils GpuUtils { get { return this.gpuUtils; } }
+		public void Reset () {}
+		public void ClearColourBuffer (Rgba32 color = new Rgba32()) {}
+		public void ClearDepthBuffer (Single depth = 1f) {}
+		public void SetCullMode (CullMode cullMode) {}
+        public void SetActiveGeometryBuffer (IGeometryBuffer buffer) {}
+        public ITexture UploadTexture (TextureAsset tex) { return null; }
+        public void UnloadTexture (ITexture texture) {}
+        public void SetActiveTexture (Int32 slot, ITexture tex) {}
+        public IShader CreateShader (ShaderAsset asset) { return null; }
+        public void DestroyShader (IShader shader) {}
 
-        public void Reset()
+		public IGeometryBuffer CreateGeometryBuffer (
+            VertexDeclaration vertexDeclaration, Int32 vertexCount, Int32 indexCount)
         {
-
+            return new StubGeometryBuffer (vertexDeclaration, vertexCount, indexCount);
         }
 
-        public void ClearColourBuffer(Rgba32 color = new Rgba32())
+        public void SetBlendEquation (
+            BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb,
+            BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha)
         {
-
         }
 
-        public void ClearDepthBuffer(Single depth = 1f)
-        {
-
-        }
-
-        public void SetCullMode(CullMode cullMode)
-        {
-
-        }
-
-        public IGeometryBuffer CreateGeometryBuffer (
-            VertexDeclaration vertexDeclaration,
-            Int32 vertexCount,
-            Int32 indexCount )
-        {
-            return new StubGeometryBuffer(vertexDeclaration, vertexCount, indexCount);
-        }
-
-        public void SetActiveGeometryBuffer (IGeometryBuffer buffer)
-        {
-
-        }
-
-        public ITexture UploadTexture (TextureAsset tex)
-        {
-            return null;
-        }
-
-        public void UnloadTexture (ITexture texture)
-        {
-        
-        }
-
-        public void SetActiveTexture (Int32 slot, ITexture tex)
-        {
-        
-        }
-
-        public IShader CreateShader (ShaderAsset asset)
-        {
-            return null;
-        }
-
-        public void DestroyShader (IShader shader)
-        {
-
-        }
-
-        public void SetBlendEquation(
-            BlendFunction rgbBlendFunction,
-            BlendFactor sourceRgb,
-            BlendFactor destinationRgb,
-            BlendFunction alphaBlendFunction,
-            BlendFactor sourceAlpha,
-            BlendFactor destinationAlpha
-            )
-        {
-
-        }
-
-        public void DrawPrimitives(
-            PrimitiveType primitiveType,
-            Int32 startVertex,
-            Int32 primitiveCount )
-        {
-
-        }
+        public void DrawPrimitives (
+            PrimitiveType primitiveType, Int32 startVertex, Int32 primitiveCount) {}
 
         public void DrawIndexedPrimitives (
             PrimitiveType primitiveType,
@@ -227,10 +167,8 @@ namespace Cor.Platform.Stub
             Int32 minVertexIndex,
             Int32 numVertices,
             Int32 startIndex,
-            Int32 primitiveCount
-            )
+            Int32 primitiveCount)
         {
-
         }
 
         public void DrawUserPrimitives <T> (
@@ -238,10 +176,11 @@ namespace Cor.Platform.Stub
             T[] vertexData,
             Int32 vertexOffset,
             Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration )
-            where T : struct, IVertexType
+            VertexDeclaration vertexDeclaration)
+        where T 
+            : struct
+            , IVertexType
         {
-
         }
 
         public void DrawUserIndexedPrimitives <T> (
@@ -252,50 +191,54 @@ namespace Cor.Platform.Stub
             Int32[] indexData,
             Int32 indexOffset,
             Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration )
-            where T : struct, IVertexType
+            VertexDeclaration vertexDeclaration)
+        where T
+            : struct
+            , IVertexType
         {
-
         }
 
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class StubAppStatus
 		: IAppStatus
     {
-        public StubAppStatus()
+        public StubAppStatus ()
         {
-            InternalUtils.Log.Info(
-                "StubDisplayStatus -> ()");
+            InternalUtils.Log.Info ("StubDisplayStatus -> ()");
         }
 
         #region IDisplayStatus
 
 		public Boolean? Fullscreen { get { return true; } }
-
         public Int32 Width { get { return 800; } }
-
 		public Int32 Height { get { return 600; } }
 
         #endregion
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class StubIndexBuffer
         : IIndexBuffer
     {
         UInt16[] data;
 
-        public StubIndexBuffer()
+        public StubIndexBuffer ()
         {
-            InternalUtils.Log.Info(
-                "StubIndexBuffer -> ()");
+            InternalUtils.Log.Info ("StubIndexBuffer -> ()");
         }
 
         static internal UInt16[] ConvertToUnsigned (Int32[] indexBuffer)
         {
             UInt16[] udata = new UInt16[indexBuffer.Length];
 
-            for(Int32 i = 0; i < indexBuffer.Length; ++i)
+            for (Int32 i = 0; i < indexBuffer.Length; ++i)
             {
                 udata[i] = (UInt16) indexBuffer[i];
             }
@@ -307,45 +250,48 @@ namespace Cor.Platform.Stub
 
         public Int32 IndexCount { get { return this.data.Length; } }
 
-        public void SetData(Int32[] data)
+        public void SetData (Int32[] data)
         {
-            this.data = ConvertToUnsigned(data);
+            this.data = ConvertToUnsigned (data);
         }
 
-        public void GetData(Int32[] data)
+        public void GetData (Int32[] data)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException ();
         }
 
-        public void SetData(Int32[] data, Int32 startIndex, Int32 elementCount)
+        public void SetData (Int32[] data, Int32 startIndex, Int32 elementCount)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException ();
         }
 
-        public void GetData(Int32[] data, Int32 startIndex, Int32 elementCount)
+        public void GetData (Int32[] data, Int32 startIndex, Int32 elementCount)
         {
-            throw new NotImplementedException();    
+            throw new NotImplementedException ();    
         }
 
-        public void SetRawData(Byte[] data, Int32 startIndex, Int32 elementCount)
+        public void SetRawData (Byte[] data, Int32 startIndex, Int32 elementCount)
         {
-            throw new NotImplementedException();    
+            throw new NotImplementedException ();    
         }
 
-        public Byte[] GetRawData(Int32 startIndex, Int32 elementCount)
+        public Byte[] GetRawData (Int32 startIndex, Int32 elementCount)
         {
-            throw new NotImplementedException();    
+            throw new NotImplementedException ();    
         }
         
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class StubPanelSpecification
         : IPanelSpecification
     {
-        public StubPanelSpecification()
+        public StubPanelSpecification ()
         {
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info (
                 "StubPanelSpecification -> ()");
         }
 
@@ -366,15 +312,18 @@ namespace Cor.Platform.Stub
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class StubScreenSpecification
         : IScreenSpecification
     {
         Int32 width = 800;
         Int32 height = 600;
 
-        public StubScreenSpecification()
+        public StubScreenSpecification ()
         {
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info (
                 "StubScreenSpecification -> ()");
         }
 
@@ -403,22 +352,25 @@ namespace Cor.Platform.Stub
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class StubGeometryBuffer
         : IGeometryBuffer
     {
         IVertexBuffer vertexBuffer;
         IIndexBuffer indexBuffer;
 
-        public StubGeometryBuffer(
+        public StubGeometryBuffer (
             VertexDeclaration vertexDeclaration,
             Int32 vertexCount,
-            Int32 indexCount )
+            Int32 indexCount)
         {
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info (
                 "StubGeometryBuffer -> ()");
 
-            this.vertexBuffer = new StubVertexBuffer();
-            this.indexBuffer = new StubIndexBuffer();
+            this.vertexBuffer = new StubVertexBuffer ();
+            this.indexBuffer = new StubIndexBuffer ();
         }
 
         #region IGeometryBuffer
@@ -435,27 +387,30 @@ namespace Cor.Platform.Stub
 
         #endregion
     }
-    public class StubSystemInformation
-		: ISystemInformation
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public class StubHost
+		: IHost
     {
         readonly IScreenSpecification screen;
         readonly IPanelSpecification panel;
 
-        public StubSystemInformation()
+        public StubHost ()
         {
-            InternalUtils.Log.Info(
-                "StubSystemManager -> ()");
+			InternalUtils.Log.Info ("StubHost -> ()");
 
-            screen = new StubScreenSpecification();
-            panel = new StubPanelSpecification();
+            screen = new StubScreenSpecification ();
+            panel = new StubPanelSpecification ();
         }
 
-        void GetEffectiveDisplaySize(
+        void GetEffectiveDisplaySize (
             ref Int32 screenSpecWidth,
             ref Int32 screenSpecHeight)
         {
             if (this.CurrentOrientation == DeviceOrientation.Default ||
-                this.CurrentOrientation == DeviceOrientation.Upsidedown )
+                this.CurrentOrientation == DeviceOrientation.Upsidedown)
             {
                 return;
             }
@@ -467,9 +422,7 @@ namespace Cor.Platform.Stub
             }
         }
 
-        #region ISystemManager
-
-        public String OperatingSystem { get { return "Stub OS 2013"; } }
+        #region ISystem
 
         public Point2 CurrentDisplaySize
         {
@@ -478,19 +431,15 @@ namespace Cor.Platform.Stub
                 Int32 w = ScreenSpecification.ScreenResolutionWidth;
                 Int32 h = ScreenSpecification.ScreenResolutionHeight;
 
-                GetEffectiveDisplaySize(ref w, ref h);
+                GetEffectiveDisplaySize (ref w, ref h);
 
                 return new Point2(w, h);
             }
         }
 
-        public String DeviceName { get { return "The New Stub Pad"; } }
-
-        public String DeviceModel { get { return "xf4bs2013"; } }
-
-        public String SystemName { get { return "Sungiant's System"; } }
-
-        public String SystemVersion { get { return "1314.0.1.29"; } }
+		public String Machine { get { return "The New Stub Pad"; } }
+		public String OperatingSystem { get { return "Cyberdyne OS"; } }
+		public String VirtualMachine { get { return "Mono 2.10"; } }
 
         public DeviceOrientation CurrentOrientation
         {
@@ -507,21 +456,39 @@ namespace Cor.Platform.Stub
             get { return this.panel; }
         }
 
-        public Stream GetAssetStream (String assetId)
-        {
-            return null;
-        }
-
         #endregion
     }
+
+
+	// ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+	public class StubSystem
+		: ISystem
+	{
+		public StubSystem ()
+		{
+			InternalUtils.Log.Info ("StubSystem -> ()");
+		}
+
+		#region ISystem
+
+		public Stream GetAssetStream (String assetId)
+		{
+			return null;
+		}
+
+		#endregion
+	}
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public class StubVertexBuffer
         : IVertexBuffer
     {
-        public StubVertexBuffer()
+        public StubVertexBuffer ()
         {
-            InternalUtils.Log.Info(
-                "StubVertexBuffer -> ()");
+            InternalUtils.Log.Info ("StubVertexBuffer -> ()");
         }
 
         #region IVertexBuffer
@@ -545,7 +512,7 @@ namespace Cor.Platform.Stub
             : struct
             , IVertexType
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException ();
         }
  
         public void SetData<T> (T[] data, Int32 startIndex, Int32 elementCount)
@@ -560,59 +527,55 @@ namespace Cor.Platform.Stub
             : struct
             , IVertexType
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException ();
         }
 
-        public void SetRawData (
-            Byte[] data,
-            Int32 startIndex, 
-            Int32 elementCount)
-        {
-        }
-        
-        public Byte[] GetRawData (
-            Int32 startIndex,
-            Int32 elementCount)
-        {
-            throw new NotImplementedException();
-        }
+		public void SetRawData (Byte[] data, Int32 startIndex, Int32 elementCount)
+		{
+
+		}
+
+		public Byte[] GetRawData (Int32 startIndex, Int32 elementCount)
+		{
+			throw new NotImplementedException ();
+		}
         
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class StubGpuUtils
         : IGpuUtils
     {
-        public StubGpuUtils()
+        public StubGpuUtils ()
         {
-            InternalUtils.Log.Info(
+            InternalUtils.Log.Info (
                 "StubGpuUtils -> ()");
         }
 
         #region IGpuUtils
 
-        public Int32 BeginEvent(Rgba32 colour, String eventName)
+        public Int32 BeginEvent (Rgba32 colour, String eventName)
         {
             return 0;
         }
 
-        public Int32 EndEvent()
+        public Int32 EndEvent ()
         {
             return 0;
         }
 
-        public void SetMarker(Rgba32 colour, String eventName)
-        {
-
-        }
-
-        public void SetRegion(Rgba32 colour, String eventName)
-        {
-
-        }
+        public void SetMarker (Rgba32 colour, String eventName) {}
+        public void SetRegion (Rgba32 colour, String eventName) {}
 
         #endregion
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class StubShader
         : IShader
     {
@@ -622,121 +585,83 @@ namespace Cor.Platform.Stub
 
         #region IShader
 
-        public void ResetVariables()
-        {
-            
-        }
-
-        public void ResetSamplerTargets()
-        {
-            
-        }
-
-        public void SetSamplerTarget(String name, Int32 textureSlot)
-        {
-
-        }
-
+        public void ResetVariables () {}
+        public void ResetSamplerTargets () {}
+        public void SetSamplerTarget (String name, Int32 textureSlot) {}
         public IShaderPass[] Passes { get { return passes; } }
-
         public VertexElementUsage[] RequiredVertexElements { get { return requiredVertexElements; } }
-
         public VertexElementUsage[] OptionalVertexElements { get { return optionalVertexElements; } }
-
         public String Name { get { return "StubShader"; } }
-
-        public void SetVariable<T>(String name, T value)
-        {
-
-        }
+        public void SetVariable<T>(String name, T value) {}
 
         #endregion
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public class StubInputManager
         : IInputManager
     {
-        readonly IXbox360Gamepad xbox360Gamepad = new StubXbox360Gamepad();
-        readonly IPsmGamepad psmGamepad = new StubPsmGamepad();
-        readonly IMultiTouchController multiTouchController = new StubMultiTouchController();
-        readonly IGenericGamepad genericGamepad = new StubGenericGamepad();
-        readonly IKeyboard keyboard = new StubKeyboard();
-        readonly IMouse mouse = new StubMouse();
+        readonly IXbox360Gamepad xbox360Gamepad = new StubXbox360Gamepad ();
+        readonly IPsmGamepad psmGamepad = new StubPsmGamepad ();
+        readonly IMultiTouchController multiTouchController = new StubMultiTouchController ();
+        readonly IGenericGamepad genericGamepad = new StubGenericGamepad ();
+        readonly IKeyboard keyboard = new StubKeyboard ();
+        readonly IMouse mouse = new StubMouse ();
 
-        public StubInputManager()
+        public StubInputManager ()
         {
-            InternalUtils.Log.Info("StubInputManager -> ()");
+            InternalUtils.Log.Info ("StubInputManager -> ()");
         }
 
         #region IInputManager
 
-        public IXbox360Gamepad Xbox360Gamepad
-        {
-            get { return xbox360Gamepad; }
-        }
-
-        public IPsmGamepad PsmGamepad
-        {
-            get { return psmGamepad; }
-        }
-
-        public IMultiTouchController MultiTouchController
-        {
-            get { return multiTouchController; }
-        }
-
-        public IGenericGamepad GenericGamepad
-        {
-            get { return genericGamepad; }
-        }
-
-        public IKeyboard Keyboard
-        {
-            get { return keyboard; }
-        }
-
-        public IMouse Mouse
-        {
-            get { return mouse; }
-        }
+        public IXbox360Gamepad Xbox360Gamepad { get { return xbox360Gamepad; } }
+        public IPsmGamepad PsmGamepad { get { return psmGamepad; } }
+        public IMultiTouchController MultiTouchController { get { return multiTouchController; } }
+        public IGenericGamepad GenericGamepad { get { return genericGamepad; } }
+        public IKeyboard Keyboard { get { return keyboard; } }
+        public IMouse Mouse { get { return mouse; } }
 
         #endregion
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
 	public sealed class StubGenericGamepadDPad
 		: IGamepadDPad
 	{
 		public ButtonState Down { get { return ButtonState.Released; } }
-
 		public ButtonState Left { get { return ButtonState.Released; } }
-
 		public ButtonState Right { get { return ButtonState.Released; } }
-
 		public ButtonState Up { get { return ButtonState.Released; } }
 	}
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
 	public sealed class StubGenericGamepadButtons
 		: IGenericGamepadButtons
 	{
 		public ButtonState North { get { return ButtonState.Released; } }
-
 		public ButtonState South { get { return ButtonState.Released; } }
-
 		public ButtonState East { get { return ButtonState.Released; } }
-
 		public ButtonState West { get { return ButtonState.Released; } }
-
 		public ButtonState Option { get { return ButtonState.Released; } }
-
 		public ButtonState Pause { get { return ButtonState.Released; } }
 	}
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class StubGenericGamepad
         : IGenericGamepad
     {
-        public StubGenericGamepad()
+        public StubGenericGamepad ()
         {
-            InternalUtils.Log.Info("StubGenericGamepad -> ()");
+            InternalUtils.Log.Info ("StubGenericGamepad -> ()");
 			DPad = new StubGenericGamepadDPad ();
 			Buttons = new StubGenericGamepadButtons ();
         }
@@ -749,12 +674,15 @@ namespace Cor.Platform.Stub
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class StubKeyboard
         : IKeyboard
     {
-        public StubKeyboard()
+        public StubKeyboard ()
         {
-            InternalUtils.Log.Info("StubKeyboard -> ()");
+            InternalUtils.Log.Info ("StubKeyboard -> ()");
         }
 
         #region IKeyboard
@@ -763,8 +691,7 @@ namespace Cor.Platform.Stub
         public Boolean IsFunctionalKeyDown (FunctionalKey key) { return false; }
         public Boolean IsFunctionalKeyUp (FunctionalKey key) { return false; }
         public KeyState this [FunctionalKey key] { get { return KeyState.Up; } }
-
-        public Char[] GetPressedCharacterKeys() { return new Char[]{}; }
+        public Char[] GetPressedCharacterKeys () { return new Char[]{}; }
         public Boolean IsCharacterKeyDown (Char key) { return false; }
         public Boolean IsCharacterKeyUp (Char key) { return false; }
         public KeyState this [Char key] { get { return KeyState.Up; } }
@@ -772,40 +699,41 @@ namespace Cor.Platform.Stub
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class StubMouse
         : IMouse
     {
-        public StubMouse()
+        public StubMouse ()
         {
-            InternalUtils.Log.Info("StubMouse -> ()");
+            InternalUtils.Log.Info ("StubMouse -> ()");
         }
 
         #region IMouse
 
         public ButtonState Left { get { return ButtonState.Released; } }
-
         public ButtonState Middle { get { return ButtonState.Released; } }
-
         public ButtonState Right { get { return ButtonState.Released; } }
-
         public Int32 ScrollWheelValue { get { return 0; } }
-
         public Int32 X { get { return 0; } }
-
         public Int32 Y { get { return 0; } }
 
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class StubMultiTouchController
         : IMultiTouchController
     {
-        readonly TouchCollection touchCollection = new TouchCollection();
-        readonly IPanelSpecification panelSpecification = new StubPanelSpecification();
+        readonly TouchCollection touchCollection = new TouchCollection ();
+        readonly IPanelSpecification panelSpecification = new StubPanelSpecification ();
 
-        public StubMultiTouchController()
+        public StubMultiTouchController ()
         {
-            InternalUtils.Log.Info("StubMultiTouchController -> ()");
+            InternalUtils.Log.Info ("StubMultiTouchController -> ()");
         }
 
         #region IMultiTouchController
@@ -817,16 +745,19 @@ namespace Cor.Platform.Stub
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class StubPsmGamepad
         : IPsmGamepad
     {
-        readonly IPsmGamepadButtons psmGamepadButtons = new StubPsmGamepadButtons();
-        readonly IGamepadDPad psmGamepadDPad = new StubPsmGamepadDPad();
-        readonly IGamepadThumbsticks psmGamepadThumbsticks = new StubPsmGamepadThumbsticks();
+        readonly IPsmGamepadButtons psmGamepadButtons = new StubPsmGamepadButtons ();
+        readonly IGamepadDPad psmGamepadDPad = new StubPsmGamepadDPad ();
+        readonly IGamepadThumbsticks psmGamepadThumbsticks = new StubPsmGamepadThumbsticks ();
 
-        public StubPsmGamepad()
+        public StubPsmGamepad ()
         {
-            InternalUtils.Log.Info("StubPsmGamepad -> ()");
+            InternalUtils.Log.Info ("StubPsmGamepad -> ()");
         }
 
         #region IPsmGamepad
@@ -838,12 +769,15 @@ namespace Cor.Platform.Stub
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class StubPsmGamepadButtons
         : IPsmGamepadButtons
     {
-        public StubPsmGamepadButtons()
+        public StubPsmGamepadButtons ()
         {
-            InternalUtils.Log.Info("StubPsmGamepadButtons -> ()");
+            InternalUtils.Log.Info ("StubPsmGamepadButtons -> ()");
         }
 
         #region IPsmGamepadButtons
@@ -860,12 +794,15 @@ namespace Cor.Platform.Stub
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class StubPsmGamepadDPad
         : IGamepadDPad
     {
-        public StubPsmGamepadDPad()
+        public StubPsmGamepadDPad ()
         {
-            InternalUtils.Log.Info("StubPsmGamepadDPad -> ()");
+            InternalUtils.Log.Info ("StubPsmGamepadDPad -> ()");
         }
 
         #region IPsmGamepadDPad
@@ -878,12 +815,15 @@ namespace Cor.Platform.Stub
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class StubPsmGamepadThumbsticks
         : IGamepadThumbsticks
     {
-        public StubPsmGamepadThumbsticks()
+        public StubPsmGamepadThumbsticks ()
         {
-            InternalUtils.Log.Info("StubPsmGamepadThumbsticks -> ()");
+            InternalUtils.Log.Info ("StubPsmGamepadThumbsticks -> ()");
         }
 
         #region IPsmGamepadThumbsticks
@@ -894,17 +834,20 @@ namespace Cor.Platform.Stub
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class StubXbox360Gamepad
         : IXbox360Gamepad
     {
-        readonly IXbox360GamepadButtons buttons = new StubXbox360GamepadButtons();
-        readonly IGamepadDPad dPad = new StubXbox360GamepadDPad();
-        readonly IGamepadThumbsticks thumbsticks = new StubXbox360GamepadThumbsticks();
-		readonly IGamepadTriggerPair triggers = new StubXbox360GamepadTriggers();
+        readonly IXbox360GamepadButtons buttons = new StubXbox360GamepadButtons ();
+        readonly IGamepadDPad dPad = new StubXbox360GamepadDPad ();
+        readonly IGamepadThumbsticks thumbsticks = new StubXbox360GamepadThumbsticks ();
+		readonly IGamepadTriggerPair triggers = new StubXbox360GamepadTriggers ();
 
-        public StubXbox360Gamepad()
+        public StubXbox360Gamepad ()
         {
-            InternalUtils.Log.Info("StubXbox360Gamepad -> ()");
+            InternalUtils.Log.Info ("StubXbox360Gamepad -> ()");
         }
 
         #region IXbox360Gamepad
@@ -917,12 +860,15 @@ namespace Cor.Platform.Stub
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class StubXbox360GamepadButtons
         : IXbox360GamepadButtons
     {
-        public StubXbox360GamepadButtons()
+        public StubXbox360GamepadButtons ()
         {
-            InternalUtils.Log.Info("StubXbox360GamepadButtons -> ()");
+            InternalUtils.Log.Info ("StubXbox360GamepadButtons -> ()");
         }
 
         #region IXbox360GamepadButtons
@@ -941,12 +887,15 @@ namespace Cor.Platform.Stub
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class StubXbox360GamepadDPad
         : IGamepadDPad
     {
-        public StubXbox360GamepadDPad()
+        public StubXbox360GamepadDPad ()
         {
-            InternalUtils.Log.Info("StubXbox360GamepadDPads -> ()");
+            InternalUtils.Log.Info ("StubXbox360GamepadDPads -> ()");
         }
 
         #region IXbox360GamepadDPad
@@ -959,12 +908,15 @@ namespace Cor.Platform.Stub
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class StubXbox360GamepadThumbsticks
         : IGamepadThumbsticks
     {
-        public StubXbox360GamepadThumbsticks()
+        public StubXbox360GamepadThumbsticks ()
         {
-            InternalUtils.Log.Info("StubXbox360GamepadThumbsticks -> ()");
+            InternalUtils.Log.Info ("StubXbox360GamepadThumbsticks -> ()");
         }
 
         #region IXbox360GamepadThumbsticks
@@ -975,12 +927,15 @@ namespace Cor.Platform.Stub
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class StubXbox360GamepadTriggers
 		: IGamepadTriggerPair
     {
-        public StubXbox360GamepadTriggers()
+        public StubXbox360GamepadTriggers ()
         {
-            InternalUtils.Log.Info("StubXbox360GamepadTriggers -> ()");
+            InternalUtils.Log.Info ("StubXbox360GamepadTriggers -> ()");
         }
 
         #region IXbox360GamepadTriggers

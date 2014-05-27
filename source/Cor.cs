@@ -96,10 +96,10 @@ namespace Cor
         /// user and provided along with their IApp object to a platform's Cor.ICor implementation in order to 
         /// trigger the entry point into a Cor App Framework program.
         /// </summary>
-        public AppSettings(String appName)
+        public AppSettings (String appName)
         {
             this.appName = appName;
-            this.logManagerSettings = new LogManagerSettings(this.appName);
+            this.logManagerSettings = new LogManagerSettings (this.appName);
 
             // Default configuration
             this.MouseGeneratesTouches = true;
@@ -147,7 +147,7 @@ namespace Cor
         /// <summary>
         /// Initializes a new instance of the Cor.AppTime structure.
         /// </summary>
-        internal AppTime(Single dt, Single elapsed, Int64 frameNumber)
+        internal AppTime (Single dt, Single elapsed, Int64 frameNumber)
         {
             this.dt = dt;
             this.elapsed = elapsed;
@@ -208,12 +208,17 @@ namespace Cor
         IInputManager Input { get; }
 
         /// <summary>
-        /// Provides access to Cor's system manager.
+        /// Provides information about the hardware and environment.
         /// </summary>
-        ISystemInformation System { get; }
+        IHost Host { get; }
 
         /// <summary>
-        /// Provides access to Cor's Asset system.
+        /// Provides access to Cor's system level services.
+        /// </summary>
+		ISystem System { get; }
+
+        /// <summary>
+        /// Provides access to Cor's asset system.
         /// </summary>
         AssetManager Assets { get; }
 
@@ -259,22 +264,22 @@ namespace Cor
         /// <summary>
         /// Resets the graphics manager to it's default state.
         /// </summary>
-        void Reset();
+        void Reset ();
 
         /// <summary>
         /// Clears the colour buffer to the specified colour.
         /// </summary>
-        void ClearColourBuffer(Rgba32 color = new Rgba32());
+        void ClearColourBuffer (Rgba32 color = new Rgba32());
 
         /// <summary>
         /// Clears the depth buffer to the specified depth.
         /// </summary>
-        void ClearDepthBuffer(Single depth = 1f);
+        void ClearDepthBuffer (Single depth = 1f);
 
         /// <summary>
         /// Sets the GPU's current culling mode to the value specified.
         /// </summary>
-        void SetCullMode(CullMode cullMode);
+        void SetCullMode (CullMode cullMode);
 
         /// <summary>
         /// With the current design the only way you can create geom buffers is here.  This is to maintain consistency 
@@ -343,8 +348,8 @@ namespace Cor
         ///                     determined by the primitive type. If it is a line list, each primitive has two vertices.
         ///                     If it is a triangle list, each primitive has three vertices.
         /// </summary>
-        void DrawPrimitives(
-            PrimitiveType primitiveType, Int32 startVertex, Int32 primitiveCount );
+        void DrawPrimitives (
+            PrimitiveType primitiveType, Int32 startVertex, Int32 primitiveCount);
 
         /// <summary>
         /// Renders a sequence of indexed geometric primitives of the specified type from the active geometry buffer
@@ -459,42 +464,35 @@ namespace Cor
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// Provides information about the machine that the Cor App Framework is running on.
+    /// Provides information about the hardware and environment that the Cor App Framework is running against.
     /// </summary>
-    public interface ISystemInformation
+    public interface IHost
     {
         /// <summary>
-        /// 
+        /// Identifies the Machine that Cor's host Virtual Machine is running on.
+        /// Ex: PC, Macintosh, iPad2, Samsung Galaxy S4
+        /// </summary>
+        String Machine { get; }
+
+        /// <summary>
+        /// Identifies the Operating System that Cor's host Virtual Machine is running on.
+        /// Ex: Ubuntu, Windows NT, OSX, iOS 7.0, Android Jelly Bean
         /// </summary>
         String OperatingSystem { get; }
 
         /// <summary>
-        /// 
+        /// Identifies the Virtual Machine that Cor is running in.
+        /// Ex: .NET 4.0, MONO 2.10
         /// </summary>
-        String DeviceName { get; }
+        String VirtualMachine { get; }
 
         /// <summary>
-        /// 
-        /// </summary>
-        String DeviceModel { get; }
-
-        /// <summary>
-        /// The name of the machine / computer / device.
-        /// </summary>
-        String SystemName { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        String SystemVersion { get; }
-
-        /// <summary>
-        /// 
+        /// The current orientation of the machine.
         /// </summary>
         DeviceOrientation CurrentOrientation { get; }
 
         /// <summary>
-        /// 
+        /// The screen specification of the machine.
         /// </summary>
         IScreenSpecification ScreenSpecification { get; }
 
@@ -502,9 +500,18 @@ namespace Cor
         /// 
         /// </summary>
         IPanelSpecification PanelSpecification { get; }
+    }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// Provides access to system wide facilities such as IO.
+    /// </summary>
+    public interface ISystem
+    {
         /// <summary>
-        /// 
+        /// Provides a mechanism to load bundled data from the machine.
         /// </summary>
         Stream GetAssetStream (String assetId);
     }
@@ -547,29 +554,29 @@ namespace Cor
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// 
+    /// Provided a means to profile the performance of the GPU on platforms that support GPU event, markers and regions.
     /// </summary>
     public interface IGpuUtils
     {
         /// <summary>
-        /// 
+        /// Starts a profiler event.
         /// </summary>
-        Int32 BeginEvent(Rgba32 colour, String eventName);
+        Int32 BeginEvent (Rgba32 colour, String eventName);
             
         /// <summary>
-        /// 
+        /// Closes the last opened profiler event.
         /// </summary>
-        Int32 EndEvent();
+        Int32 EndEvent ();
 
         /// <summary>
-        /// 
+        /// Registers a profiler marker.
         /// </summary>
-        void SetMarker(Rgba32 colour, String eventName);
+        void SetMarker (Rgba32 colour, String marker);
 
         /// <summary>
-        /// 
+        /// Registers a profiler region.
         /// </summary>
-        void SetRegion(Rgba32 colour, String eventName);
+        void SetRegion (Rgba32 colour, String region);
     }
 
 
@@ -655,7 +662,7 @@ namespace Cor
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// 
+    /// Provides the means to interact with a vertex buffer in GRAM.
     /// </summary>
     public interface IVertexBuffer
     {
@@ -728,86 +735,68 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        /// IntPtr GetAddress(Int32 elementIndex);
+        /// IntPtr GetAddress (Int32 elementIndex);
     }
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// 
+    /// Provides the means to interact with an index buffer in GRAM.
+    /// Unlike many rendering apis where the data is unsigned, Cor uses signed data so that it can maintain CLS
+    /// compliance.  I'm not sure if this will cause problems in the future with very large models, however, until
+    /// it causes a problem it can stay like this.
     /// </summary>
     public interface IIndexBuffer
     {
         /// <summary>
-        /// 
+        /// The cardinality of the index buffer,
         /// </summary>
         Int32 IndexCount { get; }
 
         /// <summary>
-        /// 
+        /// Sets all of the indicies in the buffer.
         /// </summary>
-        void SetData(Int32[] data);
+        void SetData (Int32[] data);
 
         /// <summary>
-        /// 
+        /// Gets all of the indices in the buffer.
         /// </summary>
-        void GetData(Int32[] data);
+        void GetData (Int32[] data);
 
         /// <summary>
-        /// 
+        /// Sets indices in the buffer within the given range.
         /// </summary>
-        void SetData(
-            Int32[] data, 
-            Int32 startIndex, 
-            Int32 elementCount);
+        void SetData (Int32[] data, Int32 startIndex, Int32 elementCount);
 
         /// <summary>
-        /// 
+        /// Gets indices in the buffer within the given range.
         /// </summary>
-        void GetData(
-            Int32[] data, 
-            Int32 startIndex, 
-            Int32 elementCount);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        void SetRawData(
-            Byte[] data, 
-            Int32 startIndex, 
-            Int32 elementCount);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        Byte[] GetRawData(
-            Int32 startIndex, 
-            Int32 elementCount);
+        void GetData (Int32[] data, Int32 startIndex, Int32 elementCount);
     }
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// This interface provides a way to interact with a shader loaded on the GPU
+    /// Provides a means to interact with a shader loaded on the GPU.
     /// </summary>
     public interface IShader
     {
         /// <summary>
         /// Resets all the shader's variables to their default values.
         /// </summary>
-        void ResetVariables();
+        void ResetVariables ();
 
         /// <summary>
         /// Resets all the shader's samplers to null textures.
         /// </summary>
-        void ResetSamplerTargets();
+        void ResetSamplerTargets ();
   
         /// <summary>
         /// Sets the texture slot that a texture sampler should sample from.
         /// </summary>
-        void SetSamplerTarget(String name, Int32 textureSlot);
+        void SetSamplerTarget (String name, Int32 textureSlot);
 
         /// <summary>
         /// Provides access to the individual passes in this shader.  The calling code can itterate though these and
@@ -840,17 +829,18 @@ namespace Cor
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// 
+    /// Represents a individual effect pass in a Cor.IShader.
     /// </summary>
     public interface IShaderPass
     {
         /// <summary>
-        /// 
+        /// The name of the pass.
         /// </summary>
         String Name { get; }
 
         /// <summary>
-        /// 
+        /// When called applies this shader pass's configuration to the GPU.  This must be called before using the
+        /// GPU to draw primitives.
         /// </summary>
         void Activate (VertexDeclaration vertexDeclaration);
     }
@@ -859,35 +849,34 @@ namespace Cor
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// 
+    /// Provides a means to interact with a 2D texture living in GRAM.
     /// </summary>
     public interface ITexture
     {
         /// <summary>
-        /// 
+        /// The width of the texture in pixels.
         /// </summary>
         Int32 Width { get; }
 
         /// <summary>
-        /// 
+        /// THe height of the texture in pixels.
         /// </summary>
         Int32 Height { get; }
 
         /// <summary>
-        /// 
+        /// Defines the format in which the texture data is reperesented in GRAM.
         /// </summary>
         SurfaceFormat SurfaceFormat { get; }
 
-
         /// <summary>
-        /// 
+        /// The texture data in Cor.ITexture.SurfaceFormat.
         /// </summary>
         Byte[] Primary { get; }
 
         /// <summary>
-        /// 
+        /// Contains mipmaps for the texture, if they exist, index -> byte[].
         /// </summary>
-        Byte[,] Mipmaps { get; }
+        Byte[][] Mipmaps { get; }
     }
 
 
@@ -1269,7 +1258,7 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        Char[] GetPressedCharacterKeys();
+        Char[] GetPressedCharacterKeys ();
 
         /// <summary>
         /// 
@@ -1631,17 +1620,17 @@ namespace Cor
     public class QuaternionSerialiser
         : Serialiser<Quaternion>
     {
-        public override Quaternion Read(ISerialisationChannel ss)
+        public override Quaternion Read (ISerialisationChannel ss)
         {
             Single i = ss.Read <Single> ();
             Single j = ss.Read <Single> ();
             Single k = ss.Read <Single> ();
             Single u = ss.Read <Single> ();
 
-            return new Quaternion(i, j, k, u);
+            return new Quaternion (i, j, k, u);
         }
 
-        public override void Write(ISerialisationChannel ss, Quaternion obj)
+        public override void Write (ISerialisationChannel ss, Quaternion obj)
         {
             ss.Write <Single> (obj.I);
             ss.Write <Single> (obj.J);
@@ -1656,7 +1645,7 @@ namespace Cor
     public class Rgba32Serialiser
         : Serialiser<Rgba32>
     {
-        public override Rgba32 Read(ISerialisationChannel ss)
+        public override Rgba32 Read (ISerialisationChannel ss)
         {
             Byte r = ss.Read <Byte> ();
             Byte g = ss.Read <Byte> ();
@@ -1666,7 +1655,7 @@ namespace Cor
             return new Rgba32(r, g, b, a);
         }
 
-        public override void Write(ISerialisationChannel ss, Rgba32 obj)
+        public override void Write (ISerialisationChannel ss, Rgba32 obj)
         {
             ss.Write <Byte> (obj.R);
             ss.Write <Byte> (obj.G);
@@ -1681,7 +1670,7 @@ namespace Cor
     public class Vector2Serialiser
         : Serialiser<Vector2>
     {
-        public override Vector2 Read(ISerialisationChannel ss)
+        public override Vector2 Read (ISerialisationChannel ss)
         {
             Single x = ss.Read <Single> ();
             Single y = ss.Read <Single> ();
@@ -1689,7 +1678,7 @@ namespace Cor
             return new Vector2(x, y);
         }
 
-        public override void Write(ISerialisationChannel ss, Vector2 obj)
+        public override void Write (ISerialisationChannel ss, Vector2 obj)
         {
             ss.Write <Single> (obj.X);
             ss.Write <Single> (obj.Y);
@@ -1702,7 +1691,7 @@ namespace Cor
     public class Vector3Serialiser
         : Serialiser<Vector3>
     {
-        public override Vector3 Read(ISerialisationChannel ss)
+        public override Vector3 Read (ISerialisationChannel ss)
         {
             Single x = ss.Read <Single> ();
             Single y = ss.Read <Single> ();
@@ -1711,7 +1700,7 @@ namespace Cor
             return new Vector3(x, y, z);
         }
 
-        public override void Write(ISerialisationChannel ss, Vector3 obj)
+        public override void Write (ISerialisationChannel ss, Vector3 obj)
         {
             ss.Write <Single> (obj.X);
             ss.Write <Single> (obj.Y);
@@ -1725,7 +1714,7 @@ namespace Cor
     public class Vector4Serialiser
         : Serialiser<Vector4>
     {
-        public override Vector4 Read(ISerialisationChannel ss)
+        public override Vector4 Read (ISerialisationChannel ss)
         {
             Single x = ss.Read <Single> ();
             Single y = ss.Read <Single> ();
@@ -1735,7 +1724,7 @@ namespace Cor
             return new Vector4(x, y, z, w);
         }
 
-        public override void Write(ISerialisationChannel ss, Vector4 obj)
+        public override void Write (ISerialisationChannel ss, Vector4 obj)
         {
             ss.Write <Single> (obj.X);
             ss.Write <Single> (obj.Y);
@@ -1926,7 +1915,7 @@ namespace Cor
             return sd;
         }
 
-        public override void Write(ISerialisationChannel ss, ShaderDefinition sd)
+        public override void Write (ISerialisationChannel ss, ShaderDefinition sd)
         {
             if (sd.InputDefinitions.Count > Byte.MaxValue ||
                 sd.SamplerDefinitions.Count > Byte.MaxValue ||
@@ -2115,21 +2104,21 @@ namespace Cor
     public sealed class AssetManager
     {
         readonly IGraphicsManager graphics;
-        readonly ISystemInformation systemManager;
+		readonly ISystem system;
 
         internal AssetManager (
             IGraphicsManager graphics,
-            ISystemInformation systemManager)
+            ISystem system)
         {
             this.graphics = graphics;
-            this.systemManager = systemManager;
+            this.system = system;
         }
 
         public T Load<T> (String assetId)
         where T
             : class, IAsset
         {
-            using (Stream stream = this.systemManager.GetAssetStream (assetId))
+            using (Stream stream = this.system.GetAssetStream (assetId))
             {
                 using (var channel = 
                     new SerialisationChannel
@@ -2210,9 +2199,9 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        public Boolean Equals(VertexDeclaration other)
+        public Boolean Equals (VertexDeclaration other)
         {
-            if( other == null)
+            if (other == null)
                 return false;
 
             return other == this;
@@ -2238,11 +2227,11 @@ namespace Cor
         /// </summary>
         public override Boolean Equals (object obj)
         {
-            if( obj != null )
+            if (obj != null)
             {
                 var other = obj as VertexDeclaration;
 
-                if( other != null )
+                if (other != null)
                 {
                     return other == this;
                 }
@@ -2279,9 +2268,9 @@ namespace Cor
             if (one._vertexStride != other._vertexStride)
                 return false;
 
-            for(int i = 0; i < one._elements.Length; ++i)
+            for (int i = 0; i < one._elements.Length; ++i)
             {
-                if( one._elements[i] != other._elements[i] )
+                if (one._elements[i] != other._elements[i] )
                     return false;
             }
 
@@ -2291,15 +2280,15 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        public override String ToString()
+        public override String ToString ()
         {
             string s = string.Empty;
 
-            for(int i = 0; i < _elements.Length; ++i)
+            for (int i = 0; i < _elements.Length; ++i)
             {
 				s += _elements[i]._usage;
 
-                if( i + 1 < _elements.Length )
+                if (i + 1 < _elements.Length)
                 {
                     s += ","; 
                 }
@@ -2393,7 +2382,7 @@ namespace Cor
     /// <summary>
     /// 
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout (LayoutKind.Sequential)]
     public struct VertexElement
     {
         /// <summary>
@@ -2540,7 +2529,7 @@ namespace Cor
         Boolean useLogChannels = false;
         readonly String tag;
 
-        internal LogManagerSettings(String tag)
+        internal LogManagerSettings (String tag)
         {
             this.tag = tag;
 
@@ -2554,7 +2543,7 @@ namespace Cor
             };
         }
 
-        void DefaultWriteLogFunction(
+        void DefaultWriteLogFunction (
             String assembly,
             String tag,
             String channel,
@@ -2564,17 +2553,17 @@ namespace Cor
         {
             if (!this.enabledLogChannels.Contains (channel)) return;
 
-            String startString = String.Format(
+            String startString = String.Format (
                 "[{3}][{1}][{0}][{2}] ",
                 time,
                 type,
                 channel,
                 tag);
 
-            if (!String.IsNullOrWhiteSpace(assembly))
+            if (!String.IsNullOrWhiteSpace (assembly))
                 startString = String.Format ("[{0}]{1}", assembly, startString);
 
-            String customNewLine = Environment.NewLine + new String(' ', startString.Length);
+            String customNewLine = Environment.NewLine + new String (' ', startString.Length);
 
             String formatedLine = lines
                     .Join (customNewLine);
@@ -2619,100 +2608,100 @@ namespace Cor
             String time,
             String[] lines);
 
-        public void Debug(String line)
+        public void Debug (String line)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Debug, assembly, line);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Debug, assembly, line);
         }
 
-        public void Debug(String line, params Object[] args)
+        public void Debug (String line, params Object[] args)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Debug, assembly, line, args);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Debug, assembly, line, args);
         }
 
-        public void Debug(String channel, String line, params Object[] args)
+        public void Debug (String channel, String line, params Object[] args)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Debug, assembly, channel, line, args);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Debug, assembly, channel, line, args);
         }
 
-        public void Debug(String channel, String line)
+        public void Debug (String channel, String line)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Debug, assembly, channel, line);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Debug, assembly, channel, line);
         }
 
-        public void Info(String line)
+        public void Info (String line)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Info, assembly, line);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Info, assembly, line);
         }
 
-        public void Info(String line, params Object[] args)
+        public void Info (String line, params Object[] args)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Info, assembly, line, args);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Info, assembly, line, args);
         }
 
-        public void Info(String channel, String line, params Object[] args)
+        public void Info (String channel, String line, params Object[] args)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Info, assembly, channel, line, args);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Info, assembly, channel, line, args);
         }
 
-        public void Info(String channel, String line)
+        public void Info (String channel, String line)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Info, assembly, channel, line);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Info, assembly, channel, line);
         }
 
-        public void Warning(String line)
+        public void Warning (String line)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Warning, assembly, line);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Warning, assembly, line);
         }
 
-        public void Warning(String line, params Object[] args)
+        public void Warning (String line, params Object[] args)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Warning, assembly, line, args);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Warning, assembly, line, args);
         }
 
-        public void Warning(String channel, String line, params Object[] args)
+        public void Warning (String channel, String line, params Object[] args)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Warning, assembly, channel, line, args);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Warning, assembly, channel, line, args);
         }
 
-        public void Warning(String channel, String line)
+        public void Warning (String channel, String line)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Warning, assembly, channel, line);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Warning, assembly, channel, line);
         }
 
-        public void Error(String line)
+        public void Error (String line)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Error, assembly, line);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Error, assembly, line);
         }
 
-        public void Error(String line, params Object[] args)
+        public void Error (String line, params Object[] args)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Error, assembly, line, args);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Error, assembly, line, args);
         }
 
-        public void Error(String channel, String line, params Object[] args)
+        public void Error (String channel, String line, params Object[] args)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Error, assembly, channel, line, args);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Error, assembly, channel, line, args);
         }
 
-        public void Error(String channel, String line)
+        public void Error (String channel, String line)
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            WriteLine(LogType.Error, assembly, channel, line);
+            Assembly assembly = Assembly.GetCallingAssembly ();
+            WriteLine (LogType.Error, assembly, channel, line);
         }
 
 
@@ -2726,13 +2715,13 @@ namespace Cor
 
         readonly LogManagerSettings settings;
 
-        internal LogManager(LogManagerSettings settings)
+        internal LogManager (LogManagerSettings settings)
         {
             this.settings = settings;
         }
 
         // This should be user customisable
-        void DoWriteLog(
+        void DoWriteLog (
             String assembly,
             String tag,
             String channel,
@@ -2740,34 +2729,34 @@ namespace Cor
             String time,
             String[] lines)
         {
-            foreach(var writeLogFn in settings.LogWriters)
+            foreach (var writeLogFn in settings.LogWriters)
             {
-                writeLogFn(assembly, tag, channel, type, time, lines);
+                writeLogFn (assembly, tag, channel, type, time, lines);
             }
         }
 
-        void WriteLine(LogType type, Assembly callingAssembly, String line)
+        void WriteLine (LogType type, Assembly callingAssembly, String line)
         {
-            WriteLine(type, callingAssembly, "Default", line);
+            WriteLine (type, callingAssembly, "Default", line);
         }
 
 
-        void WriteLine(LogType type, Assembly callingAssembly, String line, params object[] args)
+        void WriteLine (LogType type, Assembly callingAssembly, String line, params object[] args)
         {
-            WriteLine(type, callingAssembly, "Default", line, args);
+            WriteLine (type, callingAssembly, "Default", line, args);
         }
 
-        void WriteLine(LogType type, Assembly callingAssembly, String channel, String line, params object[] args)
+        void WriteLine (LogType type, Assembly callingAssembly, String channel, String line, params object[] args)
         {
-            String main = String.Format(line, args);
+            String main = String.Format (line, args);
 
-            WriteLine(type, callingAssembly, channel, main);
+            WriteLine (type, callingAssembly, channel, main);
         }
 
-        void WriteLine(LogType type, Assembly callingAssembly, String channel, String line)
+        void WriteLine (LogType type, Assembly callingAssembly, String channel, String line)
         {
             if (settings.UseLogChannels &&
-                !settings.EnabledLogChannels.Contains(channel))
+                !settings.EnabledLogChannels.Contains (channel))
             {
                 return;
             }
@@ -2778,13 +2767,13 @@ namespace Cor
             }
 
             String assembyStr = Path.GetFileNameWithoutExtension (callingAssembly.Location);
-            String typeStr = type.ToString().ToUpper();
-            String timeStr = DateTime.Now.ToString("HH:mm:ss.ffffff");
-            String[] lines = line.Split(Environment.NewLine.ToCharArray())
-                .Where (x => !String.IsNullOrWhiteSpace(x))
-                .ToArray();
+            String typeStr = type.ToString ().ToUpper ();
+            String timeStr = DateTime.Now.ToString ("HH:mm:ss.ffffff");
+            String[] lines = line.Split (Environment.NewLine.ToCharArray ())
+                .Where (x => !String.IsNullOrWhiteSpace (x))
+                .ToArray ();
 
-            DoWriteLog(assembyStr, settings.Tag, channel, typeStr, timeStr, lines);
+            DoWriteLog (assembyStr, settings.Tag, channel, typeStr, timeStr, lines);
         }
     }
     
@@ -2857,25 +2846,25 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        public Touch(
+        public Touch (
             Int32 id,
             Vector2 normalisedEngineSpacePosition,
             TouchPhase phase,
             Int64 frame,
             Single timestamp)
         {
-            if( normalisedEngineSpacePosition.X > 0.5f || 
-                normalisedEngineSpacePosition.X < -0.5f )
+            if (normalisedEngineSpacePosition.X > 0.5f || 
+                normalisedEngineSpacePosition.X < -0.5f)
             {
-                throw new Exception(
+                throw new Exception (
                     "Touch has a bad X coordinate: " + 
                     normalisedEngineSpacePosition.X);
             }
 
-            if( normalisedEngineSpacePosition.Y > 0.5f || 
-                normalisedEngineSpacePosition.X < -0.5f )
+            if (normalisedEngineSpacePosition.Y > 0.5f || 
+                normalisedEngineSpacePosition.X < -0.5f)
             {
-                throw new Exception(
+                throw new Exception (
                     "Touch has a bad Y coordinate: " + 
                     normalisedEngineSpacePosition.Y);
             }
@@ -2890,9 +2879,9 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        static Touch()
+        static Touch ()
         {
-            invalidTouch = new Touch(
+            invalidTouch = new Touch (
                 -1, 
                 Vector2.Zero, 
                 TouchPhase.Invalid, 
@@ -2923,31 +2912,31 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        IEnumerator IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator ()
         {
-            return GetEnumerator();
+            return GetEnumerator ();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        IEnumerator<Touch> IEnumerable<Touch>.GetEnumerator()
+        IEnumerator<Touch> IEnumerable<Touch>.GetEnumerator ()
         {
-            return GetEnumerator();
+            return GetEnumerator ();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        internal void ClearBuffer()
+        internal void ClearBuffer ()
         {
-            this.touchBuffer.Clear();
+            this.touchBuffer.Clear ();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        internal void RegisterTouch(
+        internal void RegisterTouch (
             Int32 id,
             Vector2 normalisedEngineSpacePosition,
             TouchPhase phase,
@@ -2956,20 +2945,20 @@ namespace Cor
         {
             Boolean die = false;
 
-            if( normalisedEngineSpacePosition.X > 0.5f ||
-                normalisedEngineSpacePosition.X < -0.5f )
+            if (normalisedEngineSpacePosition.X > 0.5f ||
+                normalisedEngineSpacePosition.X < -0.5f)
             {
-                InternalUtils.Log.Info(
+                InternalUtils.Log.Info (
                     "Touch has a bad X coordinate: " +
                     normalisedEngineSpacePosition.X);
 
                 die = true;
             }
 
-            if( normalisedEngineSpacePosition.Y > 0.5f ||
-                normalisedEngineSpacePosition.X < -0.5f )
+            if (normalisedEngineSpacePosition.Y > 0.5f ||
+                normalisedEngineSpacePosition.X < -0.5f)
             {
-                InternalUtils.Log.Info(
+                InternalUtils.Log.Info (
                     "Touch has a bad Y coordinate: " +
                     normalisedEngineSpacePosition.Y);
 
@@ -2978,26 +2967,26 @@ namespace Cor
 
             if (die)
             {
-                InternalUtils.Log.Info("Discarding Bad Touch");
+                InternalUtils.Log.Info ("Discarding Bad Touch");
                 return;
             }
 
-            var touch = new Touch(
+            var touch = new Touch (
                 id,
                 normalisedEngineSpacePosition,
                 phase,
                 frameNum,
                 timestamp);
 
-            this.touchBuffer.Add(touch);
+            this.touchBuffer.Add (touch);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public IEnumerator<Touch> GetEnumerator()
+        public IEnumerator<Touch> GetEnumerator ()
         {
-            return new TouchCollectionEnumerator(this.touchBuffer);
+            return new TouchCollectionEnumerator (this.touchBuffer);
         }
 
         /// <summary>
@@ -3014,14 +3003,14 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        public Touch GetTouchFromTouchID(int zTouchID)
+        public Touch GetTouchFromTouchID (int zTouchID)
         {
             foreach (var touch in touchBuffer)
             {
                 if (touch.ID == zTouchID) return touch;
             }
 
-            //System.Diagnostics.Debug.WriteLine(
+            //System.Diagnostics.Debug.WriteLine (
             //    "The touch requested no longer exists.");
 
             return Touch.Invalid;
@@ -3044,14 +3033,14 @@ namespace Cor
 
         /// <summary>
         /// Enumerators are positioned before the first element
-        /// until the first MoveNext() call.
+        /// until the first MoveNext () call.
         /// </summary>
         Int32 position = -1;
 
         /// <summary>
         /// 
         /// </summary>
-        internal TouchCollectionEnumerator(List<Touch> touches)
+        internal TouchCollectionEnumerator (List<Touch> touches)
         {
             this.touches = touches;
         }
@@ -3059,7 +3048,7 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        void IDisposable.Dispose()
+        void IDisposable.Dispose ()
         {
 
         }
@@ -3067,7 +3056,7 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        public Boolean MoveNext()
+        public Boolean MoveNext ()
         {
             position++;
             return (position < touches.Count);
@@ -3076,7 +3065,7 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        public void Reset()
+        public void Reset ()
         {
             position = -1;
         }
@@ -3105,7 +3094,7 @@ namespace Cor
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException ();
                 }
             }
         }
@@ -3117,7 +3106,7 @@ namespace Cor
     /// <summary>
     /// 
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout (LayoutKind.Sequential)]
     public struct VertexPosition
         : IVertexType
     {
@@ -3129,7 +3118,7 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        public VertexPosition(Vector3 position)
+        public VertexPosition (Vector3 position)
         {
             this.Position = position;
         }
@@ -3137,17 +3126,17 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        static VertexPosition()
+        static VertexPosition ()
         {
             _vertexDeclaration = new VertexDeclaration (
-                new VertexElement(
+                new VertexElement (
                     0, 
                     VertexElementFormat.Vector3, 
                     VertexElementUsage.Position, 
                     0)
                 );
 
-            _default = new VertexPosition(Vector3.Zero);
+            _default = new VertexPosition (Vector3.Zero);
         }
 
         /// <summary>
@@ -3189,7 +3178,7 @@ namespace Cor
     /// <summary>
     /// 
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout (LayoutKind.Sequential)]
     public struct VertexPositionColour
         : IVertexType
     {
@@ -3206,7 +3195,7 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        public VertexPositionColour(
+        public VertexPositionColour (
             Vector3 position, 
             Rgba32 color)
         {
@@ -3217,22 +3206,22 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        static VertexPositionColour()
+        static VertexPositionColour ()
         {
             _vertexDeclaration = new VertexDeclaration (
-                new VertexElement(
+                new VertexElement (
                     0, 
                     VertexElementFormat.Vector3, 
                     VertexElementUsage.Position, 
                     0),
-                new VertexElement(
+                new VertexElement (
                     12, 
                     VertexElementFormat.Colour, 
                     VertexElementUsage.Colour, 
                     0)
                 );
 
-            _default = new VertexPositionColour(
+            _default = new VertexPositionColour (
                 Vector3.Zero, 
                 Rgba32.Magenta);
         }
@@ -3273,7 +3262,7 @@ namespace Cor
     /// <summary>
     /// 
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout (LayoutKind.Sequential)]
     public struct VertexPositionNormal
         : IVertexType
     {
@@ -3320,7 +3309,7 @@ namespace Cor
                     VertexElementUsage.Position, 
                     0),
                 new VertexElement (
-                    sizeof(Single) * 3, 
+                    sizeof (Single) * 3, 
                     VertexElementFormat.Vector3, 
                     VertexElementUsage.Normal, 
                     0)
@@ -3360,7 +3349,7 @@ namespace Cor
     /// <summary>
     /// 
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout (LayoutKind.Sequential)]
     public struct VertexPositionNormalColour
         : IVertexType
     {
@@ -3382,7 +3371,7 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        public VertexPositionNormalColour(
+        public VertexPositionNormalColour (
             Vector3 position, 
             Vector3 normal, 
             Rgba32 color)
@@ -3395,27 +3384,27 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        static VertexPositionNormalColour()
+        static VertexPositionNormalColour ()
         {
             _vertexDeclaration = new VertexDeclaration (
-                new VertexElement(
+                new VertexElement (
                     0, 
                     VertexElementFormat.Vector3, 
                     VertexElementUsage.Position, 
                     0),
-                new VertexElement(
+                new VertexElement (
                     12, 
                     VertexElementFormat.Vector3, 
                     VertexElementUsage.Normal, 
                     0),
-                new VertexElement(
+                new VertexElement (
                     24, 
                     VertexElementFormat.Colour, 
                     VertexElementUsage.Colour, 
                     0)
                 );
 
-            _default = new VertexPositionNormalColour(
+            _default = new VertexPositionNormalColour (
                 Vector3.Zero, 
                 Vector3.Zero, 
                 Rgba32.White);
@@ -3460,7 +3449,7 @@ namespace Cor
     /// <summary>
     /// 
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout (LayoutKind.Sequential)]
     public struct VertexPositionNormalTexture
         : IVertexType
     {
@@ -3560,7 +3549,7 @@ namespace Cor
     /// <summary>
     /// 
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout (LayoutKind.Sequential)]
     public struct VertexPositionNormalTextureColour
         : IVertexType
     {
@@ -3673,7 +3662,7 @@ namespace Cor
     /// <summary>
     /// 
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout (LayoutKind.Sequential)]
     public struct VertexPositionTexture
         : IVertexType
     {
@@ -3760,7 +3749,7 @@ namespace Cor
     /// <summary>
     /// 
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout (LayoutKind.Sequential)]
     public struct VertexPositionTextureColour
         : IVertexType
     {
@@ -3867,7 +3856,7 @@ namespace Cor
 
             do
             {
-                value = me.ReadByte();
+                value = me.ReadByte ();
                 result |= (value & 0x7f) << bitsRead;
                 bitsRead += 7;
             }
@@ -3895,14 +3884,14 @@ namespace Cor
     {
         public static string Join<T>(this IEnumerable<T> values, string seperator)
         {
-            var sb = new StringBuilder();
+            var sb = new StringBuilder ();
             foreach (var value in values)
             {
                 if (sb.Length > 0)
-                    sb.Append(seperator);
-                sb.Append(value);
+                    sb.Append (seperator);
+                sb.Append (value);
             }
-            return sb.ToString();
+            return sb.ToString ();
         }
     }
     
@@ -3917,20 +3906,20 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        public static Int32 NumVertsIn(PrimitiveType type)
+        public static Int32 NumVertsIn (PrimitiveType type)
         {
-            switch(type)
+            switch (type)
             {
                 case PrimitiveType.TriangleList: 
                     return 3;
                 case PrimitiveType.TriangleStrip: 
-                    throw new NotImplementedException();
+                    throw new NotImplementedException ();
                 case PrimitiveType.LineList: 
                     return 2;
                 case PrimitiveType.LineStrip: 
-                    throw new NotImplementedException();
+                    throw new NotImplementedException ();
                 default: 
-                    throw new NotImplementedException();   
+                    throw new NotImplementedException ();   
             }
         }
     }
@@ -4023,7 +4012,7 @@ namespace Cor
                 
                 Int32 typeSize = GetTypeSize (elements [j].VertexElementFormat);
                 
-                if ((elements [j].VertexElementUsage < VertexElementUsage.Position ) || 
+                if ((elements [j].VertexElementUsage < VertexElementUsage.Position) || 
                     (elements [j].VertexElementUsage > VertexElementUsage.TessellateFactor)) 
                 {
                     throw new ArgumentException ("FrameworkResources.VertexElementBadUsage");
@@ -4068,10 +4057,10 @@ namespace Cor
     {
         static readonly LogManager log;
 
-        static InternalUtils()
+        static InternalUtils ()
         {
-            var settings = new LogManagerSettings("INTERNAL");
-            log = new LogManager(settings);
+            var settings = new LogManagerSettings ("INTERNAL");
+            log = new LogManager (settings);
         }
 
         public static LogManager Log
@@ -4171,7 +4160,7 @@ namespace Cor
         /// <summary>
         /// Each component of the colour is multiplied by either the alpha of the source colour, or the inverse of the
         /// alpha of the source colour, whichever is greater. This can be represented as (f, f, f, 1), where
-        /// f = min(A, 1 − Ad).
+        /// f = min (A, 1 − Ad).
         /// </summary>
         //SourceAlphaSaturation,
 
@@ -4214,13 +4203,13 @@ namespace Cor
 
         /// <summary>
         /// The result is the maximum of the source and destination.
-        /// Result = max((Source Colour * Source Blend), (Destination Colour * Destination Blend))
+        /// Result = max ((Source Colour * Source Blend), (Destination Colour * Destination Blend))
         /// </summary>
         Max,
 
         /// <summary>
         /// The result is the minimum of the source and destination.
-        /// Result = min((Source Colour * Source Blend), (Destination Colour * Destination Blend))
+        /// Result = min ((Source Colour * Source Blend), (Destination Colour * Destination Blend))
         /// </summary>
         Min,
     }
@@ -4513,37 +4502,37 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        public static Type FromEnum(VertexElementFormat format)
+        public static Type FromEnum (VertexElementFormat format)
         {
-            switch(format)
+            switch (format)
             {
                 case VertexElementFormat.Single: 
-                    return typeof(Single);
+                    return typeof (Single);
                 case VertexElementFormat.Vector2: 
-                    return typeof(Vector2);
+                    return typeof (Vector2);
                 case VertexElementFormat.Vector3: 
-                    return typeof(Vector3);
+                    return typeof (Vector3);
                 case VertexElementFormat.Vector4: 
-                    return typeof(Vector4);
+                    return typeof (Vector4);
                 case VertexElementFormat.Colour: 
-                    return typeof(Rgba32);
+                    return typeof (Rgba32);
                 case VertexElementFormat.Byte4: 
-                    return typeof(Byte4);
+                    return typeof (Byte4);
                 case VertexElementFormat.Short2: 
-                    return typeof(Short2);
+                    return typeof (Short2);
                 case VertexElementFormat.Short4: 
-                    return typeof(Short4);
+                    return typeof (Short4);
                 case VertexElementFormat.NormalisedShort2: 
-                    return typeof(NormalisedShort2);
+                    return typeof (NormalisedShort2);
                 case VertexElementFormat.NormalisedShort4: 
-                    return typeof(NormalisedShort4);
+                    return typeof (NormalisedShort4);
                 //case VertexElementFormat.HalfVector2: 
-                //    return typeof(Abacus.HalfPrecision.Vector2);
+                //    return typeof (Abacus.HalfPrecision.Vector2);
                 //case VertexElementFormat.HalfVector4: 
-                //    return typeof(Abacus.HalfPrecision.Vector4);
+                //    return typeof (Abacus.HalfPrecision.Vector4);
             }
 
-            throw new NotSupportedException();
+            throw new NotSupportedException ();
         }
     }
     

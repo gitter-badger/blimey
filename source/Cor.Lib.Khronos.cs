@@ -30,60 +30,67 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-using System;
-using System.Globalization;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Runtime.ConstrainedExecution;
-
-using Abacus;
-using Abacus.Packed;
-using Abacus.SinglePrecision;
-
-using Oats;
-
-#if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
-
-using System.Drawing;
-
-#endif
-
-#if COR_PLATFORM_XIOS
-
-using OpenTK.Graphics.ES20;
-using GLShaderType = OpenTK.Graphics.ES20.ShaderType;
-using GLBufferUsage = OpenTK.Graphics.ES20.BufferUsage;
-using ActiveUniformType = OpenTK.Graphics.ES20.ActiveUniformType;
-using KhronosVector2 = OpenTK.Vector2;
-using KhronosVector3 = OpenTK.Vector3;
-using KhronosVector4 = OpenTK.Vector4;
-using KhronosMatrix4 = OpenTK.Matrix4;
-
-#elif COR_PLATFORM_MONOMAC
-
-using MonoMac.OpenGL;
-using GLShaderType = MonoMac.OpenGL.ShaderType;
-using GLBufferUsage = MonoMac.OpenGL.BufferUsageHint;
-using ActiveUniformType = MonoMac.OpenGL.ActiveUniformType;
-using KhronosVector2 = MonoMac.OpenGL.Vector2;
-using KhronosVector3 = MonoMac.OpenGL.Vector3;
-using KhronosVector4 = MonoMac.OpenGL.Vector4;
-using KhronosMatrix4 = MonoMac.OpenGL.Matrix4;
-
-#endif
-
-using Boolean = System.Boolean;
-
 namespace Cor.Lib.Khronos
 {
+    using System;
+    using System.Globalization;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.IO;
+    using System.Diagnostics;
+    using System.Runtime.InteropServices;
+    using System.Runtime.ConstrainedExecution;
+
+    using Abacus;
+    using Abacus.Packed;
+    using Abacus.SinglePrecision;
+
+    using Oats;
+
+    #if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
+
+    using System.Drawing;
+
+    #endif
+
+    #if COR_PLATFORM_XIOS
+
+    using OpenTK.Graphics.ES20;
+    using GLShaderType = OpenTK.Graphics.ES20.ShaderType;
+    using GLBufferUsage = OpenTK.Graphics.ES20.BufferUsage;
+    using ActiveUniformType = OpenTK.Graphics.ES20.ActiveUniformType;
+    using KhronosVector2 = OpenTK.Vector2;
+    using KhronosVector3 = OpenTK.Vector3;
+    using KhronosVector4 = OpenTK.Vector4;
+    using KhronosMatrix4 = OpenTK.Matrix4;
+
+    #elif COR_PLATFORM_MONOMAC
+
+    using MonoMac.OpenGL;
+    using GLShaderType = MonoMac.OpenGL.ShaderType;
+    using GLBufferUsage = MonoMac.OpenGL.BufferUsageHint;
+    using ActiveUniformType = MonoMac.OpenGL.ActiveUniformType;
+    using KhronosVector2 = MonoMac.OpenGL.Vector2;
+    using KhronosVector3 = MonoMac.OpenGL.Vector3;
+    using KhronosVector4 = MonoMac.OpenGL.Vector4;
+    using KhronosMatrix4 = MonoMac.OpenGL.Matrix4;
+
+    #endif
+
+    using Boolean = System.Boolean;
+
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class KrShaderDefinition
     {
         public List<KrShaderVariantDefinition> VariantDefinitions { get; set; }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class KrShaderSourceDefinition
     {
@@ -91,11 +98,17 @@ namespace Cor.Lib.Khronos
         public string PixelShaderPath { get; set; }
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class KrShaderVariantDefinition
     {
         public String VariantName { get; set; }
         public List<KrShaderVariantPassDefinition> VariantPassDefinitions { get; set; }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class KrShaderVariantPassDefinition
     {
@@ -106,6 +119,9 @@ namespace Cor.Lib.Khronos
 
 #if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class GeometryBuffer
         : IGeometryBuffer
     {
@@ -115,34 +131,34 @@ namespace Cor.Lib.Khronos
         public GeometryBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount, Int32 indexCount)
         {
 
-            if(vertexCount == 0)
+            if (vertexCount == 0)
             {
-                throw new Exception("A geometry buffer must have verts");
+                throw new Exception ("A geometry buffer must have verts");
             }
 
-            if( indexCount != 0 )
+            if (indexCount != 0 )
             {
-                _iBuf = new IndexBuffer(indexCount);
+                _iBuf = new IndexBuffer (indexCount);
             }
 
-            _vBuf = new VertexBuffer(vertexDeclaration, vertexCount);
+            _vBuf = new VertexBuffer (vertexDeclaration, vertexCount);
 
         }
 
-        internal void Activate()
+        internal void Activate ()
         {
-            _vBuf.Activate();
+            _vBuf.Activate ();
 
-            if( _iBuf != null )
-                _iBuf.Activate();
+            if (_iBuf != null)
+                _iBuf.Activate ();
         }
 
-        internal void Deactivate()
+        internal void Deactivate ()
         {
-            _vBuf.Deactivate();
+            _vBuf.Deactivate ();
 
-            if( _iBuf != null )
-                _iBuf.Deactivate();
+            if (_iBuf != null)
+                _iBuf.Deactivate ();
         }
 
         public IVertexBuffer VertexBuffer { get { return _vBuf; } }
@@ -151,37 +167,44 @@ namespace Cor.Lib.Khronos
         internal VertexBuffer OpenTKVertexBuffer { get { return _vBuf; } }
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class GpuUtils
         : IGpuUtils
     {
-        public GpuUtils()
+        public GpuUtils ()
         {
         }
 
         #region IGpuUtils
 
-        public Int32 BeginEvent(Rgba32 colour, String eventName)
+        public Int32 BeginEvent (Rgba32 colour, String eventName)
         {
             return 0;
         }
 
-        public Int32 EndEvent()
+        public Int32 EndEvent ()
         {
             return 0;
         }
 
-        public void SetMarker(Rgba32 colour, String eventName)
+        public void SetMarker (Rgba32 colour, String eventName)
         {
 
         }
 
-        public void SetRegion(Rgba32 colour, String eventName)
+        public void SetRegion (Rgba32 colour, String eventName)
         {
 
         }
 
         #endregion
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public sealed class GraphicsManager
         : IGraphicsManager
     {
@@ -190,31 +213,31 @@ namespace Cor.Lib.Khronos
         GeometryBuffer currentGeomBuffer;
         CullMode? currentCullMode;
 
-        public GraphicsManager()
+        public GraphicsManager ()
         {
             InternalUtils.Log.Info ("GFX", 
                 "Khronos Graphics Manager -> ()");
 
-            this.gpuUtils = new GpuUtils();
+            this.gpuUtils = new GpuUtils ();
 
-            GL.Enable(EnableCap.Blend);
-            KrErrorHandler.Check();
+            GL.Enable (EnableCap.Blend);
+            KrErrorHandler.Check ();
 
-            this.SetBlendEquation(
+            this.SetBlendEquation (
                 BlendFunction.Add, BlendFactor.SourceAlpha, BlendFactor.InverseSourceAlpha,
                 BlendFunction.Add, BlendFactor.One, BlendFactor.InverseSourceAlpha);
 
-            GL.Enable(EnableCap.DepthTest);
-            KrErrorHandler.Check();
+            GL.Enable (EnableCap.DepthTest);
+            KrErrorHandler.Check ();
 
-            GL.DepthMask(true);
-            KrErrorHandler.Check();
+            GL.DepthMask (true);
+            KrErrorHandler.Check ();
 
-            GL.DepthRange(0f, 1f);
-            KrErrorHandler.Check();
+            GL.DepthRange (0f, 1f);
+            KrErrorHandler.Check ();
 
-            GL.DepthFunc(DepthFunction.Lequal);
-            KrErrorHandler.Check();
+            GL.DepthFunc (DepthFunction.Lequal);
+            KrErrorHandler.Check ();
 
             SetCullMode (CullMode.CW);
         }
@@ -237,17 +260,17 @@ namespace Cor.Lib.Khronos
             }
         }
 
-        void EnableVertAttribs(VertexDeclaration vertDecl, IntPtr pointer)
+        void EnableVertAttribs (VertexDeclaration vertDecl, IntPtr pointer)
         {
-            var vertElems = vertDecl.GetVertexElements();
+            var vertElems = vertDecl.GetVertexElements ();
 
             IntPtr ptr = pointer;
 
             int counter = 0;
-            foreach(var elem in vertElems)
+            foreach (var elem in vertElems)
             {
-                GL.EnableVertexAttribArray(counter);
-                KrErrorHandler.Check();
+                GL.EnableVertexAttribArray (counter);
+                KrErrorHandler.Check ();
 
                 //var vertElemUsage = elem.VertexElementUsage;
                 var vertElemFormat = elem.VertexElementFormat;
@@ -257,14 +280,14 @@ namespace Cor.Lib.Khronos
                 Boolean vertElemNormalized = false;
                 VertexAttribPointerType glVertElemFormat;
 
-                KrEnumConverter.ToKhronos(vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
+                KrEnumConverter.ToKhronos (vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
 
-                if( counter != 0)
+                if (counter != 0)
                 {
-                    ptr = Add(ptr, vertElemOffset);
+                    ptr = Add (ptr, vertElemOffset);
                 }
 
-                GL.VertexAttribPointer(
+                GL.VertexAttribPointer (
                     counter,                // index - specifies the generic vertex attribute index.  This value is 0 to
                                             //         max vertex attributes supported - 1.
                     numComponentsInVertElem,// size - number of components specified in the vertex array for the
@@ -282,21 +305,21 @@ namespace Cor.Lib.Khronos
 
                     );
 
-                KrErrorHandler.Check();
+                KrErrorHandler.Check ();
 
                 counter++;
 
             }
         }
 
-        void DisableVertAttribs(VertexDeclaration vertDecl)
+        void DisableVertAttribs (VertexDeclaration vertDecl)
         {
-            var vertElems = vertDecl.GetVertexElements();
+            var vertElems = vertDecl.GetVertexElements ();
 
-            for(int i = 0; i < vertElems.Length; ++i)
+            for (int i = 0; i < vertElems.Length; ++i)
             {
-                GL.DisableVertexAttribArray(i);
-                KrErrorHandler.Check();
+                GL.DisableVertexAttribArray (i);
+                KrErrorHandler.Check ();
             }
         }
 
@@ -305,43 +328,43 @@ namespace Cor.Lib.Khronos
 
         public IGpuUtils GpuUtils { get { return this.gpuUtils; } }
 
-        public void Reset()
+        public void Reset ()
         {
-            this.ClearDepthBuffer();
-            this.ClearColourBuffer();
-            this.SetActiveGeometryBuffer(null);
+            this.ClearDepthBuffer ();
+            this.ClearColourBuffer ();
+            this.SetActiveGeometryBuffer (null);
 
             // todo, here we need to set all the texture slots to point to null
-            this.SetActiveTexture(0, null);
+            this.SetActiveTexture (0, null);
         }
 
-        public void ClearColourBuffer(Rgba32 col = new Rgba32())
+        public void ClearColourBuffer (Rgba32 col = new Rgba32())
         {
             Abacus.SinglePrecision.Vector4 c;
 
-            col.UnpackTo(out c);
+            col.UnpackTo (out c);
 
             GL.ClearColor (c.X, c.Y, c.Z, c.W);
 
             var mask = ClearBufferMask.ColorBufferBit;
 
-            GL.Clear ( mask );
+            GL.Clear (mask);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
         }
 
-        public void ClearDepthBuffer(Single val = 1)
+        public void ClearDepthBuffer (Single val = 1)
         {
-            GL.ClearDepth(val);
+            GL.ClearDepth (val);
 
             var mask = ClearBufferMask.DepthBufferBit;
 
-            GL.Clear ( mask );
+            GL.Clear (mask);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
         }
 
-        public void SetCullMode(CullMode cullMode)
+        public void SetCullMode (CullMode cullMode)
         {
             if (!currentCullMode.HasValue || currentCullMode.Value != cullMode)
             {
@@ -353,11 +376,11 @@ namespace Cor.Lib.Khronos
                 }
                 else
                 {
-                    GL.Enable(EnableCap.CullFace);
-                    KrErrorHandler.Check();
+                    GL.Enable (EnableCap.CullFace);
+                    KrErrorHandler.Check ();
 
-                    GL.FrontFace(FrontFaceDirection.Cw);
-                    KrErrorHandler.Check();
+                    GL.FrontFace (FrontFaceDirection.Cw);
+                    KrErrorHandler.Check ();
 
                     if (cullMode == CullMode.CW)
                     {
@@ -371,7 +394,7 @@ namespace Cor.Lib.Khronos
                     }
                     else
                     {
-                        throw new NotSupportedException();
+                        throw new NotSupportedException ();
                     }
                 }
 
@@ -382,27 +405,27 @@ namespace Cor.Lib.Khronos
         public IGeometryBuffer CreateGeometryBuffer (
             VertexDeclaration vertexDeclaration,
             Int32 vertexCount,
-            Int32 indexCount )
+            Int32 indexCount)
         {
-            return new GeometryBuffer(vertexDeclaration, vertexCount, indexCount);
+            return new GeometryBuffer (vertexDeclaration, vertexCount, indexCount);
         }
 
-        public void SetActiveGeometryBuffer(IGeometryBuffer buffer)
+        public void SetActiveGeometryBuffer (IGeometryBuffer buffer)
         {
             var temp = buffer as GeometryBuffer;
 
-            if( temp != this.currentGeomBuffer )
+            if (temp != this.currentGeomBuffer)
             {
-                if( this.currentGeomBuffer != null )
+                if (this.currentGeomBuffer != null)
                 {
-                    this.currentGeomBuffer.Deactivate();
+                    this.currentGeomBuffer.Deactivate ();
 
                     this.currentGeomBuffer = null;
                 }
 
-                if( temp != null )
+                if (temp != null)
                 {
-                    temp.Activate();
+                    temp.Activate ();
                 }
 
                 this.currentGeomBuffer = temp;
@@ -417,11 +440,11 @@ namespace Cor.Lib.Khronos
             if (tex.SurfaceFormat != SurfaceFormat.Rgba32)
                 throw new NotImplementedException ();
 
-            IntPtr pixelDataRgba32 = Marshal.AllocHGlobal(tex.Data.Length);
-            Marshal.Copy(tex.Data, 0, pixelDataRgba32, tex.Data.Length);
+            IntPtr pixelDataRgba32 = Marshal.AllocHGlobal (tex.Data.Length);
+            Marshal.Copy (tex.Data, 0, pixelDataRgba32, tex.Data.Length);
 
             // Call unmanaged code
-            Marshal.FreeHGlobal(pixelDataRgba32);
+            Marshal.FreeHGlobal (pixelDataRgba32);
 
             int textureId = -1;
 
@@ -430,25 +453,25 @@ namespace Cor.Lib.Khronos
             // the rows of pixels are assumed to be aligned to the value set for GL_UNPACK_ALIGNMENT.
             // By default, the value is 4, meaning that rows of pixels are assumed to begin
             // on 4-byte boundaries.  this is a global STATE.
-            GL.PixelStore(
+            GL.PixelStore (
                 PixelStoreParameter.UnpackAlignment, 4);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             // the first sept in the application of texture is to create the
             // texture object.  this is a container object that holds the
             // texture data.  this function returns a handle to a texture
             // object.
-            GL.GenTextures(1, out textureId);
-            KrErrorHandler.Check();
+            GL.GenTextures (1, out textureId);
+            KrErrorHandler.Check ();
 
             var textureHandle = new TextureHandle (textureId);
 
             var textureTarget = TextureTarget.Texture2D;
 
             // we need to bind the texture object so that we can opperate on it.
-            GL.BindTexture(textureTarget, textureId);
-            KrErrorHandler.Check();
+            GL.BindTexture (textureTarget, textureId);
+            KrErrorHandler.Check ();
 
             // the incoming texture format
             // (the format that [pixelDataRgba32] is in)
@@ -459,7 +482,7 @@ namespace Cor.Lib.Khronos
             var textureDataFormat = PixelType.UnsignedByte;
 
             // now use the bound texture object to load the image data.
-            GL.TexImage2D(
+            GL.TexImage2D (
 
                 // specifies the texture target, either GL_TEXTURE_2D or one of the cubemap face targets.
                 textureTarget,
@@ -502,18 +525,18 @@ namespace Cor.Lib.Khronos
 
                 );
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             // sets the minification and maginfication filtering modes.  required
             // because we have not loaded a complete mipmap chain for the texture
             // so we must select a non mipmapped minification filter.
-            GL.TexParameter(textureTarget, TextureParameterName.TextureMinFilter, (int) All.Nearest );
+            GL.TexParameter (textureTarget, TextureParameterName.TextureMinFilter, (int) All.Nearest);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
-            GL.TexParameter(textureTarget, TextureParameterName.TextureMagFilter, (int) All.Nearest );
+            GL.TexParameter (textureTarget, TextureParameterName.TextureMagFilter, (int) All.Nearest);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             return textureHandle;
         }
@@ -522,23 +545,23 @@ namespace Cor.Lib.Khronos
         {
             int textureId = (texture as TextureHandle).glTextureId;
 
-            GL.DeleteTextures(1, ref textureId);
+            GL.DeleteTextures (1, ref textureId);
         }
 
         public void SetActiveTexture (Int32 slot, ITexture tex)
         {
-            TextureUnit oglTexSlot = KrEnumConverter.ToKhronosTextureSlot(slot);
-            GL.ActiveTexture(oglTexSlot);
+            TextureUnit oglTexSlot = KrEnumConverter.ToKhronosTextureSlot (slot);
+            GL.ActiveTexture (oglTexSlot);
 
             var oglt0 = tex as TextureHandle;
 
-            if( oglt0 != null )
+            if (oglt0 != null)
             {
                 var textureTarget = TextureTarget.Texture2D;
 
                 // we need to bind the texture object so that we can opperate on it.
-                GL.BindTexture(textureTarget, oglt0.glTextureId);
-                KrErrorHandler.Check();
+                GL.BindTexture (textureTarget, oglt0.glTextureId);
+                KrErrorHandler.Check ();
             }
         }
 
@@ -596,7 +619,7 @@ namespace Cor.Lib.Khronos
                 }
             }
 
-            var result = new ShaderHandle(
+            var result = new ShaderHandle (
                 shaderDefinition,
                 platformVariants);
 
@@ -609,7 +632,7 @@ namespace Cor.Lib.Khronos
             handle.Dispose ();
         }
 
-        public void SetBlendEquation(
+        public void SetBlendEquation (
             BlendFunction rgbBlendFunction,
             BlendFactor sourceRgb,
             BlendFactor destinationRgb,
@@ -618,25 +641,25 @@ namespace Cor.Lib.Khronos
             BlendFactor destinationAlpha
             )
         {
-            GL.BlendEquationSeparate(
-                KrEnumConverter.ToKhronos(rgbBlendFunction),
-                KrEnumConverter.ToKhronos(alphaBlendFunction) );
-            KrErrorHandler.Check();
+            GL.BlendEquationSeparate (
+                KrEnumConverter.ToKhronos (rgbBlendFunction),
+                KrEnumConverter.ToKhronos (alphaBlendFunction) );
+            KrErrorHandler.Check ();
 
-            GL.BlendFuncSeparate(
-                KrEnumConverter.ToKhronosSrc(sourceRgb),
-                KrEnumConverter.ToKhronosDest(destinationRgb),
-                KrEnumConverter.ToKhronosSrc(sourceAlpha),
-                KrEnumConverter.ToKhronosDest(destinationAlpha) );
-            KrErrorHandler.Check();
+            GL.BlendFuncSeparate (
+                KrEnumConverter.ToKhronosSrc (sourceRgb),
+                KrEnumConverter.ToKhronosDest (destinationRgb),
+                KrEnumConverter.ToKhronosSrc (sourceAlpha),
+                KrEnumConverter.ToKhronosDest (destinationAlpha) );
+            KrErrorHandler.Check ();
         }
 
-        public void DrawPrimitives(
+        public void DrawPrimitives (
             PrimitiveType primitiveType,
             Int32 startVertex,
-            Int32 primitiveCount )
+            Int32 primitiveCount)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException ();
         }
 
         public void DrawIndexedPrimitives (
@@ -648,20 +671,20 @@ namespace Cor.Lib.Khronos
             Int32 primitiveCount
             )
         {
-            if( baseVertex != 0 || minVertexIndex != 0 || startIndex != 0 )
+            if (baseVertex != 0 || minVertexIndex != 0 || startIndex != 0 )
             {
-                throw new NotImplementedException();
+                throw new NotImplementedException ();
             }
 
-            var otkpType =  KrEnumConverter.ToKhronos(primitiveType);
+            var otkpType =  KrEnumConverter.ToKhronos (primitiveType);
             //Int32 numVertsInPrim = numVertices / primitiveCount;
 
-            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn(primitiveType);
+            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
             Int32 count = primitiveCount * nVertsInPrim;
 
             var vertDecl = currentGeomBuffer.VertexBuffer.VertexDeclaration;
 
-            this.EnableVertAttribs( vertDecl, (IntPtr) 0 );
+            this.EnableVertAttribs (vertDecl, (IntPtr) 0 );
 
             GL.DrawElements (
                 otkpType,
@@ -669,9 +692,9 @@ namespace Cor.Lib.Khronos
                 DrawElementsType.UnsignedShort,
                 (System.IntPtr) 0 );
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
-            this.DisableVertAttribs(vertDecl);
+            this.DisableVertAttribs (vertDecl);
         }
 
         public void DrawUserPrimitives <T> (
@@ -679,11 +702,11 @@ namespace Cor.Lib.Khronos
             T[] vertexData,
             Int32 vertexOffset,
             Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration )
+            VertexDeclaration vertexDeclaration)
             where T : struct, IVertexType
         {
             // do i need to do this? todo: find out
-            this.SetActiveGeometryBuffer(null);
+            this.SetActiveGeometryBuffer (null);
 
             var vertDecl = vertexData[0].VertexDeclaration;
 
@@ -709,40 +732,40 @@ namespace Cor.Lib.Khronos
             //will be unpinned and will become eligible for garbage
             //collection, if there are no other references to it.
             //
-            GCHandle pinnedArray = GCHandle.Alloc(vertexData, GCHandleType.Pinned);
-            IntPtr pointer = pinnedArray.AddrOfPinnedObject();
+            GCHandle pinnedArray = GCHandle.Alloc (vertexData, GCHandleType.Pinned);
+            IntPtr pointer = pinnedArray.AddrOfPinnedObject ();
 
-            if( vertexOffset != 0 )
+            if (vertexOffset != 0 )
             {
-                pointer = Add(pointer, vertexOffset * vertDecl.VertexStride * sizeof(byte));
+                pointer = Add (pointer, vertexOffset * vertDecl.VertexStride * sizeof (byte));
             }
 
-            var glDrawMode = KrEnumConverter.ToKhronos(primitiveType);
+            var glDrawMode = KrEnumConverter.ToKhronos (primitiveType);
             var glDrawModeAll = glDrawMode;
 
             var bindTarget = BufferTarget.ArrayBuffer;
 
-            GL.BindBuffer(bindTarget, 0);
-            KrErrorHandler.Check();
+            GL.BindBuffer (bindTarget, 0);
+            KrErrorHandler.Check ();
 
 
-            this.EnableVertAttribs( vertDecl, pointer );
+            this.EnableVertAttribs (vertDecl, pointer);
 
-            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn(primitiveType);
+            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
             Int32 count = primitiveCount * nVertsInPrim;
 
-            GL.DrawArrays(
+            GL.DrawArrays (
                 glDrawModeAll, // specifies the primitive to render
                 vertexOffset,  // specifies the starting vertex index in the enabled vertex arrays
-                count ); // specifies the number of indicies to be drawn
+                count); // specifies the number of indicies to be drawn
 
-            KrErrorHandler.Check();
-
-
-            this.DisableVertAttribs(vertDecl);
+            KrErrorHandler.Check ();
 
 
-            pinnedArray.Free();
+            this.DisableVertAttribs (vertDecl);
+
+
+            pinnedArray.Free ();
         }
 
         public void DrawUserIndexedPrimitives <T> (
@@ -753,10 +776,10 @@ namespace Cor.Lib.Khronos
             Int32[] indexData,
             Int32 indexOffset,
             Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration )
+            VertexDeclaration vertexDeclaration)
             where T : struct, IVertexType
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException ();
         }
 
         #endregion
@@ -783,56 +806,56 @@ namespace Cor.Lib.Khronos
 
             this.bufferUsage = GLBufferUsage.DynamicDraw;
 
-            GL.GenBuffers(1, out this.bufferHandle);
+            GL.GenBuffers (1, out this.bufferHandle);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
-            if( this.bufferHandle == 0 )
+            if (this.bufferHandle == 0 )
             {
-                throw new Exception("Failed to generate vert buffer.");
+                throw new Exception ("Failed to generate vert buffer.");
             }
 
-            this.Activate();
+            this.Activate ();
 
-            GL.BufferData(
+            GL.BufferData (
                 this.type,
-                (System.IntPtr) (sizeof(UInt16) * this.indexCount),
+                (System.IntPtr) (sizeof (UInt16) * this.indexCount),
                 (System.IntPtr) null,
                 this.bufferUsage);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             resourceCounter++;
 
         }
 
-        ~IndexBuffer()
+        ~IndexBuffer ()
         {
-            RunDispose(false);
+            RunDispose (false);
         }
 
-        void CleanUpManagedResources()
+        void CleanUpManagedResources ()
         {
 
         }
 
-        void CleanUpNativeResources()
+        void CleanUpNativeResources ()
         {
-            GL.DeleteBuffers(1, ref this.bufferHandle);
-            KrErrorHandler.Check();
+            GL.DeleteBuffers (1, ref this.bufferHandle);
+            KrErrorHandler.Check ();
 
             bufferHandle = 0;
 
             resourceCounter--;
         }
 
-        public void Dispose()
+        public void Dispose ()
         {
-            RunDispose(true);
-            GC.SuppressFinalize(this);
+            RunDispose (true);
+            GC.SuppressFinalize (this);
         }
 
-        public void RunDispose(bool isDisposing)
+        public void RunDispose (bool isDisposing)
         {
             if (alreadyDisposed)
                 return;
@@ -853,44 +876,44 @@ namespace Cor.Lib.Khronos
         void GetBufferData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount)
             where T : struct
         {
-            throw new NotImplementedException();/*
-            GL.BindBuffer(BufferTarget.ArrayBuffer, ibo);
-            GraphicsExtensions.CheckGLError();
-            var elementSizeInByte = Marshal.SizeOf(typeof(T));
-            IntPtr ptr = GL.MapBuffer(BufferTarget.ArrayBuffer, BufferAccess.ReadOnly);
+            throw new NotImplementedException ();/*
+            GL.BindBuffer (BufferTarget.ArrayBuffer, ibo);
+            GraphicsExtensions.CheckGLError ();
+            var elementSizeInByte = Marshal.SizeOf (typeof (T));
+            IntPtr ptr = GL.MapBuffer (BufferTarget.ArrayBuffer, BufferAccess.ReadOnly);
             // Pointer to the start of data to read in the index buffer
-            ptr = new IntPtr(ptr.ToInt64() + offsetInBytes);
+            ptr = new IntPtr (ptr.ToInt64() + offsetInBytes);
             if (data is byte[])
             {
                 byte[] buffer = data as byte[];
                 // If data is already a byte[] we can skip the temporary buffer
                 // Copy from the index buffer to the destination array
-                Marshal.Copy(ptr, buffer, 0, buffer.Length);
+                Marshal.Copy (ptr, buffer, 0, buffer.Length);
             }
             else
             {
                 // Temporary buffer to store the copied section of data
                 byte[] buffer = new byte[elementCount * elementSizeInByte];
                 // Copy from the index buffer to the temporary buffer
-                Marshal.Copy(ptr, buffer, 0, buffer.Length);
+                Marshal.Copy (ptr, buffer, 0, buffer.Length);
                 // Copy from the temporary buffer to the destination array
-                Buffer.BlockCopy(buffer, 0, data, startIndex * elementSizeInByte, elementCount * elementSizeInByte);
+                Buffer.BlockCopy (buffer, 0, data, startIndex * elementSizeInByte, elementCount * elementSizeInByte);
             }
-            GL.UnmapBuffer(BufferTarget.ArrayBuffer);
-            GraphicsExtensions.CheckGLError();
+            GL.UnmapBuffer (BufferTarget.ArrayBuffer);
+            GraphicsExtensions.CheckGLError ();
             */
         }
 
-        internal void Activate()
+        internal void Activate ()
         {
-            GL.BindBuffer(this.type, this.bufferHandle);
-            KrErrorHandler.Check();
+            GL.BindBuffer (this.type, this.bufferHandle);
+            KrErrorHandler.Check ();
         }
 
-        internal void Deactivate()
+        internal void Deactivate ()
         {
-            GL.BindBuffer(this.type, 0);
-            KrErrorHandler.Check();
+            GL.BindBuffer (this.type, 0);
+            KrErrorHandler.Check ();
         }
 
         public int IndexCount
@@ -905,60 +928,53 @@ namespace Cor.Lib.Khronos
         public void SetData (Int32[] data)
         {
 
-            if( data.Length != indexCount )
+            if (data.Length != indexCount)
             {
-                throw new Exception("?");
+                throw new Exception ("?");
             }
 
             UInt16[] udata = new UInt16[data.Length];
 
-            for(Int32 i = 0; i < data.Length; ++i)
+            for (Int32 i = 0; i < data.Length; ++i)
             {
                 udata[i] = (UInt16) data[i];
             }
 
-            this.Activate();
+            this.Activate ();
 
             // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
             // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
             // then content of data are copied to the allocated data store.  The contents of the buffer object data
             // store can be initialized or updated using the glBufferSubData FN
-            GL.BufferSubData(
+            GL.BufferSubData (
                 this.type,
                 (System.IntPtr) 0,
-                (System.IntPtr) (sizeof(UInt16) * this.indexCount),
+                (System.IntPtr) (sizeof (UInt16) * this.indexCount),
                 udata);
 
             udata = null;
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
         }
 
-        public void GetData(Int32[] data)
+        public void GetData (Int32[] data)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException ();
         }
 
-        public void SetData(Int32[] data, Int32 startIndex, Int32 elementCount)
+        public void SetData (Int32[] data, Int32 startIndex, Int32 elementCount)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException ();
         }
 
-        public void GetData(Int32[] data, Int32 startIndex, Int32 elementCount)
+        public void GetData (Int32[] data, Int32 startIndex, Int32 elementCount)
         {
-            throw new NotImplementedException();
-        }
-
-        public void SetRawData(Byte[] data, Int32 startIndex, Int32 elementCount)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Byte[] GetRawData(Int32 startIndex, Int32 elementCount)
-        {
-            throw new NotImplementedException();
+            throw new NotImplementedException ();
         }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
     /// Represents a handle to a Khronos GL shader on the GPU.
@@ -972,7 +988,7 @@ namespace Cor.Lib.Khronos
         /// <summary>
         /// Resets all the shader's variables to their default values.
         /// </summary>
-        public void ResetVariables()
+        public void ResetVariables ()
         {
             // the shader definition defines the default values for the variables
             foreach (var variableDefinition in cachedShaderDefinition.VariableDefinitions)
@@ -980,37 +996,37 @@ namespace Cor.Lib.Khronos
                 string varName = variableDefinition.Name;
                 object value = variableDefinition.DefaultValue;
 
-                if( variableDefinition.Type == typeof(Matrix44) )
+                if (variableDefinition.Type == typeof (Matrix44) )
                 {
-                    this.SetVariable(varName, (Matrix44) value);
+                    this.SetVariable (varName, (Matrix44) value);
                 }
-                else if( variableDefinition.Type == typeof(Int32) )
+                else if (variableDefinition.Type == typeof (Int32) )
                 {
-                    this.SetVariable(varName, (Int32) value);
+                    this.SetVariable (varName, (Int32) value);
                 }
-                else if( variableDefinition.Type == typeof(Single) )
+                else if (variableDefinition.Type == typeof (Single) )
                 {
-                    this.SetVariable(varName, (Single) value);
+                    this.SetVariable (varName, (Single) value);
                 }
-                else if( variableDefinition.Type == typeof(Abacus.SinglePrecision.Vector2) )
+                else if (variableDefinition.Type == typeof (Abacus.SinglePrecision.Vector2) )
                 {
-                    this.SetVariable(varName, (Abacus.SinglePrecision.Vector2) value);
+                    this.SetVariable (varName, (Abacus.SinglePrecision.Vector2) value);
                 }
-                else if( variableDefinition.Type == typeof(Abacus.SinglePrecision.Vector3) )
+                else if (variableDefinition.Type == typeof (Abacus.SinglePrecision.Vector3) )
                 {
-                    this.SetVariable(varName, (Abacus.SinglePrecision.Vector3) value);
+                    this.SetVariable (varName, (Abacus.SinglePrecision.Vector3) value);
                 }
-                else if( variableDefinition.Type == typeof(Abacus.SinglePrecision.Vector4) )
+                else if (variableDefinition.Type == typeof (Abacus.SinglePrecision.Vector4) )
                 {
-                    this.SetVariable(varName, (Abacus.SinglePrecision.Vector4) value);
+                    this.SetVariable (varName, (Abacus.SinglePrecision.Vector4) value);
                 }
-                else if( variableDefinition.Type == typeof(Rgba32) )
+                else if (variableDefinition.Type == typeof (Rgba32) )
                 {
-                    this.SetVariable(varName, (Rgba32) value);
+                    this.SetVariable (varName, (Rgba32) value);
                 }
                 else
                 {
-                    throw new NotSupportedException();
+                    throw new NotSupportedException ();
                 }
             }
         }
@@ -1018,11 +1034,11 @@ namespace Cor.Lib.Khronos
         /// <summary>
         /// Resets all the shader's texture samplers point at texture slot 0.
         /// </summary>
-        public void ResetSamplerTargets()
+        public void ResetSamplerTargets ()
         {
             foreach (var samplerDefinition in cachedShaderDefinition.SamplerDefinitions)
             {
-                this.SetSamplerTarget(samplerDefinition.Name, 0);
+                this.SetSamplerTarget (samplerDefinition.Name, 0);
             }
         }
 
@@ -1031,17 +1047,17 @@ namespace Cor.Lib.Khronos
         /// </summary>
         public void SetVariable<T>(string name, T value)
         {
-            passes.ForEach( x => x.SetVariable(name, value));
+            passes.ForEach (x => x.SetVariable (name, value));
         }
 
         /// <summary>
         /// Sets the texture slot that a texture sampler should sample from.
         /// </summary>
-        public void SetSamplerTarget(string name, Int32 textureSlot)
+        public void SetSamplerTarget (string name, Int32 textureSlot)
         {
             foreach (var pass in passes)
             {
-                pass.SetSamplerTarget(name, textureSlot);
+                pass.SetSamplerTarget (name, textureSlot);
             }
         }
 
@@ -1054,7 +1070,7 @@ namespace Cor.Lib.Khronos
         {
             get
             {
-                return passes.ToArray();
+                return passes.ToArray ();
             }
         }
 
@@ -1067,7 +1083,7 @@ namespace Cor.Lib.Khronos
             {
                 // todo: an array of vert elem usage
                 // doesn't uniquely identify anything...
-                return requiredVertexElements.ToArray();
+                return requiredVertexElements.ToArray ();
             }
         }
 
@@ -1081,7 +1097,7 @@ namespace Cor.Lib.Khronos
             {
                 // todo: an array of vert elem usage
                 // doesn't uniquely identify anything...
-                return optionalVertexElements.ToArray();
+                return optionalVertexElements.ToArray ();
             }
         }
 
@@ -1094,11 +1110,11 @@ namespace Cor.Lib.Khronos
         /// <summary>
         /// Releases all resource used by the <see cref="Cor.MonoTouchRuntime.Shader"/> object.
         /// </summary>
-        public void Dispose()
+        public void Dispose ()
         {
             foreach (var pass in passes)
             {
-                pass.Dispose();
+                pass.Dispose ();
             }
         }
 
@@ -1153,10 +1169,10 @@ namespace Cor.Lib.Khronos
             this.cachedShaderDefinition = shaderDefinition;
             this.cachedVariantDefinitions = platformVariants;
             this.Name = shaderDefinition.Name;
-            CalculateRequiredInputs(shaderDefinition);
+            CalculateRequiredInputs (shaderDefinition);
             InitilisePasses (shaderDefinition);
 
-            this.ResetVariables();
+            this.ResetVariables ();
         }
 
         /// <summary>
@@ -1164,17 +1180,17 @@ namespace Cor.Lib.Khronos
         /// inputs are required/optional, needed as the
         /// <see cref="IShader"/> interface requires this information.
         /// </summary>
-        void CalculateRequiredInputs(ShaderDefinition shaderDefinition)
+        void CalculateRequiredInputs (ShaderDefinition shaderDefinition)
         {
             foreach (var input in shaderDefinition.InputDefinitions)
             {
-                if( input.Optional )
+                if (input.Optional)
                 {
-                    optionalVertexElements.Add(input.Usage);
+                    optionalVertexElements.Add (input.Usage);
                 }
                 else
                 {
-                    requiredVertexElements.Add(input.Usage);
+                    requiredVertexElements.Add (input.Usage);
                 }
             }
         }
@@ -1183,7 +1199,7 @@ namespace Cor.Lib.Khronos
         /// Triggers the creation of all of
         /// this <see cref="Shader"/> object's passes.
         /// </summary>
-        void InitilisePasses(ShaderDefinition shaderDefinition)
+        void InitilisePasses (ShaderDefinition shaderDefinition)
         {
             // This function builds up an in memory object for each shader
             // pass in this shader.  The different shader varients are defined
@@ -1201,9 +1217,9 @@ namespace Cor.Lib.Khronos
                 // itterate over the defined pass names, ex: cel, outline...
 
                 //shaderDefinition.VariantDefinitions
-                //  .Select(x => x.PassDefinitions
-                //  .Select(y => y.PassName == definedPassName))
-                //  .ToList();
+                //  .Select (x => x.PassDefinitions
+                //  .Select (y => y.PassName == definedPassName))
+                //  .ToList ();
 
                 // Find all of the variants that are defined
                 // in this shader object's definition
@@ -1222,7 +1238,7 @@ namespace Cor.Lib.Khronos
                     // currently trying to initilise.
                     var variantPassDefinition =
                         shaderVariantDefinition.VariantPassDefinitions
-                            .Find(x => x.PassName == definedPassName);
+                            .Find (x => x.PassName == definedPassName);
 
                     // now we have a Variant name, say:
                     //   - Unlit_PositionTextureColour
@@ -1231,7 +1247,7 @@ namespace Cor.Lib.Khronos
                     //   - Shaders/Unlit_PositionTextureColour.vsh
                     //   - Shaders/Unlit_PositionTextureColour.fsh
                     //
-                    passVariants___Name_AND_passVariantDefinition.Add(
+                    passVariants___Name_AND_passVariantDefinition.Add (
                         new Tuple<String, KrShaderVariantPassDefinition>(
                             shaderVariantName, variantPassDefinition));
                 }
@@ -1239,22 +1255,25 @@ namespace Cor.Lib.Khronos
                 // Create one shader pass for each defined pass name.
                 var shaderPass = new ShaderPassHandle (
                     definedPassName,
-                    passVariants___Name_AND_passVariantDefinition );
+                    passVariants___Name_AND_passVariantDefinition);
 
                 shaderPass.BindAttributes (
                     shaderDefinition
-                        .InputDefinitions.Select(x => x.Name)
-                        .ToList());
+                        .InputDefinitions.Select (x => x.Name)
+                        .ToList ());
 
                 shaderPass.Link ();
-                shaderPass.ValidateInputs(shaderDefinition.InputDefinitions);
-                shaderPass.ValidateVariables(shaderDefinition.VariableDefinitions);
-                shaderPass.ValidateSamplers(shaderDefinition.SamplerDefinitions);
+                shaderPass.ValidateInputs (shaderDefinition.InputDefinitions);
+                shaderPass.ValidateVariables (shaderDefinition.VariableDefinitions);
+                shaderPass.ValidateSamplers (shaderDefinition.SamplerDefinitions);
 
-                passes.Add(shaderPass);
+                passes.Add (shaderPass);
             }
         }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
     /// Represents in individual pass of a Cor.Xios high level Shader object.
@@ -1291,12 +1310,12 @@ namespace Cor.Lib.Khronos
             currentVariables[name] = value;
         }
 
-        internal void SetSamplerTarget(string name, Int32 textureSlot)
+        internal void SetSamplerTarget (string name, Int32 textureSlot)
         {
             currentSamplerSlots[name] = textureSlot;
         }
 
-        public ShaderPassHandle(
+        public ShaderPassHandle (
             String passName,
             List<Tuple<String, KrShaderVariantPassDefinition>> passVariants___Name_AND_passVariantDefinition)
         {
@@ -1308,58 +1327,57 @@ namespace Cor.Lib.Khronos
                         x.Item1, passName, 
                         x.Item2.PassDefinition.VertexShaderPath,
                         x.Item2.PassDefinition.PixelShaderPath))
-                    .ToList();
+                    .ToList ();
 
             this.BestVariantMap = new Dictionary<VertexDeclaration, KrShader>();
         }
 
 
-        internal void BindAttributes(IList<String> inputNames)
+        internal void BindAttributes (IList<String> inputNames)
         {
             foreach (var variant in this.Variants)
             {
-                variant.BindAttributes(inputNames);
+                variant.BindAttributes (inputNames);
             }
         }
 
-        internal void Link()
+        internal void Link ()
         {
             foreach (var variant in this.Variants)
             {
-                variant.Link();
+                variant.Link ();
             }
         }
 
-        internal void ValidateInputs(List<ShaderInputDefinition> definitions)
+        internal void ValidateInputs (List<ShaderInputDefinition> definitions)
         {
-            foreach(var variant in this.Variants)
+            foreach (var variant in this.Variants)
             {
-                variant.ValidateInputs(definitions);
+                variant.ValidateInputs (definitions);
             }
         }
 
-        internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
+        internal void ValidateVariables (List<ShaderVariableDefinition> definitions)
         {
-            foreach(var variant in this.Variants)
+            foreach (var variant in this.Variants)
             {
-                variant.ValidateVariables(definitions);
+                variant.ValidateVariables (definitions);
             }
         }
 
-        internal void ValidateSamplers(List<ShaderSamplerDefinition> definitions)
+        internal void ValidateSamplers (List<ShaderSamplerDefinition> definitions)
         {
-            foreach(var variant in this.Variants)
+            foreach (var variant in this.Variants)
             {
-                variant.ValidateSamplers(definitions);
+                variant.ValidateSamplers (definitions);
             }
         }
 
-
-        public void Activate(VertexDeclaration vertexDeclaration)
+        public void Activate (VertexDeclaration vertexDeclaration)
         {
             if (!BestVariantMap.ContainsKey (vertexDeclaration))
             {
-                BestVariantMap[vertexDeclaration] = KrShaderHelper.WorkOutBestVariantFor(vertexDeclaration, Variants);
+                BestVariantMap[vertexDeclaration] = KrShaderHelper.WorkOutBestVariantFor (vertexDeclaration, Variants);
             }
             var bestVariant = BestVariantMap[vertexDeclaration];
             // select the correct shader pass variant and then activate it
@@ -1369,24 +1387,24 @@ namespace Cor.Lib.Khronos
             {
                 var variable = bestVariant
                     .Variables
-                    .Find(x => x.NiceName == key1 || x.Name == key1);
+                    .Find (x => x.NiceName == key1 || x.Name == key1);
 
-                if( variable == null )
+                if (variable == null)
                 {
                     string warning = "WARNING: missing variable: " + key1;
 
-                    if( !logHistory.ContainsKey(warning) )
+                    if ( !logHistory.ContainsKey (warning) )
                     {
                         InternalUtils.Log.Info ("GFX", warning);
 
-                        logHistory.Add(warning, true);
+                        logHistory.Add (warning, true);
                     }
                 }
                 else
                 {
                     var val = currentVariables[key1];
 
-                    variable.Set(val);
+                    variable.Set (val);
                 }
             }
 
@@ -1394,9 +1412,9 @@ namespace Cor.Lib.Khronos
             {
                 var sampler = bestVariant
                     .Samplers
-                    .Find(x => x.NiceName == key2 || x.Name == key2);
+                    .Find (x => x.NiceName == key2 || x.Name == key2);
 
-                if( sampler == null )
+                if (sampler == null)
                 {
                     //InternalUtils.Log.Info ("GFX", "missing sampler: " + key2);
                 }
@@ -1404,12 +1422,12 @@ namespace Cor.Lib.Khronos
                 {
                     var slot = currentSamplerSlots[key2];
 
-                    sampler.SetSlot(slot);
+                    sampler.SetSlot (slot);
                 }
             }
         }
 
-        public void Dispose()
+        public void Dispose ()
         {
             foreach (var oglesShader in Variants)
             {
@@ -1417,6 +1435,9 @@ namespace Cor.Lib.Khronos
             }
         }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     internal sealed class TextureHandle
         : ITexture
@@ -1450,7 +1471,7 @@ namespace Cor.Lib.Khronos
             }
         }
 
-        public Byte[,] Mipmaps
+		public Byte[][] Mipmaps
         {
             get
             {
@@ -1474,6 +1495,9 @@ namespace Cor.Lib.Khronos
             }
         }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class VertexBuffer
         : IVertexBuffer
@@ -1501,69 +1525,69 @@ namespace Cor.Lib.Khronos
 
             this.bufferUsage = GLBufferUsage.DynamicDraw;
 
-            GL.GenBuffers(1, out this.bufferHandle);
-            KrErrorHandler.Check();
+            GL.GenBuffers (1, out this.bufferHandle);
+            KrErrorHandler.Check ();
 
 
-            if( this.bufferHandle == 0 )
+            if (this.bufferHandle == 0 )
             {
-                throw new Exception("Failed to generate vert buffer.");
+                throw new Exception ("Failed to generate vert buffer.");
             }
 
 
-            this.Activate();
+            this.Activate ();
 
-            GL.BufferData(
+            GL.BufferData (
                 this.type,
                 (System.IntPtr) (vertDecl.VertexStride * this.vertexCount),
                 (System.IntPtr) null,
                 this.bufferUsage);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             resourceCounter++;
 
         }
 
-        internal void Activate()
+        internal void Activate ()
         {
-            GL.BindBuffer(this.type, this.bufferHandle);
-            KrErrorHandler.Check();
+            GL.BindBuffer (this.type, this.bufferHandle);
+            KrErrorHandler.Check ();
         }
 
-        internal void Deactivate()
+        internal void Deactivate ()
         {
-            GL.BindBuffer(this.type, 0);
-            KrErrorHandler.Check();
+            GL.BindBuffer (this.type, 0);
+            KrErrorHandler.Check ();
         }
 
-        ~VertexBuffer()
+        ~VertexBuffer ()
         {
-            RunDispose(false);
+            RunDispose (false);
         }
 
-        void CleanUpManagedResources()
+        void CleanUpManagedResources ()
         {
 
         }
 
-        void CleanUpNativeResources()
+        void CleanUpNativeResources ()
         {
-            GL.DeleteBuffers(1, ref this.bufferHandle);
-            KrErrorHandler.Check();
+            GL.DeleteBuffers (1, ref this.bufferHandle);
+            KrErrorHandler.Check ();
 
             bufferHandle = 0;
 
             resourceCounter--;
         }
 
-        public void Dispose()
+        public void Dispose ()
         {
-            RunDispose(true);
-            GC.SuppressFinalize(this);
+            RunDispose (true);
+            GC.SuppressFinalize (this);
         }
 
-        public void RunDispose(bool isDisposing)
+        public void RunDispose (bool isDisposing)
         {
             if (alreadyDisposed)
                 return;
@@ -1599,12 +1623,12 @@ namespace Cor.Lib.Khronos
 
         void GetBufferData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount, int vertexStride) where T : struct
         {
-            throw new NotImplementedException();/*
+            throw new NotImplementedException ();/*
             GL.BindBuffer (BufferTarget.ArrayBuffer, vbo);
-            GraphicsExtensions.CheckGLError();
-            var elementSizeInByte = Marshal.SizeOf(typeof(T));
+            GraphicsExtensions.CheckGLError ();
+            var elementSizeInByte = Marshal.SizeOf (typeof (T));
             IntPtr ptr = GL.MapBuffer (BufferTarget.ArrayBuffer, BufferAccess.ReadOnly);
-            GraphicsExtensions.CheckGLError();
+            GraphicsExtensions.CheckGLError ();
 
             // Pointer to the start of data to read in the index buffer
             ptr = new IntPtr (ptr.ToInt64 () + offsetInBytes);
@@ -1620,31 +1644,31 @@ namespace Cor.Lib.Khronos
                 // Temporary buffer to store the copied section of data
                 byte[] buffer = new byte[elementCount * vertexStride - offsetInBytes];
                 // Copy from the vertex buffer to the temporary buffer
-                Marshal.Copy(ptr, buffer, 0, buffer.Length);
+                Marshal.Copy (ptr, buffer, 0, buffer.Length);
 
                 var dataHandle = GCHandle.Alloc (data, GCHandleType.Pinned);
                 var dataPtr = (IntPtr)(dataHandle.AddrOfPinnedObject ().ToInt64 () + startIndex * elementSizeInByte);
 
                 // Copy from the temporary buffer to the destination array
 
-                int dataSize = Marshal.SizeOf(typeof(T));
+                int dataSize = Marshal.SizeOf (typeof (T));
                 if (dataSize == vertexStride)
-                    Marshal.Copy(buffer, 0, dataPtr, buffer.Length);
+                    Marshal.Copy (buffer, 0, dataPtr, buffer.Length);
                 else
                 {
                     // If the user is asking for a specific element within the vertex buffer, copy them one by one...
                     for (int i = 0; i < elementCount; i++)
                     {
-                        Marshal.Copy(buffer, i * vertexStride, dataPtr, dataSize);
+                        Marshal.Copy (buffer, i * vertexStride, dataPtr, dataSize);
                         dataPtr = (IntPtr)(dataPtr.ToInt64() + dataSize);
                     }
                 }
 
                 dataHandle.Free ();
 
-                //Buffer.BlockCopy(buffer, 0, data, startIndex * elementSizeInByte, elementCount * elementSizeInByte);
+                //Buffer.BlockCopy (buffer, 0, data, startIndex * elementSizeInByte, elementCount * elementSizeInByte);
             }
-            GL.UnmapBuffer(BufferTarget.ArrayBuffer);*/
+            GL.UnmapBuffer (BufferTarget.ArrayBuffer);*/
         }
 
         public void SetData<T> (T[] data)
@@ -1652,7 +1676,7 @@ namespace Cor.Lib.Khronos
             : struct
             , IVertexType
         {
-            this.SetData(data, 0, this.vertexCount);
+            this.SetData (data, 0, this.vertexCount);
         }
 
         public T[] GetData<T> ()
@@ -1668,24 +1692,24 @@ namespace Cor.Lib.Khronos
             : struct
             , IVertexType
         {
-            if( data.Length != vertexCount )
+            if (data.Length != vertexCount)
             {
-                throw new Exception("?");
+                throw new Exception ("?");
             }
 
-            this.Activate();
+            this.Activate ();
 
             // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
             // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
             // then content of data are copied to the allocated data store.  The contents of the buffer object data
             // store can be initialized or updated using the glBufferSubData FN
-            GL.BufferSubData(
+            GL.BufferSubData (
                 this.type,
                 (System.IntPtr) (this.vertDecl.VertexStride * startIndex),
                 (System.IntPtr) (this.vertDecl.VertexStride * elementCount),
                 data);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
         }
 
         public T[] GetData<T> (Int32 startIndex, Int32 elementCount)
@@ -1693,7 +1717,7 @@ namespace Cor.Lib.Khronos
             : struct
             , IVertexType
         {
-            throw new System.NotSupportedException();
+            throw new System.NotSupportedException ();
         }
 
         public void SetRawData (
@@ -1701,25 +1725,27 @@ namespace Cor.Lib.Khronos
             Int32 startIndex,
             Int32 elementCount)
         {
-            this.Activate();
+            this.Activate ();
 
-            GL.BufferSubData(
+            GL.BufferSubData (
                 this.type,
                 (System.IntPtr) (this.vertDecl.VertexStride * startIndex),
                 (System.IntPtr) (this.vertDecl.VertexStride * elementCount),
                 data);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
         }
 
         public Byte[] GetRawData (
             Int32 startIndex,
             Int32 elementCount)
         {
-            throw new System.NotSupportedException();
+            throw new System.NotSupportedException ();
         }
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class KrShader
         : IDisposable
@@ -1737,7 +1763,7 @@ namespace Cor.Lib.Khronos
         string variantName;
         string passName;
 
-        internal KrShader(
+        internal KrShader (
             String variantName,
             String passName,
             String vertexShaderSource,
@@ -1760,20 +1786,20 @@ namespace Cor.Lib.Khronos
 
         public override string ToString ()
         {
-            //string a = Inputs.Select(x => x.Name).Join(", ");
-            //string b = Variables.Select(x => x.Name).Join(", ");
+            //string a = Inputs.Select (x => x.Name).Join (", ");
+            //string b = Variables.Select (x => x.Name).Join (", ");
 
             string a = string.Empty;
 
-            for(int i = 0; i < Inputs.Count; ++i)
+            for (int i = 0; i < Inputs.Count; ++i)
             {
-                a += Inputs[i].Name; if( i + 1 < Inputs.Count ) { a += ", "; }
+                a += Inputs[i].Name; if (i + 1 < Inputs.Count) { a += ", "; }
             }
 
             string b = string.Empty;
-            for(int i = 0; i < Variables.Count; ++i)
+            for (int i = 0; i < Variables.Count; ++i)
             {
-                b += Variables[i].Name; if( i + 1 < Variables.Count ) { b += ", "; }
+                b += Variables[i].Name; if (i + 1 < Variables.Count) { b += ", "; }
             }
 
             return
@@ -1785,145 +1811,145 @@ namespace Cor.Lib.Khronos
                     b);
         }
 
-        internal void ValidateInputs(List<ShaderInputDefinition> definitions)
+        internal void ValidateInputs (List<ShaderInputDefinition> definitions)
         {
             InternalUtils.Log.Info ("GFX", 
                 String.Format (
-                    "Pass: {1} => ValidateInputs({0})",
+                    "Pass: {1} => ValidateInputs ({0})",
                     variantName,
-                    passName ));
+                    passName));
 
             // Make sure that this shader implements all of the non-optional defined inputs.
-            var nonOptionalDefinitions = definitions.Where(y => !y.Optional).ToList();
+            var nonOptionalDefinitions = definitions.Where (y => !y.Optional).ToList ();
 
-            foreach(var definition in nonOptionalDefinitions)
+            foreach (var definition in nonOptionalDefinitions)
             {
-                var find = Inputs.Find(x => x.Name == definition.Name/* && x.Type == definition.Type */);
+                var find = Inputs.Find (x => x.Name == definition.Name/* && x.Type == definition.Type */);
 
-                if( find == null )
+                if (find == null)
                 {
-                    throw new Exception("problem");
+                    throw new Exception ("problem");
                 }
             }
 
             // Make sure that every implemented input is defined.
-            foreach(var input in Inputs)
+            foreach (var input in Inputs)
             {
-                var find = definitions.Find(x => x.Name == input.Name
-                    /*&& (x.Type == input.Type || (x.Type == typeof(Rgba32) && input.Type == typeof(Vector4)))*/
+                var find = definitions.Find (x => x.Name == input.Name
+                    /*&& (x.Type == input.Type || (x.Type == typeof (Rgba32) && input.Type == typeof (Vector4)))*/
                     );
 
-                if( find == null )
+                if (find == null)
                 {
-                    throw new Exception("problem");
+                    throw new Exception ("problem");
                 }
                 else
                 {
-                    input.RegisterExtraInfo(find);
+                    input.RegisterExtraInfo (find);
                 }
             }
         }
 
-        internal void ValidateVariables(List<ShaderVariableDefinition> definitions)
+        internal void ValidateVariables (List<ShaderVariableDefinition> definitions)
         {
             InternalUtils.Log.Info ("GFX", 
                 String.Format (
-                    "Pass: {1} => ValidateVariables({0})",
+                    "Pass: {1} => ValidateVariables ({0})",
                     variantName,
                     passName));
 
 
             // Make sure that every implemented input is defined.
-            foreach(var variable in Variables)
+            foreach (var variable in Variables)
             {
-                var find = definitions.Find(
+                var find = definitions.Find (
                     x =>
                     x.Name == variable.Name //&&
-                    //(x.Type == variable.Type || (x.Type == typeof(Rgba32) && variable.Type == typeof(Vector4)))
+                    //(x.Type == variable.Type || (x.Type == typeof (Rgba32) && variable.Type == typeof (Vector4)))
                     );
 
-                if( find == null )
+                if (find == null)
                 {
-                    throw new Exception("problem");
+                    throw new Exception ("problem");
                 }
                 else
                 {
-                    variable.RegisterExtraInfo(find);
+                    variable.RegisterExtraInfo (find);
                 }
             }
         }
 
-        internal void ValidateSamplers(List<ShaderSamplerDefinition> definitions)
+        internal void ValidateSamplers (List<ShaderSamplerDefinition> definitions)
         {
             InternalUtils.Log.Info ("GFX", 
                 String.Format (
-                    "Pass: {1} => ValidateSamplers({0})",
+                    "Pass: {1} => ValidateSamplers ({0})",
                     variantName,
-                    passName ));
+                    passName));
 
             var nonOptionalSamplers =
                 definitions
-                    .Where(y => !y.Optional)
-                    .ToList();
+                    .Where (y => !y.Optional)
+                    .ToList ();
 
-            foreach(var definition in nonOptionalSamplers)
+            foreach (var definition in nonOptionalSamplers)
             {
-                var find = this.Samplers.Find(x => x.Name == definition.Name);
+                var find = this.Samplers.Find (x => x.Name == definition.Name);
 
-                if( find == null )
+                if (find == null)
                 {
-                    throw new Exception("problem");
+                    throw new Exception ("problem");
                 }
             }
 
             // Make sure that every implemented input is defined.
-            foreach(var sampler in this.Samplers)
+            foreach (var sampler in this.Samplers)
             {
-                var find = definitions.Find(x => x.Name == sampler.Name);
+                var find = definitions.Find (x => x.Name == sampler.Name);
 
-                if( find == null )
+                if (find == null)
                 {
-                    throw new Exception("problem");
+                    throw new Exception ("problem");
                 }
                 else
                 {
-                    sampler.RegisterExtraInfo(find);
+                    sampler.RegisterExtraInfo (find);
                 }
             }
         }
 
-        static string GetResourcePath(string path)
+        static string GetResourcePath (string path)
         {
-            string ext = Path.GetExtension(path);
+            string ext = Path.GetExtension (path);
 
-            string filename = path.Substring(0, path.Length - ext.Length);
+            string filename = path.Substring (0, path.Length - ext.Length);
 
             var resourcePathname =
-#               if COR_PLATFORM_XIOS
+#if COR_PLATFORM_XIOS
                 MonoTouch.Foundation.NSBundle.MainBundle.PathForResource (
-#               else
+#else
                 global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (
-#               endif
+#endif
                     filename,
-                    ext.Substring(1, ext.Length - 1)
+                    ext.Substring (1, ext.Length - 1)
                 );
 
-            if( resourcePathname == null )
+            if (resourcePathname == null)
             {
-                throw new Exception("Resource [" + path + "] not found");
+                throw new Exception ("Resource [" + path + "] not found");
             }
 
             return resourcePathname;
         }
 
-        internal void BindAttributes(IList<String> orderedAttributes)
+        internal void BindAttributes (IList<String> orderedAttributes)
         {
             int index = 0;
 
-            foreach(var attName in orderedAttributes)
+            foreach (var attName in orderedAttributes)
             {
-                GL.BindAttribLocation(programHandle, index, attName);
-                KrErrorHandler.Check();
+                GL.BindAttribLocation (programHandle, index, attName);
+                KrErrorHandler.Check ();
                 bool success = KrShaderUtils.LinkProgram (programHandle);
                 if (success)
                 {
@@ -1933,7 +1959,7 @@ namespace Cor.Lib.Khronos
             }
         }
 
-        internal void Link()
+        internal void Link ()
         {
             // bind atts here
             //ShaderUtils.LinkProgram (programHandle);
@@ -1941,12 +1967,12 @@ namespace Cor.Lib.Khronos
             InternalUtils.Log.Info ("GFX", "  Finishing linking");
 
             InternalUtils.Log.Info ("GFX", "  Initilise Attributes");
-            var attributes = KrShaderUtils.GetAttributes(programHandle);
+            var attributes = KrShaderUtils.GetAttributes (programHandle);
 
             Inputs = attributes
-                .Select(x => new KrShaderInput(programHandle, x))
-                .OrderBy(y => y.AttributeLocation)
-                .ToList();
+                .Select (x => new KrShaderInput (programHandle, x))
+                .OrderBy (y => y.AttributeLocation)
+                .ToList ();
 
             String logInputs = "  Inputs : ";
             foreach (var input in Inputs) {
@@ -1955,16 +1981,16 @@ namespace Cor.Lib.Khronos
             InternalUtils.Log.Info ("GFX", logInputs);
 
             InternalUtils.Log.Info ("GFX", "  Initilise Uniforms");
-            var uniforms = KrShaderUtils.GetUniforms(programHandle);
+            var uniforms = KrShaderUtils.GetUniforms (programHandle);
 
 
             Variables = uniforms
-                .Where(y =>
+                .Where (y =>
                        y.Type != ActiveUniformType.Sampler2D &&
                        y.Type != ActiveUniformType.SamplerCube)
-                .Select(x => new KrShaderVariable(programHandle, x))
-                .OrderBy(z => z.UniformLocation)
-                .ToList();
+                .Select (x => new KrShaderVariable (programHandle, x))
+                .OrderBy (z => z.UniformLocation)
+                .ToList ();
             String logVars = "  Variables : ";
             foreach (var variable in Variables) {
                 logVars += variable.Name + ", ";
@@ -1973,22 +1999,22 @@ namespace Cor.Lib.Khronos
 
             InternalUtils.Log.Info ("GFX", "  Initilise Samplers");
             Samplers = uniforms
-                .Where(y =>
+                .Where (y =>
                        y.Type == ActiveUniformType.Sampler2D ||
                        y.Type == ActiveUniformType.SamplerCube)
-                .Select(x => new KrShaderSampler(programHandle, x))
-                .OrderBy(z => z.UniformLocation)
-                .ToList();
+                .Select (x => new KrShaderSampler (programHandle, x))
+                .OrderBy (z => z.UniformLocation)
+                .ToList ();
 
             #if DEBUG
             KrShaderUtils.ValidateProgram (programHandle);
             #endif
 
-            KrShaderUtils.DetachShader(programHandle, fragShaderHandle);
-            KrShaderUtils.DetachShader(programHandle, vertShaderHandle);
+            KrShaderUtils.DetachShader (programHandle, fragShaderHandle);
+            KrShaderUtils.DetachShader (programHandle, vertShaderHandle);
 
-            KrShaderUtils.DeleteShader(programHandle, fragShaderHandle);
-            KrShaderUtils.DeleteShader(programHandle, vertShaderHandle);
+            KrShaderUtils.DeleteShader (programHandle, fragShaderHandle);
+            KrShaderUtils.DeleteShader (programHandle, vertShaderHandle);
         }
 
         public void Activate ()
@@ -1997,12 +2023,15 @@ namespace Cor.Lib.Khronos
             KrErrorHandler.Check ();
         }
 
-        public void Dispose()
+        public void Dispose ()
         {
-            KrShaderUtils.DestroyShaderProgram(programHandle);
-            KrErrorHandler.Check();
+            KrShaderUtils.DestroyShaderProgram (programHandle);
+            KrErrorHandler.Check ();
         }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
     /// Represents an Open GL ES shader input, all the data is read dynamically from
@@ -2020,32 +2049,35 @@ namespace Cor.Lib.Khronos
         public Object DefaultValue { get; private set; }
         public Boolean Optional { get; private set; }
 
-        public KrShaderInput(
+        public KrShaderInput (
             int programHandle, KrShaderUtils.KrShaderAttribute attribute)
         {
-            int attLocation = GL.GetAttribLocation(programHandle, attribute.Name);
+            int attLocation = GL.GetAttribLocation (programHandle, attribute.Name);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
-            InternalUtils.Log.Info ("GFX", string.Format(
+            InternalUtils.Log.Info ("GFX", string.Format (
                 "    Binding Shader Input: [Prog={0}, AttIndex={1}, AttLocation={4}, AttName={2}, AttType={3}]",
                 programHandle, attribute.Index, attribute.Name, attribute.Type, attLocation));
 
             this.ProgramHandle = programHandle;
             this.AttributeLocation = attLocation;
             this.Name = attribute.Name;
-            this.Type = KrEnumConverter.ToType(attribute.Type);
+            this.Type = KrEnumConverter.ToType (attribute.Type);
 
 
         }
 
-        internal void RegisterExtraInfo(ShaderInputDefinition definition)
+        internal void RegisterExtraInfo (ShaderInputDefinition definition)
         {
             Usage = definition.Usage;
             DefaultValue = definition.DefaultValue;
             Optional = definition.Optional;
         }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class KrShaderVariable
     {
@@ -2057,25 +2089,25 @@ namespace Cor.Lib.Khronos
         public Type Type { get; private set; }
         public Object DefaultValue { get; private set; }
 
-        public KrShaderVariable(
+        public KrShaderVariable (
             int programHandle, KrShaderUtils.KrShaderUniform uniform)
         {
 
             this.ProgramHandle = programHandle;
 
-            int uniformLocation = GL.GetUniformLocation(programHandle, uniform.Name);
+            int uniformLocation = GL.GetUniformLocation (programHandle, uniform.Name);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
-            if( uniformLocation == -1 )
-                throw new Exception();
+            if (uniformLocation == -1 )
+                throw new Exception ();
 
             this.UniformLocation = uniformLocation;
             this.Name = uniform.Name;
-            this.Type = Cor.Lib.Khronos.KrEnumConverter.ToType(uniform.Type);
+            this.Type = Cor.Lib.Khronos.KrEnumConverter.ToType (uniform.Type);
 
             InternalUtils.Log.Info ("GFX", 
-                String.Format(
+                String.Format (
                 "    Caching Reference to Shader Variable: [Prog={0}, UniIndex={1}, UniLocation={2}, UniName={3}, UniType={4}]",
                 programHandle,
                 uniform.Index,
@@ -2085,72 +2117,75 @@ namespace Cor.Lib.Khronos
 
         }
 
-        internal void RegisterExtraInfo(ShaderVariableDefinition definition)
+        internal void RegisterExtraInfo (ShaderVariableDefinition definition)
         {
             NiceName = definition.NiceName;
             DefaultValue = definition.DefaultValue;
         }
 
-        public void Set(object value)
+        public void Set (object value)
         {
             //todo this should be using convert turn the data into proper opengl es types.
-            Type t = value.GetType();
+            Type t = value.GetType ();
 
-            if( t == typeof(Matrix44) )
+            if (t == typeof (Matrix44) )
             {
                 var castValue = (Matrix44) value;
-                var otkValue = KrMatrix44Converter.ToKhronos(castValue);
-                GL.UniformMatrix4( UniformLocation, false, ref otkValue );
+                var otkValue = KrMatrix44Converter.ToKhronos (castValue);
+                GL.UniformMatrix4(UniformLocation, false, ref otkValue);
             }
-            else if( t == typeof(Int32) )
+            else if (t == typeof (Int32) )
             {
                 var castValue = (Int32) value;
-                GL.Uniform1( UniformLocation, 1, ref castValue );
+                GL.Uniform1(UniformLocation, 1, ref castValue);
             }
-            else if( t == typeof(Single) )
+            else if (t == typeof (Single) )
             {
                 var castValue = (Single) value;
-                GL.Uniform1( UniformLocation, 1, ref castValue );
+                GL.Uniform1(UniformLocation, 1, ref castValue);
             }
-            else if( t == typeof(Abacus.SinglePrecision.Vector2) )
+            else if (t == typeof (Abacus.SinglePrecision.Vector2) )
             {
                 var castValue = (Abacus.SinglePrecision.Vector2) value;
-                GL.Uniform2( UniformLocation, 1, ref castValue.X );
+                GL.Uniform2(UniformLocation, 1, ref castValue.X);
             }
-            else if( t == typeof(Abacus.SinglePrecision.Vector3) )
+            else if (t == typeof (Abacus.SinglePrecision.Vector3) )
             {
                 var castValue = (Abacus.SinglePrecision.Vector3) value;
-                GL.Uniform3( UniformLocation, 1, ref castValue.X );
+                GL.Uniform3(UniformLocation, 1, ref castValue.X);
             }
-            else if( t == typeof(Abacus.SinglePrecision.Vector4) )
+            else if (t == typeof (Abacus.SinglePrecision.Vector4) )
             {
                 var castValue = (Abacus.SinglePrecision.Vector4) value;
-                GL.Uniform4( UniformLocation, 1, ref castValue.X );
+                GL.Uniform4(UniformLocation, 1, ref castValue.X);
             }
-            else if( t == typeof(Rgba32) )
+            else if (t == typeof (Rgba32) )
             {
                 var castValue = (Rgba32) value;
 
                 Abacus.SinglePrecision.Vector4 vec4Value;
-                castValue.UnpackTo(out vec4Value);
+                castValue.UnpackTo (out vec4Value);
 
                 // does this rgba value need to be packed in to a vector3 or a vector4
-                if( this.Type == typeof(Abacus.SinglePrecision.Vector4) )
-                    GL.Uniform4( UniformLocation, 1, ref vec4Value.X );
-                else if( this.Type == typeof(Abacus.SinglePrecision.Vector3) )
-                    GL.Uniform3( UniformLocation, 1, ref vec4Value.X );
+                if (this.Type == typeof (Abacus.SinglePrecision.Vector4) )
+                    GL.Uniform4(UniformLocation, 1, ref vec4Value.X);
+                else if (this.Type == typeof (Abacus.SinglePrecision.Vector3) )
+                    GL.Uniform3(UniformLocation, 1, ref vec4Value.X);
                 else
-                    throw new Exception("Not supported");
+                    throw new Exception ("Not supported");
             }
             else
             {
-                throw new Exception("Not supported");
+                throw new Exception ("Not supported");
             }
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
         }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class KrShaderSampler
     {
@@ -2160,31 +2195,35 @@ namespace Cor.Lib.Khronos
         public String NiceName { get; set; }
         public String Name { get; set; }
 
-        public KrShaderSampler(
-            int programHandle, KrShaderUtils.KrShaderUniform uniform )
+        public KrShaderSampler (
+            int programHandle, KrShaderUtils.KrShaderUniform uniform)
         {
             this.ProgramHandle = programHandle;
 
-            int uniformLocation = GL.GetUniformLocation(programHandle, uniform.Name);
+            int uniformLocation = GL.GetUniformLocation (programHandle, uniform.Name);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             this.UniformLocation = uniformLocation;
             this.Name = uniform.Name;
         }
 
-        internal void RegisterExtraInfo(ShaderSamplerDefinition definition)
+        internal void RegisterExtraInfo (ShaderSamplerDefinition definition)
         {
             NiceName = definition.NiceName;
         }
 
-        public void SetSlot(Int32 slot)
+        public void SetSlot (Int32 slot)
         {
             // set the sampler texture unit to 0
-            GL.Uniform1( this.UniformLocation, slot );
-            KrErrorHandler.Check();
+            GL.Uniform1(this.UniformLocation, slot);
+            KrErrorHandler.Check ();
         }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     /// <summary>
     /// Shader variants could be useful outside of Khronos, PSM defo.
     /// It'd be good to make this system more generic and make it
@@ -2197,7 +2236,7 @@ namespace Cor.Lib.Khronos
         /// OpenGL shader passes and works out which
         /// pass is the best fit for the VertexDeclaration.
         /// </summary>
-        public static KrShader WorkOutBestVariantFor(
+        public static KrShader WorkOutBestVariantFor (
             VertexDeclaration vertexDeclaration,
             IList<KrShader> variants)
         {
@@ -2219,7 +2258,7 @@ namespace Cor.Lib.Khronos
                 // work out how many vert inputs match
 
 
-                var matchResult = CompareShaderInputs(vertexDeclaration, variants[i]);
+                var matchResult = CompareShaderInputs (vertexDeclaration, variants[i]);
 
                 int numMatchedVertElems = matchResult.NumMatchedInputs;
                 int numUnmatchedVertElems = matchResult.NumUnmatchedInputs;
@@ -2227,7 +2266,7 @@ namespace Cor.Lib.Khronos
 
                 InternalUtils.Log.Info ("GFX", " - " + variants[i]);
 
-                if( i == 0 )
+                if (i == 0 )
                 {
                     bestNumMatchedVertElems = numMatchedVertElems;
                     bestNumUnmatchedVertElems = numUnmatchedVertElems;
@@ -2235,7 +2274,7 @@ namespace Cor.Lib.Khronos
                 }
                 else
                 {
-                    if(
+                    if (
                         (
                             numMatchedVertElems > bestNumMatchedVertElems &&
                             bestNumMissingNonOptionalInputs == 0
@@ -2277,55 +2316,55 @@ namespace Cor.Lib.Khronos
             KrShader oglesShader
             )
         {
-            var result = new CompareShaderInputsResult();
+            var result = new CompareShaderInputsResult ();
 
             var oglesShaderInputsUsed = new List<KrShaderInput>();
 
-            var vertElems = vertexDeclaration.GetVertexElements();
+            var vertElems = vertexDeclaration.GetVertexElements ();
 
             // itterate over each input defined in the vert decl
-            foreach(var vertElem in vertElems)
+            foreach (var vertElem in vertElems)
             {
                 var usage = vertElem.VertexElementUsage;
 
                 var format = vertElem.VertexElementFormat;
                 /*
 
-                foreach( var input in oglesShader.Inputs )
+                foreach (var input in oglesShader.Inputs)
                 {
                     // the vertDecl knows what each input's intended use is,
                     // so lets match up
-                    if( input.Usage == usage )
+                    if (input.Usage == usage)
                     {
                         // intended use seems good
                     }
                 }
 
                 // find all inputs that could match
-                var matchingInputs = oglesShader.Inputs.FindAll(
+                var matchingInputs = oglesShader.Inputs.FindAll (
                     x =>
 
                         x.Usage == usage &&
-                        (x.Type == VertexElementFormatHelper.FromEnum(format) ||
-                        ( (x.Type.GetType() == typeof(Vector4)) && (format == VertexElementFormat.Colour) ))
+                        (x.Type == VertexElementFormatHelper.FromEnum (format) ||
+                        ( (x.Type.GetType () == typeof (Vector4)) && (format == VertexElementFormat.Colour) ))
 
                  );*/
 
-                var matchingInputs = oglesShader.Inputs.FindAll(x => x.Usage == usage);
+                var matchingInputs = oglesShader.Inputs.FindAll (x => x.Usage == usage);
 
                 // now make sure it's not been used already
 
-                while(matchingInputs.Count > 0)
+                while (matchingInputs.Count > 0)
                 {
                     var potentialInput = matchingInputs[0];
 
-                    if( oglesShaderInputsUsed.Find(x => x == potentialInput) != null)
+                    if (oglesShaderInputsUsed.Find (x => x == potentialInput) != null)
                     {
-                        matchingInputs.RemoveAt(0);
+                        matchingInputs.RemoveAt (0);
                     }
                     else
                     {
-                        oglesShaderInputsUsed.Add(potentialInput);
+                        oglesShaderInputsUsed.Add (potentialInput);
                     }
                 }
             }
@@ -2338,9 +2377,9 @@ namespace Cor.Lib.Khronos
 
             foreach (var input in oglesShader.Inputs)
             {
-                if(!oglesShaderInputsUsed.Contains(input) )
+                if (!oglesShaderInputsUsed.Contains (input) )
                 {
-                    if( !input.Optional )
+                    if ( !input.Optional)
                     {
                         result.NumUnmatchedRequiredInputs++;
                     }
@@ -2349,7 +2388,7 @@ namespace Cor.Lib.Khronos
             }
 
             InternalUtils.Log.Info ("GFX", 
-                String.Format(
+                String.Format (
                     "[{0}, {1}, {2}]",
                     result.NumMatchedInputs,
                     result.NumUnmatchedInputs,
@@ -2357,8 +2396,10 @@ namespace Cor.Lib.Khronos
 
             return result;
         }
-
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
     /// Static class to help with horrible shader system.
@@ -2379,51 +2420,51 @@ namespace Cor.Lib.Khronos
             public ActiveAttribType Type { get; set; }
         }
 
-        public static Int32 CreateShaderProgram()
+        public static Int32 CreateShaderProgram ()
         {
             // Create shader program.
             Int32 programHandle = GL.CreateProgram ();
 
-            if( programHandle == 0 )
-                throw new Exception("Failed to create shader program");
+            if (programHandle == 0 )
+                throw new Exception ("Failed to create shader program");
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             return programHandle;
         }
 
-        public static Int32 CreateVertexShader(String source)
+        public static Int32 CreateVertexShader (String source)
         {
             Int32 vertShaderHandle;
 
             KrShaderUtils.CompileShader (
                 GLShaderType.VertexShader,
                 source,
-                out vertShaderHandle );
+                out vertShaderHandle);
 
-            if( vertShaderHandle == 0 )
-                throw new Exception("Failed to compile vertex shader program");
+            if (vertShaderHandle == 0 )
+                throw new Exception ("Failed to compile vertex shader program");
 
             return vertShaderHandle;
         }
 
-        public static Int32 CreateFragmentShader(String source)
+        public static Int32 CreateFragmentShader (String source)
         {
             Int32 fragShaderHandle;
 
             KrShaderUtils.CompileShader (
                 GLShaderType.FragmentShader,
                 source,
-                out fragShaderHandle );
+                out fragShaderHandle);
 
-            if( fragShaderHandle == 0 )
-                throw new Exception("Failed to compile fragment shader program");
+            if (fragShaderHandle == 0 )
+                throw new Exception ("Failed to compile fragment shader program");
 
 
             return fragShaderHandle;
         }
 
-        public static void AttachShader(
+        public static void AttachShader (
             Int32 programHandle,
             Int32 shaderHandle)
         {
@@ -2431,30 +2472,30 @@ namespace Cor.Lib.Khronos
             {
                 // Attach vertex shader to program.
                 GL.AttachShader (programHandle, shaderHandle);
-                KrErrorHandler.Check();
+                KrErrorHandler.Check ();
             }
         }
 
-        public static void DetachShader(
+        public static void DetachShader (
             Int32 programHandle,
-            Int32 shaderHandle )
+            Int32 shaderHandle)
         {
             if (shaderHandle != 0)
             {
                 GL.DetachShader (programHandle, shaderHandle);
-                KrErrorHandler.Check();
+                KrErrorHandler.Check ();
             }
         }
 
-        public static void DeleteShader(
+        public static void DeleteShader (
             Int32 programHandle,
-            Int32 shaderHandle )
+            Int32 shaderHandle)
         {
             if (shaderHandle != 0)
             {
                 GL.DeleteShader (shaderHandle);
                 shaderHandle = 0;
-                KrErrorHandler.Check();
+                KrErrorHandler.Check ();
             }
         }
 
@@ -2467,7 +2508,7 @@ namespace Cor.Lib.Khronos
 #elif           COR_PLATFORM_MONOMAC
                 try
                 {
-                    GL.DeleteProgram (1, ref programHandle );
+                    GL.DeleteProgram (1, ref programHandle);
                 }
                 catch (Exception ex)
                 {
@@ -2476,7 +2517,7 @@ namespace Cor.Lib.Khronos
 #endif
 
                 programHandle = 0;
-                KrErrorHandler.Check();
+                KrErrorHandler.Check ();
             }
         }
 
@@ -2484,12 +2525,12 @@ namespace Cor.Lib.Khronos
         public static void CompileShader (
             GLShaderType type,
             String src,
-            out Int32 shaderHandle )
+            out Int32 shaderHandle)
         {
             // Create an empty vertex shader object
             shaderHandle = GL.CreateShader (type);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             // Replace the source code in the vertex shader object
 #if COR_PLATFORM_XIOS
@@ -2497,18 +2538,18 @@ namespace Cor.Lib.Khronos
                 shaderHandle,
                 1,
                 new String[] { src },
-                (Int32[]) null );
+                (Int32[]) null);
 #elif COR_PLATFORM_MONOMAC
             GL.ShaderSource (
                 shaderHandle,
                 src);
 #endif
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             GL.CompileShader (shaderHandle);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
 #if DEBUG
             Int32 logLength = 0;
@@ -2517,8 +2558,8 @@ namespace Cor.Lib.Khronos
                 ShaderParameter.InfoLogLength,
                 out logLength);
 
-            KrErrorHandler.Check();
-            var infoLog = new System.Text.StringBuilder(logLength);
+            KrErrorHandler.Check ();
+            var infoLog = new System.Text.StringBuilder (logLength);
 
             if (logLength > 0)
             {
@@ -2527,13 +2568,13 @@ namespace Cor.Lib.Khronos
                     shaderHandle,
                     logLength,
                     out temp,
-                    infoLog );
+                    infoLog);
 
-                string log = infoLog.ToString();
+                string log = infoLog.ToString ();
 
                 InternalUtils.Log.Info ("GFX", src);
                 InternalUtils.Log.Info ("GFX", log);
-                InternalUtils.Log.Info ("GFX", type.ToString());
+                InternalUtils.Log.Info ("GFX", type.ToString ());
             }
 #endif
             Int32 status = 0;
@@ -2541,14 +2582,14 @@ namespace Cor.Lib.Khronos
             GL.GetShader (
                 shaderHandle,
                 ShaderParameter.CompileStatus,
-                out status );
+                out status);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             if (status == 0)
             {
                 GL.DeleteShader (shaderHandle);
-                throw new Exception ("Failed to compile " + type.ToString());
+                throw new Exception ("Failed to compile " + type.ToString ());
             }
         }
 
@@ -2559,10 +2600,10 @@ namespace Cor.Lib.Khronos
 
             var result = new List<KrShaderUniform>();
 
-            GL.GetProgram(prog, ProgramParameter.ActiveUniforms, out numActiveUniforms);
-            KrErrorHandler.Check();
+            GL.GetProgram (prog, ProgramParameter.ActiveUniforms, out numActiveUniforms);
+            KrErrorHandler.Check ();
 
-            for(int i = 0; i < numActiveUniforms; ++i)
+            for (int i = 0; i < numActiveUniforms; ++i)
             {
                 var sb = new System.Text.StringBuilder ();
 
@@ -2571,7 +2612,7 @@ namespace Cor.Lib.Khronos
                 int size = 0;
                 ActiveUniformType type;
 
-                GL.GetActiveUniform(
+                GL.GetActiveUniform (
                     prog,
                     i,
                     64,
@@ -2579,13 +2620,13 @@ namespace Cor.Lib.Khronos
                     out size,
                     out type,
                     sb);
-                KrErrorHandler.Check();
+                KrErrorHandler.Check ();
 
-                result.Add(
-                    new KrShaderUniform()
+                result.Add (
+                    new KrShaderUniform ()
                     {
                     Index = i,
-                    Name = sb.ToString(),
+                    Name = sb.ToString (),
                     Type = type
                     }
                 );
@@ -2601,10 +2642,10 @@ namespace Cor.Lib.Khronos
             var result = new List<KrShaderAttribute>();
 
             // gets the number of active vertex attributes
-            GL.GetProgram(prog, ProgramParameter.ActiveAttributes, out numActiveAttributes);
-            KrErrorHandler.Check();
+            GL.GetProgram (prog, ProgramParameter.ActiveAttributes, out numActiveAttributes);
+            KrErrorHandler.Check ();
 
-            for(int i = 0; i < numActiveAttributes; ++i)
+            for (int i = 0; i < numActiveAttributes; ++i)
             {
                 var sb = new System.Text.StringBuilder ();
 
@@ -2612,7 +2653,7 @@ namespace Cor.Lib.Khronos
                 int length = 0;
                 int size = 0;
                 ActiveAttribType type;
-                GL.GetActiveAttrib(
+                GL.GetActiveAttrib (
                     prog,
                     i,
                     64,
@@ -2620,13 +2661,13 @@ namespace Cor.Lib.Khronos
                     out size,
                     out type,
                     sb);
-                KrErrorHandler.Check();
+                KrErrorHandler.Check ();
 
-                result.Add(
-                    new KrShaderAttribute()
+                result.Add (
+                    new KrShaderAttribute ()
                     {
                         Index = i,
-                        Name = sb.ToString(),
+                        Name = sb.ToString (),
                         Type = type
                     }
                 );
@@ -2642,7 +2683,7 @@ namespace Cor.Lib.Khronos
 
             GL.LinkProgram (prog);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
 #if DEBUG
             Int32 logLength = 0;
@@ -2650,9 +2691,9 @@ namespace Cor.Lib.Khronos
             GL.GetProgram (
                 prog,
                 ProgramParameter.InfoLogLength,
-                out logLength );
+                out logLength);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             if (logLength > 0)
             {
@@ -2665,15 +2706,15 @@ namespace Cor.Lib.Khronos
                     prog,
                     logLength,
                     out logLength,
-                    infoLog );
+                    infoLog);
                 */
                 var infoLog = string.Empty;
-                GL.GetProgramInfoLog(prog, out infoLog);
+                GL.GetProgramInfoLog (prog, out infoLog);
 
 
-                KrErrorHandler.Check();
+                KrErrorHandler.Check ();
 
-                InternalUtils.Log.Info ("GFX", string.Format("[Cor.Resources] Program link log:\n{0}", infoLog));
+                InternalUtils.Log.Info ("GFX", string.Format ("[Cor.Resources] Program link log:\n{0}", infoLog));
             }
 #endif
             Int32 status = 0;
@@ -2681,13 +2722,13 @@ namespace Cor.Lib.Khronos
             GL.GetProgram (
                 prog,
                 ProgramParameter.LinkStatus,
-                out status );
+                out status);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             if (status == 0)
             {
-                throw new Exception(String.Format("Failed to link program: {0:x}", prog));
+                throw new Exception (String.Format ("Failed to link program: {0:x}", prog));
             }
 
             return retVal;
@@ -2698,16 +2739,16 @@ namespace Cor.Lib.Khronos
         {
             GL.ValidateProgram (programHandle);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             Int32 logLength = 0;
 
             GL.GetProgram (
                 programHandle,
                 ProgramParameter.InfoLogLength,
-                out logLength );
+                out logLength);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             if (logLength > 0)
             {
@@ -2716,49 +2757,53 @@ namespace Cor.Lib.Khronos
                 GL.GetProgramInfoLog (
                     programHandle,
                     logLength,
-                    out logLength, infoLog );
+                    out logLength, infoLog);
 
-                KrErrorHandler.Check();
+                KrErrorHandler.Check ();
 
-                InternalUtils.Log.Info ("GFX", string.Format("[Cor.Resources] Program validate log:\n{0}", infoLog));
+                InternalUtils.Log.Info ("GFX", string.Format ("[Cor.Resources] Program validate log:\n{0}", infoLog));
             }
 
             Int32 status = 0;
 
             GL.GetProgram (
                 programHandle, ProgramParameter.LinkStatus,
-                out status );
+                out status);
 
-            KrErrorHandler.Check();
+            KrErrorHandler.Check ();
 
             if (status == 0)
             {
-                throw new Exception (String.Format("Failed to validate program {0:x}", programHandle));
+                throw new Exception (String.Format ("Failed to validate program {0:x}", programHandle));
             }
         }
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public static class KrErrorHandler
     {
-        [Conditional("DEBUG")]
-        public static void Check()
+        [Conditional ("DEBUG")]
+        public static void Check ()
         {
-            var ec = GL.GetError();
+            var ec = GL.GetError ();
 
             if (ec != ErrorCode.NoError)
             {
-                throw new Exception( ec.ToString());
+                throw new Exception (ec.ToString ());
             }
         }
     }
 
 
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     internal static class KrEnumConverter
     {
-        internal static TextureUnit ToKhronosTextureSlot(Int32 slot)
+        internal static TextureUnit ToKhronosTextureSlot (Int32 slot)
         {
-            switch(slot)
+            switch (slot)
             {
                 case 0: return TextureUnit.Texture0;
                 case 1: return TextureUnit.Texture1;
@@ -2793,50 +2838,50 @@ namespace Cor.Lib.Khronos
                 case 30: return TextureUnit.Texture30;
             }
 
-            throw new NotSupportedException();
+            throw new NotSupportedException ();
         }
 
 
         internal static Type ToType (ActiveAttribType ogl)
         {
-            switch(ogl)
+            switch (ogl)
             {
-            case ActiveAttribType.Float: return typeof(Single);
-            case ActiveAttribType.FloatMat2: throw new NotSupportedException();
-            case ActiveAttribType.FloatMat3: throw new NotSupportedException();
-            case ActiveAttribType.FloatMat4: return typeof(Abacus.SinglePrecision.Matrix44);
-            case ActiveAttribType.FloatVec2: return typeof(Abacus.SinglePrecision.Vector2);
-            case ActiveAttribType.FloatVec3: return typeof(Abacus.SinglePrecision.Vector3);
-            case ActiveAttribType.FloatVec4: return typeof(Abacus.SinglePrecision.Vector4);
+            case ActiveAttribType.Float: return typeof (Single);
+            case ActiveAttribType.FloatMat2: throw new NotSupportedException ();
+            case ActiveAttribType.FloatMat3: throw new NotSupportedException ();
+            case ActiveAttribType.FloatMat4: return typeof (Abacus.SinglePrecision.Matrix44);
+            case ActiveAttribType.FloatVec2: return typeof (Abacus.SinglePrecision.Vector2);
+            case ActiveAttribType.FloatVec3: return typeof (Abacus.SinglePrecision.Vector3);
+            case ActiveAttribType.FloatVec4: return typeof (Abacus.SinglePrecision.Vector4);
             }
 
-            throw new NotSupportedException();
+            throw new NotSupportedException ();
         }
 
         internal static Type ToType (ActiveUniformType ogl)
         {
-            switch(ogl)
+            switch (ogl)
             {
-            case ActiveUniformType.Bool: return typeof(Boolean);
-            case ActiveUniformType.BoolVec2: throw new NotSupportedException();
-            case ActiveUniformType.BoolVec3: throw new NotSupportedException();
-            case ActiveUniformType.BoolVec4: throw new NotSupportedException();
-            case ActiveUniformType.Float: return typeof(Single);
-            case ActiveUniformType.FloatMat2: throw new NotSupportedException();
-            case ActiveUniformType.FloatMat3: throw new NotSupportedException();
-            case ActiveUniformType.FloatMat4: return typeof(Abacus.SinglePrecision.Matrix44);
-            case ActiveUniformType.FloatVec2: return typeof(Abacus.SinglePrecision.Vector2);
-            case ActiveUniformType.FloatVec3: return typeof(Abacus.SinglePrecision.Vector3);
-            case ActiveUniformType.FloatVec4: return typeof(Abacus.SinglePrecision.Vector4);
-            case ActiveUniformType.Int: return typeof(Boolean);
-            case ActiveUniformType.IntVec2: throw new NotSupportedException();
-            case ActiveUniformType.IntVec3: throw new NotSupportedException();
-            case ActiveUniformType.IntVec4: throw new NotSupportedException();
-            case ActiveUniformType.Sampler2D: throw new NotSupportedException();
-            case ActiveUniformType.SamplerCube: throw new NotSupportedException();
+            case ActiveUniformType.Bool: return typeof (Boolean);
+            case ActiveUniformType.BoolVec2: throw new NotSupportedException ();
+            case ActiveUniformType.BoolVec3: throw new NotSupportedException ();
+            case ActiveUniformType.BoolVec4: throw new NotSupportedException ();
+            case ActiveUniformType.Float: return typeof (Single);
+            case ActiveUniformType.FloatMat2: throw new NotSupportedException ();
+            case ActiveUniformType.FloatMat3: throw new NotSupportedException ();
+            case ActiveUniformType.FloatMat4: return typeof (Abacus.SinglePrecision.Matrix44);
+            case ActiveUniformType.FloatVec2: return typeof (Abacus.SinglePrecision.Vector2);
+            case ActiveUniformType.FloatVec3: return typeof (Abacus.SinglePrecision.Vector3);
+            case ActiveUniformType.FloatVec4: return typeof (Abacus.SinglePrecision.Vector4);
+            case ActiveUniformType.Int: return typeof (Boolean);
+            case ActiveUniformType.IntVec2: throw new NotSupportedException ();
+            case ActiveUniformType.IntVec3: throw new NotSupportedException ();
+            case ActiveUniformType.IntVec4: throw new NotSupportedException ();
+            case ActiveUniformType.Sampler2D: throw new NotSupportedException ();
+            case ActiveUniformType.SamplerCube: throw new NotSupportedException ();
             }
 
-            throw new NotSupportedException();
+            throw new NotSupportedException ();
         }
 
         internal static void ToKhronos (
@@ -2849,7 +2894,7 @@ namespace Cor.Lib.Khronos
             size = 0;
             dataFormat = VertexAttribPointerType.Float;
 
-            switch(blimey)
+            switch (blimey)
             {
                 case VertexElementFormat.Single:
                 dataFormat = VertexAttribPointerType.Float;
@@ -2872,17 +2917,17 @@ namespace Cor.Lib.Khronos
                     normalized = true;
                     size = 4;
                     break;
-                case VertexElementFormat.Byte4: throw new Exception("?");
-                case VertexElementFormat.Short2: throw new Exception("?");
-                case VertexElementFormat.Short4: throw new Exception("?");
-                case VertexElementFormat.NormalisedShort2: throw new Exception("?");
-                case VertexElementFormat.NormalisedShort4: throw new Exception("?");
-                case VertexElementFormat.HalfVector2: throw new Exception("?");
-                case VertexElementFormat.HalfVector4: throw new Exception("?");
+                case VertexElementFormat.Byte4: throw new Exception ("?");
+                case VertexElementFormat.Short2: throw new Exception ("?");
+                case VertexElementFormat.Short4: throw new Exception ("?");
+                case VertexElementFormat.NormalisedShort2: throw new Exception ("?");
+                case VertexElementFormat.NormalisedShort4: throw new Exception ("?");
+                case VertexElementFormat.HalfVector2: throw new Exception ("?");
+                case VertexElementFormat.HalfVector4: throw new Exception ("?");
             }
         }
 
-        internal static BlendingFactorSrc ToKhronosSrc(BlendFactor blimey)
+        internal static BlendingFactorSrc ToKhronosSrc (BlendFactor blimey)
         {
             switch (blimey)
             {
@@ -2909,12 +2954,12 @@ namespace Cor.Lib.Khronos
                 case BlendFactor.InverseDestinationColour: return BlendingFactorSrc.OneMinusDstColor;
             }
 
-            throw new Exception();
+            throw new Exception ();
         }
 
-        internal static BlendingFactorDest ToKhronosDest(BlendFactor blimey)
+        internal static BlendingFactorDest ToKhronosDest (BlendFactor blimey)
         {
-            switch(blimey)
+            switch (blimey)
             {
                 case BlendFactor.Zero: return BlendingFactorDest.Zero;
                 case BlendFactor.One: return BlendingFactorDest.One;
@@ -2928,12 +2973,12 @@ namespace Cor.Lib.Khronos
                 case BlendFactor.InverseDestinationColour: return BlendingFactorDest.OneMinusSrcColor;
             }
 
-            throw new Exception();
+            throw new Exception ();
         }
 
         internal static BlendFactor ToCorDestinationBlendFactor (All ogl)
         {
-            switch(ogl)
+            switch (ogl)
             {
                 case All.Zero: return BlendFactor.Zero;
                 case All.One: return BlendFactor.One;
@@ -2947,26 +2992,26 @@ namespace Cor.Lib.Khronos
                 case All.OneMinusDstColor: return BlendFactor.InverseDestinationColour;
             }
 
-            throw new Exception();
+            throw new Exception ();
         }
 
-        internal static BlendEquationMode ToKhronos(BlendFunction blimey)
+        internal static BlendEquationMode ToKhronos (BlendFunction blimey)
         {
-            switch(blimey)
+            switch (blimey)
             {
                 case BlendFunction.Add: return BlendEquationMode.FuncAdd;
-                case BlendFunction.Max: throw new NotSupportedException();
-                case BlendFunction.Min: throw new NotSupportedException();
+                case BlendFunction.Max: throw new NotSupportedException ();
+                case BlendFunction.Min: throw new NotSupportedException ();
                 case BlendFunction.ReverseSubtract: return BlendEquationMode.FuncReverseSubtract;
                 case BlendFunction.Subtract: return BlendEquationMode.FuncSubtract;
             }
 
-            throw new Exception();
+            throw new Exception ();
         }
 
         internal static BlendFunction ToCorDestinationBlendFunction (All ogl)
         {
-            switch(ogl)
+            switch (ogl)
             {
                 case All.FuncAdd: return BlendFunction.Add;
                 case All.MaxExt: return BlendFunction.Max;
@@ -2975,7 +3020,7 @@ namespace Cor.Lib.Khronos
                 case All.FuncSubtract: return BlendFunction.Subtract;
             }
 
-            throw new Exception();
+            throw new Exception ();
         }
 
         // PRIMITIVE TYPE
@@ -3019,6 +3064,9 @@ namespace Cor.Lib.Khronos
         }
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public static class KrVector2Converter
     {
         // VECTOR 2
@@ -3032,6 +3080,10 @@ namespace Cor.Lib.Khronos
             return new Abacus.SinglePrecision.Vector2 (vec.X, vec.Y);
         }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public static class KrVector3Converter
     {
         // VECTOR 3
@@ -3045,6 +3097,10 @@ namespace Cor.Lib.Khronos
             return new Abacus.SinglePrecision.Vector3 (vec.X, vec.Y, vec.Z);
         }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public static class KrVector4Converter
     {
         // VECTOR 3
@@ -3058,6 +3114,9 @@ namespace Cor.Lib.Khronos
             return new Abacus.SinglePrecision.Vector4 (vec.X, vec.Y, vec.Z, vec.W);
         }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public static class KrMatrix44Converter
     {
@@ -3081,5 +3140,8 @@ namespace Cor.Lib.Khronos
     }
 
 
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
 #endif
+
 }

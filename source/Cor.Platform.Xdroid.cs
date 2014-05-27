@@ -30,18 +30,21 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-using System;
-using System.Runtime.InteropServices;
-using System.Globalization;
-using System.Collections;
-using System.Collections.Generic;
-using Abacus;
-using Abacus.Packed;
-using Abacus.SinglePrecision;
-using Abacus.Int32Precision;
-
 namespace Cor.Platform.Xdroid
 {
+    using System;
+    using System.Runtime.InteropServices;
+    using System.Globalization;
+    using System.Collections;
+    using System.Collections.Generic;
+    using Abacus;
+    using Abacus.Packed;
+    using Abacus.SinglePrecision;
+    using Abacus.Int32Precision;
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class Engine
         : ICor
     {
@@ -52,16 +55,16 @@ namespace Cor.Platform.Xdroid
         ISystemManager system;
         AppSettings settings;
 
-        public Engine(AppSettings settings)
+        public Engine (AppSettings settings)
         {
-            Console.WriteLine(
+            Console.WriteLine (
                 "Engine -> ()");
 
-            this.audio = new AudioManager();
-            this.graphics = new GraphicsManager();
-            this.resources = new ResourceManager();
-            this.input = new InputManager();
-            this.system = new SystemManager();
+            this.audio = new AudioManager ();
+            this.graphics = new GraphicsManager ();
+            this.resources = new ResourceManager ();
+            this.input = new InputManager ();
+            this.system = new SystemManager ();
             this.settings = settings;
         }
 
@@ -82,6 +85,9 @@ namespace Cor.Platform.Xdroid
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class AudioManager
         : IAudioManager
     {
@@ -94,16 +100,16 @@ namespace Cor.Platform.Xdroid
             {
                 this.volume = value;
 
-                Console.WriteLine(
+                Console.WriteLine (
                     "AudioManager -> Setting Volume:" + value);
             } 
         }
 
         #region IAudioManager
 
-        public AudioManager()
+        public AudioManager ()
         {
-            Console.WriteLine(
+            Console.WriteLine (
                 "AudioManager -> ()");
 
             this.volume = 1f;
@@ -112,17 +118,20 @@ namespace Cor.Platform.Xdroid
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class GraphicsManager
         : IGraphicsManager
     {
         IDisplayStatus displayStatus;
 
-        public GraphicsManager()
+        public GraphicsManager ()
         {
-            Console.WriteLine(
+            Console.WriteLine (
                 "GraphicsManager -> ()");
 
-            this.displayStatus = new DisplayStatus();
+            this.displayStatus = new DisplayStatus ();
         }
 
         #region IGraphicsManager
@@ -131,62 +140,41 @@ namespace Cor.Platform.Xdroid
 
         public IGpuUtils GpuUtils { get { return null; } }
 
-        public void Reset()
-        {
-            
-        }
+        public void Reset () {}
 
-        public void ClearColourBuffer(Rgba32 color = new Rgba32())
-        {
-            
-        }
+        public void ClearColourBuffer (Rgba32 color = new Rgba32()) {}
 
-        public void ClearDepthBuffer(Single depth = 1f)
-        {
-            
-        }
+        public void ClearDepthBuffer (Single depth = 1f) {}
 
-        public void SetCullMode(CullMode cullMode)
-        {
-            
-        }
+        public void SetCullMode (CullMode cullMode) {}
 
         public IGeometryBuffer CreateGeometryBuffer (
             VertexDeclaration vertexDeclaration,
             Int32 vertexCount,
-            Int32 indexCount )
+            Int32 indexCount)
         {
-            return new GeometryBuffer(vertexDeclaration, vertexCount, indexCount);
+            return new GeometryBuffer (vertexDeclaration, vertexCount, indexCount);
         }
 
-        public void SetActiveGeometryBuffer(IGeometryBuffer buffer)
-        {
-            
-        }
+        public void SetActiveGeometryBuffer (IGeometryBuffer buffer) {}
 
-        public void SetActiveTexture(Int32 slot, Texture2D tex)
-        {
-            
-        }
+        public void SetActiveTexture (Int32 slot, Texture2D tex) {}
 
-        public void SetBlendEquation(
+        public void SetBlendEquation (
             BlendFunction rgbBlendFunction, 
             BlendFactor sourceRgb, 
             BlendFactor destinationRgb,
             BlendFunction alphaBlendFunction, 
             BlendFactor sourceAlpha, 
-            BlendFactor destinationAlpha
-            )
+            BlendFactor destinationAlpha)
         {
-            
         }
 
-        public void DrawPrimitives(
+        public void DrawPrimitives (
             PrimitiveType primitiveType,            
             Int32 startVertex,                      
-            Int32 primitiveCount )
+            Int32 primitiveCount)
         {
-            
         }              
 
         public void DrawIndexedPrimitives (
@@ -195,10 +183,8 @@ namespace Cor.Platform.Xdroid
             Int32 minVertexIndex,
             Int32 numVertices,
             Int32 startIndex,
-            Int32 primitiveCount
-            )
+            Int32 primitiveCount)
         {
-            
         }
 
         public void DrawUserPrimitives <T> (
@@ -206,10 +192,11 @@ namespace Cor.Platform.Xdroid
             T[] vertexData,
             Int32 vertexOffset,
             Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration )
-            where T : struct, IVertexType
-        {
-            
+            VertexDeclaration vertexDeclaration)
+        where T 
+            : struct
+            , IVertexType
+        {  
         }
 
         public void DrawUserIndexedPrimitives <T> (
@@ -220,21 +207,25 @@ namespace Cor.Platform.Xdroid
             Int32[] indexData,
             Int32 indexOffset,
             Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration ) 
-            where T : struct, IVertexType
+            VertexDeclaration vertexDeclaration) 
+        where T 
+            : struct
+            , IVertexType
         {
-
         }
 
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class DisplayStatus
         : IDisplayStatus
     {
-        public DisplayStatus()
+        public DisplayStatus ()
         {
-            Console.WriteLine(
+            Console.WriteLine (
                 "DisplayStatus -> ()");
         }
 
@@ -247,14 +238,19 @@ namespace Cor.Platform.Xdroid
         public Int32 CurrentHeight { get { return 600; } }
 
         #endregion
-    }    public class IndexBuffer
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public class IndexBuffer
         : IIndexBuffer
     {
         UInt16[] data;
 
-        public IndexBuffer()
+        public IndexBuffer ()
         {
-            Console.WriteLine(
+            Console.WriteLine (
                 "IndexBuffer -> ()");
         }
 
@@ -262,7 +258,7 @@ namespace Cor.Platform.Xdroid
         {   
             UInt16[] udata = new UInt16[indexBuffer.Length];
 
-            for(Int32 i = 0; i < indexBuffer.Length; ++i)
+            for (Int32 i = 0; i < indexBuffer.Length; ++i)
             {
                 udata[i] = (UInt16) indexBuffer[i];
             }
@@ -274,40 +270,44 @@ namespace Cor.Platform.Xdroid
 
         public Int32 IndexCount { get { return this.data.Length; } }
 
-        public void SetData(Int32[] data)
+        public void SetData (Int32[] data)
         {
-            this.data = ConvertToUnsigned(data);
+            this.data = ConvertToUnsigned (data);
         }
 
         #endregion
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class InputManager
         : IInputManager
     {
-        public InputManager()
+        public InputManager ()
         {
-            Console.WriteLine(
+            Console.WriteLine (
                 "InputManager -> ()");
         }
 
         #region IInputManager
 
-        public Xbox360Gamepad GetXbox360Gamepad(PlayerIndex player)
+        public Xbox360Gamepad GetXbox360Gamepad (PlayerIndex player)
         {
             return null;
         }
 
-        public PsmGamepad GetPsmGamepad()
+        public PsmGamepad GetPsmGamepad ()
         {
             return null;
         }
 
-        public MultiTouchController GetMultiTouchController()
+        public MultiTouchController GetMultiTouchController ()
         {
             return null;
         }
 
-        public GenericGamepad GetGenericGamepad()
+        public GenericGamepad GetGenericGamepad ()
         {
             return null;
         }
@@ -315,12 +315,15 @@ namespace Cor.Platform.Xdroid
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class ResourceManager
         : IOldResourceManager
     {
-        public ResourceManager()
+        public ResourceManager ()
         {
-            Console.WriteLine(
+            Console.WriteLine (
                 "ResourceManager -> ()");
         }
 
@@ -328,10 +331,10 @@ namespace Cor.Platform.Xdroid
 
         public T Load<T>(String path) where T : IOldResource
         {
-            return default(T);
+            return default (T);
         }
 
-        public IShader LoadShader(ShaderType shaderType)
+        public IShader LoadShader (ShaderType shaderType)
         {
             return null;
         }
@@ -339,12 +342,15 @@ namespace Cor.Platform.Xdroid
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class PanelSpecification
         : IPanelSpecification
     {
-        public PanelSpecification()
+        public PanelSpecification ()
         {
-            Console.WriteLine(
+            Console.WriteLine (
                 "PanelSpecification -> ()");
         }
 
@@ -352,7 +358,7 @@ namespace Cor.Platform.Xdroid
 
         public Vector2 PanelPhysicalSize 
         { 
-            get { return new Vector2(0.20f, 0.15f ); } 
+            get { return new Vector2(0.20f, 0.15f); } 
         }
         
         public Single PanelPhysicalAspectRatio 
@@ -365,15 +371,18 @@ namespace Cor.Platform.Xdroid
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class ScreenSpecification
         : IScreenSpecification
     {
         Int32 width = 800;
         Int32 height = 600;
 
-        public ScreenSpecification()
+        public ScreenSpecification ()
         {
-            Console.WriteLine(
+            Console.WriteLine (
                 "ScreenSpecification -> ()");
         }
 
@@ -402,22 +411,25 @@ namespace Cor.Platform.Xdroid
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class GeometryBuffer
         : IGeometryBuffer
     {
         IVertexBuffer vertexBuffer;
         IIndexBuffer indexBuffer;
 
-        public GeometryBuffer(
+        public GeometryBuffer (
             VertexDeclaration vertexDeclaration,
             Int32 vertexCount,
-            Int32 indexCount )
+            Int32 indexCount)
         {
-            Console.WriteLine(
+            Console.WriteLine (
                 "GeometryBuffer -> ()");
 
-            this.vertexBuffer = new VertexBuffer();
-            this.indexBuffer = new IndexBuffer();
+            this.vertexBuffer = new VertexBuffer ();
+            this.indexBuffer = new IndexBuffer ();
         }
 
         #region IGeometryBuffer
@@ -434,27 +446,31 @@ namespace Cor.Platform.Xdroid
 
         #endregion
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class SystemManager
         : ISystemManager
     {
         readonly IScreenSpecification screen;
         readonly IPanelSpecification panel;
 
-        public SystemManager()
+        public SystemManager ()
         {
-            Console.WriteLine(
+            Console.WriteLine (
                 "SystemManager -> ()");
 
-            screen = new ScreenSpecification();
-            panel = new PanelSpecification();
+            screen = new ScreenSpecification ();
+            panel = new PanelSpecification ();
         }
 
-        void GetEffectiveDisplaySize(
+        void GetEffectiveDisplaySize (
             ref Int32 screenSpecWidth, 
             ref Int32 screenSpecHeight)
         {
             if (this.CurrentOrientation == DeviceOrientation.Default ||
-                this.CurrentOrientation == DeviceOrientation.Upsidedown )
+                this.CurrentOrientation == DeviceOrientation.Upsidedown)
             {
                 return;
             }
@@ -477,7 +493,7 @@ namespace Cor.Platform.Xdroid
                 Int32 w = ScreenSpecification.ScreenResolutionWidth;
                 Int32 h = ScreenSpecification.ScreenResolutionHeight;
 
-                GetEffectiveDisplaySize(ref w, ref h);
+                GetEffectiveDisplaySize (ref w, ref h);
 
                 return new Point2(w, h);
             }
@@ -509,12 +525,15 @@ namespace Cor.Platform.Xdroid
         #endregion
     }
 
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public class VertexBuffer
         : IVertexBuffer
     {
-        public VertexBuffer()
+        public VertexBuffer ()
         {
-            Console.WriteLine(
+            Console.WriteLine (
                 "VertexBuffer -> ()");
         }
 

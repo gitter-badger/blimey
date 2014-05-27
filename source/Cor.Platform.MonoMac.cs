@@ -32,16 +32,17 @@
 
 namespace Cor.Platform.MonoMac
 {
-    using System;
-    using System.Globalization;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.IO;
-    using System.Drawing;
-    using System.Diagnostics;
-    using System.Runtime.InteropServices;
-    using System.Runtime.ConstrainedExecution;
+	using global::System;
+	using global::System;
+	using global::System.Globalization;
+	using global::System.Collections;
+	using global::System.Collections.Generic;
+	using global::System.Linq;
+	using global::System.IO;
+	using global::System.Drawing;
+	using global::System.Diagnostics;
+	using global::System.Runtime.InteropServices;
+	using global::System.Runtime.ConstrainedExecution;
 
     using Abacus;
     using Abacus.Packed;
@@ -67,7 +68,8 @@ namespace Cor.Platform.MonoMac
         readonly AudioManager audio;
         readonly GraphicsManager graphics;
         readonly InputManager input;
-		readonly SystemInformation system;
+		readonly Host host;
+		readonly System system;
         readonly AppSettings settings;
         readonly AppStatus appStatus;
         readonly IApp app;
@@ -82,7 +84,8 @@ namespace Cor.Platform.MonoMac
             this.audio = new AudioManager ();
             this.graphics = new GraphicsManager ();
             this.input = new InputManager (this);
-			this.system = new SystemInformation ();
+			this.system = new System ();
+			this.host = new Host ();
             this.appStatus = new AppStatus (width, height);
             
             this.log = new LogManager (this.settings.LogSettings);
@@ -98,7 +101,7 @@ namespace Cor.Platform.MonoMac
 
         internal InputManager InputImplementation { get { return this.input; } }
 
-		internal SystemInformation SystemImplementation { get { return this.system; } }
+		internal Host HostImplementation { get { return this.host; } }
 
         internal AppStatus DisplayStatusImplementation { get { return this.appStatus; } }
 
@@ -110,9 +113,11 @@ namespace Cor.Platform.MonoMac
 
 		public IAppStatus AppStatus { get { return this.appStatus; } }
 
-        public IInputManager Input { get { return this.input; } }
+		public IInputManager Input { get { return this.input; } }
 
-		public ISystemInformation System { get { return this.system; } }
+		public IHost Host { get { return this.host; } }
+
+		public ISystem System { get { return this.system; } }
 
         public LogManager Log { get { return this.log; } }
 
@@ -217,23 +222,12 @@ namespace Cor.Platform.MonoMac
     public sealed class PanelSpecification
         : IPanelSpecification
     {
-        public PanelSpecification ()
-        {
-            InternalUtils.Log.Info ("PanelSpecification -> ()");
-        }
+		public PanelSpecification () { InternalUtils.Log.Info ("PanelSpecification -> ()"); }
 
         #region IPanelSpecification
 
-		public Vector2? PanelPhysicalSize
-        {
-			get { return null; }
-        }
-
-		public Single? PanelPhysicalAspectRatio
-        {
-			get { return null; }
-        }
-
+		public Vector2? PanelPhysicalSize { get { return null; } }
+		public Single? PanelPhysicalAspectRatio { get { return null; } }
         public PanelType PanelType { get { return PanelType.TouchScreen; } }
 
         #endregion
@@ -248,29 +242,16 @@ namespace Cor.Platform.MonoMac
         Int32 width = 800;
         Int32 height = 600;
 
-        public ScreenSpecification ()
-        {
-            InternalUtils.Log.Info ("ScreenSpecification -> ()");
-        }
+		public ScreenSpecification () { InternalUtils.Log.Info ("ScreenSpecification -> ()"); }
 
         #region IScreenSpecification
 
-        public Int32 ScreenResolutionWidth
-        {
-            get { return width; }
-        }
-
-        public Int32 ScreenResolutionHeight
-        {
-            get { return height; }
-        }
+		public Int32 ScreenResolutionWidth { get { return width; } }
+		public Int32 ScreenResolutionHeight { get { return height; } }
 
         public Single ScreenResolutionAspectRatio
         {
-            get
-            {
-                return (Single) this.ScreenResolutionWidth / (Single) this.ScreenResolutionHeight;
-            }
+			get { return (Single) this.ScreenResolutionWidth / (Single) this.ScreenResolutionHeight; }
         }
 
         #endregion
@@ -279,15 +260,15 @@ namespace Cor.Platform.MonoMac
     
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-	public sealed class SystemInformation
-		: ISystemInformation
+	public sealed class Host
+		: IHost
     {
         readonly IScreenSpecification screen;
         readonly IPanelSpecification panel;
 
-		public SystemInformation ()
+		public Host ()
         {
-            InternalUtils.Log.Info ("SystemManager -> ()");
+			InternalUtils.Log.Info ("Host -> ()");
 
             screen = new ScreenSpecification ();
             panel = new PanelSpecification ();
@@ -308,24 +289,7 @@ namespace Cor.Platform.MonoMac
             }
         }
 
-        static String GetBundlePath (String path)
-        {
-            String rtype = Path.GetExtension (path);
-            String rname = Path.Combine (Path.GetDirectoryName (path), Path.GetFileNameWithoutExtension (path));
-
-            var correctPath = global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (rname, rtype);
-
-            if (!File.Exists (correctPath))
-            {
-                throw new FileNotFoundException (correctPath);
-            }
-
-            return correctPath;
-        }
-
         #region ISystemManager
-
-        public String OperatingSystem { get { return " OS 2013"; } }
 
         public Point2 CurrentDisplaySize
         {
@@ -340,20 +304,40 @@ namespace Cor.Platform.MonoMac
             }
         }
 
-        public String DeviceName { get { return "The New  Pad"; } }
-        public String DeviceModel { get { return "xf4bs2013"; } }
-        public String SystemName { get { return "Sungiant's System"; } }
-        public String SystemVersion { get { return "1314.0.1.29"; } }
+		public String Machine { get { return "Machintosh"; } }
+		public String OperatingSystem { get { return "OSX" + Environment.OSVersion.VersionString;; } }
+		public String VirtualMachine { get { return "Mono ?"; } }
+
         public DeviceOrientation CurrentOrientation { get { return DeviceOrientation.Default; } }
         public IScreenSpecification ScreenSpecification { get { return this.screen; } }
         public IPanelSpecification PanelSpecification { get { return this.panel; } }
+	}
+
+
+	// ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+	public sealed class System
+		: ISystem
+	{
+		static String GetBundlePath (String path)
+		{
+			String rtype = Path.GetExtension (path);
+			String rname = Path.Combine (Path.GetDirectoryName (path), Path.GetFileNameWithoutExtension (path));
+
+			var correctPath = global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (rname, rtype);
+
+			if (!File.Exists (correctPath))
+			{
+				throw new FileNotFoundException (correctPath);
+			}
+
+			return correctPath;
+		}
 
         public Stream GetAssetStream (String assetId)
         {
             string path = GetBundlePath (Path.Combine ("assets/monomac", assetId));
-
             var fStream = new FileStream (path, FileMode.Open);
-
             return fStream;
         }
 
@@ -379,7 +363,7 @@ namespace Cor.Platform.MonoMac
 
         void InitializeMainWindow ()
         {
-            RectangleF frame = new RectangleF(
+            RectangleF frame = new RectangleF (
                 0, 0,
                 800,
                 600);
@@ -737,12 +721,12 @@ namespace Cor.Platform.MonoMac
 
     internal static class Vector2Converter
     {
-        internal static System.Drawing.PointF ToSystemDrawing (this Vector2 vec)
+		internal static global::System.Drawing.PointF ToSystemDrawing (this Vector2 vec)
         {
-            return new System.Drawing.PointF (vec.X, vec.Y);
+			return new global::System.Drawing.PointF (vec.X, vec.Y);
         }
 
-        internal static Vector2 ToAbacus (this System.Drawing.PointF vec)
+		internal static Vector2 ToAbacus (this global::System.Drawing.PointF vec)
         {
             return new Vector2 (vec.X, vec.Y);
         }
@@ -1023,7 +1007,7 @@ namespace Cor.Platform.MonoMac
 
 		public IPanelSpecification PanelSpecification
         { 
-            get { return (cor.System as SystemInformation).PanelSpecification; }
+			get { return (cor.Host as Host).PanelSpecification; }
         }
 
         internal void Update (AppTime time)
