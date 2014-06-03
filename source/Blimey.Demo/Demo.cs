@@ -48,7 +48,7 @@ namespace Blimey.Demo
 
         readonly static Scene startScene;
         readonly static AppSettings appSettings;
-        readonly static BlimeyApp blimeyApp;
+        readonly static Blimey blimeyApp;
 
         static Demo()
         {
@@ -58,7 +58,7 @@ namespace Blimey.Demo
 
             startScene = new MainMenuScene();
 
-            blimeyApp = new BlimeyApp(startScene);
+            blimeyApp = new Blimey(startScene);
         }
     }
 }

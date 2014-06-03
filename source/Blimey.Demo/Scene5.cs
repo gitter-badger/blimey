@@ -40,6 +40,7 @@ using Cor;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Blimey.Content;
 
 namespace Blimey.Demo
 {
