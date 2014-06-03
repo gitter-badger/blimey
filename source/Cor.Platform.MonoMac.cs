@@ -87,10 +87,8 @@ namespace Cor.Platform.MonoMac
 			this.system = new System ();
 			this.host = new Host ();
             this.appStatus = new AppStatus (width, height);
-            
             this.log = new LogManager (this.settings.LogSettings);
             this.assets = new AssetManager (this.graphics, this.system);
-
             this.app = app;
 			this.app.Start (this);
         }
@@ -568,8 +566,7 @@ namespace Cor.Platform.MonoMac
 
         public override Boolean AcceptsFirstResponder ()
         {
-            // We want this view to be able to receive key events
-            return true;
+            return true; // We want this view to be able to receive key events
         }
 
         public override Boolean BecomeFirstResponder ()
@@ -850,12 +847,7 @@ namespace Cor.Platform.MonoMac
 
         public KeyState this [FunctionalKey key]
         {
-            get
-            {
-                return functionalKeysThatAreDown.Contains (key)
-                    ? KeyState.Down
-                    : KeyState.Up;
-            }
+            get { return functionalKeysThatAreDown.Contains (key) ? KeyState.Down : KeyState.Up; }
         }
 
         public Char[] GetPressedCharacterKeys ()
@@ -875,12 +867,7 @@ namespace Cor.Platform.MonoMac
 
         public KeyState this [Char key]
         {
-            get
-            {
-                return characterKeysThatAreDown.Contains (key)
-                    ? KeyState.Down
-                    : KeyState.Up;
-            }
+            get { return characterKeysThatAreDown.Contains (key) ? KeyState.Down : KeyState.Up; }
         }
 
         #endregion
@@ -889,50 +876,9 @@ namespace Cor.Platform.MonoMac
     
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class Mouse
+    internal sealed class Mouse
         : IMouse
     {
-        public void LeftMouseUp (NSEvent theEvent)
-        {
-            left = ButtonState.Released;
-        }
-
-        public void LeftMouseDown (NSEvent theEvent)
-        {
-            left = ButtonState.Pressed;
-        }
-
-        public void MiddletMouseUp (NSEvent theEvent)
-        {
-            middle = ButtonState.Released;
-        }
-
-        public void MiddleMouseDown (NSEvent theEvent)
-        {
-            middle = ButtonState.Pressed;
-        }
-
-        public void RightMouseUp (NSEvent theEvent)
-        {
-            right = ButtonState.Released;
-        }
-
-        public void RightMouseDown (NSEvent theEvent)
-        {
-            right = ButtonState.Pressed;
-        }
-
-        public void ScrollWheel (NSEvent theEvent)
-        {
-            //throw new NotImplementedException ();
-        }
-
-        public void MouseMoved (NSEvent theEvent)
-        {
-            x = theEvent.AbsoluteX;
-            y = theEvent.AbsoluteY;
-        }
-
         ButtonState left = ButtonState.Released;
         ButtonState middle = ButtonState.Released;
         ButtonState right = ButtonState.Released;
@@ -940,12 +886,30 @@ namespace Cor.Platform.MonoMac
         Int32 x = 0;
         Int32 y = 0;
 
+        internal void MouseMoved (NSEvent theEvent)
+        {
+            x = theEvent.AbsoluteX;
+            y = theEvent.AbsoluteY;
+        }
+
+        internal void LeftMouseUp (NSEvent theEvent) { left = ButtonState.Released; }
+        internal void LeftMouseDown (NSEvent theEvent) { left = ButtonState.Pressed; }
+        internal void MiddletMouseUp (NSEvent theEvent) { middle = ButtonState.Released; }
+        internal void MiddleMouseDown (NSEvent theEvent) { middle = ButtonState.Pressed; }
+        internal void RightMouseUp (NSEvent theEvent) { right = ButtonState.Released; }
+        internal void RightMouseDown (NSEvent theEvent) { right = ButtonState.Pressed; }
+        internal void ScrollWheel (NSEvent theEvent) { ; }
+
+        #region IMouse
+
         public ButtonState Left { get { return left; } }
         public ButtonState Middle { get { return middle; } }
         public ButtonState Right { get { return right; } }
         public Int32 ScrollWheelValue { get { return scrollWheelValue; } }
         public Int32 X { get { return x; } }
         public Int32 Y { get { return y; } }
+
+        #endregion
     }
 
     
