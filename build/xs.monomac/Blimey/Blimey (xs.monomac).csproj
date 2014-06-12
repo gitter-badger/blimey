@@ -62,6 +62,24 @@
     <Compile Include="..\..\..\source\Blimey.cs">
       <Link>Blimey.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\source\Content.cs">
+      <Link>Content.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Input.cs">
+      <Link>Input.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Internal.cs">
+      <Link>Internal.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Maths.cs">
+      <Link>Maths.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Render.cs">
+      <Link>Render.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Traits.cs">
+      <Link>Traits.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\abacus\build\xs.monomac\Abacus\Abacus %28xs.monomac%29.csproj">
