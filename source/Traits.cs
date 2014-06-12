@@ -33,16 +33,9 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
-    using System.Globalization;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Diagnostics;
     using Abacus;
     using Abacus.Packed;
     using Abacus.SinglePrecision;
-    using Abacus.Int32Precision;
-    using System.Linq;
     using Cor;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -283,9 +276,6 @@ namespace Blimey
     }
 
 
-
-
-
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public class ChaseSubject
@@ -398,26 +388,23 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class FreeCamInputs
-    {
-        public Vector3 mTranslation;
-        public Vector3 mRotation;
-        public float mTranslationSpeed; //in range 0-1
-        public float mRotationSpeedScale;
-        public bool mFixUp;
-    }
-
-    /*
-    public class FreeCamBehavior
+    public class FreeCam
         : Trait
     {
+        public struct FreeCamInputs
+        {
+            public Vector3 mTranslation;
+            public Vector3 mRotation;
+            public float mTranslationSpeed; //in range 0-1
+            public float mRotationSpeedScale;
+            public bool mFixUp;
+        }
+            
         float localPitch;
         float localYaw;
         float localRoll;
 
         Vector3 oldPosition = Vector3.Zero;
-        KeyboardState currentKeyboardState = new KeyboardState();
-        GamePadState currentGamePadState = new GamePadState();
 
         // inputs that come from the controller
         FreeCamInputs mInputs;
@@ -429,28 +416,28 @@ namespace Blimey
 
         public void WorkOutInputs()
         {
-            currentKeyboardState = Keyboard.GetState();
-            currentGamePadState = GamePad.GetState(PlayerIndex.One);
-
-            FreeCamInputs input = new FreeCamInputs();
-
+            var input = new FreeCamInputs();
+            
+            var xbox = this.Parent.Owner.Cor.Input.Xbox360Gamepad;
+            var keyboard = this.Parent.Owner.Cor.Input.Keyboard;
+                
             input.mTranslation = new Vector3(
-                currentGamePadState.ThumbSticks.Left.X,
+                xbox.Thumbsticks.Left.X,
                 0.0f,
-                -currentGamePadState.ThumbSticks.Left.Y
+                -xbox.Thumbsticks.Left.Y
                 );
 
             input.mRotation = new Vector3(
-                -currentGamePadState.ThumbSticks.Right.Y,
-                -currentGamePadState.ThumbSticks.Right.X,
+                -xbox.Thumbsticks.Right.Y,
+                -xbox.Thumbsticks.Right.X,
                 0.0f
                 );
 
-            input.mTranslationSpeed = currentGamePadState.Triggers.Right;
+            input.mTranslationSpeed = xbox.Triggers.Right;
 
             input.mRotationSpeedScale = 1.0f;
 
-           input.mFixUp = currentKeyboardState.IsKeyDown(Keys.U);
+            input.mFixUp = keyboard.IsCharacterKeyUp('u');
             SetInputs(input);
         }
 
@@ -465,8 +452,8 @@ namespace Blimey
             localRoll = 0.0f;
             oldPosition = Vector3.Zero;
         }
-
-        public void Apply(float zDt, CameraState zState, CameraState zPreviousCameraState)
+        
+        public override void OnUpdate(AppTime time)
         {
             WorkOutInputs();
 
@@ -474,12 +461,12 @@ namespace Blimey
                 + mInputs.mTranslationSpeed *
                 (mTranslationSpeedMaximum - mTranslationSpeedStandard);
 
-            Vector3 translation = mInputs.mTranslation * translationSpeed * zDt;
+            Vector3 translation = mInputs.mTranslation * translationSpeed * time.Delta;
 
             Vector3 rotation =
                 mInputs.mRotation *
-                MathHelper.ToRadians(mRotationSpeed) *
-                mInputs.mRotationSpeedScale * zDt;
+                RealMaths.ToRadians(mRotationSpeed) *
+                mInputs.mRotationSpeedScale * time.Delta;
 
             localPitch += rotation.X;
             localYaw += rotation.Y;
@@ -487,66 +474,67 @@ namespace Blimey
 
             Quaternion rotationFromInputs = Quaternion.CreateFromYawPitchRoll(localYaw, localPitch, localRoll);
 
-            Quaternion currentOri = zState.Orientation;
+            Quaternion currentOri = this.Parent.Transform.Rotation;
 
-            zState.Orientation = Quaternion.Multiply( currentOri, rotationFromInputs);
+            this.Parent.Transform.Rotation = Quaternion.Multiply(currentOri, rotationFromInputs);
 
             float yTranslation = translation.Y;
             translation.Y = 0.0f;
 
-            zState.Position += oldPosition + Vector3.Transform(translation, zState.Orientation) + new Vector3(0.0f, yTranslation, 0.0f);
-            zState.focusDistance = 3.0f;
+            this.Parent.Transform.Position += 
+                oldPosition + 
+                Vector3.Transform(translation, this.Parent.Transform.Rotation) + 
+                new Vector3(0.0f, yTranslation, 0.0f);
+            
+            //focusDistance = 3.0f;
 
             //update the old position for next time
-            oldPosition = zState.Position;
-            mInputs = null;
-
+            oldPosition = this.Parent.Transform.Position;
         }
     }
-    */
+
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public struct SpriteConfiguration
-    {
-        static SpriteConfiguration sprConf;
-
-        static SpriteConfiguration()
-        {
-            Single piOver2;
-            RealMaths.Pi(out piOver2);
-            piOver2 /= 2;
-            Single minusPiOver2 = -piOver2;
-            Matrix44 rotation = Matrix44.Identity;
-            Matrix44.CreateRotationX(ref minusPiOver2, out rotation);
-            Quaternion q;
-            Quaternion.CreateFromRotationMatrix(ref rotation, out q);
-
-
-            sprConf = new SpriteConfiguration()
-            {
-                SpriteSpaceScale = 100f,
-                SpriteSpaceOrientation = q
-            };
-        }
-
-        public static SpriteConfiguration Default { get { return sprConf; } }
-
-        // Defines the number of units in world
-        // space a sprite takes up, perhaps this should be a member of each
-        // sprite... Not sure yet...
-        // so as it stands if your sprite has width of 256 and heigh of 128 in
-        // world space, it will occupy 2.56 x 1.28 units on the face of the
-        // plane it is defined to use.
-        public Single SpriteSpaceScale { get; set; }
-
-        public Quaternion SpriteSpaceOrientation { get; set; }
-
-    }
 
     public class Sprite
         : Trait
     {
+        public struct SpriteConfiguration
+        {
+            static SpriteConfiguration sprConf;
+
+            static SpriteConfiguration()
+            {
+                Single piOver2;
+                RealMaths.Pi(out piOver2);
+                piOver2 /= 2;
+                Single minusPiOver2 = -piOver2;
+                Matrix44 rotation = Matrix44.Identity;
+                Matrix44.CreateRotationX(ref minusPiOver2, out rotation);
+                Quaternion q;
+                Quaternion.CreateFromRotationMatrix(ref rotation, out q);
+
+
+                sprConf = new SpriteConfiguration()
+                {
+                    SpriteSpaceScale = 100f,
+                    SpriteSpaceOrientation = q
+                };
+            }
+
+            public static SpriteConfiguration Default { get { return sprConf; } }
+
+            // Defines the number of units in world
+            // space a sprite takes up, perhaps this should be a member of each
+            // sprite... Not sure yet...
+            // so as it stands if your sprite has width of 256 and heigh of 128 in
+            // world space, it will occupy 2.56 x 1.28 units on the face of the
+            // plane it is defined to use.
+            public Single SpriteSpaceScale { get; set; }
+
+            public Quaternion SpriteSpaceOrientation { get; set; }
+
+        }
 
         SpriteMesh spriteMesh;
 
@@ -576,7 +564,7 @@ namespace Blimey
 
         SpriteConfiguration conf;
 
-        public SpriteConfiguration SpriteConfiguration
+        public SpriteConfiguration Configuration
         {
             get { return conf; }
             set
@@ -640,7 +628,7 @@ namespace Blimey
         //--------------------------------------------------------------------//
         public Sprite()
         {
-            SpriteConfiguration = SpriteConfiguration.Default;
+            Configuration = SpriteConfiguration.Default;
             desiredColour = Rgba32.White;
             desiredScale = 1f;
         }
@@ -648,9 +636,9 @@ namespace Blimey
         void CalculateTransforms()
         {
             Matrix44 scale =
-                Matrix44.CreateScale(SpriteConfiguration.SpriteSpaceScale);
+                Matrix44.CreateScale(Configuration.SpriteSpaceScale);
 
-            Quaternion q = SpriteConfiguration.SpriteSpaceOrientation;
+            Quaternion q = Configuration.SpriteSpaceOrientation;
             Matrix44 rotation;
             Matrix44.CreateFromQuaternion(
                 ref q,
@@ -916,8 +904,8 @@ namespace Blimey
                 {
                     _projection =
                         Matrix44.CreateOrthographic(
-                            width / SpriteConfiguration.Default.SpriteSpaceScale,
-                            height / SpriteConfiguration.Default.SpriteSpaceScale,
+                            width / Sprite.SpriteConfiguration.Default.SpriteSpaceScale,
+                            height / Sprite.SpriteConfiguration.Default.SpriteSpaceScale,
                             1, -1);
                 }
                 else
