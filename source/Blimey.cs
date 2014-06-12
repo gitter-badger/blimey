@@ -294,13 +294,22 @@ namespace Blimey
             return shader;
         }
 
-        public Vector2 Tiling { get; set; }
-        public Vector2 Offset { get; set; }
+		public Vector2 Tiling
+		{ 
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+        
+		public Vector2 Offset
+		{ 
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
         internal void UpdateGpuSettings(IGraphicsManager graphics)
         {
             // Update the render states on the gpu
-            BlendMode.Apply (this.BlendMode, graphics);
+            BlendMode.Apply (graphics, this.BlendMode);
 
             graphics.SetActiveTexture (0, null);
 
@@ -628,7 +637,7 @@ namespace Blimey
         static BlendMode lastSet = BlendMode.Default;
         static Boolean neverSet = true;
 
-        public static void Apply(BlendMode blendMode, IGraphicsManager graphics)
+        public static void Apply (IGraphicsManager graphics, BlendMode blendMode)
         {
             if (neverSet || lastSet != blendMode)
             {
