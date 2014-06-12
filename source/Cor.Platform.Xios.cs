@@ -32,17 +32,17 @@
 
 namespace Cor.Platform.Xios
 {
-    using System;
-    using System.Globalization;
-    using System.Collections;
-    using System.Collections.ObjectModel;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Drawing;
-    using System.Diagnostics;
-    using System.Runtime.ConstrainedExecution;
-    using System.Runtime.InteropServices;
-    using System.Linq;
+    using global::System;
+    using global::System.Globalization;
+    using global::System.Collections;
+    using global::System.Collections.ObjectModel;
+    using global::System.Collections.Generic;
+    using global::System.IO;
+    using global::System.Drawing;
+    using global::System.Diagnostics;
+    using global::System.Runtime.ConstrainedExecution;
+    using global::System.Runtime.InteropServices;
+    using global::System.Linq;
 
     using Abacus;
     using Abacus.Packed;
