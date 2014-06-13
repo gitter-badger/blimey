@@ -434,7 +434,6 @@ namespace Blimey
         }
     }
 
-
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public class GridRenderer
@@ -594,16 +593,16 @@ namespace Blimey
     }
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    /*
+
     public class PrimitiveBatch
     {
-        public class Triple
+        public class PrimitiveBatchTriple
         {
             public VertexPositionTextureColour[] v = new VertexPositionTextureColour[3];
             public ITexture tex = null;
             public BlendMode blend = BlendMode.Default;
 
-            public Triple()
+            public PrimitiveBatchTriple()
             {
                 v[0].Colour = v[1].Colour = v[2].Colour = Rgba32.White;
                 v[0].Position.Z = 0.5f;
@@ -612,13 +611,13 @@ namespace Blimey
             }
         }
 
-        public class Quad
+        public class PrimitiveBatchQuad
         {
             public VertexPositionTextureColour[] v;
             public ITexture tex;
             public BlendMode blend = BlendMode.Default;
 
-            public Quad()
+            public PrimitiveBatchQuad()
             {
                 v = new VertexPositionTextureColour[4];
                 v[0].Position.Z = 0.5f;
@@ -627,7 +626,7 @@ namespace Blimey
                 v[3].Position.Z = 0.5f;
             }
 
-            public Quad(Quad from)
+            public PrimitiveBatchQuad(PrimitiveBatchQuad from)
             {
                 v = new VertexPositionTextureColour[4];
 
@@ -640,20 +639,12 @@ namespace Blimey
             }
         }
 
-        public enum PrimType
+        public enum PrimitiveBatchType
         {
             PRIM_INVALID = 0,
             PRIM_LINES = 2,
             PRIM_TRIPLES = 3,
             PRIM_QUADS = 4,
-        }
-
-
-        public enum PixelShaderOutputColourFormat
-        {
-            NORMAL,
-            PRE_MULTIPLIED_BY_ALPHA,
-            PRE_MULTIPLIED_BY_INVERSE_ALPHA,
         }
 
         public class BlendModeDescAlpha
@@ -704,7 +695,7 @@ namespace Blimey
 
         bool hasBegun = false;
 
-        PrimType CurPrimType;
+        PrimitiveBatchType CurPrimType;
         BlendMode CurBlendMode = BlendMode.Default;
 
         BlendState primBatchBlendState = BlendState.AlphaBlend;
@@ -785,19 +776,19 @@ namespace Blimey
         // RENDER TRI
         // Renders a quad.
         //
-        public void RenderTriple(Triple zTriple)
+        public void RenderTriple(PrimitiveBatchTriple zTriple)
         {
             if (hasBegun)
             {
-                if (CurPrimType != PrimType.PRIM_TRIPLES ||
-                    nPrimsInBuffer >= VERT_BUFFER_SIZE / (uint)PrimType.PRIM_TRIPLES ||
+                if (CurPrimType != PrimitiveBatchType.PRIM_TRIPLES ||
+                    nPrimsInBuffer >= VERT_BUFFER_SIZE / (uint)PrimitiveBatchType.PRIM_TRIPLES ||
                     curTexture != zTriple.tex
                     || CurBlendMode != zTriple.blend
                 )
                 {
                     _render_batch(false);
 
-                    CurPrimType = PrimType.PRIM_TRIPLES;
+                    CurPrimType = PrimitiveBatchType.PRIM_TRIPLES;
                     if (CurBlendMode != zTriple.blend) SetBlendMode(zTriple.blend);
                     if (zTriple.tex != curTexture)
                     {
@@ -805,7 +796,7 @@ namespace Blimey
                     }
                 }
 
-                uint offset = nPrimsInBuffer * (uint)PrimType.PRIM_TRIPLES;
+                uint offset = nPrimsInBuffer * (uint)PrimitiveBatchType.PRIM_TRIPLES;
 
                 for (uint i = 0; i < 3; ++i)
                 {
@@ -830,12 +821,12 @@ namespace Blimey
         // RENDER QUAD
         // Renders a quad.
         //
-        public void RenderQuad( Quad zQuad )
+        public void RenderQuad( PrimitiveBatchQuad zQuad )
         {
             if (hasBegun)
             {
-                if (CurPrimType != PrimType.PRIM_QUADS ||
-                    nPrimsInBuffer >= VERT_BUFFER_SIZE / (uint)PrimType.PRIM_QUADS ||
+                if (CurPrimType != PrimitiveBatchType.PRIM_QUADS ||
+                    nPrimsInBuffer >= VERT_BUFFER_SIZE / (uint)PrimitiveBatchType.PRIM_QUADS ||
                     curTexture != zQuad.tex ||
                     CurBlendMode != zQuad.blend)
                 {
@@ -843,7 +834,7 @@ namespace Blimey
 
 
                     //Set up for new type
-                    CurPrimType = PrimType.PRIM_QUADS;
+                    CurPrimType = PrimitiveBatchType.PRIM_QUADS;
                     if (CurBlendMode != zQuad.blend) SetBlendMode(zQuad.blend);
                     if (zQuad.tex != curTexture)
                     {
@@ -853,7 +844,7 @@ namespace Blimey
                     }
                 }
 
-                uint offset = nPrimsInBuffer * (uint)PrimType.PRIM_QUADS;
+                uint offset = nPrimsInBuffer * (uint)PrimitiveBatchType.PRIM_QUADS;
 
                 for (uint i = 0; i < 4; ++i)
                 {
@@ -923,7 +914,7 @@ namespace Blimey
 
                     switch(CurPrimType)
                     {
-                    case PrimType.PRIM_QUADS:
+                    case PrimitiveBatchType.PRIM_QUADS:
                         gfx.DrawUserIndexedPrimitives<VertexPositionTextureColour>(
                             PrimitiveType.TriangleList, //primitiveType
                             vertBuffer, //vertexData
@@ -934,7 +925,7 @@ namespace Blimey
                             (int)nPrimsInBuffer * 4 / 2);//primitiveCount
                         break;
 
-                    case PrimType.PRIM_TRIPLES:
+                    case PrimitiveBatchType.PRIM_TRIPLES:
                         gfx.DrawUserPrimitives<VertexPositionTextureColour>(
                             PrimitiveType.TriangleList,//primitiveType
                             vertBuffer, //vertexData
@@ -942,7 +933,7 @@ namespace Blimey
                             (int)nPrimsInBuffer);//primitiveCount
                         break;
 
-                    case PrimType.PRIM_LINES:
+                    case PrimitiveBatchType.PRIM_LINES:
                         gfx.DrawUserPrimitives<VertexPositionTextureColour>(
                             PrimitiveType.LineList,//primitiveType
                             vertBuffer, //vertexData
@@ -999,8 +990,8 @@ namespace Blimey
             {
                 // If the array does not hold lines, or it is full
                 // or the texture has changed, or the blend mode
-                if (CurPrimType != PrimType.PRIM_LINES ||
-                    nPrimsInBuffer >= VERT_BUFFER_SIZE / (uint)PrimType.PRIM_LINES
+                if (CurPrimType != PrimitiveBatchType.PRIM_LINES ||
+                    nPrimsInBuffer >= VERT_BUFFER_SIZE / (uint)PrimitiveBatchType.PRIM_LINES
                     || curTexture != null
                     || CurBlendMode != BlendMode.BLEND_NORMAL
                 )
@@ -1008,13 +999,13 @@ namespace Blimey
 
                     _render_batch(false);
 
-                    CurPrimType = PrimType.PRIM_LINES;
+                    CurPrimType = PrimitiveBatchType.PRIM_LINES;
                     if (CurBlendMode != BlendMode.BLEND_NORMAL)
                         SetBlendMode(BlendMode.BLEND_NORMAL);
                     curTexture = null;
                 }
 
-                uint i = nPrimsInBuffer * (uint)PrimType.PRIM_LINES;
+                uint i = nPrimsInBuffer * (uint)PrimitiveBatchType.PRIM_LINES;
                 vertBuffer[i].Position = a; vertBuffer[i + 1].Position = b;
                 vertBuffer[i].Colour = vertBuffer[i + 1].Colour = zColour;
                 vertBuffer[i].UV.X = vertBuffer[i + 1].UV.X =
@@ -1040,5 +1031,4 @@ namespace Blimey
                 ClearOptions.Target | ClearOptions.DepthBuffer, zColour, 1.0f, 0);
         }
     }
-    */
 }

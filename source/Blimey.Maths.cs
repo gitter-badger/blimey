@@ -47,6 +47,15 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
+    public enum Space
+    {
+        World,
+        Self
+    }
+    
+    
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
     public static class BlimeyMathsHelper
     {
         public static Single Distance(Single value1, Single value2)

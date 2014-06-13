@@ -164,15 +164,6 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public enum CameraProjectionType
-    {
-        Perspective,
-        Orthographic,
-    }
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
     public abstract class Mesh
     {
         /// <summary>
@@ -195,183 +186,6 @@ namespace Blimey
         /// </summary>
         public IGeometryBuffer GeomBuffer;
     }
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public class Material
-    {
-        IShader shader;
-        string renderPass;
-
-        public BlendMode BlendMode { get; set; }
-        public string RenderPass { get { return renderPass; } }
-
-        public Material(string renderPass, IShader shader)
-        {
-            this.BlendMode = BlendMode.Default;
-
-            this.renderPass = renderPass;
-            this.shader = shader;
-        }
-
-        internal void UpdateShaderVariables(Matrix44 world, Matrix44 view, Matrix44 proj)
-        {
-            if(shader == null)
-                return;
-
-            // Right now we need to make sure that the shader variables are all set with this
-            // settings this material has defined.
-
-            // We don't know if the shader being used is exclusive to this material, or if it
-            // is shared between many.
-
-            // Therefore to be 100% sure we could reset every variable on the shader to the defaults,
-            // then set the ones that this material knows about, thus avoiding running with shader settings
-            // that this material doesn't know about that are being changed by something else that
-            // shares the shader.  This would be bad, as it will likely involve setting the same variable multiple times
-
-            // So instead, as an optimisation, iterate over all settings that this material knows about,
-            // and ask the shader to change them, this compare those changes against a full list of
-            // all of the shader's variables, if any were missed by the material, then set them to
-            // their default values.
-
-            // Right now, just use the easy option and optimise later ;-D
-
-            shader.ResetVariables();
-
-            shader.SetVariable ("World", world);
-            shader.SetVariable ("View", view);
-            shader.SetVariable ("Projection", proj);
-
-            foreach(var propertyName in colourSettings.Keys)
-            {
-                shader.SetVariable (propertyName, colourSettings[propertyName]);
-            }
-
-            foreach(var propertyName in floatSettings.Keys)
-            {
-                shader.SetVariable (propertyName, floatSettings[propertyName]);
-            }
-
-            foreach(var propertyName in matrixSettings.Keys)
-            {
-                shader.SetVariable (propertyName, matrixSettings[propertyName]);
-            }
-
-            foreach(var propertyName in vector3Settings.Keys)
-            {
-                shader.SetVariable (propertyName, vector3Settings[propertyName]);
-            }
-
-            foreach(var propertyName in vector4Settings.Keys)
-            {
-                shader.SetVariable (propertyName, vector4Settings[propertyName]);
-            }
-
-            foreach(var propertyName in scaleSettings.Keys)
-            {
-                shader.SetVariable (propertyName, scaleSettings[propertyName]);
-            }
-
-            foreach(var propertyName in textureOffsetSettings.Keys)
-            {
-                shader.SetVariable (propertyName, textureOffsetSettings[propertyName]);
-            }
-
-            shader.ResetSamplerTargets();
-
-            int i = 0;
-            foreach(var key in textureSamplerSettings.Keys)
-            {
-                shader.SetSamplerTarget (key, i);
-                i++;
-            }
-        }
-
-        internal IShader GetShader()
-        {
-            return shader;
-        }
-
-		public Vector2 Tiling
-		{ 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-        
-		public Vector2 Offset
-		{ 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-        internal void UpdateGpuSettings(IGraphicsManager graphics)
-        {
-            // Update the render states on the gpu
-            BlendMode.Apply (graphics, this.BlendMode);
-
-            graphics.SetActiveTexture (0, null);
-
-            // Set the active textures on the gpu
-            int i = 0;
-            foreach(var key in textureSamplerSettings.Keys)
-            {
-                graphics.SetActiveTexture (i, textureSamplerSettings[key]);
-                i++;
-            }
-        }
-
-        Dictionary<string, Rgba32> colourSettings = new Dictionary<string, Rgba32>();
-        Dictionary<string, Single> floatSettings = new Dictionary<string, Single>();
-        Dictionary<string, Matrix44> matrixSettings = new Dictionary<string, Matrix44>();
-        Dictionary<string, Vector3> vector3Settings = new Dictionary<string, Vector3>();
-        Dictionary<string, Vector4> vector4Settings = new Dictionary<string, Vector4>();
-        Dictionary<string, Vector2> scaleSettings = new Dictionary<string, Vector2>();
-        Dictionary<string, Vector2> textureOffsetSettings = new Dictionary<string, Vector2>();
-        Dictionary<string, ITexture> textureSamplerSettings = new Dictionary<string, ITexture>();
-
-        public void SetColour(string propertyName, Rgba32 colour)
-        {
-            colourSettings[propertyName] = colour;
-        }
-
-        public void SetFloat(string propertyName, Single value)
-        {
-            floatSettings[propertyName] = value;
-        }
-
-        public void SetMatrix(string propertyName, Matrix44 matrix)
-        {
-            matrixSettings[propertyName] = matrix;
-        }
-
-        public void SetVector4(string propertyName, Vector4 vector)
-        {
-            vector4Settings[propertyName] = vector;
-        }
-
-        public void SetVector3(string propertyName, Vector3 vector)
-        {
-            vector3Settings[propertyName] = vector;
-        }
-
-        public void SetTextureOffset(string propertyName, Vector2 offset)
-        {
-            textureOffsetSettings[propertyName] = offset;
-        }
-
-        public void SetTextureScale(string propertyName, Vector2 scale)
-        {
-            scaleSettings[propertyName] = scale;
-        }
-
-
-        public void SetTexture(string propertyName, ITexture texture)
-        {
-            textureSamplerSettings[propertyName] = texture;
-        }
-         }
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -482,174 +296,9 @@ namespace Blimey
     }
 
 
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public enum Space
-    {
-        World,
-        Self
-    }
 
 
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    // high level wrapper for blending stuff
-    public struct BlendMode
-        : IEquatable<BlendMode>
-    {
-        BlendFunction rgbBlendFunction;
-        BlendFactor sourceRgb;
-        BlendFactor destinationRgb;
-
-        BlendFunction alphaBlendFunction;
-        BlendFactor sourceAlpha;
-        BlendFactor destinationAlpha;
-
-        public override String ToString ()
-        {
-            return string.Format (
-                "{{rgbBlendFunction:{0} sourceRgb:{1} destinationRgb:{2} alphaBlendFunction:{3} sourceAlpha:{4} destinationAlpha:{5}}}"
-                , new Object[]
-                    {
-                        rgbBlendFunction.ToString (), sourceRgb.ToString (), destinationRgb.ToString (),
-                        alphaBlendFunction.ToString (), sourceAlpha.ToString (), destinationAlpha.ToString ()
-                    }
-            );
-        }
-
-        public Boolean Equals (BlendMode other)
-        {
-            return this == other;
-        }
-
-        public override Boolean Equals (Object obj)
-        {
-            Boolean flag = false;
-            if (obj is BlendMode) {
-                flag = this.Equals ((BlendMode)obj);
-            }
-            return flag;
-        }
-
-        public override Int32 GetHashCode ()
-        {
-            int a = (int) rgbBlendFunction.GetHashCode();
-            int b = (int) sourceRgb.GetHashCode();
-            int c = (int) destinationRgb.GetHashCode();
-
-            int d = (int) alphaBlendFunction.GetHashCode();
-            int e = (int) sourceAlpha.GetHashCode();
-            int f = (int) destinationAlpha.GetHashCode();
-
-
-            return a + b + c + d + e + f;
-        }
-
-        public static Boolean operator != (BlendMode value1, BlendMode value2)
-        {
-            return !(value1 == value2);
-        }
-
-        public static Boolean operator == (BlendMode value1, BlendMode value2)
-        {
-            if (value1.rgbBlendFunction != value2.rgbBlendFunction) return false;
-            if (value1.sourceRgb != value2.sourceRgb) return false;
-            if (value1.destinationRgb != value2.destinationRgb) return false;
-            if (value1.alphaBlendFunction != value2.alphaBlendFunction) return false;
-            if (value1.sourceAlpha != value2.sourceAlpha) return false;
-            if (value1.destinationAlpha != value2.destinationAlpha) return false;
-
-            return true;
-        }
-
-        public static BlendMode Default
-        {
-            get
-            {
-                var blendMode = new BlendMode();
-
-                blendMode.rgbBlendFunction =    BlendFunction.Add;
-                blendMode.sourceRgb =           BlendFactor.SourceAlpha;
-                blendMode.destinationRgb =      BlendFactor.InverseSourceAlpha;
-
-                blendMode.alphaBlendFunction =  BlendFunction.Add;
-                blendMode.sourceAlpha =         BlendFactor.One;
-                blendMode.destinationAlpha =    BlendFactor.InverseSourceAlpha;
-
-                return blendMode;
-            }
-        }
-
-        public static BlendMode Opaque
-        {
-            get
-            {
-                var blendMode = new BlendMode();
-
-                blendMode.rgbBlendFunction =    BlendFunction.Add;
-                blendMode.sourceRgb =           BlendFactor.One;
-                blendMode.destinationRgb =      BlendFactor.Zero;
-
-                blendMode.alphaBlendFunction =  BlendFunction.Add;
-                blendMode.sourceAlpha =         BlendFactor.One;
-                blendMode.destinationAlpha =    BlendFactor.Zero;
-
-                return blendMode;
-            }
-        }
-
-        public static BlendMode Subtract
-        {
-            get
-            {
-                var blendMode = new BlendMode();
-
-                blendMode.rgbBlendFunction =    BlendFunction.ReverseSubtract;
-                blendMode.sourceRgb =           BlendFactor.SourceAlpha;
-                blendMode.destinationRgb =      BlendFactor.One;
-
-                blendMode.alphaBlendFunction =  BlendFunction.ReverseSubtract;
-                blendMode.sourceAlpha =         BlendFactor.SourceAlpha;
-                blendMode.destinationAlpha =    BlendFactor.One;
-
-                return blendMode;
-            }
-        }
-
-        public static BlendMode Additive
-        {
-            get
-            {
-                var blendMode = new BlendMode();
-
-                blendMode.rgbBlendFunction =    BlendFunction.Add;
-                blendMode.sourceRgb =           BlendFactor.SourceAlpha;
-                blendMode.destinationRgb =      BlendFactor.One;
-
-                blendMode.alphaBlendFunction =  BlendFunction.Add;
-                blendMode.sourceAlpha =         BlendFactor.SourceAlpha;
-                blendMode.destinationAlpha =    BlendFactor.One;
-
-                return blendMode;
-            }
-        }
-
-        static BlendMode lastSet = BlendMode.Default;
-        static Boolean neverSet = true;
-
-        public static void Apply (IGraphicsManager graphics, BlendMode blendMode)
-        {
-            if (neverSet || lastSet != blendMode)
-            {
-                graphics.SetBlendEquation (
-                    blendMode.rgbBlendFunction, blendMode.sourceRgb, blendMode.destinationRgb,
-                    blendMode.alphaBlendFunction, blendMode.sourceAlpha, blendMode.destinationAlpha
-                    );
-
-                lastSet = blendMode;
-            }
-        }
-    }
 
 
 	// ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -1080,6 +729,281 @@ namespace Blimey
             dirLight2DiffuseColour = Rgba32.DimGrey;
             dirLight2SpecularColour = Rgba32.DarkBlue;
 
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    internal class SceneManager
+    {
+        Scene activeScene;
+        ICor cor;
+
+        SceneRenderManager renderManager;
+
+        public event System.EventHandler SimulationStateChanged;
+
+        public Scene ActiveState { get { return activeScene; } }
+
+        public SceneManager (ICor cor, Scene startScene)
+        {
+            this.cor = cor;
+            activeScene = startScene;
+            activeScene.Initialize(cor);
+            renderManager = new SceneRenderManager(cor);
+
+        }
+
+        public Boolean Update(AppTime time)
+        {
+            Scene a = activeScene.RunUpdate (time);
+
+            // If the active state returns a game state other than itself then we need to shut
+            // it down and start the returned state.  If a game state returns null then we need to
+            // shut the engine down.
+
+            //quitting the game
+            if (a == null)
+            {
+                activeScene.Uninitilise ();
+                return true;
+            }
+            else if (a != activeScene)
+            {
+                activeScene.Uninitilise ();
+
+                activeScene = a;
+
+                this.cor.Graphics.Reset();
+
+                GC.Collect();
+
+                activeScene.Initialize (cor);
+
+                if (SimulationStateChanged != null)
+                {
+                    SimulationStateChanged(this, System.EventArgs.Empty);
+                }
+
+                this.Update(time);
+
+            }
+
+            return false;
+
+        }
+
+        public void Render()
+        {
+            if (activeScene != null && activeScene.Active)
+            {
+                renderManager.Render(activeScene);
+            }
+            else
+            {
+                Console.WriteLine("Beep");
+            }
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    internal class SceneRenderManager
+    {
+        ICor Castle { get; set; }
+
+        internal SceneRenderManager(ICor cor)
+        {
+            this.Castle = cor;
+        }
+
+        internal void Render(Scene scene)
+        {
+            var sceneSettings = scene.Settings;
+
+            // Clear the background colour if the scene settings want us to.
+            if (sceneSettings.StartByClearingBackBuffer)
+            {
+                this.Castle.Graphics.ClearColourBuffer(sceneSettings.BackgroundColour);
+            }
+
+            foreach (string renderPass in sceneSettings.RenderPasses)
+            {
+                this.RenderPass(scene, renderPass);
+            }
+        }
+
+        List<MeshRenderer> list = new List<MeshRenderer>();
+        List<MeshRenderer> GetMeshRenderersWithMaterials(Scene scene, string pass)
+        {
+            list.Clear ();
+            foreach (var go in scene.SceneObjects)
+            {
+                var mr = go.GetTrait<MeshRenderer>();
+
+                if (mr == null)
+                {
+                    continue;
+                }
+
+                if (mr.Material == null)
+                {
+                    continue;
+                }
+
+                // if the material is for this pass
+                if (mr.Material.RenderPass == pass)
+                {
+                    list.Add(mr);
+                }
+            }
+
+            return list;
+        }
+
+        void RenderPass(Scene scene, string pass)
+        {
+            // init pass
+            var passSettings = scene.Settings.GetRenderPassSettings(pass);
+
+            var gfxManager = this.Castle.Graphics;
+
+            if (passSettings.ClearDepthBuffer)
+            {
+                gfxManager.ClearDepthBuffer();
+            }
+
+            var cam = scene.CameraManager.GetActiveCamera(pass);
+
+            var meshRenderers = this.GetMeshRenderersWithMaterials(scene, pass);
+
+            // TODO: big one
+            // we really need to group the mesh renderers by material
+            // and only make a new draw call when there are changes.
+            foreach (var mr in meshRenderers)
+            {
+                mr.Render(gfxManager, cam.ViewMatrix44, cam.ProjectionMatrix44);
+            }
+
+                scene.Blimey.DebugShapeRenderer.Render(
+                gfxManager, pass, cam.ViewMatrix44, cam.ProjectionMatrix44);
+
+        }
+    }
+
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    internal class SpriteMesh
+        : Mesh
+    {
+        VertexPositionTexture[] spriteVerts;
+        Int32[] spriteIndices;
+
+        private SpriteMesh()
+        {
+            spriteVerts = new VertexPositionTexture[]
+            {
+                new VertexPositionTexture ((-Vector3.Right - Vector3.Forward) / 2, new Vector2(0f, 1f)),
+                new VertexPositionTexture ((-Vector3.Right + Vector3.Forward) / 2, new Vector2(0f, 0f)),
+                new VertexPositionTexture ((Vector3.Right + Vector3.Forward) / 2, new Vector2(1f, 0f)),
+                new VertexPositionTexture ((Vector3.Right - Vector3.Forward) / 2, new Vector2(1f, 1f))
+            };
+
+            spriteIndices = new Int32[]
+            {
+                0,1,2,
+                0,2,3
+            };
+        }
+
+        public static SpriteMesh Create(IGraphicsManager gfx)
+        {
+            var sm = new SpriteMesh();
+            sm.GeomBuffer = gfx.CreateGeometryBuffer(
+                VertexPositionTexture.Default.VertexDeclaration,
+                sm.spriteVerts.Length,
+                sm.spriteIndices.Length);
+
+            sm.GeomBuffer.VertexBuffer.SetData(sm.spriteVerts);
+
+            sm.GeomBuffer.IndexBuffer.SetData(sm.spriteIndices);
+
+            sm.TriangleCount = 2;
+            sm.VertexCount = 4;
+            return sm;
+        }
+
+        public override VertexDeclaration VertDecl
+        {
+            get
+            {
+                return VertexPositionTexture.Default.VertexDeclaration;
+            }
+        }
+    }
+
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    internal class CameraManager
+    {
+        internal Camera GetActiveCamera(String RenderPass)
+        {
+            return _activeCameras[RenderPass].GetTrait<Camera> ();
+        }
+
+        Dictionary<String, SceneObject> _defaultCameras = new Dictionary<String,SceneObject>();
+        Dictionary<String, SceneObject> _activeCameras = new Dictionary<String,SceneObject>();
+
+        internal void SetDefaultCamera(String RenderPass)
+        {
+            _activeCameras[RenderPass] = _defaultCameras[RenderPass];
+        }
+
+        internal void SetMainCamera (String RenderPass, SceneObject go)
+        {
+            _activeCameras[RenderPass] = go;
+        }
+
+        internal CameraManager (Scene scene)
+        {
+            var settings = scene.Settings;
+
+            foreach (String renderPass in settings.RenderPasses)
+            {
+                var renderPassSettings = settings.GetRenderPassSettings(renderPass);
+
+                var go = scene.CreateSceneObject("RenderPass(" + renderPass + ") Provided Camera");
+
+                var cam = go.AddTrait<Camera>();
+
+                if (renderPassSettings.CameraProjectionType == CameraProjectionType.Perspective)
+                {
+                    go.Transform.Position = new Vector3(2, 1, 5);
+
+                    var orbit = go.AddTrait<OrbitAroundSubject>();
+                    orbit.CameraSubject = Transform.Origin;
+
+                    var lookAtSub = go.AddTrait<LookAtSubject>();
+                    lookAtSub.Subject = Transform.Origin;
+                }
+                else
+                {
+                    cam.Projection = CameraProjectionType.Orthographic;
+
+                    go.Transform.Position = new Vector3(0, 0, 0.5f);
+                    go.Transform.LookAt(Vector3.Zero);
+                }
+
+
+                _defaultCameras.Add(renderPass, go);
+                _activeCameras.Add(renderPass, go);
+            }
         }
     }
 }
