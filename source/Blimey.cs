@@ -57,6 +57,73 @@ namespace Blimey
     public sealed class Blimey
         : IApp
     {
+        class FpsHelper
+        {
+            Single fps = 0;
+            TimeSpan sampleSpan;
+            Stopwatch stopwatch;
+            Int32 sampleFrames;
+
+            Single Fps { get { return fps; } }
+
+            public FpsHelper()
+            {
+                sampleSpan = TimeSpan.FromSeconds(1);
+                fps = 0;
+                sampleFrames = 0;
+                stopwatch = Stopwatch.StartNew();
+
+            }
+
+            public void Update(AppTime time)
+            {
+                if (stopwatch.Elapsed > sampleSpan)
+                {
+                    // Update FPS value and start next sampling period.
+                    fps = (Single)sampleFrames / (Single)stopwatch.Elapsed.TotalSeconds;
+
+                    stopwatch.Reset();
+                    stopwatch.Start();
+                    sampleFrames = 0;
+                }
+            }
+
+            public void LogRender()
+            {
+                sampleFrames++;
+            }
+        }
+
+        class FrameBufferHelper
+        {
+            Rgba32 randomColour = Rgba32.CornflowerBlue;
+            Single colourChangeTime = 5.0f;
+            Single colourChangeTimer = 0.0f;
+
+            IGraphicsManager gfx;
+
+            public FrameBufferHelper(IGraphicsManager gfx)
+            {
+                this.gfx = gfx;
+            }
+
+            public void Update(AppTime time)
+            {
+                colourChangeTimer += time.Delta;
+
+                if (colourChangeTimer > colourChangeTime)
+                {
+                    colourChangeTimer = 0.0f;
+                    randomColour = RandomGenerator.Default.GetRandomColour();
+                }
+            }
+
+            public void Clear()
+            {
+                gfx.ClearColourBuffer(randomColour);
+            }
+        }
+
         Scene startScene;
         SceneManager sceneManager;
 
@@ -605,16 +672,6 @@ namespace Blimey
             }
         }
 
-        internal void Render(IGraphicsManager zGfx, Matrix44 zView, Matrix44 zProjection){
-            if (!Enabled)
-                return;
-
-            foreach (Trait behaviour in behaviours) {
-                if (behaviour.Active)
-                    behaviour.Render(zGfx, zView, zProjection);
-            }
-        }
-
         internal void Shutdown ()
         {
             foreach (var behaviour in behaviours)
@@ -653,11 +710,6 @@ namespace Blimey
             Active = true;
         }
 
-        // INTERNAL CALLBACKS
-        internal virtual void Render(IGraphicsManager zGfx, Matrix44 zView, Matrix44 zProjection) {}
-
-        //TODO MAKE THESE ABSTRACT
-
         // PUBLIC CALLBACKS
         public virtual void OnAwake () {}
 
@@ -666,7 +718,7 @@ namespace Blimey
         // Called when the Enabled state of the parent gameobject changes
         public virtual void OnEnable() {}
         public virtual void OnDisable() {}
-
+        
         public virtual void OnDestroy () {}
     }
 
@@ -812,11 +864,11 @@ namespace Blimey
 
     internal class SceneRenderManager
     {
-        ICor Castle { get; set; }
+        ICor Cor { get; set; }
 
         internal SceneRenderManager(ICor cor)
         {
-            this.Castle = cor;
+            this.Cor = cor;
         }
 
         internal void Render(Scene scene)
@@ -826,7 +878,7 @@ namespace Blimey
             // Clear the background colour if the scene settings want us to.
             if (sceneSettings.StartByClearingBackBuffer)
             {
-                this.Castle.Graphics.ClearColourBuffer(sceneSettings.BackgroundColour);
+                this.Cor.Graphics.ClearColourBuffer(sceneSettings.BackgroundColour);
             }
 
             foreach (string renderPass in sceneSettings.RenderPasses)
@@ -868,7 +920,7 @@ namespace Blimey
             // init pass
             var passSettings = scene.Settings.GetRenderPassSettings(pass);
 
-            var gfxManager = this.Castle.Graphics;
+            var gfxManager = this.Cor.Graphics;
 
             if (passSettings.ClearDepthBuffer)
             {
@@ -884,12 +936,94 @@ namespace Blimey
             // and only make a new draw call when there are changes.
             foreach (var mr in meshRenderers)
             {
-                mr.Render(gfxManager, cam.ViewMatrix44, cam.ProjectionMatrix44);
+                _renderMeshRenderer (gfxManager, pass, cam.ViewMatrix44, cam.ProjectionMatrix44, mr);
             }
 
-                scene.Blimey.DebugShapeRenderer.Render(
-                gfxManager, pass, cam.ViewMatrix44, cam.ProjectionMatrix44);
+            scene.Blimey.DebugShapeRenderer.Render(gfxManager, pass, cam.ViewMatrix44, cam.ProjectionMatrix44);
+        }
+        
+        static void _renderMeshRenderer (IGraphicsManager zGfx, string renderPass, Matrix44 zView, Matrix44 zProjection, MeshRenderer mr)
+        {
+            if (!mr.Active)
+                return;
+            
+            if (mr.Material.RenderPass != renderPass )
+                return;
+            
+            zGfx.GpuUtils.BeginEvent(Rgba32.Red, "MeshRenderer.Render");
 
+            using (new ProfilingTimer(t => FrameStats.SetCullModeTime += t))
+            {
+                zGfx.SetCullMode(mr.CullMode);
+            }
+
+            using (new ProfilingTimer(t => FrameStats.ActivateGeomBufferTime += t))
+            {
+                // Set our vertex declaration, vertex buffer, and index buffer.
+                zGfx.SetActiveGeometryBuffer(mr.Mesh.GeomBuffer);
+            }
+
+            using (new ProfilingTimer(t => FrameStats.MaterialTime += t))
+            {
+                mr.Material.UpdateGpuSettings (zGfx);
+
+                // The lighing manager right now just grabs the shader and tries to set
+                // all variables to do with lighting, without even knowing if the shader
+                // supports lighting.
+                mr.Material.SetColour( "AmbientLightColour", LightingManager.ambientLightColour );
+                mr.Material.SetColour( "EmissiveColour", LightingManager.emissiveColour );
+                mr.Material.SetColour( "SpecularColour", LightingManager.specularColour );
+                mr.Material.SetFloat( "SpecularPower", LightingManager.specularPower );
+
+                mr.Material.SetFloat( "FogEnabled", LightingManager.fogEnabled ? 1f : 0f );
+                mr.Material.SetFloat( "FogStart", LightingManager.fogStart );
+                mr.Material.SetFloat( "FogEnd", LightingManager.fogEnd );
+                mr.Material.SetColour( "FogColour", LightingManager.fogColour );
+
+                mr.Material.SetVector3( "DirectionalLight0Direction", LightingManager.dirLight0Direction );
+                mr.Material.SetColour( "DirectionalLight0DiffuseColour", LightingManager.dirLight0DiffuseColour );
+                mr.Material.SetColour( "DirectionalLight0SpecularColour", LightingManager.dirLight0SpecularColour );
+
+                mr.Material.SetVector3( "DirectionalLight1Direction", LightingManager.dirLight1Direction );
+                mr.Material.SetColour( "DirectionalLight1DiffuseColour", LightingManager.dirLight1DiffuseColour );
+                mr.Material.SetColour( "DirectionalLight1SpecularColour", LightingManager.dirLight1SpecularColour );
+
+                mr.Material.SetVector3( "DirectionalLight2Direction", LightingManager.dirLight2Direction );
+                mr.Material.SetColour( "DirectionalLight2DiffuseColour", LightingManager.dirLight2DiffuseColour );
+                mr.Material.SetColour( "DirectionalLight2SpecularColour", LightingManager.dirLight2SpecularColour );
+
+                mr.Material.SetVector3( "EyePosition", zView.Translation );
+
+                // Get the material's shader and apply all of the settings
+                // it needs.
+                mr.Material.UpdateShaderVariables (
+                    mr.Parent.Transform.Location,
+                    zView,
+                    zProjection
+                    );
+            }
+
+            var shader = mr.Material.GetShader ();
+
+            if( shader != null)
+            {
+                foreach (var effectPass in shader.Passes)
+                {
+                    using (new ProfilingTimer(t => FrameStats.ActivateShaderTime += t))
+                    {
+                        effectPass.Activate (mr.Mesh.GeomBuffer.VertexBuffer.VertexDeclaration);
+                    }
+                    using (new ProfilingTimer(t => FrameStats.DrawTime += t))
+                    {
+                        FrameStats.DrawIndexedPrimitivesCount ++;
+                        zGfx.DrawIndexedPrimitives (
+                            PrimitiveType.TriangleList, 0, 0,
+                            mr.Mesh.VertexCount, 0, mr.Mesh.TriangleCount);
+                    }
+                }
+            }
+
+            zGfx.GpuUtils.EndEvent();
         }
     }
 

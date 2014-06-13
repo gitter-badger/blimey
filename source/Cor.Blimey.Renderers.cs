@@ -647,41 +647,6 @@ namespace Blimey
             PRIM_QUADS = 4,
         }
 
-        public class BlendModeDescAlpha
-        {
-            public BlendModeDescAlpha(BlendState zBlendState, PixelShaderOutputColourFormat zColFmt)
-            {
-                BlendState = zBlendState;
-                PixShaderOutputColourFormat = zColFmt;
-            }
-            public BlendState BlendState;
-            public PixelShaderOutputColourFormat PixShaderOutputColourFormat;
-        }
-
-        static BlendModeDescAlpha[] acmodes = new BlendModeDescAlpha[]
-        {
-            // Normal
-            //new BlendModeDescAlpha(
-            //    BlendState.AlphaBlend,
-            //    PixelShaderOutputColourFormat.PRE_MULTIPLIED_BY_ALPHA ),
-
-            new BlendModeDescAlpha(
-                RenderStateUtils.BlendNormal,
-                //BlendState.AlphaBlend,
-                PixelShaderOutputColourFormat.NORMAL ),
-
-            // Additive
-            new BlendModeDescAlpha(
-                BlendState.Additive,
-                PixelShaderOutputColourFormat.NORMAL ),
-
-            // Subtract
-            new BlendModeDescAlpha(
-                RenderStateUtils.BlendSubtract,
-                PixelShaderOutputColourFormat.NORMAL ),
-
-        };
-
         protected IShader effectToUse;
 
         ITexture curTexture = null;
@@ -689,7 +654,7 @@ namespace Blimey
         const int VERT_BUFFER_SIZE = 4000;
         VertexPositionTextureColour[] vertBuffer = new VertexPositionTextureColour[VERT_BUFFER_SIZE];
 
-        short[] quadIndices = new short[VERT_BUFFER_SIZE * 3 / 2];
+        int[] quadIndices = new int[VERT_BUFFER_SIZE * 3 / 2];
 
         uint nPrimsInBuffer = 0;
 
@@ -698,43 +663,14 @@ namespace Blimey
         PrimitiveBatchType CurPrimType;
         BlendMode CurBlendMode = BlendMode.Default;
 
-        BlendState primBatchBlendState = BlendState.AlphaBlend;
-
-        [System.Diagnostics.Conditional("XBOX")]
-        void LoadCustomEffect(GraphicsDevice zGfxDevice, ContentManager zContentManager)
-        {
-            this.effectToUse = zContentManager.Load<Effect>("SunGiant.Framework.Content.Shaders\\TwoDeeEffect");
-            this.effectToUse.Parameters["BasicTexture"].SetValue(curTexture);
-            this.effectToUse.Parameters["UseTextures"].SetValue(true);
-            this.effectToUse.Parameters["VertexShaderIndex"].SetValue(0);
-            this.effectToUse.Parameters["PixelShaderIndex"].SetValue(0);
-        }
-
-        void LoadBasicEffect(IGraphicsManager gfx, ContentManager zContentManager)
-        {
-            IShader bE = new BasicEffect(gfx);
-            bE.VertexColorEnabled = true;
-            bE.TextureEnabled = true;
-            bE.DiffuseColor = Vector3.One;
-            bE.World = Matrix.Identity;
-            this.effectToUse = bE;
-        }
-
         //
         //SETUP GRAPHICS
         // Sets up the transforms for the 2d render and setup the basic effect
         //
-        public PrimitiveBatch(IGraphicsManager zGfxDevice, IAssetManager zContentManager)
+        public PrimitiveBatch (IGraphicsManager zGfxDevice, AssetManager zContentManager)
         {
-            System.Diagnostics.Debug.Assert(zContentManager != null);
-
-            // this will work
-            LoadBasicEffect(zGfxDevice, zContentManager);
-
-            // if possible this will override it
-            LoadCustomEffect(zGfxDevice, zContentManager);
-
-
+            // todo load shader here
+            
             // Set the index buffer for each vertex, using
             // clockwise winding
             quadIndices[0] = 1;
@@ -744,39 +680,23 @@ namespace Blimey
             quadIndices[4] = 3;
             quadIndices[5] = 1;
 
-
-
-            for (short i = 0, vertex = 0; i < quadIndices.Length; i += 6, vertex += 4)
+            for (int i = 0, vertex = 0; i < quadIndices.Length; i += 6, vertex += 4)
             {
                 quadIndices[i] = vertex;
-                quadIndices[i + 1] = (short)(vertex + 1);
-                quadIndices[i + 2] = (short)(vertex + 2);
+                quadIndices[i + 1] = vertex + 1;
+                quadIndices[i + 2] = vertex + 2;
                 quadIndices[i + 3] = vertex;
-                quadIndices[i + 4] = (short)(vertex + 2);
-                quadIndices[i + 5] = (short)(vertex + 3);
+                quadIndices[i + 4] = vertex + 2;
+                quadIndices[i + 5] = vertex + 3;
             }
         }
-
-
-
-        private void SetBlendMode(IGraphicsManager gfx, BlendMode zBlend )
-        {
-            CurBlendMode = zBlend;
-            gfx.BlendState = acmodes[(int)zBlend].BlendState;
-
-            if (effectToUse as BasicEffect == null)
-            {
-                effectToUse.Parameters["PixelShaderIndex"].SetValue((int)acmodes[(int)zBlend].PixShaderOutputColourFormat);
-            }
-        }
-
 
 
         //
         // RENDER TRI
         // Renders a quad.
         //
-        public void RenderTriple(PrimitiveBatchTriple zTriple)
+        public void RenderTriple(IGraphicsManager gfx, PrimitiveBatchTriple zTriple)
         {
             if (hasBegun)
             {
@@ -786,10 +706,9 @@ namespace Blimey
                     || CurBlendMode != zTriple.blend
                 )
                 {
-                    _render_batch(false);
+                    _render_batch(gfx, false);
 
                     CurPrimType = PrimitiveBatchType.PRIM_TRIPLES;
-                    if (CurBlendMode != zTriple.blend) SetBlendMode(zTriple.blend);
                     if (zTriple.tex != curTexture)
                     {
                         curTexture = zTriple.tex;
@@ -821,7 +740,7 @@ namespace Blimey
         // RENDER QUAD
         // Renders a quad.
         //
-        public void RenderQuad( PrimitiveBatchQuad zQuad )
+        public void RenderQuad(IGraphicsManager gfx, PrimitiveBatchQuad zQuad)
         {
             if (hasBegun)
             {
@@ -830,12 +749,10 @@ namespace Blimey
                     curTexture != zQuad.tex ||
                     CurBlendMode != zQuad.blend)
                 {
-                    _render_batch(false);
-
+                    _render_batch(gfx ,false);
 
                     //Set up for new type
                     CurPrimType = PrimitiveBatchType.PRIM_QUADS;
-                    if (CurBlendMode != zQuad.blend) SetBlendMode(zQuad.blend);
                     if (zQuad.tex != curTexture)
                     {
 
@@ -871,46 +788,15 @@ namespace Blimey
             get { return hasBegun; }
         }
 
-        protected void _render_batch(IGraphicsManager gfx, bool bEndScene)
+        void _render_batch(IGraphicsManager gfx, bool bEndScene)
         {
-
-            //RStateManager.Instance.Apply(primBatchRState);
-
-            // If we have a texture for this batch set the shader's mode to expect it and set it
-            // in the shader
-            if (curTexture != null)
-            {
-                BasicEffect basicEffect = effectToUse as BasicEffect;
-                if (basicEffect != null)
-                {
-                    basicEffect.Texture = curTexture;
-                    basicEffect.TextureEnabled = true;
-                }
-                else
-                {
-                    effectToUse.Parameters["BasicTexture"].SetValue(curTexture);
-                    effectToUse.Parameters["UseTextures"].SetValue(true);
-                }
-            }
-            // If we have no texture just set the shader's mode to vertex colour
-            else
-            {
-                BasicEffect basicEffect = effectToUse as BasicEffect;
-                if (basicEffect != null)
-                {
-                    basicEffect.TextureEnabled = false;
-                }
-                else
-                {
-                    effectToUse.Parameters["UseTextures"].SetValue(false);
-                }
-            }
+            //todo activate effect
 
             if(nPrimsInBuffer > 0)
             {
                 foreach (var pass in effectToUse.Passes)
                 {
-                    pass.Activate ();
+                    pass.Activate (VertexPositionTextureColour.Default.VertexDeclaration);
 
                     switch(CurPrimType)
                     {
@@ -922,7 +808,8 @@ namespace Blimey
                             (int)nPrimsInBuffer * 4, //numVertices
                             quadIndices, //indexData
                             0, //indexOffset
-                            (int)nPrimsInBuffer * 4 / 2);//primitiveCount
+                            (int)nPrimsInBuffer * 4 / 2,
+                            VertexPositionTextureColour.Default.VertexDeclaration);//primitiveCount
                         break;
 
                     case PrimitiveBatchType.PRIM_TRIPLES:
@@ -930,7 +817,8 @@ namespace Blimey
                             PrimitiveType.TriangleList,//primitiveType
                             vertBuffer, //vertexData
                             0,//vertexOffset
-                            (int)nPrimsInBuffer);//primitiveCount
+                            (int)nPrimsInBuffer,
+                            VertexPositionTextureColour.Default.VertexDeclaration);//primitiveCount
                         break;
 
                     case PrimitiveBatchType.PRIM_LINES:
@@ -938,53 +826,41 @@ namespace Blimey
                             PrimitiveType.LineList,//primitiveType
                             vertBuffer, //vertexData
                             0,//vertexOffset
-                            (int)nPrimsInBuffer);//primitiveCount
+                            (int)nPrimsInBuffer,
+                            VertexPositionTextureColour.Default.VertexDeclaration);//primitiveCount
                         break;
                     }
                 }
 
                 nPrimsInBuffer=0;
 
-                if(bEndScene)
-                    hasBegun = false;
+                hasBegun &= !bEndScene;
             }
         }
 
 
         public void BeginScene( IGraphicsManager gfx, Matrix44 zView, Matrix44 zProj)
         {
-            gfx.GpuUtils.BeginEvent( "Blimey: Primitive Batch" );
+            gfx.GpuUtils.BeginEvent( Rgba32.Blue, "Blimey: Primitive Batch" );
             hasBegun = true;
 
-            IShader basicEffect = effectToUse as BasicEffect;
-            if (basicEffect != null)
-            {
-                basicEffect.World = Matrix.Identity;
-                basicEffect.View = zView;
-                basicEffect.Projection = zProj;
-            }
-            else
-            {
-                effectToUse.Parameters["World"].SetValue(Matrix.Identity);
-                effectToUse.Parameters["View"].SetValue(zView);
-                effectToUse.Parameters["Projection"].SetValue(zProj);
-            }
-
-            SetBlendMode(gfx, BlendMode.BLEND_NORMAL);
+            //todo: set world view proj on shader
+            
+            BlendMode.Apply(gfx, BlendMode.Default);
         }
 
         //
         // END SCENE
         // Ends rendering and updates the screen.
         //
-        public void EndScene(IGraphicsManager graphics)
+        public void EndScene(IGraphicsManager gfx)
         {
-            _render_batch(graphics, true);
-            graphics.GpuUtils.EndEvent();
+            _render_batch(gfx, true);
+            gfx.GpuUtils.EndEvent();
         }
 
 
-        public void RenderLine(Vector3 a, Vector3 b, Rgba32 zColour)
+        public void RenderLine(IGraphicsManager gfx, Vector3 a, Vector3 b, Rgba32 zColour)
         {
             if (hasBegun)
             {
@@ -993,15 +869,15 @@ namespace Blimey
                 if (CurPrimType != PrimitiveBatchType.PRIM_LINES ||
                     nPrimsInBuffer >= VERT_BUFFER_SIZE / (uint)PrimitiveBatchType.PRIM_LINES
                     || curTexture != null
-                    || CurBlendMode != BlendMode.BLEND_NORMAL
+                    || CurBlendMode != BlendMode.Default
                 )
                 {
 
-                    _render_batch(false);
+                    _render_batch(gfx, false);
 
                     CurPrimType = PrimitiveBatchType.PRIM_LINES;
-                    if (CurBlendMode != BlendMode.BLEND_NORMAL)
-                        SetBlendMode(BlendMode.BLEND_NORMAL);
+                    if (CurBlendMode != BlendMode.Default)
+                        BlendMode.Apply(gfx, BlendMode.Default);
                     curTexture = null;
                 }
 
@@ -1015,20 +891,8 @@ namespace Blimey
             }
             else
             {
-                throw new InvalidOperationException
-                ("Begin must be called.");
+                throw new InvalidOperationException ("Begin must be called.");
             }
-        }
-
-        //
-        // CLEAR
-        // Clears the render target and the z buffer.
-        //
-        public void Clear(IGraphicsManager gfx, Rgba32 zColour)
-        {
-            //GraphicsDevice.Clear(zColour);
-            gfx.Clear(
-                ClearOptions.Target | ClearOptions.DepthBuffer, zColour, 1.0f, 0);
         }
     }
 }

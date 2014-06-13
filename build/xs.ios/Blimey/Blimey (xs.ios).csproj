@@ -96,26 +96,35 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\source\Blimey.Assets.cs">
+      <Link>Blimey.Assets.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\source\Blimey.cs">
       <Link>Blimey.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Content.cs">
-      <Link>Content.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Graphics.cs">
+      <Link>Blimey.Graphics.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Input.cs">
-      <Link>Input.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Internal.cs">
+      <Link>Blimey.Internal.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Internal.cs">
-      <Link>Internal.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Maths.cs">
+      <Link>Blimey.Maths.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Maths.cs">
-      <Link>Maths.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Traits.cs">
+      <Link>Blimey.Traits.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Render.cs">
-      <Link>Render.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Utilities.cs">
+      <Link>Blimey.Utilities.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Traits.cs">
-      <Link>Traits.cs</Link>
+    <Compile Include="..\..\..\source\Cor.Blimey.Content.cs">
+      <Link>Cor.Blimey.Content.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Cor.Blimey.Gesture.cs">
+      <Link>Cor.Blimey.Gesture.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Cor.Blimey.Renderers.cs">
+      <Link>Cor.Blimey.Renderers.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

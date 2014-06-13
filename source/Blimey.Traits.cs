@@ -122,88 +122,6 @@ namespace Blimey
             this.Material = null;
             this.CullMode = CullMode.CW;
         }
-
-        internal override void Render (IGraphicsManager zGfx, Matrix44 zView, Matrix44 zProjection)
-        {
-            if (!Active)
-                return;
-
-            zGfx.GpuUtils.BeginEvent(Rgba32.Red, "MeshRenderer.Render");
-
-            using (new ProfilingTimer(t => FrameStats.SetCullModeTime += t))
-            {
-                zGfx.SetCullMode(this.CullMode);
-            }
-
-            using (new ProfilingTimer(t => FrameStats.ActivateGeomBufferTime += t))
-            {
-                // Set our vertex declaration, vertex buffer, and index buffer.
-                zGfx.SetActiveGeometryBuffer(Mesh.GeomBuffer);
-            }
-
-            using (new ProfilingTimer(t => FrameStats.MaterialTime += t))
-            {
-                Material.UpdateGpuSettings (zGfx);
-
-                // The lighing manager right now just grabs the shader and tries to set
-                // all variables to do with lighting, without even knowing if the shader
-                // supports lighting.
-                Material.SetColour( "AmbientLightColour", LightingManager.ambientLightColour );
-                Material.SetColour( "EmissiveColour", LightingManager.emissiveColour );
-                Material.SetColour( "SpecularColour", LightingManager.specularColour );
-                Material.SetFloat( "SpecularPower", LightingManager.specularPower );
-
-                Material.SetFloat( "FogEnabled", LightingManager.fogEnabled ? 1f : 0f );
-                Material.SetFloat( "FogStart", LightingManager.fogStart );
-                Material.SetFloat( "FogEnd", LightingManager.fogEnd );
-                Material.SetColour( "FogColour", LightingManager.fogColour );
-
-                Material.SetVector3( "DirectionalLight0Direction", LightingManager.dirLight0Direction );
-                Material.SetColour( "DirectionalLight0DiffuseColour", LightingManager.dirLight0DiffuseColour );
-                Material.SetColour( "DirectionalLight0SpecularColour", LightingManager.dirLight0SpecularColour );
-
-                Material.SetVector3( "DirectionalLight1Direction", LightingManager.dirLight1Direction );
-                Material.SetColour( "DirectionalLight1DiffuseColour", LightingManager.dirLight1DiffuseColour );
-                Material.SetColour( "DirectionalLight1SpecularColour", LightingManager.dirLight1SpecularColour );
-
-                Material.SetVector3( "DirectionalLight2Direction", LightingManager.dirLight2Direction );
-                Material.SetColour( "DirectionalLight2DiffuseColour", LightingManager.dirLight2DiffuseColour );
-                Material.SetColour( "DirectionalLight2SpecularColour", LightingManager.dirLight2SpecularColour );
-
-                Material.SetVector3( "EyePosition", zView.Translation );
-
-                // Get the material's shader and apply all of the settings
-                // it needs.
-                Material.UpdateShaderVariables (
-                    this.Parent.Transform.Location,
-                    zView,
-                    zProjection
-                    );
-            }
-
-            var shader = Material.GetShader ();
-
-            if( shader != null)
-            {
-                foreach (var effectPass in shader.Passes)
-                {
-                    using (new ProfilingTimer(t => FrameStats.ActivateShaderTime += t))
-                    {
-                        effectPass.Activate (Mesh.GeomBuffer.VertexBuffer.VertexDeclaration);
-                    }
-                    using (new ProfilingTimer(t => FrameStats.DrawTime += t))
-                    {
-                        FrameStats.DrawIndexedPrimitivesCount ++;
-                        zGfx.DrawIndexedPrimitives (
-                            PrimitiveType.TriangleList, 0, 0,
-                            Mesh.VertexCount, 0, Mesh.TriangleCount);
-                    }
-                }
-            }
-
-            zGfx.GpuUtils.EndEvent();
-
-        }
     }
 
 
@@ -240,7 +158,6 @@ namespace Blimey
             this.Parent.Transform.LocalPosition = offset + CameraSubject.Position;
 
         }
-
     }
 
 
@@ -399,7 +316,7 @@ namespace Blimey
             public float mRotationSpeedScale;
             public bool mFixUp;
         }
-            
+
         float localPitch;
         float localYaw;
         float localRoll;
@@ -417,10 +334,10 @@ namespace Blimey
         public void WorkOutInputs()
         {
             var input = new FreeCamInputs();
-            
+
             var xbox = this.Parent.Owner.Cor.Input.Xbox360Gamepad;
             var keyboard = this.Parent.Owner.Cor.Input.Keyboard;
-                
+
             input.mTranslation = new Vector3(
                 xbox.Thumbsticks.Left.X,
                 0.0f,
@@ -452,7 +369,7 @@ namespace Blimey
             localRoll = 0.0f;
             oldPosition = Vector3.Zero;
         }
-        
+
         public override void OnUpdate(AppTime time)
         {
             WorkOutInputs();
@@ -481,11 +398,11 @@ namespace Blimey
             float yTranslation = translation.Y;
             translation.Y = 0.0f;
 
-            this.Parent.Transform.Position += 
-                oldPosition + 
-                Vector3.Transform(translation, this.Parent.Transform.Rotation) + 
+            this.Parent.Transform.Position +=
+                oldPosition +
+                Vector3.Transform(translation, this.Parent.Transform.Rotation) +
                 new Vector3(0.0f, yTranslation, 0.0f);
-            
+
             //focusDistance = 3.0f;
 
             //update the old position for next time
