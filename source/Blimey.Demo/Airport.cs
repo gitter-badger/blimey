@@ -41,36 +41,6 @@ using System.Collections.Generic;
 
 namespace Blimey.Demo
 {
-	public class Airport
-	{
-		public Airport(string[] items)
-		{
 
-			ID = int.Parse(items[0]);
-			Name = items[1].Replace("\"", string.Empty);
-			City = items[2].Replace("\"", string.Empty);
-			Country = items[3].Replace("\"", string.Empty);
-			Iata = items[4].Replace("\"", string.Empty);
-			Icao = items[5].Replace("\"", string.Empty);
-			Latitude = float.Parse(items[6]);
-			Longitude = float.Parse(items[7]);
-			Altitude = int.Parse(items[8]);
-			Timezone = float.Parse(items[9]);
-			Dst = char.Parse(items[10].Replace("\"", string.Empty));
-		}
-
-		public int ID {get; private set; }
-		public string Name { get; private set; }
-		public string City { get; private set; }
-		public string Country { get; private set; }
-		public string Iata { get; private set; }
-		public string Icao { get; private set; }
-		public float Latitude { get; private set; }
-		public float Longitude { get; private set; }
-		public int Altitude { get; private set; }
-		public float Timezone { get; private set; }
-		public char Dst { get; private set; }
-
-	}
 }
 

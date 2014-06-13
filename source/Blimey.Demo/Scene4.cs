@@ -44,14 +44,104 @@ namespace Blimey.Demo
     public class Scene4
         : Scene
     {
+        public class Hare
+            : Trait
+        {
+            Vector2 velocity;
+            Single deltaScale;
+            Single deltaRotation;
+    
+            Sprite sprite;
+    
+            public override void OnAwake()
+            {
+                this.sprite = this.Parent.AddTrait<Sprite>();
+    
+                this.sprite.Texture = Scene4.texZa;
+    
+                var bm = BlendMode.Default;
+    
+                switch (RandomGenerator.Default.GetRandomInt32 (2))
+                {
+                    case 1: bm = BlendMode.Subtract; break;
+                    case 2: bm = BlendMode.Additive; break;
+                    case 3: bm = BlendMode.Opaque; break;
+                }
+    
+                this.sprite.Material.BlendMode = bm;
+    
+                this.sprite.DebugRender = null;
+    
+                Single width = (Single) Scene4.screenWidth / 2f;
+                Single height = (Single) Scene4.screenHeight / 2f;
+    
+                this.velocity = RandomGenerator.Default.GetRandomVector2(-200, 200);
+                this.deltaRotation = RandomGenerator.Default.GetRandomSingle(-0.5f, 0.5f);
+    
+                this.deltaScale = RandomGenerator.Default.GetRandomSingle(-0.2f, 0.2f);
+    
+                Single pi;
+                RealMaths.Pi(out pi);
+    
+                this.sprite.Rotation = RandomGenerator.Default.GetRandomSingle(0, pi);
+                Single x = RandomGenerator.Default.GetRandomSingle( 0, width );
+                Single y = RandomGenerator.Default.GetRandomSingle( 0 , height );
+                this.sprite.Position = new Vector2(x, y);
+                this.sprite.Scale = RandomGenerator.Default.GetRandomSingle(0.8f, 1.2f);
+    
+                this.sprite.Width = 64f;
+                this.sprite.Height = 64f;
+    
+                this.sprite.Colour = RandomGenerator.Default.GetRandomColour();
+                //this.sprite.FlipVertical = RandomGenerator.Default.GetRandomBoolean();
+                //this.sprite.FlipHorizontal = RandomGenerator.Default.GetRandomBoolean();
+            }
+    
+            public void EnabledDebugRenderer (Boolean on)
+            {
+                this.sprite.DebugRender = on ? "Default" : null;
+            }
+    
+            public override void OnUpdate(AppTime time)
+            {
+                Single width = (Single) Scene4.screenWidth / 2f;
+                Single height = (Single) Scene4.screenHeight / 2f;
+    
+                this.sprite.Position += this.velocity * time.Delta;
+    
+                if (this.sprite.Position.X > width || this.sprite.Position.X < -width)
+                {
+                    this.velocity.X = -this.velocity.X;
+                }
+    
+                if (this.sprite.Position.Y > height || this.sprite.Position.Y < -height)
+                {
+                    this.velocity.Y = -this.velocity.Y;
+                }
+    
+                this.sprite.Scale += this.deltaScale * time.Delta;
+    
+                if (this.sprite.Scale > 1.2f || this.sprite.Scale < 0.8f)
+                {
+                    this.deltaScale = -this.deltaScale;
+                }
+    
+                this.sprite.Rotation += this.deltaRotation * time.Delta;
+            }
+    
+            public override void OnDestroy ()
+            {
+    
+            }
+        }
         Scene _returnScene;
 
-        //const Int32 MinVans = 25;
-        const Int32 MaxVans = 64;
+        const Int32 MinHares = 16;
+        const Int32 MaxHares = 256;
 
-        const Int32 currentNumVans = 64;
+        Int32 currentNumVans = 32;
 
-        readonly List<CaliforniaVan> vans = new List<CaliforniaVan>();
+        readonly List<Hare> hares = new List<Hare>();
 
         GridRenderer gr;
 
@@ -61,8 +151,8 @@ namespace Blimey.Demo
 
         public static Int32 screenWidth;
         public static Int32 screenHeight;
-        public static ITexture texVan1;
-        public static ITexture texVan2;
+        public static ITexture texZa;
+        public static ITexture texBg;
 
         public Scene4()
         {
@@ -72,51 +162,29 @@ namespace Blimey.Demo
         public override void Start ()
         {
 			ShaderAsset unlitShaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
-			this.Blimey.DebugShapeRenderer.DebugShader = 
-				this.Cor.Graphics.CreateShader (unlitShaderAsset);
+			this.Blimey.DebugShapeRenderer.DebugShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
+            Sprite.SpriteShader = this.Cor.Graphics.CreateShader(unlitShaderAsset);
+            
             gr = new GridRenderer (this.Blimey.DebugShapeRenderer, "Default");
 
 			screenWidth = this.Cor.AppStatus.Width;
 			screenHeight = this.Cor.AppStatus.Height;
 
-            if (texVan1 == null)
-			{
-				var ta = this.Cor.Assets.Load<TextureAsset> ("cvan01.cba");
-				texVan1 = this.Cor.Graphics.UploadTexture (ta);
-			}
+			var ta_za = this.Cor.Assets.Load<TextureAsset> ("zazaka.cba");
+            var ta_bg = this.Cor.Assets.Load<TextureAsset> ("bg2.cba");
+			texZa = this.Cor.Graphics.UploadTexture (ta_za);
+            texBg = this.Cor.Graphics.UploadTexture (ta_bg);
+            
+            var soBG = this.CreateSceneObject ("bg");
 
-            if( texVan2 == null )
-			{
-				var ta = this.Cor.Assets.Load<TextureAsset> ("cvan02.cba");
-				texVan2 = this.Cor.Graphics.UploadTexture (ta);
-			}
-
-            var shaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
-
-			Sprite.SpriteShader = this.Cor.Graphics.CreateShader(shaderAsset);
-
-            /*
-            var go = this.CreateSceneObject("block");
-
-            go.Transform.LocalScale = new Vector3(0.5f, 0.1f, 2f);
-
-
-            Single piOver2 = 0;
-            RealMaths.PiOver2(out piOver2);
-
-            Vector3 x = Vector3.Right;
-            Quaternion q;
-            Quaternion.CreateFromAxisAngle(ref x, -piOver2, out q);
-            go.Transform.LocalRotation = q;
-
-
-            var mr = go.AddTrait<MeshRenderer>();
-
-            mr.Mesh = new CubePrimitive(this.Cor.Graphics);
-            mr.Material = new Material("Default", this.Cor.Resources.GetShader(
-                ShaderType.Gouraud,mr.Mesh.VertDecl));
-
-            */
+            var spr = soBG.AddTrait <Sprite> ();
+            spr.Width = 256f;
+            spr.Height = 256f;
+            spr.Texture = texBg;
+            spr.Depth = 1f;
+            //spr.Material.Offset = new Vector2 (0.5f, 0.5f);
+            spr.Material.SetColour ("MaterialColour", Rgba32.Yellow);
+            
 
             Single pi = 0;
             RealMaths.Pi(out pi);
@@ -130,59 +198,43 @@ namespace Blimey.Demo
             orthoCam.Projection = CameraProjectionType.Orthographic;
 
             orthoCam.TempWORKOUTANICERWAY = true;
-            //Quaternion q;
-            //Quaternion.CreateFromYawPitchRoll(pi, 0, 0, out q);
-            //newCamSo.Transform.LocalRotation = q;
 
             this.SetRenderPassCameraTo("Default", newCamSo);
-
-            /*
-            var camSo = this.GetRenderPassCamera("Default");
-
-            //camSo.Transform.LocalPosition = new Vector3(0,300,0);
-
-            this.Cor.System.GetEffectiveDisplaySize(ref screenWidth, ref screenHeight);
-
-            var cam = camSo.GetTrait<Camera>();
-
-            //cam.Projection = CameraProjectionType.Orthographic;
-            camSo.GetTrait<OrbitAroundSubject>().Speed = -0.01f;
-			*/
-
             this.Settings.BackgroundColour = Rgba32.Aquamarine;
 
-            while (vans.Count != MaxVans )
+            while (hares.Count != MaxHares )
             {
-                var so = this.CreateSceneObject("van #" + vans.Count);
-                var vanTrait = so.AddTrait<CaliforniaVan>();
-                vans.Add(vanTrait);
+                var so = this.CreateSceneObject("van #" + hares.Count);
+                var vanTrait = so.AddTrait<Hare>();
+                hares.Add(vanTrait);
 
             }
 
             this.Blimey.InputEventSystem.Tap += this.HandleTap;
 
         }
-
-        void HandleTap(Gesture gesture)
+        
+        void HandleTap (Gesture gesture)
         {
-            _returnScene = new MainMenuScene();
-            /*
-            currentNumVans += 100;
-
-            if( currentNumVans > MaxVans )
-            {
-                currentNumVans = MinVans;
-            }
-            */
+            ChangeNumHares ();
         }
+            
+            
+        void ChangeNumHares ()
+        { 
+            currentNumVans = currentNumVans << 1;
 
-        void AdjustNumVans()
-        {
-            for(Int32 i = 0; i < vans.Count; ++i)
+            if( currentNumVans > MaxHares )
             {
-                var vanTrait = vans[i];
+                currentNumVans = MinHares;
+            }
+            
+            for(Int32 i = 0; i < hares.Count; ++i)
+            {
+                var vanTrait = hares[i];
 
                 vanTrait.Parent.Enabled = (i < currentNumVans);
+                
             }
         }
 
@@ -192,11 +244,11 @@ namespace Blimey.Demo
 
 			// Clean up the things we allocated on the GPU.
 			this.Cor.Graphics.DestroyShader (Sprite.SpriteShader);
-			this.Cor.Graphics.UnloadTexture (texVan1);
-			this.Cor.Graphics.UnloadTexture (texVan2);
+			this.Cor.Graphics.UnloadTexture (texZa);
+            this.Cor.Graphics.UnloadTexture (texBg);
 			Sprite.SpriteShader = null;
-			texVan1 = null;
-			texVan2 = null;
+            texZa = null;
+			texBg = null;
         }
 
         public override Scene Update (AppTime time)
@@ -219,17 +271,24 @@ namespace Blimey.Demo
                 }
 
 				if (Cor.Input.GenericGamepad.Buttons.North == ButtonState.Pressed ||
-                Cor.Input.Keyboard.IsCharacterKeyDown ('d'))
+                    Cor.Input.Keyboard.IsCharacterKeyDown ('d'))
                 {
                     debugLinesOn = !debugLinesOn;
 
-                    vans.ForEach( x => x.EnabledDebugRenderer(debugLinesOn) );
+                    hares.ForEach( x => x.EnabledDebugRenderer(debugLinesOn) );
+                }
+                
+                if (Cor.Input.GenericGamepad.Buttons.South == ButtonState.Pressed ||
+                    Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Spacebar))
+                {
+                    ChangeNumHares ();
                 }
 
-                timer = 0.5f;
+                timer = 0.2f;
             }
-
-            gr.Update ();
+            
+            if (debugLinesOn)
+                gr.Update ();
 
             if (debugLinesOn)
             {
@@ -246,6 +305,7 @@ namespace Blimey.Demo
                     new Vector3 (left, top, 0),
                     Rgba32.Yellow);
             }
+            
 
             return _returnScene;
         }

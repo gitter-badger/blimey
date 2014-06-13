@@ -81,7 +81,7 @@ namespace Blimey.Demo
 			spr.Width = 256f;
 			spr.Height = 256f;
 			spr.Texture = fntTex;
-			spr.Material.Offset = new Vector2 (0.5f, 0.5f);
+			//spr.Material.Offset = new Vector2 (0.5f, 0.5f);
 			spr.Material.SetColour ("MaterialColour", Rgba32.Yellow);
 
 			unlitShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);

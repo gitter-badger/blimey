@@ -75,12 +75,6 @@
   <ItemGroup>
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="..\..\..\source\Blimey.Demo\Airport.cs">
-      <Link>source\Airport.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\CaliforniaVan.cs">
-      <Link>source\CaliforniaVan.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\source\Blimey.Demo\ColourChanger.cs">
       <Link>source\ColourChanger.cs</Link>
     </Compile>
@@ -155,6 +149,9 @@
     </BundleResource>
     <BundleResource Include="..\..\..\assets\monomac\blimey_fnt_uv.cba">
       <Link>assets\monomac\blimey_fnt_uv.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\zazaka.cba">
+      <Link>assets\monomac\zazaka.cba</Link>
     </BundleResource>
   </ItemGroup>
   <ItemGroup>

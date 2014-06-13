@@ -60,6 +60,7 @@ namespace Blimey.Demo
 
             Vector3.Normalise(ref _vec, out _vec);
         }
+        
         public override void OnUpdate(AppTime time)
         {
             _timer += time.Delta;

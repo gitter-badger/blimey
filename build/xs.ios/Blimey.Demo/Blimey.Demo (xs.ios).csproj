@@ -101,12 +101,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="..\..\..\source\Blimey.Demo\Airport.cs">
-      <Link>source\Airport.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\CaliforniaVan.cs">
-      <Link>source\CaliforniaVan.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\source\Blimey.Demo\ColourChanger.cs">
       <Link>source\ColourChanger.cs</Link>
     </Compile>
@@ -183,6 +177,15 @@
     </BundleResource>
     <BundleResource Include="..\..\..\assets\xios\vertex_lit.cba">
       <Link>assets\xios\vertex_lit.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\zazaka.cba">
+      <Link>assets\xios\zazaka.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\blimey_fnt_tex.cba">
+      <Link>assets\xios\blimey_fnt_tex.cba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\blimey_fnt_uv.cba">
+      <Link>assets\xios\blimey_fnt_uv.cba</Link>
     </BundleResource>
   </ItemGroup>
   <ItemGroup>
