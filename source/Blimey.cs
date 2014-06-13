@@ -893,6 +893,8 @@ namespace Blimey
             list.Clear ();
             foreach (var go in scene.SceneObjects)
             {
+                if (!go.Enabled) continue;
+                
                 var mr = go.GetTrait<MeshRenderer>();
 
                 if (mr == null)
