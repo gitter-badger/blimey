@@ -453,6 +453,55 @@ namespace Blimey
 
         }
 
+		class SpriteMesh
+        	: Mesh
+	    {
+	        VertexPositionTexture[] spriteVerts;
+	        Int32[] spriteIndices;
+	
+	        private SpriteMesh()
+	        {
+	            spriteVerts = new VertexPositionTexture[]
+	            {
+	                new VertexPositionTexture ((-Vector3.Right - Vector3.Forward) / 2, new Vector2(0f, 1f)),
+	                new VertexPositionTexture ((-Vector3.Right + Vector3.Forward) / 2, new Vector2(0f, 0f)),
+	                new VertexPositionTexture ((Vector3.Right + Vector3.Forward) / 2, new Vector2(1f, 0f)),
+	                new VertexPositionTexture ((Vector3.Right - Vector3.Forward) / 2, new Vector2(1f, 1f))
+	            };
+	
+	            spriteIndices = new Int32[]
+	            {
+	                0,1,2,
+	                0,2,3
+	            };
+	        }
+	
+	        public static SpriteMesh Create(IGraphicsManager gfx)
+	        {
+	            var sm = new SpriteMesh();
+	            sm.GeomBuffer = gfx.CreateGeometryBuffer(
+	                VertexPositionTexture.Default.VertexDeclaration,
+	                sm.spriteVerts.Length,
+	                sm.spriteIndices.Length);
+	
+	            sm.GeomBuffer.VertexBuffer.SetData(sm.spriteVerts);
+	
+	            sm.GeomBuffer.IndexBuffer.SetData(sm.spriteIndices);
+	
+	            sm.TriangleCount = 2;
+	            sm.VertexCount = 4;
+	            return sm;
+	        }
+	
+	        public override VertexDeclaration VertDecl
+	        {
+	            get
+	            {
+	                return VertexPositionTexture.Default.VertexDeclaration;
+	            }
+	        }
+	    }
+		
         SpriteMesh spriteMesh;
 
         // all sprites share a quad uploaded to the gpu.
@@ -635,7 +684,6 @@ namespace Blimey
                     Rgba32.Red
                     );
             }
-
         }
 
 

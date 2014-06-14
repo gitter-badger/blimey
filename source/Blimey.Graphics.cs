@@ -57,7 +57,9 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    // high level wrapper for blending stuff
+	/// <summary>
+	/// Provides Blimey consumers a means to configure the GPU's blending equation.
+	/// </summary>
     public struct BlendMode
         : IEquatable<BlendMode>
     {
@@ -72,12 +74,10 @@ namespace Blimey
         public override String ToString ()
         {
             return string.Format (
-                "{{rgbBlendFunction:{0} sourceRgb:{1} destinationRgb:{2} alphaBlendFunction:{3} sourceAlpha:{4} destinationAlpha:{5}}}"
-                , new Object[]
-                    {
-                        rgbBlendFunction.ToString (), sourceRgb.ToString (), destinationRgb.ToString (),
-                        alphaBlendFunction.ToString (), sourceAlpha.ToString (), destinationAlpha.ToString ()
-                    }
+                "{{rgbBlendFunction:{0} sourceRgb:{1} destinationRgb:{2}" + 
+				" alphaBlendFunction:{3} sourceAlpha:{4} destinationAlpha:{5}}}",
+				rgbBlendFunction.ToString (), sourceRgb.ToString (), destinationRgb.ToString (),
+                alphaBlendFunction.ToString (), sourceAlpha.ToString (), destinationAlpha.ToString ()
             );
         }
 
@@ -105,8 +105,23 @@ namespace Blimey
             int e = (int) sourceAlpha.GetHashCode();
             int f = (int) destinationAlpha.GetHashCode();
 
+            return a ^ b ^ c ^ d ^ e ^ f;
+        }
 
-            return a + b + c + d + e + f;
+        static BlendMode lastSet = BlendMode.Default;
+        static Boolean neverSet = true;
+
+        public static void Apply (IGraphicsManager graphics, BlendMode blendMode)
+        {
+            if (neverSet || lastSet != blendMode)
+            {
+                graphics.SetBlendEquation (
+                    blendMode.rgbBlendFunction, blendMode.sourceRgb, blendMode.destinationRgb,
+                    blendMode.alphaBlendFunction, blendMode.sourceAlpha, blendMode.destinationAlpha
+                    );
+
+                lastSet = blendMode;
+            }
         }
 
         public static Boolean operator != (BlendMode value1, BlendMode value2)
@@ -195,22 +210,6 @@ namespace Blimey
                 blendMode.destinationAlpha =    BlendFactor.One;
 
                 return blendMode;
-            }
-        }
-
-        static BlendMode lastSet = BlendMode.Default;
-        static Boolean neverSet = true;
-
-        public static void Apply (IGraphicsManager graphics, BlendMode blendMode)
-        {
-            if (neverSet || lastSet != blendMode)
-            {
-                graphics.SetBlendEquation (
-                    blendMode.rgbBlendFunction, blendMode.sourceRgb, blendMode.destinationRgb,
-                    blendMode.alphaBlendFunction, blendMode.sourceAlpha, blendMode.destinationAlpha
-                    );
-
-                lastSet = blendMode;
             }
         }
     }

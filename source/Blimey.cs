@@ -54,7 +54,7 @@ namespace Blimey
 	/// Blimey takes care of the Update and Render loop for you, all you need to do is author <see cref="Blimey.Scene"/>
 	/// objects for Blimey to handle.
 	/// </summary>
-    public sealed class Blimey
+	public class App
         : IApp
     {
         class FpsHelper
@@ -129,11 +129,11 @@ namespace Blimey
 
         FpsHelper fps;
         FrameBufferHelper frameBuffer;
-
+		
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Blimey.Blimey"/> class.
 		/// </summary>
-        public Blimey(Scene startScene)
+        public App (Scene startScene)
         {
             this.startScene = startScene;
         }
@@ -141,7 +141,7 @@ namespace Blimey
 		/// <summary>
 		/// Blimey's initilisation rountine.
 		/// </summary>
-		public void Start(ICor cor)
+		public virtual void Start(ICor cor)
         {
             fps = new FpsHelper();
             frameBuffer = new FrameBufferHelper(cor.Graphics);
@@ -151,7 +151,7 @@ namespace Blimey
 		/// <summary>
 		/// Blimey's root update loop.
 		/// </summary>
-		public Boolean Update(ICor cor, AppTime time)
+		public virtual Boolean Update(ICor cor, AppTime time)
         {
 			//FrameStats.SlowLog ();
 			FrameStats.Reset ();
@@ -168,7 +168,7 @@ namespace Blimey
 		/// <summary>
 		/// Blimey's render loop.
 		/// </summary>
-		public void Render(ICor cor)
+		public virtual void Render(ICor cor)
         {
             using (new ProfilingTimer(t => FrameStats.RenderTime += t))
             {
@@ -181,18 +181,18 @@ namespace Blimey
 		/// <summary>
 		/// Blimey's termination routine.
 		/// </summary>
-		public void Stop (ICor cor)
+		public virtual void Stop (ICor cor)
 		{
 		}
     }
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Services
+    public class Blimey
     {
         ICor cor;
 
-        internal Services (ICor cor, SceneSettings settings)
+        internal Blimey (ICor cor, Scene.SceneConfiguration settings)
         {
             this.cor = cor;
 
@@ -255,283 +255,294 @@ namespace Blimey
     }
 
 
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+ 	// ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    
+	public class RenderPass
+	{
+		public struct RenderPassConfiguration
+	    {
+			public static RenderPassConfiguration Default
+			{
+				get
+				{
+					var rpc = new RenderPassConfiguration ();
+					rpc.ClearDepthBuffer = false;
+					rpc.FogEnabled = false;
+					rpc.FogColour = Rgba32.CornflowerBlue;
+					rpc.FogStart = 300.0f;
+					rpc.FogEnd = 550.0f;
+					rpc.EnableDefaultLighting = true;
+					rpc.CameraProjectionType = CameraProjectionType.Perspective;
+					return rpc;
+				}
+			}
+			
+	        public Boolean ClearDepthBuffer;
+	        public Boolean FogEnabled;
+	        public Rgba32 FogColour;
+	        public Single FogStart;
+	        public Single FogEnd;
+	        public Boolean EnableDefaultLighting;
+	        public CameraProjectionType CameraProjectionType;
+	    }
+		
+		internal RenderPass () {}
+		public String Name { get; set; }
+		public RenderPassConfiguration Configuration { get; set; }
+	}
 
-    /// <summary>
-    /// Game scene settings are used by the engine to detemine how
-    /// to manage an associated scene.  For example the game scene
-    /// settings are used to define the render pass for the scene.
+	
+ 	// ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+	/// <summary>
+    /// Scenes are a blimey feature that provide a simple scene graph and higher
+	/// level abstraction of the renderering pipeline.
 	/// </summary>
-    public class SceneSettings
-    {
-        Dictionary<String, RenderPassSettings> renderPassSettings;
-        List<String> renderPassOrder;
-        Boolean startByClearingBackBuffer;
-        Rgba32 clearBackBufferColour;
-
-        readonly static SceneSettings defaultSettings = new SceneSettings();
-
-        internal static SceneSettings Default
-        {
-            get
-            {
-                return defaultSettings;
-            }
-        }
-
-        static SceneSettings()
-        {
-            defaultSettings.InitDefault();
-        }
-
-        public SceneSettings()
-        {
-            renderPassSettings = new Dictionary<String, RenderPassSettings>();
-            renderPassOrder = new List<String>();
-            startByClearingBackBuffer = false;
-            clearBackBufferColour = Rgba32.CornflowerBlue;
-        }
-
-        void InitDefault()
-        {
-            /// BIG TODO, ADD AWAY TO MAKE RENDER PASSES SHARE THE SAME CAMERA!!!!!
-			/// SO DEBUG AND DEFAULT CAN USER THE SAME
-			var debugPassSettings = RenderPassSettings.Default;
-			debugPassSettings.ClearDepthBuffer = true;
-			AddRenderPass("Debug", debugPassSettings);
-
-            var defaultPassSettings = RenderPassSettings.Default;
-            defaultPassSettings.EnableDefaultLighting = true;
-            defaultPassSettings.FogEnabled = true;
-            AddRenderPass("Default", defaultPassSettings);
-
-            var guiPassSettings = RenderPassSettings.Default;
-            guiPassSettings.ClearDepthBuffer = true;
-            guiPassSettings.CameraProjectionType = CameraProjectionType.Orthographic;
-            AddRenderPass("Gui", guiPassSettings);
-        }
-
-        public void AddRenderPass(String passID, RenderPassSettings settings)
-        {
-            if (renderPassOrder.Contains(passID))
-            {
-                throw new Exception("Can't have render passes with the same name");
-            }
-
-            renderPassOrder.Add(passID);
-            renderPassSettings.Add(passID, settings);
-        }
-
-        public RenderPassSettings GetRenderPassSettings(String passName)
-        {
-            return renderPassSettings[passName];
-        }
-
-        public List<String> RenderPasses
-        {
-            get
-            {
-                return renderPassOrder;
-            }
-        }
-
-        // Debug Background Rgba
-        public bool StartByClearingBackBuffer
-        {
-            get
-            {
-                return startByClearingBackBuffer;
-            }
-            set
-            {
-                startByClearingBackBuffer = value;
-            }
-        }
-
-        public Rgba32 BackgroundColour
-        {
-            get
-            {
-                return clearBackBufferColour;
-            }
-            set
-            {
-                startByClearingBackBuffer = true;
-                clearBackBufferColour = value;
-            }
-        }
-    }
-
-
-
-
-
-
-
-	// ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public struct RenderPassSettings
-    {
-        public static readonly RenderPassSettings Default;
-
-        static RenderPassSettings()
-        {
-            Default.ClearDepthBuffer = false;
-            Default.FogEnabled = false;
-            Default.FogColour = Rgba32.CornflowerBlue;
-            Default.FogStart = 300.0f;
-            Default.FogEnd = 550.0f;
-            Default.EnableDefaultLighting = true;
-            Default.CameraProjectionType = CameraProjectionType.Perspective;
-        }
-
-        public Boolean ClearDepthBuffer;
-        public Boolean FogEnabled;
-        public Rgba32 FogColour;
-        public Single FogStart;
-        public Single FogEnd;
-        public Boolean EnableDefaultLighting;
-        public CameraProjectionType CameraProjectionType;
-    }
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    // THe user creates game states and uses them to interact with the engine
     public abstract class Scene
     {
-        public virtual SceneSettings Settings
-        {
-            get
-            {
-                return SceneSettings.Default;
-            }
-        }
-
-        internal void RegisterDrawCall() { drawCalls++; }
-        int drawCalls = 0;
-
-        internal void RegisterTriangles(int count) { triCount += count; }
-        int triCount = 0;
-
-
-		Services services;
-
-        public ICor Cor { get; set;}
-
-        public Services Blimey { get { return services; } }
-
-        public Boolean Active { get { return _active; } }
-
-        Boolean _active;
-        List<SceneObject> _gameObjects = new List<SceneObject> ();
-
-        public List<SceneObject> SceneObjects { get { return _gameObjects; } }
-
-        CameraManager cameraManager;
-
-        public SceneObject CreateSceneObject (string zName)
-        {
-            var go = new SceneObject (this, zName);
-            _gameObjects.Add (go);
-            return go;
-        }
-
-        public void DestroySceneObject (SceneObject zGo)
-        {
-            zGo.Shutdown ();
-            foreach (SceneObject go in zGo.Children) {
-                this.DestroySceneObject (go);
-                _gameObjects.Remove (go);
-            }
-            _gameObjects.Remove (zGo);
-
-            zGo = null;
-        }
+		/// <summary>
+	    /// Game scene settings are used by the engine to detemine how
+	    /// to manage an associated scene.  For example the game scene 
+	    /// settings are used to define the render pass for the scene.
+		/// </summary>
+	    public class SceneConfiguration
+	    {
+			readonly Dictionary<String, RenderPass> renderPasses = new Dictionary<String, RenderPass> ();
+			
+			public Rgba32? BackgroundColour { get; set; }
+			
+			public List<RenderPass> RenderPasses { get { return renderPasses.Values.ToList (); } }
+	
+	        internal SceneConfiguration() {}
+	
+	        public void AddRenderPass (String passName, RenderPass.RenderPassConfiguration renderPassConfig)
+	        {
+				if (renderPasses.ContainsKey (passName))
+	            {
+	                throw new Exception("Can't have render passes with the same name");
+	            }
+				
+				var renderPass = new RenderPass ()
+				{
+					Name = passName,
+					Configuration = renderPassConfig
+				};
+	
+	            renderPasses.Add(passName, renderPass);
+	        }
+	
+			public void RemoveRenderPass (String passName)
+			{
+				renderPasses.Remove (passName);
+			}
+	
+	        public RenderPass GetRenderPass(String passName)
+	        {
+				if (!renderPasses.ContainsKey (passName))
+	            {
+					return null;
+				}
+				
+	            return renderPasses[passName];
+	        }
+	
+			public static SceneConfiguration CreateVanilla ()
+	        {
+				var ss = new SceneConfiguration ();
+				return ss;
+			}
+	
+	        public static SceneConfiguration CreateDefault ()
+	        {
+				var ss = new SceneConfiguration ();
+				
+				ss.BackgroundColour = Rgba32.Crimson;
+				
+				var debugPassSettings = new RenderPass.RenderPassConfiguration ();
+				debugPassSettings.ClearDepthBuffer = true;
+				ss.AddRenderPass ("Debug", debugPassSettings);
+	
+	            var defaultPassSettings = new RenderPass.RenderPassConfiguration ();
+	            defaultPassSettings.EnableDefaultLighting = true;
+	            defaultPassSettings.FogEnabled = true;
+	            ss.AddRenderPass ("Default", defaultPassSettings);
+	
+	            var guiPassSettings = new RenderPass.RenderPassConfiguration ();
+	            guiPassSettings.ClearDepthBuffer = true;
+	            guiPassSettings.CameraProjectionType = CameraProjectionType.Orthographic;
+	            ss.AddRenderPass ("Gui", guiPassSettings);
+	
+				return ss;
+	        }
+	    }
+		
+		/// <summary>
+		/// Provides a means to change some scene configuration settings at runtime,
+		/// not settings can be changed at runtime.
+		/// </summary>
+		public class SceneRuntimeConfiguration
+		{
+			readonly Scene parent = null;
+			
+			internal SceneRuntimeConfiguration (Scene parent)
+			{
+				this.parent = parent;
+			}
+			
+			public void ChangeBackgroundColour (Rgba32? colour)
+			{
+				parent.configuration.BackgroundColour = colour;
+			}
+			
+			public void SetRenderPassCameraToDefault(string renderPass)
+	        {
+	            parent.cameraManager.SetDefaultCamera (renderPass);
+	        }
+	        
+	        public void SetRenderPassCameraTo (string renderPass, Entity go)
+	        {
+	            parent.cameraManager.SetMainCamera(renderPass, go);
+	        }
+			
+		}
+		
+		public class ObjectGraph
+		{
+			readonly Scene parent = null;
+			
+			public ObjectGraph (Scene parent)
+			{
+				this.parent = parent;
+			}
+			readonly List<Entity> sceneGraph = new List<Entity> ();
+			
+			public List<Entity> GetAllObjects ()
+			{
+				return sceneGraph;
+			}
+			
+			public Entity CreateSceneObject (string zName)
+	        {
+				var go = new Entity (parent, zName);
+	            sceneGraph.Add (go);
+	            return go;
+	        }
+	
+	        public void DestroySceneObject (Entity zGo)
+	        {
+	            zGo.Shutdown ();
+	            foreach (Entity go in zGo.Children) {
+	                this.DestroySceneObject (go);
+	                sceneGraph.Remove (go);
+	            }
+	            sceneGraph.Remove (zGo);
+	
+	            zGo = null;
+	        }
+		}
+		
+		// ======================== //
+		// Consumers must implement //
+		// ======================== //
 
         public abstract void Start ();
 
-        public abstract Scene Update(AppTime time);
+        public abstract Scene Update (AppTime time);
 
         public abstract void Shutdown ();
+		
+		
+		// ========== //
+		// Scene Data //
+		// ========== //
+		
+		ICor cor = null;
+		Blimey blimey = null;
+		readonly SceneConfiguration configuration = null;
+		readonly SceneRuntimeConfiguration runtimeConfiguration = null;
+		CameraManager cameraManager = null;
+		ObjectGraph sceneGraph = null;
+		Boolean isRunning = false;
 
-        public void Initialize(ICor cor)
+		
+		// ======================= //
+		// Functions for consumers //
+		// ======================= //
+        public ICor Cor { get { return cor; } }
+		public Blimey Blimey { get { return blimey; } }
+		
+		public Boolean Active { get { return isRunning;} }
+		public SceneConfiguration Configuration { get { return configuration; } }
+		public SceneRuntimeConfiguration RuntimeConfiguration { get { return runtimeConfiguration; } }
+		public ObjectGraph SceneGraph { get { return sceneGraph; } }
+		public CameraManager CameraManager { get { return cameraManager; } }
+
+		public Scene (SceneConfiguration configuration = null)
+		{
+			if (configuration == null)
+				this.configuration = SceneConfiguration.CreateDefault ();
+			else
+				this.configuration = configuration;
+			
+			this.runtimeConfiguration = new SceneRuntimeConfiguration (this);
+		}
+
+		// ===================== //
+		// Blimey internal calls //
+		// ===================== //
+		
+        internal void Initialize (ICor cor)
         {
-            this.Cor = cor;
-			this.services = new Services(this.Cor, this.Settings); ;
-
-            cameraManager = new CameraManager(this);
-            _active = true;
-
+			this.cor = cor;
+			this.blimey = new Blimey (cor, this.configuration);
+			this.sceneGraph = new ObjectGraph (this);
+            this.cameraManager = new CameraManager(this);
             this.Start();
+            this.isRunning = true;
         }
 
         internal Scene RunUpdate(AppTime time)
         {
-            drawCalls = 0;
-            triCount = 0;
-
-            this.services.PreUpdate(time);
-
-            foreach (SceneObject go in _gameObjects) {
+			this.blimey.PreUpdate (time);
+			
+			foreach (Entity go in sceneGraph.GetAllObjects())
+			{
                 go.Update(time);
             }
 
             var ret =  this.Update(time);
-
-            this.services.PostUpdate(time);
-
             return ret;
         }
-
-        internal CameraManager CameraManager { get { return cameraManager; } }
-
-        public void SetRenderPassCameraToDefault(string renderPass)
-        {
-            cameraManager.SetDefaultCamera (renderPass);
-        }
-
-        public void SetRenderPassCameraTo (string renderPass, SceneObject go)
-        {
-            cameraManager.SetMainCamera(renderPass, go);
-        }
-
-        public SceneObject GetRenderPassCamera(string renderPass)
-        {
-            return cameraManager.GetActiveCamera(renderPass).Parent;
-        }
-
-        public virtual void Uninitilise ()
+        
+        internal virtual void Uninitilise ()
         {
             this.Shutdown ();
 
-            _active = false;
+            this.isRunning = false;
 
-            List<SceneObject> onesToDestroy = new List<SceneObject> ();
+            List<Entity> onesToDestroy = new List<Entity> ();
 
-            foreach (SceneObject go in _gameObjects) {
+			foreach (Entity go in sceneGraph.GetAllObjects ())
+			{
                 if (go.Transform.Parent == null)
+				{
                     onesToDestroy.Add (go);
+				}
             }
 
-            foreach (SceneObject go in onesToDestroy) {
-                DestroySceneObject (go);
+            foreach (Entity go in onesToDestroy)
+			{
+                sceneGraph.DestroySceneObject (go);
             }
 
-            System.Diagnostics.Debug.Assert(_gameObjects.Count == 0);
-
-            this.services = null;
-            this.cameraManager = null;
+			Debug.Assert(sceneGraph.GetAllObjects ().Count == 0);
         }
     }
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    // Game Object
-    // -----------
-    //
-    public sealed class SceneObject
+    public sealed class Entity
     {
         List<Trait> behaviours = new List<Trait> ();
         Transform location = new Transform ();
@@ -583,10 +594,10 @@ namespace Blimey
         }
 
 
-        internal List<SceneObject> Children {
+        internal List<Entity> Children {
             get {
-                List<SceneObject> kids = new List<SceneObject> ();
-                foreach (SceneObject go in containedBy.SceneObjects) {
+                List<Entity> kids = new List<Entity> ();
+				foreach (Entity go in containedBy.SceneGraph.GetAllObjects ()) {
                     if (go.Transform.Parent == this.Transform)
                         kids.Add (go);
                 }
@@ -648,7 +659,7 @@ namespace Blimey
             return null;
         }
 
-        internal SceneObject (Scene containedBy, string name)
+        internal Entity (Scene containedBy, string name)
         {
             this.Name = name;
 
@@ -693,15 +704,15 @@ namespace Blimey
     public abstract class Trait
     {
         protected ICor Cor { get; set; }
-        protected Services Blimey { get; set; }
+        protected Blimey Blimey { get; set; }
 
-        public SceneObject Parent { get; set; }
+        public Entity Parent { get; set; }
 
         public Boolean Active { get; set; }
 
         // INTERNAL METHODS
         // called after constructor and before awake
-		internal void Initilise (ICor cor, Services blimeyServices, SceneObject parent)
+		internal void Initilise (ICor cor, Blimey blimeyServices, Entity parent)
         {
             Cor = cor;
             Blimey = blimeyServices;
@@ -721,7 +732,6 @@ namespace Blimey
         
         public virtual void OnDestroy () {}
     }
-
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -850,6 +860,7 @@ namespace Blimey
         {
             if (activeScene != null && activeScene.Active)
             {
+				
                 renderManager.Render(activeScene);
             }
             else
@@ -873,15 +884,13 @@ namespace Blimey
 
         internal void Render(Scene scene)
         {
-            var sceneSettings = scene.Settings;
-
             // Clear the background colour if the scene settings want us to.
-            if (sceneSettings.StartByClearingBackBuffer)
+			if (scene.Configuration.BackgroundColour.HasValue)
             {
-                this.Cor.Graphics.ClearColourBuffer(sceneSettings.BackgroundColour);
+				this.Cor.Graphics.ClearColourBuffer(scene.Configuration.BackgroundColour.Value);
             }
-
-            foreach (string renderPass in sceneSettings.RenderPasses)
+			
+            foreach (var renderPass in scene.Configuration.RenderPasses)
             {
                 this.RenderPass(scene, renderPass);
             }
@@ -891,7 +900,7 @@ namespace Blimey
         List<MeshRenderer> GetMeshRenderersWithMaterials(Scene scene, string pass)
         {
             list.Clear ();
-            foreach (var go in scene.SceneObjects)
+			foreach (var go in scene.SceneGraph.GetAllObjects())
             {
                 if (!go.Enabled) continue;
                 
@@ -917,31 +926,29 @@ namespace Blimey
             return list;
         }
 
-        void RenderPass(Scene scene, string pass)
+		void RenderPass(Scene scene, RenderPass pass)
         {
             // init pass
-            var passSettings = scene.Settings.GetRenderPassSettings(pass);
-
             var gfxManager = this.Cor.Graphics;
 
-            if (passSettings.ClearDepthBuffer)
+			if (pass.Configuration.ClearDepthBuffer)
             {
                 gfxManager.ClearDepthBuffer();
             }
 
-            var cam = scene.CameraManager.GetActiveCamera(pass);
+            var cam = scene.CameraManager.GetActiveCamera(pass.Name);
 
-            var meshRenderers = this.GetMeshRenderersWithMaterials(scene, pass);
+            var meshRenderers = this.GetMeshRenderersWithMaterials(scene, pass.Name);
 
             // TODO: big one
             // we really need to group the mesh renderers by material
             // and only make a new draw call when there are changes.
             foreach (var mr in meshRenderers)
             {
-                _renderMeshRenderer (gfxManager, pass, cam.ViewMatrix44, cam.ProjectionMatrix44, mr);
+                _renderMeshRenderer (gfxManager, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44, mr);
             }
 
-            scene.Blimey.DebugShapeRenderer.Render(gfxManager, pass, cam.ViewMatrix44, cam.ProjectionMatrix44);
+            scene.Blimey.DebugShapeRenderer.Render(gfxManager, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
         }
         
         static void _renderMeshRenderer (IGraphicsManager zGfx, string renderPass, Matrix44 zView, Matrix44 zProjection, MeshRenderer mr)
@@ -1030,95 +1037,43 @@ namespace Blimey
     }
 
 
-
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    internal class SpriteMesh
-        : Mesh
+	public class CameraManager
     {
-        VertexPositionTexture[] spriteVerts;
-        Int32[] spriteIndices;
-
-        private SpriteMesh()
-        {
-            spriteVerts = new VertexPositionTexture[]
-            {
-                new VertexPositionTexture ((-Vector3.Right - Vector3.Forward) / 2, new Vector2(0f, 1f)),
-                new VertexPositionTexture ((-Vector3.Right + Vector3.Forward) / 2, new Vector2(0f, 0f)),
-                new VertexPositionTexture ((Vector3.Right + Vector3.Forward) / 2, new Vector2(1f, 0f)),
-                new VertexPositionTexture ((Vector3.Right - Vector3.Forward) / 2, new Vector2(1f, 1f))
-            };
-
-            spriteIndices = new Int32[]
-            {
-                0,1,2,
-                0,2,3
-            };
-        }
-
-        public static SpriteMesh Create(IGraphicsManager gfx)
-        {
-            var sm = new SpriteMesh();
-            sm.GeomBuffer = gfx.CreateGeometryBuffer(
-                VertexPositionTexture.Default.VertexDeclaration,
-                sm.spriteVerts.Length,
-                sm.spriteIndices.Length);
-
-            sm.GeomBuffer.VertexBuffer.SetData(sm.spriteVerts);
-
-            sm.GeomBuffer.IndexBuffer.SetData(sm.spriteIndices);
-
-            sm.TriangleCount = 2;
-            sm.VertexCount = 4;
-            return sm;
-        }
-
-        public override VertexDeclaration VertDecl
-        {
-            get
-            {
-                return VertexPositionTexture.Default.VertexDeclaration;
-            }
-        }
-    }
-
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    internal class CameraManager
-    {
-        internal Camera GetActiveCamera(String RenderPass)
+		public Entity GetRenderPassCamera (String renderPass)
+		{
+			return GetActiveCamera(renderPass).Parent;
+		}
+		internal Camera GetActiveCamera(String RenderPass)
         {
             return _activeCameras[RenderPass].GetTrait<Camera> ();
         }
 
-        Dictionary<String, SceneObject> _defaultCameras = new Dictionary<String,SceneObject>();
-        Dictionary<String, SceneObject> _activeCameras = new Dictionary<String,SceneObject>();
+        Dictionary<String, Entity> _defaultCameras = new Dictionary<String,Entity>();
+        Dictionary<String, Entity> _activeCameras = new Dictionary<String,Entity>();
 
         internal void SetDefaultCamera(String RenderPass)
         {
             _activeCameras[RenderPass] = _defaultCameras[RenderPass];
         }
 
-        internal void SetMainCamera (String RenderPass, SceneObject go)
+        internal void SetMainCamera (String RenderPass, Entity go)
         {
             _activeCameras[RenderPass] = go;
         }
 
         internal CameraManager (Scene scene)
         {
-            var settings = scene.Settings;
+			var settings = scene.Configuration;
 
-            foreach (String renderPass in settings.RenderPasses)
+			foreach (var renderPass in settings.RenderPasses)
             {
-                var renderPassSettings = settings.GetRenderPassSettings(renderPass);
-
-                var go = scene.CreateSceneObject("RenderPass(" + renderPass + ") Provided Camera");
+				var go = scene.SceneGraph.CreateSceneObject("RenderPass(" + renderPass + ") Provided Camera");
 
                 var cam = go.AddTrait<Camera>();
 
-                if (renderPassSettings.CameraProjectionType == CameraProjectionType.Perspective)
+                if (renderPass.Configuration.CameraProjectionType == CameraProjectionType.Perspective)
                 {
                     go.Transform.Position = new Vector3(2, 1, 5);
 
@@ -1137,8 +1092,8 @@ namespace Blimey
                 }
 
 
-                _defaultCameras.Add(renderPass, go);
-                _activeCameras.Add(renderPass, go);
+				_defaultCameras.Add(renderPass.Name, go);
+                _activeCameras.Add(renderPass.Name, go);
             }
         }
     }

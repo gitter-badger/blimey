@@ -118,9 +118,9 @@ namespace Blimey
 
         readonly ICor cor;
 
-        readonly List<string> renderPasses;
+		readonly List<RenderPass> renderPasses;
 
-        public DebugShapeRenderer(ICor cor, List<string> renderPasses)
+		public DebugShapeRenderer(ICor cor, List<RenderPass> renderPasses)
         {
             this.cor = cor;
             this.renderPasses = renderPasses;
@@ -131,12 +131,12 @@ namespace Blimey
 
         void Init ()
         {
-            foreach (string pass in renderPasses)
+            foreach (var pass in renderPasses)
             {
-                var m = new Material(pass, debugShader);
+				var m = new Material(pass.Name, debugShader);
 
                 m.BlendMode = BlendMode.Default;
-                materials[pass] = m;
+				materials[pass.Name] = m;
                 m.SetColour("MaterialColour", Rgba32.White);
 
             }
