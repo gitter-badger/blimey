@@ -56,9 +56,9 @@ namespace Blimey.Demo
 
         public override void Start()
         {
-            this.Settings.BackgroundColour = Rgba32.Black;
+			this.Configuration.BackgroundColour = Rgba32.Black;
 
-            SceneObject camSo = CreateSceneObject ("Scene 3 Camera");
+            Entity camSo = SceneGraph.CreateSceneObject ("Scene 3 Camera");
 			camSo.AddTrait <Camera> ();
             var lookatTrait = camSo.AddTrait<LookAtSubject>();
             lookatTrait.Subject = Transform.Origin;
@@ -67,8 +67,8 @@ namespace Blimey.Demo
 
             camSo.Transform.LocalPosition = new Vector3(1f,0.5f,5f);
 
-            this.SetRenderPassCameraTo("Debug", camSo);
-			this.SetRenderPassCameraTo("Default", camSo);
+			this.RuntimeConfiguration.SetRenderPassCameraTo("Debug", camSo);
+			this.RuntimeConfiguration.SetRenderPassCameraTo("Default", camSo);
 
             _returnScene = this;
             this.Blimey.InputEventSystem.Tap += this.OnTap;
@@ -89,7 +89,7 @@ namespace Blimey.Demo
         void AddTeapot(Single z)
         {
             // create a game object
-            SceneObject testGO = CreateSceneObject ("teapot #" + ++teapotCounter);
+            Entity testGO = SceneGraph.CreateSceneObject ("teapot #" + ++teapotCounter);
 
             Single scale = 1f;
 

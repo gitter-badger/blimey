@@ -51,7 +51,7 @@ namespace Blimey.Demo
 
 		public override void Start()
 		{
-			this.Settings.BackgroundColour = Rgba32.DarkSlateGrey;
+			this.Configuration.BackgroundColour = Rgba32.DarkSlateGrey;
 
 			// set up the debug renderer
 			ShaderAsset unlitShaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
@@ -71,11 +71,11 @@ namespace Blimey.Demo
 
 			returnScene = this;
 
-			var cam = this.GetRenderPassCamera ("Default");
+			var cam = this.CameraManager.GetRenderPassCamera ("Default");
 			cam.GetTrait <OrbitAroundSubject> ().Active = false;
 
 			// create a sprite
-			var so = this.CreateSceneObject ("fnt_spr");
+			var so = this.SceneGraph.CreateSceneObject ("fnt_spr");
 
 			var spr = so.AddTrait <Sprite> ();
 			spr.Width = 256f;

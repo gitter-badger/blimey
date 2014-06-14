@@ -45,13 +45,13 @@ namespace Blimey.Demo
         : Scene
     {
         Scene returnScene;
-        SceneObject billboardGo;
+        Entity billboardGo;
 
         GridRenderer gr;
 
         LookAtSubject las;
 
-        SceneObject cam;
+        Entity cam;
 
         Transform target;
 
@@ -61,14 +61,14 @@ namespace Blimey.Demo
         bool x = true;
         bool goOut = true;
 
-        SceneObject markerGo;
+        Entity markerGo;
 
 		// GPU Resources
 		IShader unlitShader = null;
 
         public override void Start()
         {
-            this.Settings.BackgroundColour = Rgba32.LightSlateGrey;
+			this.Configuration.BackgroundColour = Rgba32.LightSlateGrey;
 
 			// set up the debug renderer
 			ShaderAsset unlitShaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
@@ -83,7 +83,7 @@ namespace Blimey.Demo
 
 
 			unlitShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
-            billboardGo = this.CreateSceneObject("billboard");
+            billboardGo = this.SceneGraph.CreateSceneObject("billboard");
 
             var mr = billboardGo.AddTrait<MeshRenderer>();
             mr.Mesh = billboard;
@@ -92,7 +92,7 @@ namespace Blimey.Demo
 
             target = billboardGo.Transform;
 
-            markerGo = CreateSceneObject ("marker");
+			markerGo = this.SceneGraph.CreateSceneObject ("marker");
 
             markerGo.Transform.LocalScale = new Vector3 (0.05f, 0.05f, 0.05f);
 
@@ -101,12 +101,12 @@ namespace Blimey.Demo
             markerMR.Material = new Material("Default", unlitShader);
             markerMR.Material.SetColour("MaterialColour", Rgba32.Red);
 
-            cam = this.GetRenderPassCamera ("Default");
+			cam = this.CameraManager.GetRenderPassCamera ("Default");
 
-            this.DestroySceneObject(this.GetRenderPassCamera ("Debug"));
-            this.DestroySceneObject(this.GetRenderPassCamera ("Gui"));
+			this.SceneGraph.DestroySceneObject(this.CameraManager.GetRenderPassCamera ("Debug"));
+            this.SceneGraph.DestroySceneObject(this.CameraManager.GetRenderPassCamera ("Gui"));
 
-            this.SetRenderPassCameraTo ("Debug", cam);
+            this.RuntimeConfiguration.SetRenderPassCameraTo ("Debug", cam);
             cam.Transform.Position = new Vector3(2, 1, 5);
             cam.RemoveTrait<OrbitAroundSubject> ();
 

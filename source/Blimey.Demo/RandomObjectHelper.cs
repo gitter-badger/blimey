@@ -43,9 +43,9 @@ namespace Blimey.Demo
 {
     public static class RandomObjectHelper
     {
-        public static List<SceneObject> Generate(Scene scene)
+        public static List<Entity> Generate(Scene scene)
         {
-            var objects = new List<SceneObject>();
+            var objects = new List<Entity>();
             var cubeModel = new CubePrimitive(scene.Cor.Graphics);
             var billboardModel = new BillboardPrimitive(scene.Cor.Graphics);
             var teapotModel = new TeapotPrimitive(scene.Cor.Graphics);
@@ -65,10 +65,10 @@ namespace Blimey.Demo
         }
 
 
-        public static SceneObject CreateShapeGO(Scene scene, string renderPass,  Mesh modelpart, int shaderIndex = 0)
+        public static Entity CreateShapeGO(Scene scene, string renderPass,  Mesh modelpart, int shaderIndex = 0)
         {
             // create a game object
-            SceneObject testGO = scene.CreateSceneObject ("test");
+			Entity testGO = scene.SceneGraph.CreateSceneObject ("test");
 
 
             Single scale = RandomGenerator.Default.GetRandomSingle(0.25f, 0.5f);

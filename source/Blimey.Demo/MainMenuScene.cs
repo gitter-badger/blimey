@@ -59,7 +59,7 @@ namespace Blimey.Demo
         static Int32 _selectedIndex = 0;
 
         List<Material> _menuItemMaterials = new List<Material>();
-        List<SceneObject> _menuSceneObjects = new List<SceneObject>();
+        List<Entity> _menuSceneObjects = new List<Entity>();
 
         Scene _returnScene;
 
@@ -72,7 +72,7 @@ namespace Blimey.Demo
 			this.Blimey.DebugShapeRenderer.DebugShader = 
 				this.Cor.Graphics.CreateShader (shaderAsset);
 
-            this.Settings.BackgroundColour = _startCol;
+			this.Configuration.BackgroundColour = _startCol;
 
 			//var cubeModel = new CubePrimitive(this.Cor.Graphics);
 			//var cylinderModel = new CylinderPrimitive(this.Cor.Graphics);

@@ -95,7 +95,7 @@ namespace Blimey.Demo
 		: Scene
 	{
 		Scene returnScene;
-		SceneObject earthGo;
+		Entity earthGo;
 
 		GridRenderer gr;
 
@@ -132,7 +132,7 @@ namespace Blimey.Demo
 
 			Console.WriteLine("num airports: " + airports.Count);
 
-			this.Settings.BackgroundColour = Rgba32.Red;
+			this.Configuration.BackgroundColour = Rgba32.Red;
 
 			returnScene = this;
 
@@ -145,9 +145,9 @@ namespace Blimey.Demo
 
             var mat = new Material("Default",shader);
             mat.SetColour("MaterialColour", Rgba32.LightGrey);
-			earthGo = this.CreateSceneObject("earth");
+			earthGo = this.SceneGraph.CreateSceneObject("earth");
 
-			SceneObject camSo = CreateSceneObject ("Scene 5 Camera");
+			Entity camSo = SceneGraph.CreateSceneObject ("Scene 5 Camera");
 			camSo.AddTrait<Camera>();
 			var lookatTrait = camSo.AddTrait<LookAtSubject>();
 			lookatTrait.Subject = Transform.Origin;
@@ -156,8 +156,8 @@ namespace Blimey.Demo
 
 			camSo.Transform.LocalPosition = new Vector3(10f,4f,10f);
 
-			this.SetRenderPassCameraTo("Debug", camSo);
-			this.SetRenderPassCameraTo("Default", camSo);
+			this.RuntimeConfiguration.SetRenderPassCameraTo("Debug", camSo);
+			this.RuntimeConfiguration.SetRenderPassCameraTo("Default", camSo);
 
 			earthGo.Transform.LocalScale = new Vector3(2 * radius, 2 * radius, 2 * radius);
 
@@ -173,7 +173,7 @@ namespace Blimey.Demo
 
             foreach (var airport in airports)
 			{
-				var so = this.CreateSceneObject(airport.Iata);
+				var so = this.SceneGraph.CreateSceneObject(airport.Iata);
 
                 so.Transform.Parent = earthGo.Transform;
 

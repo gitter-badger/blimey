@@ -44,9 +44,9 @@ namespace Blimey.Demo
     public class Scene1
         : Scene
     {
-        List<SceneObject> _objects;
+        List<Entity> _objects;
 
-        SceneObject _alternateCamera;
+        Entity _alternateCamera;
 
         GridRenderer gr;
 
@@ -70,7 +70,7 @@ namespace Blimey.Demo
 
             gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Default");
 
-            _alternateCamera = this.CreateSceneObject("Alternate Camera");
+			_alternateCamera = this.SceneGraph.CreateSceneObject("Alternate Camera");
 
             _alternateCamera.AddTrait<Camera>();
 
@@ -87,9 +87,9 @@ namespace Blimey.Demo
             this.Blimey.InputEventSystem.Tap += this.OnTap;
         }
 
-        SceneObject CreateLandmark()
+        Entity CreateLandmark()
         {
-            var landmarkGo = this.CreateSceneObject("landmark");
+			var landmarkGo = this.SceneGraph.CreateSceneObject("landmark");
 
             landmarkGo.Transform.LocalPosition = new Vector3(0f, 0f, 0f);
             landmarkGo.Transform.LocalScale = new Vector3(0.64f, 0.64f, 0.64f);
@@ -131,11 +131,11 @@ namespace Blimey.Demo
 
                 if( _defaultCamIsCurrent )
                 {
-                    this.SetRenderPassCameraTo("Default", _alternateCamera);
+					this.RuntimeConfiguration.SetRenderPassCameraTo("Default", _alternateCamera);
                 }
                 else
                 {
-                    this.SetRenderPassCameraToDefault("Default");
+					this.RuntimeConfiguration.SetRenderPassCameraToDefault("Default");
                 }
 
                 _defaultCamIsCurrent = !_defaultCamIsCurrent;

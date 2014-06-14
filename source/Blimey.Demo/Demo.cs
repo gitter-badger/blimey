@@ -41,25 +41,33 @@ using System.Collections.Generic;
 
 namespace Blimey.Demo
 {
-    public static class Demo
-    {
-        public static IApp GetEntryPoint() { return blimeyApp; }
-        public static AppSettings GetAppSettings() { return appSettings; }
-
-        readonly static Scene startScene;
-        readonly static AppSettings appSettings;
-        readonly static Blimey blimeyApp;
-
-        static Demo()
+	public class Demo
+		: global::Blimey.App
+	{
+        public Demo()
+			: base (new MainMenuScene())
         {
-            appSettings = new AppSettings("Blimey Demo");
-            appSettings.FullScreen = true;
-            appSettings.MouseGeneratesTouches = true;
-
-            startScene = new MainMenuScene();
-
-            blimeyApp = new Blimey(startScene);
         }
-    }
+		
+        public override void Start (ICor cor)
+		{
+			base.Start (cor);
+		}
+
+        public override Boolean Update (ICor cor, AppTime time)
+		{
+			return base.Update (cor, time);
+		}
+
+        public override void Render (ICor cor)
+		{
+			base.Render (cor);
+		}
+
+        public override void Stop (ICor cor)
+		{
+			base.Stop (cor);
+		}
+	}
 }
 

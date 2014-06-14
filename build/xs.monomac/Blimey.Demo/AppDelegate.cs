@@ -36,6 +36,7 @@ using System;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
 using Cor.Platform.MonoMac;
+using Cor;
 
 namespace Blimey.Demo
 {
@@ -46,11 +47,14 @@ namespace Blimey.Demo
 
         public override void FinishedLaunching (NSObject notification)
         {
-            var appSettings = Demo.GetAppSettings();
-			appSettings.MouseGeneratesTouches = true;
-            var appEntryPoint = Demo.GetEntryPoint();
+        	AppSettings appSettings;
+			appSettings = new AppSettings("Blimey Demo");
+            appSettings.FullScreen = true;
+            appSettings.MouseGeneratesTouches = true;
+			
+			var demo = new Demo ();
 
-            engine = new MonoMacApp(appSettings, appEntryPoint);
+            engine = new MonoMacApp(appSettings, demo);
 
             engine.Run();
         }

@@ -52,6 +52,16 @@ namespace Blimey.Demo
             Single deltaRotation;
     
             Sprite sprite;
+			
+			int currentBlendMode = 0;
+			
+			readonly BlendMode[] blendModes = new BlendMode[]
+			{
+				BlendMode.Default,
+				BlendMode.Additive,
+				BlendMode.Subtract,
+				BlendMode.Opaque
+			};
     
             public override void OnAwake()
             {
@@ -59,16 +69,7 @@ namespace Blimey.Demo
     
                 this.sprite.Texture = Scene4.texZa;
     
-                var bm = BlendMode.Default;
-    
-                switch (RandomGenerator.Default.GetRandomInt32 (2))
-                {
-                    case 1: bm = BlendMode.Subtract; break;
-                    case 2: bm = BlendMode.Additive; break;
-                    case 3: bm = BlendMode.Opaque; break;
-                }
-    
-                this.sprite.Material.BlendMode = bm;
+				this.sprite.Material.BlendMode = blendModes [currentBlendMode];
     
                 this.sprite.DebugRender = null;
     
@@ -96,6 +97,12 @@ namespace Blimey.Demo
                 //this.sprite.FlipVertical = RandomGenerator.Default.GetRandomBoolean();
                 //this.sprite.FlipHorizontal = RandomGenerator.Default.GetRandomBoolean();
             }
+			
+			public void NextBlendMode ()
+			{
+				this.sprite.Material.BlendMode = 
+					blendModes [++currentBlendMode >= blendModes.Length ? currentBlendMode = 0 : currentBlendMode];
+			}
     
             public void EnabledDebugRenderer (Boolean on)
             {
@@ -175,7 +182,7 @@ namespace Blimey.Demo
 			texZa = this.Cor.Graphics.UploadTexture (ta_za);
             texBg = this.Cor.Graphics.UploadTexture (ta_bg);
             
-            var soBG = this.CreateSceneObject ("bg");
+            var soBG = this.SceneGraph.CreateSceneObject ("bg");
 
             var spr = soBG.AddTrait <Sprite> ();
             spr.Width = 256f;
@@ -189,7 +196,7 @@ namespace Blimey.Demo
             Single pi = 0;
             RealMaths.Pi(out pi);
 
-            var newCamSo = this.CreateSceneObject("ortho");
+            var newCamSo = this.SceneGraph.CreateSceneObject("ortho");
             newCamSo.Transform.LocalPosition = new Vector3(0, 0, 1);
 
             var orthoCam = newCamSo.AddTrait<Camera>();
@@ -199,12 +206,12 @@ namespace Blimey.Demo
 
             orthoCam.TempWORKOUTANICERWAY = true;
 
-            this.SetRenderPassCameraTo("Default", newCamSo);
-            this.Settings.BackgroundColour = Rgba32.Aquamarine;
+            this.RuntimeConfiguration.SetRenderPassCameraTo("Default", newCamSo);
+			this.Configuration.BackgroundColour = Rgba32.Aquamarine;
 
             while (hares.Count != MaxHares )
             {
-                var so = this.CreateSceneObject("van #" + hares.Count);
+                var so = this.SceneGraph.CreateSceneObject("van #" + hares.Count);
                 var vanTrait = so.AddTrait<Hare>();
                 hares.Add(vanTrait);
 
@@ -277,6 +284,12 @@ namespace Blimey.Demo
 
                     hares.ForEach( x => x.EnabledDebugRenderer(debugLinesOn) );
                 }
+
+				if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
+                    Cor.Input.Keyboard.IsCharacterKeyDown ('b'))
+                {
+					hares.ForEach(x => x.NextBlendMode());
+                }
                 
                 if (Cor.Input.GenericGamepad.Buttons.South == ButtonState.Pressed ||
                     Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Spacebar))
@@ -284,7 +297,7 @@ namespace Blimey.Demo
                     ChangeNumHares ();
                 }
 
-                timer = 0.2f;
+                timer = 0.1f;
             }
             
             if (debugLinesOn)
