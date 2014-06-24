@@ -1,0 +1,64 @@
+﻿    /// <summary>
+    ///
+    /// </summary>
+    public interface IPackedReal
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        void PackFrom (Single x);
+
+        /// <summary>
+        ///
+        /// </summary>
+        void UnpackTo (out Single x);
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public interface IPackedReal2
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        void PackFrom (Single x, Single y);
+
+        /// <summary>
+        ///
+        /// </summary>
+        void UnpackTo (out Single x, out Single y);
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public interface IPackedReal3
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        void PackFrom (Single x, Single y, Single z);
+
+        /// <summary>
+        ///
+        /// </summary>
+        void UnpackTo (out Single x, out Single y, out Single z);
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public interface IPackedReal4
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        void PackFrom (Single x, Single y, Single z, Single w);
+
+        /// <summary>
+        ///
+        /// </summary>
+        void UnpackTo (out Single x, out Single y, out Single z, out Single w);
+    }
+

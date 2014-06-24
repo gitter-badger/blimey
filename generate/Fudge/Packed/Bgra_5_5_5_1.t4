@@ -1,0 +1,54 @@
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential), Serializable]
+    public struct Bgra_5_5_5_1
+        : IPackedValue<UInt16>
+        , IEquatable<Bgra_5_5_5_1>
+        , IPackedReal4
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public override String ToString ()
+        {
+            return this.packedValue.ToString ("X4", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Pack(Single zB, Single zG, Single zR, Single zA, out UInt16 zPackedBgra)
+        {
+            if (zR < 0f || zR > 1f || zG < 0f || zG > 1f || zB < 0f || zB > 1f || zA < 0f || zA > 1f )
+            {
+                throw new ArgumentException ("A component of the input source is not unsigned and normalised.");
+            }
+
+            UInt32 b = PackUtils.PackUnsignedNormalisedValue (31f, zB);
+            UInt32 g = PackUtils.PackUnsignedNormalisedValue (31f, zG) << 5;
+            UInt32 r = PackUtils.PackUnsignedNormalisedValue (31f, zR) << 10;
+            UInt32 a = PackUtils.PackUnsignedNormalisedValue (1f, zA) << 15;
+
+            zPackedBgra = (UInt16)(((r | g) | b) | a);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Unpack(UInt16 zPackedBgra, out Single zB, out Single zG, out Single zR, out Single zA)
+        {
+            zB = PackUtils.UnpackUnsignedNormalisedValue (0x1f, zPackedBgra);
+            zG = PackUtils.UnpackUnsignedNormalisedValue (0x1f, (UInt32)(zPackedBgra >> 5));
+            zR = PackUtils.UnpackUnsignedNormalisedValue (0x1f, (UInt32)(zPackedBgra >> 10));
+            zA = PackUtils.UnpackUnsignedNormalisedValue (1, (UInt32)(zPackedBgra >> 15));
+
+            if (zR < 0f || zR > 1f || zG < 0f || zG > 1f || zB < 0f || zB > 1f || zA < 0f || zA > 1f)
+            {
+                throw new Exception ("A the input source doesn't yeild an unsigned normalised output: " + zPackedBgra);
+            }
+        }
+
+<#  GeneratePackedCommon("Bgra_5_5_5_1", "UInt16", "zPackedBgra", new [] { "zB", "zG", "zR", "zA" }); #>
+    }
+

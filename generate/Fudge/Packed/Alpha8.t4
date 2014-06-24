@@ -1,0 +1,46 @@
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential), Serializable]
+    public struct Alpha_8
+        : IPackedValue<Byte>
+        , IEquatable<Alpha_8>
+        , IPackedReal
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public override String ToString()
+        {
+            return this.packedValue.ToString("X2", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Pack(Single zAlpha, out Byte zPackedAlpha)
+        {
+            if (zAlpha < 0f || zAlpha > 1f)
+            {
+                throw new ArgumentException ("A component of the input source is not unsigned and normalised.");
+            }
+
+            zPackedAlpha = (Byte)PackUtils.PackUnsignedNormalisedValue(255f, zAlpha);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Unpack(Byte zPackedAlpha, out Single zAlpha)
+        {
+            zAlpha = PackUtils.UnpackUnsignedNormalisedValue(0xff, zPackedAlpha);
+
+            if (zAlpha < 0f || zAlpha > 1f)
+            {
+                throw new Exception ("A the input source doesn't yeild an unsigned normalised output: " + zPackedAlpha);
+            }
+        }
+
+<#  GeneratePackedCommon("Alpha_8", "Byte", "zPackedAlpha", new [] { "zRealAlpha" } ); #>
+    }
+

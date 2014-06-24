@@ -1,0 +1,54 @@
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential), Serializable]
+    public struct NormalisedByte4
+        : IPackedValue<UInt32>
+        , IEquatable<NormalisedByte4>
+        , IPackedReal4
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public override String ToString ()
+        {
+            return this.packedValue.ToString ("X8", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Pack(Single zX, Single zY, Single zZ, Single zW, out UInt32 zPackedXyzw)
+        {
+            if (zX < -1f || zX > 1f || zY < -1f || zY > 1f || zZ < -1f || zZ > 1f || zW < -1f || zW > 1f)
+            {
+                throw new ArgumentException ("A component of the input source is not normalised.");
+            }
+
+            UInt32 x = PackUtils.PackSignedNormalised (0xff, zX);
+            UInt32 y = PackUtils.PackSignedNormalised (0xff, zY) << 8;
+            UInt32 z = PackUtils.PackSignedNormalised (0xff, zZ) << 16;
+            UInt32 w = PackUtils.PackSignedNormalised (0xff, zW) << 24;
+
+            zPackedXyzw = (((x | y) | z) | w);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Unpack(UInt32 zPackedXyzw, out Single zX, out Single zY, out Single zZ, out Single zW)
+        {
+            zX = PackUtils.UnpackSignedNormalised (0xff, zPackedXyzw);
+            zY = PackUtils.UnpackSignedNormalised (0xff, (UInt32) (zPackedXyzw >> 8));
+            zZ = PackUtils.UnpackSignedNormalised (0xff, (UInt32) (zPackedXyzw >> 16));
+            zW = PackUtils.UnpackSignedNormalised (0xff, (UInt32) (zPackedXyzw >> 24));
+
+            if (zX < -1f || zX > 1f || zY < -1f || zY > 1f || zZ < -1f || zZ > 1f || zW < -1f || zW > 1f)
+            {
+                throw new Exception ("A the input source doesn't yeild a normalised output: " + zPackedXyzw);
+            }
+        }
+
+<#  GeneratePackedCommon("NormalisedByte4", "UInt32", "zPackedXyzw", new [] { "zX", "zY", "zZ", "zW" }); #>
+    }
+

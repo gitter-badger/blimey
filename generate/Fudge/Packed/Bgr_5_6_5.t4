@@ -1,0 +1,52 @@
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential), Serializable]
+    public struct Bgr_5_6_5
+        : IPackedValue<UInt16>
+        , IEquatable<Bgr_5_6_5>
+        , IPackedReal3
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public override String ToString ()
+        {
+            return this.packedValue.ToString ("X4", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Pack(Single zB, Single zG, Single zR, out UInt16 zPackedBgr)
+        {
+            if (zR < 0f || zR > 1f || zG < 0f || zG > 1f || zB < 0f || zB > 1f)
+            {
+                throw new ArgumentException ("A component of the input source is not unsigned and normalised.");
+            }
+
+            UInt32 b = PackUtils.PackUnsignedNormalisedValue(31f, zB);
+            UInt32 g = PackUtils.PackUnsignedNormalisedValue(63f, zG) << 5;
+            UInt32 r = PackUtils.PackUnsignedNormalisedValue(31f, zR) << 11;
+
+            zPackedBgr = (UInt16)((r | g) | b);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Unpack(UInt16 zPackedBgr, out Single zB, out Single zG, out Single zR)
+        {
+            zB = PackUtils.UnpackUnsignedNormalisedValue(0x1f, zPackedBgr);
+            zG = PackUtils.UnpackUnsignedNormalisedValue(0x3f, (UInt32)(zPackedBgr >> 5));
+            zR = PackUtils.UnpackUnsignedNormalisedValue(0x1f, (UInt32)(zPackedBgr >> 11));
+
+            if (zR < 0f || zR > 1f || zG < 0f || zG > 1f || zB < 0f || zB > 1f)
+            {
+                throw new Exception ("A the input source doesn't yeild an unsigned normalised output: " + zPackedBgr);
+            }
+        }
+
+<#  GeneratePackedCommon("Bgr_5_6_5", "UInt16", "zPackedBgr", new [] { "zB", "zG", "zR" }); #>
+    }
+

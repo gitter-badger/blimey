@@ -1,0 +1,105 @@
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential), Serializable]
+    public partial struct Rgba32
+        : IPackedValue<UInt32>
+        , IEquatable<Rgba32>
+        , IPackedReal4
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public override String ToString ()
+        {
+            return string.Format ("{{R:{0} G:{1} B:{2} A:{3}}}", new Object[] { this.R, this.G, this.B, this.A });
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Pack(Single zR, Single zG, Single zB, Single zA, out UInt32 zPackedRgba)
+        {
+            if (zR < 0f || zR > 1f || zG < 0f || zG > 1f || zB < 0f || zB > 1f || zA < 0f || zA > 1f )
+            {
+                throw new ArgumentException ("A component of the input source is not unsigned and normalised.");
+            }
+
+            UInt32 r = PackUtils.PackUnsignedNormalisedValue (0xff, zR);
+            UInt32 g = PackUtils.PackUnsignedNormalisedValue (0xff, zG) << 8;
+            UInt32 b = PackUtils.PackUnsignedNormalisedValue (0xff, zB) << 16;
+            UInt32 a = PackUtils.PackUnsignedNormalisedValue (0xff, zA) << 24;
+
+            zPackedRgba = ((r | g) | b) | a;
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Unpack(UInt32 zPackedRgba, out Single zR, out Single zG, out Single zB, out Single zA)
+        {
+            zR = PackUtils.UnpackUnsignedNormalisedValue (0xff, zPackedRgba);
+            zG = PackUtils.UnpackUnsignedNormalisedValue (0xff, (UInt32)(zPackedRgba >> 8));
+            zB = PackUtils.UnpackUnsignedNormalisedValue (0xff, (UInt32)(zPackedRgba >> 16));
+            zA = PackUtils.UnpackUnsignedNormalisedValue (0xff, (UInt32)(zPackedRgba >> 24));
+
+            if (zR < 0f || zR > 1f || zG < 0f || zG > 1f || zB < 0f || zB > 1f || zA < 0f || zA > 1f )
+            {
+                throw new Exception ("A the input source doesn't yeild an unsigned normalised output: " + zPackedRgba);
+            }
+        }
+
+<# foreach( var kvp in TT_GetUInt32Colours() ) { #>
+        /// <summary>
+        /// <#= kvp.Key #>
+        /// </summary>
+        public static Rgba32 <#= kvp.Key #>
+        {
+            get { return new Rgba32 (<#= kvp.Value #>); }
+        }
+
+<# } #>
+
+<#  GeneratePackedCommon("Rgba32", "UInt32", "zPackedRgba", new [] { "zR", "zG", "zB", "zA" }); #>
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Byte R
+        {
+            get { return unchecked((Byte)this.packedValue); }
+            set { this.packedValue = (this.packedValue & 0xffffff00) | value; }
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Byte G
+        {
+            get { return unchecked((Byte)(this.packedValue >> 8)); }
+            set { this.packedValue = (this.packedValue & 0xffff00ff) | ((UInt32)(value << 8)); }
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Byte B
+        {
+            get { return unchecked((Byte)(this.packedValue >> 0x10)); }
+            set { this.packedValue = (this.packedValue & 0xff00ffff) | ((UInt32)(value << 0x10)); }
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Byte A
+        {
+            get { return unchecked((Byte)(this.packedValue >> 0x18)); }
+            set { this.packedValue = (this.packedValue & 0xffffff) | ((UInt32)(value << 0x18)); }
+        }
+
+//<#@ include file="Rgba32.Misc.t4"#>
+//<#@ include file="Rgba32.Operators.t4"#>
+
+    }
+

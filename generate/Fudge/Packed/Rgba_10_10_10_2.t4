@@ -1,0 +1,44 @@
+﻿    // 2 bit alpha
+    [StructLayout (LayoutKind.Sequential), Serializable]
+    public struct Rgba_10_10_10_2
+        : IPackedValue<UInt32>
+        , IEquatable<Rgba_10_10_10_2>
+        , IPackedReal4
+    {
+
+        public override String ToString ()
+        {
+            return this.packedValue.ToString ("X8", CultureInfo.InvariantCulture);
+        }
+
+        static void Pack(Single zR, Single zG, Single zB, Single zA, out UInt32 zPackedRgba)
+        {
+            if (zR < 0f || zR > 1f || zG < 0f || zG > 1f || zB < 0f || zB > 1f || zA < 0f || zA > 1f)
+            {
+                throw new ArgumentException ("A component of the input source is not unsigned and normalised.");
+            }
+
+            UInt32 r = PackUtils.PackUnsignedNormalisedValue (0xffff, zR);
+            UInt32 g = PackUtils.PackUnsignedNormalisedValue (0xffff, zG) << 10;
+            UInt32 b = PackUtils.PackUnsignedNormalisedValue (0xffff, zB) << 20;
+            UInt32 a = PackUtils.PackUnsignedNormalisedValue (0xffff, zA) << 30;
+
+            zPackedRgba = ((r | g) | b) | a;
+        }
+
+        static void Unpack(UInt32 zPackedRgba, out Single zR, out Single zG, out Single zB, out Single zA)
+        {
+            zR = PackUtils.UnpackUnsignedNormalisedValue (0xffff, zPackedRgba);
+            zG = PackUtils.UnpackUnsignedNormalisedValue (0xffff, (UInt32)(zPackedRgba >> 10));
+            zB = PackUtils.UnpackUnsignedNormalisedValue (0xffff, (UInt32)(zPackedRgba >> 20));
+            zA = PackUtils.UnpackUnsignedNormalisedValue (0xffff, (UInt32)(zPackedRgba >> 30));
+
+            if (zR < 0f || zR > 1f || zG < 0f || zG > 1f || zB < 0f || zB > 1f || zA < 0f || zA > 1f)
+            {
+                throw new Exception ("A the input source doesn't yeild an unsigned normalised output: " + zPackedRgba);
+            }
+        }
+
+<#  GeneratePackedCommon("Rgba_10_10_10_2", "UInt32", "zPackedRgba", new [] { "zR", "zG", "zB", "zA" }); #>
+    }
+

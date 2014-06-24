@@ -1,0 +1,41 @@
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential), Serializable]
+    public struct Short2
+        : IPackedValue<UInt32>
+        , IEquatable<Short2>
+        , IPackedReal2
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public override String ToString ()
+        {
+            return this.packedValue.ToString ("X8", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Pack(Single zX, Single zY, out UInt32 zPackedXy)
+        {
+            UInt32 x = PackUtils.PackSigned (0xffff, zX);
+            UInt32 y = PackUtils.PackSigned (0xffff, zY) << 16;
+
+            zPackedXy = (x | y);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Unpack(UInt32 zPackedXy, out Single zX, out Single zY)
+        {
+            zX = (Int16) zPackedXy;
+            zY = (Int16) (zPackedXy >> 16);
+        }
+
+<#  GeneratePackedCommon("Short2", "UInt32", "zPackedXy", new [] { "zX", "zY" }); #>
+
+    }
+
