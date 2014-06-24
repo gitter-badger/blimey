@@ -141,6 +141,7 @@ namespace Blimey.Demo
     
             }
         }
+        
         Scene _returnScene;
 
         const Int32 MinHares = 16;
@@ -177,7 +178,7 @@ namespace Blimey.Demo
 			screenWidth = this.Cor.AppStatus.Width;
 			screenHeight = this.Cor.AppStatus.Height;
 
-			var ta_za = this.Cor.Assets.Load<TextureAsset> ("zazaka.cba");
+			var ta_za = this.Cor.Assets.Load<TextureAsset> ("cvan01.cba");
             var ta_bg = this.Cor.Assets.Load<TextureAsset> ("bg2.cba");
 			texZa = this.Cor.Graphics.UploadTexture (ta_za);
             texBg = this.Cor.Graphics.UploadTexture (ta_bg);

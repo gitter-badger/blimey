@@ -7,7 +7,7 @@
             "Platforms" : [ "xios", "monomac" ],
             "Importer" :
             {
-                "Files" : [ "zazaka.png" ],
+                "Files" : [ "zazaka.tga" ],
                 "AssetImporterType" : "Cor.ImageFileImporter, Cor.Assets.Builders",
                 "AssetImporterSettings" : {}
             },

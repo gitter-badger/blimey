@@ -43,24 +43,27 @@ namespace Blimey.Demo
 {
     public static class RandomObjectHelper
     {
-        public static List<Entity> Generate(Scene scene)
+        public static List<SceneObject> Generate (Scene scene)
         {
-            var objects = new List<Entity>();
-            var cubeModel = new CubePrimitive(scene.Cor.Graphics);
-            var billboardModel = new BillboardPrimitive(scene.Cor.Graphics);
-            var teapotModel = new TeapotPrimitive(scene.Cor.Graphics);
-            var cylinderModel = new CylinderPrimitive(scene.Cor.Graphics);
-            var sphereModel = new SpherePrimitive(scene.Cor.Graphics);
-            var torusModel = new TorusPrimitive(scene.Cor.Graphics);
-
-            objects.Add(CreateShapeGO(scene, "Default", cubeModel, 2));
-            objects.Add(CreateShapeGO(scene, "Default", billboardModel));
-            objects.Add(CreateShapeGO(scene, "Default", teapotModel, 1));
-            objects.Add(CreateShapeGO(scene, "Default", cylinderModel));
-            objects.Add(CreateShapeGO(scene, "Default", sphereModel));
-            objects.Add(CreateShapeGO(scene, "Default", torusModel, 1));
-            objects.Add(CreateShapeGO(scene, "Default", torusModel, 2));
-            objects.Add(CreateShapeGO(scene, "Default", torusModel, 0));
+            var objects = new List<SceneObject> ();
+            var cubeModel = new CubePrimitive (scene.Cor.Graphics);
+            var billboardModel = new BillboardPrimitive (scene.Cor.Graphics);
+            var teapotModel = new TeapotPrimitive (scene.Cor.Graphics);
+            var cylinderModel = new CylinderPrimitive (scene.Cor.Graphics);
+            var sphereModel = new SpherePrimitive (scene.Cor.Graphics);
+            var torusModel = new TorusPrimitive (scene.Cor.Graphics);
+    
+            for (int i = 5; i-- != 0;)
+            {
+                objects.Add (CreateShapeGO (scene, "Default", cubeModel, 2));
+                objects.Add (CreateShapeGO (scene, "Default", billboardModel));
+                objects.Add (CreateShapeGO (scene, "Default", teapotModel, 1));
+                objects.Add (CreateShapeGO (scene, "Default", cylinderModel));
+                objects.Add (CreateShapeGO (scene, "Default", sphereModel));
+                objects.Add (CreateShapeGO (scene, "Default", torusModel, 1));
+                objects.Add (CreateShapeGO (scene, "Default", torusModel, 2));
+                objects.Add (CreateShapeGO (scene, "Default", torusModel, 0));
+            }
             return objects;
         }
 
