@@ -917,28 +917,40 @@ namespace Blimey
             return list;
         }
 
-        void RenderPass(Scene scene, string pass)
+        void RenderPass (Scene scene, string pass)
         {
             // init pass
-            var passSettings = scene.Settings.GetRenderPassSettings(pass);
+            var passSettings = scene.Settings.GetRenderPassSettings (pass);
 
             var gfxManager = this.Cor.Graphics;
 
             if (passSettings.ClearDepthBuffer)
             {
-                gfxManager.ClearDepthBuffer();
+                gfxManager.ClearDepthBuffer ();
             }
 
-            var cam = scene.CameraManager.GetActiveCamera(pass);
+            var cam = scene.CameraManager.GetActiveCamera (pass);
 
-            var meshRenderers = this.GetMeshRenderersWithMaterials(scene, pass);
-
-            // TODO: big one
-            // we really need to group the mesh renderers by material
-            // and only make a new draw call when there are changes.
-            foreach (var mr in meshRenderers)
+            var meshRenderers = this.GetMeshRenderersWithMaterials (scene, pass);
+            
+            // filter this to get only renderers in the camera's frustum
+            
+            // first group by material
+            var materialIDs = meshRenderers.Select (x => x.Material.ID).Distinct ().ToList ();
+            
+            // next build two groups, those supporting alpha and those that are opaque
+            
+            // for all the opaque objects groups render them from front to back to maximise gpu z-clipping
+            
+            // for all transparent object render them from back to front
+            
+            foreach (var materialID in materialIDs)
             {
-                _renderMeshRenderer (gfxManager, pass, cam.ViewMatrix44, cam.ProjectionMatrix44, mr);
+                foreach (var mr in meshRenderers)
+                {
+                    if (mr.Material.ID == materialID)
+                        _renderMeshRenderer (gfxManager, pass, cam.ViewMatrix44, cam.ProjectionMatrix44, mr);
+                }
             }
 
             scene.Blimey.DebugShapeRenderer.Render(gfxManager, pass, cam.ViewMatrix44, cam.ProjectionMatrix44);
