@@ -221,6 +221,9 @@ namespace Blimey
     {
         IShader shader;
         string renderPass;
+        
+        static int id = 0;
+        public int ID { get; private set; } 
 
         public BlendMode BlendMode { get; set; }
         public string RenderPass { get { return renderPass; } }
@@ -228,7 +231,7 @@ namespace Blimey
         public Material(string renderPass, IShader shader)
         {
             this.BlendMode = BlendMode.Default;
-
+            this.ID = id++;
             this.renderPass = renderPass;
             this.shader = shader;
         }
