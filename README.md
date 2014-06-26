@@ -1,6 +1,6 @@
 # Oats
 
-## Project Status: [![Build Status](https://travis-ci.org/ajpook/oats.png?branch=master)](https://travis-ci.org/ajpook/oats)
+## Project Status: [![Build Status](https://travis-ci.org/blimey3Dk/oats.png?branch=master)](https://travis-ci.org/blimey3D/oats)
 
 Oats is an explicit serialisation library for the CLR.
 
