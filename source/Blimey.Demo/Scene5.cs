@@ -34,7 +34,7 @@
 
 using System;
 using Abacus;
-using Abacus.Packed;
+using Fudge;
 using Abacus.SinglePrecision;
 using Cor;
 using System.Collections.Generic;
@@ -188,11 +188,11 @@ namespace Blimey.Demo
 				var lon = airport.Longitude;
 
 				Vector3 pos = new Vector3(
-					radius * RealMaths.Cos(RealMaths.ToRadians(lat)),
-					radius * RealMaths.Sin(RealMaths.ToRadians(lat)),
+					radius * Maths.Cos(Maths.ToRadians(lat)),
+					radius * Maths.Sin(Maths.ToRadians(lat)),
 					0f);
 
-				Single t = RealMaths.ToRadians (lon);
+				Single t = Maths.ToRadians (lon);
 
                 Matrix44 rot; Matrix44.CreateRotationY(ref t, out rot);
 

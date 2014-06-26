@@ -34,7 +34,7 @@
 
 using System;
 using Abacus;
-using Abacus.Packed;
+using Fudge;
 using Abacus.SinglePrecision;
 using Cor;
 using System.Collections.Generic;
@@ -82,7 +82,7 @@ namespace Blimey.Demo
                 this.deltaScale = RandomGenerator.Default.GetRandomSingle(-0.2f, 0.2f);
     
                 Single pi;
-                RealMaths.Pi(out pi);
+                Maths.Pi(out pi);
     
                 this.sprite.Rotation = RandomGenerator.Default.GetRandomSingle(0, pi);
                 Single x = RandomGenerator.Default.GetRandomSingle( 0, width );
@@ -195,7 +195,7 @@ namespace Blimey.Demo
             
 
             Single pi = 0;
-            RealMaths.Pi(out pi);
+            Maths.Pi(out pi);
 
             var newCamSo = this.SceneGraph.CreateSceneObject("ortho");
             newCamSo.Transform.LocalPosition = new Vector3(0, 0, 1);

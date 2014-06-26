@@ -13,3 +13,6 @@
 [submodule "submodules/oats"]
 	path = submodules/oats
     url=https://github.com/blimey3D/oats.git
+[submodule "submodules/fudge"]
+	path = submodules/fudge
+	url = git@github.com:blimey3D/fudge.git

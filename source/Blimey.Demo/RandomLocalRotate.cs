@@ -34,7 +34,7 @@
 
 using System;
 using Abacus;
-using Abacus.Packed;
+using Fudge;
 using Abacus.SinglePrecision;
 using Cor;
 using System.Collections.Generic;

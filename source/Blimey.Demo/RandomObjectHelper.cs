@@ -34,7 +34,7 @@
 
 using System;
 using Abacus;
-using Abacus.Packed;
+using Fudge;
 using Abacus.SinglePrecision;
 using Cor;
 using System.Collections.Generic;
@@ -43,9 +43,9 @@ namespace Blimey.Demo
 {
     public static class RandomObjectHelper
     {
-        public static List<SceneObject> Generate (Scene scene)
+        public static List<Entity> Generate (Scene scene)
         {
-            var objects = new List<SceneObject> ();
+            var objects = new List<Entity> ();
             var cubeModel = new CubePrimitive (scene.Cor.Graphics);
             var billboardModel = new BillboardPrimitive (scene.Cor.Graphics);
             var teapotModel = new TeapotPrimitive (scene.Cor.Graphics);
