@@ -33,7 +33,6 @@
 namespace Cor.Platform.MonoMac
 {
 	using global::System;
-	using global::System;
 	using global::System.Globalization;
 	using global::System.Collections;
 	using global::System.Collections.Generic;
@@ -44,10 +43,8 @@ namespace Cor.Platform.MonoMac
 	using global::System.Runtime.InteropServices;
 	using global::System.Runtime.ConstrainedExecution;
 
-    using Abacus;
-    using Abacus.Packed;
+    using Fudge;
     using Abacus.SinglePrecision;
-    using Abacus.Int32Precision;
 
     using Cor.Lib.Khronos;
     using Cor.Platform.Stub;
@@ -288,20 +285,7 @@ namespace Cor.Platform.MonoMac
         }
 
         #region ISystemManager
-
-        public Point2 CurrentDisplaySize
-        {
-            get
-            {
-                Int32 w = ScreenSpecification.ScreenResolutionWidth;
-                Int32 h = ScreenSpecification.ScreenResolutionHeight;
-
-                GetEffectiveDisplaySize (ref w, ref h);
-
-                return new Point2(w, h);
-            }
-        }
-
+        
 		public String Machine { get { return "Machintosh"; } }
 		public String OperatingSystem { get { return "OSX" + Environment.OSVersion.VersionString;; } }
 		public String VirtualMachine { get { return "Mono ?"; } }

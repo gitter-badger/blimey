@@ -72,5 +72,9 @@
       <Project>{721349D4-249A-48DE-839E-E7E3CA528BA6}</Project>
       <Name>Oats (xs.monomac)</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\fudge\build\xs.monomac\Fudge\Fudge %28xs.monomac%29.csproj">
+      <Project>{FB8EF9CB-D3B2-402B-89C6-9F68F1BAFA44}</Project>
+      <Name>Fudge (xs.monomac)</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

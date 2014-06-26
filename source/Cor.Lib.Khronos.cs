@@ -42,8 +42,7 @@ namespace Cor.Lib.Khronos
     using System.Runtime.InteropServices;
     using System.Runtime.ConstrainedExecution;
 
-    using Abacus;
-    using Abacus.Packed;
+    using Fudge;
     using Abacus.SinglePrecision;
 
     using Oats;
@@ -342,7 +341,7 @@ namespace Cor.Lib.Khronos
         {
             Abacus.SinglePrecision.Vector4 c;
 
-            col.UnpackTo (out c);
+            col.UnpackTo (out c.X, out c.Y, out c.Z, out c.W);
 
             GL.ClearColor (c.X, c.Y, c.Z, c.W);
 
@@ -2164,7 +2163,7 @@ namespace Cor.Lib.Khronos
                 var castValue = (Rgba32) value;
 
                 Abacus.SinglePrecision.Vector4 vec4Value;
-                castValue.UnpackTo (out vec4Value);
+                castValue.UnpackTo (out vec4Value.X, out vec4Value.Y, out vec4Value.Z, out vec4Value.W);
 
                 // does this rgba value need to be packed in to a vector3 or a vector4
                 if (this.Type == typeof (Abacus.SinglePrecision.Vector4) )

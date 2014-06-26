@@ -41,10 +41,8 @@ namespace Cor
     using System.Text;
     using System.IO;
     using System.Reflection;
-    using Abacus;
-    using Abacus.Packed;
+    using Fudge;
     using Abacus.SinglePrecision;
-    using Abacus.Int32Precision;
     using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //

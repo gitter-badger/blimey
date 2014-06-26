@@ -38,10 +38,8 @@ namespace Cor.Platform.Stub
     using System.Collections;
     using System.Collections.Generic;
     using System.IO;
-    using Abacus;
-    using Abacus.Packed;
+    using Fudge;
     using Abacus.SinglePrecision;
-    using Abacus.Int32Precision;
 
     public class StubEngine
         : ICor
@@ -423,19 +421,6 @@ namespace Cor.Platform.Stub
         }
 
         #region ISystem
-
-        public Point2 CurrentDisplaySize
-        {
-            get
-            {
-                Int32 w = ScreenSpecification.ScreenResolutionWidth;
-                Int32 h = ScreenSpecification.ScreenResolutionHeight;
-
-                GetEffectiveDisplaySize (ref w, ref h);
-
-                return new Point2(w, h);
-            }
-        }
 
 		public String Machine { get { return "The New Stub Pad"; } }
 		public String OperatingSystem { get { return "Cyberdyne OS"; } }
