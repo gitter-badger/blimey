@@ -39,9 +39,8 @@ namespace Blimey
     using System.Collections.Generic;
     using System.Diagnostics;
     using Abacus;
-    using Abacus.Packed;
+    using Fudge;
     using Abacus.SinglePrecision;
-    using Abacus.Int32Precision;
     using System.Linq;
     using Cor;
 
@@ -363,7 +362,7 @@ namespace Blimey
             // We need two vertices per line, so we can allocate our vertices
             unitSphere = new Vector3[sphereLineCount * 2];
 
-            float tau; RealMaths.Tau(out tau);
+            float tau; Maths.Tau(out tau);
 
             // Compute our step around each circle
             float step = tau / sphereResolution;

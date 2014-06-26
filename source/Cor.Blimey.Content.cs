@@ -39,9 +39,8 @@ namespace Blimey
     using System.Collections.Generic;
     using System.Diagnostics;
     using Abacus;
-    using Abacus.Packed;
+    using Fudge;
     using Abacus.SinglePrecision;
-    using Abacus.Int32Precision;
     using System.Linq;
     using Cor;
 
@@ -461,7 +460,7 @@ namespace Blimey
         /// </summary>
         static Vector3 GetCircleVector (int i, int tessellation)
         {
-            float tau; RealMaths.Tau(out tau);
+            float tau; Maths.Tau(out tau);
             float angle = i * tau / tessellation;
 
             float dx = (float)Math.Cos (angle);
@@ -495,7 +494,7 @@ namespace Blimey
             // Start with a single vertex at the bottom of the sphere.
             AddVertex(Vector3.Down * radius, Vector3.Down);
 
-            float pi; RealMaths.Pi(out pi);
+            float pi; Maths.Pi(out pi);
             float piOver2 = pi / 2;
             // Create rings of vertices at progressively higher latitudes.
             for (int i = 0; i < verticalSegments - 1; i++)
@@ -506,7 +505,7 @@ namespace Blimey
                 float dy = (float)Math.Sin(latitude);
                 float dxz = (float)Math.Cos(latitude);
 
-                float tau; RealMaths.Tau(out tau);
+                float tau; Maths.Tau(out tau);
 
                 // Create a single ring of vertices at this latitude.
                 for (int j = 0; j < horizontalSegments; j++)
@@ -863,7 +862,7 @@ namespace Blimey
             // First we loop around the main ring of the torus.
             for (int i = 0; i < tessellation; i++)
             {
-                float tau; RealMaths.Tau(out tau);
+                float tau; Maths.Tau(out tau);
                 float outerAngle = i * tau / tessellation;
 
                 // Create a transform matrix that will align geometry to

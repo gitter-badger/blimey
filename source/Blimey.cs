@@ -39,9 +39,8 @@ namespace Blimey
     using System.Collections.Generic;
     using System.Diagnostics;
     using Abacus;
-    using Abacus.Packed;
+    using Fudge;
     using Abacus.SinglePrecision;
-    using Abacus.Int32Precision;
     using System.Linq;
     using Cor;
 
@@ -929,7 +928,6 @@ namespace Blimey
 		void RenderPass(Scene scene, RenderPass pass)
         {
             // init pass
-            var passSettings = scene.Settings.GetRenderPassSettings (pass);
 
             var gfxManager = this.Cor.Graphics;
 
@@ -940,7 +938,7 @@ namespace Blimey
 
             var cam = scene.CameraManager.GetActiveCamera(pass.Name);
 
-            var meshRenderers = this.GetMeshRenderersWithMaterials (scene, pass);
+            var meshRenderers = this.GetMeshRenderersWithMaterials (scene, pass.Name);
             
             // filter this to get only renderers in the camera's frustum
             

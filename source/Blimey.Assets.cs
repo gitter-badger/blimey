@@ -39,9 +39,8 @@ namespace Blimey
     using System.Collections.Generic;
     using System.Diagnostics;
     using Abacus;
-    using Abacus.Packed;
+    using Fudge;
     using Abacus.SinglePrecision;
-    using Abacus.Int32Precision;
     using System.Linq;
     using Cor;
 

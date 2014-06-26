@@ -34,7 +34,7 @@ namespace Blimey
 {
     using System;
     using Abacus;
-    using Abacus.Packed;
+    using Fudge;
     using Abacus.SinglePrecision;
     using Cor;
 
@@ -176,7 +176,7 @@ namespace Blimey
     {
         public override void OnUpdate(AppTime time)
         {
-            Single x = time.Delta * RealMaths.ToRadians(10f);
+            Single x = time.Delta * Maths.ToRadians(10f);
 
             Quaternion rot = Quaternion.CreateFromYawPitchRoll(x, 0, 0);
 
@@ -382,7 +382,7 @@ namespace Blimey
 
             Vector3 rotation =
                 mInputs.mRotation *
-                RealMaths.ToRadians(mRotationSpeed) *
+                Maths.ToRadians(mRotationSpeed) *
                 mInputs.mRotationSpeedScale * time.Delta;
 
             localPitch += rotation.X;
@@ -423,7 +423,7 @@ namespace Blimey
             static SpriteConfiguration()
             {
                 Single piOver2;
-                RealMaths.Pi(out piOver2);
+                Maths.Pi(out piOver2);
                 piOver2 /= 2;
                 Single minusPiOver2 = -piOver2;
                 Matrix44 rotation = Matrix44.Identity;
@@ -823,7 +823,7 @@ namespace Blimey
         public CameraProjectionType Projection = CameraProjectionType.Perspective;
 
         // perspective settings
-        public Single FieldOfView = RealMaths.ToRadians(45.0f);
+        public Single FieldOfView = Maths.ToRadians(45.0f);
 
         // orthographic settings
         public Single size = 100f;

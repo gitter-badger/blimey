@@ -39,9 +39,8 @@ namespace Blimey
     using System.Collections.Generic;
     using System.Diagnostics;
     using Abacus;
-    using Abacus.Packed;
+    using Fudge;
     using Abacus.SinglePrecision;
-    using Abacus.Int32Precision;
     using System.Linq;
     using Cor;
 
@@ -110,9 +109,9 @@ namespace Blimey
         public static Quaternion EulerToQuaternion(Vector3 e)
         {
 
-            Single x = RealMaths.ToRadians(e.X);
-            Single y = RealMaths.ToRadians(e.Y);
-            Single z = RealMaths.ToRadians(e.Z);
+            Single x = Maths.ToRadians(e.X);
+            Single y = Maths.ToRadians(e.Y);
+            Single z = Maths.ToRadians(e.Z);
 
             Quaternion result;
             Quaternion.CreateFromYawPitchRoll(ref x, ref y, ref z, out result);
@@ -180,9 +179,9 @@ namespace Blimey
             //}
 
 
-            angles.X = RealMaths.ToDegrees(angles.X);
-            angles.Y = RealMaths.ToDegrees(angles.Y);
-            angles.Z = RealMaths.ToDegrees(angles.Z);
+            angles.X = Maths.ToDegrees(angles.X);
+            angles.Y = Maths.ToDegrees(angles.Y);
+            angles.Z = Maths.ToDegrees(angles.Z);
 
 
             return angles;
@@ -210,7 +209,7 @@ namespace Blimey
                 yaw = sign * 2 * (Single)Math.Atan2(q.I, q.U);
 
                 Single piOver2;
-                RealMaths.Pi(out piOver2);
+                Maths.Pi(out piOver2);
                 piOver2 /= 2;
 
                 pitch = sign * piOver2;
@@ -284,7 +283,7 @@ namespace Blimey
 
             Single dot;
             Vector3.Dot(ref vec1, ref vec2, out dot);
-            Single angle = RealMaths.ArcCos(dot);
+            Single angle = Maths.ArcCos(dot);
 
             //check to see if the car->camera vector is to the left or right of the
             //inverse car.look vector using the cross product
@@ -304,10 +303,10 @@ namespace Blimey
             angle *= sign;
 
             Single pi;
-            RealMaths.Pi(out pi);
+            Maths.Pi(out pi);
 
             Single tau;
-            RealMaths.Tau(out tau);
+            Maths.Tau(out tau);
 
             while (angle < -pi)
                 angle += tau;
@@ -845,7 +844,7 @@ namespace Blimey
             Vector3 newRight;
             Vector3.Cross(ref lookAtVector, ref worldUp, out newRight);
 
-            Single epsilon; RealMaths.Epsilon(out epsilon);
+            Single epsilon; Maths.Epsilon(out epsilon);
 
             Single newRightLengthSquared =
                 (newRight.X * newRight.X) +
