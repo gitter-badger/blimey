@@ -1,5 +1,5 @@
 ﻿// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor.Lib.Khronos                                                                                                │ \\
+// │ Cor.Lib.OpenTK                                                                                                 │ \\
 // ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
 // │                     Brought to you by:                                                                         │ \\
 // │                              _________                    .__               __                                 │ \\
@@ -30,7 +30,7 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Cor.Lib.Khronos
+namespace Cor.Lib.OTK
 {
     using System;
     using System.Globalization;
@@ -42,6 +42,7 @@ namespace Cor.Lib.Khronos
     using System.Runtime.InteropServices;
     using System.Runtime.ConstrainedExecution;
 
+    
     using Fudge;
     using Abacus.SinglePrecision;
 
@@ -204,15 +205,15 @@ namespace Cor.Lib.Khronos
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class GraphicsManager
-        : IGraphicsManager
+    public sealed class Graphics
+        : GraphicsBase
     {
         readonly GpuUtils gpuUtils;
 
         GeometryBuffer currentGeomBuffer;
         CullMode? currentCullMode;
 
-        public GraphicsManager ()
+        public Graphics ()
         {
             InternalUtils.Log.Info ("GFX", 
                 "Khronos Graphics Manager -> ()");
@@ -323,11 +324,11 @@ namespace Cor.Lib.Khronos
         }
 
 
-        #region IGraphicsManager
+        #region GraphicsBase
 
-        public IGpuUtils GpuUtils { get { return this.gpuUtils; } }
+        public override IGpuUtils GpuUtils { get { return this.gpuUtils; } }
 
-        public void Reset ()
+        public override void Reset ()
         {
             this.ClearDepthBuffer ();
             this.ClearColourBuffer ();
@@ -337,13 +338,13 @@ namespace Cor.Lib.Khronos
             this.SetActiveTexture (0, null);
         }
 
-        public void ClearColourBuffer (Rgba32 col = new Rgba32())
+        public override void ClearColourBuffer (Rgba32 col = new Rgba32())
         {
-            Abacus.SinglePrecision.Vector4 c;
+            Single r, g, b, a;
 
-            col.UnpackTo (out c.X, out c.Y, out c.Z, out c.W);
+            col.UnpackTo (out r, out g, out b, out a);
 
-            GL.ClearColor (c.X, c.Y, c.Z, c.W);
+            GL.ClearColor (r, g, b, a);
 
             var mask = ClearBufferMask.ColorBufferBit;
 
@@ -352,7 +353,7 @@ namespace Cor.Lib.Khronos
             KrErrorHandler.Check ();
         }
 
-        public void ClearDepthBuffer (Single val = 1)
+        public override void ClearDepthBuffer (Single val = 1)
         {
             GL.ClearDepth (val);
 
@@ -363,7 +364,7 @@ namespace Cor.Lib.Khronos
             KrErrorHandler.Check ();
         }
 
-        public void SetCullMode (CullMode cullMode)
+        public override void SetCullMode (CullMode cullMode)
         {
             if (!currentCullMode.HasValue || currentCullMode.Value != cullMode)
             {
@@ -401,7 +402,7 @@ namespace Cor.Lib.Khronos
             }
         }
 
-        public IGeometryBuffer CreateGeometryBuffer (
+        public override IGeometryBuffer CreateGeometryBuffer (
             VertexDeclaration vertexDeclaration,
             Int32 vertexCount,
             Int32 indexCount)
@@ -409,7 +410,7 @@ namespace Cor.Lib.Khronos
             return new GeometryBuffer (vertexDeclaration, vertexCount, indexCount);
         }
 
-        public void SetActiveGeometryBuffer (IGeometryBuffer buffer)
+        public override void SetActiveGeometryBuffer (IGeometryBuffer buffer)
         {
             var temp = buffer as GeometryBuffer;
 
@@ -431,7 +432,7 @@ namespace Cor.Lib.Khronos
             }
         }
 
-        public ITexture UploadTexture (TextureAsset tex)
+        public override ITexture UploadTexture (TextureAsset tex)
         {
             int width = tex.Width;
             int height = tex.Height;
@@ -540,14 +541,14 @@ namespace Cor.Lib.Khronos
             return textureHandle;
         }
 
-        public void UnloadTexture (ITexture texture)
+        public override void UnloadTexture (ITexture texture)
         {
             int textureId = (texture as TextureHandle).glTextureId;
 
             GL.DeleteTextures (1, ref textureId);
         }
 
-        public void SetActiveTexture (Int32 slot, ITexture tex)
+        public override void SetActiveTexture (Int32 slot, ITexture tex)
         {
             TextureUnit oglTexSlot = KrEnumConverter.ToKhronosTextureSlot (slot);
             GL.ActiveTexture (oglTexSlot);
@@ -564,7 +565,7 @@ namespace Cor.Lib.Khronos
             }
         }
 
-        public IShader CreateShader (ShaderAsset asset)
+        public override IShader CreateShader (ShaderAsset asset)
         {
             ShaderDefinition shaderDefinition = asset.Definition;
 
@@ -625,13 +626,13 @@ namespace Cor.Lib.Khronos
             return result;
         }
 
-        public void DestroyShader (IShader shader)
+        public override void DestroyShader (IShader shader)
         {
             var handle = (ShaderHandle) shader;
             handle.Dispose ();
         }
 
-        public void SetBlendEquation (
+        public override void SetBlendEquation (
             BlendFunction rgbBlendFunction,
             BlendFactor sourceRgb,
             BlendFactor destinationRgb,
@@ -653,7 +654,7 @@ namespace Cor.Lib.Khronos
             KrErrorHandler.Check ();
         }
 
-        public void DrawPrimitives (
+        public override void DrawPrimitives (
             PrimitiveType primitiveType,
             Int32 startVertex,
             Int32 primitiveCount)
@@ -661,7 +662,7 @@ namespace Cor.Lib.Khronos
             throw new NotImplementedException ();
         }
 
-        public void DrawIndexedPrimitives (
+        public override void DrawIndexedPrimitives (
             PrimitiveType primitiveType,
             Int32 baseVertex,
             Int32 minVertexIndex,
@@ -696,13 +697,12 @@ namespace Cor.Lib.Khronos
             this.DisableVertAttribs (vertDecl);
         }
 
-        public void DrawUserPrimitives <T> (
+        public override void DrawUserPrimitives <T> (
             PrimitiveType primitiveType,
             T[] vertexData,
             Int32 vertexOffset,
             Int32 primitiveCount,
             VertexDeclaration vertexDeclaration)
-            where T : struct, IVertexType
         {
             // do i need to do this? todo: find out
             this.SetActiveGeometryBuffer (null);
@@ -767,7 +767,7 @@ namespace Cor.Lib.Khronos
             pinnedArray.Free ();
         }
 
-        public void DrawUserIndexedPrimitives <T> (
+        public override void DrawUserIndexedPrimitives <T> (
             PrimitiveType primitiveType,
             T[] vertexData,
             Int32 vertexOffset,
@@ -776,7 +776,6 @@ namespace Cor.Lib.Khronos
             Int32 indexOffset,
             Int32 primitiveCount,
             VertexDeclaration vertexDeclaration)
-            where T : struct, IVertexType
         {
             throw new NotImplementedException ();
         }
@@ -2103,7 +2102,7 @@ namespace Cor.Lib.Khronos
 
             this.UniformLocation = uniformLocation;
             this.Name = uniform.Name;
-            this.Type = Cor.Lib.Khronos.KrEnumConverter.ToType (uniform.Type);
+            this.Type = Cor.Lib.OTK.KrEnumConverter.ToType (uniform.Type);
 
             InternalUtils.Log.Info ("GFX", 
                 String.Format (

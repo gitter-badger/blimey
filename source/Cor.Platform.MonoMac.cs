@@ -38,15 +38,16 @@ namespace Cor.Platform.MonoMac
 	using global::System.Collections.Generic;
 	using global::System.Linq;
 	using global::System.IO;
-	using global::System.Drawing;
 	using global::System.Diagnostics;
 	using global::System.Runtime.InteropServices;
 	using global::System.Runtime.ConstrainedExecution;
 
+    
     using Fudge;
     using Abacus.SinglePrecision;
+    
 
-    using Cor.Lib.Khronos;
+    using Cor.Lib.OTK;
     using Cor.Platform.Stub;
 
 	using global::MonoMac.Foundation;
@@ -60,65 +61,52 @@ namespace Cor.Platform.MonoMac
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class Engine
-        : ICor
+        : EngineBase
     {
-        readonly AudioManager audio;
-        readonly GraphicsManager graphics;
-        readonly InputManager input;
+        readonly Graphics graphics;
+        readonly Input input;
 		readonly Host host;
-		readonly System system;
         readonly AppSettings settings;
-        readonly AppStatus appStatus;
+        readonly Status status;
         readonly IApp app;
         readonly LogManager log;
-        readonly AssetManager assets;
-
+        
         public Engine (AppSettings settings, IApp app, Int32 width, Int32 height)
+			: base (new MonoMacPlatform ())
         {
             InternalUtils.Log.Info ("Engine -> ()");
 
             this.settings = settings;
-            this.audio = new AudioManager ();
-            this.graphics = new GraphicsManager ();
-            this.input = new InputManager (this);
-			this.system = new System ();
+            this.graphics = new Graphics ();
 			this.host = new Host ();
-            this.appStatus = new AppStatus (width, height);
+            this.status = new Status (width, height);
+			this.input = new Input (this.host, this.status, settings.MouseGeneratesTouches);
             this.log = new LogManager (this.settings.LogSettings);
-            this.assets = new AssetManager (this.graphics, this.system);
             this.app = app;
 			this.app.Start (this);
         }
 
-        internal AudioManager AudioImplementation { get { return this.audio; } }
+        internal Graphics GraphicsImplementation { get { return this.graphics; } }
 
-        internal GraphicsManager GraphicsImplementation { get { return this.graphics; } }
-
-        internal InputManager InputImplementation { get { return this.input; } }
+        internal Input InputImplementation { get { return this.input; } }
 
 		internal Host HostImplementation { get { return this.host; } }
 
-        internal AppStatus DisplayStatusImplementation { get { return this.appStatus; } }
+        internal Status DisplayStatusImplementation { get { return this.status; } }
 
-        #region ICor
+        #region EngineBase
 
-        public IAudioManager Audio { get { return this.audio; } }
+        public override GraphicsBase Graphics { get { return this.graphics; } }
 
-        public IGraphicsManager Graphics { get { return this.graphics; } }
+		public override StatusBase Status { get { return this.status; } }
 
-		public IAppStatus AppStatus { get { return this.appStatus; } }
+		public override InputBase Input { get { return this.input; } }
 
-		public IInputManager Input { get { return this.input; } }
+		public override HostBase Host { get { return this.host; } }
 
-		public IHost Host { get { return this.host; } }
+        public override LogManager Log { get { return this.log; } }
 
-		public ISystem System { get { return this.system; } }
-
-        public LogManager Log { get { return this.log; } }
-
-        public AssetManager Assets { get { return this.assets; } }
-
-        public AppSettings Settings { get { return this.settings; } }
+        public override AppSettings Settings { get { return this.settings; } }
 
         #endregion
 
@@ -137,33 +125,49 @@ namespace Cor.Platform.MonoMac
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class AudioManager
-        : IAudioManager
+	public class MonoMacPlatform
+		: IPlatform
     {
-        public Single volume = 1f;
+		Single volume = 1f;
 
-        public Single Volume
+		public MonoMacPlatform ()
         {
-            get { return this.volume; }
-            set
-            {
-                this.volume = value;
-                InternalUtils.Log.Info ("AudioManager -> Setting Volume:" + value);
-            }
-        }
-
-        public AudioManager ()
-        {
-            InternalUtils.Log.Info ("AudioManager -> ()");
             this.volume = 1f;
         }
+
+        #region IPlatform
+
+        public Single sfx_GetVolume () { return this.volume; }
+
+		public void sfx_SetVolume (Single value)
+		{
+	        this.volume = value;
+        }
+
+        public Stream res_GetFileStream (String filePath)
+        {
+            String platformPath = Path.Combine ("assets/monomac", filePath);
+            String rtype = Path.GetExtension (platformPath);
+            String rname = Path.Combine (
+                Path.GetDirectoryName (platformPath),
+                Path.GetFileNameWithoutExtension (platformPath));
+            var correctPath = global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (rname, rtype);
+
+            if (!File.Exists (correctPath))
+            {
+                throw new FileNotFoundException (correctPath);
+            }
+
+            return new FileStream (correctPath, FileMode.Open);
+        }
+
+        #endregion
     }
 
-    
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class InputManager
-        : IInputManager
+    public sealed class Input
+        : InputBase
     {
         readonly Keyboard keyboard;
         readonly Mouse mouse;
@@ -175,16 +179,16 @@ namespace Cor.Platform.MonoMac
 
         TouchScreenImplementation touchScreen;
 
-        public InputManager (ICor engine)
+		public Input (HostBase host, StatusBase status, Boolean mouseGeneratesTouches)
         {
             InternalUtils.Log.Info ("InputManager -> ()");
 
             keyboard = new Keyboard ();
             mouse = new Mouse ();
 
-            if (engine.Settings.MouseGeneratesTouches)
+            if (mouseGeneratesTouches)
             {
-                touchScreen = new TouchScreenImplementation (engine);
+				touchScreen = new TouchScreenImplementation (host, this, status);
             }
         }
 
@@ -193,12 +197,12 @@ namespace Cor.Platform.MonoMac
 
         #region IInputManager
 
-        public IXbox360Gamepad Xbox360Gamepad { get { return xbox360Gamepad; } }
-        public IPsmGamepad PsmGamepad { get { return psmGamepad; } }
-        public IMultiTouchController MultiTouchController { get { return multiTouchController; } }
-        public IGenericGamepad GenericGamepad { get { return genericGamepad; } }
-        public IMouse Mouse { get { return mouse; } }
-        public IKeyboard Keyboard { get { return keyboard; } }
+        public override IXbox360Gamepad Xbox360Gamepad { get { return xbox360Gamepad; } }
+        public override IPsmGamepad PsmGamepad { get { return psmGamepad; } }
+        public override IMultiTouchController MultiTouchController { get { return multiTouchController; } }
+        public override IGenericGamepad GenericGamepad { get { return genericGamepad; } }
+        public override IMouse Mouse { get { return mouse; } }
+        public override IKeyboard Keyboard { get { return keyboard; } }
 
         #endregion
 
@@ -211,7 +215,7 @@ namespace Cor.Platform.MonoMac
         }
     }
 
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class PanelSpecification
@@ -228,7 +232,7 @@ namespace Cor.Platform.MonoMac
         #endregion
     }
 
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class ScreenSpecification
@@ -252,11 +256,11 @@ namespace Cor.Platform.MonoMac
         #endregion
     }
 
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
 	public sealed class Host
-		: IHost
+		: HostBase
     {
         readonly IScreenSpecification screen;
         readonly IPanelSpecification panel;
@@ -285,48 +289,19 @@ namespace Cor.Platform.MonoMac
         }
 
         #region ISystemManager
-        
-		public String Machine { get { return "Machintosh"; } }
-		public String OperatingSystem { get { return "OSX" + Environment.OSVersion.VersionString;; } }
-		public String VirtualMachine { get { return "Mono ?"; } }
 
-        public DeviceOrientation CurrentOrientation { get { return DeviceOrientation.Default; } }
-        public IScreenSpecification ScreenSpecification { get { return this.screen; } }
-        public IPanelSpecification PanelSpecification { get { return this.panel; } }
+		public override String Machine { get { return "Machintosh"; } }
+		public override String OperatingSystem { get { return "OSX" + Environment.OSVersion.VersionString;; } }
+		public override String VirtualMachine { get { return "Mono ?"; } }
+
+        public override DeviceOrientation CurrentOrientation { get { return DeviceOrientation.Default; } }
+        public override IScreenSpecification ScreenSpecification { get { return this.screen; } }
+        public override IPanelSpecification PanelSpecification { get { return this.panel; } }
+        
+        #endregion
 	}
 
 
-	// ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-	public sealed class System
-		: ISystem
-	{
-		static String GetBundlePath (String path)
-		{
-			String rtype = Path.GetExtension (path);
-			String rname = Path.Combine (Path.GetDirectoryName (path), Path.GetFileNameWithoutExtension (path));
-
-			var correctPath = global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (rname, rtype);
-
-			if (!File.Exists (correctPath))
-			{
-				throw new FileNotFoundException (correctPath);
-			}
-
-			return correctPath;
-		}
-
-        public Stream GetAssetStream (String assetId)
-        {
-            string path = GetBundlePath (Path.Combine ("assets/monomac", assetId));
-            var fStream = new FileStream (path, FileMode.Open);
-            return fStream;
-        }
-
-        #endregion
-    }
-
-    
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class MonoMacApp
@@ -345,7 +320,7 @@ namespace Cor.Platform.MonoMac
 
         void InitializeMainWindow ()
         {
-            RectangleF frame = new RectangleF (
+            System.Drawing.RectangleF frame = new System.Drawing.RectangleF (
                 0, 0,
                 800,
                 600);
@@ -391,12 +366,12 @@ namespace Cor.Platform.MonoMac
 
         Single GetTitleBarHeight ()
         {
-            RectangleF contentRect = NSWindow.ContentRectFor (mainWindow.Frame, mainWindow.StyleMask);
+            System.Drawing.RectangleF contentRect = NSWindow.ContentRectFor (mainWindow.Frame, mainWindow.StyleMask);
             return mainWindow.Frame.Height - contentRect.Height;
         }
     }
 
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     [CLSCompliant (false)]
@@ -418,7 +393,7 @@ namespace Cor.Platform.MonoMac
         // Init
         //------------------------------------------------------------------------------------------------------------//
 
-        public OpenGLView (AppSettings settings, IApp entryPoint, RectangleF frame)
+        public OpenGLView (AppSettings settings, IApp entryPoint, System.Drawing.RectangleF frame)
             : base (frame)
         {
             this.settings = settings;
@@ -493,7 +468,7 @@ namespace Cor.Platform.MonoMac
         protected override void OnResize (EventArgs e)
         {
             // Occurs whenever GameWindow is resized.
-            // Update the OpenGL Viewport and Projection Matrix here. 
+            // Update the OpenGL Viewport and Projection Matrix here.
             InternalUtils.Log.Info ("MonoMacGameView.OnResize -> Bounds:" + Bounds + ", Frame:" + Frame);
 
             gameEngine.DisplayStatusImplementation.UpdateSize ((Int32)Frame.Width, (Int32)Frame.Height);
@@ -662,14 +637,14 @@ namespace Cor.Platform.MonoMac
         }
     }
 
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class MacGameNSWindow 
+    public sealed class MacGameNSWindow
         : NSWindow
     {
         [Export ("initWithContentRect:styleMask:backing:defer:")]
-        public MacGameNSWindow (RectangleF rect, NSWindowStyle style, NSBackingStore backing, Boolean defer)
+        public MacGameNSWindow (System.Drawing.RectangleF rect, NSWindowStyle style, NSBackingStore backing, Boolean defer)
             : base (rect, style, backing, defer)
         {
         }
@@ -677,10 +652,10 @@ namespace Cor.Platform.MonoMac
         public override Boolean CanBecomeKeyWindow { get { return true; } }
     }
 
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    internal sealed class MainWindowDelegate 
+    internal sealed class MainWindowDelegate
         : NSWindowDelegate
     {
         private readonly MonoMacApp owner;
@@ -691,13 +666,13 @@ namespace Cor.Platform.MonoMac
             this.owner = owner;
         }
 
-        public override Boolean ShouldZoom (NSWindow window, RectangleF newFrame)
+        public override Boolean ShouldZoom (NSWindow window, System.Drawing.RectangleF newFrame)
         {
             return true;
         }
     }
 
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     internal static class Vector2Converter
@@ -713,7 +688,7 @@ namespace Cor.Platform.MonoMac
         }
     }
 
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class Keyboard
@@ -857,7 +832,7 @@ namespace Cor.Platform.MonoMac
         #endregion
     }
 
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     internal sealed class Mouse
@@ -896,16 +871,16 @@ namespace Cor.Platform.MonoMac
         #endregion
     }
 
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class AppStatus
-		: IAppStatus
+    public sealed class Status
+		: StatusBase
     {
         Int32 width = 0;
         Int32 height = 0;
 
-        public AppStatus (Int32 width, Int32 height)
+        public Status (Int32 width, Int32 height)
         {
             InternalUtils.Log.Info (
                 "DisplayStatus -> ()");
@@ -920,32 +895,36 @@ namespace Cor.Platform.MonoMac
             this.height = height;
         }
 
-        #region IDisplayStatus
+        #region StatusBase
 
-		public Boolean? Fullscreen { get { return true; } }
+		public override Boolean? Fullscreen { get { return true; } }
 
-        public Int32 Width { get { return width; } }
+        public override Int32 Width { get { return width; } }
 
-        public Int32 Height { get { return height; } }
+        public override Int32 Height { get { return height; } }
 
         #endregion
     }
 
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
+
     public class TouchScreenImplementation
         : IMultiTouchController
     {
         Boolean doneFirstUpdateFlag = false;
 
-        readonly ICor cor;
+		readonly HostBase host;
+		readonly InputBase input;
+		readonly StatusBase status;
         ButtonState previousMouseLeftState;
         readonly TouchCollection collection = new TouchCollection ();
 
-        internal TouchScreenImplementation (ICor cor)
+        internal TouchScreenImplementation (HostBase host, InputBase input, StatusBase status)
         {
-            this.cor = cor;
+            this.host = host;
+            this.input = input;
+            this.status = status;
         }
 
         public TouchCollection TouchCollection
@@ -954,8 +933,8 @@ namespace Cor.Platform.MonoMac
         }
 
 		public IPanelSpecification PanelSpecification
-        { 
-			get { return (cor.Host as Host).PanelSpecification; }
+        {
+			get { return (host as Host).PanelSpecification; }
         }
 
         internal void Update (AppTime time)
@@ -964,14 +943,14 @@ namespace Cor.Platform.MonoMac
 
             if (doneFirstUpdateFlag)
             {
-                Boolean pressedThisFrame = (this.cor.Input.Mouse.Left == ButtonState.Pressed);
+                Boolean pressedThisFrame = (this.input.Mouse.Left == ButtonState.Pressed);
                 Boolean pressedLastFrame = (previousMouseLeftState == ButtonState.Pressed);
 
                 Int32 id = -42;
-                Vector2 pos = new Vector2(this.cor.Input.Mouse.X, this.cor.Input.Mouse.Y);
+                Vector2 pos = new Vector2(this.input.Mouse.X, this.input.Mouse.Y);
 
-				Int32 w = cor.AppStatus.Width;
-				Int32 h = cor.AppStatus.Height;
+				Int32 w = this.status.Width;
+				Int32 h = this.status.Height;
 
                 pos.X = pos.X / (Single)w;
                 pos.Y = pos.Y / (Single)h;
@@ -981,7 +960,7 @@ namespace Cor.Platform.MonoMac
                 pos.Y = -pos.Y;
 
                 var state = TouchPhase.Invalid;
-                
+
                 if (pressedThisFrame && !pressedLastFrame)
                 {
                     // new press
@@ -1008,7 +987,7 @@ namespace Cor.Platform.MonoMac
                 doneFirstUpdateFlag = true;
             }
 
-            previousMouseLeftState = this.cor.Input.Mouse.Left;
+            previousMouseLeftState = this.input.Mouse.Left;
         }
     }
 }

@@ -38,51 +38,45 @@ namespace Cor.Platform.Stub
     using System.Collections;
     using System.Collections.Generic;
     using System.IO;
+    
     using Fudge;
     using Abacus.SinglePrecision;
+    
 
     public class StubEngine
-        : ICor
+        : EngineBase
     {
-        readonly IAudioManager audio;
-        readonly IGraphicsManager graphics;
-        readonly IInputManager input;
-		readonly IHost host;
+        readonly GraphicsBase graphics;
+        readonly InputBase input;
+		readonly HostBase host;
         readonly AppSettings settings;
         readonly IApp app;
         readonly LogManager log;
-        readonly AssetManager assets;
-		readonly IAppStatus appStatus;
-		readonly ISystem system;
+		readonly StatusBase appStatus;
 
 		public StubEngine (IApp app, AppSettings settings)
+			: base (new StubPlatform ())
         {
 			InternalUtils.Log.Info ("StubEngine -> ()");
 
-			this.audio = new StubAudioManager ();
-			this.graphics = new StubGraphicsManager ();
-			this.input = new StubInputManager ();
+			this.graphics = new StubGraphics ();
+			this.input = new StubInput ();
 			this.host = new StubHost ();
             this.settings = settings;
-            this.appStatus = new StubAppStatus ();
-			this.system = new StubSystem ();
+            this.appStatus = new StubStatus ();
             this.log = new LogManager (this.settings.LogSettings);
-			this.assets = new AssetManager (this.graphics, this.system);
             this.app = app;
 			this.app.Start (this);
         }
 
         #region ICor
 
-        public IAudioManager Audio { get { return this.audio; } }
-        public IGraphicsManager Graphics { get { return this.graphics; } }
-		public IAppStatus AppStatus { get { return this.appStatus; } }
-        public IInputManager Input { get { return this.input; } }
-		public IHost Host { get { return this.host; } }
-		public ISystem System { get { return this.system; } }
-        public LogManager Log { get { return this.log; } }
-        public AssetManager Assets { get { return this.assets; } }
-        public AppSettings Settings { get { return this.settings; } }
+        public override GraphicsBase Graphics { get { return this.graphics; } }
+		public override StatusBase Status { get { return this.appStatus; } }
+        public override InputBase Input { get { return this.input; } }
+		public override HostBase Host { get { return this.host; } }
+		public override LogManager Log { get { return this.log; } }
+        public override AppSettings Settings { get { return this.settings; } }
 
         #endregion
     }
@@ -90,76 +84,79 @@ namespace Cor.Platform.Stub
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class StubAudioManager
-        : IAudioManager
+    public class StubPlatform
+		: IPlatform
     {
 		Single volume = 1f;
 
-        public Single Volume
-        {
-            get { return this.volume; }
-            set
-            {
-                this.volume = value;
-				InternalUtils.Log.Info ("StubAudioManager -> Setting Volume:" + value);
-            }
-        }
-
-        #region IAudioManager
-
-		public StubAudioManager ()
+		public StubPlatform ()
         {
 			InternalUtils.Log.Info ("StubAudioManager -> ()");
             this.volume = 1f;
         }
 
+        #region IPlatform
+
+        public Single sfx_GetVolume () { return this.volume; }
+        
+		public void sfx_SetVolume (Single value)
+		{
+	        this.volume = value;
+			InternalUtils.Log.Info ("StubAudioManager -> Setting Volume:" + value);
+        }
+        
+        public Stream res_GetFileStream (String path)
+        {
+            return new FileStream (path, FileMode.OpenOrCreate);
+        }
+
         #endregion
     }
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class StubGraphicsManager
-        : IGraphicsManager
+    public class StubGraphics
+        : GraphicsBase
     {
         readonly IGpuUtils gpuUtils;
 
-		public StubGraphicsManager ()
+		public StubGraphics ()
         {
 			InternalUtils.Log.Info ("StubGraphicsManager -> ()");
             this.gpuUtils = new StubGpuUtils ();
         }
 
-        #region IGraphicsManager
+        #region GraphicsBase
 
-        public IGpuUtils GpuUtils { get { return this.gpuUtils; } }
-		public void Reset () {}
-		public void ClearColourBuffer (Rgba32 color = new Rgba32()) {}
-		public void ClearDepthBuffer (Single depth = 1f) {}
-		public void SetCullMode (CullMode cullMode) {}
-        public void SetActiveGeometryBuffer (IGeometryBuffer buffer) {}
-        public ITexture UploadTexture (TextureAsset tex) { return null; }
-        public void UnloadTexture (ITexture texture) {}
-        public void SetActiveTexture (Int32 slot, ITexture tex) {}
-        public IShader CreateShader (ShaderAsset asset) { return null; }
-        public void DestroyShader (IShader shader) {}
+        public override IGpuUtils GpuUtils { get { return this.gpuUtils; } }
+		public override void Reset () {}
+		public override void ClearColourBuffer (Rgba32 color = new Rgba32()) {}
+		public override void ClearDepthBuffer (Single depth = 1f) {}
+		public override void SetCullMode (CullMode cullMode) {}
+        public override void SetActiveGeometryBuffer (IGeometryBuffer buffer) {}
+        public override ITexture UploadTexture (TextureAsset tex) { return null; }
+        public override void UnloadTexture (ITexture texture) {}
+        public override void SetActiveTexture (Int32 slot, ITexture tex) {}
+        public override IShader CreateShader (ShaderAsset asset) { return null; }
+        public override void DestroyShader (IShader shader) {}
 
-		public IGeometryBuffer CreateGeometryBuffer (
+		public override IGeometryBuffer CreateGeometryBuffer (
             VertexDeclaration vertexDeclaration, Int32 vertexCount, Int32 indexCount)
         {
             return new StubGeometryBuffer (vertexDeclaration, vertexCount, indexCount);
         }
 
-        public void SetBlendEquation (
+        public override void SetBlendEquation (
             BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb,
             BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha)
         {
         }
 
-        public void DrawPrimitives (
+        public override void DrawPrimitives (
             PrimitiveType primitiveType, Int32 startVertex, Int32 primitiveCount) {}
 
-        public void DrawIndexedPrimitives (
+        public override void DrawIndexedPrimitives (
             PrimitiveType primitiveType,
             Int32 baseVertex,
             Int32 minVertexIndex,
@@ -169,19 +166,16 @@ namespace Cor.Platform.Stub
         {
         }
 
-        public void DrawUserPrimitives <T> (
+        public override void DrawUserPrimitives <T> (
             PrimitiveType primitiveType,
             T[] vertexData,
             Int32 vertexOffset,
             Int32 primitiveCount,
             VertexDeclaration vertexDeclaration)
-        where T 
-            : struct
-            , IVertexType
         {
         }
 
-        public void DrawUserIndexedPrimitives <T> (
+        public override void DrawUserIndexedPrimitives <T> (
             PrimitiveType primitiveType,
             T[] vertexData,
             Int32 vertexOffset,
@@ -190,9 +184,6 @@ namespace Cor.Platform.Stub
             Int32 indexOffset,
             Int32 primitiveCount,
             VertexDeclaration vertexDeclaration)
-        where T
-            : struct
-            , IVertexType
         {
         }
 
@@ -202,19 +193,19 @@ namespace Cor.Platform.Stub
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class StubAppStatus
-		: IAppStatus
+    public class StubStatus
+		: StatusBase
     {
-        public StubAppStatus ()
+        public StubStatus ()
         {
             InternalUtils.Log.Info ("StubDisplayStatus -> ()");
         }
 
-        #region IDisplayStatus
+        #region StatusBase
 
-		public Boolean? Fullscreen { get { return true; } }
-        public Int32 Width { get { return 800; } }
-		public Int32 Height { get { return 600; } }
+		public override Boolean? Fullscreen { get { return true; } }
+        public override Int32 Width { get { return 800; } }
+		public override Int32 Height { get { return 600; } }
 
         #endregion
     }
@@ -390,7 +381,7 @@ namespace Cor.Platform.Stub
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public class StubHost
-		: IHost
+		: HostBase
     {
         readonly IScreenSpecification screen;
         readonly IPanelSpecification panel;
@@ -420,50 +411,29 @@ namespace Cor.Platform.Stub
             }
         }
 
-        #region ISystem
+        #region HoseBase
 
-		public String Machine { get { return "The New Stub Pad"; } }
-		public String OperatingSystem { get { return "Cyberdyne OS"; } }
-		public String VirtualMachine { get { return "Mono 2.10"; } }
+		public override String Machine { get { return "The New Stub Pad"; } }
+		public override String OperatingSystem { get { return "Cyberdyne OS"; } }
+		public override String VirtualMachine { get { return "Mono 2.10"; } }
 
-        public DeviceOrientation CurrentOrientation
+        public override DeviceOrientation CurrentOrientation
         {
             get { return DeviceOrientation.Default; }
         }
 
-        public IScreenSpecification ScreenSpecification
+        public override IScreenSpecification ScreenSpecification
         {
             get { return this.screen; }
         }
 
-        public IPanelSpecification PanelSpecification
+        public override IPanelSpecification PanelSpecification
         {
             get { return this.panel; }
         }
 
         #endregion
     }
-
-
-	// ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-	public class StubSystem
-		: ISystem
-	{
-		public StubSystem ()
-		{
-			InternalUtils.Log.Info ("StubSystem -> ()");
-		}
-
-		#region ISystem
-
-		public Stream GetAssetStream (String assetId)
-		{
-			return null;
-		}
-
-		#endregion
-	}
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -585,8 +555,8 @@ namespace Cor.Platform.Stub
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class StubInputManager
-        : IInputManager
+    public class StubInput
+        : InputBase
     {
         readonly IXbox360Gamepad xbox360Gamepad = new StubXbox360Gamepad ();
         readonly IPsmGamepad psmGamepad = new StubPsmGamepad ();
@@ -595,19 +565,19 @@ namespace Cor.Platform.Stub
         readonly IKeyboard keyboard = new StubKeyboard ();
         readonly IMouse mouse = new StubMouse ();
 
-        public StubInputManager ()
+        public StubInput ()
         {
             InternalUtils.Log.Info ("StubInputManager -> ()");
         }
 
-        #region IInputManager
+        #region InputBase
 
-        public IXbox360Gamepad Xbox360Gamepad { get { return xbox360Gamepad; } }
-        public IPsmGamepad PsmGamepad { get { return psmGamepad; } }
-        public IMultiTouchController MultiTouchController { get { return multiTouchController; } }
-        public IGenericGamepad GenericGamepad { get { return genericGamepad; } }
-        public IKeyboard Keyboard { get { return keyboard; } }
-        public IMouse Mouse { get { return mouse; } }
+        public override IXbox360Gamepad Xbox360Gamepad { get { return xbox360Gamepad; } }
+        public override IPsmGamepad PsmGamepad { get { return psmGamepad; } }
+        public override IMultiTouchController MultiTouchController { get { return multiTouchController; } }
+        public override IGenericGamepad GenericGamepad { get { return genericGamepad; } }
+        public override IKeyboard Keyboard { get { return keyboard; } }
+        public override IMouse Mouse { get { return mouse; } }
 
         #endregion
     }

@@ -61,9 +61,9 @@ namespace Cor.Platform.Xios
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class AudioManager
-        : IAudioManager
+        : AudioBase
     {
-        public Single Volume { get; set; }
+        public override Single Volume { get; set; }
     }
 
 
@@ -122,10 +122,10 @@ namespace Cor.Platform.Xios
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class AppStatus
-		: IAppStatus
+    public sealed class Status
+		: StatusBase
     {
-		public Boolean? Fullscreen
+		public override Boolean? Fullscreen
         {
             get
             {
@@ -134,7 +134,7 @@ namespace Cor.Platform.Xios
             }
         }
 
-		public Int32 Width
+		public override Int32 Width
         {
             get
             {
@@ -142,7 +142,7 @@ namespace Cor.Platform.Xios
             }
         }
 
-		public Int32 Height
+		public override Int32 Height
         {
             get
             {
@@ -459,19 +459,18 @@ namespace Cor.Platform.Xios
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class Engine
-        : ICor
+        : EngineBase
     {
         readonly TouchScreen touchScreen;
         readonly AppSettings settings;
         readonly IApp app;
-        readonly GraphicsManager graphics;
+        readonly Graphics graphics;
         readonly InputManager input;
 		readonly Host host;
-		readonly System system;
         readonly AudioManager audio;
-        readonly AppStatus appStatus;
+        readonly Status appStatus;
         readonly LogManager log;
-        readonly AssetManager assets;
+        readonly Assets assets;
 
         internal Engine (
             AppSettings settings,
@@ -484,7 +483,7 @@ namespace Cor.Platform.Xios
 
             this.app = app;
 
-            this.graphics = new GraphicsManager ();
+            this.graphics = new Graphics ();
 
             this.touchScreen = new TouchScreen (this, view, touches);
 
@@ -492,11 +491,11 @@ namespace Cor.Platform.Xios
 
             this.input = new InputManager (this, this.touchScreen);
 
-            this.appStatus = new AppStatus ();
+            this.appStatus = new Status ();
 
             this.log = new LogManager (this.settings.LogSettings);
 
-			this.assets = new AssetManager (this.graphics, this.system);
+			this.assets = new Assets (this.graphics);
 
 			this.app.Start (this);
 
@@ -510,17 +509,16 @@ namespace Cor.Platform.Xios
             }
         }
 
-        #region ICor
+        #region EngineBase
 
-        public IAudioManager Audio { get { return this.audio; } }
-        public IGraphicsManager Graphics { get { return this.graphics; } }
-        public IInputManager Input { get { return this.input; } }
-		public IHost Host { get { return this.host; } }
-		public ISystem System { get { return this.system; } }
-		public IAppStatus AppStatus { get { return this.appStatus; } }
-        public LogManager Log { get { return this.log; } }
-        public AssetManager Assets { get { return this.assets; } }
-        public AppSettings Settings { get { return this.settings; } }
+        public override AudioBase Audio { get { return this.audio; } }
+        public override GraphicsBase Graphics { get { return this.graphics; } }
+        public override InputBase Input { get { return this.input; } }
+		public override HostBase Host { get { return this.host; } }
+		public override StatusBase Status { get { return this.appStatus; } }
+        public override LogManager Log { get { return this.log; } }
+        public override AssetsBase Assets { get { return this.assets; } }
+        public override AppSettings Settings { get { return this.settings; } }
 
         #endregion
 
@@ -540,7 +538,7 @@ namespace Cor.Platform.Xios
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class InputManager
-        : IInputManager
+        : InputBase
     {
         readonly TouchScreen touchScreen;
 
@@ -557,37 +555,37 @@ namespace Cor.Platform.Xios
 
         #region IInputManager
 
-        public InputManager (ICor engine, TouchScreen touchScreen)
+        public InputManager (EngineBase engine, TouchScreen touchScreen)
         {
             this.touchScreen = touchScreen;
         }
 
-        public IMultiTouchController MultiTouchController
+        public override IMultiTouchController MultiTouchController
         {
             get { return this.touchScreen; }
         }
 
-        public IXbox360Gamepad Xbox360Gamepad
+        public override IXbox360Gamepad Xbox360Gamepad
         {
             get { return stubXbox360Gamepad; }
         }
 
-        public IPsmGamepad PsmGamepad
+        public override IPsmGamepad PsmGamepad
         {
             get { return stubPsmGamepad; }
         }
 
-        public IGenericGamepad GenericGamepad
+        public override IGenericGamepad GenericGamepad
         {
             get { return stubGenericGamepad; }
         }
 
-        public IMouse Mouse
+        public override IMouse Mouse
         {
             get { return stubMouse; }
         }
 
-        public IKeyboard Keyboard
+        public override IKeyboard Keyboard
         {
             get { return stubKeyboard; }
         }
@@ -710,7 +708,7 @@ namespace Cor.Platform.Xios
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class Host
-		: IHost
+		: HostBase
     {
         TouchScreen screen;
 
@@ -790,7 +788,7 @@ namespace Cor.Platform.Xios
             }
         }
 
-		public String Machine
+		public override String Machine
 		{
 			get
 			{
@@ -799,7 +797,7 @@ namespace Cor.Platform.Xios
 			}
 		}
 
-		public String OperatingSystem
+		public override String OperatingSystem
 		{ 
 			get 
 			{ 
@@ -808,9 +806,9 @@ namespace Cor.Platform.Xios
 			}
 		}
 
-		public String VirtualMachine { get { return "Mono ?"; } }
+		public override String VirtualMachine { get { return "Mono ?"; } }
 
-        public DeviceOrientation CurrentOrientation
+        public override DeviceOrientation CurrentOrientation
         {
             get
             {
@@ -820,7 +818,7 @@ namespace Cor.Platform.Xios
             }
         }
 
-        public IScreenSpecification ScreenSpecification
+        public override IScreenSpecification ScreenSpecification
         {
             get
             {
@@ -828,7 +826,7 @@ namespace Cor.Platform.Xios
             }
         }
 
-        public IPanelSpecification PanelSpecification
+        public override IPanelSpecification PanelSpecification
         {
             get
             {
@@ -840,9 +838,14 @@ namespace Cor.Platform.Xios
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-	public sealed class System
-		: ISystem
+	public sealed class Assets
+		: AssetsBase
 	{
+		public Assets (GraphicsBase gfx)
+			: base (gfx)
+		{
+		}
+		
         static string GetResourcePath (string path)
         {
             string ext = Path.GetExtension (path);
@@ -862,8 +865,10 @@ namespace Cor.Platform.Xios
 
             return resourcePathname;
         }
+		
+		#region AssetsBase
 
-        public Stream GetAssetStream (String assetId)
+        public override Stream GetAssetStream (String assetId)
         {
             string path = GetResourcePath (Path.Combine ("assets/xios", assetId));
 
@@ -871,6 +876,8 @@ namespace Cor.Platform.Xios
 
             return fStream;
         }
+		
+		#endregion
     }
 
 
@@ -884,10 +891,10 @@ namespace Cor.Platform.Xios
         readonly Dictionary<Int32, iOSTouchState> touchData;
         readonly MonoTouch.UIKit.UIView view;
         readonly TouchCollection collection = new TouchCollection ();
-        readonly ICor engine;
+        readonly EngineBase engine;
 
         internal TouchScreen (
-            ICor engine,
+            EngineBase engine,
             MonoTouch.UIKit.UIView view,
             Dictionary<Int32, iOSTouchState> touches)
         {
@@ -934,8 +941,8 @@ namespace Cor.Platform.Xios
 
                 // todo: this needs to be current display res, not just the screen specs
 
-				pos.X = pos.X / engine.AppStatus.Width;
-				pos.Y = pos.Y / engine.AppStatus.Height;
+				pos.X = pos.X / engine.Status.Width;
+				pos.Y = pos.Y / engine.Status.Height;
 
                 pos -= new Vector2(0.5f, 0.5f);
 
