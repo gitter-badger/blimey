@@ -1,47 +1,46 @@
-// ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ Blimey - Fast, efficient, high level engine built upon Cor & Abacus    │ \\
-// ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Brought to you by:                                                     │ \\
-// │          _________                    .__               __             │ \\
-// │         /   _____/__ __  ____    ____ |__|____    _____/  |_           │ \\
-// │         \_____  \|  |  \/    \  / ___\|  \__  \  /    \   __\          │ \\
-// │         /        \  |  /   |  \/ /_/  >  |/ __ \|   |  \  |            │ \\
-// │        /_______  /____/|___|  /\___  /|__(____  /___|  /__|            │ \\
-// │                \/           \//_____/         \/     \/                │ \\
-// │                                                                        │ \\
-// ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2014 A.J.Pook (http://ajpook.github.io)                    │ \\
-// ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
-// │ a copy of this software and associated documentation files (the        │ \\
-// │ "Software"), to deal in the Software without restriction, including    │ \\
-// │ without limitation the rights to use, copy, modify, merge, publish,    │ \\
-// │ distribute, sublicense, and/or sellcopies of the Software, and to      │ \\
-// │ permit persons to whom the Software is furnished to do so, subject to  │ \\
-// │ the following conditions:                                              │ \\
-// │                                                                        │ \\
-// │ The above copyright notice and this permission notice shall be         │ \\
-// │ included in all copies or substantial portions of the Software.        │ \\
-// │                                                                        │ \\
-// │ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,        │ \\
-// │ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF     │ \\
-// │ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. │ \\
-// │ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY   │ \\
-// │ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,   │ \\
-// │ TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE       │ \\
-// │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
-// └────────────────────────────────────────────────────────────────────────┘ \\
-
-using System;
-using Abacus;
-using Fudge;
-using Abacus.SinglePrecision;
-using Cor;
-using System.Collections.Generic;
+// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ \\
+// │ Blimey - Fast, efficient, high level engine built upon Cor & Abacus                                            │ \\
+// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
+// │                     Brought to you by:                                                                         │ \\
+// │                              _________                    .__               __                                 │ \\
+// │                             /   _____/__ __  ____    ____ |__|____    _____/  |_                               │ \\
+// │                             \_____  \|  |  \/    \  / ___\|  \__  \  /    \   __\                              │ \\
+// │                             /        \  |  /   |  \/ /_/  >  |/ __ \|   |  \  |                                │ \\
+// │                            /_______  /____/|___|  /\___  /|__(____  /___|  /__|                                │ \\
+// │                                    \/           \//_____/         \/     \/                                    │ \\
+// │                                                                                                                │ \\
+// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
+// │ Copyright © 2008-2014 A.J.Pook (http://ajpook.github.io)                                                       │ \\
+// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
+// │ Authors: A.J.Pook                                                                                              │ \\
+// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
+// │ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated   │ \\
+// │ documentation files (the "Software"), to deal in the Software without restriction, including without           │ \\
+// │ limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sellcopies of the   │ \\
+// │ Software, and to permit persons to whom the Software is furnished to do so, subject to the following           │ \\
+// │ conditions:                                                                                                    │ \\
+// │                                                                                                                │ \\
+// │ The above copyright notice and this permission notice shall be included in all copies or substantial portions  │ \\
+// │ of the Software.                                                                                               │ \\
+// │                                                                                                                │ \\
+// │ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED  │ \\
+// │ TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL │ \\
+// │ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  │ \\
+// │ CONTRACT, TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        │ \\
+// │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
+// └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
 namespace Blimey.Demo
 {
-    public class Scene4
+    using System;
+    using Fudge;
+    using Abacus.SinglePrecision;
+    using Cor;
+    using System.Collections.Generic;
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public class Scene_Sprites
         : Scene
     {
         public class Hare
@@ -55,8 +54,7 @@ namespace Blimey.Demo
 			
 			int currentBlendMode = 0;
 			
-			readonly BlendMode[] blendModes = new BlendMode[]
-			{
+			readonly BlendMode[] blendModes = {
 				BlendMode.Default,
 				BlendMode.Additive,
 				BlendMode.Subtract,
@@ -67,14 +65,14 @@ namespace Blimey.Demo
             {
                 this.sprite = this.Parent.AddTrait<Sprite>();
     
-                this.sprite.Texture = Scene4.texZa;
+                this.sprite.Texture = Scene_Sprites.texZa;
     
 				this.sprite.Material.BlendMode = blendModes [currentBlendMode];
     
                 this.sprite.DebugRender = null;
     
-                Single width = (Single) Scene4.screenWidth / 2f;
-                Single height = (Single) Scene4.screenHeight / 2f;
+                Single width = (Single) Scene_Sprites.screenWidth / 2f;
+                Single height = (Single) Scene_Sprites.screenHeight / 2f;
     
                 this.velocity = RandomGenerator.Default.GetRandomVector2(-200, 200);
                 this.deltaRotation = RandomGenerator.Default.GetRandomSingle(-0.5f, 0.5f);
@@ -111,8 +109,8 @@ namespace Blimey.Demo
     
             public override void OnUpdate(AppTime time)
             {
-                Single width = (Single) Scene4.screenWidth / 2f;
-                Single height = (Single) Scene4.screenHeight / 2f;
+                Single width = (Single) Scene_Sprites.screenWidth / 2f;
+                Single height = (Single) Scene_Sprites.screenHeight / 2f;
     
                 this.sprite.Position += this.velocity * time.Delta;
     
@@ -162,7 +160,7 @@ namespace Blimey.Demo
         public static ITexture texZa;
         public static ITexture texBg;
 
-        public Scene4()
+        public Scene_Sprites()
         {
             _returnScene = this;
         }
@@ -175,10 +173,10 @@ namespace Blimey.Demo
             
             gr = new GridRenderer (this.Blimey.DebugShapeRenderer, "Default");
 
-			screenWidth = this.Cor.AppStatus.Width;
-			screenHeight = this.Cor.AppStatus.Height;
+			screenWidth = this.Cor.Status.Width;
+			screenHeight = this.Cor.Status.Height;
 
-			var ta_za = this.Cor.Assets.Load<TextureAsset> ("cvan01.cba");
+			var ta_za = this.Cor.Assets.Load<TextureAsset> ("cvan02.cba");
             var ta_bg = this.Cor.Assets.Load<TextureAsset> ("bg2.cba");
 			texZa = this.Cor.Graphics.UploadTexture (ta_za);
             texBg = this.Cor.Graphics.UploadTexture (ta_bg);
@@ -275,7 +273,7 @@ namespace Blimey.Demo
 					Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape) ||
 					Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
                 {
-                    _returnScene = new MainMenuScene ();
+                    _returnScene = new Scene_MainMenu ();
                 }
 
 				if (Cor.Input.GenericGamepad.Buttons.North == ButtonState.Pressed ||

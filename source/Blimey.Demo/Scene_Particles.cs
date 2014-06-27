@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ \\
 // │ Blimey - Fast, efficient, high level engine built upon Cor & Abacus                                            │ \\
 // ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
 // │                     Brought to you by:                                                                         │ \\
@@ -33,37 +33,27 @@
 namespace Blimey.Demo
 {
     using System;
+    using Fudge;
+    using Abacus.SinglePrecision;
     using Cor;
+    using System.Collections.Generic;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-	public class Demo
-		: global::Blimey.App
-	{
-        public Demo()
-			: base (new Scene_MainMenu())
+    
+    public class Scene_Particles
+        : Scene
+    {
+        public override void Start()
         {
         }
-		
-        public override void Start (EngineBase cor)
-		{
-			base.Start (cor);
-		}
 
-        public override Boolean Update (EngineBase cor, AppTime time)
-		{
-			return base.Update (cor, time);
-		}
+        public override void Shutdown()
+        {
+        }
 
-        public override void Render (EngineBase cor)
-		{
-			base.Render (cor);
-		}
-
-        public override void Stop (EngineBase cor)
-		{
-			base.Stop (cor);
-		}
-	}
+        public override Scene Update(AppTime time)
+        {
+            return this;
+        }
+    }
 }
-

@@ -75,38 +75,32 @@
   <ItemGroup>
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="..\..\..\source\Blimey.Demo\ColourChanger.cs">
-      <Link>source\ColourChanger.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\source\Blimey.Demo\Demo.cs">
       <Link>source\Demo.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\MainMenuScene.cs">
-      <Link>source\MainMenuScene.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_Airports.cs">
+      <Link>source\Scene_Airports.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\RandomLocalRotate.cs">
-      <Link>source\RandomLocalRotate.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_Boids.cs">
+      <Link>source\Scene_Boids.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\RandomObjectHelper.cs">
-      <Link>source\RandomObjectHelper.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_MainMenu.cs">
+      <Link>source\Scene_MainMenu.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\Scene1.cs">
-      <Link>source\Scene1.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_Particles.cs">
+      <Link>source\Scene_Particles.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\Scene2.cs">
-      <Link>source\Scene2.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_Shapes.cs">
+      <Link>source\Scene_Shapes.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\Scene3.cs">
-      <Link>source\Scene3.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_Sprites.cs">
+      <Link>source\Scene_Sprites.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\Scene4.cs">
-      <Link>source\Scene4.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_Text.cs">
+      <Link>source\Scene_Text.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\Scene5.cs">
-      <Link>source\Scene5.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\Scene6.cs">
-      <Link>source\Scene6.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene.Parallax.cs">
+      <Link>source\Scene.Parallax.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
