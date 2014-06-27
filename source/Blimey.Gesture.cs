@@ -38,9 +38,10 @@ namespace Blimey
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using Abacus;
+    
     using Fudge;
     using Abacus.SinglePrecision;
+    
     using System.Linq;
     using Cor;
 
@@ -156,14 +157,14 @@ namespace Blimey
     {
         IMultiTouchController controller;
 
-        internal InputEventSystem(ICor engine)
+        internal InputEventSystem(EngineBase engine)
         {
             this.engine = engine;
 
             this.controller = engine.Input.MultiTouchController;
         }
 
-        ICor engine;
+        EngineBase engine;
 
         public delegate void GestureDelegate(Gesture gesture);
 
@@ -521,10 +522,10 @@ namespace Blimey
         List<Touch> samples = new List<Touch>();
         IScreenSpecification screenSpec;
         IPanelSpecification panelSpec;
-        ICor engine;
+        EngineBase engine;
 
         internal TouchTracker(
-            ICor engine,
+            EngineBase engine,
             IScreenSpecification displayMode,
             IPanelSpecification panelMode,
             Int32 id )
@@ -606,8 +607,8 @@ namespace Blimey
                         pos.Y = -temp;
                     }
 
-                    Int32 w = this.engine.AppStatus.Width;
-                    Int32 h = this.engine.AppStatus.Height;
+                    Int32 w = this.engine.Status.Width;
+                    Int32 h = this.engine.Status.Height;
 
                     //this.engine.System.GetEffectiveDisplaySize(ref w, ref h);
 

@@ -38,9 +38,10 @@ namespace Blimey
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using Abacus;
+    
     using Fudge;
     using Abacus.SinglePrecision;
+    
     using System.Linq;
     using Cor;
 
@@ -115,11 +116,11 @@ namespace Blimey
 
         readonly Dictionary<string, Material> materials = new Dictionary<string, Material>();
 
-        readonly ICor cor;
+        readonly EngineBase cor;
 
 		readonly List<RenderPass> renderPasses;
 
-		public DebugShapeRenderer(ICor cor, List<RenderPass> renderPasses)
+		public DebugShapeRenderer(EngineBase cor, List<RenderPass> renderPasses)
         {
             this.cor = cor;
             this.renderPasses = renderPasses;
@@ -265,7 +266,7 @@ namespace Blimey
         }
 
 
-        internal void Render(IGraphicsManager zGfx, string pass, Matrix44 zView, Matrix44 zProjection)
+        internal void Render(GraphicsBase zGfx, string pass, Matrix44 zView, Matrix44 zProjection)
         {
             if (!materials.ContainsKey(pass))
                 return;
@@ -666,7 +667,7 @@ namespace Blimey
         //SETUP GRAPHICS
         // Sets up the transforms for the 2d render and setup the basic effect
         //
-        public PrimitiveBatch (IGraphicsManager zGfxDevice, AssetManager zContentManager)
+        public PrimitiveBatch (GraphicsBase zGfxDevice, Assets zContentManager)
         {
             // todo load shader here
             
@@ -695,7 +696,7 @@ namespace Blimey
         // RENDER TRI
         // Renders a quad.
         //
-        public void RenderTriple(IGraphicsManager gfx, PrimitiveBatchTriple zTriple)
+        public void RenderTriple(GraphicsBase gfx, PrimitiveBatchTriple zTriple)
         {
             if (hasBegun)
             {
@@ -739,7 +740,7 @@ namespace Blimey
         // RENDER QUAD
         // Renders a quad.
         //
-        public void RenderQuad(IGraphicsManager gfx, PrimitiveBatchQuad zQuad)
+        public void RenderQuad(GraphicsBase gfx, PrimitiveBatchQuad zQuad)
         {
             if (hasBegun)
             {
@@ -776,8 +777,7 @@ namespace Blimey
             }
             else
             {
-                throw new InvalidOperationException
-                ("Begin must be called.");
+                throw new InvalidOperationException ("Begin must be called.");
             }
         }
 
@@ -787,7 +787,7 @@ namespace Blimey
             get { return hasBegun; }
         }
 
-        void _render_batch(IGraphicsManager gfx, bool bEndScene)
+        void _render_batch(GraphicsBase gfx, bool bEndScene)
         {
             //todo activate effect
 
@@ -838,28 +838,27 @@ namespace Blimey
         }
 
 
-        public void BeginScene( IGraphicsManager gfx, Matrix44 zView, Matrix44 zProj)
+        public void BeginScene( GraphicsBase gfx, Matrix44 zView, Matrix44 zProj)
         {
             gfx.GpuUtils.BeginEvent( Rgba32.Blue, "Blimey: Primitive Batch" );
             hasBegun = true;
 
             //todo: set world view proj on shader
-            
-            BlendMode.Apply(gfx, BlendMode.Default);
+			gfx.SetBlendEquation(BlendMode.Default);
         }
 
         //
         // END SCENE
         // Ends rendering and updates the screen.
         //
-        public void EndScene(IGraphicsManager gfx)
+        public void EndScene(GraphicsBase gfx)
         {
             _render_batch(gfx, true);
             gfx.GpuUtils.EndEvent();
         }
 
 
-        public void RenderLine(IGraphicsManager gfx, Vector3 a, Vector3 b, Rgba32 zColour)
+        public void RenderLine(GraphicsBase gfx, Vector3 a, Vector3 b, Rgba32 zColour)
         {
             if (hasBegun)
             {
@@ -868,15 +867,14 @@ namespace Blimey
                 if (CurPrimType != PrimitiveBatchType.PRIM_LINES ||
                     nPrimsInBuffer >= VERT_BUFFER_SIZE / (uint)PrimitiveBatchType.PRIM_LINES
                     || curTexture != null
-                    || CurBlendMode != BlendMode.Default
-                )
+                    || CurBlendMode != BlendMode.Default)
                 {
 
                     _render_batch(gfx, false);
 
                     CurPrimType = PrimitiveBatchType.PRIM_LINES;
                     if (CurBlendMode != BlendMode.Default)
-                        BlendMode.Apply(gfx, BlendMode.Default);
+						gfx.SetBlendEquation(BlendMode.Default);
                     curTexture = null;
                 }
 

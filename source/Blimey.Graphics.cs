@@ -38,11 +38,34 @@ namespace Blimey
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using Abacus;
+    
     using Fudge;
     using Abacus.SinglePrecision;
+    
     using System.Linq;
     using Cor;
+	
+	
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+	
+	public static class GraphicsBaseExtensions
+	{
+		static BlendMode lastSet = BlendMode.Default;
+        static Boolean neverSet = true;
+
+        public static void SetBlendEquation (this GraphicsBase graphics, BlendMode blendMode)
+        {
+            if (neverSet || lastSet != blendMode)
+            {
+                graphics.SetBlendEquation (
+                    blendMode.RgbBlendFunction, blendMode.SourceRgb, blendMode.DestinationRgb,
+                    blendMode.AlphaBlendFunction, blendMode.SourceAlpha, blendMode.DestinationAlpha
+                    );
+
+                lastSet = blendMode;
+            }
+        }
+	}
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -69,6 +92,14 @@ namespace Blimey
         BlendFunction alphaBlendFunction;
         BlendFactor sourceAlpha;
         BlendFactor destinationAlpha;
+		
+		internal BlendFunction RgbBlendFunction { get { return rgbBlendFunction;} }
+        internal BlendFactor SourceRgb { get { return sourceRgb;} }
+        internal BlendFactor DestinationRgb { get { return destinationRgb;} }
+
+        internal BlendFunction AlphaBlendFunction { get { return alphaBlendFunction;} }
+        internal BlendFactor SourceAlpha { get { return sourceAlpha;} }
+        internal BlendFactor DestinationAlpha { get { return destinationAlpha;} }
 
         public override String ToString ()
         {
@@ -104,23 +135,7 @@ namespace Blimey
             int e = (int) sourceAlpha.GetHashCode();
             int f = (int) destinationAlpha.GetHashCode();
 
-            return a ^ b ^ c ^ d ^ e ^ f;
-        }
-
-        static BlendMode lastSet = BlendMode.Default;
-        static Boolean neverSet = true;
-
-        public static void Apply (IGraphicsManager graphics, BlendMode blendMode)
-        {
-            if (neverSet || lastSet != blendMode)
-            {
-                graphics.SetBlendEquation (
-                    blendMode.rgbBlendFunction, blendMode.sourceRgb, blendMode.destinationRgb,
-                    blendMode.alphaBlendFunction, blendMode.sourceAlpha, blendMode.destinationAlpha
-                    );
-
-                lastSet = blendMode;
-            }
+			return a.ShiftAndWrap(10) ^ b.ShiftAndWrap(8) ^ c.ShiftAndWrap(6) ^ d.ShiftAndWrap(4) ^ e.ShiftAndWrap(2) ^ f;
         }
 
         public static Boolean operator != (BlendMode value1, BlendMode value2)
@@ -220,9 +235,6 @@ namespace Blimey
     {
         IShader shader;
         string renderPass;
-        
-        static int id = 0;
-        public int ID { get; private set; } 
 
         public BlendMode BlendMode { get; set; }
         public string RenderPass { get { return renderPass; } }
@@ -230,7 +242,7 @@ namespace Blimey
         public Material(string renderPass, IShader shader)
         {
             this.BlendMode = BlendMode.Default;
-            this.ID = id++;
+
             this.renderPass = renderPass;
             this.shader = shader;
         }
@@ -326,10 +338,10 @@ namespace Blimey
             set { throw new NotImplementedException (); }
         }
 
-        internal void UpdateGpuSettings(IGraphicsManager graphics)
+        internal void UpdateGpuSettings(GraphicsBase graphics)
         {
             // Update the render states on the gpu
-            BlendMode.Apply (graphics, this.BlendMode);
+			graphics.SetBlendEquation (this.BlendMode);
 
             graphics.SetActiveTexture (0, null);
 

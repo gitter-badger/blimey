@@ -29,6 +29,7 @@
 // │ CONTRACT, TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        │ \\
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
+using System.IO;
 
 namespace Blimey
 {
@@ -38,151 +39,38 @@ namespace Blimey
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using Abacus;
-    using Abacus.Packed;
+    
+    using Fudge;
     using Abacus.SinglePrecision;
-    using Abacus.Int32Precision;
+    
     using System.Linq;
     using Cor;
 
-
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    internal static class FrameStats
+    
+    internal static class Int32Extensions
     {
-        static FrameStats ()
+        // http://msdn.microsoft.com/en-us/library/system.object.gethashcode(v=vs.110).aspx
+        public static Int32 ShiftAndWrap (this Int32 value, Int32 positions = 2)
         {
-            Reset ();
-        }
-
-        public static void Reset ()
-        {
-            UpdateTime = 0.0;
-            RenderTime = 0.0;
-
-            SetCullModeTime = 0.0;
-            ActivateGeomBufferTime = 0.0;
-            MaterialTime = 0.0;
-            ActivateShaderTime = 0.0;
-            DrawTime = 0.0;
-
-            DrawUserPrimitivesCount = 0;
-            DrawIndexedPrimitivesCount = 0;
-        }
-
-        public static Double UpdateTime { get; set; }
-        public static Double RenderTime { get; set; }
-
-        public static Double SetCullModeTime { get; set; }
-        public static Double ActivateGeomBufferTime { get; set; }
-        public static Double MaterialTime { get; set; }
-        public static Double ActivateShaderTime { get; set; }
-        public static Double DrawTime { get; set; }
-
-        public static Int32 DrawUserPrimitivesCount { get; set; }
-        public static Int32 DrawIndexedPrimitivesCount { get; set; }
-
-        public static Int32 DrawCallCount
-        {
-            get
-            {
-                return
-                    DrawUserPrimitivesCount +
-                    DrawIndexedPrimitivesCount;
-            }
-        }
-
-        public static void SlowLog ()
-        {
-            if (UpdateTime > 5.0)
-            {
-                Console.WriteLine(
-                    string.Format(
-                        "UpdateTime -> {0:0.##}ms",
-                        UpdateTime ));
-            }
-
-            if (RenderTime > 10.0)
-            {
-                Console.WriteLine(
-                    string.Format(
-                        "RenderTime -> {0:0.##}ms",
-                        RenderTime ));
-
-
-                Console.WriteLine(
-                    string.Format(
-                        "\tMeshRenderer -> SetCullModeTime -> {0:0.##}ms",
-                        SetCullModeTime ));
-
-                Console.WriteLine(
-                    string.Format(
-                        "\tActivateGeomBufferTime -> DrawTime -> {0:0.##}ms",
-                        ActivateGeomBufferTime ));
-
-                Console.WriteLine(
-                    string.Format(
-                        "\tMeshRenderer -> MaterialTime -> {0:0.##}ms",
-                        MaterialTime ));
-
-                Console.WriteLine(
-                    string.Format(
-                        "\tMeshRenderer -> ActivateShaderTime -> {0:0.##}ms",
-                        ActivateShaderTime ));
-
-                Console.WriteLine(
-                    string.Format(
-                        "\tMeshRenderer -> DrawTime -> {0:0.##}ms",
-                        DrawTime ));
-            }
-
-            if (DrawCallCount > 25)
-            {
-                Console.WriteLine(
-                    string.Format(
-                        "Draw Call Count -> {0}",
-                        DrawCallCount ));
-            }
+            positions = positions & 0x1F;
+    
+            // Save the existing bit pattern, but interpret it as an unsigned integer. 
+            uint number = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
+            // Preserve the bits to be discarded. 
+            uint wrapped = number >> (32 - positions);
+            // Shift and wrap the discarded bits. 
+            return BitConverter.ToInt32(BitConverter.GetBytes((number << positions) | wrapped), 0);
         }
     }
 
-
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    internal class FpsHelper
+    internal static class BinaryWriterExtensions
     {
-        Single fps = 0;
-        TimeSpan sampleSpan;
-        Stopwatch stopwatch;
-        Int32 sampleFrames;
-
-        internal Single Fps { get { return fps; } }
-
-        internal FpsHelper()
+        public static void Write7BitEncodedInt32 (this BinaryWriter me, Int32 value)
         {
-            sampleSpan = TimeSpan.FromSeconds(1);
-            fps = 0;
-            sampleFrames = 0;
-            stopwatch = Stopwatch.StartNew();
-
-        }
-
-        internal void Update(AppTime time)
-        {
-            if (stopwatch.Elapsed > sampleSpan)
-            {
-                // Update FPS value and start next sampling period.
-                fps = (Single)sampleFrames / (Single)stopwatch.Elapsed.TotalSeconds;
-
-                stopwatch.Reset();
-                stopwatch.Start();
-                sampleFrames = 0;
-            }
-        }
-
-        internal void LogRender()
-        {
-            sampleFrames++;
+            throw new NotImplementedException ();
         }
     }
 }

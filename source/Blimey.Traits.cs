@@ -33,7 +33,7 @@
 namespace Blimey
 {
     using System;
-    using Abacus;
+    
     using Fudge;
     using Abacus.SinglePrecision;
     using Cor;
@@ -476,7 +476,7 @@ namespace Blimey
 	            };
 	        }
 	
-	        public static SpriteMesh Create(IGraphicsManager gfx)
+	        public static SpriteMesh Create(GraphicsBase gfx)
 	        {
 	            var sm = new SpriteMesh();
 	            sm.GeomBuffer = gfx.CreateGeometryBuffer(
@@ -826,7 +826,10 @@ namespace Blimey
         public Single FieldOfView = Maths.ToRadians(45.0f);
 
         // orthographic settings
-        public Single size = 100f;
+        public Single ortho_depth = 100f;
+        public Single ortho_width = 1f;
+        public Single ortho_height = 1f;
+        public Single ortho_zoom = 1f;
 
         // clipping planes
         public Single NearPlaneDistance = 1.0f;
@@ -860,8 +863,8 @@ namespace Blimey
                 ref camUp,
                 out _view);
 
-            Single width = (Single) this.Cor.AppStatus.Width;
-            Single height = (Single)this.Cor.AppStatus.Height;
+            Single width = (Single) this.Cor.Status.Width;
+            Single height = (Single)this.Cor.Status.Height;
 
             if (Projection == CameraProjectionType.Orthographic)
             {
@@ -877,7 +880,9 @@ namespace Blimey
                 {
                     _projection =
                         Matrix44.CreateOrthographicOffCenter(
-                            -0.5f, 0.5f, -0.5f, 0.5f, 0.5f * size, -0.5f * size);
+							-0.5f * ortho_width * ortho_zoom,  +0.5f * ortho_width * ortho_zoom, 
+							-0.5f * ortho_height * ortho_zoom, +0.5f * ortho_height * ortho_zoom, 
+							+0.5f * ortho_depth,  -0.5f * ortho_depth);
                 }
             }
             else

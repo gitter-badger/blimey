@@ -1,4 +1,4 @@
-// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ \\
+﻿// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ \\
 // │ Blimey - Fast, efficient, high level engine built upon Cor & Abacus                                            │ \\
 // ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
 // │                     Brought to you by:                                                                         │ \\
@@ -38,9 +38,10 @@ namespace Blimey
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using Abacus;
+    
     using Fudge;
     using Abacus.SinglePrecision;
+    
     using System.Linq;
     using Cor;
 
@@ -99,9 +100,9 @@ namespace Blimey
             Single colourChangeTime = 5.0f;
             Single colourChangeTimer = 0.0f;
 
-            IGraphicsManager gfx;
+            GraphicsBase gfx;
 
-            public FrameBufferHelper(IGraphicsManager gfx)
+            public FrameBufferHelper(GraphicsBase gfx)
             {
                 this.gfx = gfx;
             }
@@ -140,7 +141,7 @@ namespace Blimey
 		/// <summary>
 		/// Blimey's initilisation rountine.
 		/// </summary>
-		public virtual void Start(ICor cor)
+		public virtual void Start(EngineBase cor)
         {
             fps = new FpsHelper();
             frameBuffer = new FrameBufferHelper(cor.Graphics);
@@ -150,7 +151,7 @@ namespace Blimey
 		/// <summary>
 		/// Blimey's root update loop.
 		/// </summary>
-		public virtual Boolean Update(ICor cor, AppTime time)
+		public virtual Boolean Update(EngineBase cor, AppTime time)
         {
 			//FrameStats.SlowLog ();
 			FrameStats.Reset ();
@@ -167,7 +168,7 @@ namespace Blimey
 		/// <summary>
 		/// Blimey's render loop.
 		/// </summary>
-		public virtual void Render(ICor cor)
+		public virtual void Render(EngineBase cor)
         {
             using (new ProfilingTimer(t => FrameStats.RenderTime += t))
             {
@@ -180,7 +181,7 @@ namespace Blimey
 		/// <summary>
 		/// Blimey's termination routine.
 		/// </summary>
-		public virtual void Stop (ICor cor)
+		public virtual void Stop (EngineBase cor)
 		{
 		}
     }
@@ -189,9 +190,9 @@ namespace Blimey
 
     public class Blimey
     {
-        ICor cor;
+        EngineBase cor;
 
-        internal Blimey (ICor cor, Scene.SceneConfiguration settings)
+        internal Blimey (EngineBase cor, Scene.SceneConfiguration settings)
         {
             this.cor = cor;
 
@@ -405,11 +406,11 @@ namespace Blimey
 			
 		}
 		
-		public class ObjectGraph
+		public class SceneSceneGraph
 		{
 			readonly Scene parent = null;
 			
-			public ObjectGraph (Scene parent)
+			public SceneSceneGraph (Scene parent)
 			{
 				this.parent = parent;
 			}
@@ -455,25 +456,25 @@ namespace Blimey
 		// Scene Data //
 		// ========== //
 		
-		ICor cor = null;
+		EngineBase cor = null;
 		Blimey blimey = null;
 		readonly SceneConfiguration configuration = null;
 		readonly SceneRuntimeConfiguration runtimeConfiguration = null;
 		CameraManager cameraManager = null;
-		ObjectGraph sceneGraph = null;
+		SceneSceneGraph sceneGraph = null;
 		Boolean isRunning = false;
 
 		
 		// ======================= //
 		// Functions for consumers //
 		// ======================= //
-        public ICor Cor { get { return cor; } }
+        public EngineBase Cor { get { return cor; } }
 		public Blimey Blimey { get { return blimey; } }
 		
 		public Boolean Active { get { return isRunning;} }
 		public SceneConfiguration Configuration { get { return configuration; } }
 		public SceneRuntimeConfiguration RuntimeConfiguration { get { return runtimeConfiguration; } }
-		public ObjectGraph SceneGraph { get { return sceneGraph; } }
+		public SceneSceneGraph SceneGraph { get { return sceneGraph; } }
 		public CameraManager CameraManager { get { return cameraManager; } }
 
 		public Scene (SceneConfiguration configuration = null)
@@ -490,11 +491,11 @@ namespace Blimey
 		// Blimey internal calls //
 		// ===================== //
 		
-        internal void Initialize (ICor cor)
+        internal void Initialize (EngineBase cor)
         {
 			this.cor = cor;
 			this.blimey = new Blimey (cor, this.configuration);
-			this.sceneGraph = new ObjectGraph (this);
+			this.sceneGraph = new SceneSceneGraph (this);
             this.cameraManager = new CameraManager(this);
             this.Start();
             this.isRunning = true;
@@ -702,7 +703,7 @@ namespace Blimey
     //
     public abstract class Trait
     {
-        protected ICor Cor { get; set; }
+        protected EngineBase Cor { get; set; }
         protected Blimey Blimey { get; set; }
 
         public Entity Parent { get; set; }
@@ -711,7 +712,7 @@ namespace Blimey
 
         // INTERNAL METHODS
         // called after constructor and before awake
-		internal void Initilise (ICor cor, Blimey blimeyServices, Entity parent)
+		internal void Initilise (EngineBase cor, Blimey blimeyServices, Entity parent)
         {
             Cor = cor;
             Blimey = blimeyServices;
@@ -799,7 +800,7 @@ namespace Blimey
     internal class SceneManager
     {
         Scene activeScene;
-        ICor cor;
+        EngineBase cor;
 
         SceneRenderManager renderManager;
 
@@ -807,7 +808,7 @@ namespace Blimey
 
         public Scene ActiveState { get { return activeScene; } }
 
-        public SceneManager (ICor cor, Scene startScene)
+        public SceneManager (EngineBase cor, Scene startScene)
         {
             this.cor = cor;
             activeScene = startScene;
@@ -874,9 +875,9 @@ namespace Blimey
 
     internal class SceneRenderManager
     {
-        ICor Cor { get; set; }
+        EngineBase Cor { get; set; }
 
-        internal SceneRenderManager(ICor cor)
+        internal SceneRenderManager(EngineBase cor)
         {
             this.Cor = cor;
         }
@@ -928,42 +929,29 @@ namespace Blimey
 		void RenderPass(Scene scene, RenderPass pass)
         {
             // init pass
-
             var gfxManager = this.Cor.Graphics;
 
 			if (pass.Configuration.ClearDepthBuffer)
             {
-                gfxManager.ClearDepthBuffer ();
+                gfxManager.ClearDepthBuffer();
             }
 
             var cam = scene.CameraManager.GetActiveCamera(pass.Name);
 
-            var meshRenderers = this.GetMeshRenderersWithMaterials (scene, pass.Name);
-            
-            // filter this to get only renderers in the camera's frustum
-            
-            // first group by material
-            var materialIDs = meshRenderers.Select (x => x.Material.ID).Distinct ().ToList ();
-            
-            // next build two groups, those supporting alpha and those that are opaque
-            
-            // for all the opaque objects groups render them from front to back to maximise gpu z-clipping
-            
-            // for all transparent object render them from back to front
-            
-            foreach (var materialID in materialIDs)
+            var meshRenderers = this.GetMeshRenderersWithMaterials(scene, pass.Name);
+
+            // TODO: big one
+            // we really need to group the mesh renderers by material
+            // and only make a new draw call when there are changes.
+            foreach (var mr in meshRenderers)
             {
-                foreach (var mr in meshRenderers)
-                {
-                    if (mr.Material.ID == materialID)
-                        _renderMeshRenderer (gfxManager, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44, mr);
-                }
+                _renderMeshRenderer (gfxManager, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44, mr);
             }
 
             scene.Blimey.DebugShapeRenderer.Render(gfxManager, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
         }
         
-        static void _renderMeshRenderer (IGraphicsManager zGfx, string renderPass, Matrix44 zView, Matrix44 zProjection, MeshRenderer mr)
+        static void _renderMeshRenderer (GraphicsBase zGfx, string renderPass, Matrix44 zView, Matrix44 zProjection, MeshRenderer mr)
         {
             if (!mr.Active)
                 return;
