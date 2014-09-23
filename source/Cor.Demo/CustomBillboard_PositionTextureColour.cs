@@ -32,78 +32,88 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-using System;
-using Abacus;
-using Abacus.SinglePrecision;
-using Abacus.Packed;
-using Cor;
-using System.Collections.Generic;
-
 namespace Cor.Demo
 {
-	public static class CustomBillboard_PositionTextureColour
-	{
-		static List<Int32> indexArray = new List<Int32>();
+    using System;
+    using Abacus.SinglePrecision;
+    using Fudge;
+    using Cor.Platform;
+    using System.Runtime.InteropServices;
 
-		static List<VertexPositionTextureColour> vertArray =
-			new List<VertexPositionTextureColour>();
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertPosTexCol : IVertexType
+    {
+        readonly static VertexDeclaration _vertexDeclaration;
 
-		public static VertexDeclaration VertexDeclaration { get {
-				return VertexPositionTextureColour.Default.VertexDeclaration; } }
+        static VertPosTexCol ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0),
+                new VertexElement (
+                    12,
+                    VertexElementFormat.Vector2,
+                    VertexElementUsage.TextureCoordinate,
+                    0),
+                new VertexElement (
+                    20,
+                    VertexElementFormat.Colour,
+                    VertexElementUsage.Colour,
+                    0)
+            );
+        }
 
-		static CustomBillboard_PositionTextureColour()
+        public Vector3 Position;
+        public Vector2 UV;
+        public Rgba32 Colour;
+
+        public VertPosTexCol (Vector3 position, Vector2 uv, Rgba32 color)
+        {
+            this.Position = position;
+            this.UV = uv;
+            this.Colour = color;
+        }
+
+        public VertexDeclaration VertexDeclaration { get { return _vertexDeclaration; } }
+    }
+
+	public class Billboard
+        : IMesh <VertPosTexCol>
+    {
+        readonly VertPosTexCol[] vertArray = new VertPosTexCol[4];
+        readonly Int32[] indexArray = new Int32[6];
+        readonly VertexDeclaration vertexDeclaration;
+
+        #region IMesh <VertPosTexCol>
+
+        public VertPosTexCol[] VertArray { get { return vertArray; } }
+        public Int32[] IndexArray { get { return indexArray; } }
+        public VertexDeclaration VertexDeclaration { get { return vertexDeclaration; } }
+
+        #endregion
+
+        public Billboard()
 		{
-			// Six indices (two triangles) per face.
-			AddIndex(0);
-			AddIndex(3);
-			AddIndex(2);
+            vertexDeclaration = new VertPosTexCol (Vector3.Zero, Vector2.Zero, Rgba32.White).VertexDeclaration;
 
-			AddIndex(0);
-			AddIndex(1);
-			AddIndex(3);
+			// Six indices (two triangles) per face.
+            indexArray[0] = 0;
+            indexArray[1] = 3;
+            indexArray[2] = 2;
+
+            indexArray[3] = 0;
+            indexArray[4] = 1;
+            indexArray[5] = 3;
 
 			// Four vertices per face.
-			AddVertex(new Vector3(-0.5f, -0.5f, 0f), new Vector2(0.5f, 1f), Rgba32.Yellow);
-			AddVertex(new Vector3(-0.5f,  0.5f, 0f), new Vector2(0.5f, 0f), Rgba32.Green);
-			AddVertex(new Vector3( 0.5f, -0.5f, 0f), new Vector2(0f, 1f), Rgba32.Blue);
-			AddVertex(new Vector3( 0.5f,  0.5f, 0f), new Vector2(0f, 0f), Rgba32.Red);
-
+            vertArray[0] = new VertPosTexCol(new Vector3(-0.5f, -0.5f, 0f), new Vector2(0.5f, 1f), Rgba32.Yellow);
+            vertArray[1] = new VertPosTexCol(new Vector3(-0.5f,  0.5f, 0f), new Vector2(0.5f, 0f), Rgba32.Green);
+            vertArray[2] = new VertPosTexCol(new Vector3( 0.5f, -0.5f, 0f), new Vector2(0f, 1f), Rgba32.Blue);
+            vertArray[3] = new VertPosTexCol(new Vector3( 0.5f,  0.5f, 0f), new Vector2(0f, 0f), Rgba32.Red);
 		}
-
-		static int CurrentVertex
-		{
-			get { return vertArray.Count; }
-		}
-
-		static void AddVertex(Vector3 position, Vector2 texCoord, Rgba32 colour)
-		{
-			vertArray.Add(new VertexPositionTextureColour(position, texCoord, colour));
-		}
-
-		static void AddIndex(int index)
-		{
-			if (index > ushort.MaxValue)
-				throw new ArgumentOutOfRangeException("index");
-
-			indexArray.Add((ushort)index);
-		}
-
-		public static VertexPositionTextureColour[] VertArray
-		{
-			get
-			{
-				return vertArray.ToArray();
-			}
-		}
-
-		public static Int32[] IndexArray
-		{
-			get
-			{
-				return indexArray.ToArray();
-			}
-		}
-
 	}
 }
 

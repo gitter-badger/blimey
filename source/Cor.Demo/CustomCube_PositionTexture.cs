@@ -33,26 +33,58 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
-using Abacus;
 using Abacus.SinglePrecision;
-using Abacus.Packed;
-using Cor;
 using System.Collections.Generic;
+using Cor.Platform;
+using System.Runtime.InteropServices;
 
 namespace Cor.Demo
 {
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertPosTex : IVertexType
+    {
+        readonly static VertexDeclaration _vertexDeclaration;
+
+        static VertPosTex ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0),
+                new VertexElement (
+                    12,
+                    VertexElementFormat.Vector2,
+                    VertexElementUsage.TextureCoordinate,
+                    0)
+            );
+        }
+
+        public Vector3 Position;
+        public Vector2 UV;
+
+        public VertPosTex (Vector3 position, Vector2 uv)
+        {
+            this.Position = position;
+            this.UV = uv;
+        }
+
+        public VertexDeclaration VertexDeclaration { get { return _vertexDeclaration; } }
+    }
+
     public static class CustomCube_PositionTexture
     {
         static Vector3[] normals;
-        static List<Int32> indexArray = new List<Int32>();
-        static List<VertexPositionTexture> vertArray =
-            new List<VertexPositionTexture>();
+        readonly static List<Int32> indexArray = new List<Int32>();
+        readonly static List<VertPosTex> vertArray = new List<VertPosTex>();
 
-        public static VertexDeclaration VertexDeclaration { get {
-                return VertexPositionTexture.Default.VertexDeclaration; } }
+        public static VertexDeclaration VertexDeclaration;
 
         static CustomCube_PositionTexture()
         {
+            VertexDeclaration = new VertPosTex (Vector3.Zero, Vector2.Zero).VertexDeclaration;
+
             // A cube has six faces, each one pointing in a different direction.
             normals = new Vector3[]
             {
@@ -98,7 +130,7 @@ namespace Cor.Demo
 
         static void AddVertex(Vector3 position, Vector3 normal, Vector2 texCoord)
         {
-            vertArray.Add(new VertexPositionTexture(position, /*normal,*/ texCoord));
+            vertArray.Add(new VertPosTex(position, /*normal,*/ texCoord));
         }
 
         static void AddIndex(int index)
@@ -109,7 +141,7 @@ namespace Cor.Demo
             indexArray.Add((ushort)index);
         }
 
-        public static VertexPositionTexture[] VertArray
+        public static VertPosTex[] VertArray
         {
             get
             {

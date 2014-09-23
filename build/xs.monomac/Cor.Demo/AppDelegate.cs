@@ -35,28 +35,39 @@
 using System;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
+using Cor;
+using Cor.Platform;
 using Cor.Platform.MonoMac;
 
 namespace Cor.Demo
 {
 	class AppDelegate
 		: NSApplicationDelegate
+        , IDisposable
 	{
-		MonoMacApp engine;
+        Engine engine;
 
 		public override void FinishedLaunching (NSObject notification)
 		{
-			engine = new MonoMacApp(
-				Cor.Demo.Demo.GetAppSettings(),
-				Cor.Demo.Demo.GetEntryPoint());
+            var appSettings = Demo.GetAppSettings();
+            var entryPoint = Demo.GetEntryPoint();
 
-			engine.Run();
+			engine = new Engine(
+                new MonoMacPlatform (),
+                appSettings,
+                entryPoint);
 		}
 
 		public override bool ApplicationShouldTerminateAfterLastWindowClosed (NSApplication sender)
 		{
 			return true;
 		}
+        
+        public new void Dispose ()
+        {
+            engine.Dispose ();
+            base.Dispose ();
+        }
 	}
 }
 

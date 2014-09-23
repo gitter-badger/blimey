@@ -33,29 +33,69 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
-using Abacus;
 using Abacus.SinglePrecision;
-using Abacus.Packed;
-using Cor;
 using System.Collections.Generic;
+using Cor.Platform;
+using System.Runtime.InteropServices;
 
 namespace Cor.Demo
 {
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertPosNormTex
+        : IVertexType
+    {
+        readonly static VertexDeclaration _vertexDeclaration;
+
+        static VertPosNormTex ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0),
+                new VertexElement (
+                    12,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Normal,
+                    0),
+                new VertexElement (
+                    24,
+                    VertexElementFormat.Vector2,
+                    VertexElementUsage.TextureCoordinate,
+                    0)
+            );
+        }
+
+        public Vector3 Position;
+        public Vector3 Normal;
+        public Vector2 UV;
+
+        public VertPosNormTex (Vector3 position, Vector3 normal, Vector2 uv)
+        {
+            this.Position = position;
+            this.Normal = normal;
+            this.UV = uv;
+        }
+
+        public VertexDeclaration VertexDeclaration { get { return _vertexDeclaration; } }
+    }
+
     public static class CustomCylinder_PositionNormalTexture
     {
         const int tessellation = 9; // must be greater than 2
         const float height = 0.5f;
         const float radius = 0.5f;
 
-        static List<Int32> indexArray = new List<Int32>();
-        static List<VertexPositionNormalTexture> vertArray =
-            new List<VertexPositionNormalTexture>();
+        readonly static List<Int32> indexArray = new List<Int32>();
+        readonly static List<VertPosNormTex> vertArray = new List<VertPosNormTex>();
 
-        public static VertexDeclaration VertexDeclaration { get {
-                return VertexPositionNormalTexture.Default.VertexDeclaration; } }
+        public static VertexDeclaration VertexDeclaration;
 
         static CustomCylinder_PositionNormalTexture()
         {
+            VertexDeclaration = new VertPosNormTex (Vector3.Zero, Vector3.Zero, Vector2.Zero).VertexDeclaration;
+
             // Create a ring of triangles around the outside of the cylinder.
             for (int i = 0; i <= tessellation; i++)
             {
@@ -126,7 +166,7 @@ namespace Cor.Demo
         /// Helper method computes a point on a circle.
         static Vector3 GetCircleVector(int i, int tessellation)
         {
-            Single tau; RealMaths.Tau(out tau);
+            Single tau; Maths.Tau(out tau);
             float angle = i * tau / tessellation;
 
             float dx = (float)Math.Cos(angle);
@@ -142,7 +182,7 @@ namespace Cor.Demo
 
         static void AddVertex(Vector3 position, Vector3 normal, Vector2 texCoord)
         {
-            vertArray.Add(new VertexPositionNormalTexture(position, normal, texCoord));
+            vertArray.Add(new VertPosNormTex(position, normal, texCoord));
         }
 
         static void AddIndex(int index)
@@ -153,7 +193,7 @@ namespace Cor.Demo
             indexArray.Add((ushort)index);
         }
 
-        public static VertexPositionNormalTexture[] VertArray
+        public static VertPosNormTex[] VertArray
         {
             get
             {

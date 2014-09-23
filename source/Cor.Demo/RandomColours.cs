@@ -33,11 +33,7 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
-using Abacus;
-using Abacus.SinglePrecision;
-using Abacus.Packed;
-using Cor;
-using System.Collections.Generic;
+using Fudge;
 
 namespace Cor.Demo
 {

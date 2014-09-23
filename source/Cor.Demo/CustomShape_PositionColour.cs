@@ -33,44 +33,81 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
-using Abacus;
 using Abacus.SinglePrecision;
-using Abacus.Packed;
-using Cor;
-using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Cor.Platform;
+using Fudge;
 
 namespace Cor.Demo
 {
-    public static class CustomShape_PositionColour
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertPosCol : IVertexType
     {
+        readonly static VertexDeclaration _vertexDeclaration;
 
-        public static VertexPositionColour[] VertArray
+        static VertPosCol ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0),
+                new VertexElement (
+                    12,
+                    VertexElementFormat.Colour,
+                    VertexElementUsage.Colour,
+                    0)
+            );
+        }
+
+        public Vector3 Position;
+        public Rgba32 Colour;
+
+        public VertPosCol (Vector3 position, Rgba32 color)
+        {
+            this.Position = position;
+            this.Colour = color;
+        }
+
+        public VertexDeclaration VertexDeclaration
         {
             get
             {
-                return new VertexPositionColour[]
+                return _vertexDeclaration;
+            }
+        }
+    }
+
+    public static class CustomShape_PositionColour
+    {
+        public static VertPosCol[] VertArray
+        {
+            get
+            {
+                return new[]
                 {
-                    new VertexPositionColour( new Vector3(0.0f, 0.0f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(0.0f, 0.0f, 0.0f), RandomColours.GetNext() ),
                     // Top
-                    new VertexPositionColour( new Vector3(-0.2f, 0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.2f, 0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.0f, 0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.0f, 1.0f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(-0.2f, 0.8f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(0.2f, 0.8f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(0.0f, 0.8f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(0.0f, 1.0f, 0.0f), RandomColours.GetNext() ),
                     // Bottom
-                    new VertexPositionColour( new Vector3(-0.2f, -0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.2f, -0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.0f, -0.8f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.0f, -1.0f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(-0.2f, -0.8f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(0.2f, -0.8f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(0.0f, -0.8f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(0.0f, -1.0f, 0.0f), RandomColours.GetNext() ),
                     // Left
-                    new VertexPositionColour( new Vector3(-0.8f, -0.2f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(-0.8f, 0.2f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(-0.8f, 0.0f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(-1.0f, 0.0f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(-0.8f, -0.2f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(-0.8f, 0.2f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(-0.8f, 0.0f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(-1.0f, 0.0f, 0.0f), RandomColours.GetNext() ),
                     // Right
-                    new VertexPositionColour( new Vector3(0.8f, -0.2f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.8f, 0.2f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(0.8f, 0.0f, 0.0f), RandomColours.GetNext() ),
-                    new VertexPositionColour( new Vector3(1.0f, 0.0f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(0.8f, -0.2f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(0.8f, 0.2f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(0.8f, 0.0f, 0.0f), RandomColours.GetNext() ),
+                    new VertPosCol( new Vector3(1.0f, 0.0f, 0.0f), RandomColours.GetNext() ),
                 };
             }
         }
@@ -79,7 +116,7 @@ namespace Cor.Demo
         {
             get
             {
-                return new Int32[] {
+                return new [] {
                     // Top
                     0, 1, 3,
                     0, 3, 2,
@@ -103,7 +140,6 @@ namespace Cor.Demo
                 };
             }
         }
-
     }
 }
 
