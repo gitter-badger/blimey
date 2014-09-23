@@ -45,6 +45,142 @@ namespace Blimey
     using System.Linq;
     using Cor;
 
+    // Runtime asset object, loaded into RAM, not GRAM.
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public abstract class Asset
+        : IAsset
+    {
+        String id;
+
+        public Asset ()
+        {
+            id = new Guid ().ToString ();
+        }
+
+        public String Id { get { return id; } }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public sealed class ColourmapAsset
+        : Asset
+    {
+        public Rgba32[,] Data { get; set; }
+
+        public Int32 Width { get { return Data.GetLength (0); } }
+
+        public Int32 Height { get { return Data.GetLength (1); } }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public sealed class ShaderAsset
+        : Asset
+    {
+        // Platform agnostic definition
+        public ShaderDefinition Definition { get; set; }
+
+        // Platform specific binary content.
+        // This contains compiled shaders.
+        public Byte[] Data { get; set; }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public sealed class TextAsset
+        : Asset
+    {
+        public String Text { get; set; }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public sealed class TextureAsset
+        : Asset
+    {
+        public SurfaceFormat SurfaceFormat { get; set; }
+
+        public Int32 Width { get; set; }
+        public Int32 Height { get; set; }
+
+        // Data allocated in standard system RAM
+        public Byte[] Data { get; set; }
+
+        // Data allocated in standard system RAM
+        // public Byte[,] Mipmaps { get; set; }
+
+        // public Int32 MipmapCount { get { return Data.GetLength (0); } }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// Base interface for all assets
+    /// </summary>
+    public interface IAsset
+    {
+        /// <summary>
+        /// A unique id for this asset, if null this asset has not
+        /// been instantiated.
+        /// </summary>
+        String Id { get; }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public sealed class Assets
+    {
+        readonly IApi platform;
+
+        internal Assets (IApi platform)
+        {
+            this.platform = platform;
+        }
+
+        public T Load<T> (String assetId)
+            where T
+            : class, IAsset
+        {
+            using (Stream stream = platform.res_GetFileStream (assetId))
+            {
+                using (var channel = 
+                    new SerialisationChannel
+                    <BinaryStreamSerialiser> 
+                    (stream, ChannelMode.Read)) 
+                {
+                    ProcessFileHeader (channel);
+                    T asset = channel.Read <T> ();
+                    return asset;
+                }
+            }
+        }
+
+        void ProcessFileHeader (ISerialisationChannel sc)
+        {
+            // file type
+            Byte f0 = sc.Read <Byte> ();
+            Byte f1 = sc.Read <Byte> ();
+            Byte f2 = sc.Read <Byte> ();
+
+            if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'A')
+                throw new Exception ("Asset file doesn't have the correct header.");
+
+            // file version
+            Byte fileVersion = sc.Read <Byte> ();
+
+            if (fileVersion != 0)
+                throw new Exception ("Only file format version 0 is supported.");
+
+            // platform index
+            Byte platformIndex = sc.Read <Byte> ();
+        }
+    }
 
 }

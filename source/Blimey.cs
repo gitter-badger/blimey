@@ -44,6 +44,7 @@ namespace Blimey
     
     using System.Linq;
     using Cor;
+    using Cor.Engine;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -1097,4 +1098,1430 @@ namespace Blimey
             }
         }
     }
+
+
+    #region Vertex Types
+
+    // Definitions for common vertex types.
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    ///
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertexPosition
+        : IVertexType
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Position;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexPosition (Vector3 position)
+        {
+            this.Position = position;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        static VertexPosition ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0)
+            );
+
+            _default = new VertexPosition (Vector3.Zero);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexPosition _default;
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexDeclaration _vertexDeclaration;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public static IVertexType Default
+        {
+            get
+            {
+                return _default;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
+        {
+            get
+            {
+                return _vertexDeclaration;
+            }
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    ///
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertexPositionColour
+        : IVertexType
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Position;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Rgba32 Colour;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexPositionColour (
+            Vector3 position,
+            Rgba32 color)
+        {
+            this.Position = position;
+            this.Colour = color;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        static VertexPositionColour ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0),
+                new VertexElement (
+                    12,
+                    VertexElementFormat.Colour,
+                    VertexElementUsage.Colour,
+                    0)
+            );
+
+            _default = new VertexPositionColour (
+                Vector3.Zero,
+                Rgba32.Magenta);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexPositionColour _default;
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexDeclaration _vertexDeclaration;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public static IVertexType Default
+        {
+            get
+            {
+                return _default;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
+        {
+            get
+            {
+                return _vertexDeclaration;
+            }
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    ///
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertexPositionNormal
+        : IVertexType
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Position;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Normal;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexPositionNormal (
+            Vector3 position,
+            Vector3 normal)
+        {
+            this.Position = position;
+            this.Normal = normal;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexPositionNormal _default;
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexDeclaration _vertexDeclaration;
+
+        /// <summary>
+        ///
+        /// </summary>
+        static VertexPositionNormal ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0),
+                new VertexElement (
+                    sizeof (Single) * 3,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Normal,
+                    0)
+            );
+
+            _default = new VertexPositionNormal (
+                Vector3.Zero,
+                Vector3.Zero);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public static IVertexType Default
+        {
+            get
+            {
+                return _default;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
+        {
+            get
+            {
+                return _vertexDeclaration;
+            }
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    ///
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertexPositionNormalColour
+        : IVertexType
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Position;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Normal;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Rgba32 Colour;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexPositionNormalColour (
+            Vector3 position,
+            Vector3 normal,
+            Rgba32 color)
+        {
+            this.Position = position;
+            this.Normal = normal;
+            this.Colour = color;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        static VertexPositionNormalColour ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0),
+                new VertexElement (
+                    12,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Normal,
+                    0),
+                new VertexElement (
+                    24,
+                    VertexElementFormat.Colour,
+                    VertexElementUsage.Colour,
+                    0)
+            );
+
+            _default = new VertexPositionNormalColour (
+                Vector3.Zero,
+                Vector3.Zero,
+                Rgba32.White);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexPositionNormalColour _default;
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexDeclaration _vertexDeclaration;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public static IVertexType Default
+        {
+            get
+            {
+                return _default;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
+        {
+            get
+            {
+                return _vertexDeclaration;
+            }
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    ///
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertexPositionNormalTexture
+        : IVertexType
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Position;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Normal;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector2 UV;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexPositionNormalTexture (
+            Vector3 position,
+            Vector3 normal,
+            Vector2 uv)
+        {
+            this.Position = position;
+            this.Normal = normal;
+            this.UV = uv;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexPositionNormalTexture _default;
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexDeclaration _vertexDeclaration;
+
+        /// <summary>
+        ///
+        /// </summary>
+        static VertexPositionNormalTexture ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0),
+                new VertexElement (
+                    12,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Normal,
+                    0),
+                new VertexElement (
+                    24,
+                    VertexElementFormat.Vector2,
+                    VertexElementUsage.TextureCoordinate,
+                    0)
+            );
+
+            _default = new VertexPositionNormalTexture (
+                Vector3.Zero,
+                Vector3.Zero,
+                Vector2.Zero);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public static IVertexType Default
+        {
+            get
+            {
+                return _default;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
+        {
+            get
+            {
+                return _vertexDeclaration;
+            }
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    ///
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertexPositionNormalTextureColour
+        : IVertexType
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Position;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Normal;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector2 UV;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Rgba32 Colour;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexPositionNormalTextureColour (
+            Vector3 position,
+            Vector3 normal,
+            Vector2 uv,
+            Rgba32 color)
+        {
+            this.Position = position;
+            this.Normal = normal;
+            this.UV = uv;
+            this.Colour = color;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        static VertexPositionNormalTextureColour ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0),
+                new VertexElement (
+                    12,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Normal,
+                    0),
+                new VertexElement (
+                    24,
+                    VertexElementFormat.Vector2,
+                    VertexElementUsage.TextureCoordinate,
+                    0),
+                new VertexElement (
+                    32,
+                    VertexElementFormat.Colour,
+                    VertexElementUsage.Colour,
+                    0)
+            );
+
+            _default = new VertexPositionNormalTextureColour (
+                Vector3.Zero,
+                Vector3.Zero,
+                Vector2.Zero,
+                Rgba32.White);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexPositionNormalTextureColour _default;
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexDeclaration _vertexDeclaration;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public static IVertexType Default
+        {
+            get
+            {
+                return _default;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
+        {
+            get
+            {
+                return _vertexDeclaration;
+            }
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    ///
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertexPositionTexture
+        : IVertexType
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Position;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector2 UV;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexPositionTexture (
+            Vector3 position,
+            Vector2 uv)
+        {
+            this.Position = position;
+            this.UV = uv;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        static VertexPositionTexture ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0),
+                new VertexElement (
+                    12,
+                    VertexElementFormat.Vector2,
+                    VertexElementUsage.TextureCoordinate,
+                    0)
+            );
+
+            _default = new VertexPositionTexture (
+                Vector3.Zero,
+                Vector2.Zero);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexPositionTexture _default;
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexDeclaration _vertexDeclaration;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public static IVertexType Default
+        {
+            get
+            {
+                return _default;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
+        {
+            get
+            {
+                return _vertexDeclaration;
+            }
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    ///
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertexPositionTextureColour
+        : IVertexType
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Position;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector2 UV;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Rgba32 Colour;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexPositionTextureColour (
+            Vector3 position,
+            Vector2 uv,
+            Rgba32 color)
+        {
+            this.Position = position;
+            this.UV = uv;
+            this.Colour = color;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        static VertexPositionTextureColour ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0),
+                new VertexElement (
+                    12,
+                    VertexElementFormat.Vector2,
+                    VertexElementUsage.TextureCoordinate,
+                    0),
+                new VertexElement (
+                    20,
+                    VertexElementFormat.Colour,
+                    VertexElementUsage.Colour,
+                    0)
+            );
+
+            _default = new VertexPositionTextureColour (
+                Vector3.Zero,
+                Vector2.Zero,
+                Rgba32.White);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexPositionTextureColour _default;
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexDeclaration _vertexDeclaration;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public static IVertexType Default
+        {
+            get
+            {
+                return _default;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
+        {
+            get
+            {
+                return _vertexDeclaration;
+            }
+        }
+    }
+
+    #endregion
+
+    #region Serialisers
+
+    // Oats serialisers for types used in Cor's Asset Pipeline.
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Abacus.SinglePrecision.Matrix44 type.
+    /// </summary>
+    public class Matrix44Serialiser
+        : Serialiser <Matrix44>
+    {
+        /// <summary>
+        /// Returns an Abacus.SinglePrecision.Matrix44 object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override Matrix44 Read (ISerialisationChannel ss)
+        {
+            Single m11 = ss.Read <Single> ();
+            Single m12 = ss.Read <Single> ();
+            Single m13 = ss.Read <Single> ();
+            Single m14 = ss.Read <Single> ();
+
+            Single m21 = ss.Read <Single> ();
+            Single m22 = ss.Read <Single> ();
+            Single m23 = ss.Read <Single> ();
+            Single m24 = ss.Read <Single> ();
+
+            Single m31 = ss.Read <Single> ();
+            Single m32 = ss.Read <Single> ();
+            Single m33 = ss.Read <Single> ();
+            Single m34 = ss.Read <Single> ();
+
+            Single m41 = ss.Read <Single> ();
+            Single m42 = ss.Read <Single> ();
+            Single m43 = ss.Read <Single> ();
+            Single m44 = ss.Read <Single> ();
+
+            return new Matrix44(
+                m11, m12, m13, m14,
+                m21, m22, m23, m24,
+                m31, m32, m33, m34,
+                m41, m42, m43, m44
+            );
+        }
+
+        /// <summary>
+        /// Writes an Abacus.SinglePrecision.Matrix44 object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, Matrix44 obj)
+        {
+            ss.Write <Single> (obj.R0C0);
+            ss.Write <Single> (obj.R0C1);
+            ss.Write <Single> (obj.R0C2);
+            ss.Write <Single> (obj.R0C3);
+
+            ss.Write <Single> (obj.R1C0);
+            ss.Write <Single> (obj.R1C1);
+            ss.Write <Single> (obj.R1C2);
+            ss.Write <Single> (obj.R1C3);
+
+            ss.Write <Single> (obj.R2C0);
+            ss.Write <Single> (obj.R2C1);
+            ss.Write <Single> (obj.R2C2);
+            ss.Write <Single> (obj.R2C3);
+
+            ss.Write <Single> (obj.R3C0);
+            ss.Write <Single> (obj.R3C1);
+            ss.Write <Single> (obj.R3C2);
+            ss.Write <Single> (obj.R3C3);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Abacus.SinglePrecision.Quaternion type.
+    /// </summary>
+    public class QuaternionSerialiser
+        : Serialiser<Quaternion>
+    {
+        /// <summary>
+        /// Returns an Abacus.SinglePrecision.Quaternion object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override Quaternion Read (ISerialisationChannel ss)
+        {
+            Single i = ss.Read <Single> ();
+            Single j = ss.Read <Single> ();
+            Single k = ss.Read <Single> ();
+            Single u = ss.Read <Single> ();
+
+            return new Quaternion (i, j, k, u);
+        }
+
+        /// <summary>
+        /// Writes an Abacus.SinglePrecision.Quaternion object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, Quaternion obj)
+        {
+            ss.Write <Single> (obj.I);
+            ss.Write <Single> (obj.J);
+            ss.Write <Single> (obj.K);
+            ss.Write <Single> (obj.U);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Abacus.Packed.Rgba32 type.
+    /// </summary>
+    public class Rgba32Serialiser
+        : Serialiser<Rgba32>
+    {
+        /// <summary>
+        /// Returns an Abacus.Packed.Rgba32 object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override Rgba32 Read (ISerialisationChannel ss)
+        {
+            Byte r = ss.Read <Byte> ();
+            Byte g = ss.Read <Byte> ();
+            Byte b = ss.Read <Byte> ();
+            Byte a = ss.Read <Byte> ();
+
+            return new Rgba32(r, g, b, a);
+        }
+
+        /// <summary>
+        /// Writes an Abacus.Packed.Rgba32 object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, Rgba32 obj)
+        {
+            ss.Write <Byte> (obj.R);
+            ss.Write <Byte> (obj.G);
+            ss.Write <Byte> (obj.B);
+            ss.Write <Byte> (obj.A);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Abacus.SinglePrecision.Vector2 type.
+    /// </summary>
+    public class Vector2Serialiser
+        : Serialiser<Vector2>
+    {
+        /// <summary>
+        /// Returns an Abacus.SinglePrecision.Vector2 object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override Vector2 Read (ISerialisationChannel ss)
+        {
+            Single x = ss.Read <Single> ();
+            Single y = ss.Read <Single> ();
+
+            return new Vector2(x, y);
+        }
+
+        /// <summary>
+        /// Writes an Abacus.SinglePrecision.Vector2 object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, Vector2 obj)
+        {
+            ss.Write <Single> (obj.X);
+            ss.Write <Single> (obj.Y);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Abacus.SinglePrecision.Vector3 type.
+    /// </summary>
+    public class Vector3Serialiser
+        : Serialiser<Vector3>
+    {
+        /// <summary>
+        /// Returns an Abacus.SinglePrecision.Vector3 object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override Vector3 Read (ISerialisationChannel ss)
+        {
+            Single x = ss.Read <Single> ();
+            Single y = ss.Read <Single> ();
+            Single z = ss.Read <Single> ();
+
+            return new Vector3(x, y, z);
+        }
+
+        /// <summary>
+        /// Writes an Abacus.SinglePrecision.Vector3 object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, Vector3 obj)
+        {
+            ss.Write <Single> (obj.X);
+            ss.Write <Single> (obj.Y);
+            ss.Write <Single> (obj.Z);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Abacus.SinglePrecision.Vector4 type.
+    /// </summary>
+    public class Vector4Serialiser
+        : Serialiser<Vector4>
+    {
+        /// <summary>
+        /// Returns an Abacus.SinglePrecision.Vector4 object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override Vector4 Read (ISerialisationChannel ss)
+        {
+            Single x = ss.Read <Single> ();
+            Single y = ss.Read <Single> ();
+            Single z = ss.Read <Single> ();
+            Single w = ss.Read <Single> ();
+
+            return new Vector4(x, y, z, w);
+        }
+
+        /// <summary>
+        /// Writes an Abacus.SinglePrecision.Vector4 object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, Vector4 obj)
+        {
+            ss.Write <Single> (obj.X);
+            ss.Write <Single> (obj.Y);
+            ss.Write <Single> (obj.Z);
+            ss.Write <Single> (obj.W);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Cor.ColourmapAsset type.
+    /// </summary>
+    public class ColourmapAssetSerialiser
+        : Serialiser<ColourmapAsset>
+    {
+        /// <summary>
+        /// Returns a Cor.ColourmapAsset object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override ColourmapAsset Read (ISerialisationChannel ss)
+        {
+            var asset = new ColourmapAsset ();
+
+            Int32 width = ss.Read <Int32> ();
+            Int32 height = ss.Read <Int32> ();
+
+            asset.Data = new Rgba32[width, height];
+
+            for (Int32 i = 0; i < width; ++i)
+            {
+                for (Int32 j = 0; j < height; ++j)
+                {
+                    asset.Data[i, j] =
+                        ss.Read <Rgba32> ();
+                }
+            }
+
+            return asset;
+        }
+
+        /// <summary>
+        /// Writes a Cor.ColourmapAsset object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, ColourmapAsset obj)
+        {
+            ss.Write <Int32> (obj.Width);
+            ss.Write <Int32> (obj.Height);
+
+            for (Int32 i = 0; i < obj.Width; ++i)
+            {
+                for (Int32 j = 0; j < obj.Height; ++j)
+                {
+                    ss.Write <Rgba32> (obj.Data[i, j]);
+                }
+            }
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Cor.ShaderAsset type.
+    /// </summary>
+    public class ShaderAssetSerialiser
+        : Serialiser<ShaderAsset>
+    {
+        /// <summary>
+        /// Returns a Cor.ShaderAsset object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override ShaderAsset Read (ISerialisationChannel ss)
+        {
+            var asset = new ShaderAsset ();
+
+            asset.Definition = ss.Read <ShaderDefinition> ();
+
+            UInt32 dataLength = ss.Read <UInt32> ();
+
+            asset.Data = new Byte [dataLength];
+
+            for (UInt32 i = 0; i < dataLength; ++ i)
+                asset.Data[i] = ss.Read <Byte> ();
+
+            return asset;
+        }
+
+        /// <summary>
+        /// Writes a Cor.ShaderAsset object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, ShaderAsset obj)
+        {
+            ss.Write <ShaderDefinition> (obj.Definition);
+            ss.Write <UInt32> ( (UInt32) obj.Data.LongLength);
+
+            for (UInt32 i = 0; i < obj.Data.Length; ++ i)
+                ss.Write <Byte> (obj.Data [i] );
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Cor.TextAsset type.
+    /// </summary>
+    public class TextAssetSerialiser
+        : Serialiser<TextAsset>
+    {
+        /// <summary>
+        /// Returns a Cor.TextAsset object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override TextAsset Read (ISerialisationChannel ss)
+        {
+            var asset = new TextAsset ();
+
+            asset.Text = ss.Read <String> ();
+
+            return asset;
+        }
+
+        /// <summary>
+        /// Writes a Cor.TextAsset object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, TextAsset obj)
+        {
+            ss.Write <String> (obj.Text);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Cor.TextureAsset type.
+    /// </summary>
+    public class TextureAssetSerialiser
+        : Serialiser<TextureAsset>
+    {
+        /// <summary>
+        /// Returns a Cor.TextureAsset object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override TextureAsset Read (ISerialisationChannel ss)
+        {
+            var asset = new TextureAsset ();
+
+            asset.SurfaceFormat = ss.Read <SurfaceFormat> ();
+            asset.Width = ss.Read <Int32> ();
+            asset.Height = ss.Read <Int32> ();
+            Int32 byteCount = ss.Read <Int32> ();
+
+            asset.Data = new Byte[byteCount];
+
+            for (Int32 i = 0; i < byteCount; ++i)
+            {
+                asset.Data[i] = ss.Read <Byte> ();
+            }
+
+            return asset;
+        }
+
+        /// <summary>
+        /// Writes a Cor.TextureAsset object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, TextureAsset obj)
+        {
+            ss.Write <SurfaceFormat> (obj.SurfaceFormat);
+            ss.Write <Int32> (obj.Width);
+            ss.Write <Int32> (obj.Height);
+            ss.Write <Int32> (obj.Data.Length);
+
+            for (Int32 i = 0; i < obj.Data.Length; ++i)
+            {
+                ss.Write <Byte> (obj.Data[i]);
+            }
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Cor.ShaderDefinition type.
+    /// </summary>
+    public class ShaderDefinitionSerialiser
+        : Serialiser<ShaderDefinition>
+    {
+        /// <summary>
+        /// Returns a Cor.ShaderDefinition object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override ShaderDefinition Read (ISerialisationChannel ss)
+        {
+            var sd = new ShaderDefinition ();
+
+            sd.Name =                   ss.Read <String> ();
+            sd.PassNames =              new List <String> ();
+            sd.InputDefinitions =       new List <ShaderDefinition.ShaderInputDefinition> ();
+            sd.SamplerDefinitions =     new List <ShaderDefinition.ShaderSamplerDefinition> ();
+            sd.VariableDefinitions =    new List <ShaderDefinition.ShaderVariableDefinition> ();
+
+            Int32 numPassNames = (Int32) ss.Read <Byte> ();
+            Int32 numInputDefintions = (Int32) ss.Read <Byte> ();
+            Int32 numSamplerDefinitions = (Int32) ss.Read <Byte> ();
+            Int32 numVariableDefinitions = (Int32) ss.Read <Byte> ();
+
+            for (Int32 i = 0; i < numPassNames; ++i)
+            {
+                var passName = ss.Read <String> ();
+                sd.PassNames.Add (passName);
+            }
+
+            for (Int32 i = 0; i < numInputDefintions; ++i)
+            {
+                var inputDef = ss.Read <ShaderDefinition.ShaderInputDefinition> ();
+                sd.InputDefinitions.Add (inputDef);
+            }
+
+            for (Int32 i = 0; i < numSamplerDefinitions; ++i)
+            {
+                var samplerDef = ss.Read <ShaderDefinition.ShaderSamplerDefinition> ();
+                sd.SamplerDefinitions.Add (samplerDef);
+            }
+
+            for (Int32 i = 0; i < numVariableDefinitions; ++i)
+            {
+                var variableDef = ss.Read <ShaderDefinition.ShaderVariableDefinition> ();
+                sd.VariableDefinitions.Add (variableDef);
+            }
+
+            return sd;
+        }
+
+        /// <summary>
+        /// Writes a Cor.ShaderDefinition object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, ShaderDefinition sd)
+        {
+            if (sd.InputDefinitions.Count > Byte.MaxValue ||
+                sd.SamplerDefinitions.Count > Byte.MaxValue ||
+                sd.VariableDefinitions.Count > Byte.MaxValue ||
+                sd.PassNames.Count > Byte.MaxValue)
+            {
+                throw new SerialisationException ("Too much!");
+            }
+
+            ss.Write <String> (sd.Name);
+
+            ss.Write <Byte> ((Byte) sd.PassNames.Count);
+            ss.Write <Byte> ((Byte) sd.InputDefinitions.Count);
+            ss.Write <Byte> ((Byte) sd.SamplerDefinitions.Count);
+            ss.Write <Byte> ((Byte) sd.VariableDefinitions.Count);
+
+            foreach (String passName in sd.PassNames)
+            {
+                ss.Write <String> (passName);
+            }
+
+            foreach (var inputDef in sd.InputDefinitions)
+            {
+                ss.Write <ShaderDefinition.ShaderInputDefinition> (inputDef);
+            }
+
+            foreach (var samplerDef in sd.SamplerDefinitions)
+            {
+                ss.Write <ShaderDefinition.ShaderSamplerDefinition> (samplerDef);
+            }
+
+            foreach (var variableDef in sd.VariableDefinitions)
+            {
+                ss.Write <ShaderDefinition.ShaderVariableDefinition> (variableDef);
+            }
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Cor.ShaderInputDefinition type.
+    /// </summary>
+    public class ShaderInputDefinitionSerialiser
+        : Serialiser<ShaderDefinition.ShaderInputDefinition>
+    {
+        /// <summary>
+        /// Returns a Cor.ShaderInputDefinition object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override ShaderDefinition.ShaderInputDefinition Read (ISerialisationChannel ss)
+        {
+            var sid = new ShaderDefinition.ShaderInputDefinition ();
+
+            // Name
+            sid.Name = ss.Read <String> ();
+
+            // Nice Name
+            sid.NiceName = ss.Read <String> ();
+
+            // Optional
+            sid.Optional = ss.Read <Boolean> ();
+
+            // Usage
+            sid.Usage = ss.Read <VertexElementUsage> ();
+
+            // Null
+            if (ss.Read <Boolean> ())
+            {
+                // Default Value
+                Byte typeIndex = ss.Read <Byte> ();
+                Type defaultValueType = ShaderDefinition.ShaderInputDefinition.SupportedTypes [typeIndex];
+                sid.DefaultValue = ss.ReadReflective (defaultValueType);
+            }
+
+            return sid;
+        }
+
+        /// <summary>
+        /// Writes a Cor.ShaderInputDefinition object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, ShaderDefinition.ShaderInputDefinition sid)
+        {
+            // Name
+            ss.Write <String> (sid.Name);
+
+            // Nice Name
+            ss.Write <String> (sid.NiceName);
+
+            // Optional
+            ss.Write <Boolean> (sid.Optional);
+
+            // Usage
+            ss.Write <VertexElementUsage> (sid.Usage);
+
+            // Null
+            ss.Write <Boolean> (sid.DefaultValue != null);
+
+            // Default Value
+            if (sid.DefaultValue != null)
+            {
+                Type defaultValueType = sid.DefaultValue.GetType ();
+                Byte typeIndex = (Byte)
+                    ShaderDefinition.ShaderInputDefinition.SupportedTypes
+                    .ToList ()
+                    .IndexOf (defaultValueType);
+
+                ss.Write<Byte> (typeIndex);
+                ss.WriteReflective (defaultValueType, sid.DefaultValue);
+            }
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Cor.ShaderSamplerDefinition type.
+    /// </summary>
+    public class ShaderSamplerDefinitionSerialiser
+        : Serialiser<ShaderDefinition.ShaderSamplerDefinition>
+    {
+        /// <summary>
+        /// Returns a Cor.ShaderSamplerDefinition object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override ShaderDefinition.ShaderSamplerDefinition Read (ISerialisationChannel ss)
+        {
+            var ssd = new ShaderDefinition.ShaderSamplerDefinition ();
+
+            ssd.Name =           ss.Read <String> ();
+            ssd.NiceName =       ss.Read <String> ();
+            ssd.Optional =       ss.Read <Boolean> ();
+
+            return ssd;
+        }
+
+        /// <summary>
+        /// Writes a Cor.ShaderSamplerDefinition object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, ShaderDefinition.ShaderSamplerDefinition ssd)
+        {
+            ss.Write <String> (ssd.Name);
+            ss.Write <String> (ssd.NiceName);
+            ss.Write <Boolean> (ssd.Optional);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Cor.ShaderVariableDefinition type.
+    /// </summary>
+    public class ShaderVariableDefinitionSerialiser
+        : Serialiser<ShaderDefinition.ShaderVariableDefinition>
+    {
+        /// <summary>
+        /// Returns a Cor.ShaderVariableDefinition object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override ShaderDefinition.ShaderVariableDefinition Read (ISerialisationChannel ss)
+        {
+            var svd = new ShaderDefinition.ShaderVariableDefinition ();
+
+            // Name
+            svd.Name = ss.Read <String> ();
+
+            // Nice Name
+            svd.NiceName = ss.Read <String> ();
+
+            // Null
+            if (ss.Read <Boolean> ())
+            {
+                Byte typeIndex = ss.Read <Byte> ();
+                Type defaultValueType = ShaderDefinition.ShaderVariableDefinition.SupportedTypes [typeIndex];
+                svd.DefaultValue = ss.ReadReflective (defaultValueType);
+            }
+
+            return svd;
+        }
+
+        /// <summary>
+        /// Writes a Cor.ShaderVariableDefinition object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, ShaderDefinition.ShaderVariableDefinition svd)
+        {
+            // Name
+            ss.Write <String> (svd.Name);
+
+            // Nice Name
+            ss.Write <String> (svd.NiceName);
+
+            // Null
+            ss.Write <Boolean> (svd.DefaultValue != null);
+
+            // Default Value
+            if (svd.DefaultValue != null)
+            {
+                Type defaultValueType = svd.DefaultValue.GetType ();
+                Byte typeIndex = (Byte)
+                    ShaderDefinition.ShaderVariableDefinition.SupportedTypes
+                    .ToList ()
+                    .IndexOf (defaultValueType);
+
+                ss.Write<Byte> (typeIndex);
+                ss.WriteReflective (defaultValueType, svd.DefaultValue);
+            }
+        }
+    }
+
+    #endregion
 }

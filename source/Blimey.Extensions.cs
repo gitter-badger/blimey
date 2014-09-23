@@ -29,7 +29,7 @@
 // │ CONTRACT, TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        │ \\
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
-using System.IO;
+
 
 namespace Blimey
 {
@@ -39,7 +39,9 @@ namespace Blimey
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    
+    using System.IO;
+    using System.Text;
+
     using Fudge;
     using Abacus.SinglePrecision;
     
@@ -71,6 +73,28 @@ namespace Blimey
         public static void Write7BitEncodedInt32 (this BinaryWriter me, Int32 value)
         {
             throw new NotImplementedException ();
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public static class BinaryReaderExtensions
+    {
+        public static Int32 Read7BitEncodedInt32(this BinaryReader me)
+        {
+            Int32 result = 0;
+            Int32 bitsRead = 0;
+            Int32 value;
+
+            do
+            {
+                value = me.ReadByte ();
+                result |= (value & 0x7f) << bitsRead;
+                bitsRead += 7;
+            }
+            while ((value & 0x80) != 0);
+
+            return result;
         }
     }
 }
