@@ -365,7 +365,11 @@ namespace System.Collections.Generic {
             int prev = NO_SLOT;
             do {
                 Link link = links [current];
-                if (link.HashCode == hashCode && ((hashCode == HASH_FLAG && (item == null || null == slots [current])) ? (item == null && null == slots [current]) : comparer.Equals (slots [current], item)))
+                if (
+                    link.HashCode == hashCode && 
+                    ((hashCode == HASH_FLAG && (item == null || null == slots [current])) 
+                        ? (item == null && null == slots [current]) 
+                        : comparer.Equals (slots [current], item)))
                     break;
 
                 prev = current;
@@ -1143,22 +1147,22 @@ namespace System.Collections.Generic
                 }
                 else if (value == 0) {
                     // return to default size
-                                        KeyValuePair<TKey, TValue> [] newTable = new KeyValuePair<TKey, TValue> [defaultCapacity];
-                                        Array.Copy (table, newTable, inUse);
-                                        this.table = newTable;
+                    KeyValuePair<TKey, TValue> [] newTable = new KeyValuePair<TKey, TValue> [defaultCapacity];
+                    Array.Copy (table, newTable, inUse);
+                    this.table = newTable;
                 }
 #if NET_1_0
                 else if (current > defaultCapacity && value < current) {
-                                        KeyValuePair<TKey, TValue> [] newTable = new KeyValuePair<TKey, TValue> [defaultCapacity];
-                                        Array.Copy (table, newTable, inUse);
-                                        this.table = newTable;
-                                }
+                    KeyValuePair<TKey, TValue> [] newTable = new KeyValuePair<TKey, TValue> [defaultCapacity];
+                    Array.Copy (table, newTable, inUse);
+                    this.table = newTable;
+                }
 #endif
                 else if (value > inUse) {
-                                        KeyValuePair<TKey, TValue> [] newTable = new KeyValuePair<TKey, TValue> [value];
-                                        Array.Copy (table, newTable, inUse);
-                                        this.table = newTable;
-                                }
+                    KeyValuePair<TKey, TValue> [] newTable = new KeyValuePair<TKey, TValue> [value];
+                    Array.Copy (table, newTable, inUse);
+                    this.table = newTable;
+                }
                 else if (value > current) {
                     KeyValuePair<TKey, TValue> [] newTable = new KeyValuePair<TKey, TValue> [value];
                     Array.Copy (table, newTable, current);
@@ -1608,13 +1612,17 @@ namespace System.Collections.Generic
             if (key == null)
                 throw new ArgumentNullException ("key");
             if (!(key is TKey))
-                throw new ArgumentException ("The value \"" + key + "\" isn't of type \"" + typeof (TKey) + "\" and can't be used in this generic collection.", "key");
+                throw new ArgumentException (
+                    "The value \"" + key + "\" isn't of type \"" + typeof (TKey) + 
+                    "\" and can't be used in this generic collection.", "key");
             return (TKey)key;
         }
 
         TValue ToValue (object value) {
             if (!(value is TValue))
-                throw new ArgumentException ("The value \"" + value + "\" isn't of type \"" + typeof (TValue) + "\" and can't be used in this generic collection.", "value");
+                throw new ArgumentException (
+                    "The value \"" + value + "\" isn't of type \"" + typeof (TValue) + 
+                    "\" and can't be used in this generic collection.", "value");
             return (TValue)value;
         }
 
@@ -1841,7 +1849,8 @@ namespace System.Collections.Generic
             public bool MoveNext ()
             {
                 if (ver != l.modificationCount)
-                    throw new InvalidOperationException ("Collection was modified after the enumerator was instantiated.");
+                    throw new InvalidOperationException (
+                        "Collection was modified after the enumerator was instantiated.");
                 
                 if (idx == NOT_STARTED)
                     idx = l.Count;
@@ -1861,7 +1870,8 @@ namespace System.Collections.Generic
             void IEnumerator.Reset ()
             {
                 if (ver != l.modificationCount)
-                    throw new InvalidOperationException ("Collection was modified after the enumerator was instantiated.");
+                    throw new InvalidOperationException (
+                        "Collection was modified after the enumerator was instantiated.");
                 
                 idx = NOT_STARTED;
             }

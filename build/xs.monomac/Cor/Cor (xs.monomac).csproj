@@ -49,41 +49,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\..\source\Cor.cs">
-      <Link>Cor.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Cor.Engine.cs">
-      <Link>Cor.Engine.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Cor.Enums.cs">
-      <Link>Cor.Enums.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Cor.Extensions.cs">
-      <Link>Cor.Extensions.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Cor.Extra.Log.cs">
-      <Link>Cor.Extra.Log.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Cor.Extra.Utils.cs">
-      <Link>Cor.Extra.Utils.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\source\Cor.Library.OpenTk.cs">
       <Link>Cor.Library.OpenTk.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Cor.Optional.Assets.cs">
-      <Link>Cor.Optional.Assets.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Cor.Optional.Serialisers.cs">
-      <Link>Cor.Optional.Serialisers.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Cor.Optional.VertexTypes.cs">
-      <Link>Cor.Optional.VertexTypes.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Cor.Platform.MonoMac.cs">
       <Link>Cor.Platform.MonoMac.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.Stub.cs">
-      <Link>Cor.Platform.Stub.cs</Link>
+    <Compile Include="..\..\..\source\Cor.Platform.cs">
+      <Link>Cor.Platform.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Cor.Library.Foundation.cs">
+      <Link>Cor.Library.Foundation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Cor.cs">
+      <Link>Cor.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

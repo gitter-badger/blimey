@@ -29,7 +29,7 @@
 // │ CONTRACT, TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        │ \\
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
-
+/*
 namespace Cor.Platform.Stub
 {
     using System;
@@ -103,6 +103,210 @@ namespace Cor.Platform.Stub
 		{
 	        this.volume = value;
 			InternalUtils.Log.Info ("StubAudioManager -> Setting Volume:" + value);
+        }
+        
+        public void gfx_Reset ()
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_ClearColourBuffer (Rgba32 color)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_ClearDepthBuffer (Single depth)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_SetCullMode (CullMode cullMode)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_SetBlendEquation (
+            BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb, 
+            BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha)
+        {
+            throw new NotImplementedException ();
+        }
+        
+
+        public VertexBufferHandle gfx_CreateVertexBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public IndexBufferHandle gfx_CreateIndexBuffer (Int32 indexCount)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public Cor.TextureHandle gfx_CreateTexture (TextureDefinition definition, Byte[] source)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public ShaderHandle gfx_CreateShader (ShaderDefinition definition, params Byte[] sources)
+        {
+            throw new NotImplementedException ();
+        }
+        
+
+        public void gfx_DestroyVertexBuffer (VertexBufferHandle handle)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_DestroyIndexBuffer (IndexBufferHandle handle)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_DestroyTexture (Cor.TextureHandle handle)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_DestroyShader (ShaderHandle handle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_SetActiveVertexBuffer (VertexBufferHandle handle)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_SetActiveIndexBuffer (IndexBufferHandle handle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DrawPrimitives (PrimitiveType primitiveType, Int32 startVertex, Int32 primitiveCount)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_DrawIndexedPrimitives (PrimitiveType primitiveType, Int32 baseVertex, Int32 minVertexIndex,Int32 numVertices, Int32 startIndex, Int32 primitiveCount)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_DrawUserPrimitives <T> (PrimitiveType primitiveType, T[] vertexData, Int32 vertexOffset,Int32 primitiveCount, VertexDeclaration vertexDeclaration) where T: struct, IVertexType
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_DrawUserIndexedPrimitives <T> (PrimitiveType primitiveType, T[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount, VertexDeclaration vertexDeclaration) where T: struct, IVertexType
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Byte[] gfx_CompileShader (String source)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_dbg_BeginEvent (Rgba32 colour, String eventName)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public Int32 gfx_dbg_EndEvent ()
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_dbg_SetMarker (Rgba32 colour, String marker)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_dbg_SetRegion (Rgba32 colour, String region)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_vbff_GetVertexCount (VertexBufferHandle h)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public VertexDeclaration gfx_vbff_GetVertexDeclaration (VertexBufferHandle h)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_vbff_SetData<T> (VertexBufferHandle h, T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public T[] gfx_vbff_GetData<T> (VertexBufferHandle h, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_ibff_GetIndexCount (IndexBufferHandle h)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_ibff_SetData (IndexBufferHandle h, Int32[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_ibff_GetData (IndexBufferHandle h, Int32[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_tex_GetWidth (Cor.TextureHandle h)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public Int32 gfx_tex_GetHeight (Cor.TextureHandle h)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public SurfaceFormat gfx_tex_GetSurfaceFormat (Cor.TextureHandle h)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public Byte[] gfx_tex_GetData (Cor.TextureHandle h)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_shdr_ResetVariables (ShaderHandle handle)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_shdr_ResetSamplers (ShaderHandle handle)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_shdr_SetVariable<T> (ShaderHandle handle, String name, T value)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_shdr_SetSampler (ShaderHandle handle, String name, Cor.TextureHandle textureHandle)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_shdr_Activate (ShaderHandle handle, VertexDeclaration vertexDeclaration, String passName)
+        {
+            throw new NotImplementedException ();
         }
         
         public Stream res_GetFileStream (String path)
@@ -902,3 +1106,4 @@ namespace Cor.Platform.Stub
     }
 
 }
+*/
