@@ -73,7 +73,7 @@ namespace Cor.Platform
         Handle                  gfx_CreateVertexBuffer                  (VertexDeclaration vertexDeclaration, Int32 vertexCount);
         Handle                  gfx_CreateIndexBuffer                   (Int32 indexCount);
         Handle                  gfx_CreateTexture                       (TextureFormat textureFormat, Int32 width, Int32 height, Byte[] source);
-        Handle                  gfx_CreateShader                        (ShaderFormat shaderFormat, Byte[] source);
+        Handle                  gfx_CreateShader                        (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sources);
         
         void                    gfx_DestroyVertexBuffer                 (Handle vertexBufferHandle);
         void                    gfx_DestroyIndexBuffer                  (Handle indexBufferHandle);
@@ -148,7 +148,8 @@ namespace Cor.Platform
         
         protected Handle ()
         {
-            guid = new Guid ().ToString ();
+            var g = Guid.NewGuid();
+            guid = g.ToString ();
         }
         
         public String Identifier { get { return guid; } }
@@ -835,6 +836,186 @@ namespace Cor.Platform
         GLSL,
         GLSL_ES,
         HLSL
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public sealed class ShaderDeclaration
+    {
+        /// <summary>
+        /// Defines a global name for this shader
+        /// </summary>
+        public String Name { get; set; }
+
+        /// Defines which passes this shader is made from
+        /// (ex: a toon shader is made for a cel-shading pass
+        /// followed by an edge detection pass)
+        /// </summary>
+        public List<String> PassNames { get; set; }
+
+        /// <summary>
+        /// Lists all of the supported inputs into this shader and
+        /// defines whether or not they are optional to an implementation.
+        /// </summary>
+        public List<ShaderInputDefinition> InputDefinitions { get; set; }
+
+        /// <summary>
+        /// Defines all of the variables supported by this shader.  Every
+        /// variant must support all of the variables.
+        /// </summary>
+        public List<ShaderVariableDefinition> VariableDefinitions { get; set; }
+
+
+        /// <summary>
+        /// ?
+        /// </summary>
+        public List<ShaderSamplerDefinition> SamplerDefinitions { get; set; }
+
+        public sealed class ShaderInputDefinition
+        {
+            String niceName;
+            Type defaultType;
+            Object defaultValue;
+
+            public ShaderInputDefinition ()
+            {
+                this.Name = String.Empty;
+            }
+
+            // Defines which Cor Types the DefaultValue can be set to.
+            // The order of this list is important as the Cor Serialisation
+            // of this class depends upon indexing into it.
+            public static Type [] SupportedTypes
+            {
+                get
+                {
+                    return new []
+                    {
+                        typeof (Matrix44),
+                        typeof (Int32),
+                        typeof (Single),
+                        typeof (Abacus.SinglePrecision.Vector2),
+                        typeof (Abacus.SinglePrecision.Vector3),
+                        typeof (Abacus.SinglePrecision.Vector4),
+                        typeof (Rgba32)
+                    };
+                }
+            }
+
+            public String NiceName
+            {
+                get { return (niceName == null) ? Name : niceName; }
+                set { niceName = value; }
+            }
+
+            public String Name { get; set; }
+
+            public VertexElementUsage Usage { get; set; }
+
+            public Type Type
+            {
+                get { return defaultType; }
+            }
+
+            public Object DefaultValue
+            {
+                get { return defaultValue; }
+                set
+                {
+                    Type t = value.GetType ();
+                    if (!SupportedTypes.ToList ().Contains (t))
+                    {
+                        throw new Exception ();
+                    }
+
+                    defaultType = t;
+                    defaultValue = value;
+                }
+            }
+
+            public Boolean Optional { get; set; }
+        }
+
+        public sealed class ShaderSamplerDefinition
+        {
+            String niceName;
+
+            public ShaderSamplerDefinition ()
+            {
+                this.Name = String.Empty;
+            }
+
+            public String NiceName
+            {
+                get { return (niceName == null) ? Name : niceName; }
+                set { niceName = value; }
+            }
+
+            public String Name { get; set; }
+            public Boolean Optional { get; set; }
+        }
+
+        public sealed class ShaderVariableDefinition
+        {
+            String niceName;
+            Type defaultType;
+            Object defaultValue;
+
+            public ShaderVariableDefinition ()
+            {
+                this.Name = String.Empty;
+            }
+
+            // Defines which Cor Types the DefaultValue can be set to.
+            // The order of this list is important as the Cor Serialisation
+            // of this class depends upon indexing into it.
+            public static Type [] SupportedTypes
+            {
+                get
+                {
+                    return new []
+                    {
+                        typeof (Matrix44),
+                        typeof (Int32),
+                        typeof (Single),
+                        typeof (Abacus.SinglePrecision.Vector2),
+                        typeof (Abacus.SinglePrecision.Vector3),
+                        typeof (Abacus.SinglePrecision.Vector4),
+                        typeof (Rgba32)
+                    };
+                }
+            }
+
+            public String NiceName
+            {
+                get { return (niceName == null) ? Name : niceName; }
+                set { niceName = value; }
+            }
+
+            public String Name { get; set; }
+
+            public Type Type
+            {
+                get { return defaultType; }
+            }
+
+            public Object DefaultValue
+            {
+                get { return defaultValue; }
+                set
+                {
+                    Type t = value.GetType ();
+                    if (!SupportedTypes.ToList ().Contains (t))
+                    {
+                        throw new Exception ();
+                    }
+
+                    defaultType = t;
+                    defaultValue = value;
+                }
+            }
+        }
     }
     
     

@@ -451,9 +451,9 @@ namespace Cor
         /// <summary>
         /// Creates a new shader program on the GPU.
         /// </summary>
-        public Shader CreateShader (ShaderFormat shaderFormat, Byte[] source)
+        public Shader CreateShader (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sources)
         {
-            return new Shader (this.platform, shaderFormat, source);
+            return new Shader (this.platform, shaderDeclaration, shaderFormat, sources);
         }
 
         public void DestroyShader (Shader shader)
@@ -1235,10 +1235,10 @@ namespace Cor
         Boolean disposed;
         
         
-        public Shader (IApi platform, ShaderFormat shaderFormat, Byte[] source)
+        public Shader (IApi platform, ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sources)
         {
             this.platform = platform;
-            this.shaderHandle = platform.gfx_CreateShader (shaderFormat, source);
+            this.shaderHandle = platform.gfx_CreateShader (shaderDeclaration, shaderFormat, sources);
         }
 
 
@@ -2068,8 +2068,7 @@ namespace Cor
     }
 
 
-                  #endregion
-
+    #endregion
 
     #region Human Input Devices
 

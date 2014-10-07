@@ -44,10 +44,8 @@ namespace Cor.Platform.Xios
     using global::System.Runtime.InteropServices;
     using global::System.Linq;
 
-    using Abacus;
-    using Abacus.Packed;
+    using Fudge;
     using Abacus.SinglePrecision;
-    using Abacus.Int32Precision;
 
     using Cor.Lib.Khronos;
     using Cor.Platform.Stub;

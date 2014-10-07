@@ -219,29 +219,27 @@ namespace Cor.Platform.MonoMac
             throw new NotImplementedException ();
         }
         
-        public Handle gfx_CreateShader (ShaderFormat shaderFormat, Byte[] source)
+        public Handle gfx_CreateShader (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sources)
         {
             if (shaderFormat != ShaderFormat.GLSL)
                 throw new NotSupportedException ();
 
-            String corShaderSource = Encoding.ASCII.GetString (source);
+            var handle = OTKWrapper.CreateShader (sources);
 
-            String vertexShaderSource = "";
-            String fragmentShaderSource = "";
+            // validate ?
 
-
-
-            return new OTKShaderHandle (vertexShaderHandle, fragmentShaderSource) as Handle;
+            return handle;
+            
         }
 
         public void gfx_DestroyVertexBuffer (Handle handle)
         {
-            OTKWrapper.DestroyVertexBuffer (handle as OTKVertexBufferHandle);
+            OTKWrapper.DestroyVertexBuffer (handle as VertexBufferHandle);
         }
         
         public void gfx_DestroyIndexBuffer (Handle handle)
         {
-            OTKWrapper.DestroyIndexBuffer (handle as OTKIndexBufferHandle);
+            OTKWrapper.DestroyIndexBuffer (handle as IndexBufferHandle);
         }
         
         public void gfx_DestroyTexture (Handle handle)
@@ -256,17 +254,17 @@ namespace Cor.Platform.MonoMac
 
         public void gfx_vbff_Activate (Handle handle)
         {
-            var vbuffHandle = handle as OTKVertexBufferHandle;
+            var vd = OTKApiCache.Get <VertexDeclaration> (handle, "VertexDeclaration");
 
             // Keep track of this for later draw calls that do not provide it.
-            currentVertexDeclaration = vbuffHandle.VertDecl;
+            currentVertexDeclaration = vd;
 
-            OTKWrapper.ActivateVertexBuffer (vbuffHandle);
+            OTKWrapper.ActivateVertexBuffer (handle as VertexBufferHandle);
         }
         
         public void gfx_ibff_Activate (Handle handle)
         {
-            OTKWrapper.ActivateIndexBuffer (handle as OTKIndexBufferHandle);
+            OTKWrapper.ActivateIndexBuffer (handle as IndexBufferHandle);
         }
 
         public void gfx_DrawPrimitives (
@@ -346,12 +344,12 @@ namespace Cor.Platform.MonoMac
 
         public Int32 gfx_vbff_GetVertexCount (Handle h)
         {
-            return (h as OTKVertexBufferHandle).VertexCount;
+            return OTKApiCache.Get <Int32> (h, "VertexCount");
         }
         
         public VertexDeclaration gfx_vbff_GetVertexDeclaration (Handle h)
         {
-            return (h as OTKVertexBufferHandle).VertDecl;
+            return OTKApiCache.Get <VertexDeclaration> (h, "VertexDeclaration");
         }
         
         public void gfx_vbff_SetData<T> (Handle h, T[] data, Int32 startIndex, Int32 elementCount) 
@@ -359,7 +357,7 @@ namespace Cor.Platform.MonoMac
             : struct
             , IVertexType
         {
-            OTKWrapper.SetVertexBufferData (h as OTKVertexBufferHandle, data, startIndex, elementCount);
+            OTKWrapper.SetVertexBufferData (h as VertexBufferHandle, data, startIndex, elementCount);
         }
         
         public T[] gfx_vbff_GetData<T> (Handle h, Int32 startIndex, Int32 elementCount)
@@ -372,12 +370,12 @@ namespace Cor.Platform.MonoMac
 
         public Int32 gfx_ibff_GetIndexCount (Handle h)
         {
-            return (h as OTKIndexBufferHandle).IndexCount;
+            return OTKApiCache.Get <Int32> (h, "IndexCount");
         }
         
         public void gfx_ibff_SetData (Handle h, Int32[] data, Int32 startIndex, Int32 elementCount)
         {
-            OTKWrapper.SetIndexBufferData (h as OTKIndexBufferHandle, data, startIndex, elementCount);
+            OTKWrapper.SetIndexBufferData (h as IndexBufferHandle, data, startIndex, elementCount);
         }
         
         public void gfx_ibff_GetData (Handle h, Int32[] data, Int32 startIndex, Int32 elementCount)
@@ -387,22 +385,22 @@ namespace Cor.Platform.MonoMac
 
         public Int32 gfx_tex_GetWidth (Handle h)
         {
-            return (h as OTKTextureHandle).Width;
+            return OTKApiCache.Get <Int32> (h, "Width");
         }
         
         public Int32 gfx_tex_GetHeight (Handle h)
         {
-            return (h as OTKTextureHandle).Height;
+            return OTKApiCache.Get <Int32> (h, "Height");
         }
-        
-        public TextureFormat gfx_tex_GetSurfaceFormat (Handle h)
-        {
-            return (h as OTKTextureHandle).SurfaceFormat;
-        }
-        
+
         public Byte[] gfx_tex_GetData (Handle h)
         {
             throw new NotImplementedException ();
+        }
+
+        public TextureFormat gfx_tex_GetTextureFormat (Handle h)
+        {
+            return OTKApiCache.Get <TextureFormat> (h, "TextureFormat");
         }
 
         public void gfx_shdr_ResetVariables (Handle handle)
