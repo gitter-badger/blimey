@@ -1231,15 +1231,161 @@ namespace Cor
         readonly Handle shaderHandle;
     
         public Handle Handle { get { return shaderHandle; } }
+
+        // For each vert decl seen, defines the index of the most suitable shader variant.
+        Dictionary<VertexDeclaration, Int32> bestVariantMap { get; set; }
+
+        // Current state (acts as a buffer for adjusting shader settings, only when needed will the changes
+        // be applied to the GPU).
+        Dictionary<String, Object> currentVariables = new Dictionary<String, Object>();
+        Dictionary<String, Handle> currentSamplerTargets = new Dictionary<String, Handle>();
+
+        // Debug
+        Dictionary<String, bool> logHistory = new Dictionary<String, bool>();
     
+        // IDisposable
         Boolean disposed;
-        
-        
-        public Shader (IApi platform, ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sources)
+
+        // Variant Tracking
+        readonly Int32 variantCount;
+        readonly Dictionary <Int32, String> variantIdentifiers = new Dictionary <Int32, String> ();
+        readonly Dictionary <Int32, ShaderInputInfo[]> variantInputInfos = new Dictionary<Int32, ShaderInputInfo[]> ();
+        readonly Dictionary <Int32, ShaderVariableInfo[]> variantVariableInfos = new Dictionary<Int32, ShaderVariableInfo[]> ();
+        readonly Dictionary <Int32, ShaderSamplerInfo[]> variantSamplerInfos = new Dictionary<Int32, ShaderSamplerInfo[]> ();
+
+        // Definition tracking.
+        readonly Dictionary <String, VertexElementUsage> inputNameToUsage;
+        readonly Dictionary <String, Boolean> inputNameToOptional;
+        readonly Dictionary <String, String> inputNiceNameToName;
+
+        public Shader (IApi platform, ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sourceVariants)
         {
             this.platform = platform;
-            this.shaderHandle = platform.gfx_CreateShader (shaderDeclaration, shaderFormat, sources);
+
+            // Get the platform implementation to build create the shader on the GPU.
+            this.shaderHandle = platform.gfx_CreateShader (shaderDeclaration, shaderFormat, sourceVariants);
+
+            // Cache off constants from the API so we don't need to hit the API each time we need the same info.
+            this.variantCount = platform.gfx_shdr_GetVariantCount (shaderHandle);
+
+            for (Int32 i = 0; i < variantCount; ++i)
+            {
+                this.variantIdentifiers [i] = platform.gfx_shdr_GetIdentifier (shaderHandle, i);
+                this.variantInputInfos [i] = platform.gfx_shdr_GetInputs (shaderHandle, i);
+                this.variantVariableInfos [i] = platform.gfx_shdr_GetVariables (shaderHandle, i);
+                this.variantSamplerInfos [i] = platform.gfx_shdr_GetSamplers (shaderHandle, i);
+            }
+
+            // Useful look-up tables relating to the shader declaration.
+            this.inputNameToUsage = shaderDeclaration.InputDeclarations
+                .ToDictionary (x => x.Name, x => x.Usage);
+
+            this.inputNameToOptional = shaderDeclaration.InputDeclarations
+                .ToDictionary (x => x.Name, x => x.Optional);
+
+            this.inputNiceNameToName = shaderDeclaration.InputDeclarations
+                .ToDictionary (x => x.NiceName, x => x.Name);
+
+            // Checks that all variants of the shader match up w3ith
+            // the provided shader declaration.
+            for (Int32 i = 0; i < variantCount; ++i)
+            {
+                Console.WriteLine ("Validating " + variantIdentifiers [i]);
+
+                ValidateShaderInputs (shaderDeclaration.InputDeclarations, variantInputInfos [i]);
+                ValidateShaderVariables (shaderDeclaration.VariableDeclarations, variantVariableInfos [i]);
+                ValidateShaderSamplers (shaderDeclaration.SamplerDeclarations, variantSamplerInfos [i]);
+            }
         }
+
+        void ValidateShaderInputs (List<ShaderInputDeclaration> inputDeclarations, ShaderInputInfo[] inputInfos)
+        {
+            // Make sure that this shader implements all of the non-optional defined inputs.
+            var nonOptionalDefinitions = inputDeclarations.Where (y => !y.Optional).ToList ();
+
+            foreach (var definition in nonOptionalDefinitions)
+            {
+                var find = inputInfos.ToList().Find (x => x.Name == definition.Name/* && x.Type == definition.Type */);
+
+                if (find == null)
+                {
+                    throw new Exception ("problem");
+                }
+            }
+
+            // Make sure that every implemented input is defined.
+            foreach (var input in inputInfos)
+            {
+                var find = inputDeclarations.Find (x => x.Name == input.Name
+                    /*&& (x.Type == input.Type || (x.Type == typeof (Rgba32) && input.Type == typeof (Vector4)))*/
+                );
+
+                if (find == null)
+                {
+                    throw new Exception ("problem");
+                }
+                //else
+                //{
+                //    input.RegisterExtraInfo (find);
+                //}
+            }
+        }
+
+        void ValidateShaderVariables (List<ShaderVariableDeclaration> variableDeclarations, ShaderVariableInfo[] variableInfos)
+        {
+            // Make sure that every variable is defined.
+            foreach (var variable in variableInfos)
+            {
+                var find = variableDeclarations.Find (
+                    x =>
+                    x.Name == variable.Name //&&
+                    //(x.Type == variable.Type || (x.Type == typeof (Rgba32) && variable.Type == typeof (Vector4)))
+                );
+
+                if (find == null)
+                {
+                    throw new Exception ("problem");
+                }
+                //else
+                //{
+                //    variable.RegisterExtraInfo (find);
+                //}
+            }
+        }
+
+        void ValidateShaderSamplers (List<ShaderSamplerDeclaration> samplerDeclarations, ShaderSamplerInfo[] samplerInfos)
+        {
+            var nonOptionalSamplers =
+                samplerDeclarations
+                    .Where (y => !y.Optional)
+                    .ToList ();
+
+            foreach (var definition in nonOptionalSamplers)
+            {
+                var find = samplerInfos.ToList().Find (x => x.Name == definition.Name);
+
+                if (find == null)
+                {
+                    throw new Exception ("problem");
+                }
+            }
+
+            // Make sure that every implemented input is defined.
+            foreach (var sampler in samplerInfos)
+            {
+                var find = samplerDeclarations.Find (x => x.Name == sampler.Name);
+
+                if (find == null)
+                {
+                    throw new Exception ("problem");
+                }
+                //else
+                //{
+                //    sampler.RegisterExtraInfo (find);
+                //}
+            }
+        }
+
 
 
         // This finalizer will run only if the Dispose method
@@ -1306,7 +1452,10 @@ namespace Cor
         /// </summary>
         public void ResetVariables ()
         {
-            platform.gfx_shdr_ResetVariables (shaderHandle);
+            // shd just apply defaults to current variables
+            currentVariables.Clear ();
+            //platform.gfx_shdr_ResetVariables (shaderHandle);
+            throw new NotImplementedException ();
         }
 
         /// <summary>
@@ -1314,7 +1463,8 @@ namespace Cor
         /// </summary>
         public void ResetSamplerTargets ()
         {
-            platform.gfx_shdr_ResetSamplers (shaderHandle);
+            //platform.gfx_shdr_ResetSamplers (shaderHandle);
+            throw new NotImplementedException ();
         }
 
         /// <summary>
@@ -1322,7 +1472,11 @@ namespace Cor
         /// </summary>
         public void SetSamplerTarget (String name, Handle textureHandle)
         {
-            platform.gfx_shdr_SetSampler (shaderHandle, name, textureHandle);
+            //platform.gfx_shdr_SetSampler (shaderHandle, name, textureHandle);
+            //currentSamplerSlots
+            throw new NotImplementedException ();
+
+            //currentSamplerSlots[name] = textureSlot;
         }
 
         /// <summary>
@@ -1330,14 +1484,65 @@ namespace Cor
         /// </summary>
         public void SetVariable<T>(String name, T value)
         {
-            platform.gfx_shdr_SetVariable (shaderHandle, name, value);
+            String actualName = inputNiceNameToName [name];
+            currentVariables[actualName] = value;
         }
 
         /// <summary>
-        /// Provides access to the individual passes in this shader.  The calling code can itterate though these and
-        /// apply them to the graphics context before it makes a draw call.
+        /// For the given vertex declaration, picks the most appropriate shader variant, activates applies
+        /// this shader's current state to the GPU.  This must be called before using the
+        /// GPU to draw primitives.
         /// </summary>
-        public ShaderPass[] Passes { get { throw new NotImplementedException (); } }
+        public void Activate (VertexDeclaration vertexDeclaration)
+        {
+            if (!bestVariantMap.ContainsKey (vertexDeclaration))
+            {
+                bestVariantMap[vertexDeclaration] = WorkOutBestVariantFor (vertexDeclaration);
+            }
+
+            Int32 bestVariantIndex = bestVariantMap[vertexDeclaration];
+
+            // select the correct shader pass variant and then activate it
+            platform.gfx_shdr_Activate (shaderHandle, bestVariantIndex);
+
+            // For all current cached variables.
+            foreach (var key1 in currentVariables.Keys)
+            {
+                var variable = variantVariableInfos [bestVariantIndex].ToList ().Find (x => x.Name == key1);
+
+                if (variable == null)
+                {
+                    string warning = "WARNING: missing variable: " + key1;
+
+                    if ( !logHistory.ContainsKey (warning) )
+                    {
+                        InternalUtils.Log.Info ("GFX", warning);
+
+                        logHistory.Add (warning, true);
+                    }
+                }
+                else
+                {
+                    var val = currentVariables[key1];
+                    platform.gfx_shdr_SetVariable (shaderHandle, bestVariantIndex, key1, val);
+                }
+            }
+
+            foreach (var key2 in currentSamplerTargets.Keys)
+            {
+                var sampler = variantSamplerInfos [bestVariantIndex].ToList ().Find (x => x.Name == key2);
+                if (sampler == null)
+                {
+                    //InternalUtils.Log.Info ("GFX", "missing sampler: " + key2);
+                }
+                else
+                {
+                    var textureHandle = currentSamplerTargets[key2];
+
+                    platform.gfx_shdr_SetSampler (shaderHandle, bestVariantIndex, key2, textureHandle);
+                }
+            }
+        }
 
         /// <summary>
         /// Defines which vertex elements are required by this shader.
@@ -1353,28 +1558,164 @@ namespace Cor
         /// The name of this shader.
         /// </summary>
         public String Name { get { throw new NotImplementedException (); } }
-    }
 
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    /// <summary>
-    /// Represents a individual effect pass in a Cor.IShader.
-    /// </summary>
-    public sealed class ShaderPass
-    {
-        /// <summary>
-        /// The name of the pass.
-        /// </summary>
-        public String Name { get { throw new NotImplementedException (); } }
 
         /// <summary>
-        /// When called applies this shader pass's configuration to the GPU.  This must be called before using the
-        /// GPU to draw primitives.
+        /// This function takes a VertexDeclaration and a collection of
+        /// OpenGL shader passes and works out which
+        /// pass is the best fit for the VertexDeclaration.
         /// </summary>
-        public void Activate (VertexDeclaration vertexDeclaration)
+        internal Int32 WorkOutBestVariantFor (VertexDeclaration vertexDeclaration)
         {
-            throw new NotImplementedException ();
+            InternalUtils.Log.Info ("GFX", "\n");
+            InternalUtils.Log.Info ("GFX", "\n");
+            InternalUtils.Log.Info ("GFX", "=====================================================================");
+            InternalUtils.Log.Info ("GFX", "Working out the best shader variant for: " + vertexDeclaration);
+            InternalUtils.Log.Info ("GFX", "Possible variants:");
+
+            int best = 0;
+
+            int bestNumMatchedVertElems = 0;
+            int bestNumUnmatchedVertElems = 0;
+            int bestNumMissingNonOptionalInputs = 0;
+
+            // foreach variant
+            for (int i = 0; i < variantCount; ++i)
+            {
+                // work out how many vert inputs match
+
+                var matchResult = CompareShaderInputs (vertexDeclaration, i);
+
+                int numMatchedVertElems = matchResult.NumMatchedInputs;
+                int numUnmatchedVertElems = matchResult.NumUnmatchedInputs;
+                int numMissingNonOptionalInputs = matchResult.NumUnmatchedRequiredInputs;
+
+                InternalUtils.Log.Info ("GFX", " - " + i);
+
+                if (i == 0 )
+                {
+                    bestNumMatchedVertElems = numMatchedVertElems;
+                    bestNumUnmatchedVertElems = numUnmatchedVertElems;
+                    bestNumMissingNonOptionalInputs = numMissingNonOptionalInputs;
+                }
+                else
+                {
+                    if (
+                        (
+                            numMatchedVertElems > bestNumMatchedVertElems &&
+                            bestNumMissingNonOptionalInputs == 0
+                        )
+                        ||
+                        (
+                            numMatchedVertElems == bestNumMatchedVertElems &&
+                            bestNumMissingNonOptionalInputs == 0 &&
+                            numUnmatchedVertElems < bestNumUnmatchedVertElems
+                        )
+                    )
+                    {
+                        bestNumMatchedVertElems = numMatchedVertElems;
+                        bestNumUnmatchedVertElems = numUnmatchedVertElems;
+                        bestNumMissingNonOptionalInputs = numMissingNonOptionalInputs;
+                        best = i;
+                    }
+                }
+            }
+
+            InternalUtils.Log.Info ("GFX", "Chosen variant: " + variantIdentifiers[best]);
+
+            return best;
+        }
+
+        internal CompareShaderInputsResult CompareShaderInputs (
+            VertexDeclaration vertexDeclaration, Int32 variantIndex)
+        {
+            var result = new CompareShaderInputsResult ();
+
+            var inputsUsed = new List<ShaderInputInfo>();
+
+            var vertElems = vertexDeclaration.GetVertexElements ();
+
+            // itterate over each input defined in the vert decl
+            foreach (var vertElem in vertElems)
+            {
+                var usage = vertElem.VertexElementUsage;
+
+                var format = vertElem.VertexElementFormat;
+                /*
+
+                foreach (var input in oglesShader.Inputs)
+                {
+                    // the vertDecl knows what each input's intended use is,
+                    // so lets match up
+                    if (input.Usage == usage)
+                    {
+                        // intended use seems good
+                    }
+                }
+
+                // find all inputs that could match
+                var matchingInputs = oglesShader.Inputs.FindAll (
+                    x =>
+
+                        x.Usage == usage &&
+                        (x.Type == VertexElementFormatHelper.FromEnum (format) ||
+                        ( (x.Type.GetType () == typeof (Vector4)) && (format == VertexElementFormat.Colour) ))
+
+                );*/
+
+                var matchingInputs = variantInputInfos [variantIndex].ToList ().FindAll (x => inputNameToUsage[x.Name] == usage);
+
+                // now make sure it's not been used already
+
+                while (matchingInputs.Count > 0)
+                {
+                    var potentialInput = matchingInputs[0];
+
+                    if (inputsUsed.Find (x => x == potentialInput) != null)
+                    {
+                        matchingInputs.RemoveAt (0);
+                    }
+                    else
+                    {
+                        inputsUsed.Add (potentialInput);
+                    }
+                }
+            }
+
+            result.NumMatchedInputs = inputsUsed.Count;
+
+            result.NumUnmatchedInputs = vertElems.Length - result.NumMatchedInputs;
+
+            result.NumUnmatchedRequiredInputs = 0;
+
+            foreach (var input in variantInputInfos [variantIndex])
+            {
+                if (!inputsUsed.Contains (input) )
+                {
+                    if ( !inputNameToOptional[input.Name])
+                    {
+                        result.NumUnmatchedRequiredInputs++;
+                    }
+                }
+
+            }
+
+            //InternalUtils.Log.Info ("GFX",
+            //    String.Format (
+            //        "[{0}, {1}, {2}]",
+            //        result.NumMatchedInputs,
+            //        result.NumUnmatchedInputs,
+            //        result.NumUnmatchedRequiredInputs));
+
+            return result;
+        }
+
+        internal struct CompareShaderInputsResult
+        {
+            // the nume
+            public int NumMatchedInputs;
+            public int NumUnmatchedInputs;
+            public int NumUnmatchedRequiredInputs;
         }
     }
 

@@ -224,12 +224,7 @@ namespace Cor.Platform.MonoMac
             if (shaderFormat != ShaderFormat.GLSL)
                 throw new NotSupportedException ();
 
-            var handle = OTKWrapper.CreateShader (sources);
-
-            // validate ?
-
-            return handle;
-            
+            return OTKWrapper.CreateShader (sources);
         }
 
         public void gfx_DestroyVertexBuffer (Handle handle)
@@ -403,27 +398,52 @@ namespace Cor.Platform.MonoMac
             return OTKApiCache.Get <TextureFormat> (h, "TextureFormat");
         }
 
-        public void gfx_shdr_ResetVariables (Handle handle)
+        public void gfx_shdr_ResetVariables (Handle handle, Int32 variantIndex)
         {
             throw new NotImplementedException ();
         }
         
-        public void gfx_shdr_ResetSamplers (Handle handle)
+        public void gfx_shdr_ResetSamplers (Handle handle, Int32 variantIndex)
         {
             throw new NotImplementedException ();
         }
         
-        public void gfx_shdr_SetVariable<T> (Handle handle, String name, T value)
+        public void gfx_shdr_SetVariable<T> (Handle handle, Int32 variantIndex, String name, T value)
         {
             throw new NotImplementedException ();
         }
         
-        public void gfx_shdr_SetSampler (Handle handle, String name, Handle textureHandle)
+        public void gfx_shdr_SetSampler (Handle handle, Int32 variantIndex, String name, Handle textureHandle)
         {
             throw new NotImplementedException ();
         }
         
-        public void gfx_shdr_Activate (Handle handle, VertexDeclaration vertexDeclaration, String passName)
+        public void gfx_shdr_Activate (Handle handle, Int32 variantIndex)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_shdr_GetVariantCount (Handle shaderHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public String gfx_shdr_GetIdentifier (Handle shaderHandle, Int32 variantIndex)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public ShaderInputInfo[] gfx_shdr_GetInputs (Handle shaderHandle, Int32 variantIndex)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public ShaderVariableInfo[] gfx_shdr_GetVariables (Handle shaderHandle, Int32 variantIndex)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public ShaderSamplerInfo[] gfx_shdr_GetSamplers (Handle shaderHandle, Int32 variantIndex)
         {
             throw new NotImplementedException ();
         }

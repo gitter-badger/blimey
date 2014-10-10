@@ -197,6 +197,7 @@ namespace Cor.Library.OTK
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
+    // This is a dirty hack for the time being.
     public static class OTKApiCache
     {
         static readonly Dictionary <String, Dictionary<String, Object>> data = 
@@ -1630,14 +1631,14 @@ namespace Cor.Library.OTK
         #endregion
     }
 
-    internal class OTKShaderUniform
+    sealed class OTKShaderUniform
     {
         public Int32 Index { get; set; }
         public String Name { get; set; }
         public ActiveUniformType Type { get; set; }
     }
 
-    internal class OTKShaderAttribute
+    sealed class OTKShaderAttribute
     {
         public Int32 Index { get; set; }
         public String Name { get; set; }
@@ -1646,26 +1647,9 @@ namespace Cor.Library.OTK
     
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    internal sealed class OTKShaderDefinition
+    sealed class OTKShaderSourceDefinition
     {
-        internal sealed class OTKShaderSourceDefinition
-        {
-            public string VertexShaderPath { get; set; }
-            public string PixelShaderPath { get; set; }
-        }
-        
-        internal sealed class OTKShaderVariantDefinition
-        {
-            public String VariantName { get; set; }
-            public List<OTKShaderVariantPassDefinition> VariantPassDefinitions { get; set; }
-        }
-    
-        internal sealed class OTKShaderVariantPassDefinition
-        {
-            public String PassName { get; set; }
-            public OTKShaderSourceDefinition PassDefinition { get; set; }
-        }
-        
-        public List<OTKShaderVariantDefinition> VariantDefinitions { get; set; }
+        public string VertexShaderPath { get; set; }
+        public string PixelShaderPath { get; set; }
     }
 }
