@@ -66,22 +66,29 @@ namespace Cor.Demo
         Rgba32 nextColour = Rgba32.DarkSlateBlue;
         readonly Single colourChangeTime = 10f;
         Single colourChangeProgress = 0f;
-        Single w;
-        Single h;
+        Int32 numCols;
+        Int32 numRows;
 
-        public void Start (Engine cor)
+        public void Start (Engine engine)
         {
+            var shader = ShaderHelper.CreateUnlit (engine);
             elements = new IElement[]
             {
+                new Element <Flower, VertPosCol> (shader),
+                new Element <Cylinder, VertPosNormTex> (shader),
+                new Element <Cube, VertPosTex> (shader),
+                new Element <Billboard, VertPosTexCol> (shader),
             };
 
             Double s = Math.Sqrt (elements.Length);
 
-            w = (Single) Math.Round (s);
-            h = (Single) Math.Floor (s);
+            numCols = (Int32) Math.Ceiling (s);
 
-            foreach (var element in elements)
-                element.Load (cor);
+            numRows = (Int32) Math.Floor (s);
+
+            while (elements.Length > numCols * numRows) ++numRows;
+
+            foreach (var element in elements) element.Load (engine);
         }
 
         public Boolean Update (Engine cor, AppTime time)
@@ -109,25 +116,22 @@ namespace Cor.Demo
             cor.Graphics.ClearColourBuffer(Rgba32.Lerp (currentColour, nextColour, colourChangeProgress));
             cor.Graphics.ClearDepthBuffer(1f);
 
+            // grid index
             Int32 x = 0;
-            Int32 y = 0;
+            Int32 y = numRows - 1;
+
             foreach (var element in elements)
             {
-                Single qw = 2f / w;
-                Single qh = 2f / h;
+                Single left     = -1f - (x*2f);
+                Single right    = -1f + (2f * numCols) - (x*2f);
+                Single bottom   = -1f - (y*2f);
+                Single top      = -1f + (2f * numRows) - (y*2f);
 
-                Matrix44 proj = 
-                    Matrix44.CreateOrthographicOffCenter (
-                        -1f + qw * x,
-                        -1f + qw * (x + 1), 
-                        -1f + qh * y,
-                        -1f + qh * (y + 1), 
-                        1f,
-                        -1f);
+                Matrix44 proj = Matrix44.CreateOrthographicOffCenter (left, right, bottom, top, 1f, -1f);
 
                 element.Render (cor, proj);
 
-                if (++x >= w) {x = 0; ++y;} 
+                if (++x >= numCols) {x = 0; --y;}
             }
         }
 
@@ -149,10 +153,16 @@ namespace Cor.Demo
         Matrix44 View { get; }
     }
 
-    public class Element <TMesh, TVertType> : IElement where TMesh : IMesh<TVertType> where TVertType : struct, IVertexType
+    public sealed class Element <TMesh, TVertType> : IElement
+        where TMesh
+            : class
+            , IMesh<TVertType>
+            , new ()
+        where TVertType
+            : struct
+            , IVertexType
     {
-        IMesh<TVertType> meshResource;
-        Shader shader;
+        readonly Shader shader;
 
         VertexBuffer vertexBuffer;
         IndexBuffer indexBuffer;
@@ -160,15 +170,16 @@ namespace Cor.Demo
         public Matrix44 World { get; private set; }
         public Matrix44 View { get; private set; }
 
-        public Element (IMesh<TVertType> meshResource, Shader shader)
+        public Element (Shader shader)
         {
-            this.meshResource = meshResource;
             this.shader = shader;
             View = Matrix44.CreateLookAt (Vector3.UnitZ, Vector3.Forward, Vector3.Up);
         }
 
         public void Load (Engine engine)
         {
+            var meshResource = new TMesh ();
+
             // put the mesh resource onto the gpu
             vertexBuffer = engine.Graphics.CreateVertexBuffer (meshResource.VertexDeclaration, meshResource.VertArray.Length);
             indexBuffer = engine.Graphics.CreateIndexBuffer (meshResource.IndexArray.Length);
@@ -177,7 +188,7 @@ namespace Cor.Demo
             indexBuffer.SetData(meshResource.IndexArray);
 
             // don't need a reference to the mesh now as it lives on the GPU
-            this.meshResource = null;
+            meshResource = null;
         }
 
         public void Unload ()
@@ -207,20 +218,17 @@ namespace Cor.Demo
             shader.SetVariable ("World", World);
             shader.SetVariable ("View", View);
             shader.SetVariable ("Projection", projection);
-            shader.SetVariable ("MaterialColour", Rgba32.White);
+            shader.SetVariable ("Colour", Rgba32.White);
 
-            foreach (var pass in shader.Passes)
-            {
-                pass.Activate (vertexBuffer.VertexDeclaration);
+            shader.Activate (vertexBuffer.VertexDeclaration);
 
-                engine.Graphics.DrawIndexedPrimitives (
-                    PrimitiveType.TriangleList,
-                    0,
-                    0,
-                    vertexBuffer.VertexCount,
-                    0,
-                    indexBuffer.IndexCount / 3);
-            }
+            engine.Graphics.DrawIndexedPrimitives (
+                PrimitiveType.TriangleList,
+                0,
+                0,
+                vertexBuffer.VertexCount,
+                0,
+                indexBuffer.IndexCount / 3);
         }
     }
 
@@ -439,7 +447,7 @@ namespace Cor.Demo
         }
     }
 
-    public class Star : IMesh <VertPosCol>
+    public class Flower : IMesh <VertPosCol>
     {
         readonly VertPosCol[] vertArray;
         readonly Int32[] indexArray;
@@ -452,7 +460,7 @@ namespace Cor.Demo
 
         #endregion
 
-        public Star ()
+        public Flower ()
         {
             vertArray = new[]
             {
@@ -639,8 +647,8 @@ namespace Cor.Demo
 
                 vertList.Add(
                     new VertPosNormTex(
-                        position, 
-                        normal, 
+                        position,
+                        normal,
                         new Vector2((circleVec.X + 1f) / 2f, (circleVec.Z + 1f) / 2f)));
             }
         }
@@ -668,10 +676,10 @@ namespace Cor.Demo
         public static Shader CreateUnlit (Engine engine)
         {
             return engine.Graphics.CreateShader (
-                new ShaderDefinition {
-                    Name = "Cor's Unlit Shader",
-                    InputDefinitions = new List<ShaderDefinition.ShaderInputDefinition> {
-                        new ShaderDefinition.ShaderInputDefinition
+                new ShaderDeclaration {
+                    Name = "Demo Unlit Shader",
+                    InputDeclarations = new List<ShaderInputDeclaration> {
+                        new ShaderInputDeclaration
                         {
                             Name = "a_vertPos",
                             NiceName = "Position",
@@ -679,7 +687,7 @@ namespace Cor.Demo
                             Usage = VertexElementUsage.Position,
                             DefaultValue = Vector3.Zero
                         },
-                        new ShaderDefinition.ShaderInputDefinition
+                        new ShaderInputDeclaration
                         {
                             Name = "a_vertTexcoord",
                             NiceName = "TextureCoordinate",
@@ -687,7 +695,7 @@ namespace Cor.Demo
                             Usage = VertexElementUsage.TextureCoordinate,
                             DefaultValue = Vector2.Zero
                         },
-                        new ShaderDefinition.ShaderInputDefinition
+                        new ShaderInputDeclaration
                         {
                             Name = "a_vertColour",
                             NiceName = "Colour",
@@ -696,135 +704,143 @@ namespace Cor.Demo
                             DefaultValue = Rgba32.White
                         }
                     },
-                    VariableDefinitions = new List<ShaderDefinition.ShaderVariableDefinition> {
-                        new ShaderDefinition.ShaderVariableDefinition {
+                    VariableDeclarations = new List<ShaderVariableDeclaration> {
+                        new ShaderVariableDeclaration {
                             Name = "u_world",
                             NiceName = "World",
                             DefaultValue = Matrix44.Identity
                         },
-                        new ShaderDefinition.ShaderVariableDefinition {
+                        new ShaderVariableDeclaration {
                             Name = "u_view",
                             NiceName = "View",
                             DefaultValue = Matrix44.Identity
                         },
-                        new ShaderDefinition.ShaderVariableDefinition {
+                        new ShaderVariableDeclaration {
                             Name = "u_proj",
                             NiceName = "Projection",
                             DefaultValue = Matrix44.Identity
+                        },
+                        new ShaderVariableDeclaration {
+                            Name = "u_colour",
+                            NiceName = "Colour",
+                            DefaultValue = Rgba32.White
                         }
                     },
-                    SamplerDefinitions = new List<ShaderDefinition.ShaderSamplerDefinition> {
-                        new ShaderDefinition.ShaderSamplerDefinition
+                    SamplerDeclarations = new List<ShaderSamplerDeclaration> {
+                        new ShaderSamplerDeclaration
                         {
                             Name = "s_tex0",
                             NiceName = "TextureSampler",
                             Optional = true
                         }
-                    },
-                    PassNames = new List<String> () {
-                        "Primary"
                     }
                 },
+                ShaderFormat.GLSL,
                 #if COR_PLATFORM_MONOMAC
-                Encoding.ASCII.GetBytes (
-                    @"
-                    =VSH=
-                    attribute vec4 a_vertPos;
-                    uniform mat4 u_world;
-                    uniform mat4 u_view;
-                    uniform mat4 u_proj;
-                    uniform vec4 u_colour;
-                    varying vec4 v_tint;
-                    void main()
-                    {
-                        gl_Position = u_proj * u_view * u_world * a_vertPos;
-                        v_tint = u_colour;
-                    }
-                    =FSH=
-                    varying vec4 v_tint;
-                    void main()
-                    {
-                        gl_FragColor = v_tint;
-                    }
+                new []{
+                    Encoding.ASCII.GetBytes (
+@"Vertex Position
+=VSH=
+attribute vec4 a_vertPos;
+uniform mat4 u_world;
+uniform mat4 u_view;
+uniform mat4 u_proj;
+uniform vec4 u_colour;
+varying vec4 v_tint;
+void main()
+{
+    gl_Position = u_proj * u_view * u_world * a_vertPos;
+    v_tint = u_colour;
+}
+=FSH=
+varying vec4 v_tint;
+void main()
+{
+    gl_FragColor = v_tint;
+}
+"
+                    ),
+                    Encoding.ASCII.GetBytes (
+@"Vertex Position & Colour
+=VSH=
+attribute vec4 a_vertPos;
+attribute vec4 a_vertColour;
+uniform mat4 u_world;
+uniform mat4 u_view;
+uniform mat4 u_proj;
+uniform vec4 u_colour;
+varying vec4 v_tint;
+void main()
+{
+    gl_Position = u_proj * u_view * u_world * a_vertPos;
+    v_tint = a_vertColour * u_colour;
+}
+=FSH=
+varying vec4 v_tint;
+void main()
+{
+    gl_FragColor = v_tint;
+}
+"
+                    ),
+                    Encoding.ASCII.GetBytes (
+@"Vertex Position & Texture Coordinate
+=VSH=
+attribute vec4 a_vertPos;
+attribute vec2 a_vertTexcoord;
+uniform mat4 u_world;
+uniform mat4 u_view;
+uniform mat4 u_proj;
+uniform vec4 u_colour;
+varying vec2 v_texCoord;
+varying vec4 v_tint;
+void main()
+{
+    gl_Position = u_proj * u_view * u_world * a_vertPos;
+    v_texCoord = a_vertTexcoord;
+    v_tint = u_colour;
+}
+=FSH=
+uniform sampler2D s_tex0;
+varying vec2 v_texCoord;
+varying vec4 v_tint;
+void main()
+{
+    gl_FragColor = v_tint * texture2D(s_tex0, v_texCoord);
+}"
 
-
-
-                    =VSH=
-                    attribute vec4 a_vertPos;
-                    attribute vec4 a_vertColour;
-                    uniform mat4 u_world;
-                    uniform mat4 u_view;
-                    uniform mat4 u_proj;
-                    uniform vec4 u_colour;
-                    varying vec4 v_tint;
-                    void main()
-                    {
-                        gl_Position = u_proj * u_view * u_world * a_vertPos;
-                        v_tint = a_vertColour * u_colour;
-                    }
-                    =FSH=
-                    varying vec4 v_tint;
-                    void main()
-                    {
-                        gl_FragColor = v_tint;
-                    }
-
-
-
-                    =VSH=
-                    attribute vec4 a_vertPos;
-                    attribute vec2 a_vertTexcoord;
-                    uniform mat4 u_world;
-                    uniform mat4 u_view;
-                    uniform mat4 u_proj;
-                    uniform vec4 u_colour;
-                    varying vec2 v_texCoord;
-                    varying vec4 v_tint;
-                    void main()
-                    {
-                        gl_Position = u_proj * u_view * u_world * a_vertPos;
-                        v_texCoord = a_vertTexcoord;
-                        v_tint = u_colour;
-                    }
-                    =FSH=
-                    uniform sampler2D s_tex0;
-                    varying vec2 v_texCoord;
-                    varying vec4 v_tint;
-                    void main()
-                    {
-                        gl_FragColor = v_tint * texture2D(s_tex0, v_texCoord);
-                    }
-
-
-
-                    =VSH=
-                    attribute vec4 a_vertPos;
-                    attribute vec2 a_vertTexcoord;
-                    attribute vec4 a_vertColour;
-                    uniform mat4 u_world;
-                    uniform mat4 u_view;
-                    uniform mat4 u_proj;
-                    uniform vec4 u_colour;
-                    varying vec2 v_texCoord;
-                    varying vec4 v_tint;
-                    void main()
-                    {
-                        gl_Position = u_proj * u_view * u_world * a_vertPos;
-                        v_texCoord = a_vertTexcoord;
-                        vec4 c = a_vertColour;
-                        c.a = 1.0;
-                        v_tint = c * u_colour;
-                    }
-                    =FSH=
-                    uniform sampler2D s_tex0;
-                    varying vec2 v_texCoord;
-                    varying vec4 v_tint;
-                    void main()
-                    {
-                        gl_FragColor = v_tint * texture2D(s_tex0, v_texCoord);
-                    }
-                    "
-                )
+                    ),
+                    Encoding.ASCII.GetBytes (
+@"Vertex Position, Colour & Texture Coordinate
+=VSH=
+attribute vec4 a_vertPos;
+attribute vec2 a_vertTexcoord;
+attribute vec4 a_vertColour;
+uniform mat4 u_world;
+uniform mat4 u_view;
+uniform mat4 u_proj;
+uniform vec4 u_colour;
+varying vec2 v_texCoord;
+varying vec4 v_tint;
+void main()
+{
+    gl_Position = u_proj * u_view * u_world * a_vertPos;
+    v_texCoord = a_vertTexcoord;
+    vec4 c = a_vertColour;
+    c.a = 1.0;
+    v_tint = c * u_colour;
+}
+=FSH=
+uniform sampler2D s_tex0;
+varying vec2 v_texCoord;
+varying vec4 v_tint;
+void main()
+{
+    gl_FragColor = v_tint * texture2D(s_tex0, v_texCoord);
+}
+"
+                    )
+                }
                 #elif COR_PLATFORM_XAMARIN_IOS
                 null
                 #elif COR_PLATFORM_XNA
