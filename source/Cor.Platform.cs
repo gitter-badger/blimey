@@ -109,8 +109,6 @@ namespace Cor.Platform
         Byte[]                  gfx_tex_GetData                         (Handle textureHandle);
         void                    gfx_tex_Activate                        (Int32 slot, Handle textureHandle);
 
-        void                    gfx_shdr_ResetVariables                 (Handle shaderHandle, Int32 variantIndex);
-        void                    gfx_shdr_ResetSamplers                  (Handle shaderHandle, Int32 variantIndex);
         void                    gfx_shdr_SetVariable<T>                 (Handle shaderHandle, Int32 variantIndex, String name, T value);
         void                    gfx_shdr_SetSampler                     (Handle shaderHandle, Int32 variantIndex, String name, Handle textureHandle);
         void                    gfx_shdr_Activate                       (Handle shaderHandle, Int32 variantIndex);

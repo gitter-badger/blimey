@@ -1232,8 +1232,10 @@ namespace Cor
     
         public Handle Handle { get { return shaderHandle; } }
 
+        Int32 currentActiveVariant = -1;
+
         // For each vert decl seen, defines the index of the most suitable shader variant.
-        Dictionary<VertexDeclaration, Int32> bestVariantMap { get; set; }
+        Dictionary<VertexDeclaration, Int32> bestVariantMap = new Dictionary<VertexDeclaration, Int32>();
 
         // Current state (acts as a buffer for adjusting shader settings, only when needed will the changes
         // be applied to the GPU).
@@ -1254,9 +1256,9 @@ namespace Cor
         readonly Dictionary <Int32, ShaderSamplerInfo[]> variantSamplerInfos = new Dictionary<Int32, ShaderSamplerInfo[]> ();
 
         // Definition tracking.
-        readonly Dictionary <String, VertexElementUsage> inputNameToUsage;
-        readonly Dictionary <String, Boolean> inputNameToOptional;
-        readonly Dictionary <String, String> inputNiceNameToName;
+        readonly Dictionary <String, ShaderInputDeclaration> inputActualNameToDeclaration;
+        readonly Dictionary <String, ShaderVariableDeclaration> variableActualNameToDeclaration;
+        readonly Dictionary <String, String> variableNiceNameToActualName;
 
         public Shader (IApi platform, ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sourceVariants)
         {
@@ -1277,16 +1279,16 @@ namespace Cor
             }
 
             // Useful look-up tables relating to the shader declaration.
-            this.inputNameToUsage = shaderDeclaration.InputDeclarations
-                .ToDictionary (x => x.Name, x => x.Usage);
+            this.inputActualNameToDeclaration = shaderDeclaration.InputDeclarations
+                .ToDictionary (x => x.Name, x => x);
 
-            this.inputNameToOptional = shaderDeclaration.InputDeclarations
-                .ToDictionary (x => x.Name, x => x.Optional);
+            this.variableActualNameToDeclaration = shaderDeclaration.VariableDeclarations
+                .ToDictionary (x => x.Name, x => x);
 
-            this.inputNiceNameToName = shaderDeclaration.InputDeclarations
+            this.variableNiceNameToActualName = shaderDeclaration.VariableDeclarations
                 .ToDictionary (x => x.NiceName, x => x.Name);
 
-            // Checks that all variants of the shader match up w3ith
+            // Checks that all variants of the shader match up with
             // the provided shader declaration.
             for (Int32 i = 0; i < variantCount; ++i)
             {
@@ -1454,8 +1456,16 @@ namespace Cor
         {
             // shd just apply defaults to current variables
             currentVariables.Clear ();
-            //platform.gfx_shdr_ResetVariables (shaderHandle);
-            throw new NotImplementedException ();
+
+            Int32 activeVariant = this.currentActiveVariant;
+
+            if (activeVariant < 0)
+                return;
+
+            foreach (var variableInfo in variantVariableInfos [activeVariant])
+            {
+                currentVariables.Add (variableInfo.Name, variableActualNameToDeclaration [variableInfo.Name].DefaultValue);
+            }
         }
 
         /// <summary>
@@ -1484,7 +1494,10 @@ namespace Cor
         /// </summary>
         public void SetVariable<T>(String name, T value)
         {
-            String actualName = inputNiceNameToName [name];
+            if (!variableNiceNameToActualName.ContainsKey (name)) {
+                return;
+            }
+            String actualName = variableNiceNameToActualName [name];
             currentVariables[actualName] = value;
         }
 
@@ -1501,6 +1514,8 @@ namespace Cor
             }
 
             Int32 bestVariantIndex = bestVariantMap[vertexDeclaration];
+
+            this.currentActiveVariant = bestVariantIndex;
 
             // select the correct shader pass variant and then activate it
             platform.gfx_shdr_Activate (shaderHandle, bestVariantIndex);
@@ -1663,7 +1678,9 @@ namespace Cor
 
                 );*/
 
-                var matchingInputs = variantInputInfos [variantIndex].ToList ().FindAll (x => inputNameToUsage[x.Name] == usage);
+                var matchingInputs = variantInputInfos [variantIndex]
+                    .ToList ()
+                    .FindAll (x => inputActualNameToDeclaration[x.Name].Usage == usage);
 
                 // now make sure it's not been used already
 
@@ -1692,7 +1709,7 @@ namespace Cor
             {
                 if (!inputsUsed.Contains (input) )
                 {
-                    if ( !inputNameToOptional[input.Name])
+                    if ( !inputActualNameToDeclaration[input.Name].Optional)
                     {
                         result.NumUnmatchedRequiredInputs++;
                     }

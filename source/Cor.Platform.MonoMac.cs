@@ -182,36 +182,36 @@ namespace Cor.Platform.MonoMac
         
         public void gfx_ClearColourBuffer (Rgba32 colour)
         {
-            OTKWrapper.ClearColourBuffer (colour);
+            OpenTkWrapper.ClearColourBuffer (colour);
         }
         
         public void gfx_ClearDepthBuffer (Single depth)
         {
-            OTKWrapper.ClearDepthBuffer (depth);
+            OpenTkWrapper.ClearDepthBuffer (depth);
         }
         
         public void gfx_SetCullMode (CullMode cullMode)
         {
-            OTKWrapper.SetCullMode (cullMode);
+            OpenTkWrapper.SetCullMode (cullMode);
         }
         
         public void gfx_SetBlendEquation (
             BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb, 
             BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha)
         {
-            OTKWrapper.SetBlendEquation (
+            OpenTkWrapper.SetBlendEquation (
                 rgbBlendFunction, sourceRgb, destinationRgb, alphaBlendFunction, sourceAlpha, destinationAlpha);
         }
         
 
         public Handle gfx_CreateVertexBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount)
         {
-            return OTKWrapper.CreateVertexBuffer (vertexDeclaration, vertexCount) as Handle;
+            return OpenTkWrapper.CreateVertexBuffer (vertexDeclaration, vertexCount) as Handle;
         }
         
         public Handle gfx_CreateIndexBuffer (Int32 indexCount)
         {
-            return OTKWrapper.CreateIndexBuffer (indexCount) as Handle;
+            return OpenTkWrapper.CreateIndexBuffer (indexCount) as Handle;
         }
         
         public Handle gfx_CreateTexture (TextureFormat textureFormat, Int32 width, Int32 height, Byte[] source)
@@ -224,17 +224,17 @@ namespace Cor.Platform.MonoMac
             if (shaderFormat != ShaderFormat.GLSL)
                 throw new NotSupportedException ();
 
-            return OTKWrapper.CreateShader (sources);
+            return OpenTkWrapper.CreateShader (shaderDeclaration, sources);
         }
 
         public void gfx_DestroyVertexBuffer (Handle handle)
         {
-            OTKWrapper.DestroyVertexBuffer (handle as VertexBufferHandle);
+            OpenTkWrapper.DestroyVertexBuffer (handle as VertexBufferHandle);
         }
         
         public void gfx_DestroyIndexBuffer (Handle handle)
         {
-            OTKWrapper.DestroyIndexBuffer (handle as IndexBufferHandle);
+            OpenTkWrapper.DestroyIndexBuffer (handle as IndexBufferHandle);
         }
         
         public void gfx_DestroyTexture (Handle handle)
@@ -249,17 +249,17 @@ namespace Cor.Platform.MonoMac
 
         public void gfx_vbff_Activate (Handle handle)
         {
-            var vd = OTKApiCache.Get <VertexDeclaration> (handle, "VertexDeclaration");
+            var vd = OpenTkCache.Get <VertexDeclaration> (handle, "VertexDeclaration");
 
             // Keep track of this for later draw calls that do not provide it.
             currentVertexDeclaration = vd;
 
-            OTKWrapper.ActivateVertexBuffer (handle as VertexBufferHandle);
+            OpenTkWrapper.ActivateVertexBuffer (handle as VertexBufferHandle);
         }
         
         public void gfx_ibff_Activate (Handle handle)
         {
-            OTKWrapper.ActivateIndexBuffer (handle as IndexBufferHandle);
+            OpenTkWrapper.ActivateIndexBuffer (handle as IndexBufferHandle);
         }
 
         public void gfx_DrawPrimitives (
@@ -278,7 +278,7 @@ namespace Cor.Platform.MonoMac
             Int32 startIndex, 
             Int32 primitiveCount)
         {
-            OTKWrapper.DrawIndexedPrimitives (
+            OpenTkWrapper.DrawIndexedPrimitives (
                 primitiveType, baseVertex, minVertexIndex, numVertices, 
                 startIndex, primitiveCount, currentVertexDeclaration);
         }
@@ -292,7 +292,7 @@ namespace Cor.Platform.MonoMac
             : struct
             , IVertexType
         {
-            OTKWrapper.DrawUserPrimitives (
+            OpenTkWrapper.DrawUserPrimitives (
                 primitiveType, vertexData, vertexOffset, 
                 primitiveCount, currentVertexDeclaration);
         }
@@ -339,12 +339,12 @@ namespace Cor.Platform.MonoMac
 
         public Int32 gfx_vbff_GetVertexCount (Handle h)
         {
-            return OTKApiCache.Get <Int32> (h, "VertexCount");
+            return OpenTkCache.Get <Int32> (h, "VertexCount");
         }
         
         public VertexDeclaration gfx_vbff_GetVertexDeclaration (Handle h)
         {
-            return OTKApiCache.Get <VertexDeclaration> (h, "VertexDeclaration");
+            return OpenTkCache.Get <VertexDeclaration> (h, "VertexDeclaration");
         }
         
         public void gfx_vbff_SetData<T> (Handle h, T[] data, Int32 startIndex, Int32 elementCount) 
@@ -352,7 +352,7 @@ namespace Cor.Platform.MonoMac
             : struct
             , IVertexType
         {
-            OTKWrapper.SetVertexBufferData (h as VertexBufferHandle, data, startIndex, elementCount);
+            OpenTkWrapper.SetVertexBufferData (h as VertexBufferHandle, data, startIndex, elementCount);
         }
         
         public T[] gfx_vbff_GetData<T> (Handle h, Int32 startIndex, Int32 elementCount)
@@ -365,12 +365,12 @@ namespace Cor.Platform.MonoMac
 
         public Int32 gfx_ibff_GetIndexCount (Handle h)
         {
-            return OTKApiCache.Get <Int32> (h, "IndexCount");
+            return OpenTkCache.Get <Int32> (h, "IndexCount");
         }
         
         public void gfx_ibff_SetData (Handle h, Int32[] data, Int32 startIndex, Int32 elementCount)
         {
-            OTKWrapper.SetIndexBufferData (h as IndexBufferHandle, data, startIndex, elementCount);
+            OpenTkWrapper.SetIndexBufferData (h as IndexBufferHandle, data, startIndex, elementCount);
         }
         
         public void gfx_ibff_GetData (Handle h, Int32[] data, Int32 startIndex, Int32 elementCount)
@@ -380,12 +380,12 @@ namespace Cor.Platform.MonoMac
 
         public Int32 gfx_tex_GetWidth (Handle h)
         {
-            return OTKApiCache.Get <Int32> (h, "Width");
+            return OpenTkCache.Get <Int32> (h, "Width");
         }
         
         public Int32 gfx_tex_GetHeight (Handle h)
         {
-            return OTKApiCache.Get <Int32> (h, "Height");
+            return OpenTkCache.Get <Int32> (h, "Height");
         }
 
         public Byte[] gfx_tex_GetData (Handle h)
@@ -395,57 +395,47 @@ namespace Cor.Platform.MonoMac
 
         public TextureFormat gfx_tex_GetTextureFormat (Handle h)
         {
-            return OTKApiCache.Get <TextureFormat> (h, "TextureFormat");
-        }
-
-        public void gfx_shdr_ResetVariables (Handle handle, Int32 variantIndex)
-        {
-            throw new NotImplementedException ();
+            return OpenTkCache.Get <TextureFormat> (h, "TextureFormat");
         }
         
-        public void gfx_shdr_ResetSamplers (Handle handle, Int32 variantIndex)
+        public void gfx_shdr_SetVariable<T> (Handle h, Int32 variantIndex, String name, T value)
         {
-            throw new NotImplementedException ();
+            OpenTkWrapper.SetVariable (h as ShaderHandle, variantIndex, name, value);
         }
         
-        public void gfx_shdr_SetVariable<T> (Handle handle, Int32 variantIndex, String name, T value)
+        public void gfx_shdr_SetSampler (Handle h, Int32 variantIndex, String name, Handle textureHandle)
         {
-            throw new NotImplementedException ();
-        }
-        
-        public void gfx_shdr_SetSampler (Handle handle, Int32 variantIndex, String name, Handle textureHandle)
-        {
-            throw new NotImplementedException ();
-        }
-        
-        public void gfx_shdr_Activate (Handle handle, Int32 variantIndex)
-        {
-            throw new NotImplementedException ();
+            OpenTkWrapper.SetSampler (h as ShaderHandle, variantIndex, name, textureHandle);
         }
 
-        public Int32 gfx_shdr_GetVariantCount (Handle shaderHandle)
+        public void gfx_shdr_Activate (Handle h, Int32 variantIndex)
         {
-            throw new NotImplementedException ();
+            OpenTkWrapper.Activate (h as ShaderHandle, variantIndex);
         }
 
-        public String gfx_shdr_GetIdentifier (Handle shaderHandle, Int32 variantIndex)
+        public Int32 gfx_shdr_GetVariantCount (Handle h)
         {
-            throw new NotImplementedException ();
+            return OpenTkWrapper.GetVariantCount (h as ShaderHandle);
         }
 
-        public ShaderInputInfo[] gfx_shdr_GetInputs (Handle shaderHandle, Int32 variantIndex)
+        public String gfx_shdr_GetIdentifier (Handle h, Int32 variantIndex)
         {
-            throw new NotImplementedException ();
+            return OpenTkWrapper.GetIdentifier (h as ShaderHandle, variantIndex);
         }
 
-        public ShaderVariableInfo[] gfx_shdr_GetVariables (Handle shaderHandle, Int32 variantIndex)
+        public ShaderInputInfo[] gfx_shdr_GetInputs (Handle h, Int32 variantIndex)
         {
-            throw new NotImplementedException ();
+            return OpenTkWrapper.GetInputs (h as ShaderHandle, variantIndex);
         }
 
-        public ShaderSamplerInfo[] gfx_shdr_GetSamplers (Handle shaderHandle, Int32 variantIndex)
+        public ShaderVariableInfo[] gfx_shdr_GetVariables (Handle h, Int32 variantIndex)
         {
-            throw new NotImplementedException ();
+            return OpenTkWrapper.GetVariables (h as ShaderHandle, variantIndex);
+        }
+
+        public ShaderSamplerInfo[] gfx_shdr_GetSamplers (Handle h, Int32 variantIndex)
+        {
+            return OpenTkWrapper.GetSamplers (h as ShaderHandle, variantIndex);
         }
 
         public void gfx_Reset ()
@@ -750,7 +740,7 @@ namespace Cor.Platform.MonoMac
             }
             catch (Exception ex)
             {
-                Console.WriteLine ("Failed to render frame:" + ex.Message);
+                Console.WriteLine ("Failed to render frame: " + ex.GetType() + " ~ " + ex.Message + "\n" + ex.StackTrace);
             }
 
             base.OnRenderFrame (e);
