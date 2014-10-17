@@ -53,7 +53,6 @@ namespace Cor.Platform.MonoMac
 
     using Fudge;
     using Abacus.SinglePrecision;
-    using Cor.Library.OTK;
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -149,16 +148,17 @@ namespace Cor.Platform.MonoMac
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-	public class MonoMacApi
+	public partial class MonoMacApi
 		: IApi
     {
         MonoMacProgram Program { get; set; }
 
-        internal void InitialiseDependencies (MonoMacProgram program) { Program = program; }
+        internal void InitialiseDependencies (MonoMacProgram program)
+        {
+            Program = program;
+        }
 
 		Single volume = 1f;
-
-        static VertexDeclaration currentVertexDeclaration;
 
 		internal MonoMacApi ()
         {
@@ -177,282 +177,11 @@ namespace Cor.Platform.MonoMac
         }
         
         #endregion
-        
+
         #region gfx
-        
-        public void gfx_ClearColourBuffer (Rgba32 colour)
-        {
-            OpenTkWrapper.ClearColourBuffer (colour);
-        }
-        
-        public void gfx_ClearDepthBuffer (Single depth)
-        {
-            OpenTkWrapper.ClearDepthBuffer (depth);
-        }
-        
-        public void gfx_SetCullMode (CullMode cullMode)
-        {
-            OpenTkWrapper.SetCullMode (cullMode);
-        }
-        
-        public void gfx_SetBlendEquation (
-            BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb, 
-            BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha)
-        {
-            OpenTkWrapper.SetBlendEquation (
-                rgbBlendFunction, sourceRgb, destinationRgb, alphaBlendFunction, sourceAlpha, destinationAlpha);
-        }
-        
 
-        public Handle gfx_CreateVertexBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount)
-        {
-            return OpenTkWrapper.CreateVertexBuffer (vertexDeclaration, vertexCount) as Handle;
-        }
-        
-        public Handle gfx_CreateIndexBuffer (Int32 indexCount)
-        {
-            return OpenTkWrapper.CreateIndexBuffer (indexCount) as Handle;
-        }
-        
-        public Handle gfx_CreateTexture (TextureFormat textureFormat, Int32 width, Int32 height, Byte[] source)
-        {
-            throw new NotImplementedException ();
-        }
-        
-        public Handle gfx_CreateShader (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sources)
-        {
-            if (shaderFormat != ShaderFormat.GLSL)
-                throw new NotSupportedException ();
+        // Partial implementation in Cor.Library.OpenTK.cs
 
-            return OpenTkWrapper.CreateShader (shaderDeclaration, sources);
-        }
-
-        public void gfx_DestroyVertexBuffer (Handle handle)
-        {
-            OpenTkWrapper.DestroyVertexBuffer (handle as VertexBufferHandle);
-        }
-        
-        public void gfx_DestroyIndexBuffer (Handle handle)
-        {
-            OpenTkWrapper.DestroyIndexBuffer (handle as IndexBufferHandle);
-        }
-        
-        public void gfx_DestroyTexture (Handle handle)
-        {
-            throw new NotImplementedException ();
-        }
-        
-        public void gfx_DestroyShader (Handle handle)
-        {
-            throw new NotImplementedException ();
-        }
-
-        public void gfx_vbff_Activate (Handle handle)
-        {
-            var vd = OpenTkCache.Get <VertexDeclaration> (handle, "VertexDeclaration");
-
-            // Keep track of this for later draw calls that do not provide it.
-            currentVertexDeclaration = vd;
-
-            OpenTkWrapper.ActivateVertexBuffer (handle as VertexBufferHandle);
-        }
-        
-        public void gfx_ibff_Activate (Handle handle)
-        {
-            OpenTkWrapper.ActivateIndexBuffer (handle as IndexBufferHandle);
-        }
-
-        public void gfx_DrawPrimitives (
-            PrimitiveType primitiveType,
-            Int32 startVertex,
-            Int32 primitiveCount)
-        {
-            throw new NotImplementedException ();
-        }
-        
-        public void gfx_DrawIndexedPrimitives (
-            PrimitiveType primitiveType, 
-            Int32 baseVertex, 
-            Int32 minVertexIndex,
-            Int32 numVertices, 
-            Int32 startIndex, 
-            Int32 primitiveCount)
-        {
-            OpenTkWrapper.DrawIndexedPrimitives (
-                primitiveType, baseVertex, minVertexIndex, numVertices, 
-                startIndex, primitiveCount, currentVertexDeclaration);
-        }
-        
-        public void gfx_DrawUserPrimitives <T> (
-            PrimitiveType primitiveType, 
-            T[] vertexData, 
-            Int32 vertexOffset,
-            Int32 primitiveCount) 
-        where T
-            : struct
-            , IVertexType
-        {
-            OpenTkWrapper.DrawUserPrimitives (
-                primitiveType, vertexData, vertexOffset, 
-                primitiveCount, currentVertexDeclaration);
-        }
-        
-        public void gfx_DrawUserIndexedPrimitives <T> (
-            PrimitiveType primitiveType, 
-            T[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 numVertices, 
-            Int32[] indexData, 
-            Int32 indexOffset, 
-            Int32 primitiveCount) 
-        where T
-            : struct
-        , IVertexType
-        {
-            throw new NotImplementedException ();
-        }
-
-        public Byte[] gfx_CompileShader (String source)
-        {
-            throw new NotImplementedException ();
-        }
-
-        public Int32 gfx_dbg_BeginEvent (Rgba32 colour, String eventName)
-        {
-            throw new NotImplementedException ();
-        }
-        
-        public Int32 gfx_dbg_EndEvent ()
-        {
-            throw new NotImplementedException ();
-        }
-        
-        public void gfx_dbg_SetMarker (Rgba32 colour, String marker)
-        {
-            throw new NotImplementedException ();
-        }
-        
-        public void gfx_dbg_SetRegion (Rgba32 colour, String region)
-        {
-            throw new NotImplementedException ();
-        }
-
-        public Int32 gfx_vbff_GetVertexCount (Handle h)
-        {
-            return OpenTkCache.Get <Int32> (h, "VertexCount");
-        }
-        
-        public VertexDeclaration gfx_vbff_GetVertexDeclaration (Handle h)
-        {
-            return OpenTkCache.Get <VertexDeclaration> (h, "VertexDeclaration");
-        }
-        
-        public void gfx_vbff_SetData<T> (Handle h, T[] data, Int32 startIndex, Int32 elementCount) 
-        where T
-            : struct
-            , IVertexType
-        {
-            OpenTkWrapper.SetVertexBufferData (h as VertexBufferHandle, data, startIndex, elementCount);
-        }
-        
-        public T[] gfx_vbff_GetData<T> (Handle h, Int32 startIndex, Int32 elementCount)
-        where T
-            : struct
-            , IVertexType
-        {
-            throw new NotImplementedException ();
-        }
-
-        public Int32 gfx_ibff_GetIndexCount (Handle h)
-        {
-            return OpenTkCache.Get <Int32> (h, "IndexCount");
-        }
-        
-        public void gfx_ibff_SetData (Handle h, Int32[] data, Int32 startIndex, Int32 elementCount)
-        {
-            OpenTkWrapper.SetIndexBufferData (h as IndexBufferHandle, data, startIndex, elementCount);
-        }
-        
-        public void gfx_ibff_GetData (Handle h, Int32[] data, Int32 startIndex, Int32 elementCount)
-        {
-            throw new NotImplementedException ();
-        }
-
-        public Int32 gfx_tex_GetWidth (Handle h)
-        {
-            return OpenTkCache.Get <Int32> (h, "Width");
-        }
-        
-        public Int32 gfx_tex_GetHeight (Handle h)
-        {
-            return OpenTkCache.Get <Int32> (h, "Height");
-        }
-
-        public Byte[] gfx_tex_GetData (Handle h)
-        {
-            throw new NotImplementedException ();
-        }
-
-        public TextureFormat gfx_tex_GetTextureFormat (Handle h)
-        {
-            return OpenTkCache.Get <TextureFormat> (h, "TextureFormat");
-        }
-        
-        public void gfx_shdr_SetVariable<T> (Handle h, Int32 variantIndex, String name, T value)
-        {
-            OpenTkWrapper.SetVariable (h as ShaderHandle, variantIndex, name, value);
-        }
-        
-        public void gfx_shdr_SetSampler (Handle h, Int32 variantIndex, String name, Handle textureHandle)
-        {
-            OpenTkWrapper.SetSampler (h as ShaderHandle, variantIndex, name, textureHandle);
-        }
-
-        public void gfx_shdr_Activate (Handle h, Int32 variantIndex)
-        {
-            OpenTkWrapper.Activate (h as ShaderHandle, variantIndex);
-        }
-
-        public Int32 gfx_shdr_GetVariantCount (Handle h)
-        {
-            return OpenTkWrapper.GetVariantCount (h as ShaderHandle);
-        }
-
-        public String gfx_shdr_GetIdentifier (Handle h, Int32 variantIndex)
-        {
-            return OpenTkWrapper.GetIdentifier (h as ShaderHandle, variantIndex);
-        }
-
-        public ShaderInputInfo[] gfx_shdr_GetInputs (Handle h, Int32 variantIndex)
-        {
-            return OpenTkWrapper.GetInputs (h as ShaderHandle, variantIndex);
-        }
-
-        public ShaderVariableInfo[] gfx_shdr_GetVariables (Handle h, Int32 variantIndex)
-        {
-            return OpenTkWrapper.GetVariables (h as ShaderHandle, variantIndex);
-        }
-
-        public ShaderSamplerInfo[] gfx_shdr_GetSamplers (Handle h, Int32 variantIndex)
-        {
-            return OpenTkWrapper.GetSamplers (h as ShaderHandle, variantIndex);
-        }
-
-        public void gfx_Reset ()
-        {
-            throw new NotImplementedException ();
-        }
-
-        public void gfx_tex_Activate (int slot, Handle textureHandle)
-        {
-            throw new NotImplementedException ();
-        }
-
-        public int[] gfx_ibff_GetData (Handle indexBufferHandle, int startIndex, int elementCount)
-        {
-            throw new NotImplementedException ();
-        }
-   
         #endregion
         
         #region res

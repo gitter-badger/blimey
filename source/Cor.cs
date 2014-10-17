@@ -286,6 +286,9 @@ namespace Cor
             if (firstUpdate)
             {
                 firstUpdate = false;
+
+                this.Graphics.Reset ();
+
                 this.timer.Start ();
 
                 this.userApp.Start (this);
@@ -384,6 +387,12 @@ namespace Cor
         /// </summary>
         public void Reset ()
         {
+            platform.gfx_SetBlendEquation (
+                BlendFunction.Add, BlendFactor.SourceAlpha, BlendFactor.InverseSourceAlpha,
+                BlendFunction.Add, BlendFactor.One, BlendFactor.InverseSourceAlpha);
+
+            platform.gfx_SetCullMode (CullMode.CW);
+
             platform.gfx_ClearColourBuffer (Rgba32.Black);
             platform.gfx_ClearDepthBuffer (1f);
             platform.gfx_SetCullMode (CullMode.CW);
@@ -391,7 +400,7 @@ namespace Cor
             platform.gfx_ibff_Activate (null);
 
             // todo, here we need to set all the texture slots to point to null
-            platform.gfx_tex_Activate (0, null);
+            platform.gfx_tex_Activate (null, 0);
         }
 
         /// <summary>
@@ -484,7 +493,7 @@ namespace Cor
         /// </summary>
         public void SetActiveTexture (Texture tex, Int32 slot)
         {
-            platform.gfx_tex_Activate (slot, tex.Handle);
+            platform.gfx_tex_Activate (tex.Handle, slot);
         }
 
 
@@ -1232,15 +1241,13 @@ namespace Cor
     
         public Handle Handle { get { return shaderHandle; } }
 
-        Int32 currentActiveVariant = -1;
-
         // For each vert decl seen, defines the index of the most suitable shader variant.
         Dictionary<VertexDeclaration, Int32> bestVariantMap = new Dictionary<VertexDeclaration, Int32>();
 
         // Current state (acts as a buffer for adjusting shader settings, only when needed will the changes
         // be applied to the GPU).
         Dictionary<String, Object> currentVariables = new Dictionary<String, Object>();
-        Dictionary<String, Handle> currentSamplerTargets = new Dictionary<String, Handle>();
+        Dictionary<String, Int32> currentSamplerTargets = new Dictionary<String, Int32>();
 
         // Debug
         Dictionary<String, bool> logHistory = new Dictionary<String, bool>();
@@ -1259,6 +1266,7 @@ namespace Cor
         readonly Dictionary <String, ShaderInputDeclaration> inputActualNameToDeclaration;
         readonly Dictionary <String, ShaderVariableDeclaration> variableActualNameToDeclaration;
         readonly Dictionary <String, String> variableNiceNameToActualName;
+        readonly Dictionary <String, String> samplerNiceNameToActualName;
 
         public Shader (IApi platform, ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sourceVariants)
         {
@@ -1286,6 +1294,9 @@ namespace Cor
                 .ToDictionary (x => x.Name, x => x);
 
             this.variableNiceNameToActualName = shaderDeclaration.VariableDeclarations
+                .ToDictionary (x => x.NiceName, x => x.Name);
+
+            this.samplerNiceNameToActualName = shaderDeclaration.SamplerDeclarations
                 .ToDictionary (x => x.NiceName, x => x.Name);
 
             // Checks that all variants of the shader match up with
@@ -1454,39 +1465,37 @@ namespace Cor
         /// </summary>
         public void ResetVariables ()
         {
-            // shd just apply defaults to current variables
             currentVariables.Clear ();
 
-            Int32 activeVariant = this.currentActiveVariant;
-
-            if (activeVariant < 0)
-                return;
-
-            foreach (var variableInfo in variantVariableInfos [activeVariant])
+            foreach (var kvp in variableActualNameToDeclaration)
             {
-                currentVariables.Add (variableInfo.Name, variableActualNameToDeclaration [variableInfo.Name].DefaultValue);
+                currentVariables.Add (kvp.Key, kvp.Value.DefaultValue);
             }
         }
 
         /// <summary>
-        /// Resets all the shader's samplers to null textures.
+        /// Resets all the shader's samplers.
         /// </summary>
-        public void ResetSamplerTargets ()
+        public void ResetSamplers ()
         {
-            //platform.gfx_shdr_ResetSamplers (shaderHandle);
-            throw new NotImplementedException ();
-        }
+            currentSamplerTargets.Clear ();
 
+            //foreach (var v in samplerNiceNameToActualName.Values)
+            //{
+            //    currentSamplerTargets.Add (v, null);
+            //}
+        }
+            
         /// <summary>
         /// Sets the texture slot that a texture sampler should sample from.
         /// </summary>
-        public void SetSamplerTarget (String name, Handle textureHandle)
+        public void SetSamplerTarget (String name, Int32 slot)
         {
-            //platform.gfx_shdr_SetSampler (shaderHandle, name, textureHandle);
-            //currentSamplerSlots
-            throw new NotImplementedException ();
-
-            //currentSamplerSlots[name] = textureSlot;
+            if (!samplerNiceNameToActualName.ContainsKey (name)) {
+                return;
+            }
+            String actualName = samplerNiceNameToActualName [name];
+            currentSamplerTargets[actualName] = slot;
         }
 
         /// <summary>
@@ -1514,8 +1523,6 @@ namespace Cor
             }
 
             Int32 bestVariantIndex = bestVariantMap[vertexDeclaration];
-
-            this.currentActiveVariant = bestVariantIndex;
 
             // select the correct shader pass variant and then activate it
             platform.gfx_shdr_Activate (shaderHandle, bestVariantIndex);
@@ -1552,9 +1559,9 @@ namespace Cor
                 }
                 else
                 {
-                    var textureHandle = currentSamplerTargets[key2];
+                    var textureSlot = currentSamplerTargets[key2];
 
-                    platform.gfx_shdr_SetSampler (shaderHandle, bestVariantIndex, key2, textureHandle);
+                    platform.gfx_shdr_SetSampler (shaderHandle, bestVariantIndex, key2, textureSlot);
                 }
             }
         }

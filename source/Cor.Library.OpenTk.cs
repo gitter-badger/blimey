@@ -29,12 +29,16 @@
 // │ CONTRACT, TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        │ \\
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
-using System.Text;
 
-namespace Cor.Library.OTK
+#if COR_PLATFORM_XIOS
+namespace Cor.Platform.Xios
+#elif COR_PLATFORM_MONOMAC
+namespace Cor.Platform.MonoMac
+#endif
 {
     using System;
-    using System.Globalization;
+    using global::System.Text;
+    using global::System.Globalization;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
@@ -68,197 +72,31 @@ namespace Cor.Library.OTK
 
     #elif COR_PLATFORM_MONOMAC
 
-    using MonoMac.OpenGL;
-    using GLShaderType = MonoMac.OpenGL.ShaderType;
-    using GLBufferUsage = MonoMac.OpenGL.BufferUsageHint;
-    using ActiveUniformType = MonoMac.OpenGL.ActiveUniformType;
-    using KhronosVector2 = MonoMac.OpenGL.Vector2;
-    using KhronosVector3 = MonoMac.OpenGL.Vector3;
-    using KhronosVector4 = MonoMac.OpenGL.Vector4;
-    using KhronosMatrix4 = MonoMac.OpenGL.Matrix4;
+    using global::MonoMac.OpenGL;
+    using GLShaderType = global::MonoMac.OpenGL.ShaderType;
+    using GLBufferUsage = global::MonoMac.OpenGL.BufferUsageHint;
+    using ActiveUniformType = global::MonoMac.OpenGL.ActiveUniformType;
+    using KhronosVector2 = global::MonoMac.OpenGL.Vector2;
+    using KhronosVector3 = global::MonoMac.OpenGL.Vector3;
+    using KhronosVector4 = global::MonoMac.OpenGL.Vector4;
+    using KhronosMatrix4 = global::MonoMac.OpenGL.Matrix4;
 
     #endif
 
     using Boolean = System.Boolean;
-    
-    
-    
-    // Cross platform wrapper around the Open TK libary, sitting at a slightly higher level.
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    internal class ShaderVariantHandle
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    #if COR_PLATFORM_XIOS
+    public partial class XiosApi
+    #elif COR_PLATFORM_MONOMAC
+    public partial class MonoMacApi
+    #endif
     {
-        public Int32 VertexShaderHandle { get; private set; }
-        public Int32 FragmentShaderHandle { get; private set; }
-        public Int32 ProgramHandle { get; private set; }
+        VertexDeclaration currentVertexDeclaration;
 
-        internal ShaderVariantHandle (Int32 vertexShaderHandle, Int32 fragmentShaderHandle, Int32 programHandle)
-        {
-            this.VertexShaderHandle = vertexShaderHandle;
-            this.FragmentShaderHandle = fragmentShaderHandle;
-            this.ProgramHandle = programHandle;
-        }
-    }
+        #region gfx
 
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public class ShaderHandle
-        : Handle
-    {
-        internal List<ShaderVariantHandle> VariantHandles { get; private set; }
-
-        internal ShaderHandle (List<ShaderVariantHandle> variantHandles)
-        {
-            this.VariantHandles = variantHandles;
-        }
-
-        protected override void CleanUpNativeResources ()
-        {
-            OpenTkWrapper.DestroyShader (this);
-
-            base.CleanUpNativeResources ();
-        }
-    }
-    
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
-    public class TextureHandle
-        : Handle
-    {
-        public Int32 TextureId { get; private set; }
-        
-        internal TextureHandle (int textureId)
-        {
-            this.TextureId = TextureId;
-        }
-
-        protected override void CleanUpNativeResources ()
-        {
-            OpenTkWrapper.DestroyTexture (this);
-
-            TextureId = 0;
-
-            base.CleanUpNativeResources ();
-        }
-    }
-    
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
-    public class IndexBufferHandle
-        : Handle
-    {
-        static Int32 resourceCounter;
-        
-        public UInt32 GLHandle { get; private set; }
-        
-        internal IndexBufferHandle (UInt32 glHandle)
-        {
-            GLHandle = glHandle;
-            resourceCounter++;
-        }
-
-        protected override void CleanUpNativeResources ()
-        {
-            OpenTkWrapper.DestroyIndexBuffer (this);
-
-            GLHandle = 0;
-            resourceCounter--;
-            
-            base.CleanUpNativeResources ();
-        }
-    }
-    
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
-    public class VertexBufferHandle
-        : Handle
-    {
-        static Int32 resourceCounter;
-        
-        public UInt32 GLHandle { get; private set; }
-        
-        internal VertexBufferHandle (UInt32 glHandle)
-        {
-            GLHandle = glHandle;
-            resourceCounter++;
-        }
-
-        protected override void CleanUpNativeResources ()
-        {
-            OpenTkWrapper.DestroyVertexBuffer (this);
-
-            GLHandle = 0;
-            resourceCounter--;
-            
-            base.CleanUpNativeResources ();
-        }
-    }
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    // This is a dirty hack for the time being.
-    public static class OpenTkCache
-    {
-        static readonly Dictionary <String, Dictionary<String, Object>> data = 
-            new Dictionary<String, Dictionary<String, Object>> ();
-
-        public static void Set<T> (Handle h, String identifier, T value)
-        {
-            if (!data.ContainsKey (h.Identifier))
-                data.Add (h.Identifier, new Dictionary<String, Object> ());
-
-            data[h.Identifier].Add (identifier, value);
-        }
-
-        public static T Get <T> (Handle h, String identifier)
-        {
-            return (T) data[h.Identifier][identifier];
-        }
-
-        public static void Clear (Handle h)
-        {
-            data.Remove (h.Identifier);
-        }
-    }
-    
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public static class OpenTkWrapper
-    {   
-        #region Initilisation
-        
-        static OpenTkWrapper ()
-        {
-            GL.Enable (EnableCap.Blend);
-            ThrowErrors ();
-
-            SetBlendEquation (
-                BlendFunction.Add, BlendFactor.SourceAlpha, BlendFactor.InverseSourceAlpha,
-                BlendFunction.Add, BlendFactor.One, BlendFactor.InverseSourceAlpha);
-
-            GL.Enable (EnableCap.DepthTest);
-            ThrowErrors ();
-
-            GL.DepthMask (true);
-            ThrowErrors ();
-
-            GL.DepthRange (0f, 1f);
-            ThrowErrors ();
-
-            GL.DepthFunc (DepthFunction.Lequal);
-            ThrowErrors ();
-
-            SetCullMode (CullMode.CW);
-        }
-        
-        #endregion
-        
-        #region Public API
-        
-        #region Render State
-        
-        public static void ClearColourBuffer (Rgba32 colour)
+        public void gfx_ClearColourBuffer (Rgba32 colour)
         {
             Single r, g, b, a;
 
@@ -269,11 +107,10 @@ namespace Cor.Library.OTK
             var mask = ClearBufferMask.ColorBufferBit;
 
             GL.Clear (mask);
-
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
         }
-        
-        public static void ClearDepthBuffer (Single depth)
+
+        public void gfx_ClearDepthBuffer (Single depth)
         {
             GL.ClearDepth (depth);
 
@@ -281,33 +118,33 @@ namespace Cor.Library.OTK
 
             GL.Clear (mask);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
         }
-        
-        public static void SetCullMode (CullMode cullMode)
+
+        public void gfx_SetCullMode (CullMode cullMode)
         {
             if (cullMode == CullMode.None)
             {
                 GL.Disable (EnableCap.CullFace);
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
             }
             else
             {
                 GL.Enable (EnableCap.CullFace);
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
 
                 GL.FrontFace (FrontFaceDirection.Cw);
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
 
                 if (cullMode == CullMode.CW)
                 {
                     GL.CullFace (CullFaceMode.Back);
-                    ThrowErrors ();
+                    OpenTKHelper.ThrowErrors ();
                 }
                 else if (cullMode == CullMode.CCW)
                 {
                     GL.CullFace (CullFaceMode.Front);
-                    ThrowErrors ();
+                    OpenTKHelper.ThrowErrors ();
                 }
                 else
                 {
@@ -315,37 +152,34 @@ namespace Cor.Library.OTK
                 }
             }
         }
-        
-        public static void SetBlendEquation (
+
+        public void gfx_SetBlendEquation (
             BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb, 
             BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha)
         {
             GL.BlendEquationSeparate (
-                ConvertToOTKBlendEquationModeEnum (rgbBlendFunction),
-                ConvertToOTKBlendEquationModeEnum (alphaBlendFunction) );
-            ThrowErrors ();
+                OpenTKHelper.ConvertToOpenTKBlendEquationModeEnum (rgbBlendFunction),
+                OpenTKHelper.ConvertToOpenTKBlendEquationModeEnum (alphaBlendFunction) );
+            OpenTKHelper.ThrowErrors ();
 
             GL.BlendFuncSeparate (
-                ConvertToOTKBlendingFactorSrcEnum (sourceRgb),
-                ConvertToOTKBlendingFactorDestEnum (destinationRgb),
-                ConvertToOTKBlendingFactorSrcEnum (sourceAlpha),
-                ConvertToOTKBlendingFactorDestEnum (destinationAlpha) );
-            ThrowErrors ();
+                OpenTKHelper.ConvertToOpenTKBlendingFactorSrcEnum (sourceRgb),
+                OpenTKHelper.ConvertToOpenTKBlendingFactorDestEnum (destinationRgb),
+                OpenTKHelper.ConvertToOpenTKBlendingFactorSrcEnum (sourceAlpha),
+                OpenTKHelper.ConvertToOpenTKBlendingFactorDestEnum (destinationAlpha) );
+            OpenTKHelper.ThrowErrors ();
         }
-        
-        #endregion
-        
-        #region Vertex Buffers
-        
-        public static VertexBufferHandle CreateVertexBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount)
+
+
+        public Handle gfx_CreateVertexBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount)
         {
             const BufferTarget type = BufferTarget.ArrayBuffer;
             const GLBufferUsage bufferUsage = GLBufferUsage.DynamicDraw;
-            
+
             UInt32 bufferHandle = 0;
             GL.GenBuffers (1, out bufferHandle);
-            ThrowErrors ();
-            
+            OpenTKHelper.ThrowErrors ();
+
             var handle = new VertexBufferHandle (bufferHandle);
 
             OpenTkCache.Set<VertexDeclaration> (handle, "VertexDeclaration", vertexDeclaration);
@@ -356,7 +190,7 @@ namespace Cor.Library.OTK
                 throw new Exception ("Failed to generate vert buffer.");
             }
 
-            ActivateVertexBuffer (handle);
+            gfx_vbff_Activate (handle);
 
             GL.BufferData (
                 type,
@@ -364,108 +198,32 @@ namespace Cor.Library.OTK
                 (System.IntPtr) null,
                 bufferUsage);
 
-            ThrowErrors ();
-            
+            OpenTKHelper.ThrowErrors ();
+
             return handle;
         }
-        
-        public static void ActivateVertexBuffer (VertexBufferHandle handle)
+
+        public Handle gfx_CreateIndexBuffer (Int32 indexCount)
         {
-            const BufferTarget type = BufferTarget.ArrayBuffer;
-            GL.BindBuffer (type, handle.GLHandle);
-            ThrowErrors ();
-        }
 
-        public static void DeactivateVertexBuffer (VertexBufferHandle handle)
-        {
-            const BufferTarget type = BufferTarget.ArrayBuffer;
-            GL.BindBuffer (type, 0);
-            ThrowErrors ();
-        }
-        
-        public static void DestroyVertexBuffer (VertexBufferHandle handle)
-        {  
-            OpenTkCache.Clear (handle);
-            uint h = handle.GLHandle;
-            GL.DeleteBuffers (1, ref h);
-            ThrowErrors ();
-        }
-        
-        public static void SetVertexBufferData<T> (VertexBufferHandle handle, T[] data, Int32 startIndex, Int32 elementCount)
-        where T
-            : struct
-            , IVertexType
-        {
-            Int32 vertexCount = OpenTkCache.Get <Int32> (handle, "VertexCount");
-            if (data.Length != vertexCount)
-            {
-                throw new Exception ("?");
-            }
-
-            ActivateVertexBuffer (handle);
-            
-            const BufferTarget type = BufferTarget.ArrayBuffer;
-            var vd = OpenTkCache.Get <VertexDeclaration> (handle, "VertexDeclaration");
-            
-            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
-            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
-            // then content of data are copied to the allocated data store.  The contents of the buffer object data
-            // store can be initialized or updated using the glBufferSubData FN
-            GL.BufferSubData (
-                type,
-                (System.IntPtr) (vd.VertexStride * startIndex),
-                (System.IntPtr) (vd.VertexStride * elementCount),
-                data);
-
-            ThrowErrors ();
-        }
-
-        public static void SetVertexBufferRawData (VertexBufferHandle handle, Byte[] data, Int32 startIndex, Int32 elementCount)
-        {
-            Int32 vertexCount = OpenTkCache.Get <Int32> (handle, "VertexCount");
-            if (data.Length != vertexCount)
-            {
-                throw new Exception ("?");
-            }
-            
-            ActivateVertexBuffer (handle);
-            
-            const BufferTarget type = BufferTarget.ArrayBuffer;
-            var vd = OpenTkCache.Get <VertexDeclaration> (handle, "VertexDeclaration");
-
-            GL.BufferSubData (
-                type,
-                (System.IntPtr) (vd.VertexStride * startIndex),
-                (System.IntPtr) (vd.VertexStride * elementCount),
-                data);
-
-            ThrowErrors ();
-        }
-        
-        #endregion
-        
-        #region Index Buffers
-        
-        public static IndexBufferHandle CreateIndexBuffer (Int32 indexCount)
-        {
             UInt32 glHandle;
             const BufferTarget type = BufferTarget.ElementArrayBuffer;
             const GLBufferUsage bufferUsage = GLBufferUsage.DynamicDraw;
-            
+
             GL.GenBuffers (1, out glHandle);
 
             var handle = new IndexBufferHandle (glHandle);
 
             OpenTkCache.Set<Int32> (handle, "IndexCount", indexCount);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             if (glHandle == 0 )
             {
                 throw new Exception ("Failed to generate index buffer.");
             }
-            
-            ActivateIndexBuffer (handle);
+
+            gfx_ibff_Activate (handle);
 
             GL.BufferData (
                 type,
@@ -473,73 +231,12 @@ namespace Cor.Library.OTK
                 (System.IntPtr) null,
                 bufferUsage);
 
-            ThrowErrors ();
-            
+            OpenTKHelper.ThrowErrors ();
+
             return handle;
         }
-        
-        public static void ActivateIndexBuffer (IndexBufferHandle handle)
-        {
-            const BufferTarget type = BufferTarget.ElementArrayBuffer;
-            GL.BindBuffer (type, handle.GLHandle);
-            ThrowErrors ();
-        }
 
-        public static void DeactivateIndexBuffer (IndexBufferHandle handle)
-        {
-            const BufferTarget type = BufferTarget.ElementArrayBuffer;
-            GL.BindBuffer (type, 0);
-            ThrowErrors ();
-        }
-        
-        public static void DestroyIndexBuffer (IndexBufferHandle handle)
-        {
-            OpenTkCache.Clear (handle);
-            uint h = handle.GLHandle;
-            GL.DeleteBuffers (1, ref h);
-            ThrowErrors ();
-        }
-        
-        public static void SetIndexBufferData (IndexBufferHandle handle, Int32[] data, Int32 startIndex, Int32 elementCount)
-        {
-            Int32 indexCount = OpenTkCache.Get <Int32> (handle, "IndexCount");
-
-            if (data.Length != indexCount)
-            {
-                throw new Exception ("?");
-            }
-
-            UInt16[] udata = new UInt16[data.Length];
-
-            for (Int32 i = 0; i < data.Length; ++i)
-            {
-                udata[i] = (UInt16) data[i];
-            }
-
-            ActivateIndexBuffer (handle);
-            
-            const BufferTarget type = BufferTarget.ElementArrayBuffer;
-
-            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
-            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
-            // then content of data are copied to the allocated data store.  The contents of the buffer object data
-            // store can be initialized or updated using the glBufferSubData FN
-            GL.BufferSubData (
-                type,
-                (System.IntPtr) 0,
-                (System.IntPtr) (sizeof (UInt16) * indexCount),
-                udata);
-
-            udata = null;
-
-            ThrowErrors ();
-        }
-        
-        #endregion
-        
-        #region Textures
-        
-        public static TextureHandle CreateTexture (TextureFormat textureFormat, Int32 width, Int32 height, Byte[] source)
+        public Handle gfx_CreateTexture (TextureFormat textureFormat, Int32 width, Int32 height, Byte[] source)
         {
             if (textureFormat != TextureFormat.Rgba32)
                 throw new NotImplementedException ();
@@ -560,20 +257,20 @@ namespace Cor.Library.OTK
             GL.PixelStore (
                 PixelStoreParameter.UnpackAlignment, 4);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             // the first sept in the application of texture is to create the
             // texture object.  this is a container object that holds the
             // texture data.  this function returns a handle to a texture
             // object.
             GL.GenTextures (1, out textureId);
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             const TextureTarget textureTarget = TextureTarget.Texture2D;
 
             // we need to bind the texture object so that we can opperate on it.
             GL.BindTexture (textureTarget, textureId);
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             // the incoming texture format
             // (the format that [pixelDataRgba32] is in)
@@ -625,20 +322,20 @@ namespace Cor.Library.OTK
 
                 pixelDataRgba32
 
-                );
+            );
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             // sets the minification and maginfication filtering modes.  required
             // because we have not loaded a complete mipmap chain for the texture
             // so we must select a non mipmapped minification filter.
             GL.TexParameter (textureTarget, TextureParameterName.TextureMinFilter, (int) All.Nearest);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             GL.TexParameter (textureTarget, TextureParameterName.TextureMagFilter, (int) All.Nearest);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             var handle = new TextureHandle (textureId);
 
@@ -649,36 +346,11 @@ namespace Cor.Library.OTK
             return handle;
         }
 
-        public static void DestroyTexture (Handle textureHandle)
+        public Handle gfx_CreateShader (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sources)
         {
-            int glTextureId = (textureHandle as TextureHandle).TextureId;
+            if (shaderFormat != ShaderFormat.GLSL)
+                throw new NotSupportedException ();
 
-            GL.DeleteTextures (1, ref glTextureId);
-        }
-        
-        public static void ActivateTexture (Int32 slot, Handle tex)
-        {
-            TextureUnit oglTexSlot = ConvertToOTKTextureSlotEnum (slot);
-            GL.ActiveTexture (oglTexSlot);
-
-            var oglt0 = tex as TextureHandle;
-
-            if (oglt0 != null)
-            {
-                const TextureTarget textureTarget = TextureTarget.Texture2D;
-
-                // we need to bind the texture object so that we can opperate on it.
-                GL.BindTexture (textureTarget, oglt0.TextureId);
-                ThrowErrors ();
-            }
-        }
-        
-        #endregion
-        
-        #region Shaders
-
-        public static ShaderHandle CreateShader (ShaderDeclaration shaderDeclaration, Byte[][] sources)
-        {
             var variantHandles = new List<ShaderVariantHandle> ();
             var variantIdentifiers = new List<String> ();
             foreach (var source in sources)
@@ -700,7 +372,7 @@ namespace Cor.Library.OTK
                 }
 
 
-                var variantHandle = OpenTkWrapper.CreateInternalShaderVariant (identifier, vertexShaderSource, fragmentShaderSource);
+                var variantHandle = OpenTKHelper.CreateInternalShaderVariant (identifier, vertexShaderSource, fragmentShaderSource);
                 variantHandles.Add (variantHandle);
                 variantIdentifiers.Add (identifier);
             }
@@ -718,23 +390,23 @@ namespace Cor.Library.OTK
                     .ToList () // ordered attributes as per declaration
                     .ForEach (attName => {
                         GL.BindAttribLocation (variantHandle.ProgramHandle, index, attName);
-                        OpenTkWrapper.ThrowErrors ();
-                        bool success = OpenTkWrapper.LinkProgram (variantHandle.ProgramHandle);
+                        OpenTKHelper.ThrowErrors ();
+                        bool success = OpenTKHelper.LinkProgram (variantHandle.ProgramHandle);
                         if (success) index++;
                     });
 
                 InternalUtils.Log.Info ("GFX", variantIdentifiers [i] + ": Validating shader program");
                 #if DEBUG
-                OpenTkWrapper.ValidateProgram (variantHandle.ProgramHandle);
+                OpenTKHelper.ValidateProgram (variantHandle.ProgramHandle);
                 #endif
 
                 InternalUtils.Log.Info ("GFX", variantIdentifiers [i] + ": Detaching frag & vert sources");
-                OpenTkWrapper.DetachShader (variantHandle.ProgramHandle, variantHandle.FragmentShaderHandle);
-                OpenTkWrapper.DetachShader (variantHandle.ProgramHandle, variantHandle.VertexShaderHandle);
+                OpenTKHelper.DetachShader (variantHandle.ProgramHandle, variantHandle.FragmentShaderHandle);
+                OpenTKHelper.DetachShader (variantHandle.ProgramHandle, variantHandle.VertexShaderHandle);
 
                 InternalUtils.Log.Info ("GFX", variantIdentifiers [i] + ": Deleting frag & vert sources");
-                OpenTkWrapper.DeleteShader (variantHandle.ProgramHandle,  variantHandle.FragmentShaderHandle);
-                OpenTkWrapper.DeleteShader (variantHandle.ProgramHandle, variantHandle.VertexShaderHandle);
+                OpenTKHelper.DeleteShader (variantHandle.ProgramHandle,  variantHandle.FragmentShaderHandle);
+                OpenTKHelper.DeleteShader (variantHandle.ProgramHandle, variantHandle.VertexShaderHandle);
             }
 
             var handle = new ShaderHandle (variantHandles);
@@ -743,52 +415,354 @@ namespace Cor.Library.OTK
             {
                 OpenTkCache.Set<String> (handle, "VariantIdentifier" + i, variantIdentifiers [i]);
             }
-            
+
             return handle;
         }
 
-        static ShaderVariantHandle CreateInternalShaderVariant (String identifier, String vertexShaderSource, String fragmentShaderSource)
+        public void gfx_DestroyVertexBuffer (Handle handle)
         {
-            Int32 vertexShaderHandle = -1;
-            Int32 fragmentShaderHandle = -1;
-
-            OpenTkWrapper.CompileShader (ShaderType.VertexShader, vertexShaderSource, out vertexShaderHandle);
-            OpenTkWrapper.CompileShader (ShaderType.FragmentShader, fragmentShaderSource, out fragmentShaderHandle);
-
-            Console.WriteLine("Creating Pass Variant: " + identifier);
-
-            var programHandle = OpenTkWrapper.CreateShaderProgram ();
-
-            var vertShaderHandle = OpenTkWrapper.CreateVertexShader (vertexShaderSource);
-            var fragShaderHandle = OpenTkWrapper.CreateFragmentShader (fragmentShaderSource);
-
-            OpenTkWrapper.AttachShader (programHandle, vertShaderHandle);
-            OpenTkWrapper.AttachShader (programHandle, fragShaderHandle);
-
-            var result = new ShaderVariantHandle (vertShaderHandle, fragShaderHandle, programHandle);
-
-            return result;
+            OpenTkCache.Clear (handle);
+            uint h = (handle as VertexBufferHandle).GLHandle;
+            GL.DeleteBuffers (1, ref h);
+            OpenTKHelper.ThrowErrors ();
         }
 
-        public static void DestroyShader (Handle shaderHandle)
+        public void gfx_DestroyIndexBuffer (Handle handle)
         {
-            var handle = shaderHandle as ShaderHandle;
+            OpenTkCache.Clear (handle);
+            uint h = (handle as IndexBufferHandle).GLHandle;
+            GL.DeleteBuffers (1, ref h);
+            OpenTKHelper.ThrowErrors ();
+        }
 
-            foreach (var h in handle.VariantHandles)
+        public void gfx_DestroyTexture (Handle handle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DestroyShader (Handle handle)
+        {
+            foreach (var variantHandle in (handle as ShaderHandle).VariantHandles)
+                OpenTKHelper.DestroyShaderProgram (variantHandle.ProgramHandle);
+        }
+
+        public void gfx_vbff_Activate (Handle handle)
+        {
+            if (handle == null)
+                return;
+
+            var vd = OpenTkCache.Get <VertexDeclaration> (handle, "VertexDeclaration");
+
+            // Keep track of this for later draw calls that do not provide it.
+            currentVertexDeclaration = vd;
+
+            const BufferTarget type = BufferTarget.ArrayBuffer;
+            GL.BindBuffer (type, (handle as VertexBufferHandle).GLHandle);
+            OpenTKHelper.ThrowErrors ();
+        }
+
+        public void gfx_ibff_Activate (Handle handle)
+        {
+            if (handle == null)
+                return;
+
+            const BufferTarget type = BufferTarget.ElementArrayBuffer;
+            GL.BindBuffer (type, (handle as IndexBufferHandle).GLHandle);
+            OpenTKHelper.ThrowErrors ();
+        }
+
+        public void gfx_DrawPrimitives (
+            PrimitiveType primitiveType,
+            Int32 startVertex,
+            Int32 primitiveCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DrawIndexedPrimitives (
+            PrimitiveType primitiveType, 
+            Int32 baseVertex, 
+            Int32 minVertexIndex,
+            Int32 numVertices, 
+            Int32 startIndex, 
+            Int32 primitiveCount)
+        {
+            if (baseVertex != 0 || minVertexIndex != 0 || startIndex != 0 )
             {
-                DestroyInternalShaderVariant (h);
+                throw new NotImplementedException ();
             }
+
+            var otkpType = OpenTKHelper.ConvertToOpenTKBeginModeEnum (primitiveType);
+            //Int32 numVertsInPrim = numVertices / primitiveCount;
+
+            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
+            Int32 count = primitiveCount * nVertsInPrim;
+
+            OpenTKHelper.EnableVertAttribs (currentVertexDeclaration, (IntPtr) 0 );
+
+            GL.DrawElements (
+                otkpType,
+                count,
+                DrawElementsType.UnsignedShort,
+                (System.IntPtr) 0 );
+
+            OpenTKHelper.ThrowErrors ();
+
+            OpenTKHelper.DisableVertAttribs (currentVertexDeclaration);
         }
 
-        internal static void DestroyInternalShaderVariant (ShaderVariantHandle handle)
+        public void gfx_DrawUserPrimitives <T> (
+            PrimitiveType primitiveType, 
+            T[] vertexData, 
+            Int32 vertexOffset,
+            Int32 primitiveCount) 
+            where T
+            : struct
+            , IVertexType
         {
-            DestroyShaderProgram (handle.ProgramHandle);
+            // do i need to do this? todo: find out
+            gfx_vbff_Activate (null);
+            gfx_ibff_Activate (null);
+
+            var vertDecl = vertexData[0].VertexDeclaration;
+
+            //MSDN
+            //
+            //The GCHandle structure is used with the GCHandleType
+            //enumeration to create a handle corresponding to any managed
+            //object. This handle can be one of four types: Weak,
+            //WeakTrackResurrection, Normal, or Pinned. When the handle has
+            //been allocated, you can use it to prevent the managed object
+            //from being collected by the garbage collector when an unmanaged
+            //client holds the only reference. Without such a handle,
+            //the object can be collected by the garbage collector before
+            //completing its work on behalf of the unmanaged client.
+            //
+            //You can also use GCHandle to create a pinned object that
+            //returns a memory address to prevent the garbage collector
+            //from moving the object in memory.
+            //
+            //When the handle goes out of scope you must explicitly release
+            //it by calling the Free method; otherwise, memory leaks may
+            //occur. When you free a pinned handle, the associated object
+            //will be unpinned and will become eligible for garbage
+            //collection, if there are no other references to it.
+            //
+            GCHandle pinnedArray = GCHandle.Alloc (vertexData, GCHandleType.Pinned);
+            IntPtr pointer = pinnedArray.AddrOfPinnedObject ();
+
+            if (vertexOffset != 0 )
+            {
+                pointer = OpenTKHelper.Add (pointer, vertexOffset * vertDecl.VertexStride * sizeof (byte));
+            }
+
+            var glDrawMode = OpenTKHelper.ConvertToOpenTKBeginModeEnum (primitiveType);
+            var glDrawModeAll = glDrawMode;
+
+            var bindTarget = BufferTarget.ArrayBuffer;
+
+            GL.BindBuffer (bindTarget, 0);
+            OpenTKHelper.ThrowErrors ();
+
+
+            OpenTKHelper.EnableVertAttribs (vertDecl, pointer);
+
+            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
+            Int32 count = primitiveCount * nVertsInPrim;
+
+            GL.DrawArrays (
+                glDrawModeAll, // specifies the primitive to render
+                vertexOffset,  // specifies the starting vertex index in the enabled vertex arrays
+                count); // specifies the number of indicies to be drawn
+
+            OpenTKHelper.ThrowErrors ();
+
+
+            OpenTKHelper.DisableVertAttribs (vertDecl);
+
+
+            pinnedArray.Free ();
         }
 
-        public static void SetVariable<T> (ShaderHandle h, Int32 variantIndex, String name, T value)
+        public void gfx_DrawUserIndexedPrimitives <T> (
+            PrimitiveType primitiveType, 
+            T[] vertexData, 
+            Int32 vertexOffset, 
+            Int32 numVertices, 
+            Int32[] indexData, 
+            Int32 indexOffset, 
+            Int32 primitiveCount) 
+            where T
+            : struct
+        , IVertexType
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Byte[] gfx_CompileShader (String source)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_dbg_BeginEvent (Rgba32 colour, String eventName)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_dbg_EndEvent ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_dbg_SetMarker (Rgba32 colour, String marker)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_dbg_SetRegion (Rgba32 colour, String region)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_vbff_GetVertexCount (Handle h)
+        {
+            return OpenTkCache.Get <Int32> (h, "VertexCount");
+        }
+
+        public VertexDeclaration gfx_vbff_GetVertexDeclaration (Handle h)
+        {
+            return OpenTkCache.Get <VertexDeclaration> (h, "VertexDeclaration");
+        }
+
+        public void gfx_vbff_SetData<T> (Handle h, T[] data, Int32 startIndex, Int32 elementCount) 
+            where T
+            : struct
+            , IVertexType
+        {
+            Int32 vertexCount = OpenTkCache.Get <Int32> (h, "VertexCount");
+            if (data.Length != vertexCount)
+            {
+                throw new Exception ("?");
+            }
+
+            gfx_vbff_Activate (h);
+
+            const BufferTarget type = BufferTarget.ArrayBuffer;
+            var vd = OpenTkCache.Get <VertexDeclaration> (h, "VertexDeclaration");
+
+            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
+            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
+            // then content of data are copied to the allocated data store.  The contents of the buffer object data
+            // store can be initialized or updated using the glBufferSubData FN
+            GL.BufferSubData (
+                type,
+                (System.IntPtr) (vd.VertexStride * startIndex),
+                (System.IntPtr) (vd.VertexStride * elementCount),
+                data);
+
+            OpenTKHelper.ThrowErrors ();
+        }
+
+        [Obsolete]
+        public void gfx_vbff_SetData (Handle handle, Byte[] data, Int32 startIndex, Int32 elementCount)
+        {
+            Int32 vertexCount = OpenTkCache.Get <Int32> (handle, "VertexCount");
+            if (data.Length != vertexCount)
+            {
+                throw new Exception ("?");
+            }
+
+            gfx_vbff_Activate (handle);
+
+            const BufferTarget type = BufferTarget.ArrayBuffer;
+            var vd = OpenTkCache.Get <VertexDeclaration> (handle, "VertexDeclaration");
+
+            GL.BufferSubData (
+                type,
+                (System.IntPtr) (vd.VertexStride * startIndex),
+                (System.IntPtr) (vd.VertexStride * elementCount),
+                data);
+
+            OpenTKHelper.ThrowErrors ();
+        }
+
+        public T[] gfx_vbff_GetData<T> (Handle h, Int32 startIndex, Int32 elementCount)
+            where T
+            : struct
+            , IVertexType
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_ibff_GetIndexCount (Handle h)
+        {
+            return OpenTkCache.Get <Int32> (h, "IndexCount");
+        }
+
+        public void gfx_ibff_SetData (Handle h, Int32[] data, Int32 startIndex, Int32 elementCount)
+        {
+            Int32 indexCount = OpenTkCache.Get <Int32> (h, "IndexCount");
+
+            if (data.Length != indexCount)
+            {
+                throw new Exception ("?");
+            }
+
+            UInt16[] udata = new UInt16[data.Length];
+
+            for (Int32 i = 0; i < data.Length; ++i)
+            {
+                udata[i] = (UInt16) data[i];
+            }
+
+            gfx_ibff_Activate (h);
+
+            const BufferTarget type = BufferTarget.ElementArrayBuffer;
+
+            // glBufferData FN will reserve appropriate data storage based on the value of size.  The data argument can
+            // be null indicating that the reserved data store remains uninitiliazed.  If data is a valid pointer,
+            // then content of data are copied to the allocated data store.  The contents of the buffer object data
+            // store can be initialized or updated using the glBufferSubData FN
+            GL.BufferSubData (
+                type,
+                (System.IntPtr) 0,
+                (System.IntPtr) (sizeof (UInt16) * indexCount),
+                udata);
+
+            udata = null;
+
+            OpenTKHelper.ThrowErrors ();
+        }
+
+        public void gfx_ibff_GetData (Handle h, Int32[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_tex_GetWidth (Handle h)
+        {
+            return OpenTkCache.Get <Int32> (h, "Width");
+        }
+
+        public Int32 gfx_tex_GetHeight (Handle h)
+        {
+            return OpenTkCache.Get <Int32> (h, "Height");
+        }
+
+        public Byte[] gfx_tex_GetData (Handle h)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public TextureFormat gfx_tex_GetTextureFormat (Handle h)
+        {
+            return OpenTkCache.Get <TextureFormat> (h, "TextureFormat");
+        }
+
+        public void gfx_shdr_SetVariable<T> (Handle h, Int32 variantIndex, String name, T value)
         {
             // todo: find a better way, this will be slow
-            var uniforms = GetUniforms (h.VariantHandles[variantIndex].ProgramHandle);
+            var uniforms = OpenTKHelper.GetUniforms ((h as ShaderHandle).VariantHandles[variantIndex].ProgramHandle);
             var uniform = uniforms.ToList ().Find (x => x.Name == name);
 
             //todo this should be using convert turn the data into proper opengl es types.
@@ -798,7 +772,7 @@ namespace Cor.Library.OTK
             if( t == typeof(Matrix44) )
             {
                 var castValue = (Matrix44) tx;
-                var otkValue = ToOTK(castValue);
+                var otkValue = castValue.ToOpenTK();
                 GL.UniformMatrix4( uniform.Location, false, ref otkValue );
             }
             else if( t == typeof(Int32) )
@@ -834,9 +808,9 @@ namespace Cor.Library.OTK
                 castValue.UnpackTo(out vec4Value.X, out vec4Value.Y, out vec4Value.Z, out vec4Value.W);
 
                 // does this rgba value need to be packed in to a vector3 or a vector4
-                if( ConvertToType(uniform.Type) == typeof(Abacus.SinglePrecision.Vector4) )
+                if( OpenTKHelper.ConvertToType(uniform.Type) == typeof(Abacus.SinglePrecision.Vector4) )
                     GL.Uniform4( uniform.Location, 1, ref vec4Value.X );
-                else if( ConvertToType(uniform.Type) == typeof(Abacus.SinglePrecision.Vector3) )
+                else if( OpenTKHelper.ConvertToType(uniform.Type) == typeof(Abacus.SinglePrecision.Vector3) )
                     GL.Uniform3( uniform.Location, 1, ref vec4Value.X );
                 else
                     throw new Exception("Not supported");
@@ -846,41 +820,46 @@ namespace Cor.Library.OTK
                 throw new Exception("Not supported");
             }
 
-            ThrowErrors();
+            OpenTKHelper.ThrowErrors();
         }
 
-        public static void SetSampler (ShaderHandle h, Int32 variantIndex, String name, Handle textureHandle)
+        public void gfx_shdr_SetSampler (Handle h, Int32 variantIndex, String name, Int32 slot)
         {
-            throw new NotImplementedException ();
+            var uniforms = OpenTKHelper.GetUniforms ((h as ShaderHandle).VariantHandles[variantIndex].ProgramHandle);
+            var uniform = uniforms.ToList ().Find (x => x.Name == name);
+
+            // set the sampler texture unit to 0
+            GL.Uniform1( uniform.Location, slot );
+            OpenTKHelper.ThrowErrors();
         }
 
-        public static void Activate (ShaderHandle h, Int32 variantIndex)
+        public void gfx_shdr_Activate (Handle h, Int32 variantIndex)
         {
-            GL.UseProgram (h.VariantHandles [variantIndex].ProgramHandle);
-            ThrowErrors ();
+            GL.UseProgram ((h as ShaderHandle).VariantHandles [variantIndex].ProgramHandle);
+            OpenTKHelper.ThrowErrors ();
         }
 
-        public static Int32 GetVariantCount (ShaderHandle handle)
+        public Int32 gfx_shdr_GetVariantCount (Handle h)
         {
-            return handle.VariantHandles.Count;
+            return (h as ShaderHandle).VariantHandles.Count;
         }
 
-        public static String GetIdentifier (ShaderHandle handle, Int32 variantIndex)
+        public String gfx_shdr_GetIdentifier (Handle h, Int32 variantIndex)
         {
-            return OpenTkCache.Get<String> (handle, "VariantIdentifier" + variantIndex);
+            return OpenTkCache.Get<String> (h, "VariantIdentifier" + variantIndex);
         }
 
-        public static ShaderInputInfo[] GetInputs (ShaderHandle handle, Int32 variantIndex)
+        public ShaderInputInfo[] gfx_shdr_GetInputs (Handle h, Int32 variantIndex)
         {
-            string id = GetIdentifier (handle, variantIndex);
+            string id = gfx_shdr_GetIdentifier (h, variantIndex);
             InternalUtils.Log.Info ("GFX", id + ": Initilise Attributes");
-            var attributes = GetAttributes (handle.VariantHandles[variantIndex].ProgramHandle);
+            var attributes = OpenTKHelper.GetAttributes ((h as ShaderHandle).VariantHandles[variantIndex].ProgramHandle);
 
             var inputs = attributes
                 .OrderBy (y => y.Location)
                 .Select (x => new ShaderInputInfo {
                     Name = x.Name,
-                    Type = ConvertToType (x.Type) })
+                    Type = OpenTKHelper.ConvertToType (x.Type) })
                 .ToArray ();
 
             String logInputs = id + ": Inputs ~ ";
@@ -893,12 +872,12 @@ namespace Cor.Library.OTK
             return inputs;
         }
 
-        public static ShaderVariableInfo[] GetVariables (ShaderHandle handle, Int32 variantIndex)
+        public ShaderVariableInfo[] gfx_shdr_GetVariables (Handle h, Int32 variantIndex)
         {
-            string id = GetIdentifier (handle, variantIndex);
+            string id = gfx_shdr_GetIdentifier (h, variantIndex);
             InternalUtils.Log.Info ("GFX", id + ": Initilise Uniforms");
 
-            var uniforms = GetUniforms (handle.VariantHandles[variantIndex].ProgramHandle);
+            var uniforms = OpenTKHelper.GetUniforms ((h as ShaderHandle).VariantHandles[variantIndex].ProgramHandle);
 
             var variables = uniforms
                 .Where (y =>
@@ -907,7 +886,7 @@ namespace Cor.Library.OTK
                 .OrderBy (z => z.Location)
                 .Select (x => new ShaderVariableInfo { 
                     Name = x.Name,
-                    Type = ConvertToType (x.Type) })
+                    Type = OpenTKHelper.ConvertToType (x.Type) })
                 .ToArray ();
 
             String logVars = id + ": Variables ~ ";
@@ -920,12 +899,12 @@ namespace Cor.Library.OTK
             return variables;
         }
 
-        public static ShaderSamplerInfo[] GetSamplers (ShaderHandle handle, Int32 variantIndex)
+        public ShaderSamplerInfo[] gfx_shdr_GetSamplers (Handle h, Int32 variantIndex)
         {
-            string id = GetIdentifier (handle, variantIndex);
+            string id = gfx_shdr_GetIdentifier (h, variantIndex);
             InternalUtils.Log.Info ("GFX", id + ": Initilise Samplers");
 
-            var uniforms = GetUniforms (handle.VariantHandles[variantIndex].ProgramHandle);
+            var uniforms = OpenTKHelper.GetUniforms ((h as ShaderHandle).VariantHandles[variantIndex].ProgramHandle);
 
             var samplers = uniforms
                 .Where (y =>
@@ -945,124 +924,57 @@ namespace Cor.Library.OTK
             return samplers;
         }
 
-        #endregion
-        
-        #region Drawing
-        
-        public static void DrawIndexedPrimitives (
-            PrimitiveType primitiveType,
-            Int32 baseVertex,
-            Int32 minVertexIndex,
-            Int32 numVertices,
-            Int32 startIndex,
-            Int32 primitiveCount,
-            VertexDeclaration vertDecl)
+        public void gfx_tex_Activate (Handle h, int slot)
         {
-            if (baseVertex != 0 || minVertexIndex != 0 || startIndex != 0 )
+            TextureUnit oglTexSlot = OpenTKHelper.ConvertToOpenTKTextureSlotEnum (slot);
+            GL.ActiveTexture (oglTexSlot);
+
+            var oglt0 = h as TextureHandle;
+
+            if (oglt0 != null)
             {
-                throw new NotImplementedException ();
+                const TextureTarget textureTarget = TextureTarget.Texture2D;
+
+                // we need to bind the texture object so that we can opperate on it.
+                GL.BindTexture (textureTarget, oglt0.TextureId);
+                OpenTKHelper.ThrowErrors ();
             }
-
-            var otkpType = ConvertToOTKBeginModeEnum (primitiveType);
-            //Int32 numVertsInPrim = numVertices / primitiveCount;
-
-            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
-            Int32 count = primitiveCount * nVertsInPrim;
-
-            EnableVertAttribs (vertDecl, (IntPtr) 0 );
-
-            GL.DrawElements (
-                otkpType,
-                count,
-                DrawElementsType.UnsignedShort,
-                (System.IntPtr) 0 );
-
-            ThrowErrors ();
-
-            DisableVertAttribs (vertDecl);
         }
 
-        public static void DrawUserPrimitives <T> (
-            PrimitiveType primitiveType,
-            T[] vertexData,
-            Int32 vertexOffset,
-            Int32 primitiveCount,
-            VertexDeclaration vertexDeclaration)
-        where T 
-            : IVertexType
+        public int[] gfx_ibff_GetData (Handle indexBufferHandle, int startIndex, int elementCount)
         {
-            // do i need to do this? todo: find out
-            ActivateVertexBuffer (null);
-            ActivateIndexBuffer (null);
-
-            var vertDecl = vertexData[0].VertexDeclaration;
-
-            //MSDN
-            //
-            //The GCHandle structure is used with the GCHandleType
-            //enumeration to create a handle corresponding to any managed
-            //object. This handle can be one of four types: Weak,
-            //WeakTrackResurrection, Normal, or Pinned. When the handle has
-            //been allocated, you can use it to prevent the managed object
-            //from being collected by the garbage collector when an unmanaged
-            //client holds the only reference. Without such a handle,
-            //the object can be collected by the garbage collector before
-            //completing its work on behalf of the unmanaged client.
-            //
-            //You can also use GCHandle to create a pinned object that
-            //returns a memory address to prevent the garbage collector
-            //from moving the object in memory.
-            //
-            //When the handle goes out of scope you must explicitly release
-            //it by calling the Free method; otherwise, memory leaks may
-            //occur. When you free a pinned handle, the associated object
-            //will be unpinned and will become eligible for garbage
-            //collection, if there are no other references to it.
-            //
-            GCHandle pinnedArray = GCHandle.Alloc (vertexData, GCHandleType.Pinned);
-            IntPtr pointer = pinnedArray.AddrOfPinnedObject ();
-
-            if (vertexOffset != 0 )
-            {
-                pointer = Add (pointer, vertexOffset * vertDecl.VertexStride * sizeof (byte));
-            }
-
-            var glDrawMode = ConvertToOTKBeginModeEnum (primitiveType);
-            var glDrawModeAll = glDrawMode;
-
-            var bindTarget = BufferTarget.ArrayBuffer;
-
-            GL.BindBuffer (bindTarget, 0);
-            ThrowErrors ();
-
-
-            EnableVertAttribs (vertDecl, pointer);
-
-            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
-            Int32 count = primitiveCount * nVertsInPrim;
-
-            GL.DrawArrays (
-                glDrawModeAll, // specifies the primitive to render
-                vertexOffset,  // specifies the starting vertex index in the enabled vertex arrays
-                count); // specifies the number of indicies to be drawn
-
-            ThrowErrors ();
-
-
-            DisableVertAttribs (vertDecl);
-
-
-            pinnedArray.Free ();
+            throw new NotImplementedException ();
         }
-        
-        #endregion
-        
+
         #endregion
 
-        #region Private / Internal
-        
+    }
+
+
+
+    internal static class OpenTKHelper
+    {
+        // this is a haaccky place to put opentk initilisation, todo: move it to somewhere more appropriate
+        static OpenTKHelper ()
+        {
+            GL.Enable (EnableCap.Blend);
+            OpenTKHelper.ThrowErrors ();
+
+            GL.Enable (EnableCap.DepthTest);
+            OpenTKHelper.ThrowErrors ();
+
+            GL.DepthMask (true);
+            OpenTKHelper.ThrowErrors ();
+
+            GL.DepthRange (0f, 1f);
+            OpenTKHelper.ThrowErrors ();
+
+            GL.DepthFunc (DepthFunction.Lequal);
+            OpenTKHelper.ThrowErrors ();
+        }
+
         [Conditional ("DEBUG")]
-        static void ThrowErrors ()
+        public static void ThrowErrors ()
         {
             var ec = GL.GetError ();
 
@@ -1071,9 +983,9 @@ namespace Cor.Library.OTK
                 throw new Exception (ec.ToString ());
             }
         }
-        
+
         [ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
-        static IntPtr Add (IntPtr pointer, int offset)
+        public static IntPtr Add (IntPtr pointer, int offset)
         {
             unsafe
             {
@@ -1082,15 +994,15 @@ namespace Cor.Library.OTK
         }
 
         [ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
-        static IntPtr Subtract (IntPtr pointer, int offset)
+        public static IntPtr Subtract (IntPtr pointer, int offset)
         {
             unsafe
             {
                 return (IntPtr) (unchecked (((byte *) pointer) - offset));
             }
         }
-        
-        static void EnableVertAttribs (VertexDeclaration vertDecl, IntPtr pointer)
+
+        public static void EnableVertAttribs (VertexDeclaration vertDecl, IntPtr pointer)
         {
             var vertElems = vertDecl.GetVertexElements ();
 
@@ -1100,7 +1012,7 @@ namespace Cor.Library.OTK
             foreach (var elem in vertElems)
             {
                 GL.EnableVertexAttribArray (counter);
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
 
                 //var vertElemUsage = elem.VertexElementUsage;
                 var vertElemFormat = elem.VertexElementFormat;
@@ -1119,43 +1031,41 @@ namespace Cor.Library.OTK
 
                 GL.VertexAttribPointer (
                     counter,                // index - specifies the generic vertex attribute index.  This value is 0 to
-                                            //         max vertex attributes supported - 1.
+                    //         max vertex attributes supported - 1.
                     numComponentsInVertElem,// size - number of components specified in the vertex array for the
-                                            //        vertex attribute referenced by index.  Valid values are 1 - 4.
+                    //        vertex attribute referenced by index.  Valid values are 1 - 4.
                     glVertElemFormat,       // type - Data format, valid values are GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT,
-                                            //        GL_FLOAT, GL_FIXED, GL_HALF_FLOAT_OES*(Optional feature of es2)
+                    //        GL_FLOAT, GL_FIXED, GL_HALF_FLOAT_OES*(Optional feature of es2)
                     vertElemNormalized,     // normalised - used to indicate whether the non-floating data format type should be normalised
-                                            //              or not when converted to floating point.
+                    //              or not when converted to floating point.
                     vertDecl.VertexStride,  // stride - the components of vertex attribute specified by size are stored sequentially for each
-                                            //          vertex.  stride specifies the delta between data for vertex index i and vertex (i + 1).
-                                            //          If stride is 0, attribute data for all vertices are stored sequentially.
-                                            //          If stride is > 0, then we use the stride valude tas the pitch to get vertex data
-                                            //          for the next index.
+                    //          vertex.  stride specifies the delta between data for vertex index i and vertex (i + 1).
+                    //          If stride is 0, attribute data for all vertices are stored sequentially.
+                    //          If stride is > 0, then we use the stride valude tas the pitch to get vertex data
+                    //          for the next index.
                     ptr
 
-                    );
+                );
 
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
 
                 counter++;
 
             }
         }
 
-        static void DisableVertAttribs (VertexDeclaration vertDecl)
+        public static void DisableVertAttribs (VertexDeclaration vertDecl)
         {
             var vertElems = vertDecl.GetVertexElements ();
 
             for (int i = 0; i < vertElems.Length; ++i)
             {
                 GL.DisableVertexAttribArray (i);
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
             }
         }
-        
-        #region Enum Converters
 
-        static TextureUnit ConvertToOTKTextureSlotEnum (Int32 slot)
+        public static TextureUnit ConvertToOpenTKTextureSlotEnum (Int32 slot)
         {
             switch (slot)
             {
@@ -1195,53 +1105,49 @@ namespace Cor.Library.OTK
             throw new NotSupportedException ();
         }
 
-        static Type ConvertToType (ActiveAttribType ogl)
+        public static Type ConvertToType (ActiveAttribType ogl)
         {
             switch (ogl)
             {
-            case ActiveAttribType.Float: return typeof (Single);
-            case ActiveAttribType.FloatMat2: throw new NotSupportedException ();
-            case ActiveAttribType.FloatMat3: throw new NotSupportedException ();
-            case ActiveAttribType.FloatMat4: return typeof (Abacus.SinglePrecision.Matrix44);
-            case ActiveAttribType.FloatVec2: return typeof (Abacus.SinglePrecision.Vector2);
-            case ActiveAttribType.FloatVec3: return typeof (Abacus.SinglePrecision.Vector3);
-            case ActiveAttribType.FloatVec4: return typeof (Abacus.SinglePrecision.Vector4);
+                case ActiveAttribType.Float: return typeof (Single);
+                case ActiveAttribType.FloatMat2: throw new NotSupportedException ();
+                case ActiveAttribType.FloatMat3: throw new NotSupportedException ();
+                case ActiveAttribType.FloatMat4: return typeof (Abacus.SinglePrecision.Matrix44);
+                case ActiveAttribType.FloatVec2: return typeof (Abacus.SinglePrecision.Vector2);
+                case ActiveAttribType.FloatVec3: return typeof (Abacus.SinglePrecision.Vector3);
+                case ActiveAttribType.FloatVec4: return typeof (Abacus.SinglePrecision.Vector4);
             }
 
             throw new NotSupportedException ();
         }
 
-        static Type ConvertToType (ActiveUniformType ogl)
+        public static Type ConvertToType (ActiveUniformType ogl)
         {
             switch (ogl)
             {
-            case ActiveUniformType.Bool: return typeof (Boolean);
-            case ActiveUniformType.BoolVec2: throw new NotSupportedException ();
-            case ActiveUniformType.BoolVec3: throw new NotSupportedException ();
-            case ActiveUniformType.BoolVec4: throw new NotSupportedException ();
-            case ActiveUniformType.Float: return typeof (Single);
-            case ActiveUniformType.FloatMat2: throw new NotSupportedException ();
-            case ActiveUniformType.FloatMat3: throw new NotSupportedException ();
-            case ActiveUniformType.FloatMat4: return typeof (Abacus.SinglePrecision.Matrix44);
-            case ActiveUniformType.FloatVec2: return typeof (Abacus.SinglePrecision.Vector2);
-            case ActiveUniformType.FloatVec3: return typeof (Abacus.SinglePrecision.Vector3);
-            case ActiveUniformType.FloatVec4: return typeof (Abacus.SinglePrecision.Vector4);
-            case ActiveUniformType.Int: return typeof (Boolean);
-            case ActiveUniformType.IntVec2: throw new NotSupportedException ();
-            case ActiveUniformType.IntVec3: throw new NotSupportedException ();
-            case ActiveUniformType.IntVec4: throw new NotSupportedException ();
-            case ActiveUniformType.Sampler2D: throw new NotSupportedException ();
-            case ActiveUniformType.SamplerCube: throw new NotSupportedException ();
+                case ActiveUniformType.Bool: return typeof (Boolean);
+                case ActiveUniformType.BoolVec2: throw new NotSupportedException ();
+                case ActiveUniformType.BoolVec3: throw new NotSupportedException ();
+                case ActiveUniformType.BoolVec4: throw new NotSupportedException ();
+                case ActiveUniformType.Float: return typeof (Single);
+                case ActiveUniformType.FloatMat2: throw new NotSupportedException ();
+                case ActiveUniformType.FloatMat3: throw new NotSupportedException ();
+                case ActiveUniformType.FloatMat4: return typeof (Abacus.SinglePrecision.Matrix44);
+                case ActiveUniformType.FloatVec2: return typeof (Abacus.SinglePrecision.Vector2);
+                case ActiveUniformType.FloatVec3: return typeof (Abacus.SinglePrecision.Vector3);
+                case ActiveUniformType.FloatVec4: return typeof (Abacus.SinglePrecision.Vector4);
+                case ActiveUniformType.Int: return typeof (Boolean);
+                case ActiveUniformType.IntVec2: throw new NotSupportedException ();
+                case ActiveUniformType.IntVec3: throw new NotSupportedException ();
+                case ActiveUniformType.IntVec4: throw new NotSupportedException ();
+                case ActiveUniformType.Sampler2D: throw new NotSupportedException ();
+                case ActiveUniformType.SamplerCube: throw new NotSupportedException ();
             }
 
             throw new NotSupportedException ();
         }
 
-        static void Convert (
-            VertexElementFormat blimey,
-            out VertexAttribPointerType dataFormat,
-            out bool normalized,
-            out int size)
+        public static void Convert (VertexElementFormat blimey, out VertexAttribPointerType dataFormat, out bool normalized, out int size)
         {
             normalized = false;
             size = 0;
@@ -1250,23 +1156,23 @@ namespace Cor.Library.OTK
             switch (blimey)
             {
                 case VertexElementFormat.Single:
-                dataFormat = VertexAttribPointerType.Float;
+                    dataFormat = VertexAttribPointerType.Float;
                     size = 1;
                     break;
                 case VertexElementFormat.Vector2:
-                dataFormat = VertexAttribPointerType.Float;
+                    dataFormat = VertexAttribPointerType.Float;
                     size = 2;
                     break;
                 case VertexElementFormat.Vector3:
-                dataFormat = VertexAttribPointerType.Float;
+                    dataFormat = VertexAttribPointerType.Float;
                     size = 3;
                     break;
                 case VertexElementFormat.Vector4:
-                dataFormat = VertexAttribPointerType.Float;
+                    dataFormat = VertexAttribPointerType.Float;
                     size = 4;
                     break;
                 case VertexElementFormat.Colour:
-                dataFormat = VertexAttribPointerType.UnsignedByte;
+                    dataFormat = VertexAttribPointerType.UnsignedByte;
                     normalized = true;
                     size = 4;
                     break;
@@ -1280,24 +1186,24 @@ namespace Cor.Library.OTK
             }
         }
 
-        static BlendingFactorSrc ConvertToOTKBlendingFactorSrcEnum (BlendFactor blimey)
+        public static BlendingFactorSrc ConvertToOpenTKBlendingFactorSrcEnum (BlendFactor blimey)
         {
             switch (blimey)
             {
                 case BlendFactor.Zero: return BlendingFactorSrc.Zero;
                 case BlendFactor.One: return BlendingFactorSrc.One;
 
-#if COR_PLATFORM_MONOMAC
+                    #if COR_PLATFORM_MONOMAC
 
                 case BlendFactor.SourceColour: return BlendingFactorSrc.Src1Color; // todo: check this src1 stuff
                 case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrc1Color;
 
-#elif COR_PLATFORM_XIOS
+                    #elif COR_PLATFORM_XIOS
 
-                case BlendFactor.SourceColour: return BlendingFactorSrc.SrcColor;
-                case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrcColor;
+                    case BlendFactor.SourceColour: return BlendingFactorSrc.SrcColor;
+                    case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrcColor;
 
-#endif
+                    #endif
 
                 case BlendFactor.SourceAlpha: return BlendingFactorSrc.SrcAlpha;
                 case BlendFactor.InverseSourceAlpha: return BlendingFactorSrc.OneMinusSrcAlpha;
@@ -1310,7 +1216,7 @@ namespace Cor.Library.OTK
             throw new Exception ();
         }
 
-        static BlendingFactorDest ConvertToOTKBlendingFactorDestEnum (BlendFactor blimey)
+        public static BlendingFactorDest ConvertToOpenTKBlendingFactorDestEnum (BlendFactor blimey)
         {
             switch (blimey)
             {
@@ -1329,7 +1235,7 @@ namespace Cor.Library.OTK
             throw new Exception ();
         }
 
-        static BlendFactor ConvertToCorBlendFactorEnum (All ogl)
+        public static BlendFactor ConvertToCorBlendFactorEnum (All ogl)
         {
             switch (ogl)
             {
@@ -1348,7 +1254,7 @@ namespace Cor.Library.OTK
             throw new Exception ();
         }
 
-        static BlendEquationMode ConvertToOTKBlendEquationModeEnum (BlendFunction blimey)
+        public static BlendEquationMode ConvertToOpenTKBlendEquationModeEnum (BlendFunction blimey)
         {
             switch (blimey)
             {
@@ -1362,7 +1268,7 @@ namespace Cor.Library.OTK
             throw new Exception ();
         }
 
-        static BlendFunction ConvertToCorBlendFunctionEnum (All ogl)
+        public static BlendFunction ConvertToCorBlendFunctionEnum (All ogl)
         {
             switch (ogl)
             {
@@ -1376,105 +1282,46 @@ namespace Cor.Library.OTK
             throw new Exception ();
         }
 
-        // PRIMITIVE TYPE
-        static BeginMode ConvertToOTKBeginModeEnum (PrimitiveType blimey)
+        public static BeginMode ConvertToOpenTKBeginModeEnum (PrimitiveType blimey)
         {
             switch (blimey) {
-            case PrimitiveType.LineList:
-                return  BeginMode.Lines;
-            case PrimitiveType.LineStrip:
-                return  BeginMode.LineStrip;
-            case PrimitiveType.TriangleList:
-                return  BeginMode.Triangles;
-            case PrimitiveType.TriangleStrip:
-                return  BeginMode.TriangleStrip;
+                case PrimitiveType.LineList:
+                    return  BeginMode.Lines;
+                case PrimitiveType.LineStrip:
+                    return  BeginMode.LineStrip;
+                case PrimitiveType.TriangleList:
+                    return  BeginMode.Triangles;
+                case PrimitiveType.TriangleStrip:
+                    return  BeginMode.TriangleStrip;
 
-            default:
-                throw new Exception ("problem");
+                default:
+                    throw new Exception ("problem");
             }
         }
 
-        static PrimitiveType ConvertToCorPrimitiveTypeEnum (All ogl)
+        public static PrimitiveType ConvertToCorPrimitiveTypeEnum (All ogl)
         {
             switch (ogl) {
-            case All.Lines:
-                return  PrimitiveType.LineList;
-            case All.LineStrip:
-                return  PrimitiveType.LineStrip;
-            case All.Points:
-                throw new Exception ("Not supported by Cor");
-            case All.TriangleFan:
-                throw new Exception ("Not supported by Cor");
-            case All.Triangles:
-                return  PrimitiveType.TriangleList;
-            case All.TriangleStrip:
-                return  PrimitiveType.TriangleStrip;
+                case All.Lines:
+                    return  PrimitiveType.LineList;
+                case All.LineStrip:
+                    return  PrimitiveType.LineStrip;
+                case All.Points:
+                    throw new Exception ("Not supported by Cor");
+                case All.TriangleFan:
+                    throw new Exception ("Not supported by Cor");
+                case All.Triangles:
+                    return  PrimitiveType.TriangleList;
+                case All.TriangleStrip:
+                    return  PrimitiveType.TriangleStrip;
 
-            default:
-                throw new Exception ("problem");
+                default:
+                    throw new Exception ("problem");
 
             }
         }
-        
-        #endregion
-        
-        #region Extensions
-        
-        static KhronosVector2 ToOTK (this Abacus.SinglePrecision.Vector2 vec)
-        {
-            return new KhronosVector2 (vec.X, vec.Y);
-        }
 
-        static Abacus.SinglePrecision.Vector2 ToAbacus (this KhronosVector2 vec)
-        {
-            return new Abacus.SinglePrecision.Vector2 (vec.X, vec.Y);
-        }
-        
-        static KhronosVector3 ToOTK (this Abacus.SinglePrecision.Vector3 vec)
-        {
-            return new KhronosVector3 (vec.X, vec.Y, vec.Z);
-        }
-
-        static Abacus.SinglePrecision.Vector3 ToAbacus (this KhronosVector3 vec)
-        {
-            return new Abacus.SinglePrecision.Vector3 (vec.X, vec.Y, vec.Z);
-        }
-        
-        static KhronosVector4 ToOTK (this Abacus.SinglePrecision.Vector4 vec)
-        {
-            return new KhronosVector4 (vec.X, vec.Y, vec.Z, vec.W);
-        }
-
-        static Abacus.SinglePrecision.Vector4 ToAbacus (this KhronosVector4 vec)
-        {
-            return new Abacus.SinglePrecision.Vector4 (vec.X, vec.Y, vec.Z, vec.W);
-        }
-        
-        static KhronosMatrix4 ToOTK (this Abacus.SinglePrecision.Matrix44 mat)
-        {
-            return new KhronosMatrix4(
-                mat.R0C0, mat.R0C1, mat.R0C2, mat.R0C3,
-                mat.R1C0, mat.R1C1, mat.R1C2, mat.R1C3,
-                mat.R2C0, mat.R2C1, mat.R2C2, mat.R2C3,
-                mat.R3C0, mat.R3C1, mat.R3C2, mat.R3C3);
-        }
-
-        static Abacus.SinglePrecision.Matrix44 ToAbacus (this KhronosMatrix4 mat)
-        {
-            return new Abacus.SinglePrecision.Matrix44(
-                mat.M11, mat.M12, mat.M13, mat.M14,
-                mat.M21, mat.M22, mat.M23, mat.M24,
-                mat.M31, mat.M32, mat.M33, mat.M34,
-                mat.M41, mat.M42, mat.M43, mat.M44);
-        }
-        
-        #endregion
-        
-        #endregion
-    
-        #region Shader Helper Functions
-
-        internal static Int32 CreateShaderProgram ()
+        public static Int32 CreateShaderProgram ()
         {
             // Create shader program.
             Int32 programHandle = GL.CreateProgram ();
@@ -1482,12 +1329,12 @@ namespace Cor.Library.OTK
             if (programHandle == 0 )
                 throw new Exception ("Failed to create shader program");
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             return programHandle;
         }
 
-        internal static Int32 CreateVertexShader (String source)
+        public static Int32 CreateVertexShader (String source)
         {
             Int32 vertShaderHandle;
 
@@ -1502,7 +1349,7 @@ namespace Cor.Library.OTK
             return vertShaderHandle;
         }
 
-        internal static Int32 CreateFragmentShader (String source)
+        public static Int32 CreateFragmentShader (String source)
         {
             Int32 fragShaderHandle;
 
@@ -1518,48 +1365,42 @@ namespace Cor.Library.OTK
             return fragShaderHandle;
         }
 
-        internal static void AttachShader (
-            Int32 programHandle,
-            Int32 shaderHandle)
+        public static void AttachShader (Int32 programHandle, Int32 shaderHandle)
         {
             if (shaderHandle != 0)
             {
                 // Attach vertex shader to program.
                 GL.AttachShader (programHandle, shaderHandle);
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
             }
         }
 
-        internal static void DetachShader (
-            Int32 programHandle,
-            Int32 shaderHandle)
+        public static void DetachShader (Int32 programHandle, Int32 shaderHandle)
         {
             if (shaderHandle != 0)
             {
                 GL.DetachShader (programHandle, shaderHandle);
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
             }
         }
 
-        internal static void DeleteShader (
-            Int32 programHandle,
-            Int32 shaderHandle)
+        public static void DeleteShader (Int32 programHandle, Int32 shaderHandle)
         {
             if (shaderHandle != 0)
             {
                 GL.DeleteShader (shaderHandle);
                 shaderHandle = 0;
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
             }
         }
 
-        static void DestroyShaderProgram (Int32 programHandle)
+        public static void DestroyShaderProgram (Int32 programHandle)
         {
             if (programHandle != 0)
             {
-#if             COR_PLATFORM_XIOS
+                #if             COR_PLATFORM_XIOS
                 GL.DeleteProgram (programHandle);
-#elif           COR_PLATFORM_MONOMAC
+                #elif           COR_PLATFORM_MONOMAC
                 try
                 {
                     GL.DeleteProgram (1, ref programHandle);
@@ -1568,51 +1409,47 @@ namespace Cor.Library.OTK
                 {
                     //InternalUtils.Log.Error ("FUCK! (It seems like OpenTK is broken): " + ex.Message);
                 }
-#endif
+                #endif
 
                 programHandle = 0;
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
             }
         }
 
-        // This should happen offline.
-        internal static void CompileShader (
-            GLShaderType type,
-            String src,
-            out Int32 shaderHandle)
+        public static void CompileShader (GLShaderType type, String src, out Int32 shaderHandle)
         {
             // Create an empty vertex shader object
             shaderHandle = GL.CreateShader (type);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             // Replace the source code in the vertex shader object
-#if COR_PLATFORM_XIOS
+            #if COR_PLATFORM_XIOS
             GL.ShaderSource (
-                shaderHandle,
-                1,
-                new String[] { src },
-                (Int32[]) null);
-#elif COR_PLATFORM_MONOMAC
+            shaderHandle,
+            1,
+            new String[] { src },
+            (Int32[]) null);
+            #elif COR_PLATFORM_MONOMAC
             GL.ShaderSource (
                 shaderHandle,
                 src);
-#endif
+            #endif
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             GL.CompileShader (shaderHandle);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
-#if DEBUG
+            #if DEBUG
             Int32 logLength = 0;
             GL.GetShader (
                 shaderHandle,
                 ShaderParameter.InfoLogLength,
                 out logLength);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
             var infoLog = new System.Text.StringBuilder (logLength);
 
             if (logLength > 0)
@@ -1630,7 +1467,7 @@ namespace Cor.Library.OTK
                 //InternalUtils.Log.Info ("GFX", log);
                 //InternalUtils.Log.Info ("GFX", type.ToString ());
             }
-#endif
+            #endif
             Int32 status = 0;
 
             GL.GetShader (
@@ -1638,7 +1475,7 @@ namespace Cor.Library.OTK
                 ShaderParameter.CompileStatus,
                 out status);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             if (status == 0)
             {
@@ -1647,14 +1484,14 @@ namespace Cor.Library.OTK
             }
         }
 
-        internal static List<OTKShaderUniform> GetUniforms (Int32 prog)
+        public static List<OTKShaderUniform> GetUniforms (Int32 prog)
         {
             int numActiveUniforms = 0;
 
             var result = new List<OTKShaderUniform>();
 
             GL.GetProgram (prog, ProgramParameter.ActiveUniforms, out numActiveUniforms);
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             for (int i = 0; i < numActiveUniforms; ++i)
             {
@@ -1673,13 +1510,13 @@ namespace Cor.Library.OTK
                     out size,
                     out type,
                     sb);
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
 
                 string name = sb.ToString ();
 
                 int uniformLocation = GL.GetUniformLocation (prog, name);
 
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
 
                 if (uniformLocation == -1 )
                     throw new Exception ();
@@ -1709,7 +1546,7 @@ namespace Cor.Library.OTK
             return result;
         }
 
-        internal static List<OTKShaderAttribute> GetAttributes (Int32 prog)
+        public static List<OTKShaderAttribute> GetAttributes (Int32 prog)
         {
             int numActiveAttributes = 0;
 
@@ -1717,7 +1554,7 @@ namespace Cor.Library.OTK
 
             // gets the number of active vertex attributes
             GL.GetProgram (prog, ProgramParameter.ActiveAttributes, out numActiveAttributes);
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             for (int i = 0; i < numActiveAttributes; ++i)
             {
@@ -1735,13 +1572,13 @@ namespace Cor.Library.OTK
                     out size,
                     out type,
                     sb);
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
 
                 string name = sb.ToString ();
 
                 int attLocation = GL.GetAttribLocation (prog, name);
 
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
 
                 result.Add (
                     new OTKShaderAttribute
@@ -1757,15 +1594,15 @@ namespace Cor.Library.OTK
             return result;
         }
 
-        internal static bool LinkProgram (Int32 prog)
+        public static bool LinkProgram (Int32 prog)
         {
             bool retVal = true;
 
             GL.LinkProgram (prog);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
-#if DEBUG
+            #if DEBUG
             Int32 logLength = 0;
 
             GL.GetProgram (
@@ -1773,7 +1610,7 @@ namespace Cor.Library.OTK
                 ProgramParameter.InfoLogLength,
                 out logLength);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             if (logLength > 0)
             {
@@ -1792,11 +1629,11 @@ namespace Cor.Library.OTK
                 GL.GetProgramInfoLog (prog, out infoLog);
 
 
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
 
                 //InternalUtils.Log.Info ("GFX", string.Format ("[Cor.Resources] Program link log:\n{0}", infoLog));
             }
-#endif
+            #endif
             Int32 status = 0;
 
             GL.GetProgram (
@@ -1804,7 +1641,7 @@ namespace Cor.Library.OTK
                 ProgramParameter.LinkStatus,
                 out status);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             if (status == 0)
             {
@@ -1815,11 +1652,11 @@ namespace Cor.Library.OTK
 
         }
 
-        internal static void ValidateProgram (Int32 programHandle)
+        public static void ValidateProgram (Int32 programHandle)
         {
             GL.ValidateProgram (programHandle);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             Int32 logLength = 0;
 
@@ -1828,7 +1665,7 @@ namespace Cor.Library.OTK
                 ProgramParameter.InfoLogLength,
                 out logLength);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             if (logLength > 0)
             {
@@ -1839,7 +1676,7 @@ namespace Cor.Library.OTK
                     logLength,
                     out logLength, infoLog);
 
-                ThrowErrors ();
+                OpenTKHelper.ThrowErrors ();
 
                 //InternalUtils.Log.Info ("GFX", string.Format ("[Cor.Resources] Program validate log:\n{0}", infoLog));
             }
@@ -1850,15 +1687,250 @@ namespace Cor.Library.OTK
                 programHandle, ProgramParameter.LinkStatus,
                 out status);
 
-            ThrowErrors ();
+            OpenTKHelper.ThrowErrors ();
 
             if (status == 0)
             {
                 throw new Exception (String.Format ("Failed to validate program {0:x}", programHandle));
             }
         }
+
+        public static void DeactivateVertexBuffer (VertexBufferHandle handle)
+        {
+            const BufferTarget type = BufferTarget.ArrayBuffer;
+            GL.BindBuffer (type, 0);
+            OpenTKHelper.ThrowErrors ();
+                 }
+
+        public static void DeactivateIndexBuffer (IndexBufferHandle handle)
+        {
+            const BufferTarget type = BufferTarget.ElementArrayBuffer;
+            GL.BindBuffer (type, 0);
+            OpenTKHelper.ThrowErrors ();
+        }
+
+        public static void DestroyTexture (Handle textureHandle)
+        {
+            int glTextureId = (textureHandle as TextureHandle).TextureId;
+
+            GL.DeleteTextures (1, ref glTextureId);
+        }
+
+        public static ShaderVariantHandle CreateInternalShaderVariant (String identifier, String vertexShaderSource, String fragmentShaderSource)
+        {
+            Int32 vertexShaderHandle = -1;
+            Int32 fragmentShaderHandle = -1;
+
+            CompileShader (ShaderType.VertexShader, vertexShaderSource, out vertexShaderHandle);
+            CompileShader (ShaderType.FragmentShader, fragmentShaderSource, out fragmentShaderHandle);
+
+            Console.WriteLine("Creating Pass Variant: " + identifier);
+
+            var programHandle = CreateShaderProgram ();
+
+            var vertShaderHandle = CreateVertexShader (vertexShaderSource);
+            var fragShaderHandle = CreateFragmentShader (fragmentShaderSource);
+
+            AttachShader (programHandle, vertShaderHandle);
+            AttachShader (programHandle, fragShaderHandle);
+
+            var result = new ShaderVariantHandle (vertShaderHandle, fragShaderHandle, programHandle);
+
+            return result;
+        }
+    }
+
+    internal static class TypeConversionExtensions
+    {
+        public static KhronosVector2 ToOpenTK (this Abacus.SinglePrecision.Vector2 vec)
+        {
+            return new KhronosVector2 (vec.X, vec.Y);
+        }
+
+        public static Abacus.SinglePrecision.Vector2 ToAbacus (this KhronosVector2 vec)
+        {
+            return new Abacus.SinglePrecision.Vector2 (vec.X, vec.Y);
+        }
+
+        public static KhronosVector3 ToOpenTK (this Abacus.SinglePrecision.Vector3 vec)
+        {
+            return new KhronosVector3 (vec.X, vec.Y, vec.Z);
+        }
+
+        public static Abacus.SinglePrecision.Vector3 ToAbacus (this KhronosVector3 vec)
+        {
+            return new Abacus.SinglePrecision.Vector3 (vec.X, vec.Y, vec.Z);
+        }
+
+        public static KhronosVector4 ToOpenTK (this Abacus.SinglePrecision.Vector4 vec)
+        {
+            return new KhronosVector4 (vec.X, vec.Y, vec.Z, vec.W);
+        }
+
+        public static Abacus.SinglePrecision.Vector4 ToAbacus (this KhronosVector4 vec)
+        {
+            return new Abacus.SinglePrecision.Vector4 (vec.X, vec.Y, vec.Z, vec.W);
+        }
+
+        public static KhronosMatrix4 ToOpenTK (this Abacus.SinglePrecision.Matrix44 mat)
+        {
+            return new KhronosMatrix4(
+                mat.R0C0, mat.R0C1, mat.R0C2, mat.R0C3,
+                mat.R1C0, mat.R1C1, mat.R1C2, mat.R1C3,
+                mat.R2C0, mat.R2C1, mat.R2C2, mat.R2C3,
+                mat.R3C0, mat.R3C1, mat.R3C2, mat.R3C3);
+        }
+
+        public static Abacus.SinglePrecision.Matrix44 ToAbacus (this KhronosMatrix4 mat)
+        {
+            return new Abacus.SinglePrecision.Matrix44(
+                mat.M11, mat.M12, mat.M13, mat.M14,
+                mat.M21, mat.M22, mat.M23, mat.M24,
+                mat.M31, mat.M32, mat.M33, mat.M34,
+                mat.M41, mat.M42, mat.M43, mat.M44);
+        }
+    }
+
+    
+    // Cross platform wrapper around the Open TK libary, sitting at a slightly higher level.
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    internal class ShaderVariantHandle
+    {
+        public Int32 VertexShaderHandle { get; private set; }
+        public Int32 FragmentShaderHandle { get; private set; }
+        public Int32 ProgramHandle { get; private set; }
+
+        internal ShaderVariantHandle (Int32 vertexShaderHandle, Int32 fragmentShaderHandle, Int32 programHandle)
+        {
+            this.VertexShaderHandle = vertexShaderHandle;
+            this.FragmentShaderHandle = fragmentShaderHandle;
+            this.ProgramHandle = programHandle;
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public class ShaderHandle
+        : Handle
+    {
+        internal List<ShaderVariantHandle> VariantHandles { get; private set; }
+
+        internal ShaderHandle (List<ShaderVariantHandle> variantHandles)
+        {
+            this.VariantHandles = variantHandles;
+        }
+
+        protected override void CleanUpNativeResources ()
+        {
+            // TODO: Make destroy call here?
+
+            VariantHandles.Clear ();
+
+            base.CleanUpNativeResources ();
+        }
+    }
+    
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    
+    public class TextureHandle
+        : Handle
+    {
+        public Int32 TextureId { get; private set; }
         
-        #endregion
+        internal TextureHandle (int textureId)
+        {
+            this.TextureId = textureId;
+        }
+
+        protected override void CleanUpNativeResources ()
+        {
+            // TODO: Make destroy call here?
+
+            TextureId = 0;
+
+            base.CleanUpNativeResources ();
+        }
+    }
+    
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    
+    public class IndexBufferHandle
+        : Handle
+    {
+        static Int32 resourceCounter;
+        
+        public UInt32 GLHandle { get; private set; }
+        
+        internal IndexBufferHandle (UInt32 glHandle)
+        {
+            GLHandle = glHandle;
+            resourceCounter++;
+        }
+
+        protected override void CleanUpNativeResources ()
+        {
+            // TODO: Make destroy call here?
+
+            GLHandle = 0;
+            resourceCounter--;
+            
+            base.CleanUpNativeResources ();
+        }
+    }
+    
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    
+    public class VertexBufferHandle
+        : Handle
+    {
+        static Int32 resourceCounter;
+        
+        public UInt32 GLHandle { get; private set; }
+        
+        internal VertexBufferHandle (UInt32 glHandle)
+        {
+            GLHandle = glHandle;
+            resourceCounter++;
+        }
+
+        protected override void CleanUpNativeResources ()
+        {
+            // TODO: Make destroy call here?
+
+            GLHandle = 0;
+            resourceCounter--;
+            
+            base.CleanUpNativeResources ();
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    // This is a dirty hack for the time being.
+    public static class OpenTkCache
+    {
+        static readonly Dictionary <String, Dictionary<String, Object>> data = 
+            new Dictionary<String, Dictionary<String, Object>> ();
+
+        public static void Set<T> (Handle h, String identifier, T value)
+        {
+            if (!data.ContainsKey (h.Identifier))
+                data.Add (h.Identifier, new Dictionary<String, Object> ());
+
+            data[h.Identifier].Add (identifier, value);
+        }
+
+        public static T Get <T> (Handle h, String identifier)
+        {
+            return (T) data[h.Identifier][identifier];
+        }
+
+        public static void Clear (Handle h)
+        {
+            data.Remove (h.Identifier);
+        }
     }
 
     sealed class OTKShaderUniform

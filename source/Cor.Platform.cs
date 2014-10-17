@@ -64,7 +64,6 @@ namespace Cor.Platform
         Single                  sfx_GetVolume                           ();
         void                    sfx_SetVolume                           (Single volume);
 
-        void                    gfx_Reset                               ();
         void                    gfx_ClearColourBuffer                   (Rgba32 color);
         void                    gfx_ClearDepthBuffer                    (Single depth);
         void                    gfx_SetCullMode                         (CullMode cullMode);
@@ -107,10 +106,10 @@ namespace Cor.Platform
         Int32                   gfx_tex_GetHeight                       (Handle textureHandle);
         TextureFormat           gfx_tex_GetTextureFormat                (Handle textureHandle);
         Byte[]                  gfx_tex_GetData                         (Handle textureHandle);
-        void                    gfx_tex_Activate                        (Int32 slot, Handle textureHandle);
+        void                    gfx_tex_Activate                        (Handle textureHandle, Int32 slot);
 
         void                    gfx_shdr_SetVariable<T>                 (Handle shaderHandle, Int32 variantIndex, String name, T value);
-        void                    gfx_shdr_SetSampler                     (Handle shaderHandle, Int32 variantIndex, String name, Handle textureHandle);
+        void                    gfx_shdr_SetSampler                     (Handle shaderHandle, Int32 variantIndex, String name, Int32 slot);
         void                    gfx_shdr_Activate                       (Handle shaderHandle, Int32 variantIndex);
         Int32                   gfx_shdr_GetVariantCount                (Handle shaderHandle);
         String                  gfx_shdr_GetIdentifier                  (Handle shaderHandle, Int32 variantIndex);
