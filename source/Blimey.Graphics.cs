@@ -44,16 +44,16 @@ namespace Blimey
     
     using System.Linq;
     using Cor;
-	
+    using Cor.Platform;
 	
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 	
-	public static class GraphicsBaseExtensions
+	public static class GraphicsBExtensions
 	{
 		static BlendMode lastSet = BlendMode.Default;
         static Boolean neverSet = true;
 
-        public static void SetBlendEquation (this GraphicsBase graphics, BlendMode blendMode)
+        public static void SetBlendEquation (this Graphics graphics, BlendMode blendMode)
         {
             if (neverSet || lastSet != blendMode)
             {
@@ -64,6 +64,16 @@ namespace Blimey
 
                 lastSet = blendMode;
             }
+        }
+
+        public static Shader CreateShader (this Graphics graphics, ShaderAsset shaderAsset)
+        {
+            return graphics.CreateShader (shaderAsset.Declaration, shaderAsset.Format, shaderAsset.Sources);
+        }
+
+        public static Texture CreateTexture (this Graphics graphics, TextureAsset textureAsset)
+        {
+            return graphics.CreateTexture (textureAsset.TextureFormat, textureAsset.Width, textureAsset.Height, textureAsset.Data);
         }
 	}
 
@@ -233,13 +243,13 @@ namespace Blimey
 
     public class Material
     {
-        IShader shader;
+        Shader shader;
         string renderPass;
 
         public BlendMode BlendMode { get; set; }
         public string RenderPass { get { return renderPass; } }
 
-        public Material(string renderPass, IShader shader)
+        public Material(string renderPass, Shader shader)
         {
             this.BlendMode = BlendMode.Default;
 
@@ -311,8 +321,6 @@ namespace Blimey
                 shader.SetVariable (propertyName, textureOffsetSettings[propertyName]);
             }
 
-            shader.ResetSamplerTargets();
-
             int i = 0;
             foreach(var key in textureSamplerSettings.Keys)
             {
@@ -321,7 +329,7 @@ namespace Blimey
             }
         }
 
-        internal IShader GetShader()
+        internal Shader GetShader()
         {
             return shader;
         }
@@ -338,18 +346,18 @@ namespace Blimey
             set { throw new NotImplementedException (); }
         }
 
-        internal void UpdateGpuSettings(GraphicsBase graphics)
+        internal void UpdateGpuSettings(Graphics graphics)
         {
             // Update the render states on the gpu
 			graphics.SetBlendEquation (this.BlendMode);
 
-            graphics.SetActiveTexture (0, null);
+            graphics.SetActiveTexture (null, 0);
 
             // Set the active textures on the gpu
             int i = 0;
             foreach(var key in textureSamplerSettings.Keys)
             {
-                graphics.SetActiveTexture (i, textureSamplerSettings[key]);
+                graphics.SetActiveTexture (textureSamplerSettings[key], i);
                 i++;
             }
         }
@@ -361,7 +369,7 @@ namespace Blimey
         Dictionary<string, Vector4> vector4Settings = new Dictionary<string, Vector4>();
         Dictionary<string, Vector2> scaleSettings = new Dictionary<string, Vector2>();
         Dictionary<string, Vector2> textureOffsetSettings = new Dictionary<string, Vector2>();
-        Dictionary<string, ITexture> textureSamplerSettings = new Dictionary<string, ITexture>();
+        Dictionary<string, Texture> textureSamplerSettings = new Dictionary<string, Texture>();
 
         public void SetColour(string propertyName, Rgba32 colour)
         {
@@ -399,7 +407,7 @@ namespace Blimey
         }
 
 
-        public void SetTexture(string propertyName, ITexture texture)
+        public void SetTexture(string propertyName, Texture texture)
         {
             textureSamplerSettings[propertyName] = texture;
         }

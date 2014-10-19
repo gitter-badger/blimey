@@ -37,6 +37,7 @@ namespace Blimey
     using Fudge;
     using Abacus.SinglePrecision;
     using Cor;
+    using Cor.Platform;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -476,17 +477,18 @@ namespace Blimey
 	            };
 	        }
 	
-	        public static SpriteMesh Create(GraphicsBase gfx)
+	        public static SpriteMesh Create(Graphics gfx)
 	        {
 	            var sm = new SpriteMesh();
-	            sm.GeomBuffer = gfx.CreateGeometryBuffer(
+                sm.VertexBuffer = gfx.CreateVertexBuffer(
 	                VertexPositionTexture.Default.VertexDeclaration,
-	                sm.spriteVerts.Length,
-	                sm.spriteIndices.Length);
+	                sm.spriteVerts.Length);
+                sm.IndexBuffer = gfx.CreateIndexBuffer(
+                    sm.spriteIndices.Length);
 	
-	            sm.GeomBuffer.VertexBuffer.SetData(sm.spriteVerts);
+	            sm.VertexBuffer.SetData(sm.spriteVerts);
 	
-	            sm.GeomBuffer.IndexBuffer.SetData(sm.spriteIndices);
+	            sm.IndexBuffer.SetData(sm.spriteIndices);
 	
 	            sm.TriangleCount = 2;
 	            sm.VertexCount = 4;
@@ -512,13 +514,13 @@ namespace Blimey
         //static BillboardPrimitive billboard;
 
         // they also share an unlit shader
-        public static IShader SpriteShader
+        public static Shader SpriteShader
         {
             get { return spriteShader; }
             set { spriteShader = value; }
         }
 
-        static IShader spriteShader;
+        static Shader spriteShader;
 
         // defines how to move from world space to sprite space.
         Matrix44 spriteSpaceMatrix;
@@ -555,7 +557,7 @@ namespace Blimey
         Boolean     currentFlipHorizontal;
         Boolean     currentFlipVertical;
         Rgba32      currentColour;
-        ITexture   currentTexture;
+        Texture     currentTexture;
 
         // track the desired status of the sprite
         Single      desiredWidth;
@@ -567,7 +569,7 @@ namespace Blimey
         Boolean     desiredFlipHorizontal;
         Boolean     desiredFlipVertical;
         Rgba32      desiredColour;
-        ITexture   desiredTexture;
+        Texture     desiredTexture;
 
 
         /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -589,7 +591,7 @@ namespace Blimey
         public Boolean FlipHorizontal { get { return desiredFlipHorizontal; } set { desiredFlipHorizontal = value; } }
         public Boolean FlipVertical { get { return desiredFlipVertical; } set { desiredFlipVertical = value; } }
         public Rgba32 Colour { get { return desiredColour; } set { desiredColour = value; } }
-        public ITexture Texture { get { return desiredTexture; } set { desiredTexture = value; } }
+        public Texture Texture { get { return desiredTexture; } set { desiredTexture = value; } }
 
         //--------------------------------------------------------------------//
         public Sprite()

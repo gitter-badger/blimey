@@ -44,7 +44,8 @@ namespace Blimey
     
     using System.Linq;
     using Cor;
-    using Cor.Engine;
+    using Cor.Platform;
+    using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -101,9 +102,9 @@ namespace Blimey
             Single colourChangeTime = 5.0f;
             Single colourChangeTimer = 0.0f;
 
-            GraphicsBase gfx;
+            Graphics gfx;
 
-            public FrameBufferHelper(GraphicsBase gfx)
+            public FrameBufferHelper(Graphics gfx)
             {
                 this.gfx = gfx;
             }
@@ -142,7 +143,7 @@ namespace Blimey
 		/// <summary>
 		/// Blimey's initilisation rountine.
 		/// </summary>
-		public virtual void Start(EngineBase cor)
+		public virtual void Start(Engine cor)
         {
             fps = new FpsHelper();
             frameBuffer = new FrameBufferHelper(cor.Graphics);
@@ -152,7 +153,7 @@ namespace Blimey
 		/// <summary>
 		/// Blimey's root update loop.
 		/// </summary>
-		public virtual Boolean Update(EngineBase cor, AppTime time)
+		public virtual Boolean Update(Engine cor, AppTime time)
         {
 			//FrameStats.SlowLog ();
 			FrameStats.Reset ();
@@ -169,7 +170,7 @@ namespace Blimey
 		/// <summary>
 		/// Blimey's render loop.
 		/// </summary>
-		public virtual void Render(EngineBase cor)
+		public virtual void Render(Engine cor)
         {
             using (new ProfilingTimer(t => FrameStats.RenderTime += t))
             {
@@ -182,7 +183,7 @@ namespace Blimey
 		/// <summary>
 		/// Blimey's termination routine.
 		/// </summary>
-		public virtual void Stop (EngineBase cor)
+		public virtual void Stop (Engine cor)
 		{
 		}
     }
@@ -191,21 +192,21 @@ namespace Blimey
 
     public class Blimey
     {
-        EngineBase cor;
-
-        internal Blimey (EngineBase cor, Scene.SceneConfiguration settings)
+        internal Blimey (Engine engine, Scene.SceneConfiguration settings)
         {
-            this.cor = cor;
-
-            this.InputEventSystem = new InputEventSystem(this.cor);
-            this.DebugShapeRenderer = new DebugShapeRenderer(
-                this.cor,
-                settings.RenderPasses);
+            this.Assets = new Assets (engine);
+            this.InputEventSystem = new InputEventSystem(engine);
+            this.DebugShapeRenderer = new DebugShapeRenderer(engine, settings.RenderPasses);
 
         }
 
-        public InputEventSystem InputEventSystem { get; set; }
-        public DebugShapeRenderer DebugShapeRenderer { get; set; }
+
+
+        public Assets Assets { get; private set; }
+
+        public InputEventSystem InputEventSystem { get; private set; }
+
+        public DebugShapeRenderer DebugShapeRenderer { get; private set; }
 
         internal void PreUpdate (AppTime time)
         {
@@ -252,7 +253,12 @@ namespace Blimey
         /// <summary>
         /// todo
         /// </summary>
-        public IGeometryBuffer GeomBuffer;
+        public VertexBuffer VertexBuffer;
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public IndexBuffer IndexBuffer;
     }
 
 
@@ -457,7 +463,7 @@ namespace Blimey
 		// Scene Data //
 		// ========== //
 		
-		EngineBase cor = null;
+		Engine cor = null;
 		Blimey blimey = null;
 		readonly SceneConfiguration configuration = null;
 		readonly SceneRuntimeConfiguration runtimeConfiguration = null;
@@ -469,7 +475,7 @@ namespace Blimey
 		// ======================= //
 		// Functions for consumers //
 		// ======================= //
-        public EngineBase Cor { get { return cor; } }
+        public Engine Cor { get { return cor; } }
 		public Blimey Blimey { get { return blimey; } }
 		
 		public Boolean Active { get { return isRunning;} }
@@ -492,7 +498,7 @@ namespace Blimey
 		// Blimey internal calls //
 		// ===================== //
 		
-        internal void Initialize (EngineBase cor)
+        internal void Initialize (Engine cor)
         {
 			this.cor = cor;
 			this.blimey = new Blimey (cor, this.configuration);
@@ -704,7 +710,7 @@ namespace Blimey
     //
     public abstract class Trait
     {
-        protected EngineBase Cor { get; set; }
+        protected Engine Cor { get; set; }
         protected Blimey Blimey { get; set; }
 
         public Entity Parent { get; set; }
@@ -713,7 +719,7 @@ namespace Blimey
 
         // INTERNAL METHODS
         // called after constructor and before awake
-		internal void Initilise (EngineBase cor, Blimey blimeyServices, Entity parent)
+		internal void Initilise (Engine cor, Blimey blimeyServices, Entity parent)
         {
             Cor = cor;
             Blimey = blimeyServices;
@@ -801,7 +807,7 @@ namespace Blimey
     internal class SceneManager
     {
         Scene activeScene;
-        EngineBase cor;
+        Engine cor;
 
         SceneRenderManager renderManager;
 
@@ -809,7 +815,7 @@ namespace Blimey
 
         public Scene ActiveState { get { return activeScene; } }
 
-        public SceneManager (EngineBase cor, Scene startScene)
+        public SceneManager (Engine cor, Scene startScene)
         {
             this.cor = cor;
             activeScene = startScene;
@@ -876,9 +882,9 @@ namespace Blimey
 
     internal class SceneRenderManager
     {
-        EngineBase Cor { get; set; }
+        Engine Cor { get; set; }
 
-        internal SceneRenderManager(EngineBase cor)
+        internal SceneRenderManager(Engine cor)
         {
             this.Cor = cor;
         }
@@ -952,7 +958,7 @@ namespace Blimey
             scene.Blimey.DebugShapeRenderer.Render(gfxManager, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
         }
         
-        static void _renderMeshRenderer (GraphicsBase zGfx, string renderPass, Matrix44 zView, Matrix44 zProjection, MeshRenderer mr)
+        static void _renderMeshRenderer (Graphics zGfx, string renderPass, Matrix44 zView, Matrix44 zProjection, MeshRenderer mr)
         {
             if (!mr.Active)
                 return;
@@ -967,10 +973,16 @@ namespace Blimey
                 zGfx.SetCullMode(mr.CullMode);
             }
 
-            using (new ProfilingTimer(t => FrameStats.ActivateGeomBufferTime += t))
+            using (new ProfilingTimer(t => FrameStats.ActivateVertexBufferTime += t))
             {
                 // Set our vertex declaration, vertex buffer, and index buffer.
-                zGfx.SetActiveGeometryBuffer(mr.Mesh.GeomBuffer);
+                zGfx.SetActiveVertexBuffer(mr.Mesh.VertexBuffer);
+            }
+
+            using (new ProfilingTimer(t => FrameStats.ActivateIndexBufferTime += t))
+            {
+                // Set our vertex declaration, vertex buffer, and index buffer.
+                zGfx.SetActiveIndexBuffer(mr.Mesh.IndexBuffer);
             }
 
             using (new ProfilingTimer(t => FrameStats.MaterialTime += t))
@@ -1017,19 +1029,17 @@ namespace Blimey
 
             if( shader != null)
             {
-                foreach (var effectPass in shader.Passes)
+                using (new ProfilingTimer(t => FrameStats.ActivateShaderTime += t))
                 {
-                    using (new ProfilingTimer(t => FrameStats.ActivateShaderTime += t))
-                    {
-                        effectPass.Activate (mr.Mesh.GeomBuffer.VertexBuffer.VertexDeclaration);
-                    }
-                    using (new ProfilingTimer(t => FrameStats.DrawTime += t))
-                    {
-                        FrameStats.DrawIndexedPrimitivesCount ++;
-                        zGfx.DrawIndexedPrimitives (
-                            PrimitiveType.TriangleList, 0, 0,
-                            mr.Mesh.VertexCount, 0, mr.Mesh.TriangleCount);
-                    }
+                    shader.Activate (mr.Mesh.VertexBuffer.VertexDeclaration);
+                }
+
+                using (new ProfilingTimer(t => FrameStats.DrawTime += t))
+                {
+                    FrameStats.DrawIndexedPrimitivesCount ++;
+                    zGfx.DrawIndexedPrimitives (
+                        PrimitiveType.TriangleList, 0, 0,
+                        mr.Mesh.VertexCount, 0, mr.Mesh.TriangleCount);
                 }
             }
 
@@ -2153,14 +2163,23 @@ namespace Blimey
         {
             var asset = new ShaderAsset ();
 
-            asset.Definition = ss.Read <ShaderDefinition> ();
+            asset.Declaration = ss.Read <ShaderDeclaration> ();
+            asset.Format = ss.Read <ShaderFormat> ();
 
-            UInt32 dataLength = ss.Read <UInt32> ();
+            Byte sourceCount = ss.Read <Byte> ();
 
-            asset.Data = new Byte [dataLength];
+            // jagged array
+            asset.Sources = new Byte[sourceCount][];
 
-            for (UInt32 i = 0; i < dataLength; ++ i)
-                asset.Data[i] = ss.Read <Byte> ();
+            for (Byte j = 0; j < sourceCount; ++j)
+            {
+                UInt32 dataLength = ss.Read <UInt32> ();
+
+                asset.Sources [j] = new Byte [dataLength];
+
+                for (UInt32 i = 0; i < dataLength; ++i)
+                    asset.Sources [j][i] = ss.Read <Byte> ();
+            }
 
             return asset;
         }
@@ -2170,11 +2189,18 @@ namespace Blimey
         /// </summary>
         public override void Write (ISerialisationChannel ss, ShaderAsset obj)
         {
-            ss.Write <ShaderDefinition> (obj.Definition);
-            ss.Write <UInt32> ( (UInt32) obj.Data.LongLength);
+            ss.Write <ShaderDeclaration> (obj.Declaration);
+            ss.Write <ShaderFormat> (obj.Format);
 
-            for (UInt32 i = 0; i < obj.Data.Length; ++ i)
-                ss.Write <Byte> (obj.Data [i] );
+            ss.Write <Byte> ( (Byte) obj.Sources.Length);
+
+            for (Byte j = 0; j < obj.Sources.Length; ++j)
+            {
+                ss.Write <UInt32> ((UInt32)obj.Sources [j].LongLength);
+
+                for (UInt32 i = 0; i < obj.Sources [j].Length; ++i)
+                    ss.Write <Byte> (obj.Sources [j] [i]);
+            }
         }
     }
 
@@ -2224,7 +2250,7 @@ namespace Blimey
         {
             var asset = new TextureAsset ();
 
-            asset.SurfaceFormat = ss.Read <SurfaceFormat> ();
+            asset.TextureFormat = ss.Read <TextureFormat> ();
             asset.Width = ss.Read <Int32> ();
             asset.Height = ss.Read <Int32> ();
             Int32 byteCount = ss.Read <Int32> ();
@@ -2244,7 +2270,7 @@ namespace Blimey
         /// </summary>
         public override void Write (ISerialisationChannel ss, TextureAsset obj)
         {
-            ss.Write <SurfaceFormat> (obj.SurfaceFormat);
+            ss.Write <TextureFormat> (obj.TextureFormat);
             ss.Write <Int32> (obj.Width);
             ss.Write <Int32> (obj.Height);
             ss.Write <Int32> (obj.Data.Length);
@@ -2262,49 +2288,42 @@ namespace Blimey
     /// <summary>
     /// An explict Oats.Serialiser for the Cor.ShaderDefinition type.
     /// </summary>
-    public class ShaderDefinitionSerialiser
-        : Serialiser<ShaderDefinition>
+    public class ShaderDeclarationSerialiser
+        : Serialiser<ShaderDeclaration>
     {
         /// <summary>
         /// Returns a Cor.ShaderDefinition object read from an Oats.ISerialisationChannel.
         /// </summary>
-        public override ShaderDefinition Read (ISerialisationChannel ss)
+        public override ShaderDeclaration Read (ISerialisationChannel ss)
         {
-            var sd = new ShaderDefinition ();
+            var sd = new ShaderDeclaration ();
 
             sd.Name =                   ss.Read <String> ();
-            sd.PassNames =              new List <String> ();
-            sd.InputDefinitions =       new List <ShaderDefinition.ShaderInputDefinition> ();
-            sd.SamplerDefinitions =     new List <ShaderDefinition.ShaderSamplerDefinition> ();
-            sd.VariableDefinitions =    new List <ShaderDefinition.ShaderVariableDefinition> ();
+            sd.InputDeclarations =      new List <ShaderInputDeclaration> ();
+            sd.SamplerDeclarations =    new List <ShaderSamplerDeclaration> ();
+            sd.VariableDeclarations =   new List <ShaderVariableDeclaration> ();
 
             Int32 numPassNames = (Int32) ss.Read <Byte> ();
             Int32 numInputDefintions = (Int32) ss.Read <Byte> ();
             Int32 numSamplerDefinitions = (Int32) ss.Read <Byte> ();
             Int32 numVariableDefinitions = (Int32) ss.Read <Byte> ();
 
-            for (Int32 i = 0; i < numPassNames; ++i)
-            {
-                var passName = ss.Read <String> ();
-                sd.PassNames.Add (passName);
-            }
-
             for (Int32 i = 0; i < numInputDefintions; ++i)
             {
-                var inputDef = ss.Read <ShaderDefinition.ShaderInputDefinition> ();
-                sd.InputDefinitions.Add (inputDef);
+                var inputDef = ss.Read <ShaderInputDeclaration> ();
+                sd.InputDeclarations.Add (inputDef);
             }
 
             for (Int32 i = 0; i < numSamplerDefinitions; ++i)
             {
-                var samplerDef = ss.Read <ShaderDefinition.ShaderSamplerDefinition> ();
-                sd.SamplerDefinitions.Add (samplerDef);
+                var samplerDef = ss.Read <ShaderSamplerDeclaration> ();
+                sd.SamplerDeclarations.Add (samplerDef);
             }
 
             for (Int32 i = 0; i < numVariableDefinitions; ++i)
             {
-                var variableDef = ss.Read <ShaderDefinition.ShaderVariableDefinition> ();
-                sd.VariableDefinitions.Add (variableDef);
+                var variableDef = ss.Read <ShaderVariableDeclaration> ();
+                sd.VariableDeclarations.Add (variableDef);
             }
 
             return sd;
@@ -2313,41 +2332,34 @@ namespace Blimey
         /// <summary>
         /// Writes a Cor.ShaderDefinition object to an Oats.ISerialisationChannel.
         /// </summary>
-        public override void Write (ISerialisationChannel ss, ShaderDefinition sd)
+        public override void Write (ISerialisationChannel ss, ShaderDeclaration sd)
         {
-            if (sd.InputDefinitions.Count > Byte.MaxValue ||
-                sd.SamplerDefinitions.Count > Byte.MaxValue ||
-                sd.VariableDefinitions.Count > Byte.MaxValue ||
-                sd.PassNames.Count > Byte.MaxValue)
+            if (sd.InputDeclarations.Count > Byte.MaxValue ||
+                sd.SamplerDeclarations.Count > Byte.MaxValue ||
+                sd.VariableDeclarations.Count > Byte.MaxValue)
             {
                 throw new SerialisationException ("Too much!");
             }
 
             ss.Write <String> (sd.Name);
 
-            ss.Write <Byte> ((Byte) sd.PassNames.Count);
-            ss.Write <Byte> ((Byte) sd.InputDefinitions.Count);
-            ss.Write <Byte> ((Byte) sd.SamplerDefinitions.Count);
-            ss.Write <Byte> ((Byte) sd.VariableDefinitions.Count);
+            ss.Write <Byte> ((Byte) sd.InputDeclarations.Count);
+            ss.Write <Byte> ((Byte) sd.SamplerDeclarations.Count);
+            ss.Write <Byte> ((Byte) sd.VariableDeclarations.Count);
 
-            foreach (String passName in sd.PassNames)
+            foreach (var inputDef in sd.InputDeclarations)
             {
-                ss.Write <String> (passName);
+                ss.Write <ShaderInputDeclaration> (inputDef);
             }
 
-            foreach (var inputDef in sd.InputDefinitions)
+            foreach (var samplerDef in sd.SamplerDeclarations)
             {
-                ss.Write <ShaderDefinition.ShaderInputDefinition> (inputDef);
+                ss.Write <ShaderSamplerDeclaration> (samplerDef);
             }
 
-            foreach (var samplerDef in sd.SamplerDefinitions)
+            foreach (var variableDef in sd.VariableDeclarations)
             {
-                ss.Write <ShaderDefinition.ShaderSamplerDefinition> (samplerDef);
-            }
-
-            foreach (var variableDef in sd.VariableDefinitions)
-            {
-                ss.Write <ShaderDefinition.ShaderVariableDefinition> (variableDef);
+                ss.Write <ShaderVariableDeclaration> (variableDef);
             }
         }
     }
@@ -2358,15 +2370,15 @@ namespace Blimey
     /// <summary>
     /// An explict Oats.Serialiser for the Cor.ShaderInputDefinition type.
     /// </summary>
-    public class ShaderInputDefinitionSerialiser
-        : Serialiser<ShaderDefinition.ShaderInputDefinition>
+    public class ShaderInputDeclarationSerialiser
+        : Serialiser<ShaderInputDeclaration>
     {
         /// <summary>
         /// Returns a Cor.ShaderInputDefinition object read from an Oats.ISerialisationChannel.
         /// </summary>
-        public override ShaderDefinition.ShaderInputDefinition Read (ISerialisationChannel ss)
+        public override ShaderInputDeclaration Read (ISerialisationChannel ss)
         {
-            var sid = new ShaderDefinition.ShaderInputDefinition ();
+            var sid = new ShaderInputDeclaration ();
 
             // Name
             sid.Name = ss.Read <String> ();
@@ -2385,7 +2397,7 @@ namespace Blimey
             {
                 // Default Value
                 Byte typeIndex = ss.Read <Byte> ();
-                Type defaultValueType = ShaderDefinition.ShaderInputDefinition.SupportedTypes [typeIndex];
+                Type defaultValueType = ShaderInputDeclaration.SupportedTypes [typeIndex];
                 sid.DefaultValue = ss.ReadReflective (defaultValueType);
             }
 
@@ -2395,7 +2407,7 @@ namespace Blimey
         /// <summary>
         /// Writes a Cor.ShaderInputDefinition object to an Oats.ISerialisationChannel.
         /// </summary>
-        public override void Write (ISerialisationChannel ss, ShaderDefinition.ShaderInputDefinition sid)
+        public override void Write (ISerialisationChannel ss, ShaderInputDeclaration sid)
         {
             // Name
             ss.Write <String> (sid.Name);
@@ -2417,7 +2429,7 @@ namespace Blimey
             {
                 Type defaultValueType = sid.DefaultValue.GetType ();
                 Byte typeIndex = (Byte)
-                    ShaderDefinition.ShaderInputDefinition.SupportedTypes
+                    ShaderInputDeclaration.SupportedTypes
                     .ToList ()
                     .IndexOf (defaultValueType);
 
@@ -2433,15 +2445,15 @@ namespace Blimey
     /// <summary>
     /// An explict Oats.Serialiser for the Cor.ShaderSamplerDefinition type.
     /// </summary>
-    public class ShaderSamplerDefinitionSerialiser
-        : Serialiser<ShaderDefinition.ShaderSamplerDefinition>
+    public class ShaderSamplerDeclarationSerialiser
+        : Serialiser<ShaderSamplerDeclaration>
     {
         /// <summary>
         /// Returns a Cor.ShaderSamplerDefinition object read from an Oats.ISerialisationChannel.
         /// </summary>
-        public override ShaderDefinition.ShaderSamplerDefinition Read (ISerialisationChannel ss)
+        public override ShaderSamplerDeclaration Read (ISerialisationChannel ss)
         {
-            var ssd = new ShaderDefinition.ShaderSamplerDefinition ();
+            var ssd = new ShaderSamplerDeclaration ();
 
             ssd.Name =           ss.Read <String> ();
             ssd.NiceName =       ss.Read <String> ();
@@ -2453,7 +2465,7 @@ namespace Blimey
         /// <summary>
         /// Writes a Cor.ShaderSamplerDefinition object to an Oats.ISerialisationChannel.
         /// </summary>
-        public override void Write (ISerialisationChannel ss, ShaderDefinition.ShaderSamplerDefinition ssd)
+        public override void Write (ISerialisationChannel ss, ShaderSamplerDeclaration ssd)
         {
             ss.Write <String> (ssd.Name);
             ss.Write <String> (ssd.NiceName);
@@ -2468,14 +2480,14 @@ namespace Blimey
     /// An explict Oats.Serialiser for the Cor.ShaderVariableDefinition type.
     /// </summary>
     public class ShaderVariableDefinitionSerialiser
-        : Serialiser<ShaderDefinition.ShaderVariableDefinition>
+        : Serialiser<ShaderVariableDeclaration>
     {
         /// <summary>
         /// Returns a Cor.ShaderVariableDefinition object read from an Oats.ISerialisationChannel.
         /// </summary>
-        public override ShaderDefinition.ShaderVariableDefinition Read (ISerialisationChannel ss)
+        public override ShaderVariableDeclaration Read (ISerialisationChannel ss)
         {
-            var svd = new ShaderDefinition.ShaderVariableDefinition ();
+            var svd = new ShaderVariableDeclaration ();
 
             // Name
             svd.Name = ss.Read <String> ();
@@ -2487,7 +2499,7 @@ namespace Blimey
             if (ss.Read <Boolean> ())
             {
                 Byte typeIndex = ss.Read <Byte> ();
-                Type defaultValueType = ShaderDefinition.ShaderVariableDefinition.SupportedTypes [typeIndex];
+                Type defaultValueType = ShaderVariableDeclaration.SupportedTypes [typeIndex];
                 svd.DefaultValue = ss.ReadReflective (defaultValueType);
             }
 
@@ -2497,7 +2509,7 @@ namespace Blimey
         /// <summary>
         /// Writes a Cor.ShaderVariableDefinition object to an Oats.ISerialisationChannel.
         /// </summary>
-        public override void Write (ISerialisationChannel ss, ShaderDefinition.ShaderVariableDefinition svd)
+        public override void Write (ISerialisationChannel ss, ShaderVariableDeclaration svd)
         {
             // Name
             ss.Write <String> (svd.Name);
@@ -2513,7 +2525,7 @@ namespace Blimey
             {
                 Type defaultValueType = svd.DefaultValue.GetType ();
                 Byte typeIndex = (Byte)
-                    ShaderDefinition.ShaderVariableDefinition.SupportedTypes
+                    ShaderVariableDeclaration.SupportedTypes
                     .ToList ()
                     .IndexOf (defaultValueType);
 

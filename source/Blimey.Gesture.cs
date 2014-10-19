@@ -44,6 +44,7 @@ namespace Blimey
     
     using System.Linq;
     using Cor;
+    using Cor.Platform;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -155,16 +156,16 @@ namespace Blimey
 
     public class InputEventSystem
     {
-        IMultiTouchController controller;
+        MultiTouchController controller;
 
-        internal InputEventSystem(EngineBase engine)
+        internal InputEventSystem(Engine  engine)
         {
             this.engine = engine;
 
             this.controller = engine.Input.MultiTouchController;
         }
 
-        EngineBase engine;
+        Engine engine;
 
         public delegate void GestureDelegate(Gesture gesture);
 
@@ -520,14 +521,14 @@ namespace Blimey
         Int32 trackCounter = -1;
         Int32 id;
         List<Touch> samples = new List<Touch>();
-        IScreenSpecification screenSpec;
-        IPanelSpecification panelSpec;
-        EngineBase engine;
+        ScreenSpecification screenSpec;
+        PanelSpecification panelSpec;
+        Engine engine;
 
         internal TouchTracker(
-            EngineBase engine,
-            IScreenSpecification displayMode,
-            IPanelSpecification panelMode,
+            Engine engine,
+            ScreenSpecification displayMode,
+            PanelSpecification panelMode,
             Int32 id )
         {
             this.engine = engine;

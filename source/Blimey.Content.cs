@@ -44,6 +44,7 @@ namespace Blimey
     
     using System.Linq;
     using Cor;
+    using Cor.Platform;
 
     // Provides a suite of easy to access programatically defined resources.
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -248,14 +249,13 @@ namespace Blimey
         // Once all the geometry has been specified by calling AddVertex and AddIndex,
         // this method copies the vertex and index data into GPU format buffers, ready
         // for efficient rendering.
-        protected void InitializePrimitive(GraphicsBase gfx)
+        protected void InitializePrimitive(Graphics gfx)
         {
+            gfx.CreateVertexBuffer (VertDecl, vertices.Count);
+            gfx.CreateIndexBuffer (indices.Count);
 
-            GeomBuffer = gfx.CreateGeometryBuffer(VertDecl, vertices.Count, indices.Count);
-
-            GeomBuffer.VertexBuffer.SetData(vertices.ToArray());
-
-            GeomBuffer.IndexBuffer.SetData(indices.ToArray());
+            VertexBuffer.SetData(vertices.ToArray());
+            IndexBuffer.SetData(indices.ToArray());
 
             //todo, move to base mesh abstract class
             TriangleCount = indices.Count / 3;
@@ -307,7 +307,7 @@ namespace Blimey
     public class BillboardPrimitive
         : GeometricPrimitive
     {
-        public BillboardPrimitive (GraphicsBase graphicsDevice)
+        public BillboardPrimitive (Graphics graphicsDevice)
         {
             // Six indices (two triangles) per face.
             AddIndex (0);
@@ -338,7 +338,7 @@ namespace Blimey
         /// <summary>
         /// Constructs a new cube primitive, with the specified size.
         /// </summary>
-        public CubePrimitive (GraphicsBase graphicsDevice)
+        public CubePrimitive (Graphics graphicsDevice)
         {
             // A cube has six faces, each one pointing in a different direction.
             Vector3[] normals =
@@ -392,7 +392,7 @@ namespace Blimey
         const float _height = 0.5f;
         const float _radius = 0.5f;
 
-        public CylinderPrimitive (GraphicsBase graphicsDevice)
+        public CylinderPrimitive (Graphics graphicsDevice)
         {
             Debug.Assert (_tessellation >= 3);
 
@@ -480,7 +480,7 @@ namespace Blimey
         /// <summary>
         /// Constructs a new cube primitive, with the specified size.
         /// </summary>
-        public SpherePrimitive(GraphicsBase graphicsDevice)
+        public SpherePrimitive(Graphics graphicsDevice)
         {
             Debug.Assert(tessellation >= 3);
 
@@ -572,7 +572,7 @@ namespace Blimey
         /// <summary>
         /// Constructs a new cube primitive, with the specified size.
         /// </summary>
-        public TeapotPrimitive(GraphicsBase graphicsDevice)
+        public TeapotPrimitive(Graphics graphicsDevice)
         {
             Debug.Assert(tessellation >= 1);
 
@@ -854,7 +854,7 @@ namespace Blimey
         /// <summary>
         /// Constructs a new cube primitive, with the specified size.
         /// </summary>
-        public TorusPrimitive(GraphicsBase graphicsDevice)
+        public TorusPrimitive(Graphics graphicsDevice)
         {
             Debug.Assert(tessellation >= 3);
 

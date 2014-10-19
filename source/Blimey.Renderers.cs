@@ -44,6 +44,7 @@ namespace Blimey
     
     using System.Linq;
     using Cor;
+    using Cor.Platform;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -68,13 +69,13 @@ namespace Blimey
     /// calls to make sure the game continues to work for any game.</remarks>
     public class DebugShapeRenderer
     {
-        public IShader DebugShader
+        public Shader DebugShader
         {
             get { return debugShader; }
             set { debugShader = value; Init (); }
         }
 
-        IShader debugShader;
+        Shader debugShader;
 
         public int NumActiveShapes { get { return activeShapes.Count; } }
 
@@ -116,11 +117,11 @@ namespace Blimey
 
         readonly Dictionary<string, Material> materials = new Dictionary<string, Material>();
 
-        readonly EngineBase cor;
+        readonly Engine cor;
 
 		readonly List<RenderPass> renderPasses;
 
-		public DebugShapeRenderer(EngineBase cor, List<RenderPass> renderPasses)
+		public DebugShapeRenderer(Engine cor, List<RenderPass> renderPasses)
         {
             this.cor = cor;
             this.renderPasses = renderPasses;
@@ -266,7 +267,7 @@ namespace Blimey
         }
 
 
-        internal void Render(GraphicsBase zGfx, string pass, Matrix44 zView, Matrix44 zProjection)
+        internal void Render(Graphics zGfx, string pass, Matrix44 zView, Matrix44 zProjection)
         {
             if (!materials.ContainsKey(pass))
                 return;
@@ -323,35 +324,31 @@ namespace Blimey
                 }
 
                 // Start our effect to begin rendering.
-                foreach (IShaderPass effectPass in shader.Passes)
+                shader.Activate (VertexPositionColour.Default.VertexDeclaration);
+
+                // We draw in a loop because the Reach profile only supports 65,535 primitives. While it's
+                // not incredibly likely, if a game tries to render more than 65,535 lines we don't want to
+                // crash. We handle this by doing a loop and drawing as many lines as we can at a time, capped
+                // at our limit. We then move ahead in our vertex array and draw the next set of lines.
+                int vertexOffset = 0;
+                while (lineCount > 0)
                 {
-                    effectPass.Activate (VertexPositionColour.Default.VertexDeclaration);
+                    // Figure out how many lines we're going to draw
+                    int linesToDraw = Math.Min(lineCount, 65535);
 
-                    // We draw in a loop because the Reach profile only supports 65,535 primitives. While it's
-                    // not incredibly likely, if a game tries to render more than 65,535 lines we don't want to
-                    // crash. We handle this by doing a loop and drawing as many lines as we can at a time, capped
-                    // at our limit. We then move ahead in our vertex array and draw the next set of lines.
-                    int vertexOffset = 0;
-                    while (lineCount > 0)
-                    {
-                        // Figure out how many lines we're going to draw
-                        int linesToDraw = Math.Min(lineCount, 65535);
+                    FrameStats.DrawUserPrimitivesCount ++;
+                    zGfx.DrawUserPrimitives(
+                        PrimitiveType.LineList,
+                        verts,
+                        vertexOffset,
+                        linesToDraw
+                        );
 
-                        FrameStats.DrawUserPrimitivesCount ++;
-                        zGfx.DrawUserPrimitives(
-                            PrimitiveType.LineList,
-                            verts,
-                            vertexOffset,
-                            linesToDraw,
-                            VertexPositionColour.Default.VertexDeclaration
-                            );
+                    // Move our vertex offset ahead based on the lines we drew
+                    vertexOffset += linesToDraw * 2;
 
-                        // Move our vertex offset ahead based on the lines we drew
-                        vertexOffset += linesToDraw * 2;
-
-                        // Remove these lines from our total line count
-                        lineCount -= linesToDraw;
-                    }
+                    // Remove these lines from our total line count
+                    lineCount -= linesToDraw;
                 }
 
                 zGfx.GpuUtils.EndEvent();
@@ -599,7 +596,7 @@ namespace Blimey
         public class PrimitiveBatchTriple
         {
             public VertexPositionTextureColour[] v = new VertexPositionTextureColour[3];
-            public ITexture tex = null;
+            public Texture tex = null;
             public BlendMode blend = BlendMode.Default;
 
             public PrimitiveBatchTriple()
@@ -614,7 +611,7 @@ namespace Blimey
         public class PrimitiveBatchQuad
         {
             public VertexPositionTextureColour[] v;
-            public ITexture tex;
+            public Texture tex;
             public BlendMode blend = BlendMode.Default;
 
             public PrimitiveBatchQuad()
@@ -647,9 +644,9 @@ namespace Blimey
             PRIM_QUADS = 4,
         }
 
-        protected IShader effectToUse;
+        protected Shader effectToUse;
 
-        ITexture curTexture = null;
+        Texture curTexture = null;
 
         const int VERT_BUFFER_SIZE = 4000;
         VertexPositionTextureColour[] vertBuffer = new VertexPositionTextureColour[VERT_BUFFER_SIZE];
@@ -667,7 +664,7 @@ namespace Blimey
         //SETUP GRAPHICS
         // Sets up the transforms for the 2d render and setup the basic effect
         //
-        public PrimitiveBatch (GraphicsBase zGfxDevice, Assets zContentManager)
+        public PrimitiveBatch (Graphics zGfxDevice, Assets zContentManager)
         {
             // todo load shader here
             
@@ -696,7 +693,7 @@ namespace Blimey
         // RENDER TRI
         // Renders a quad.
         //
-        public void RenderTriple(GraphicsBase gfx, PrimitiveBatchTriple zTriple)
+        public void RenderTriple(Graphics gfx, PrimitiveBatchTriple zTriple)
         {
             if (hasBegun)
             {
@@ -740,7 +737,7 @@ namespace Blimey
         // RENDER QUAD
         // Renders a quad.
         //
-        public void RenderQuad(GraphicsBase gfx, PrimitiveBatchQuad zQuad)
+        public void RenderQuad(Graphics gfx, PrimitiveBatchQuad zQuad)
         {
             if (hasBegun)
             {
@@ -787,48 +784,42 @@ namespace Blimey
             get { return hasBegun; }
         }
 
-        void _render_batch(GraphicsBase gfx, bool bEndScene)
+        void _render_batch(Graphics gfx, bool bEndScene)
         {
             //todo activate effect
 
             if(nPrimsInBuffer > 0)
             {
-                foreach (var pass in effectToUse.Passes)
+                effectToUse.Activate (VertexPositionTextureColour.Default.VertexDeclaration);
+
+                switch(CurPrimType)
                 {
-                    pass.Activate (VertexPositionTextureColour.Default.VertexDeclaration);
+                case PrimitiveBatchType.PRIM_QUADS:
+                    gfx.DrawUserIndexedPrimitives<VertexPositionTextureColour>(
+                        PrimitiveType.TriangleList, //primitiveType
+                        vertBuffer, //vertexData
+                        0, //vertexOffset
+                        (int)nPrimsInBuffer * 4, //numVertices
+                        quadIndices, //indexData
+                        0, //indexOffset
+                        (int)nPrimsInBuffer * 4 / 2);//primitiveCount
+                    break;
 
-                    switch(CurPrimType)
-                    {
-                    case PrimitiveBatchType.PRIM_QUADS:
-                        gfx.DrawUserIndexedPrimitives<VertexPositionTextureColour>(
-                            PrimitiveType.TriangleList, //primitiveType
-                            vertBuffer, //vertexData
-                            0, //vertexOffset
-                            (int)nPrimsInBuffer * 4, //numVertices
-                            quadIndices, //indexData
-                            0, //indexOffset
-                            (int)nPrimsInBuffer * 4 / 2,
-                            VertexPositionTextureColour.Default.VertexDeclaration);//primitiveCount
-                        break;
+                case PrimitiveBatchType.PRIM_TRIPLES:
+                    gfx.DrawUserPrimitives<VertexPositionTextureColour>(
+                        PrimitiveType.TriangleList,//primitiveType
+                        vertBuffer, //vertexData
+                        0,//vertexOffset
+                        (int)nPrimsInBuffer);//primitiveCount
+                    break;
 
-                    case PrimitiveBatchType.PRIM_TRIPLES:
-                        gfx.DrawUserPrimitives<VertexPositionTextureColour>(
-                            PrimitiveType.TriangleList,//primitiveType
-                            vertBuffer, //vertexData
-                            0,//vertexOffset
-                            (int)nPrimsInBuffer,
-                            VertexPositionTextureColour.Default.VertexDeclaration);//primitiveCount
-                        break;
-
-                    case PrimitiveBatchType.PRIM_LINES:
-                        gfx.DrawUserPrimitives<VertexPositionTextureColour>(
-                            PrimitiveType.LineList,//primitiveType
-                            vertBuffer, //vertexData
-                            0,//vertexOffset
-                            (int)nPrimsInBuffer,
-                            VertexPositionTextureColour.Default.VertexDeclaration);//primitiveCount
-                        break;
-                    }
+                case PrimitiveBatchType.PRIM_LINES:
+                    gfx.DrawUserPrimitives<VertexPositionTextureColour>(
+                        PrimitiveType.LineList,//primitiveType
+                        vertBuffer, //vertexData
+                        0,//vertexOffset
+                        (int)nPrimsInBuffer);//primitiveCount
+                    break;
                 }
 
                 nPrimsInBuffer=0;
@@ -838,7 +829,7 @@ namespace Blimey
         }
 
 
-        public void BeginScene( GraphicsBase gfx, Matrix44 zView, Matrix44 zProj)
+        public void BeginScene (Graphics gfx, Matrix44 zView, Matrix44 zProj)
         {
             gfx.GpuUtils.BeginEvent( Rgba32.Blue, "Blimey: Primitive Batch" );
             hasBegun = true;
@@ -851,14 +842,14 @@ namespace Blimey
         // END SCENE
         // Ends rendering and updates the screen.
         //
-        public void EndScene(GraphicsBase gfx)
+        public void EndScene(Graphics gfx)
         {
             _render_batch(gfx, true);
             gfx.GpuUtils.EndEvent();
         }
 
 
-        public void RenderLine(GraphicsBase gfx, Vector3 a, Vector3 b, Rgba32 zColour)
+        public void RenderLine(Graphics gfx, Vector3 a, Vector3 b, Rgba32 zColour)
         {
             if (hasBegun)
             {

@@ -44,6 +44,9 @@ namespace Blimey
     
     using System.Linq;
     using Cor;
+    using Cor.Platform;
+    using Oats;
+    using System.IO;
 
     // Runtime asset object, loaded into RAM, not GRAM.
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -81,11 +84,13 @@ namespace Blimey
         : Asset
     {
         // Platform agnostic definition
-        public ShaderDefinition Definition { get; set; }
+        public ShaderDeclaration Declaration { get; set; }
+
+        public ShaderFormat Format { get; set; }
 
         // Platform specific binary content.
         // This contains compiled shaders.
-        public Byte[] Data { get; set; }
+        public Byte[][] Sources { get; set; }
     }
 
 
@@ -103,7 +108,7 @@ namespace Blimey
     public sealed class TextureAsset
         : Asset
     {
-        public SurfaceFormat SurfaceFormat { get; set; }
+        public TextureFormat TextureFormat { get; set; }
 
         public Int32 Width { get; set; }
         public Int32 Height { get; set; }
@@ -137,18 +142,18 @@ namespace Blimey
 
     public sealed class Assets
     {
-        readonly IApi platform;
+        readonly Engine engine;
 
-        internal Assets (IApi platform)
+        internal Assets (Engine engine)
         {
-            this.platform = platform;
+            this.engine = engine;
         }
 
         public T Load<T> (String assetId)
             where T
             : class, IAsset
         {
-            using (Stream stream = platform.res_GetFileStream (assetId))
+            using (Stream stream = engine.Resources.GetFileStream (assetId))
             {
                 using (var channel = 
                     new SerialisationChannel

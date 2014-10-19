@@ -61,7 +61,8 @@ namespace Blimey
             RenderTime = 0.0;
 
             SetCullModeTime = 0.0;
-            ActivateGeomBufferTime = 0.0;
+            ActivateVertexBufferTime = 0.0;
+            ActivateIndexBufferTime = 0.0;
             MaterialTime = 0.0;
             ActivateShaderTime = 0.0;
             DrawTime = 0.0;
@@ -74,7 +75,8 @@ namespace Blimey
         public static Double RenderTime { get; set; }
 
         public static Double SetCullModeTime { get; set; }
-        public static Double ActivateGeomBufferTime { get; set; }
+        public static Double ActivateVertexBufferTime { get; set; }
+        public static Double ActivateIndexBufferTime { get; set; }
         public static Double MaterialTime { get; set; }
         public static Double ActivateShaderTime { get; set; }
         public static Double DrawTime { get; set; }
@@ -117,8 +119,13 @@ namespace Blimey
 
                 Console.WriteLine(
                     string.Format(
-                        "\tActivateGeomBufferTime -> DrawTime -> {0:0.##}ms",
-                        ActivateGeomBufferTime ));
+                        "\tActivateVertexBufferTime -> DrawTime -> {0:0.##}ms",
+                        ActivateVertexBufferTime ));
+
+                Console.WriteLine(
+                    string.Format(
+                        "\tActivateIndexBufferTime -> DrawTime -> {0:0.##}ms",
+                        ActivateIndexBufferTime ));
 
                 Console.WriteLine(
                     string.Format(
