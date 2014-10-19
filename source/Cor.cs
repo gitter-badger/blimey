@@ -215,6 +215,7 @@ namespace Cor
     {
         readonly Audio audio;
         readonly Graphics graphics;
+        readonly Resources resources;
         readonly Status status;
         readonly Input input;
         readonly Host host;
@@ -239,6 +240,7 @@ namespace Cor
 
 			this.audio = new Audio (this.platform.Api);
             this.graphics = new Graphics (this.platform.Api);
+            this.resources = new Resources (this.platform.Api);
             this.status = new Status (this.platform.Api);
             this.input = new Input (this.platform.Api);
             this.host = new Host (this.platform.Api);
@@ -255,6 +257,8 @@ namespace Cor
         /// Provides access to Cor's graphics manager, which  provides an interface to working with the GPU.
         /// </summary>
         public Graphics Graphics { get { return graphics; } }
+
+        public Resources Resources { get { return resources; } }
 
         /// <summary>
         /// Provides information about the current state of the App.
@@ -694,7 +698,6 @@ namespace Cor
             var pressedCharacters = this.platform.hid_GetPressedCharacters ();
             var activeTouches = this.platform.hid_GetActiveTouches ();
 
-
             digitalControlStates.Keys
                 .ToList ()
                 .ForEach (k => inputFrame.DigitalControlStates.Add (k, digitalControlStates [k]));
@@ -714,7 +717,6 @@ namespace Cor
             activeTouches
                 .ToList ()
                 .ForEach (k => inputFrame.ActiveTouches.Add (k));
-
         }
         
         /// <summary>
@@ -736,7 +738,7 @@ namespace Cor
         /// <summary>
         /// Provides access to a very basic gamepad, supported by most implementations.
         /// </summary>
-        //public GenericGamepad GenericGamepad { get; private set; }
+        public GenericGamepad GenericGamepad { get; private set; }
 
         /// <summary>
         /// Provides access to a desktop mouse.
@@ -800,6 +802,26 @@ namespace Cor
         ///
         /// </summary>
         public PanelSpecification PanelSpecification { get { return panelSpecification; } }
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// A wrapper around IPlatform's res_ functions.
+    /// </summary>
+    public sealed class Resources
+    {
+        readonly IApi platform;
+
+        internal Resources (IApi platform)
+        {
+            this.platform = platform;
+        }
+
+        public Stream GetFileStream (String path)
+        {
+            return this.platform.res_GetFileStream (path);
+        }
     }
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -2444,7 +2466,6 @@ namespace Cor
     /// modern gamepads / gamepad emulators.  It can be useful for simple apps that do not require complex inputs,
     /// instead of deciding how to handle each specific controller, instead they can simply use this common interface.
     /// </summary>
-    /*
     public sealed class GenericGamepad
     {
         /// <summary>
@@ -2457,7 +2478,6 @@ namespace Cor
         /// </summary>
         public GamepadDPad DPad { get; private set; }
     }
-    */
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -3023,7 +3043,6 @@ namespace Cor
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    /*
     /// <summary>
     ///
     /// </summary>
@@ -3059,7 +3078,6 @@ namespace Cor
         /// </summary>
         public ButtonState Pause { get; private set; }
     }
-    */
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 

@@ -61,9 +61,15 @@ namespace Cor.Platform
 
     public interface IApi
     {
+        /*
+         * Audio
+         */
         Single                  sfx_GetVolume                           ();
         void                    sfx_SetVolume                           (Single volume);
 
+        /*
+         * Graphics
+         */
         void                    gfx_ClearColourBuffer                   (Rgba32 color);
         void                    gfx_ClearDepthBuffer                    (Single depth);
         void                    gfx_SetCullMode                         (CullMode cullMode);
@@ -116,9 +122,15 @@ namespace Cor.Platform
         ShaderInputInfo[]       gfx_shdr_GetInputs                      (Handle shaderHandle, Int32 variantIndex);
         ShaderVariableInfo[]    gfx_shdr_GetVariables                   (Handle shaderHandle, Int32 variantIndex);
         ShaderSamplerInfo[]     gfx_shdr_GetSamplers                    (Handle shaderHandle, Int32 variantIndex);
-        
+
+        /*
+         * Resources
+         */
         Stream                  res_GetFileStream                       (String fileName);
 
+        /*
+         * System
+         */
         String                  sys_GetMachineIdentifier                ();
         String                  sys_GetOperatingSystemIdentifier        ();
         String                  sys_GetVirtualMachineIdentifier         ();
@@ -128,10 +140,16 @@ namespace Cor.Platform
         Vector2?                sys_GetPrimaryPanelPhysicalSize         ();
         PanelType               sys_GetPrimaryPanelType                 ();
 
+        /*
+         * Application
+         */
         Boolean?                app_IsFullscreen                        ();
         Int32                   app_GetWidth                            ();
         Int32                   app_GetHeight                           ();
 
+        /*
+         * Input
+         */
         DeviceOrientation?                                  hid_GetCurrentOrientation                   ();
         Dictionary <DigitalControlIdentifier, Int32>        hid_GetDigitalControlStates                 ();
         Dictionary <AnalogControlIdentifier, Single>        hid_GetAnalogControlStates                  ();
