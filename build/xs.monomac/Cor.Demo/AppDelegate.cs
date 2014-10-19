@@ -49,8 +49,12 @@ namespace Cor.Demo
 
 		public override void FinishedLaunching (NSObject notification)
 		{
-            var appSettings = Demo.GetAppSettings();
-            var entryPoint = Demo.GetEntryPoint();
+            var appSettings = new AppSettings ("Cor Demo") {
+                FullScreen = true,
+                MouseGeneratesTouches = true
+            };
+
+            var entryPoint = new BasicApp();
 
 			engine = new Engine(
                 new MonoMacPlatform (),

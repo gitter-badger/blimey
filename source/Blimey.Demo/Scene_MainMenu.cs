@@ -67,7 +67,7 @@ namespace Blimey.Demo
             _returnScene = this;
 
 			// set up the debug renderer
-			ShaderAsset shaderAsset = this.Cor.Assets.Load<ShaderAsset>("unlit.cba");
+			ShaderAsset shaderAsset = this.Blimey.Assets.Load<ShaderAsset>("unlit.cba");
 			this.Blimey.DebugShapeRenderer.DebugShader = 
 				this.Cor.Graphics.CreateShader (shaderAsset);
 

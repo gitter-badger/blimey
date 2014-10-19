@@ -165,13 +165,13 @@ namespace Blimey.Demo
             ShaderAsset shaderAsset = null;
 
             if (shaderIndex == 0)
-                shaderAsset = scene.Cor.Assets.Load<ShaderAsset>("vertex_lit.cba");
+                shaderAsset = scene.Blimey.Assets.Load<ShaderAsset>("vertex_lit.cba");
             else if (shaderIndex == 1)
-                shaderAsset = scene.Cor.Assets.Load<ShaderAsset>("pixel_lit.cba");
+                shaderAsset = scene.Blimey.Assets.Load<ShaderAsset>("pixel_lit.cba");
             else
-                shaderAsset = scene.Cor.Assets.Load<ShaderAsset>("unlit.cba");;
+                shaderAsset = scene.Blimey.Assets.Load<ShaderAsset>("unlit.cba");;
 
-            IShader shader = scene.Cor.Graphics.CreateShader (shaderAsset);
+            Shader shader = scene.Cor.Graphics.CreateShader (shaderAsset);
 
             // create a material on the fly
             var mat = new Material(renderPass, shader);
@@ -213,12 +213,12 @@ namespace Blimey.Demo
         Scene _returnScene;
 
         // GPU Resources.
-        IShader shader = null;
+        Shader shader = null;
 
         public override void Start ()
         {
             // set up the debug renderer
-            ShaderAsset shaderAsset = this.Cor.Assets.Load<ShaderAsset>("unlit.cba");
+            ShaderAsset shaderAsset = this.Blimey.Assets.Load<ShaderAsset>("unlit.cba");
             this.Blimey.DebugShapeRenderer.DebugShader = 
                 this.Cor.Graphics.CreateShader (shaderAsset);
 
@@ -254,7 +254,7 @@ namespace Blimey.Demo
 
             mr.Mesh = cowMesh;
 
-            ShaderAsset shaderAsset = this.Cor.Assets.Load<ShaderAsset> ("pixel_lit.cba");
+            ShaderAsset shaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("pixel_lit.cba");
             shader = this.Cor.Graphics.CreateShader (shaderAsset);
 
             var mat = new Material("Default", shader);
@@ -337,14 +337,14 @@ namespace Blimey.Demo
         Entity markerGo;
 
         // GPU Resources
-        IShader unlitShader = null;
+        Shader unlitShader = null;
 
         public override void Start()
         {
             this.Configuration.BackgroundColour = Rgba32.LightSlateGrey;
 
             // set up the debug renderer
-            ShaderAsset unlitShaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
+            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.cba");
             this.Blimey.DebugShapeRenderer.DebugShader = 
                 this.Cor.Graphics.CreateShader (unlitShaderAsset);
             gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Default", 1f, 10);
@@ -468,7 +468,7 @@ namespace Blimey.Demo
 
 		
 		// GPU Resources.
-		IShader shader = null;
+		Shader shader = null;
 
         public override void Start()
         {
@@ -492,7 +492,7 @@ namespace Blimey.Demo
             teapotGPUMesh = new TeapotPrimitive(Cor.Graphics);
 
 			// set up the debug renderer
-			ShaderAsset shaderAsset = this.Cor.Assets.Load<ShaderAsset>("unlit.cba");
+            ShaderAsset shaderAsset = this.Blimey.Assets.Load<ShaderAsset>("unlit.cba");
 			this.Blimey.DebugShapeRenderer.DebugShader = 
 				this.Cor.Graphics.CreateShader (shaderAsset);
             gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Debug");
@@ -519,7 +519,7 @@ namespace Blimey.Demo
             testGO.Transform.LocalScale = new Vector3(scale, scale, scale);
 
 
-			ShaderAsset shaderAsset = this.Cor.Assets.Load<ShaderAsset> ("pixel_lit.cba");
+            ShaderAsset shaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("pixel_lit.cba");
 
 			shader = this.Cor.Graphics.CreateShader (shaderAsset);
 

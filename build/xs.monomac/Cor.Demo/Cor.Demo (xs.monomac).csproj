@@ -71,9 +71,6 @@
   <ItemGroup>
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="..\..\..\source\Cor.Demo\BasicApp.cs">
-      <Link>source\BasicApp.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\source\Cor.Demo\Demo.cs">
       <Link>source\Demo.cs</Link>
     </Compile>
@@ -95,38 +92,5 @@
       <Project>{FB8EF9CB-D3B2-402B-89C6-9F68F1BAFA44}</Project>
       <Name>Fudge (xs.monomac)</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="assets\" />
-    <Folder Include="assets\monomac\" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="..\..\..\assets\monomac\airports.cba">
-      <Link>assets\monomac\airports.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\bg1.cba">
-      <Link>assets\monomac\bg1.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\bg2.cba">
-      <Link>assets\monomac\bg2.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\bg3.cba">
-      <Link>assets\monomac\bg3.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\cvan01.cba">
-      <Link>assets\monomac\cvan01.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\cvan02.cba">
-      <Link>assets\monomac\cvan02.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\pixel_lit.cba">
-      <Link>assets\monomac\pixel_lit.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\unlit.cba">
-      <Link>assets\monomac\unlit.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\vertex_lit.cba">
-      <Link>assets\monomac\vertex_lit.cba</Link>
-    </BundleResource>
   </ItemGroup>
 </Project>

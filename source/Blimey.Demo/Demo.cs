@@ -38,29 +38,29 @@ namespace Blimey.Demo
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
 	public class Demo
-		: global::Blimey.App
+		: App
 	{
         public Demo()
 			: base (new Scene_MainMenu())
         {
         }
 		
-        public override void Start (EngineBase cor)
+        public override void Start (Engine cor)
 		{
 			base.Start (cor);
 		}
 
-        public override Boolean Update (EngineBase cor, AppTime time)
+        public override Boolean Update (Engine cor, AppTime time)
 		{
 			return base.Update (cor, time);
 		}
 
-        public override void Render (EngineBase cor)
+        public override void Render (Engine cor)
 		{
 			base.Render (cor);
 		}
 
-        public override void Stop (EngineBase cor)
+        public override void Stop (Engine cor)
 		{
 			base.Stop (cor);
 		}

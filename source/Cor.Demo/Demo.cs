@@ -41,24 +41,6 @@ namespace Cor.Demo
     using Cor.Platform;
     using System.Runtime.InteropServices;
 
-    public static class Demo
-    {
-        public static IApp GetEntryPoint() { return basicApp; }
-        public static AppSettings GetAppSettings() { return appSettings; }
-        static IApp basicApp;
-        static AppSettings appSettings;
-
-        static Demo()
-        {
-            appSettings = new AppSettings ("Cor Demo") {
-				FullScreen = true,
-				MouseGeneratesTouches = true
-			};
-
-            basicApp = new BasicApp();
-        }
-    }
-
     public class BasicApp : IApp
     {
         IElement[] elements;
@@ -68,6 +50,7 @@ namespace Cor.Demo
         Single colourChangeProgress = 0f;
         Int32 numCols;
         Int32 numRows;
+        Texture tex;
 
         public void Start (Engine engine)
         {
@@ -78,6 +61,7 @@ namespace Cor.Demo
                 new Element <Cylinder, VertPosNormTex> (shader),
                 new Element <Cube, VertPosTex> (shader),
                 new Element <Billboard, VertPosTexCol> (shader),
+                new Element <Cylinder2, VertPosTex> (shader),
             };
 
             Double s = Math.Sqrt (elements.Length);
@@ -87,6 +71,39 @@ namespace Cor.Demo
             numRows = (Int32) Math.Floor (s);
 
             while (elements.Length > numCols * numRows) ++numRows;
+
+
+            Int32 texSize = 256;
+            Int32 gridSize = 4;
+            Int32 squareSize = texSize / gridSize;
+
+            var colours = new Rgba32 [gridSize*gridSize];
+
+            for (Int32 x = 0; x < gridSize; ++x)
+            {
+                for (Int32 y = 0; y < gridSize; ++y)
+                {
+                    colours [x + (y * gridSize)] = RandomColours.GetNext ();
+                }
+            }
+
+            var texData = new byte[texSize*texSize*4];
+
+            Int32 index = 0;
+            for (Int32 x = 0; x < texSize; ++x)
+            {
+                for (Int32 y = 0; y < texSize; ++y)
+                {
+                    texData [index++] = colours[(x/squareSize) + (y/squareSize*gridSize)].A;
+                    texData [index++] = colours[(x/squareSize) + (y/squareSize*gridSize)].R;
+                    texData [index++] = colours[(x/squareSize) + (y/squareSize*gridSize)].G;
+                    texData [index++] = colours[(x/squareSize) + (y/squareSize*gridSize)].B;
+                }
+            }
+
+            tex = engine.Graphics.CreateTexture (TextureFormat.Rgba32, texSize, texSize, texData );
+
+            engine.Graphics.SetActiveTexture(tex, 0);
 
             foreach (var element in elements) element.Load (engine);
         }
@@ -167,6 +184,8 @@ namespace Cor.Demo
         VertexBuffer vertexBuffer;
         IndexBuffer indexBuffer;
 
+        Texture tex;
+
         public Matrix44 World { get; private set; }
         public Matrix44 View { get; private set; }
 
@@ -202,7 +221,11 @@ namespace Cor.Demo
 
         public void Update(Engine engine, AppTime time)
         {
-            Matrix44 rotation = Matrix44.CreateFromAxisAngle(Vector3.Backward, Maths.Sin(time.Elapsed));
+            Matrix44 rotation =
+                Matrix44.CreateFromAxisAngle(Vector3.Backward, Maths.Sin(time.Elapsed)) *
+                Matrix44.CreateFromAxisAngle(Vector3.Left, Maths.Sin(time.Elapsed)) *
+                Matrix44.CreateFromAxisAngle(Vector3.Down, Maths.Sin(time.Elapsed));
+
             Matrix44 worldScale = Matrix44.CreateScale (0.9f);
 
             World = worldScale * rotation;
@@ -219,6 +242,8 @@ namespace Cor.Demo
             shader.SetVariable ("View", View);
             shader.SetVariable ("Projection", projection);
             shader.SetVariable ("Colour", Rgba32.White);
+
+            shader.SetSamplerTarget ("TextureSampler", 0);
 
             shader.Activate (vertexBuffer.VertexDeclaration);
 
@@ -649,6 +674,113 @@ namespace Cor.Demo
                     new VertPosNormTex(
                         position,
                         normal,
+                        new Vector2((circleVec.X + 1f) / 2f, (circleVec.Z + 1f) / 2f)));
+            }
+        }
+
+
+        /// Helper method computes a point on a circle.
+        static Vector3 GetCircleVector(int i)
+        {
+            Single tau; Maths.Tau(out tau);
+            float angle = i * tau / tessellation;
+
+            float dx = (float)Math.Cos(angle);
+            float dz = (float)Math.Sin(angle);
+
+            return new Vector3(dx, 0, dz);
+        }
+    }
+
+    public class Cylinder2 : IMesh <VertPosTex>
+    {
+        readonly VertPosTex[] vertArray;
+        readonly Int32[] indexArray;
+
+        #region IMesh <VertPosTex>
+
+        public VertPosTex[] VertArray { get { return vertArray; } }
+        public Int32[] IndexArray { get { return indexArray; } }
+        public VertexDeclaration VertexDeclaration { get { return vertArray [0].VertexDeclaration; } }
+
+        #endregion
+
+        const int tessellation = 9; // must be greater han 2
+        const float height = 0.5f;
+        const float radius = 0.5f;
+
+        public Cylinder2 ()
+        {
+            var vertList = new List<VertPosTex>();
+            var indexList = new List<Int32>();
+
+            // Create a ring of triangles around the outside of the cylinder.
+            for (Int32 i = 0; i <= tessellation; i++)
+            {
+                Vector3 normal = GetCircleVector(i);
+
+                Vector3 topPos = normal * radius + Vector3.Up * height;
+                Vector3 botPos = normal * radius + Vector3.Down * height;
+
+                Single howFarRound = (Single)i / (Single)(tessellation);
+
+                Vector2 topUV = new Vector2(howFarRound, 0f);
+                Vector2 botUV = new Vector2(howFarRound, 1f);
+
+                vertList.Add(new VertPosTex(topPos, topUV));
+                vertList.Add(new VertPosTex(botPos, botUV));
+            }
+
+            for (Int32 i = 0; i < tessellation; i++)
+            {
+                indexList.Add(i * 2);
+                indexList.Add(i * 2 + 1);
+                indexList.Add((i * 2 + 2));
+
+                indexList.Add(i * 2 + 1);
+                indexList.Add(i * 2 + 3);
+                indexList.Add(i * 2 + 2);
+            }
+
+
+            // Create flat triangle fan caps to seal the top and bottom.
+            CreateCap(vertList, indexList, Vector3.Up);
+            CreateCap(vertList, indexList, Vector3.Down);
+
+            vertArray = vertList.ToArray ();
+            indexArray = indexList.ToArray ();
+        }
+
+        /// Helper method creates a triangle fan to close the ends of the cylinder.
+        static void CreateCap(List<VertPosTex> vertList, List<Int32> indexList, Vector3 normal)
+        {
+            // Create cap indices.
+            for (int i = 0; i < tessellation - 2; i++)
+            {
+                if (normal.Y > 0)
+                {
+                    indexList.Add(vertList.Count);
+                    indexList.Add(vertList.Count + (i + 1) % tessellation);
+                    indexList.Add(vertList.Count + (i + 2) % tessellation);
+                }
+                else
+                {
+                    indexList.Add(vertList.Count);
+                    indexList.Add(vertList.Count + (i + 2) % tessellation);
+                    indexList.Add(vertList.Count + (i + 1) % tessellation);
+                }
+            }
+
+            // Create cap vertices.
+            for (int i = 0; i < tessellation; i++)
+            {
+                Vector3 circleVec = GetCircleVector(i);
+                Vector3 position = circleVec * radius +
+                    normal * height;
+
+                vertList.Add(
+                    new VertPosTex(
+                        position,
                         new Vector2((circleVec.X + 1f) / 2f, (circleVec.Z + 1f) / 2f)));
             }
         }

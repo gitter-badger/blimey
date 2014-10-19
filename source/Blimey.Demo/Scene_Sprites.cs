@@ -157,8 +157,8 @@ namespace Blimey.Demo
 
         public static Int32 screenWidth;
         public static Int32 screenHeight;
-        public static ITexture texZa;
-        public static ITexture texBg;
+        public static Texture texZa;
+        public static Texture texBg;
 
         public Scene_Sprites()
         {
@@ -167,7 +167,7 @@ namespace Blimey.Demo
 
         public override void Start ()
         {
-			ShaderAsset unlitShaderAsset = this.Cor.Assets.Load<ShaderAsset> ("unlit.cba");
+            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.cba");
 			this.Blimey.DebugShapeRenderer.DebugShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
             Sprite.SpriteShader = this.Cor.Graphics.CreateShader(unlitShaderAsset);
             
@@ -176,10 +176,10 @@ namespace Blimey.Demo
 			screenWidth = this.Cor.Status.Width;
 			screenHeight = this.Cor.Status.Height;
 
-			var ta_za = this.Cor.Assets.Load<TextureAsset> ("cvan02.cba");
-            var ta_bg = this.Cor.Assets.Load<TextureAsset> ("bg2.cba");
-			texZa = this.Cor.Graphics.UploadTexture (ta_za);
-            texBg = this.Cor.Graphics.UploadTexture (ta_bg);
+            var ta_za = this.Blimey.Assets.Load<TextureAsset> ("cvan02.cba");
+            var ta_bg = this.Blimey.Assets.Load<TextureAsset> ("bg2.cba");
+            texZa = this.Cor.Graphics.CreateTexture (ta_za);
+            texBg = this.Cor.Graphics.CreateTexture (ta_bg);
             
             var soBG = this.SceneGraph.CreateSceneObject ("bg");
 
@@ -250,8 +250,8 @@ namespace Blimey.Demo
 
 			// Clean up the things we allocated on the GPU.
 			this.Cor.Graphics.DestroyShader (Sprite.SpriteShader);
-			this.Cor.Graphics.UnloadTexture (texZa);
-            this.Cor.Graphics.UnloadTexture (texBg);
+            this.Cor.Graphics.DestroyTexture (texZa);
+            this.Cor.Graphics.DestroyTexture (texBg);
 			Sprite.SpriteShader = null;
             texZa = null;
 			texBg = null;

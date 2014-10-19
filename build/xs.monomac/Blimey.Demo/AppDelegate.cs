@@ -43,25 +43,32 @@ namespace Blimey.Demo
     class AppDelegate
         : NSApplicationDelegate
     {
-        MonoMacApp engine;
+        Engine engine;
 
         public override void FinishedLaunching (NSObject notification)
         {
-        	AppSettings appSettings;
-			appSettings = new AppSettings("Blimey Demo");
-            appSettings.FullScreen = true;
-            appSettings.MouseGeneratesTouches = true;
-			
-			var demo = new Demo ();
+            var appSettings = new AppSettings ("Cor Demo"){
+                FullScreen = true,
+                MouseGeneratesTouches = true
+            };
 
-            engine = new MonoMacApp(appSettings, demo);
+            var entryPoint = new Demo ();
 
-            engine.Run();
+            engine = new Engine(
+                new MonoMacPlatform (),
+                appSettings,
+                entryPoint);
         }
 
         public override bool ApplicationShouldTerminateAfterLastWindowClosed (NSApplication sender)
         {
             return true;
+        }
+
+        public new void Dispose ()
+        {
+            engine.Dispose ();
+            base.Dispose ();
         }
     }
 }
