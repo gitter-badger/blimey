@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B40455AB-4B94-4009-97AA-DE828B38B7E4}</ProjectGuid>
+    <ProjectTypeGuids>{69878862-DA7D-4DC6-B0A1-50D8FAB4242F};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Cor.Demo.Psm</RootNamespace>
+    <AssemblyName>Cor.Demo.Psm</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppMain.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ShaderProgram Include="shaders\Simple.fcg" />
+    <ShaderProgram Include="shaders\Simple.vcg" />
+  </ItemGroup>
+  <ItemGroup>
+    <PsmMetadata Include="app.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Sce\Sce.Psm.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\submodules\abacus\build\Abacus\Abacus %28psm%29.csproj">
+      <Project>{D7DE17E0-DD0E-4AE2-9596-E9BD352DC92D}</Project>
+      <Name>Abacus (psm)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\blimey\build\Blimey\Blimey %28psm%29.csproj">
+      <Project>{19AEB284-5313-4289-B66C-1C876799B4FF}</Project>
+      <Name>Blimey (psm)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\cor\build\Cor\Cor %28psm%29.csproj">
+      <Project>{2375F7C7-85D4-4E6C-8EDF-20FE1E21CC63}</Project>
+      <Name>Cor (psm)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\cor.psm\build\Cor.Psm\Cor.Psm %28psm%29.csproj">
+      <Project>{364DAF31-EDB5-4022-BBAA-D941316FE607}</Project>
+      <Name>Cor.Psm (psm)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\cor.demo\build\Cor.Demo\Cor.Demo %28psm%29.csproj">
+      <Project>{31AD450F-B634-43E1-992B-F94C8B3578DC}</Project>
+      <Name>Cor.Demo (psm)</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
