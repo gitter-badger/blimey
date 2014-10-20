@@ -9,6 +9,10 @@ namespace Oats
 		{
 			String typeName = sc.Read <String> ();
 			Type t = Type.GetType (typeName);
+
+            if (t == null)
+                throw new Exception ("Unknown type: " + typeName);
+
 			return t;
 		}
 
