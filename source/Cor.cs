@@ -45,7 +45,6 @@ namespace Cor
     using Abacus.SinglePrecision;
     using Cor.Platform;
     using Fudge;
-    using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 

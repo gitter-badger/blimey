@@ -51,7 +51,6 @@ namespace Cor.Platform.MonoMac
     using Fudge;
     using Abacus.SinglePrecision;
     using Cor.Platform;
-    using Oats;
 
     #if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
 
