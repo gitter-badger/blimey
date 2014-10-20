@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ShaderDefinition xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/Cor">
-<InputDefinitions>
-    <ShaderInputDefinition>
+<ShaderDeclaration xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/Cor">
+<InputDeclarations>
+    <ShaderInputDeclaration>
         <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">
         <d4p1:X>0</d4p1:X>
         <d4p1:Y>0</d4p1:Y>
@@ -11,8 +11,8 @@
     <NiceName>a_vertPos</NiceName>
     <Optional>false</Optional>
     <Usage>Position</Usage>
-</ShaderInputDefinition>
-<ShaderInputDefinition>
+</ShaderInputDeclaration>
+<ShaderInputDeclaration>
     <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector2">
     <d4p1:X>0</d4p1:X>
     <d4p1:Y>0</d4p1:Y>
@@ -21,8 +21,8 @@
 <NiceName>a_vertTexcoord</NiceName>
 <Optional>true</Optional>
 <Usage>TextureCoordinate</Usage>
-</ShaderInputDefinition>
-<ShaderInputDefinition>
+</ShaderInputDeclaration>
+<ShaderInputDeclaration>
     <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.Packed" i:type="d4p1:Rgba32">
     <d4p1:packedValue>4294967295</d4p1:packedValue>
 </DefaultValue>
@@ -30,28 +30,28 @@
 <NiceName>a_vertColour</NiceName>
 <Optional>true</Optional>
 <Usage>Colour</Usage>
-</ShaderInputDefinition>
-</InputDefinitions>
+</ShaderInputDeclaration>
+</InputDeclarations>
 <Name>Unlit</Name>
 <PassNames xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
 <d2p1:string>Main</d2p1:string>
 </PassNames>
-<SamplerDefinitions>
-    <ShaderSamplerDefinition>
+<SamplerDeclarations>
+    <ShaderSamplerDeclaration>
         <Name>s_tex0</Name>
         <NiceName>TextureSampler</NiceName>
         <Optional>true</Optional>
-    </ShaderSamplerDefinition>
-</SamplerDefinitions>
-<VariableDefinitions>
-    <ShaderVariableDefinition>
+    </ShaderSamplerDeclaration>
+</SamplerDeclarations>
+<VariableDeclarations>
+    <ShaderVariableDeclaration>
         <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.Packed" i:type="d4p1:Rgba32">
         <d4p1:packedValue>4294967295</d4p1:packedValue>
     </DefaultValue>
     <Name>u_colour</Name>
     <NiceName>MaterialColour</NiceName>
-</ShaderVariableDefinition>
-<ShaderVariableDefinition>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
     <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Matrix44">
     <d4p1:R0C0>1</d4p1:R0C0>
     <d4p1:R0C1>0</d4p1:R0C1>
@@ -72,8 +72,8 @@
 </DefaultValue>
 <Name>u_world</Name>
 <NiceName>World</NiceName>
-</ShaderVariableDefinition>
-<ShaderVariableDefinition>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
     <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Matrix44">
     <d4p1:R0C0>1</d4p1:R0C0>
     <d4p1:R0C1>0</d4p1:R0C1>
@@ -94,8 +94,8 @@
 </DefaultValue>
 <Name>u_view</Name>
 <NiceName>View</NiceName>
-</ShaderVariableDefinition>
-<ShaderVariableDefinition>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
     <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Matrix44">
     <d4p1:R0C0>1</d4p1:R0C0>
     <d4p1:R0C1>0</d4p1:R0C1>
@@ -116,6 +116,6 @@
 </DefaultValue>
 <Name>u_proj</Name>
 <NiceName>Projection</NiceName>
-</ShaderVariableDefinition>
-</VariableDefinitions>
-</ShaderDefinition>
+</ShaderVariableDeclaration>
+</VariableDeclarations>
+</ShaderDeclaration>
