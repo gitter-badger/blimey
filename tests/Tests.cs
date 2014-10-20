@@ -6,10 +6,10 @@ using System.Collections.Generic;
 
 namespace Oats.Tests
 {
-	[TestFixture ()]
+	[TestFixture]
 	public class Tests
 	{
-		[Test ()]
+		[Test]
 		public void TestCustomStream ()
 		{
 			var exampleShaderDefinition = TestObjects.ShaderSamplerDefinition;
@@ -39,7 +39,7 @@ namespace Oats.Tests
 			}
 		}
 
-		[Test ()]
+		[Test]
 		public void TestReadmeExample ()
 		{
 			var obj = TestObjects.ReadmeExample;
@@ -51,7 +51,7 @@ namespace Oats.Tests
 			Assert.That (a, Is.EqualTo (obj));
 		}
 
-		[Test ()]
+		[Test]
 		public void TestShaderSamplerDefinitionSerialiser ()
 		{
 			var obj = TestObjects.ShaderSamplerDefinition;
@@ -63,7 +63,7 @@ namespace Oats.Tests
 			Assert.That (a, Is.EqualTo (obj));
 		}
 
-		[Test ()]
+		[Test]
 		public void TestStringSerialiser ()
 		{
 			String[] tests = new []
@@ -87,7 +87,7 @@ namespace Oats.Tests
 			}
 		}
 
-		[Test ()]
+		[Test]
 		public void TestToChecksum ()
 		{
 			ShaderSamplerDefinition exampleObject = TestObjects.ShaderSamplerDefinition;
@@ -111,9 +111,54 @@ namespace Oats.Tests
 			Byte[] chk3 = newExampleObject.ToChecksum <ShaderSamplerDefinition> ();
 			Assert.That (chk1 != chk3);
 
-		}
+        }
 
-		[Test ()]
+        [Test]
+        public void TestMultidimensionalArray ()
+        {
+            Int32[,,] array3d = new Int32[2, 2, 3] { { { 1, 2, 3 }, { 4, 5, 6 } }, 
+                { { 7, 8, 9 }, { 10, 11, 12 } } };
+
+            Byte [] binary = array3d.ToBinary <Int32[,,]> ();
+
+            Int32[,,] result = binary.FromBinary <Int32[,,]> ();
+
+            for (Int32 i = 0; i < 2; ++i)
+            {
+                for (Int32 j = 0; j < 2; ++j)
+                {
+                    for (Int32 k = 0; k < 3; ++k)
+                    {
+                        Assert.That (array3d [i,j,k] == result [i,j,k]);
+                    }
+                }
+            }
+        }
+
+        [Test]
+        public void TestJaggedArray ()
+        {
+            Int32[][] jaggedArray = new Int32 [5][];
+            jaggedArray [0] = new Int32[2] { 0, 1 };
+            jaggedArray [1] = new Int32[4] { 1, 2, 3, 4};
+            jaggedArray [2] = new Int32[6] { 2, 3, 4, 5, 6, 7};
+            jaggedArray [3] = new Int32[8] { 3, 4, 5, 6, 7, 8, 9, 10};
+            jaggedArray [4] = new Int32[10] { 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+
+            Byte [] binary = jaggedArray.ToBinary <Int32[][]> ();
+
+            Int32[][] result = binary.FromBinary <Int32[][]> ();
+
+            for (Int32 i = 0; i < jaggedArray.Length; ++i)
+            {
+                for (Int32 j = 0; j < jaggedArray [i].Length; ++j)
+                {
+                    Assert.That (jaggedArray [i][j] == result [i][j]);
+                }
+            }
+        }
+
+		[Test]
 		public void TestAutoRegisterListSerialiser ()
 		{
 			var lst = new List <Animal> ()
@@ -130,7 +175,22 @@ namespace Oats.Tests
 			Assert.That (results.Count == lst.Count);
 		}
 
-		[Test ()]
+        [Test]
+        public void TestNormalValueArray ()
+        {
+            Int32[] array = new Int32 [6] { 0, 1, 2, 3, 4, 5};
+
+            Byte [] binary = array.ToBinary <Int32[]> ();
+
+            Int32[] result = binary.FromBinary <Int32[]> ();
+
+            for (Int32 i = 0; i < array.Length; ++i)
+            {
+                Assert.That (array [i] == result [i]);
+            }
+        }
+
+		[Test]
 		public void TestArraySerialiserPolymorphic ()
 		{
 			var animal = new Animal ();
