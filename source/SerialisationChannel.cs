@@ -92,10 +92,11 @@ namespace Oats
 			if (!typeof(T).IsValueType)
 			{
 				// Write some extra data
-				streamSerialiser.Write <Boolean> (value != null);
+                var isAssigned = value != null;
+                streamSerialiser.Write <Boolean> (isAssigned);
 
 				// early out if null.
-				if (value == null)
+                if (!isAssigned)
 					return;
 			}
 
@@ -144,8 +145,9 @@ namespace Oats
 
 			if (!typeof(T).IsValueType)
 			{
+                var isAssigned = streamSerialiser.Read <Boolean> ();
 				//classes can be null perhaps it's null
-				if (streamSerialiser.Read <Boolean> () == false)
+                if (!isAssigned)
 				{
 					return default (T);
 				}
