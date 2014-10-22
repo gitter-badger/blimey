@@ -18,7 +18,7 @@ namespace Oats
 
 		public override void Write (ISerialisationChannel sc, Type t)
 		{
-			String typeName = t.FullName + ", " + t.Namespace;
+            String typeName = t.FullName + ", " + t.Assembly.GetName ();
 			sc.Write(typeName);
 		}
 	}
