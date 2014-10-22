@@ -7,15 +7,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor (xs.mono40)", "..\submo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.Text", "..\submodules\ServiceStack.Text\src\ServiceStack.Text\ServiceStack.Text.csproj", "{579B3FDB-CDAD-44E1-8417-885C38E49A0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Assets.AssImp", "Cor.Assets.AssImp\Cor.Assets.AssImp.csproj", "{6C72B877-5395-4BF1-BE47-0E67D5557168}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Assets.AssImp", "Blimey.Assets.AssImp\Blimey.Assets.AssImp.csproj", "{6C72B877-5395-4BF1-BE47-0E67D5557168}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Assets.Pipeline", "Cor.Assets.Pipeline\Cor.Assets.Pipeline.csproj", "{60BC671B-7C9C-48C8-9A25-6A4303381C06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Assets.Pipeline", "Blimey.Assets.Pipeline\Blimey.Assets.Pipeline.csproj", "{60BC671B-7C9C-48C8-9A25-6A4303381C06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Assets.Builders (xs.monomac)", "Cor.Assets.Builders\Cor.Assets.Builders (xs.monomac).csproj", "{E42ABA06-F20C-48AA-B039-96EA5191377E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Assets.Builders", "Blimey.Assets.Builders\Blimey.Assets.Builders.csproj", "{E42ABA06-F20C-48AA-B039-96EA5191377E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorAssetBuilder", "CorAssetBuilder\CorAssetBuilder.csproj", "{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.AssetBuilder", "Blimey.AssetBuilder\Blimey.AssetBuilder.csproj", "{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oats (xs.mono40)", "..\submodules\oats\build\Oats\Oats (xs.mono40).csproj", "{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fudge (xs.mono40)", "..\submodules\fudge\build\xs.mono40\Fudge\Fudge (xs.mono40).csproj", "{C3491695-CFAE-427F-86F9-EEB25E58FB37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey (xs.mono40)", "..\submodules\blimey\build\xs.mono40\Blimey\Blimey (xs.mono40).csproj", "{751BD674-BDC0-427B-9FAD-ED3D275C3595}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +64,18 @@ Global
 		{6C72B877-5395-4BF1-BE47-0E67D5557168}.MonoTouch|Any CPU.Build.0 = Debug|Any CPU
 		{6C72B877-5395-4BF1-BE47-0E67D5557168}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C72B877-5395-4BF1-BE47-0E67D5557168}.Release|Any CPU.Build.0 = Release|Any CPU
+		{751BD674-BDC0-427B-9FAD-ED3D275C3595}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{751BD674-BDC0-427B-9FAD-ED3D275C3595}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{751BD674-BDC0-427B-9FAD-ED3D275C3595}.MonoTouch|Any CPU.ActiveCfg = Debug|Any CPU
+		{751BD674-BDC0-427B-9FAD-ED3D275C3595}.MonoTouch|Any CPU.Build.0 = Debug|Any CPU
+		{751BD674-BDC0-427B-9FAD-ED3D275C3595}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{751BD674-BDC0-427B-9FAD-ED3D275C3595}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3491695-CFAE-427F-86F9-EEB25E58FB37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3491695-CFAE-427F-86F9-EEB25E58FB37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3491695-CFAE-427F-86F9-EEB25E58FB37}.MonoTouch|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3491695-CFAE-427F-86F9-EEB25E58FB37}.MonoTouch|Any CPU.Build.0 = Debug|Any CPU
+		{C3491695-CFAE-427F-86F9-EEB25E58FB37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3491695-CFAE-427F-86F9-EEB25E58FB37}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E42ABA06-F20C-48AA-B039-96EA5191377E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E42ABA06-F20C-48AA-B039-96EA5191377E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E42ABA06-F20C-48AA-B039-96EA5191377E}.MonoTouch|Any CPU.ActiveCfg = Debug|Any CPU
@@ -74,6 +90,6 @@ Global
 		{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = CorAssetBuilder\CorAssetBuilder.csproj
+		StartupItem = Blimey.AssetBuilder\Blimey.AssetBuilder.csproj
 	EndGlobalSection
 EndGlobal

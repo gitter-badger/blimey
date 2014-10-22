@@ -1,7 +1,3 @@
-[submodule "submodules/cor"]
-	path = submodules/cor
-    url=https://github.com/blimey3D/cor.git
-	branch = development
 [submodule "submodules/ServiceStack.Text"]
 	path = submodules/ServiceStack.Text
 	url = https://github.com/ServiceStack/ServiceStack.Text.git
@@ -13,3 +9,12 @@
 [submodule "submodules/oats"]
 	path = submodules/oats
     url=https://github.com/blimey3D/oats.git
+[submodule "submodules/cor"]
+	path = submodules/cor
+	url = git@github.com:blimey3D/cor.git
+[submodule "submodules/blimey"]
+	path = submodules/blimey
+	url = git@github.com:blimey3D/blimey.git
+[submodule "submodules/fudge"]
+	path = submodules/fudge
+	url = git@github.com:blimey3D/fudge.git
