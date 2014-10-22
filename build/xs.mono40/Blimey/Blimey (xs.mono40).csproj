@@ -36,6 +36,36 @@
     <Compile Include="..\..\..\source\Blimey.cs">
       <Link>Blimey.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\source\Blimey.Assets.cs">
+      <Link>Blimey.Assets.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Content.cs">
+      <Link>Blimey.Content.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Extensions.cs">
+      <Link>Blimey.Extensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Gesture.cs">
+      <Link>Blimey.Gesture.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Graphics.cs">
+      <Link>Blimey.Graphics.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Internal.cs">
+      <Link>Blimey.Internal.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Maths.cs">
+      <Link>Blimey.Maths.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Renderers.cs">
+      <Link>Blimey.Renderers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Traits.cs">
+      <Link>Blimey.Traits.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Utilities.cs">
+      <Link>Blimey.Utilities.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\cor\build\xs.mono40\Cor\Cor %28xs.mono40%29.csproj">
@@ -45,6 +75,14 @@
     <ProjectReference Include="..\..\..\..\abacus\build\xs.mono40\Abacus\Abacus %28xs.mono40%29.csproj">
       <Project>{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}</Project>
       <Name>Abacus (xs.mono40)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\fudge\build\xs.mono40\Fudge\Fudge %28xs.mono40%29.csproj">
+      <Project>{C3491695-CFAE-427F-86F9-EEB25E58FB37}</Project>
+      <Name>Fudge (xs.mono40)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\oats\build\Oats\Oats %28xs.mono40%29.csproj">
+      <Project>{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}</Project>
+      <Name>Oats (xs.mono40)</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
