@@ -2165,21 +2165,7 @@ namespace Blimey
 
             asset.Declaration = ss.Read <ShaderDeclaration> ();
             asset.Format = ss.Read <ShaderFormat> ();
-
-            Byte sourceCount = ss.Read <Byte> ();
-
-            // jagged array
-            asset.Sources = new Byte[sourceCount][];
-
-            for (Byte j = 0; j < sourceCount; ++j)
-            {
-                UInt32 dataLength = ss.Read <UInt32> ();
-
-                asset.Sources [j] = new Byte [dataLength];
-
-                for (UInt32 i = 0; i < dataLength; ++i)
-                    asset.Sources [j][i] = ss.Read <Byte> ();
-            }
+            asset.Sources = ss.Read <Byte[][]> ();
 
             return asset;
         }
@@ -2191,16 +2177,7 @@ namespace Blimey
         {
             ss.Write <ShaderDeclaration> (obj.Declaration);
             ss.Write <ShaderFormat> (obj.Format);
-
-            ss.Write <Byte> ( (Byte) obj.Sources.Length);
-
-            for (Byte j = 0; j < obj.Sources.Length; ++j)
-            {
-                ss.Write <UInt32> ((UInt32)obj.Sources [j].LongLength);
-
-                for (UInt32 i = 0; i < obj.Sources [j].Length; ++i)
-                    ss.Write <Byte> (obj.Sources [j] [i]);
-            }
+            ss.Write <Byte[][]> (obj.Sources);
         }
     }
 
