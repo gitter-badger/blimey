@@ -17,6 +17,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -25,6 +26,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -34,8 +36,8 @@
     <Compile Include="..\..\..\source\Cor.cs">
       <Link>Cor.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Lib.Khronos.cs">
-      <Link>Cor.Lib.Khronos.cs</Link>
+    <Compile Include="..\..\..\source\Cor.Platform.cs">
+      <Link>Cor.Platform.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -47,6 +49,10 @@
     <ProjectReference Include="..\..\..\..\oats\build\Oats\Oats %28xs.mono40%29.csproj">
       <Project>{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}</Project>
       <Name>Oats (xs.mono40)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\fudge\build\xs.mono40\Fudge\Fudge %28xs.mono40%29.csproj">
+      <Project>{C3491695-CFAE-427F-86F9-EEB25E58FB37}</Project>
+      <Name>Fudge (xs.mono40)</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

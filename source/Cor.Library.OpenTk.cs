@@ -34,6 +34,8 @@
 namespace Cor.Platform.Xios
 #elif COR_PLATFORM_MONOMAC
 namespace Cor.Platform.MonoMac
+#else
+namespace Cor.Library.OpenTK
 #endif
 {
     using System;
@@ -91,6 +93,7 @@ namespace Cor.Platform.MonoMac
     #elif COR_PLATFORM_MONOMAC
     public partial class MonoMacApi
     #endif
+    #if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
     {
         VertexDeclaration currentVertexDeclaration;
 
@@ -949,6 +952,7 @@ namespace Cor.Platform.MonoMac
         #endregion
 
     }
+    #endif
 
 
 
@@ -1947,11 +1951,5 @@ namespace Cor.Platform.MonoMac
         public String Name { get; set; }
         public ActiveAttribType Type { get; set; }
         public Int32 Location { get; set; }
-    }
-
-    sealed class OTKShaderSourceDefinition
-    {
-        public string VertexShaderPath { get; set; }
-        public string PixelShaderPath { get; set; }
     }
 }
