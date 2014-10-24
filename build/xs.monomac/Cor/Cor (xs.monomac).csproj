@@ -49,9 +49,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\..\source\Cor.Library.OpenTk.cs">
-      <Link>Cor.Library.OpenTk.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\source\Cor.Platform.MonoMac.cs">
       <Link>Cor.Platform.MonoMac.cs</Link>
     </Compile>
@@ -63,6 +60,9 @@
     </Compile>
     <Compile Include="..\..\..\source\Cor.cs">
       <Link>Cor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Cor.Platform.OpenTk.cs">
+      <Link>Cor.Platform.OpenTk.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

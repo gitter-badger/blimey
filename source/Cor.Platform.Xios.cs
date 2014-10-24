@@ -47,9 +47,6 @@ namespace Cor.Platform.Xios
     using Fudge;
     using Abacus.SinglePrecision;
 
-    using Cor.Lib.Khronos;
-    using Cor.Platform.Stub;
-
     using MonoTouch.UIKit;
     using MonoTouch.Foundation;
     using MonoTouch.CoreText;

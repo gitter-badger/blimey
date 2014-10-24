@@ -105,11 +105,14 @@
     <Compile Include="..\..\..\source\Cor.Platform.Xios.cs">
       <Link>Cor.Platform.Xios.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.Stub.cs">
-      <Link>Cor.Platform.Stub.cs</Link>
+    <Compile Include="..\..\..\source\Cor.Library.Foundation.cs">
+      <Link>Cor.Library.Foundation.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Library.OpenTk.cs">
-      <Link>Cor.Library.OpenTk.cs</Link>
+    <Compile Include="..\..\..\source\Cor.Platform.cs">
+      <Link>Cor.Platform.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Cor.Platform.OpenTk.cs">
+      <Link>Cor.Platform.OpenTk.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
