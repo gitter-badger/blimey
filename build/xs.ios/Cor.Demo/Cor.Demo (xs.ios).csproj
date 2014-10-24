@@ -101,26 +101,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="..\..\..\source\Cor.Demo\BasicApp.cs">
-      <Link>source\BasicApp.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Cor.Demo\CustomCube_PositionTexture.cs">
-      <Link>source\CustomCube_PositionTexture.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Cor.Demo\CustomCylinder_PositionNormalTexture.cs">
-      <Link>source\CustomCylinder_PositionNormalTexture.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Cor.Demo\CustomShape_PositionColour.cs">
-      <Link>source\CustomShape_PositionColour.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\source\Cor.Demo\Demo.cs">
       <Link>source\Demo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Cor.Demo\RandomColours.cs">
-      <Link>source\RandomColours.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Cor.Demo\CustomBillboard_PositionTextureColour.cs">
-      <Link>source\CustomBillboard_PositionTextureColour.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -128,7 +110,6 @@
   <ItemGroup>
     <Folder Include="source\" />
     <Folder Include="Properties\" />
-    <Folder Include="assets\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Icon.png" />
@@ -140,33 +121,6 @@
     <BundleResource Include="Icon-Small-50.png" />
     <BundleResource Include="Icon-Small-50%402x.png" />
     <BundleResource Include="Default.png" />
-    <BundleResource Include="..\..\..\assets\xios\airports.cba">
-      <Link>assets\xios\airports.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\bg1.cba">
-      <Link>assets\xios\bg1.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\bg2.cba">
-      <Link>assets\xios\bg2.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\bg3.cba">
-      <Link>assets\xios\bg3.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\cvan01.cba">
-      <Link>assets\xios\cvan01.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\cvan02.cba">
-      <Link>assets\xios\cvan02.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\pixel_lit.cba">
-      <Link>assets\xios\pixel_lit.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\unlit.cba">
-      <Link>assets\xios\unlit.cba</Link>
-    </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\vertex_lit.cba">
-      <Link>assets\xios\vertex_lit.cba</Link>
-    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\submodules\abacus\build\xs.ios\Abacus\Abacus %28xs.ios%29.csproj">
@@ -176,6 +130,10 @@
     <ProjectReference Include="..\..\..\submodules\cor\build\xs.ios\Cor\Cor %28xs.ios%29.csproj">
       <Project>{C8436444-EAAC-4B9A-A8E3-6F8494186F57}</Project>
       <Name>Cor (xs.ios)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\fudge\build\xs.ios\Fudge\Fudge %28xs.ios%29.csproj">
+      <Project>{C29C81F0-E234-4CAE-B162-E3AEF7CBC4F5}</Project>
+      <Name>Fudge (xs.ios)</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

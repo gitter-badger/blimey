@@ -39,8 +39,9 @@ namespace Cor.Demo
 	[MonoTouch.Foundation.Register ("AppDelegate")]
 	public partial class AppDelegate
 		: MonoTouch.UIKit.UIApplicationDelegate
-	{
-		CorAppEngine engine;
+        , IDisposable
+    {
+        Engine engine;
 
 		// This method is invoked when the application has
 		// loaded its UI and is ready to run
@@ -48,13 +49,25 @@ namespace Cor.Demo
 			MonoTouch.UIKit.UIApplication app,
 			MonoTouch.Foundation.NSDictionary options)
 		{
-			AppSettings settings = Demo.GetAppSettings();
-			IApp game = Demo.GetEntryPoint();
+            var appSettings = new AppSettings ("Cor Demo") {
+                FullScreen = true,
+                MouseGeneratesTouches = true
+            };
 
-			engine = new CorAppEngine(settings, game);
-			engine.Run();
+            var entryPoint = new BasicApp();
+
+            engine = new Engine(
+                new XiosPlatform (),
+                appSettings,
+                entryPoint);
 
 			return true;
 		}
+
+        public new void Dispose ()
+        {
+            engine.Dispose ();
+            base.Dispose ();
+        }
 	}
 }
