@@ -1,6 +1,6 @@
 #!/bin/sh
 cd ../source/Blimey.AssetBuilder/
-xbuild Blimey.AssetBuilder.csproj /p:Configuration=Debug /verbosity:quiet /clp:Summary /nologo
+xbuild Blimey.AssetBuilder\ \(xs.mono40\).csproj /p:Configuration=Debug /verbosity:info /clp:Summary /nologo
 
 rm -r -f /usr/local/bin/bab_app
 mkdir /usr/local/bin/bab_app
