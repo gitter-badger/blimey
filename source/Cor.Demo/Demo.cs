@@ -57,11 +57,28 @@ namespace Cor.Demo
             var shader = ShaderHelper.CreateUnlit (engine);
             elements = new IElement[]
             {
-                new Element <Flower, VertPosCol> (shader),
-                new Element <Cylinder, VertPosNormTex> (shader),
-                new Element <Cube, VertPosTex> (shader),
-                new Element <Billboard, VertPosTexCol> (shader),
-                new Element <Cylinder2, VertPosTex> (shader),
+                // The following elements
+                // are working as expected.
+                new Element <FlowerPosCol, VertPosCol> (shader),
+                new Element <CubePosTex, VertPosTex> (shader),
+                new Element <CylinderPosTex, VertPosTex> (shader),
+
+                // The following elements
+                // have problems on OpenTK implementations.
+                // Further investigation is required.
+                // Here's what is known right now:
+
+                // Doesn't show up at all, vertex colour is not coming through properly
+                // if hard coded to white in the vert shader then the element shows up.
+                new Element <BillboardPosTexCol, VertPosTexCol> (shader), 
+
+                // UV's are wrong, the full texture should be evenly stretched across the billboard.
+                new Element <BillboardPosTex, VertPosTex> (shader),
+
+                // UV's are wrong.  This is an interesting case because Normal attribute data is
+                // provided, but should be ignored as it is being rendered with a shader declaration
+                // that knows nothing about Normals.
+                new Element <CylinderPosNormTex, VertPosNormTex> (shader),
             };
 
             Double s = Math.Sqrt (elements.Length);
@@ -184,14 +201,14 @@ namespace Cor.Demo
         VertexBuffer vertexBuffer;
         IndexBuffer indexBuffer;
 
-        Texture tex;
-
+        public Rgba32 Colour { get; private set; }
         public Matrix44 World { get; private set; }
         public Matrix44 View { get; private set; }
 
         public Element (Shader shader)
         {
             this.shader = shader;
+            this.Colour = Rgba32.White;
             View = Matrix44.CreateLookAt (Vector3.UnitZ, Vector3.Forward, Vector3.Up);
         }
 
@@ -241,7 +258,7 @@ namespace Cor.Demo
             shader.SetVariable ("World", World);
             shader.SetVariable ("View", View);
             shader.SetVariable ("Projection", projection);
-            shader.SetVariable ("Colour", Rgba32.White);
+            shader.SetVariable ("Colour", Colour);
 
             shader.SetSamplerTarget ("TextureSampler", 0);
 
@@ -440,7 +457,7 @@ namespace Cor.Demo
 
     #region Meshs
 
-    public class Billboard : IMesh <VertPosTexCol>
+    public class BillboardPosTexCol : IMesh <VertPosTexCol>
     {
         readonly VertPosTexCol[] vertArray = new VertPosTexCol[4];
         readonly Int32[] indexArray = new Int32[6];
@@ -453,7 +470,7 @@ namespace Cor.Demo
 
         #endregion
 
-        public Billboard()
+        public BillboardPosTexCol()
         {
             // Six indices (two triangles) per face.
             indexArray[0] = 0;
@@ -465,14 +482,46 @@ namespace Cor.Demo
             indexArray[5] = 3;
 
             // Four vertices per face.
-            vertArray[0] = new VertPosTexCol(new Vector3(-0.5f, -0.5f, 0f), new Vector2(0.5f, 1f), Rgba32.Yellow);
-            vertArray[1] = new VertPosTexCol(new Vector3(-0.5f,  0.5f, 0f), new Vector2(0.5f, 0f), Rgba32.Green);
+            vertArray[0] = new VertPosTexCol(new Vector3(-0.5f, -0.5f, 0f), new Vector2(0f, 1f), Rgba32.Yellow);
+            vertArray[1] = new VertPosTexCol(new Vector3(-0.5f,  0.5f, 0f), new Vector2(0f, 0f), Rgba32.Green);
             vertArray[2] = new VertPosTexCol(new Vector3( 0.5f, -0.5f, 0f), new Vector2(0f, 1f), Rgba32.Blue);
             vertArray[3] = new VertPosTexCol(new Vector3( 0.5f,  0.5f, 0f), new Vector2(0f, 0f), Rgba32.Red);
         }
     }
 
-    public class Flower : IMesh <VertPosCol>
+    public class BillboardPosTex : IMesh <VertPosTex>
+    {
+        readonly VertPosTex[] vertArray = new VertPosTex[4];
+        readonly Int32[] indexArray = new Int32[6];
+
+        #region IMesh <VertPosTexCol>
+
+        public VertPosTex[] VertArray { get { return vertArray; } }
+        public Int32[] IndexArray { get { return indexArray; } }
+        public VertexDeclaration VertexDeclaration { get { return vertArray [0].VertexDeclaration; } }
+
+        #endregion
+
+        public BillboardPosTex()
+        {
+            // Six indices (two triangles) per face.
+            indexArray[0] = 0;
+            indexArray[1] = 3;
+            indexArray[2] = 2;
+
+            indexArray[3] = 0;
+            indexArray[4] = 1;
+            indexArray[5] = 3;
+
+            // Four vertices per face.
+            vertArray[0] = new VertPosTex(new Vector3(-0.5f, -0.5f, 0f), new Vector2(0f, 1f));
+            vertArray[1] = new VertPosTex(new Vector3(-0.5f,  0.5f, 0f), new Vector2(0f, 0f));
+            vertArray[2] = new VertPosTex(new Vector3( 0.5f, -0.5f, 0f), new Vector2(0f, 1f));
+            vertArray[3] = new VertPosTex(new Vector3( 0.5f,  0.5f, 0f), new Vector2(0f, 0f));
+        }
+    }
+
+    public class FlowerPosCol : IMesh <VertPosCol>
     {
         readonly VertPosCol[] vertArray;
         readonly Int32[] indexArray;
@@ -485,7 +534,7 @@ namespace Cor.Demo
 
         #endregion
 
-        public Flower ()
+        public FlowerPosCol ()
         {
             vertArray = new[]
             {
@@ -525,7 +574,7 @@ namespace Cor.Demo
         }
     }
 
-    public class Cube : IMesh <VertPosTex>
+    public class CubePosTex : IMesh <VertPosTex>
     {
         readonly VertPosTex[] vertArray;
         readonly Int32[] indexArray;
@@ -538,7 +587,7 @@ namespace Cor.Demo
 
         #endregion
 
-        public Cube()
+        public CubePosTex()
         {
             var normals = new []
             {
@@ -584,7 +633,7 @@ namespace Cor.Demo
         }
     }
 
-    public class Cylinder : IMesh <VertPosNormTex>
+    public class CylinderPosNormTex : IMesh <VertPosNormTex>
     {
         readonly VertPosNormTex[] vertArray;
         readonly Int32[] indexArray;
@@ -601,7 +650,7 @@ namespace Cor.Demo
         const float height = 0.5f;
         const float radius = 0.5f;
 
-        public Cylinder ()
+        public CylinderPosNormTex ()
         {
             var vertList = new List<VertPosNormTex>();
             var indexList = new List<Int32>();
@@ -692,7 +741,7 @@ namespace Cor.Demo
         }
     }
 
-    public class Cylinder2 : IMesh <VertPosTex>
+    public class CylinderPosTex : IMesh <VertPosTex>
     {
         readonly VertPosTex[] vertArray;
         readonly Int32[] indexArray;
@@ -709,7 +758,7 @@ namespace Cor.Demo
         const float height = 0.5f;
         const float radius = 0.5f;
 
-        public Cylinder2 ()
+        public CylinderPosTex ()
         {
             var vertList = new List<VertPosTex>();
             var indexList = new List<Int32>();
@@ -813,7 +862,7 @@ namespace Cor.Demo
                     InputDeclarations = new List<ShaderInputDeclaration> {
                         new ShaderInputDeclaration
                         {
-                            Name = "a_vertPos",
+                            Name = "a_vertPosition",
                             NiceName = "Position",
                             Optional = false,
                             Usage = VertexElementUsage.Position,
@@ -870,10 +919,10 @@ namespace Cor.Demo
                 ShaderFormat.GLSL,
                 #if COR_PLATFORM_MONOMAC
                 new []{
-                    Encoding.ASCII.GetBytes (
+                    Encoding.UTF8.GetBytes (
 @"Vertex Position
 =VSH=
-attribute vec4 a_vertPos;
+attribute vec4 a_vertPosition;
 uniform mat4 u_world;
 uniform mat4 u_view;
 uniform mat4 u_proj;
@@ -881,7 +930,7 @@ uniform vec4 u_colour;
 varying vec4 v_tint;
 void main()
 {
-    gl_Position = u_proj * u_view * u_world * a_vertPos;
+    gl_Position = u_proj * u_view * u_world * a_vertPosition;
     v_tint = u_colour;
 }
 =FSH=
@@ -892,10 +941,10 @@ void main()
 }
 "
                     ),
-                    Encoding.ASCII.GetBytes (
+                    Encoding.UTF8.GetBytes (
 @"Vertex Position & Colour
 =VSH=
-attribute vec4 a_vertPos;
+attribute vec4 a_vertPosition;
 attribute vec4 a_vertColour;
 uniform mat4 u_world;
 uniform mat4 u_view;
@@ -904,7 +953,7 @@ uniform vec4 u_colour;
 varying vec4 v_tint;
 void main()
 {
-    gl_Position = u_proj * u_view * u_world * a_vertPos;
+    gl_Position = u_proj * u_view * u_world * a_vertPosition;
     v_tint = a_vertColour * u_colour;
 }
 =FSH=
@@ -915,10 +964,10 @@ void main()
 }
 "
                     ),
-                    Encoding.ASCII.GetBytes (
+                    Encoding.UTF8.GetBytes (
 @"Vertex Position & Texture Coordinate
 =VSH=
-attribute vec4 a_vertPos;
+attribute vec4 a_vertPosition;
 attribute vec2 a_vertTexcoord;
 uniform mat4 u_world;
 uniform mat4 u_view;
@@ -928,7 +977,7 @@ varying vec2 v_texCoord;
 varying vec4 v_tint;
 void main()
 {
-    gl_Position = u_proj * u_view * u_world * a_vertPos;
+    gl_Position = u_proj * u_view * u_world * a_vertPosition;
     v_texCoord = a_vertTexcoord;
     v_tint = u_colour;
 }
@@ -942,10 +991,10 @@ void main()
 }"
 
                     ),
-                    Encoding.ASCII.GetBytes (
-@"Vertex Position, Colour & Texture Coordinate
+                    Encoding.UTF8.GetBytes (
+@"Vertex Position, Texture Coordinate & Colour
 =VSH=
-attribute vec4 a_vertPos;
+attribute vec4 a_vertPosition;
 attribute vec2 a_vertTexcoord;
 attribute vec4 a_vertColour;
 uniform mat4 u_world;
@@ -956,10 +1005,10 @@ varying vec2 v_texCoord;
 varying vec4 v_tint;
 void main()
 {
-    gl_Position = u_proj * u_view * u_world * a_vertPos;
+    gl_Position = u_proj * u_view * u_world * a_vertPosition;
     v_texCoord = a_vertTexcoord;
     vec4 c = a_vertColour;
-    c.a = 1.0;
+    // c.a = 1.0; // this is wrong...
     v_tint = c * u_colour;
 }
 =FSH=
