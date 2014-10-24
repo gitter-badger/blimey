@@ -52,8 +52,184 @@ namespace Cor.Platform.Xios
     using MonoTouch.CoreText;
     using MonoTouch.CoreGraphics;
 
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public sealed class XiosPlatform
+        : IPlatform
+    {
+        public XiosPlatform ()
+        {
+            var program = new XiosProgram ();
+            var api = new XiosApi ();
+
+            api.InitialiseDependencies (program);
+            program.InitialiseDependencies (api);
+
+            Api = api;
+            Program = program;
+        }
+
+        public IProgram Program { get; private set; }
+        public IApi Api { get; private set; }
+    }
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public sealed class XiosProgram
+        : IProgram
+    {
+        XiosApi Api { get; set; }
+
+        internal void InitialiseDependencies (XiosApi api) { Api = api; }
+
+        public void Start (IApi platformImplementation, Action update, Action render)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void Stop ()
+        {
+            throw new NotImplementedException ();
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public partial class XiosApi
+        : IApi
+    {
+        XiosProgram Program { get; set; }
+
+        internal void InitialiseDependencies (XiosProgram program)
+        {
+            Program = program;
+        }
+
+        /*
+         * Audio
+         */
+        public Single sfx_GetVolume ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void sfx_SetVolume (Single volume)
+        {
+            throw new NotImplementedException ();
+        }
+
+
+        /*
+         * Graphics ~ Implemented in Cor.Platform.OpenTk.cs
+         */
+
+        /*
+         * Resources
+         */
+        public Stream res_GetFileStream (String fileName)
+        {
+            throw new NotImplementedException ();
+        }
+
+
+        /*
+         * System
+         */
+        public String sys_GetMachineIdentifier ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public String sys_GetOperatingSystemIdentifier ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public String sys_GetVirtualMachineIdentifier ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 sys_GetPrimaryScreenResolutionWidth ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 sys_GetPrimaryScreenResolutionHeight ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Vector2? sys_GetPrimaryPanelPhysicalSize ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public PanelType sys_GetPrimaryPanelType ()
+        {
+            throw new NotImplementedException ();
+        }
+
+
+        /*
+         * Application
+         */
+        public Boolean? app_IsFullscreen ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 app_GetWidth ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 app_GetHeight ()
+        {
+            throw new NotImplementedException ();
+        }
+
+
+        /*
+         * Input
+         */
+        public DeviceOrientation? hid_GetCurrentOrientation ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Dictionary <DigitalControlIdentifier, Int32> hid_GetDigitalControlStates ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Dictionary <AnalogControlIdentifier, Single> hid_GetAnalogControlStates ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public HashSet <BinaryControlIdentifier> hid_GetBinaryControlStates ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public HashSet <Char> hid_GetPressedCharacters ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public HashSet <RawTouch> hid_GetActiveTouches ()
+        {
+            throw new NotImplementedException ();
+        }
+
+
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+
+    /*
 
     public sealed class AudioManager
         : AudioBase
@@ -76,7 +252,7 @@ namespace Cor.Platform.Xios
                 case MonoTouch.UIKit.UIDeviceOrientation.LandscapeRight: return DeviceOrientation.Rightside;
                 case MonoTouch.UIKit.UIDeviceOrientation.Portrait: return DeviceOrientation.Default;
                 case MonoTouch.UIKit.UIDeviceOrientation.PortraitUpsideDown: return DeviceOrientation.Upsidedown;
-            
+
                 default:
                     Console.WriteLine ("WARNING: Unknown device orientaton: " + monoTouch);
                     return DeviceOrientation.Default;
@@ -150,7 +326,7 @@ namespace Cor.Platform.Xios
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     [MonoTouch.Foundation.Register ("EAGLView")]
-    public sealed class EAGLView 
+    public sealed class EAGLView
         : OpenTK.Platform.iPhoneOS.iPhoneOSGameView
     {
         AppSettings settings;
@@ -169,12 +345,12 @@ namespace Cor.Platform.Xios
 
         Dictionary<Int32, iOSTouchState> touchState = new Dictionary<int, iOSTouchState>();
 
-		public global::System.Boolean IsAnimating 
-        { 
-            get; 
-            private set; 
+		public global::System.Boolean IsAnimating
+        {
+            get;
+            private set;
         }
-        
+
         // How many display frames must pass between each time the display link fires.
         public Int32 FrameInterval
         {
@@ -214,7 +390,7 @@ namespace Cor.Platform.Xios
             return OpenTK.Platform.iPhoneOS.iPhoneOSGameView.GetLayerClass ();
         }
 
-        
+
         protected override void ConfigureLayer (MonoTouch.CoreAnimation.CAEAGLLayer eaglLayer)
         {
             eaglLayer.Opaque = true;
@@ -236,9 +412,9 @@ namespace Cor.Platform.Xios
             KrErrorHandler.Check ();
 
             OpenTK.Graphics.ES20.GL.RenderbufferStorage (
-                OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer, 
-                OpenTK.Graphics.ES20.RenderbufferInternalFormat.DepthComponent16, 
-                Size.Width, 
+                OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer,
+                OpenTK.Graphics.ES20.RenderbufferInternalFormat.DepthComponent16,
+                Size.Width,
                 Size.Height);
             KrErrorHandler.Check ();
 
@@ -249,7 +425,7 @@ namespace Cor.Platform.Xios
                 _depthRenderbuffer);
             KrErrorHandler.Check ();
         }
-        
+
         public void SetEngineDetails (AppSettings settings, IApp game)
         {
             this.settings = settings;
@@ -261,12 +437,12 @@ namespace Cor.Platform.Xios
             gameEngine = new Engine (
                 this.settings,
                 this.game,
-                this, 
-                this.GraphicsContext, 
+                this,
+                this.GraphicsContext,
                 this.touchState);
             timer.Start ();
         }
-        
+
         protected override void DestroyFrameBuffer ()
         {
             base.DestroyFrameBuffer ();
@@ -276,25 +452,25 @@ namespace Cor.Platform.Xios
         {
             if (IsAnimating)
                 return;
-            
+
             CreateFrameBuffer ();
 
             CreateEngine ();
 
-            displayLink = 
+            displayLink =
                 MonoTouch.UIKit.UIScreen.MainScreen.CreateDisplayLink (
-                    this, 
+                    this,
                     new MonoTouch.ObjCRuntime.Selector ("drawFrame")
                     );
 
             displayLink.FrameInterval = frameInterval;
             displayLink.AddToRunLoop (
-                MonoTouch.Foundation.NSRunLoop.Current, 
+                MonoTouch.Foundation.NSRunLoop.Current,
                 MonoTouch.Foundation.NSRunLoop.NSDefaultRunLoopMode);
-            
+
             IsAnimating = true;
         }
-        
+
         public void StopAnimating ()
         {
             if (!IsAnimating)
@@ -324,7 +500,7 @@ namespace Cor.Platform.Xios
 
             Single dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
             previousTimeSpan = timer.Elapsed;
-            
+
             if (dt > 0.5f)
             {
                 dt = 0.0f;
@@ -361,7 +537,7 @@ namespace Cor.Platform.Xios
             foreach (var key in keysToDitch)
             {
                 touchState.Remove (key);
-                
+
                 //Console.WriteLine ("remove "+key);
             }
         }
@@ -371,7 +547,7 @@ namespace Cor.Platform.Xios
             base.OnRenderFrame (e);
 
             base.MakeCurrent ();
-            
+
             gameEngine.Render ();
 
             this.SwapBuffers ();
@@ -409,7 +585,7 @@ namespace Cor.Platform.Xios
         {
             var touchesArray = touches.ToArray<MonoTouch.UIKit.UITouch> ();
 
-            for (int i = 0; i < touchesArray.Length; ++i) 
+            for (int i = 0; i < touchesArray.Length; ++i)
             {
                 var touch = touchesArray [i];
 
@@ -603,12 +779,12 @@ namespace Cor.Platform.Xios
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     [MonoTouch.Foundation.Register ("OpenGLViewController")]
-    public sealed class OpenGLViewController 
+    public sealed class OpenGLViewController
         : MonoTouch.UIKit.UIViewController
     {
         AppSettings _settings;
         IApp _game;
-            
+
         public OpenGLViewController (
             AppSettings settings,
             IApp game)
@@ -618,7 +794,7 @@ namespace Cor.Platform.Xios
             _settings = settings;
             _game = game;
         }
-        
+
         new EAGLView View
         {
             get
@@ -661,22 +837,22 @@ namespace Cor.Platform.Xios
                 },
                 this
             );
-            
+
             View.SetEngineDetails (_settings, _game);
         }
-        
+
         protected override void Dispose (Boolean disposing)
         {
             base.Dispose (disposing);
-            
+
             MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.RemoveObserver (this);
         }
-        
+
         public override void DidReceiveMemoryWarning ()
         {
             // Releases the view if it doesn't have a superview.
             base.DidReceiveMemoryWarning ();
-            
+
             // Release any cached data, images, etc that aren't in use.
         }
 
@@ -685,13 +861,13 @@ namespace Cor.Platform.Xios
             base.DidRotate (fromInterfaceOrientation);
         }
 
-        
+
         public override void ViewWillAppear (Boolean animated)
         {
             base.ViewWillAppear (animated);
             View.StartAnimating ();
         }
-        
+
         public override void ViewWillDisappear (Boolean animated)
         {
             base.ViewWillDisappear (animated);
@@ -716,7 +892,7 @@ namespace Cor.Platform.Xios
 
             MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
                 MonoTouch.UIKit.UIApplication.DidBecomeActiveNotification, this.DidBecomeActive);
-            
+
             MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
                 MonoTouch.UIKit.UIApplication.DidReceiveMemoryWarningNotification, this.DidReceiveMemoryWarning);
 
@@ -742,7 +918,7 @@ namespace Cor.Platform.Xios
         {
             Console.WriteLine ("[Cor.System] DidEnterBackground");
         }
-        
+
         public void DidFinishLaunching (MonoTouch.Foundation.NSNotification ntf)
         {
             Console.WriteLine ("[Cor.System] DidFinishLaunching");
@@ -751,7 +927,7 @@ namespace Cor.Platform.Xios
         public void OrientationDidChange (MonoTouch.Foundation.NSNotification ntf)
         {
             Console.WriteLine (
-                "[Cor.System] OrientationDidChange, CurrentOrientation: " + 
+                "[Cor.System] OrientationDidChange, CurrentOrientation: " +
                 CurrentOrientation.ToString () + ", CurrentDisplaySize: " + CurrentDisplaySize.ToString ());
         }
 
@@ -787,16 +963,16 @@ namespace Cor.Platform.Xios
 		{
 			get
 			{
-				return MonoTouch.UIKit.UIDevice.CurrentDevice.Model + 
+				return MonoTouch.UIKit.UIDevice.CurrentDevice.Model +
 					" : " + MonoTouch.UIKit.UIDevice.CurrentDevice.Name;
 			}
 		}
 
 		public override String OperatingSystem
-		{ 
-			get 
-			{ 
-				return MonoTouch.UIKit.UIDevice.CurrentDevice.SystemName + 
+		{
+			get
+			{
+				return MonoTouch.UIKit.UIDevice.CurrentDevice.SystemName +
 					" : " + MonoTouch.UIKit.UIDevice.CurrentDevice.SystemVersion;
 			}
 		}
@@ -840,7 +1016,7 @@ namespace Cor.Platform.Xios
 			: base (gfx)
 		{
 		}
-		
+
         static string GetResourcePath (string path)
         {
             string ext = Path.GetExtension (path);
@@ -860,7 +1036,7 @@ namespace Cor.Platform.Xios
 
             return resourcePathname;
         }
-		
+
 		#region AssetsBase
 
         public override Stream GetAssetStream (String assetId)
@@ -871,7 +1047,7 @@ namespace Cor.Platform.Xios
 
             return fStream;
         }
-		
+
 		#endregion
     }
 
@@ -899,8 +1075,8 @@ namespace Cor.Platform.Xios
 
             Console.WriteLine (
                 string.Format (
-                    "Screen Specification - Width: {0}, Height: {1}", 
-                    ScreenResolutionWidth, 
+                    "Screen Specification - Width: {0}, Height: {1}",
+                    ScreenResolutionWidth,
                     ScreenResolutionHeight));
         }
 
@@ -969,7 +1145,7 @@ namespace Cor.Platform.Xios
             get
             {
                 // do lookup here into all device types
-                return new Vector2(0.0768f, 0.1024f); 
+                return new Vector2(0.0768f, 0.1024f);
             }
         }
 
@@ -1039,7 +1215,7 @@ namespace Cor.Platform.Xios
         }
 
         public void Run ()
-        {  
+        {
             UIApplication.SharedApplication.StatusBarHidden = true;
 
             // create a new window instance based on the screen size
@@ -1054,4 +1230,5 @@ namespace Cor.Platform.Xios
             window.MakeKeyAndVisible ();
         }
     }
+    */
 }
