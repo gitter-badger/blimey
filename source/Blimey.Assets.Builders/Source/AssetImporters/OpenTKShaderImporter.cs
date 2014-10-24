@@ -49,8 +49,11 @@ namespace Blimey.Assets.Builders
             if (!shaderFormat.HasValue)
                 throw new Exception ("Format " + format + " not supported.");
 
+            // this is a hack
             Abacus.SinglePrecision.Matrix44 m ;
             m = Abacus.SinglePrecision.Matrix44.Identity;
+            // hack complete
+
 			String commonShaderDecl = File.ReadAllText (input.Files [0]);
             String platformShaderDef = File.ReadAllText (input.Files [1]);
 
@@ -63,7 +66,7 @@ namespace Blimey.Assets.Builders
 
 			// BEGIN PLATFORM SPECIFIC RUNTIME DATA FORMAT ------------------------ //
 
-            // Jagged arry
+            // Jagged array
             Byte[][] sources = new Byte[platformDefinition.VariantDefinitions.Count][];
 
             string path = Path.GetFullPath (input.Files [1]);
@@ -93,7 +96,9 @@ namespace Blimey.Assets.Builders
 
                 sources [i] = Encoding.UTF8.GetBytes (s);
             }
-						
+				
+            Byte[] bin = sources.ToBinary <Byte[][]> ();
+            Byte[][] andback = bin.FromBinary <Byte[][]> ();
 
 			// END PLATFORM SPECIFIC RUNTIME DATA FORMAT -------------------------- //
 

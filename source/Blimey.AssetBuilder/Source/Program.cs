@@ -169,7 +169,7 @@ namespace Blimey.AssetBuilder
                     Path.Combine (
                         projectDefinition.DestinationFolder,
                         platformId,
-						assetDefinition.AssetId + ".cba");
+						assetDefinition.AssetId + ".bba");
 
                 Console.WriteLine ("\t= " + assetfile);
 
