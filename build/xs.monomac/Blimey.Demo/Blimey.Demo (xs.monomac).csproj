@@ -107,41 +107,41 @@
     <Folder Include="assets\" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="..\..\..\assets\monomac\airports.cba">
-      <Link>assets\monomac\airports.cba</Link>
+    <BundleResource Include="..\..\..\assets\monomac\airports.bba">
+      <Link>assets\monomac\airports.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\bg1.cba">
-      <Link>assets\monomac\bg1.cba</Link>
+    <BundleResource Include="..\..\..\assets\monomac\bg1.bba">
+      <Link>assets\monomac\bg1.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\bg2.cba">
-      <Link>assets\monomac\bg2.cba</Link>
+    <BundleResource Include="..\..\..\assets\monomac\bg2.bba">
+      <Link>assets\monomac\bg2.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\bg3.cba">
-      <Link>assets\monomac\bg3.cba</Link>
+    <BundleResource Include="..\..\..\assets\monomac\bg3.bba">
+      <Link>assets\monomac\bg3.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\cvan01.cba">
-      <Link>assets\monomac\cvan01.cba</Link>
+    <BundleResource Include="..\..\..\assets\monomac\cvan01.bba">
+      <Link>assets\monomac\cvan01.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\cvan02.cba">
-      <Link>assets\monomac\cvan02.cba</Link>
+    <BundleResource Include="..\..\..\assets\monomac\cvan02.bba">
+      <Link>assets\monomac\cvan02.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\pixel_lit.cba">
-      <Link>assets\monomac\pixel_lit.cba</Link>
+    <BundleResource Include="..\..\..\assets\monomac\pixel_lit.bba">
+      <Link>assets\monomac\pixel_lit.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\unlit.cba">
-      <Link>assets\monomac\unlit.cba</Link>
+    <BundleResource Include="..\..\..\assets\monomac\unlit.bba">
+      <Link>assets\monomac\unlit.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\vertex_lit.cba">
-      <Link>assets\monomac\vertex_lit.cba</Link>
+    <BundleResource Include="..\..\..\assets\monomac\vertex_lit.bba">
+      <Link>assets\monomac\vertex_lit.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\blimey_fnt_tex.cba">
-      <Link>assets\monomac\blimey_fnt_tex.cba</Link>
+    <BundleResource Include="..\..\..\assets\monomac\blimey_fnt_tex.bba">
+      <Link>assets\monomac\blimey_fnt_tex.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\blimey_fnt_uv.cba">
-      <Link>assets\monomac\blimey_fnt_uv.cba</Link>
+    <BundleResource Include="..\..\..\assets\monomac\blimey_fnt_uv.bba">
+      <Link>assets\monomac\blimey_fnt_uv.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\monomac\zazaka.cba">
-      <Link>assets\monomac\zazaka.cba</Link>
+    <BundleResource Include="..\..\..\assets\monomac\zazaka.bba">
+      <Link>assets\monomac\zazaka.bba</Link>
     </BundleResource>
   </ItemGroup>
   <ItemGroup>

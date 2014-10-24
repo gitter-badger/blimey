@@ -104,12 +104,12 @@ namespace Blimey.Demo
 
 		public override void Start()
 		{
-            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.cba");
+            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
 			this.Blimey.DebugShapeRenderer.DebugShader = 
                 this.Cor.Graphics.CreateShader (unlitShaderAsset);
 			gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Debug");
             
-            var lines = Blimey.Assets.Load <TextAsset> ("airports.cba")
+            var lines = Blimey.Assets.Load <TextAsset> ("airports.bba")
                 .Text
                 .Split ('\n')
                 .ToList ();
@@ -138,7 +138,7 @@ namespace Blimey.Demo
 			// create a sprite
 			var sphereMesh = new SpherePrimitive(this.Cor.Graphics);
 
-            ShaderAsset shaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("vertex_lit.cba");
+            ShaderAsset shaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("vertex_lit.bba");
             shader = this.Cor.Graphics.CreateShader (shaderAsset);
 
             var mat = new Material("Default",shader);
@@ -163,7 +163,7 @@ namespace Blimey.Demo
 			mr.Mesh = sphereMesh;
 			mr.Material = mat;
 
-            ShaderAsset shaderAsset2 = this.Blimey.Assets.Load<ShaderAsset> ("unlit.cba");
+            ShaderAsset shaderAsset2 = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
 			shader2 = this.Cor.Graphics.CreateShader (shaderAsset2);
 
 			var mat2 = new Material("Default", shader2);

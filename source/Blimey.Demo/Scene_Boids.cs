@@ -328,7 +328,7 @@ namespace Blimey.Demo
 
         public override void Start()
         {
-            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.cba");
+            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
 			this.Blimey.DebugShapeRenderer.DebugShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
 
 			var newCamSo = this.SceneGraph.CreateSceneObject("ortho");

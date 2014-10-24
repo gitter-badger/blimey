@@ -167,7 +167,7 @@ namespace Blimey.Demo
 
         public override void Start ()
         {
-            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.cba");
+            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
 			this.Blimey.DebugShapeRenderer.DebugShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
             Sprite.SpriteShader = this.Cor.Graphics.CreateShader(unlitShaderAsset);
             
@@ -176,8 +176,8 @@ namespace Blimey.Demo
 			screenWidth = this.Cor.Status.Width;
 			screenHeight = this.Cor.Status.Height;
 
-            var ta_za = this.Blimey.Assets.Load<TextureAsset> ("cvan02.cba");
-            var ta_bg = this.Blimey.Assets.Load<TextureAsset> ("bg2.cba");
+            var ta_za = this.Blimey.Assets.Load<TextureAsset> ("cvan02.bba");
+            var ta_bg = this.Blimey.Assets.Load<TextureAsset> ("bg2.bba");
             texZa = this.Cor.Graphics.CreateTexture (ta_za);
             texBg = this.Cor.Graphics.CreateTexture (ta_bg);
             

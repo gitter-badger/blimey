@@ -1,13 +1,13 @@
 {
     "AssetId" : "unlit",
-    "AssetType" : "Cor.ShaderAsset, Cor",
+    "AssetType" : "Blimey.ShaderAsset, Blimey",
     "SourceSets" :
     [
         {
             "Platforms" : [ "monomac" ],
             "Importer" :
             {
-                "AssetImporterType" : "Cor.KhronosShaderImporter, Cor.Assets.Builders",
+                "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, Blimey.Assets.Builders",
                 "AssetImporterSettings" :
                 {
                     "Format" : "OpenGL 4"
@@ -24,7 +24,7 @@
             "Platforms" : [ "xios" ],
             "Importer" :
             {
-                "AssetImporterType" : "Cor.KhronosShaderImporter, Cor.Assets.Builders",
+                "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, Blimey.Assets.Builders",
                 "AssetImporterSettings" :
                 {
                     "Format" : "OpenGL ES 2"

@@ -1,6 +1,6 @@
 {
     "AssetId" : "cvan01",
-    "AssetType" : "Cor.ColourmapAsset, Cor",
+    "AssetType" : "Blimey.ColourmapAsset, Blimey",
     "SourceSets" :
     [
         {
@@ -8,16 +8,16 @@
             "Importer" :
             {
                 "Files" : [ "cvan01.png" ],
-                "AssetImporterType" : "Cor.ImageFileImporter, Cor.Assets.Builders",
+                "AssetImporterType" : "Blimey.Assets.Builders.ImageFileImporter, Blimey.Assets.Builders",
                 "AssetImporterSettings" : {}
             },
             "Processors" :
             [
                 {
-                    "AssetProcessorType" : "Cor.TextureAssetProcessor, Cor.Assets.Builders",
+                    "AssetProcessorType" : "Blimey.Assets.Builders.TextureAssetProcessor, Blimey.Assets.Builders",
                     "AssetProcessorSettings" :
-                    { 
-                        "SurfaceFormat" : "Rgba32" 
+                    {
+                        "SurfaceFormat" : "Rgba32"
                     }
                 }
             ]

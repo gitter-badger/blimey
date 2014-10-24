@@ -53,18 +53,18 @@ namespace Blimey.Demo
 			this.Configuration.BackgroundColour = Rgba32.DarkSlateGrey;
 
 			// set up the debug renderer
-            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.cba");
+            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
 			this.Blimey.DebugShapeRenderer.DebugShader = 
 				this.Cor.Graphics.CreateShader (unlitShaderAsset);
 			gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Default", 1f, 10);
 
 			Sprite.SpriteShader = this.Cor.Graphics.CreateShader(unlitShaderAsset);
 
-            TextAsset fntUvAsset = this.Blimey.Assets.Load <TextAsset> ("blimey_fnt_uv.cba");
+            TextAsset fntUvAsset = this.Blimey.Assets.Load <TextAsset> ("blimey_fnt_uv.bba");
 
 			Console.WriteLine (fntUvAsset.Text);
 
-            TextureAsset fntTexAsset = this.Blimey.Assets.Load <TextureAsset> ("blimey_fnt_tex.cba");
+            TextureAsset fntTexAsset = this.Blimey.Assets.Load <TextureAsset> ("blimey_fnt_tex.bba");
 
             fntTex = this.Cor.Graphics.CreateTexture (fntTexAsset);
 

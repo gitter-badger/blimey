@@ -152,41 +152,41 @@
     <BundleResource Include="Icon-Small-50.png" />
     <BundleResource Include="Icon-Small-50%402x.png" />
     <BundleResource Include="Default.png" />
-    <BundleResource Include="..\..\..\assets\xios\airports.cba">
-      <Link>assets\xios\airports.cba</Link>
+    <BundleResource Include="..\..\..\assets\xios\airports.bba">
+      <Link>assets\xios\airports.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\bg1.cba">
-      <Link>assets\xios\bg1.cba</Link>
+    <BundleResource Include="..\..\..\assets\xios\bg1.bba">
+      <Link>assets\xios\bg1.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\bg2.cba">
-      <Link>assets\xios\bg2.cba</Link>
+    <BundleResource Include="..\..\..\assets\xios\bg2.bba">
+      <Link>assets\xios\bg2.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\bg3.cba">
-      <Link>assets\xios\bg3.cba</Link>
+    <BundleResource Include="..\..\..\assets\xios\bg3.bba">
+      <Link>assets\xios\bg3.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\cvan01.cba">
-      <Link>assets\xios\cvan01.cba</Link>
+    <BundleResource Include="..\..\..\assets\xios\cvan01.bba">
+      <Link>assets\xios\cvan01.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\cvan02.cba">
-      <Link>assets\xios\cvan02.cba</Link>
+    <BundleResource Include="..\..\..\assets\xios\cvan02.bba">
+      <Link>assets\xios\cvan02.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\pixel_lit.cba">
-      <Link>assets\xios\pixel_lit.cba</Link>
+    <BundleResource Include="..\..\..\assets\xios\pixel_lit.bba">
+      <Link>assets\xios\pixel_lit.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\unlit.cba">
-      <Link>assets\xios\unlit.cba</Link>
+    <BundleResource Include="..\..\..\assets\xios\unlit.bba">
+      <Link>assets\xios\unlit.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\vertex_lit.cba">
-      <Link>assets\xios\vertex_lit.cba</Link>
+    <BundleResource Include="..\..\..\assets\xios\vertex_lit.bba">
+      <Link>assets\xios\vertex_lit.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\zazaka.cba">
-      <Link>assets\xios\zazaka.cba</Link>
+    <BundleResource Include="..\..\..\assets\xios\zazaka.bba">
+      <Link>assets\xios\zazaka.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\blimey_fnt_tex.cba">
-      <Link>assets\xios\blimey_fnt_tex.cba</Link>
+    <BundleResource Include="..\..\..\assets\xios\blimey_fnt_tex.bba">
+      <Link>assets\xios\blimey_fnt_tex.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\blimey_fnt_uv.cba">
-      <Link>assets\xios\blimey_fnt_uv.cba</Link>
+    <BundleResource Include="..\..\..\assets\xios\blimey_fnt_uv.bba">
+      <Link>assets\xios\blimey_fnt_uv.bba</Link>
     </BundleResource>
   </ItemGroup>
   <ItemGroup>

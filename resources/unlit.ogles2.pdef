@@ -1,61 +1,25 @@
 {
     "VariantDefinitions" :
     [
-    	{
+        {
             "VariantName" = "Unlit_Position",
-            "VariantPassDefinitions" :
-            [
-	            {
-                    "PassName" = "Main",
-                    "PassDefinition" :
-                    {
-                        "VertexShaderPath" = "ogles2/Unlit_Position.vsh",
-                        "PixelShaderPath" = "ogles2/Unlit_Position.fsh",
-                    }
-	            }
-            ]
+            "VertexShaderPath" = "ogles2/Unlit_Position.vsh",
+            "PixelShaderPath" = "ogles2/Unlit_Position.fsh"
         },
         {
             "VariantName" = "Unlit_PositionTexture",
-            "VariantPassDefinitions" :
-            [
-	            {
-                    "PassName" = "Main",
-                    "PassDefinition" :
-                    {
-                        "VertexShaderPath" = "ogles2/Unlit_PositionTexture.vsh",
-                        "PixelShaderPath" = "ogles2/Unlit_PositionTexture.fsh",
-                    }
-	            }
-            ]
+            "VertexShaderPath" = "ogles2/Unlit_PositionTexture.vsh",
+            "PixelShaderPath" = "ogles2/Unlit_PositionTexture.fsh"
         },
         {
             "VariantName" = "Unlit_PositionColour",
-            "VariantPassDefinitions" :
-            [
-	            {
-                    "PassName" = "Main",
-                    "PassDefinition" :
-                    {
-                        "VertexShaderPath" = "ogles2/Unlit_PositionColour.vsh",
-                        "PixelShaderPath" = "ogles2/Unlit_PositionColour.fsh",
-                    }
-	            }
-            ]
+            "VertexShaderPath" = "ogles2/Unlit_PositionColour.vsh",
+            "PixelShaderPath" = "ogles2/Unlit_PositionColour.fsh"
         },
         {
             "VariantName" = "Unlit_PositionTextureColour",
-            "VariantPassDefinitions" :
-            [
-	            {
-                    "PassName" = "Main",
-                    "PassDefinition" :
-                    {
-                        "VertexShaderPath" = "ogles2/Unlit_PositionTextureColour.vsh",
-                        "PixelShaderPath" = "ogles2/Unlit_PositionTextureColour.fsh",
-                    }
-	            }
-            ]
+            "VertexShaderPath" = "ogles2/Unlit_PositionTextureColour.vsh",
+            "PixelShaderPath" = "ogles2/Unlit_PositionTextureColour.fsh"
         }
     ]
 }
