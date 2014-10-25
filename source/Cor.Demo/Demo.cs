@@ -854,6 +854,183 @@ namespace Cor.Demo
 
     public static class ShaderHelper
     {
+        static ShaderFormat GetShaderFormat ()
+        {
+            #if COR_PLATFORM_MONOMAC
+            return ShaderFormat.GLSL
+            #elif COR_PLATFORM_XIOS
+            return ShaderFormat.GLSL_ES;
+            #else
+            #error
+            #endif
+
+        }
+
+        static String ConvertToES (String source)
+        {
+            source = source.Replace ("uniform", "uniform mediump");
+            source = source.Replace ("varying", "varying mediump");
+            source = source.Replace ("attribute", "attribute mediump");
+            return source;
+        }
+
+        static Byte[] GetUnlit_VertPos ()
+        {
+            String source =
+                #if COR_PLATFORM_MONOMAC || COR_PLATFORM_XIOS
+@"Vertex Position
+=VSH=
+attribute vec4 a_vertPosition;
+uniform mat4 u_world;
+uniform mat4 u_view;
+uniform mat4 u_proj;
+uniform vec4 u_colour;
+varying vec4 v_tint;
+void main()
+{
+    gl_Position = u_proj * u_view * u_world * a_vertPosition;
+    v_tint = u_colour;
+}
+=FSH=
+varying vec4 v_tint;
+void main()
+{
+    gl_FragColor = v_tint;
+}
+"
+                #else
+                #error
+                #endif
+                ;
+
+            #if COR_PLATFORM_XIOS
+            source = ConvertToES (source);
+            #endif
+
+            return Encoding.UTF8.GetBytes (source);
+        }
+
+        static Byte[] GetUnlit_VertPosTex ()
+        {
+            String source =
+                #if COR_PLATFORM_MONOMAC || COR_PLATFORM_XIOS
+@"Vertex Position & Texture Coordinate
+=VSH=
+attribute vec4 a_vertPosition;
+attribute vec2 a_vertTexcoord;
+uniform mat4 u_world;
+uniform mat4 u_view;
+uniform mat4 u_proj;
+uniform vec4 u_colour;
+varying vec2 v_texCoord;
+varying vec4 v_tint;
+void main()
+{
+    gl_Position = u_proj * u_view * u_world * a_vertPosition;
+    v_texCoord = a_vertTexcoord;
+    v_tint = u_colour;
+}
+=FSH=
+uniform sampler2D s_tex0;
+varying vec2 v_texCoord;
+varying vec4 v_tint;
+void main()
+{
+    gl_FragColor = v_tint * texture2D(s_tex0, v_texCoord);
+}"
+                #else
+                #error
+                #endif
+            ;
+
+            #if COR_PLATFORM_XIOS
+            source = ConvertToES (source);
+            #endif
+
+            return Encoding.UTF8.GetBytes (source);
+        }
+
+        static Byte[] GetUnlit_VertPosCol ()
+        {
+            String source =
+                #if COR_PLATFORM_MONOMAC || COR_PLATFORM_XIOS
+@"Vertex Position & Colour
+=VSH=
+attribute vec4 a_vertPosition;
+attribute vec4 a_vertColour;
+uniform mat4 u_world;
+uniform mat4 u_view;
+uniform mat4 u_proj;
+uniform vec4 u_colour;
+varying vec4 v_tint;
+void main()
+{
+    gl_Position = u_proj * u_view * u_world * a_vertPosition;
+    v_tint = a_vertColour * u_colour;
+}
+=FSH=
+varying vec4 v_tint;
+void main()
+{
+    gl_FragColor = v_tint;
+}
+"
+                #else
+                #error
+                #endif
+            ;
+
+            #if COR_PLATFORM_XIOS
+            source = ConvertToES (source);
+            #endif
+
+            return Encoding.UTF8.GetBytes (source);
+        }
+
+        static Byte[] GetUnlit_VertPosTexCol ()
+        {
+            String source =
+                #if COR_PLATFORM_MONOMAC || COR_PLATFORM_XIOS
+@"Vertex Position, Texture Coordinate & Colour
+=VSH=
+attribute vec4 a_vertPosition;
+attribute vec2 a_vertTexcoord;
+attribute vec4 a_vertColour;
+uniform mat4 u_world;
+uniform mat4 u_view;
+uniform mat4 u_proj;
+uniform vec4 u_colour;
+varying vec2 v_texCoord;
+varying vec4 v_tint;
+void main()
+{
+    gl_Position = u_proj * u_view * u_world * a_vertPosition;
+    v_texCoord = a_vertTexcoord;
+    vec4 c = a_vertColour;
+    // c.a = 1.0; // this is wrong...
+    v_tint = c * u_colour;
+}
+=FSH=
+uniform sampler2D s_tex0;
+varying vec2 v_texCoord;
+varying vec4 v_tint;
+void main()
+{
+    gl_FragColor = v_tint * texture2D(s_tex0, v_texCoord);
+}
+"
+                #else
+                #error
+                #endif
+            ;
+
+            #if COR_PLATFORM_XIOS
+            source = ConvertToES (source);
+            #endif
+
+            return Encoding.UTF8.GetBytes (source);
+        }
+
         public static Shader CreateUnlit (Engine engine)
         {
             return engine.Graphics.CreateShader (
@@ -916,119 +1093,14 @@ namespace Cor.Demo
                         }
                     }
                 },
-                ShaderFormat.GLSL,
-                #if COR_PLATFORM_MONOMAC
-                new []{
-                    Encoding.UTF8.GetBytes (
-@"Vertex Position
-=VSH=
-attribute vec4 a_vertPosition;
-uniform mat4 u_world;
-uniform mat4 u_view;
-uniform mat4 u_proj;
-uniform vec4 u_colour;
-varying vec4 v_tint;
-void main()
-{
-    gl_Position = u_proj * u_view * u_world * a_vertPosition;
-    v_tint = u_colour;
-}
-=FSH=
-varying vec4 v_tint;
-void main()
-{
-    gl_FragColor = v_tint;
-}
-"
-                    ),
-                    Encoding.UTF8.GetBytes (
-@"Vertex Position & Colour
-=VSH=
-attribute vec4 a_vertPosition;
-attribute vec4 a_vertColour;
-uniform mat4 u_world;
-uniform mat4 u_view;
-uniform mat4 u_proj;
-uniform vec4 u_colour;
-varying vec4 v_tint;
-void main()
-{
-    gl_Position = u_proj * u_view * u_world * a_vertPosition;
-    v_tint = a_vertColour * u_colour;
-}
-=FSH=
-varying vec4 v_tint;
-void main()
-{
-    gl_FragColor = v_tint;
-}
-"
-                    ),
-                    Encoding.UTF8.GetBytes (
-@"Vertex Position & Texture Coordinate
-=VSH=
-attribute vec4 a_vertPosition;
-attribute vec2 a_vertTexcoord;
-uniform mat4 u_world;
-uniform mat4 u_view;
-uniform mat4 u_proj;
-uniform vec4 u_colour;
-varying vec2 v_texCoord;
-varying vec4 v_tint;
-void main()
-{
-    gl_Position = u_proj * u_view * u_world * a_vertPosition;
-    v_texCoord = a_vertTexcoord;
-    v_tint = u_colour;
-}
-=FSH=
-uniform sampler2D s_tex0;
-varying vec2 v_texCoord;
-varying vec4 v_tint;
-void main()
-{
-    gl_FragColor = v_tint * texture2D(s_tex0, v_texCoord);
-}"
-
-                    ),
-                    Encoding.UTF8.GetBytes (
-@"Vertex Position, Texture Coordinate & Colour
-=VSH=
-attribute vec4 a_vertPosition;
-attribute vec2 a_vertTexcoord;
-attribute vec4 a_vertColour;
-uniform mat4 u_world;
-uniform mat4 u_view;
-uniform mat4 u_proj;
-uniform vec4 u_colour;
-varying vec2 v_texCoord;
-varying vec4 v_tint;
-void main()
-{
-    gl_Position = u_proj * u_view * u_world * a_vertPosition;
-    v_texCoord = a_vertTexcoord;
-    vec4 c = a_vertColour;
-    // c.a = 1.0; // this is wrong...
-    v_tint = c * u_colour;
-}
-=FSH=
-uniform sampler2D s_tex0;
-varying vec2 v_texCoord;
-varying vec4 v_tint;
-void main()
-{
-    gl_FragColor = v_tint * texture2D(s_tex0, v_texCoord);
-}
-"
-                    )
+                GetShaderFormat (), 
+                new []
+                {
+                    GetUnlit_VertPos (),
+                    GetUnlit_VertPosTex (),
+                    GetUnlit_VertPosCol (),
+                    GetUnlit_VertPosTexCol ()
                 }
-                #elif COR_PLATFORM_XAMARIN_IOS
-                null
-                #elif COR_PLATFORM_XNA
-                null
-                #else
-                null
-                #endif
             );
         }
     }

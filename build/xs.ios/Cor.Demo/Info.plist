@@ -5,7 +5,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Cor Demo</string>
 	<key>CFBundleIdentifier</key>
-	<string>co.sungiant.cor</string>
+	<string>co.sungiant.cor.demo</string>
 	<key>MinimumOSVersion</key>
 	<string>3.2</string>
 	<key>UIDeviceFamily</key>
