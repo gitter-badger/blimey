@@ -861,7 +861,6 @@ namespace Cor.Demo
             #elif COR_PLATFORM_XIOS
             return ShaderFormat.GLSL_ES;
             #else
-            #error
             #endif
 
         }
@@ -897,11 +896,10 @@ void main()
 {
     gl_FragColor = v_tint;
 }
-"
+";
                 #else
-                #error
                 #endif
-                ;
+
 
             #if COR_PLATFORM_XIOS
             source = ConvertToES (source);
@@ -937,11 +935,10 @@ varying vec4 v_tint;
 void main()
 {
     gl_FragColor = v_tint * texture2D(s_tex0, v_texCoord);
-}"
+}";
                 #else
-                #error
                 #endif
-            ;
+            
 
             #if COR_PLATFORM_XIOS
             source = ConvertToES (source);
@@ -974,11 +971,10 @@ void main()
 {
     gl_FragColor = v_tint;
 }
-"
+";
                 #else
-                #error
                 #endif
-            ;
+            
 
             #if COR_PLATFORM_XIOS
             source = ConvertToES (source);
@@ -1018,11 +1014,10 @@ void main()
 {
     gl_FragColor = v_tint * texture2D(s_tex0, v_texCoord);
 }
-"
+";
                 #else
-                #error
                 #endif
-            ;
+            
 
             #if COR_PLATFORM_XIOS
             source = ConvertToES (source);

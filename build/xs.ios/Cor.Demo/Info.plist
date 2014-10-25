@@ -5,7 +5,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Cor Demo</string>
 	<key>CFBundleIdentifier</key>
-	<string>co.sungiant.cor.demo</string>
+	<string>co.sungiant.cor</string>
 	<key>MinimumOSVersion</key>
 	<string>3.2</string>
 	<key>UIDeviceFamily</key>
@@ -43,6 +43,11 @@
 		<string>Icon-Small@2x</string>
 		<string>Icon-Small-50</string>
 		<string>Icon-Small-50@2x</string>
+		<string>Icon-60@2x</string>
+		<string>Icon-76</string>
+		<string>Icon-76@2x</string>
+		<string>Icon-Small-40@2x</string>
+		<string>Icon-Small-40</string>
 	</array>
 </dict>
 </plist>
