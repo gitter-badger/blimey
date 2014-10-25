@@ -350,7 +350,7 @@ namespace Cor.Library.OpenTK
 
         public Handle gfx_CreateShader (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sources)
         {
-            if (shaderFormat != ShaderFormat.GLSL)
+            if (shaderFormat != ShaderFormat.GLSL && shaderFormat != ShaderFormat.GLSL_ES)
                 throw new NotSupportedException ();
 
             var variantHandles = new List<ShaderVariantHandle> ();

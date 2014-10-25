@@ -90,7 +90,15 @@ namespace Cor.Platform.MonoMac
 
         internal OpenGLView OpenGLView { get { return openGLView; } }
 
-        void InitializeMainWindow (Action update, Action render)
+        Single GetTitleBarHeight ()
+        {
+            System.Drawing.RectangleF contentRect = NSWindow.ContentRectFor (mainWindow.Frame, mainWindow.StyleMask);
+            return mainWindow.Frame.Height - contentRect.Height;
+        }
+
+        internal MonoMacProgram () {}
+
+        public void Start (IApi platformImplementation, Action update, Action render)
         {
             var frame = new System.Drawing.RectangleF (0, 0, 800, 600);
 
@@ -120,19 +128,6 @@ namespace Cor.Platform.MonoMac
             mainWindow.MakeKeyAndOrderFront (mainWindow);
 
             openGLView.StartRunLoop (60f);
-        }
-
-        Single GetTitleBarHeight ()
-        {
-            System.Drawing.RectangleF contentRect = NSWindow.ContentRectFor (mainWindow.Frame, mainWindow.StyleMask);
-            return mainWindow.Frame.Height - contentRect.Height;
-        }
-
-        internal MonoMacProgram () {}
-
-        public void Start (IApi platformImplementation, Action update, Action render)
-        {
-            InitializeMainWindow (update, render);
         }
 
         public void Stop ()

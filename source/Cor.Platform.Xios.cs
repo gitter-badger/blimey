@@ -78,13 +78,27 @@ namespace Cor.Platform.Xios
     public sealed class XiosProgram
         : IProgram
     {
+        OpenGLViewController viewController;
+        MonoTouch.UIKit.UIWindow window;
+
         XiosApi Api { get; set; }
 
         internal void InitialiseDependencies (XiosApi api) { Api = api; }
 
         public void Start (IApi platformImplementation, Action update, Action render)
         {
-            throw new NotImplementedException ();
+            UIApplication.SharedApplication.StatusBarHidden = true;
+            UIApplication.SharedApplication.SetStatusBarHidden (true, UIStatusBarAnimation.None);
+
+            // create a new window instance based on the screen size
+            window = new UIWindow (UIScreen.MainScreen.Bounds);
+
+            viewController = new OpenGLViewController (update, render);
+
+            window.RootViewController = viewController;
+
+            // make the window visible
+            window.MakeKeyAndVisible ();
         }
 
         public void Stop ()
@@ -142,7 +156,7 @@ namespace Cor.Platform.Xios
 
         public String sys_GetOperatingSystemIdentifier ()
         {
-            throw new NotImplementedException ();
+            return UIDevice.CurrentDevice.SystemName + " : " + UIDevice.CurrentDevice.SystemVersion;
         }
 
         public String sys_GetVirtualMachineIdentifier ()
@@ -152,22 +166,27 @@ namespace Cor.Platform.Xios
 
         public Int32 sys_GetPrimaryScreenResolutionWidth ()
         {
-            throw new NotImplementedException ();
+            return (Int32) (
+                MonoTouch.UIKit.UIScreen.MainScreen.Bounds.Width *
+                MonoTouch.UIKit.UIScreen.MainScreen.Scale);
         }
 
         public Int32 sys_GetPrimaryScreenResolutionHeight ()
         {
-            throw new NotImplementedException ();
+            return (Int32) (
+                MonoTouch.UIKit.UIScreen.MainScreen.Bounds.Height *
+                MonoTouch.UIKit.UIScreen.MainScreen.Scale);
         }
 
         public Vector2? sys_GetPrimaryPanelPhysicalSize ()
         {
-            throw new NotImplementedException ();
+            // todo: lookup here into all device types
+            return new Vector2(0.0768f, 0.1024f);
         }
 
         public PanelType sys_GetPrimaryPanelType ()
         {
-            throw new NotImplementedException ();
+            return PanelType.TouchScreen;
         }
 
 
@@ -195,48 +214,36 @@ namespace Cor.Platform.Xios
          */
         public DeviceOrientation? hid_GetCurrentOrientation ()
         {
-            throw new NotImplementedException ();
+            return DeviceOrientation.Default;
         }
 
         public Dictionary <DigitalControlIdentifier, Int32> hid_GetDigitalControlStates ()
         {
-            throw new NotImplementedException ();
+            return new Dictionary<DigitalControlIdentifier, Int32> ();
         }
 
         public Dictionary <AnalogControlIdentifier, Single> hid_GetAnalogControlStates ()
         {
-            throw new NotImplementedException ();
+            return new Dictionary<AnalogControlIdentifier, float> ();
         }
 
         public HashSet <BinaryControlIdentifier> hid_GetBinaryControlStates ()
         {
-            throw new NotImplementedException ();
+            return new HashSet<BinaryControlIdentifier> ();
         }
 
         public HashSet <Char> hid_GetPressedCharacters ()
         {
-            throw new NotImplementedException ();
+            return new HashSet<char> ();
         }
 
         public HashSet <RawTouch> hid_GetActiveTouches ()
         {
-            throw new NotImplementedException ();
+            return new HashSet<RawTouch> ();
         }
 
 
     }
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-
-    /*
-
-    public sealed class AudioManager
-        : AudioBase
-    {
-        public override Single Volume { get; set; }
-    }
-
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -290,7 +297,7 @@ namespace Cor.Platform.Xios
         }
     }
 
-
+    /*
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class Status
@@ -322,6 +329,8 @@ namespace Cor.Platform.Xios
         }
     }
 
+    */
+
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -329,23 +338,37 @@ namespace Cor.Platform.Xios
     public sealed class EAGLView
         : OpenTK.Platform.iPhoneOS.iPhoneOSGameView
     {
-        AppSettings settings;
-        IApp game;
+        //AppSettings settings;
+        //IApp game;
 
-        Engine gameEngine;
-        Stopwatch timer = new Stopwatch ();
-        Single elapsedTime;
+        //Engine gameEngine;
+        //Stopwatch timer = new Stopwatch ();
+        //Single elapsedTime;
         Int64 frameCounter = -1;
-        TimeSpan previousTimeSpan;
+        //TimeSpan previousTimeSpan;
         Int32 frameInterval;
 
         MonoTouch.CoreAnimation.CADisplayLink displayLink;
 
-        uint _depthRenderbuffer;
+        //uint _depthRenderbuffer;
 
-        Dictionary<Int32, iOSTouchState> touchState = new Dictionary<int, iOSTouchState>();
+        readonly Dictionary<Int32, iOSTouchState> touchState = new Dictionary<int, iOSTouchState>();
 
-		public global::System.Boolean IsAnimating
+        readonly Action update;
+        readonly Action render;
+
+        public EAGLView (Action update, Action render, RectangleF frame)
+            : base (frame)
+        {
+            this.update = update;
+            this.render = render;
+
+            LayerRetainsBacking = true;
+            LayerColorFormat = MonoTouch.OpenGLES.EAGLColorFormat.RGBA8;
+            ContextRenderingApi = MonoTouch.OpenGLES.EAGLRenderingAPI.OpenGLES2;
+        }
+
+        public Boolean IsAnimating
         {
             get;
             private set;
@@ -375,15 +398,6 @@ namespace Cor.Platform.Xios
             }
         }
 
-		public EAGLView (global::System.Drawing.RectangleF frame)
-            : base (frame)
-        {
-            LayerRetainsBacking = true;
-            LayerColorFormat = MonoTouch.OpenGLES.EAGLColorFormat.RGBA8;
-            ContextRenderingApi = MonoTouch.OpenGLES.EAGLRenderingAPI.OpenGLES2;
-
-        }
-
         [MonoTouch.Foundation.Export ("layerClass")]
         public static new MonoTouch.ObjCRuntime.Class GetLayerClass ()
         {
@@ -399,7 +413,7 @@ namespace Cor.Platform.Xios
         protected override void CreateFrameBuffer ()
         {
             base.CreateFrameBuffer ();
-
+            /**
             //
             // Enable the depth buffer
             //
@@ -424,24 +438,14 @@ namespace Cor.Platform.Xios
                 OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer,
                 _depthRenderbuffer);
             KrErrorHandler.Check ();
+            */
         }
 
-        public void SetEngineDetails (AppSettings settings, IApp game)
-        {
-            this.settings = settings;
-            this.game = game;
-        }
-
-        void CreateEngine ()
-        {
-            gameEngine = new Engine (
-                this.settings,
-                this.game,
-                this,
-                this.GraphicsContext,
-                this.touchState);
-            timer.Start ();
-        }
+        //public void SetEngineDetails (AppSettings settings, IApp game)
+        //{
+        //    this.settings = settings;
+        //    this.game = game;
+        //}
 
         protected override void DestroyFrameBuffer ()
         {
@@ -455,18 +459,9 @@ namespace Cor.Platform.Xios
 
             CreateFrameBuffer ();
 
-            CreateEngine ();
-
-            displayLink =
-                MonoTouch.UIKit.UIScreen.MainScreen.CreateDisplayLink (
-                    this,
-                    new MonoTouch.ObjCRuntime.Selector ("drawFrame")
-                    );
-
+            displayLink = UIScreen.MainScreen.CreateDisplayLink (this, new MonoTouch.ObjCRuntime.Selector ("drawFrame"));
             displayLink.FrameInterval = frameInterval;
-            displayLink.AddToRunLoop (
-                MonoTouch.Foundation.NSRunLoop.Current,
-                MonoTouch.Foundation.NSRunLoop.NSDefaultRunLoopMode);
+            displayLink.AddToRunLoop (NSRunLoop.Current, NSRunLoop.NSDefaultRunLoopMode);
 
             IsAnimating = true;
         }
@@ -496,21 +491,11 @@ namespace Cor.Platform.Xios
         {
             base.OnUpdateFrame (e);
 
+            frameCounter++;
+
             this.ClearOldTouches ();
 
-            Single dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
-            previousTimeSpan = timer.Elapsed;
-
-            if (dt > 0.5f)
-            {
-                dt = 0.0f;
-            }
-
-            elapsedTime += dt;
-
-            var appTime = new AppTime (dt, elapsedTime, ++frameCounter);
-
-            gameEngine.Update (appTime);
+            update ();
         }
 
         void ClearOldTouches ()
@@ -548,7 +533,7 @@ namespace Cor.Platform.Xios
 
             base.MakeCurrent ();
 
-            gameEngine.Render ();
+            render ();
 
             this.SwapBuffers ();
         }
@@ -625,7 +610,7 @@ namespace Cor.Platform.Xios
             }
         }
     }
-
+    /*
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -763,7 +748,7 @@ namespace Cor.Platform.Xios
 
         #endregion
     }
-
+    */
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -782,17 +767,13 @@ namespace Cor.Platform.Xios
     public sealed class OpenGLViewController
         : MonoTouch.UIKit.UIViewController
     {
-        AppSettings _settings;
-        IApp _game;
+        readonly Action update;
+        readonly Action render;
 
-        public OpenGLViewController (
-            AppSettings settings,
-            IApp game)
-            : base ()
+        public OpenGLViewController (Action update, Action render)
         {
-            MonoTouch.UIKit.UIApplication.SharedApplication.SetStatusBarHidden (true, MonoTouch.UIKit.UIStatusBarAnimation.None);
-            _settings = settings;
-            _game = game;
+            this.update = update;
+            this.render = render;
         }
 
         new EAGLView View
@@ -808,7 +789,7 @@ namespace Cor.Platform.Xios
             //var size = MonoTouch.UIKit.UIScreen.MainScreen.CurrentMode.Size;
             //var frame = new System.Drawing.RectangleF (0, 0, size.Width, size.Height);
             var frame = MonoTouch.UIKit.UIScreen.MainScreen.Bounds;
-            base.View = new EAGLView (frame);
+            base.View = new EAGLView (update, render, frame);
         }
         public override void ViewDidLoad ()
         {
@@ -838,7 +819,7 @@ namespace Cor.Platform.Xios
                 this
             );
 
-            View.SetEngineDetails (_settings, _game);
+            //View.SetEngineDetails (_settings, _game);
         }
 
         protected override void Dispose (Boolean disposing)
@@ -875,7 +856,7 @@ namespace Cor.Platform.Xios
         }
     }
 
-
+    /*
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class Host
@@ -1139,25 +1120,6 @@ namespace Cor.Platform.Xios
                 this.collection.RegisterTouch (id, pos, state, time.FrameNumber, time.Elapsed);
             }
         }
-
-		public Vector2? PanelPhysicalSize
-        {
-            get
-            {
-                // do lookup here into all device types
-                return new Vector2(0.0768f, 0.1024f);
-            }
-        }
-
-		public float? PanelPhysicalAspectRatio
-        {
-            get { return PanelPhysicalSize.Value.X / PanelPhysicalSize.Value.Y; }
-        }
-        public PanelType PanelType
-        {
-            get { return PanelType.TouchScreen; }
-        }
-
 
         public float ScreenResolutionAspectRatio
         {
