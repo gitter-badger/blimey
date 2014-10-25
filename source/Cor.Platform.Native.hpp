@@ -108,16 +108,10 @@ public:
     {
         ASSERTM( !ms_Singleton, "Trying to create singleton twice" );
 
-        size_t offset = reinterpret_cast<size_t>(
-            reinterpret_cast<T*>(1)) -
-            reinterpret_cast<size_t>(
-                static_cast<cSingleton <T>*>(
-                    reinterpret_cast<T*>(1)
-                )
-            );
+        size_t offset = reinterpret_cast<size_t>(reinterpret_cast<T*>(1)) -
+            reinterpret_cast<size_t>(static_cast<cSingleton <T>*>(reinterpret_cast<T*>(1)));
 
-        ms_Singleton = reinterpret_cast<T*>(
-            (reinterpret_cast<size_t>(this) + offset));
+        ms_Singleton = reinterpret_cast<T*>((reinterpret_cast<size_t>(this) + offset));
     }
 
     virtual ~cSingleton( void )
@@ -159,68 +153,84 @@ public:
     }
 };
 
+//----------------------------------------------------------------------------//
+// Native calls
+//----------------------------------------------------------------------------//
+
+extern "C" void 	__sfx_SetVolume (float volume);
+extern "C" float	__sfx_GetVolume ();
+extern "C" void 	__gfx_ClearColourBuffer (byte r, byte g, byte b, byte a);
+extern "C" void 	__gfx_ClearDepthBuffer (float depth);
+extern "C" void 	__gfx_SetCullMode (int cullMode);
+extern "C" void 	__gfx_SetBlendEquation (int rgbBlendFunction, int sourceRgb, int destinationRgb, int alphaBlendFunction, int sourceAlpha, int destinationAlpha);
+extern "C" void 	__gfx_CreateVertexBuffer ();
+extern "C" void 	__gfx_CreateIndexBuffer ();
+extern "C" void 	__gfx_CreateTexture ();
+extern "C" void 	__gfx_CreateShader ();
+extern "C" void 	__gfx_DestroyVertexBuffer ();
+extern "C" void 	__gfx_DestroyIndexBuffer ();
+extern "C" void 	__gfx_DestroyTexture ();
+extern "C" void 	__gfx_DestroyShader ();
+extern "C" void 	__gfx_DrawPrimitives ();
+extern "C" void 	__gfx_DrawIndexedPrimitives ();
+extern "C" void 	__gfx_DrawUserPrimitives ();
+extern "C" void 	__gfx_DrawUserIndexedPrimitives ();
+extern "C" void 	__gfx_CompileShader ();
+extern "C" void 	__gfx_dbg_BeginEvent ();
+extern "C" void 	__gfx_dbg_EndEvent ();
+extern "C" void 	__gfx_dbg_SetMarker ();
+extern "C" void 	__gfx_dbg_SetRegion ();
+extern "C" void 	__gfx_vbff_GetVertexCount ();
+extern "C" void 	__gfx_vbff_GetVertexDeclaration ();
+extern "C" void 	__gfx_vbff_SetData ();
+extern "C" void 	__gfx_vbff_GetData ();
+extern "C" void 	__gfx_vbff_Activate ();
+extern "C" void 	__gfx_ibff_GetIndexCount ();
+extern "C" void 	__gfx_ibff_SetData ();
+extern "C" void 	__gfx_ibff_GetData ();
+extern "C" void 	__gfx_ibff_Activate ();
+extern "C" void 	__gfx_tex_GetWidth ();
+extern "C" void 	__gfx_tex_GetHeight ();
+extern "C" void 	__gfx_tex_GetTextureFormat ();
+extern "C" byte[] 	__gfx_tex_GetData ();
+extern "C" void 	__gfx_tex_Activate ();
+extern "C" void 	__gfx_shdr_SetVariable ();
+extern "C" void 	__gfx_shdr_SetSampler ();
+extern "C" void 	__gfx_shdr_Activate ();
+extern "C" void 	__gfx_shdr_GetVariantCount ();
+extern "C" void 	__gfx_shdr_GetIdentifier ();
+extern "C" void 	__gfx_shdr_GetInputs ();
+extern "C" void 	__gfx_shdr_GetVariables ();
+extern "C" void 	__gfx_shdr_GetSamplers ();
+extern "C" void 	__res_GetFileStream ();
+extern "C" char* 	__sys_GetMachineIdentifier ();
+extern "C" char* 	__sys_GetOperatingSystemIdentifier ();
+extern "C" char* 	__sys_GetVirtualMachineIdentifier ();
+extern "C" int 		__sys_GetPrimaryScreenResolutionWidth ();
+extern "C" int 		__sys_GetPrimaryScreenResolutionHeight ();
+extern "C" void 	__sys_GetPrimaryPanelPhysicalSize ();
+extern "C" void 	__sys_GetPrimaryPanelType ();
+extern "C" int 		__app_IsFullscreen ();
+extern "C" int 		__app_GetWidth ();
+extern "C" int 		__app_GetHeight ();
+extern "C" int 		__hid_GetCurrentOrientation ();
+extern "C" void 	__hid_GetDigitalControlStates ();
+extern "C" void 	__hid_GetAnalogControlStates ();
+extern "C" void 	__hid_GetBinaryControlStates ();
+extern "C" void 	__hid_GetPressedCharacters ();
+extern "C" void 	__hid_GetActiveTouches ();
 
 
 //----------------------------------------------------------------------------//
 // Classes
 //----------------------------------------------------------------------------//
 
-// These functions get called from managed code.
-class cNativeBindings
+class cEngine
+    : public cSingleton<cEngine>
 {
 public:
-    cNativeBindings();
-    
-    ~cNativeBindings();
-
-    void Engine_Create ();
-
-    void AudioManager_Create ();
-
-    void GraphicsManager_Create ();
-
-    void ResourceManager_Create ();
-
-    void InputManager_Create ();
-
-    void SystemManager_Create ();
-
-    void DisplayStatus_Create ();
-
-    void IndexBuffer_Create ();
-
-    void PanelSpecification_Create ();
-
-    void ScreenSpecification_Create ();
-
-    void GeometryBuffer_Create ();
-
-    void VertexBuffer_Create ();
-};
-
-// These functions call into managed code.
-class cManagedBindings
-{
-public:
-    cManagedBindings();
-    
-    ~cManagedBindings();
-
-    void Boot (char* settings, char* entryPoint);
-
-private:
-
-    // this calls into managed code.
-    //void BootstapApp(MonoString* settings, MonoString* entryPoint)
-};
-
-
-class cCorEngine
-    : public cSingleton<cCorEngine>
-{
-public:
-    cCorEngine();
-    ~cCorEngine();
+    cEngine();
+    ~cEngine();
 
     void Setup();
 };
@@ -256,23 +266,23 @@ protected:
 	}
 	
 private:
-	MonoAssembly*   m_assembly;	
+	MonoAssembly* m_assembly;	
 };
 
 // An implementation of the assembly wrapper that will be used to invoke methods within
 // the linux binding dll
-class cLinuxBindingAssemblyWrapper :
+class cBindingAssemblyWrapper :
 	cAssemblyWrapper
 {
 public:
-	cLinuxBindingAssemblyWrapper( ) : cAssemblyWrapper( "LINUXBINDINGDLLNAME" )
+	cBindingAssemblyWrapper( ) : cAssemblyWrapper( "LINUXBINDINGDLLNAME" )
 	{
 	}
 };
 
 int main()
 {
-	cLinuxBindingAssemblyWrapper* linuxBindingDLL = new cLinuxBindingAssemblyWrapper();
+	cBindingAssemblyWrapper* linuxBindingDLL = new cBindingAssemblyWrapper();
 	
 	//do some stuff with the dll
 	
