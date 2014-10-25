@@ -87,6 +87,7 @@ namespace Cor.Platform.Xios
 
         public void Start (IApi platformImplementation, Action update, Action render)
         {
+            RegisterLoggingListeners ();
             UIApplication.SharedApplication.StatusBarHidden = true;
             UIApplication.SharedApplication.SetStatusBarHidden (true, UIStatusBarAnimation.None);
 
@@ -105,6 +106,50 @@ namespace Cor.Platform.Xios
         {
             throw new NotImplementedException ();
         }
+
+        void RegisterLoggingListeners ()
+        {
+            NSNotificationCenter.DefaultCenter.AddObserver (
+                UIApplication.DidEnterBackgroundNotification, this.DidEnterBackground);
+
+            NSNotificationCenter.DefaultCenter.AddObserver (
+                UIApplication.DidBecomeActiveNotification, this.DidBecomeActive);
+
+            NSNotificationCenter.DefaultCenter.AddObserver (
+                UIApplication.DidReceiveMemoryWarningNotification, this.DidReceiveMemoryWarning);
+
+            NSNotificationCenter.DefaultCenter.AddObserver (
+                UIApplication.DidFinishLaunchingNotification, this.DidFinishLaunching);
+
+            NSNotificationCenter.DefaultCenter.AddObserver (
+                UIDevice.OrientationDidChangeNotification, this.OrientationDidChange);
+
+        }
+
+        void DidReceiveMemoryWarning (NSNotification ntf)
+        {
+            Console.WriteLine ("[Cor.System] DidReceiveMemoryWarning");
+        }
+
+        void DidBecomeActive (NSNotification ntf)
+        {
+            Console.WriteLine ("[Cor.System] DidBecomeActive");
+        }
+
+        void DidEnterBackground (NSNotification ntf)
+        {
+            Console.WriteLine ("[Cor.System] DidEnterBackground");
+        }
+
+        void DidFinishLaunching (NSNotification ntf)
+        {
+            Console.WriteLine ("[Cor.System] DidFinishLaunching");
+        }
+
+        void OrientationDidChange (NSNotification ntf)
+        {
+            Console.WriteLine ("[Cor.System] OrientationDidChange");
+        }
     }
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -119,7 +164,7 @@ namespace Cor.Platform.Xios
             Program = program;
         }
 
-        /*
+        /**
          * Audio
          */
         public Single sfx_GetVolume ()
@@ -133,25 +178,46 @@ namespace Cor.Platform.Xios
         }
 
 
-        /*
+        /**
          * Graphics ~ Implemented in Cor.Platform.OpenTk.cs
          */
 
-        /*
+
+        /**
          * Resources
          */
         public Stream res_GetFileStream (String fileName)
         {
-            throw new NotImplementedException ();
+            string ext = Path.GetExtension (fileName);
+
+            string filename = fileName.Substring (0, fileName.Length - ext.Length);
+
+            var resourcePathname =
+                MonoTouch.Foundation.NSBundle.MainBundle.PathForResource (
+                    filename,
+                    ext.Substring (1, ext.Length - 1)
+                );
+
+            if (resourcePathname == null)
+            {
+                throw new Exception ("Resource [" + fileName + "] not found");
+            }
+
+            string path = Path.Combine ("assets/xios", resourcePathname);
+
+            var fStream = new FileStream (path, FileMode.Open);
+
+            return fStream;
+
         }
 
 
-        /*
+        /**
          * System
          */
         public String sys_GetMachineIdentifier ()
         {
-            throw new NotImplementedException ();
+            return UIDevice.CurrentDevice.Model + " : " + UIDevice.CurrentDevice.Name;
         }
 
         public String sys_GetOperatingSystemIdentifier ()
@@ -161,21 +227,17 @@ namespace Cor.Platform.Xios
 
         public String sys_GetVirtualMachineIdentifier ()
         {
-            throw new NotImplementedException ();
+            return "Mono v?";
         }
 
         public Int32 sys_GetPrimaryScreenResolutionWidth ()
         {
-            return (Int32) (
-                MonoTouch.UIKit.UIScreen.MainScreen.Bounds.Width *
-                MonoTouch.UIKit.UIScreen.MainScreen.Scale);
+            return (Int32) (UIScreen.MainScreen.Bounds.Width * UIScreen.MainScreen.Scale);
         }
 
         public Int32 sys_GetPrimaryScreenResolutionHeight ()
         {
-            return (Int32) (
-                MonoTouch.UIKit.UIScreen.MainScreen.Bounds.Height *
-                MonoTouch.UIKit.UIScreen.MainScreen.Scale);
+            return (Int32) (UIScreen.MainScreen.Bounds.Height * UIScreen.MainScreen.Scale);
         }
 
         public Vector2? sys_GetPrimaryPanelPhysicalSize ()
@@ -190,31 +252,32 @@ namespace Cor.Platform.Xios
         }
 
 
-        /*
+        /**
          * Application
          */
         public Boolean? app_IsFullscreen ()
         {
-            throw new NotImplementedException ();
+            return true;
         }
 
         public Int32 app_GetWidth ()
         {
-            throw new NotImplementedException ();
+            return (Int32) UIScreen.MainScreen.CurrentMode.Size.Width;
         }
 
         public Int32 app_GetHeight ()
         {
-            throw new NotImplementedException ();
+            return (Int32) UIScreen.MainScreen.CurrentMode.Size.Height;
         }
 
 
-        /*
+        /**
          * Input
          */
         public DeviceOrientation? hid_GetCurrentOrientation ()
         {
-            return DeviceOrientation.Default;
+            var monoTouchOrientation = UIDevice.CurrentDevice.Orientation;
+            return EnumConverter.ToCor (monoTouchOrientation);
         }
 
         public Dictionary <DigitalControlIdentifier, Int32> hid_GetDigitalControlStates ()
@@ -297,40 +360,6 @@ namespace Cor.Platform.Xios
         }
     }
 
-    /*
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public sealed class Status
-		: StatusBase
-    {
-		public override Boolean? Fullscreen
-        {
-            get
-            {
-                // always fullscreen on iOS
-                return true;
-            }
-        }
-
-		public override Int32 Width
-        {
-            get
-            {
-                return (Int32) MonoTouch.UIKit.UIScreen.MainScreen.CurrentMode.Size.Width;
-            }
-        }
-
-		public override Int32 Height
-        {
-            get
-            {
-                return (Int32) MonoTouch.UIKit.UIScreen.MainScreen.CurrentMode.Size.Height;
-            }
-        }
-    }
-
-    */
-
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -338,19 +367,10 @@ namespace Cor.Platform.Xios
     public sealed class EAGLView
         : OpenTK.Platform.iPhoneOS.iPhoneOSGameView
     {
-        //AppSettings settings;
-        //IApp game;
-
-        //Engine gameEngine;
-        //Stopwatch timer = new Stopwatch ();
-        //Single elapsedTime;
         Int64 frameCounter = -1;
-        //TimeSpan previousTimeSpan;
         Int32 frameInterval;
 
         MonoTouch.CoreAnimation.CADisplayLink displayLink;
-
-        //uint _depthRenderbuffer;
 
         readonly Dictionary<Int32, iOSTouchState> touchState = new Dictionary<int, iOSTouchState>();
 
@@ -441,12 +461,6 @@ namespace Cor.Platform.Xios
             */
         }
 
-        //public void SetEngineDetails (AppSettings settings, IApp game)
-        //{
-        //    this.settings = settings;
-        //    this.game = game;
-        //}
-
         protected override void DestroyFrameBuffer ()
         {
             base.DestroyFrameBuffer ();
@@ -522,8 +536,6 @@ namespace Cor.Platform.Xios
             foreach (var key in keysToDitch)
             {
                 touchState.Remove (key);
-
-                //Console.WriteLine ("remove "+key);
             }
         }
 
@@ -610,145 +622,7 @@ namespace Cor.Platform.Xios
             }
         }
     }
-    /*
 
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public sealed class Engine
-        : EngineBase
-    {
-        readonly TouchScreen touchScreen;
-        readonly AppSettings settings;
-        readonly IApp app;
-        readonly Graphics graphics;
-        readonly InputManager input;
-		readonly Host host;
-        readonly AudioManager audio;
-        readonly Status appStatus;
-        readonly LogManager log;
-        readonly Assets assets;
-
-        internal Engine (
-            AppSettings settings,
-            IApp app,
-            OpenTK.Platform.iPhoneOS.iPhoneOSGameView view,
-            OpenTK.Graphics.IGraphicsContext gfxContext,
-            Dictionary<Int32, iOSTouchState> touches)
-        {
-            this.settings = settings;
-
-            this.app = app;
-
-            this.graphics = new Graphics ();
-
-            this.touchScreen = new TouchScreen (this, view, touches);
-
-            this.host = new Host (touchScreen);
-
-            this.input = new InputManager (this, this.touchScreen);
-
-            this.appStatus = new Status ();
-
-            this.log = new LogManager (this.settings.LogSettings);
-
-			this.assets = new Assets (this.graphics);
-
-			this.app.Start (this);
-
-        }
-
-        internal TouchScreen TouchScreenImplementation
-        {
-            get
-            {
-                return touchScreen;
-            }
-        }
-
-        #region EngineBase
-
-        public override AudioBase Audio { get { return this.audio; } }
-        public override GraphicsBase Graphics { get { return this.graphics; } }
-        public override InputBase Input { get { return this.input; } }
-		public override HostBase Host { get { return this.host; } }
-		public override StatusBase Status { get { return this.appStatus; } }
-        public override LogManager Log { get { return this.log; } }
-        public override AssetsBase Assets { get { return this.assets; } }
-        public override AppSettings Settings { get { return this.settings; } }
-
-        #endregion
-
-        internal Boolean Update (AppTime time)
-        {
-            input.Update (time);
-			return app.Update (this, time);
-        }
-
-        internal void Render ()
-        {
-			app.Render (this);
-        }
-    }
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public sealed class InputManager
-        : InputBase
-    {
-        readonly TouchScreen touchScreen;
-
-        readonly IXbox360Gamepad stubXbox360Gamepad = new StubXbox360Gamepad ();
-        readonly IPsmGamepad stubPsmGamepad = new StubPsmGamepad ();
-        readonly IGenericGamepad stubGenericGamepad = new StubGenericGamepad ();
-        readonly IKeyboard stubKeyboard = new StubKeyboard ();
-        readonly IMouse stubMouse = new StubMouse ();
-
-        internal void Update (AppTime time)
-        {
-            this.touchScreen.Update (time);
-        }
-
-        #region IInputManager
-
-        public InputManager (EngineBase engine, TouchScreen touchScreen)
-        {
-            this.touchScreen = touchScreen;
-        }
-
-        public override IMultiTouchController MultiTouchController
-        {
-            get { return this.touchScreen; }
-        }
-
-        public override IXbox360Gamepad Xbox360Gamepad
-        {
-            get { return stubXbox360Gamepad; }
-        }
-
-        public override IPsmGamepad PsmGamepad
-        {
-            get { return stubPsmGamepad; }
-        }
-
-        public override IGenericGamepad GenericGamepad
-        {
-            get { return stubGenericGamepad; }
-        }
-
-        public override IMouse Mouse
-        {
-            get { return stubMouse; }
-        }
-
-        public override IKeyboard Keyboard
-        {
-            get { return stubKeyboard; }
-        }
-
-        #endregion
-    }
-    */
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -857,181 +731,6 @@ namespace Cor.Platform.Xios
     }
 
     /*
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public sealed class Host
-		: HostBase
-    {
-        TouchScreen screen;
-
-        public Host (TouchScreen screen)
-        {
-            this.screen = screen;
-
-            MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
-                MonoTouch.UIKit.UIApplication.DidEnterBackgroundNotification, this.DidEnterBackground);
-
-            MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
-                MonoTouch.UIKit.UIApplication.DidBecomeActiveNotification, this.DidBecomeActive);
-
-            MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
-                MonoTouch.UIKit.UIApplication.DidReceiveMemoryWarningNotification, this.DidReceiveMemoryWarning);
-
-            MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
-                MonoTouch.UIKit.UIApplication.DidFinishLaunchingNotification, this.DidFinishLaunching);
-
-            MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
-                MonoTouch.UIKit.UIDevice.OrientationDidChangeNotification, this.OrientationDidChange);
-
-        }
-
-        public void DidReceiveMemoryWarning (MonoTouch.Foundation.NSNotification ntf)
-        {
-            Console.WriteLine ("[Cor.System] DidReceiveMemoryWarning");
-        }
-
-        public void DidBecomeActive (MonoTouch.Foundation.NSNotification ntf)
-        {
-            Console.WriteLine ("[Cor.System] DidBecomeActive");
-        }
-
-        public void DidEnterBackground (MonoTouch.Foundation.NSNotification ntf)
-        {
-            Console.WriteLine ("[Cor.System] DidEnterBackground");
-        }
-
-        public void DidFinishLaunching (MonoTouch.Foundation.NSNotification ntf)
-        {
-            Console.WriteLine ("[Cor.System] DidFinishLaunching");
-        }
-
-        public void OrientationDidChange (MonoTouch.Foundation.NSNotification ntf)
-        {
-            Console.WriteLine (
-                "[Cor.System] OrientationDidChange, CurrentOrientation: " +
-                CurrentOrientation.ToString () + ", CurrentDisplaySize: " + CurrentDisplaySize.ToString ());
-        }
-
-        public Point2 CurrentDisplaySize
-        {
-            get
-            {
-                Int32 w = ScreenSpecification.ScreenResolutionWidth;
-                Int32 h = ScreenSpecification.ScreenResolutionHeight;
-
-                GetEffectiveDisplaySize (ref w, ref h);
-
-                return new Point2(w, h);
-            }
-        }
-
-        void GetEffectiveDisplaySize (ref Int32 screenSpecWidth, ref Int32 screenSpecHeight)
-        {
-            if (this.CurrentOrientation == DeviceOrientation.Default ||
-                this.CurrentOrientation == DeviceOrientation.Upsidedown)
-            {
-                return;
-            }
-            else
-            {
-                Int32 temp = screenSpecWidth;
-                screenSpecWidth = screenSpecHeight;
-                screenSpecHeight = temp;
-            }
-        }
-
-		public override String Machine
-		{
-			get
-			{
-				return MonoTouch.UIKit.UIDevice.CurrentDevice.Model +
-					" : " + MonoTouch.UIKit.UIDevice.CurrentDevice.Name;
-			}
-		}
-
-		public override String OperatingSystem
-		{
-			get
-			{
-				return MonoTouch.UIKit.UIDevice.CurrentDevice.SystemName +
-					" : " + MonoTouch.UIKit.UIDevice.CurrentDevice.SystemVersion;
-			}
-		}
-
-		public override String VirtualMachine { get { return "Mono ?"; } }
-
-        public override DeviceOrientation CurrentOrientation
-        {
-            get
-            {
-                var monoTouchOrientation = MonoTouch.UIKit.UIDevice.CurrentDevice.Orientation;
-
-                return EnumConverter.ToCor (monoTouchOrientation);
-            }
-        }
-
-        public override IScreenSpecification ScreenSpecification
-        {
-            get
-            {
-                return this.screen;
-            }
-        }
-
-        public override IPanelSpecification PanelSpecification
-        {
-            get
-            {
-                return this.screen;
-            }
-        }
-	}
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-	public sealed class Assets
-		: AssetsBase
-	{
-		public Assets (GraphicsBase gfx)
-			: base (gfx)
-		{
-		}
-
-        static string GetResourcePath (string path)
-        {
-            string ext = Path.GetExtension (path);
-
-            string filename = path.Substring (0, path.Length - ext.Length);
-
-            var resourcePathname =
-                MonoTouch.Foundation.NSBundle.MainBundle.PathForResource (
-                    filename,
-                    ext.Substring (1, ext.Length - 1)
-                );
-
-            if (resourcePathname == null)
-            {
-                throw new Exception ("Resource [" + path + "] not found");
-            }
-
-            return resourcePathname;
-        }
-
-		#region AssetsBase
-
-        public override Stream GetAssetStream (String assetId)
-        {
-            string path = GetResourcePath (Path.Combine ("assets/xios", assetId));
-
-            var fStream = new FileStream (path, FileMode.Open);
-
-            return fStream;
-        }
-
-		#endregion
-    }
-
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -1159,38 +858,5 @@ namespace Cor.Platform.Xios
         }
     }
 
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public sealed class CorAppEngine
-    {
-        OpenGLViewController viewController;
-        MonoTouch.UIKit.UIWindow window;
-
-        readonly AppSettings settings;
-        readonly IApp game;
-
-        public CorAppEngine (AppSettings settings, IApp game)
-        {
-            this.settings = settings;
-            this.game = game;
-        }
-
-        public void Run ()
-        {
-            UIApplication.SharedApplication.StatusBarHidden = true;
-
-            // create a new window instance based on the screen size
-            window = new MonoTouch.UIKit.UIWindow (
-                MonoTouch.UIKit.UIScreen.MainScreen.Bounds);
-
-            viewController = new OpenGLViewController (this.settings, this.game);
-
-            window.RootViewController = viewController;
-
-            // make the window visible
-            window.MakeKeyAndVisible ();
-        }
-    }
     */
 }
