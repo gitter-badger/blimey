@@ -21,6 +21,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fudge (xs.mono40)", "..\sub
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey (xs.mono40)", "..\submodules\blimey\build\xs.mono40\Blimey\Blimey (xs.mono40).csproj", "{751BD674-BDC0-427B-9FAD-ED3D275C3595}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oats.Tests (xs.mono40)", "..\submodules\oats\build\Oats.Tests\Oats.Tests (xs.mono40).csproj", "{1D01A142-3E37-4466-A977-88F9E1D0BED9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Tests (xs.mono40)", "..\submodules\blimey\build\xs.mono40\Blimey.Tests\Blimey.Tests (xs.mono40).csproj", "{B0FDF03B-01B8-439B-8A59-C48D5B915899}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +32,12 @@ Global
 		MonoTouch|Any CPU = MonoTouch|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1D01A142-3E37-4466-A977-88F9E1D0BED9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D01A142-3E37-4466-A977-88F9E1D0BED9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D01A142-3E37-4466-A977-88F9E1D0BED9}.MonoTouch|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D01A142-3E37-4466-A977-88F9E1D0BED9}.MonoTouch|Any CPU.Build.0 = Debug|Any CPU
+		{1D01A142-3E37-4466-A977-88F9E1D0BED9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D01A142-3E37-4466-A977-88F9E1D0BED9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}.MonoTouch|Any CPU.ActiveCfg = Debug|Any CPU
@@ -70,6 +80,12 @@ Global
 		{751BD674-BDC0-427B-9FAD-ED3D275C3595}.MonoTouch|Any CPU.Build.0 = Debug|Any CPU
 		{751BD674-BDC0-427B-9FAD-ED3D275C3595}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{751BD674-BDC0-427B-9FAD-ED3D275C3595}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0FDF03B-01B8-439B-8A59-C48D5B915899}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0FDF03B-01B8-439B-8A59-C48D5B915899}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0FDF03B-01B8-439B-8A59-C48D5B915899}.MonoTouch|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0FDF03B-01B8-439B-8A59-C48D5B915899}.MonoTouch|Any CPU.Build.0 = Debug|Any CPU
+		{B0FDF03B-01B8-439B-8A59-C48D5B915899}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0FDF03B-01B8-439B-8A59-C48D5B915899}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C3491695-CFAE-427F-86F9-EEB25E58FB37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C3491695-CFAE-427F-86F9-EEB25E58FB37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3491695-CFAE-427F-86F9-EEB25E58FB37}.MonoTouch|Any CPU.ActiveCfg = Debug|Any CPU

@@ -96,22 +96,35 @@ namespace Blimey.Assets.Builders
 
                 sources [i] = Encoding.UTF8.GetBytes (s);
             }
-				
-            Byte[] bin = sources.ToBinary <Byte[][]> ();
-            Byte[][] andback = bin.FromBinary <Byte[][]> ();
+			
+            using (var mem = new MemoryStream ())
+            {
+                using (var binW = new BinaryWriter (mem))
+                {
+                    binW.Write ((Byte)sources.Length);
+                    foreach (var variant in sources)
+                    {
+                        binW.Write (variant.Length);
+                        binW.Write (variant);
+                    }
+                }
 
-			// END PLATFORM SPECIFIC RUNTIME DATA FORMAT -------------------------- //
+                Byte[] platformSource = mem.GetBuffer ();
 
-			// Make our in memory result
-			var result = new ShaderAsset {
-                Declaration = shaderDeclaration,
-                Format = shaderFormat.Value,
-                Sources = sources
-			};
+    			// END PLATFORM SPECIFIC RUNTIME DATA FORMAT -------------------------- //
 
-			return new AssetImporterOutput <ShaderAsset> {
-				OutputAsset = result
-			};
+    			// Make our in memory result
+    			var result = new ShaderAsset {
+                    Declaration = shaderDeclaration,
+                    Format = shaderFormat.Value,
+                    Source = platformSource
+    			};
+
+    			return new AssetImporterOutput <ShaderAsset> {
+    				OutputAsset = result
+    			};
+
+            }
 		}
 	}
 }
