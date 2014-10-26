@@ -2165,11 +2165,7 @@ namespace Blimey
 
             asset.Declaration = ss.Read <ShaderDeclaration> ();
             asset.Format = ss.Read <ShaderFormat> ();
-
-            Int32 byteCount = ss.Read <Int32> ();
-            asset.Source = new Byte[byteCount];
-            for (Int32 i = 0; i < byteCount; ++i)
-                asset.Source [i] = ss.Read <Byte> ();
+            asset.Source = ss.Read <Byte[]> ();
 
             return asset;
         }
@@ -2181,9 +2177,7 @@ namespace Blimey
         {
             ss.Write <ShaderDeclaration> (obj.Declaration);
             ss.Write <ShaderFormat> (obj.Format);
-            ss.Write <Int32> (obj.Source.Length);
-            for (Int32 i = 0; i < obj.Source.Length; ++i)
-                ss.Write <Byte> (obj.Source [i]);
+            ss.Write <Byte[]> (obj.Source);
         }
     }
 
@@ -2286,7 +2280,6 @@ namespace Blimey
             sd.SamplerDeclarations =    new List <ShaderSamplerDeclaration> ();
             sd.VariableDeclarations =   new List <ShaderVariableDeclaration> ();
 
-            Int32 numPassNames = (Int32) ss.Read <Byte> ();
             Int32 numInputDefintions = (Int32) ss.Read <Byte> ();
             Int32 numSamplerDefinitions = (Int32) ss.Read <Byte> ();
             Int32 numVariableDefinitions = (Int32) ss.Read <Byte> ();
