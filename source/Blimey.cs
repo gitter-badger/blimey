@@ -2165,7 +2165,7 @@ namespace Blimey
 
             asset.Declaration = ss.Read <ShaderDeclaration> ();
             asset.Format = ss.Read <ShaderFormat> ();
-            asset.Sources = ss.Read <Byte[][]> ();
+            asset.Source = ss.Read <Byte[]> ();
 
             return asset;
         }
@@ -2177,7 +2177,7 @@ namespace Blimey
         {
             ss.Write <ShaderDeclaration> (obj.Declaration);
             ss.Write <ShaderFormat> (obj.Format);
-            ss.Write <Byte[][]> (obj.Sources);
+            ss.Write <Byte[]> (obj.Source);
         }
     }
 

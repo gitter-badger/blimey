@@ -68,7 +68,7 @@ namespace Blimey
 
         public static Shader CreateShader (this Graphics graphics, ShaderAsset shaderAsset)
         {
-            return graphics.CreateShader (shaderAsset.Declaration, shaderAsset.Format, shaderAsset.Sources);
+            return graphics.CreateShader (shaderAsset.Declaration, shaderAsset.Format, shaderAsset.Source);
         }
 
         public static Texture CreateTexture (this Graphics graphics, TextureAsset textureAsset)

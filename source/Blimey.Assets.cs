@@ -90,7 +90,7 @@ namespace Blimey
 
         // Platform specific binary content.
         // This contains compiled shaders.
-        public Byte[][] Sources { get; set; }
+        public Byte[] Source { get; set; }
     }
 
 
