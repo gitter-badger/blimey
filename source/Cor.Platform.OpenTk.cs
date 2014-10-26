@@ -348,35 +348,57 @@ namespace Cor.Library.OpenTK
             return handle;
         }
 
-        public Handle gfx_CreateShader (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sources)
+        public Handle gfx_CreateShader (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[] source)
         {
             if (shaderFormat != ShaderFormat.GLSL && shaderFormat != ShaderFormat.GLSL_ES)
                 throw new NotSupportedException ();
 
             var variantHandles = new List<ShaderVariantHandle> ();
             var variantIdentifiers = new List<String> ();
-            foreach (var source in sources)
+
+            using (var memStream = new MemoryStream (source))
             {
-                String corShaderSource = Encoding.ASCII.GetString (source);
-                // Noddy parser for the custom GLSL shader format that combines both
-                // the vertex and fragment shaders.
-                String identifier = "";
-                String vertexShaderSource = "";
-                String fragmentShaderSource = "";
-                char state = (char)0;
-                foreach (var line in corShaderSource.Split ('\n'))
+                using (var binReader = new BinaryReader (memStream))
                 {
-                    if (line == "=VSH=") { state = (char)1; continue; }
-                    if (line == "=FSH=") { state = (char)2; continue; }
-                    if (state == 0) identifier = line;
-                    if (state == 1) vertexShaderSource += line + "\n";
-                    if (state == 2) fragmentShaderSource += line + "\n";
+                    Byte variantCount = binReader.ReadByte ();
+
+                    for (Int32 i = 0; i < (Int32)variantCount; ++i)
+                    {
+                        Int32 variantByteCount = binReader.ReadInt32 ();
+                        Byte[] variantEncoded = binReader.ReadBytes (variantByteCount);
+
+                        String corShaderSource = Encoding.ASCII.GetString (variantEncoded);
+                        // Noddy parser for the custom GLSL shader format that combines both
+                        // the vertex and fragment shaders.
+                        String identifier = "";
+                        String vertexShaderSource = "";
+                        String fragmentShaderSource = "";
+                        char state = (char)0;
+                        foreach (var line in corShaderSource.Split ('\n'))
+                        {
+                            if (line == "=VSH=")
+                            {
+                                state = (char)1;
+                                continue;
+                            }
+                            if (line == "=FSH=")
+                            {
+                                state = (char)2;
+                                continue;
+                            }
+                            if (state == 0)
+                                identifier = line;
+                            if (state == 1)
+                                vertexShaderSource += line + "\n";
+                            if (state == 2)
+                                fragmentShaderSource += line + "\n";
+                        }
+
+                        var variantHandle = OpenTKHelper.CreateInternalShaderVariant (identifier, vertexShaderSource, fragmentShaderSource);
+                        variantHandles.Add (variantHandle);
+                        variantIdentifiers.Add (identifier);
+                    }
                 }
-
-
-                var variantHandle = OpenTKHelper.CreateInternalShaderVariant (identifier, vertexShaderSource, fragmentShaderSource);
-                variantHandles.Add (variantHandle);
-                variantIdentifiers.Add (identifier);
             }
 
             // Link

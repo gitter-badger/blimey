@@ -78,7 +78,7 @@ namespace Cor.Platform
         Handle                  gfx_CreateVertexBuffer                  (VertexDeclaration vertexDeclaration, Int32 vertexCount);
         Handle                  gfx_CreateIndexBuffer                   (Int32 indexCount);
         Handle                  gfx_CreateTexture                       (TextureFormat textureFormat, Int32 width, Int32 height, Byte[] source);
-        Handle                  gfx_CreateShader                        (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sourceVariants);
+        Handle                  gfx_CreateShader                        (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[] source);
         
         void                    gfx_DestroyVertexBuffer                 (Handle vertexBufferHandle);
         void                    gfx_DestroyIndexBuffer                  (Handle indexBufferHandle);

@@ -165,7 +165,7 @@ namespace Cor.Platform.Native
 
         [DllImport ("__Internal")]
         static extern void __gfx_CreateShader ();
-        public Handle gfx_CreateShader (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sourceVariants)
+        public Handle gfx_CreateShader (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[] source)
         {
             throw new NotImplementedException ();
         }

@@ -463,9 +463,9 @@ namespace Cor
         /// <summary>
         /// Creates a new shader program on the GPU.
         /// </summary>
-        public Shader CreateShader (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sources)
+        public Shader CreateShader (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[] source)
         {
-            return new Shader (this.platform, shaderDeclaration, shaderFormat, sources);
+            return new Shader (this.platform, shaderDeclaration, shaderFormat, source);
         }
 
         public void DestroyShader (Shader shader)
@@ -1289,12 +1289,12 @@ namespace Cor
         readonly Dictionary <String, String> variableNiceNameToActualName;
         readonly Dictionary <String, String> samplerNiceNameToActualName;
 
-        public Shader (IApi platform, ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[][] sourceVariants)
+        public Shader (IApi platform, ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[] source)
         {
             this.platform = platform;
 
             // Get the platform implementation to build create the shader on the GPU.
-            this.shaderHandle = platform.gfx_CreateShader (shaderDeclaration, shaderFormat, sourceVariants);
+            this.shaderHandle = platform.gfx_CreateShader (shaderDeclaration, shaderFormat, source);
 
             // Cache off constants from the API so we don't need to hit the API each time we need the same info.
             this.variantCount = platform.gfx_shdr_GetVariantCount (shaderHandle);
