@@ -34,6 +34,7 @@ namespace Cor.Demo
 {
     using System;
     using System.Text;
+    using System.IO;
     using Abacus.SinglePrecision;
     using Fudge;
     using Cor;
@@ -857,19 +858,80 @@ namespace Cor.Demo
         static ShaderFormat GetShaderFormat ()
         {
             #if COR_PLATFORM_MONOMAC
-            return ShaderFormat.GLSL
+            return ShaderFormat.GLSL;
             #elif COR_PLATFORM_XIOS
             return ShaderFormat.GLSL_ES;
             #else
             #endif
+        }
 
+        static ShaderDeclaration GetUnlitShaderDeclaration ()
+        {
+            return new ShaderDeclaration {
+                Name = "Demo Unlit Shader",
+                InputDeclarations = new List<ShaderInputDeclaration> {
+                    new ShaderInputDeclaration {
+                        Name = "a_vertPosition",
+                        NiceName = "Position",
+                        Optional = false,
+                        Usage = VertexElementUsage.Position,
+                        DefaultValue = Vector3.Zero
+                    },
+                    new ShaderInputDeclaration {
+                        Name = "a_vertTexcoord",
+                        NiceName = "TextureCoordinate",
+                        Optional = true,
+                        Usage = VertexElementUsage.TextureCoordinate,
+                        DefaultValue = Vector2.Zero
+                    },
+                    new ShaderInputDeclaration {
+                        Name = "a_vertColour",
+                        NiceName = "Colour",
+                        Optional = true,
+                        Usage = VertexElementUsage.Colour,
+                        DefaultValue = Rgba32.White
+                    }
+                },
+                VariableDeclarations = new List<ShaderVariableDeclaration> {
+                    new ShaderVariableDeclaration {
+                        Name = "u_world",
+                        NiceName = "World",
+                        DefaultValue = Matrix44.Identity
+                    },
+                    new ShaderVariableDeclaration {
+                        Name = "u_view",
+                        NiceName = "View",
+                        DefaultValue = Matrix44.Identity
+                    },
+                    new ShaderVariableDeclaration {
+                        Name = "u_proj",
+                        NiceName = "Projection",
+                        DefaultValue = Matrix44.Identity
+                    },
+                    new ShaderVariableDeclaration {
+                        Name = "u_colour",
+                        NiceName = "Colour",
+                        DefaultValue = Rgba32.White
+                    }
+                },
+                SamplerDeclarations = new List<ShaderSamplerDeclaration> {
+                    new ShaderSamplerDeclaration {
+                        Name = "s_tex0",
+                        NiceName = "TextureSampler",
+                        Optional = true
+                    }
+                }
+            };
         }
 
         static String ConvertToES (String source)
         {
-            source = source.Replace ("uniform", "uniform mediump");
-            source = source.Replace ("varying", "varying mediump");
-            source = source.Replace ("attribute", "attribute mediump");
+            source = source.Replace ("float ", "mediump float ");
+            source = source.Replace ("vec2 ", "mediump vec2 ");
+            source = source.Replace ("vec3 ", "mediump vec3 ");
+            source = source.Replace ("vec4 ", "mediump vec4 ");
+            source = source.Replace ("mat4 ", "mediump mat4 ");
+            source = source.Replace ("sampler2D ", "mediump sampler2D ");
             return source;
         }
 
@@ -1002,9 +1064,7 @@ void main()
 {
     gl_Position = u_proj * u_view * u_world * a_vertPosition;
     v_texCoord = a_vertTexcoord;
-    vec4 c = a_vertColour;
-    // c.a = 1.0; // this is wrong...
-    v_tint = c * u_colour;
+    v_tint = a_vertColour * u_colour;
 }
 =FSH=
 uniform sampler2D s_tex0;
@@ -1026,76 +1086,37 @@ void main()
             return Encoding.UTF8.GetBytes (source);
         }
 
+        static Byte[] GetUnlitShaderSource ()
+        {
+            var encodedVariants = new [] {
+                GetUnlit_VertPos (),
+                GetUnlit_VertPosTex (),
+                GetUnlit_VertPosCol (),
+                GetUnlit_VertPosTexCol ()
+            };
+
+            using (var mem = new MemoryStream ())
+            {
+                using (var bin = new BinaryWriter (mem))
+                {
+                    bin.Write ((Byte)encodedVariants.Length);
+                    foreach (var variant in encodedVariants)
+                    {
+                        bin.Write (variant.Length);
+                        bin.Write (variant);
+                    }
+                }
+                return mem.GetBuffer ();
+            }
+
+        }
+
         public static Shader CreateUnlit (Engine engine)
         {
             return engine.Graphics.CreateShader (
-                new ShaderDeclaration {
-                    Name = "Demo Unlit Shader",
-                    InputDeclarations = new List<ShaderInputDeclaration> {
-                        new ShaderInputDeclaration
-                        {
-                            Name = "a_vertPosition",
-                            NiceName = "Position",
-                            Optional = false,
-                            Usage = VertexElementUsage.Position,
-                            DefaultValue = Vector3.Zero
-                        },
-                        new ShaderInputDeclaration
-                        {
-                            Name = "a_vertTexcoord",
-                            NiceName = "TextureCoordinate",
-                            Optional = true,
-                            Usage = VertexElementUsage.TextureCoordinate,
-                            DefaultValue = Vector2.Zero
-                        },
-                        new ShaderInputDeclaration
-                        {
-                            Name = "a_vertColour",
-                            NiceName = "Colour",
-                            Optional = true,
-                            Usage = VertexElementUsage.Colour,
-                            DefaultValue = Rgba32.White
-                        }
-                    },
-                    VariableDeclarations = new List<ShaderVariableDeclaration> {
-                        new ShaderVariableDeclaration {
-                            Name = "u_world",
-                            NiceName = "World",
-                            DefaultValue = Matrix44.Identity
-                        },
-                        new ShaderVariableDeclaration {
-                            Name = "u_view",
-                            NiceName = "View",
-                            DefaultValue = Matrix44.Identity
-                        },
-                        new ShaderVariableDeclaration {
-                            Name = "u_proj",
-                            NiceName = "Projection",
-                            DefaultValue = Matrix44.Identity
-                        },
-                        new ShaderVariableDeclaration {
-                            Name = "u_colour",
-                            NiceName = "Colour",
-                            DefaultValue = Rgba32.White
-                        }
-                    },
-                    SamplerDeclarations = new List<ShaderSamplerDeclaration> {
-                        new ShaderSamplerDeclaration
-                        {
-                            Name = "s_tex0",
-                            NiceName = "TextureSampler",
-                            Optional = true
-                        }
-                    }
-                },
-                GetShaderFormat (), 
-                new []
-                {
-                    GetUnlit_VertPos (),
-                    GetUnlit_VertPosTex (),
-                    GetUnlit_VertPosCol (),
-                    GetUnlit_VertPosTexCol ()
-                }
+                GetUnlitShaderDeclaration (),
+                GetShaderFormat (),
+                GetUnlitShaderSource ()
             );
         }
     }
