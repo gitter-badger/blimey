@@ -51,7 +51,7 @@
     <MtouchI18n>
     </MtouchI18n>
     <MtouchArch>ARMv7, ARMv7s</MtouchArch>
-    <CodesignProvision>B77A780A-45F1-4792-B935-BAC05C597EFC</CodesignProvision>
+    <CodesignProvision>8f3e5a3f-92ff-467f-bf5d-e3b9d8f50915</CodesignProvision>
     <CrashReportingApiKey>
     </CrashReportingApiKey>
     <AssemblyName>SungiantCorDemoXios</AssemblyName>
