@@ -862,6 +862,7 @@ namespace Cor.Platform
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class ShaderDeclaration
+        : IEquatable <ShaderDeclaration>
     {
         /// <summary>
         /// Defines a global name for this shader
@@ -885,10 +886,71 @@ namespace Cor.Platform
         /// ?
         /// </summary>
         public List<ShaderSamplerDeclaration> SamplerDeclarations { get; set; }
+
+        public override Boolean Equals (Object obj)
+        {
+            Boolean flag = false;
+
+            if (obj is ShaderDeclaration)
+            {
+                flag = this.Equals ((ShaderDeclaration) obj);
+            }
+
+            return flag;
+        }
+
+        public Boolean Equals (ShaderDeclaration other)
+        {
+            if (this.Name != other.Name)
+                return false;
+
+            if (this.InputDeclarations == null && other.InputDeclarations != null)
+                return false;
+
+            if (this.InputDeclarations != null && other.InputDeclarations == null)
+                return false;
+
+            for (Int32 i = 0; i < this.InputDeclarations.Count; ++i)
+                if (this.InputDeclarations [i] != other.InputDeclarations [i])
+                    return false;
+
+            if (this.VariableDeclarations == null && other.VariableDeclarations != null)
+                return false;
+
+            if (this.VariableDeclarations != null && other.VariableDeclarations == null)
+                return false;
+
+            for (Int32 i = 0; i < this.VariableDeclarations.Count; ++i)
+                if (this.VariableDeclarations [i] != other.VariableDeclarations [i])
+                    return false;
+
+            if (this.SamplerDeclarations == null && other.SamplerDeclarations != null)
+                return false;
+
+            if (this.SamplerDeclarations != null && other.SamplerDeclarations == null)
+                return false;
+
+            for (Int32 i = 0; i < this.SamplerDeclarations.Count; ++i)
+                if (this.SamplerDeclarations [i] != other.SamplerDeclarations [i])
+                    return false;
+
+            return true;
+        }
+
+        public static Boolean operator == (ShaderDeclaration a, ShaderDeclaration b)
+        {
+            return Equals (a, b);
+        }
+
+        public static Boolean operator != (ShaderDeclaration a, ShaderDeclaration b)
+        {
+            return !Equals (a, b);
+        }
     }
 
 
     public sealed class ShaderInputDeclaration
+        : IEquatable <ShaderInputDeclaration>
     {
         String niceName;
         Type defaultType;
@@ -951,9 +1013,55 @@ namespace Cor.Platform
         }
 
         public Boolean Optional { get; set; }
+
+        public override Boolean Equals (Object obj)
+        {
+            Boolean flag = false;
+
+            if (obj is ShaderInputDeclaration)
+            {
+                flag = this.Equals ((ShaderInputDeclaration) obj);
+            }
+
+            return flag;
+        }
+
+        public Boolean Equals (ShaderInputDeclaration other)
+        {
+            if (this.niceName != other.niceName)
+                return false;
+
+            if (this.defaultType != other.defaultType)
+                return false;
+
+            if (this.defaultValue.ToString () != other.defaultValue.ToString ())
+                return false;
+
+            if (this.Name != other.Name)
+                return false;
+
+            if (this.Usage != other.Usage)
+                return false;
+
+            if (this.Optional != other.Optional)
+                return false;
+
+            return true;
+        }
+
+        public static Boolean operator == (ShaderInputDeclaration a, ShaderInputDeclaration b)
+        {
+            return Equals (a, b);
+        }
+
+        public static Boolean operator != (ShaderInputDeclaration a, ShaderInputDeclaration b)
+        {
+            return !Equals (a, b);
+        }
     }
 
     public sealed class ShaderSamplerDeclaration
+        : IEquatable <ShaderSamplerDeclaration>
     {
         String niceName;
 
@@ -970,9 +1078,46 @@ namespace Cor.Platform
 
         public String Name { get; set; }
         public Boolean Optional { get; set; }
+
+        public override Boolean Equals (Object obj)
+        {
+            Boolean flag = false;
+
+            if (obj is ShaderSamplerDeclaration)
+            {
+                flag = this.Equals ((ShaderSamplerDeclaration) obj);
+            }
+
+            return flag;
+        }
+
+        public Boolean Equals (ShaderSamplerDeclaration other)
+        {
+            if (this.niceName != other.niceName)
+                return false;
+
+            if (this.Name != other.Name)
+                return false;
+
+            if (this.Optional != other.Optional)
+                return false;
+
+            return true;
+        }
+
+        public static Boolean operator == (ShaderSamplerDeclaration a, ShaderSamplerDeclaration b)
+        {
+            return Equals (a, b);
+        }
+
+        public static Boolean operator != (ShaderSamplerDeclaration a, ShaderSamplerDeclaration b)
+        {
+            return !Equals (a, b);
+        }
     }
 
     public sealed class ShaderVariableDeclaration
+        : IEquatable <ShaderVariableDeclaration>
     {
         String niceName;
         Type defaultType;
@@ -1030,6 +1175,45 @@ namespace Cor.Platform
                 defaultType = t;
                 defaultValue = value;
             }
+        }
+
+        public override Boolean Equals (Object obj)
+        {
+            Boolean flag = false;
+
+            if (obj is ShaderVariableDeclaration)
+            {
+                flag = this.Equals ((ShaderVariableDeclaration) obj);
+            }
+
+            return flag;
+        }
+
+        public Boolean Equals (ShaderVariableDeclaration other)
+        {
+            if (this.niceName != other.niceName)
+                return false;
+
+            if (this.Name != other.Name)
+                return false;
+
+            if (this.defaultType != other.defaultType)
+                return false;
+
+            if (this.defaultValue.ToString () != other.defaultValue.ToString ())
+                return false;
+
+            return true;
+        }
+
+        public static Boolean operator == (ShaderVariableDeclaration a, ShaderVariableDeclaration b)
+        {
+            return Equals (a, b);
+        }
+
+        public static Boolean operator != (ShaderVariableDeclaration a, ShaderVariableDeclaration b)
+        {
+            return !Equals (a, b);
         }
     }
 
