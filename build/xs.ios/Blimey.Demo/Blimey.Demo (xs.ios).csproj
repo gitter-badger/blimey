@@ -40,7 +40,7 @@
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\iPhone\Debug</OutputPath>
-    <DefineConstants>DEBUG;XIOS;AOT;</DefineConstants>
+    <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
@@ -64,7 +64,6 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
-    <DefineConstants>XIOS;AOT;</DefineConstants>
     <AssemblyName>SungiantCorDemoXios</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
@@ -76,7 +75,6 @@
     <ConsolePause>False</ConsolePause>
     <BuildIpa>True</BuildIpa>
     <CodesignKey>iPhone Distribution</CodesignKey>
-    <DefineConstants>XIOS;AOT;</DefineConstants>
     <AssemblyName>SungiantCorDemoXios</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
@@ -86,9 +84,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
-    <CodesignKey>iPhone Distribution</CodesignKey>
-    <DefineConstants>XIOS;AOT;</DefineConstants>
-    <AssemblyName>SungiantCorDemoXios</AssemblyName>
+    <CodesignKey>iPhone Developer: Ashleigh Pook (9L6336R47Y)</CodesignKey>
+    <AssemblyName>BlimeyDemoXios</AssemblyName>
+    <CodesignProvision>B77A780A-45F1-4792-B935-BAC05C597EFC</CodesignProvision>
+    <IpaPackageName>
+    </IpaPackageName>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -101,38 +104,32 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="..\..\..\source\Blimey.Demo\ColourChanger.cs">
-      <Link>source\ColourChanger.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\source\Blimey.Demo\Demo.cs">
       <Link>source\Demo.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\MainMenuScene.cs">
-      <Link>source\MainMenuScene.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_Airports.cs">
+      <Link>source\Scene_Airports.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\RandomLocalRotate.cs">
-      <Link>source\RandomLocalRotate.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_Boids.cs">
+      <Link>source\Scene_Boids.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\RandomObjectHelper.cs">
-      <Link>source\RandomObjectHelper.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_MainMenu.cs">
+      <Link>source\Scene_MainMenu.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\Scene1.cs">
-      <Link>source\Scene1.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_Particles.cs">
+      <Link>source\Scene_Particles.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\Scene2.cs">
-      <Link>source\Scene2.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_Shapes.cs">
+      <Link>source\Scene_Shapes.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\Scene3.cs">
-      <Link>source\Scene3.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_Sprites.cs">
+      <Link>source\Scene_Sprites.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\Scene4.cs">
-      <Link>source\Scene4.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_Text.cs">
+      <Link>source\Scene_Text.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\Scene5.cs">
-      <Link>source\Scene5.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\source\Blimey.Demo\Scene6.cs">
-      <Link>source\Scene6.cs</Link>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene.Parallax.cs">
+      <Link>source\Scene.Parallax.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -143,15 +140,6 @@
     <Folder Include="assets\" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Icon.png" />
-    <BundleResource Include="Icon%402x.png" />
-    <BundleResource Include="Icon-72.png" />
-    <BundleResource Include="Icon-72%402x.png" />
-    <BundleResource Include="Icon-Small.png" />
-    <BundleResource Include="Icon-Small%402x.png" />
-    <BundleResource Include="Icon-Small-50.png" />
-    <BundleResource Include="Icon-Small-50%402x.png" />
-    <BundleResource Include="Default.png" />
     <BundleResource Include="..\..\..\assets\xios\airports.bba">
       <Link>assets\xios\airports.bba</Link>
     </BundleResource>
@@ -188,6 +176,26 @@
     <BundleResource Include="..\..\..\assets\xios\blimey_fnt_uv.bba">
       <Link>assets\xios\blimey_fnt_uv.bba</Link>
     </BundleResource>
+    <BundleResource Include="Resources\Icon.png" />
+    <BundleResource Include="Resources\Icon%402x.png" />
+    <BundleResource Include="Resources\Icon-60%402x.png" />
+    <BundleResource Include="Resources\Icon-72.png" />
+    <BundleResource Include="Resources\Icon-72%402x.png" />
+    <BundleResource Include="Resources\Icon-76.png" />
+    <BundleResource Include="Resources\Icon-76%402x.png" />
+    <BundleResource Include="Resources\Icon-Small.png" />
+    <BundleResource Include="Resources\Icon-Small%402x.png" />
+    <BundleResource Include="Resources\Icon-Small-50.png" />
+    <BundleResource Include="Resources\Icon-Small-50%402x.png" />
+    <BundleResource Include="Resources\Icon-Small-40.png" />
+    <BundleResource Include="Resources\Icon-Small-40%402x.png" />
+    <BundleResource Include="Resources\Default.png" />
+    <BundleResource Include="Resources\Default%402x.png" />
+    <BundleResource Include="Resources\Default-568h%402x.png" />
+    <BundleResource Include="Resources\Default-Portrait.png" />
+    <BundleResource Include="Resources\Default-Landscape.png" />
+    <BundleResource Include="Resources\Default-Portrait%402x.png" />
+    <BundleResource Include="Resources\Default-Landscape%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\submodules\abacus\build\xs.ios\Abacus\Abacus %28xs.ios%29.csproj">
@@ -201,6 +209,14 @@
     <ProjectReference Include="..\..\..\submodules\blimey\build\xs.ios\Blimey\Blimey %28xs.ios%29.csproj">
       <Project>{461BB256-E834-4D64-AF80-E032446FC086}</Project>
       <Name>Blimey (xs.ios)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\fudge\build\xs.ios\Fudge\Fudge %28xs.ios%29.csproj">
+      <Project>{C29C81F0-E234-4CAE-B162-E3AEF7CBC4F5}</Project>
+      <Name>Fudge (xs.ios)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\oats\build\Oats\Oats %28xs.ios%29.csproj">
+      <Project>{58F253D1-DFD7-4D31-AA36-96A7EB3DCC09}</Project>
+      <Name>Oats (xs.ios)</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
