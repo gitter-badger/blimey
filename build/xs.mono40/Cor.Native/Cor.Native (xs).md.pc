@@ -1,0 +1,5 @@
+Name: Cor.Native (xs)
+Description: 
+Version: 0.1
+Libs: -L"/Users/ash/repos/github/blimey3D/cor-demo/submodules/cor/build/xs.mono40/Cor.Native/bin/Debug" -lCor
+Cflags: -I"/Users/ash/repos/github/blimey3D/cor-demo/submodules/cor/source"

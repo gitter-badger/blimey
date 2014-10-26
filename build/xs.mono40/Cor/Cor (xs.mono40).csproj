@@ -57,12 +57,4 @@
       <Name>Fudge (xs.mono40)</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\source\Cor.Platform.Native.cpp">
-      <Link>Cor.Platform.Native.cpp</Link>
-    </None>
-    <None Include="..\..\..\source\Cor.Platform.Native.hpp">
-      <Link>Cor.Platform.Native.hpp</Link>
-    </None>
-  </ItemGroup>
 </Project>
