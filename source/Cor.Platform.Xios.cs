@@ -192,9 +192,11 @@ namespace Cor.Platform.Xios
 
             string filename = fileName.Substring (0, fileName.Length - ext.Length);
 
+            string path = Path.Combine ("assets/xios", filename);
+
             var resourcePathname =
                 MonoTouch.Foundation.NSBundle.MainBundle.PathForResource (
-                    filename,
+                    path,
                     ext.Substring (1, ext.Length - 1)
                 );
 
@@ -203,9 +205,7 @@ namespace Cor.Platform.Xios
                 throw new Exception ("Resource [" + fileName + "] not found");
             }
 
-            string path = Path.Combine ("assets/xios", resourcePathname);
-
-            var fStream = new FileStream (path, FileMode.Open);
+            var fStream = new FileStream (resourcePathname, FileMode.Open);
 
             return fStream;
 
