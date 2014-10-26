@@ -59,37 +59,37 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\..\source\Blimey.Assets.cs">
+    <Compile Include="..\..\..\..\..\..\blimey-assetbuilder\submodules\blimey\source\Blimey\Blimey.Assets.cs">
       <Link>Blimey.Assets.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Content.cs">
+    <Compile Include="..\..\..\..\..\..\blimey-assetbuilder\submodules\blimey\source\Blimey\Blimey.Content.cs">
       <Link>Blimey.Content.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.cs">
+    <Compile Include="..\..\..\..\..\..\blimey-assetbuilder\submodules\blimey\source\Blimey\Blimey.cs">
       <Link>Blimey.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Extensions.cs">
+    <Compile Include="..\..\..\..\..\..\blimey-assetbuilder\submodules\blimey\source\Blimey\Blimey.Extensions.cs">
       <Link>Blimey.Extensions.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Gesture.cs">
+    <Compile Include="..\..\..\..\..\..\blimey-assetbuilder\submodules\blimey\source\Blimey\Blimey.Gesture.cs">
       <Link>Blimey.Gesture.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Graphics.cs">
+    <Compile Include="..\..\..\..\..\..\blimey-assetbuilder\submodules\blimey\source\Blimey\Blimey.Graphics.cs">
       <Link>Blimey.Graphics.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Internal.cs">
+    <Compile Include="..\..\..\..\..\..\blimey-assetbuilder\submodules\blimey\source\Blimey\Blimey.Internal.cs">
       <Link>Blimey.Internal.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Maths.cs">
+    <Compile Include="..\..\..\..\..\..\blimey-assetbuilder\submodules\blimey\source\Blimey\Blimey.Maths.cs">
       <Link>Blimey.Maths.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Renderers.cs">
+    <Compile Include="..\..\..\..\..\..\blimey-assetbuilder\submodules\blimey\source\Blimey\Blimey.Renderers.cs">
       <Link>Blimey.Renderers.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Traits.cs">
+    <Compile Include="..\..\..\..\..\..\blimey-assetbuilder\submodules\blimey\source\Blimey\Blimey.Traits.cs">
       <Link>Blimey.Traits.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Blimey.Utilities.cs">
+    <Compile Include="..\..\..\..\..\..\blimey-assetbuilder\submodules\blimey\source\Blimey\Blimey.Utilities.cs">
       <Link>Blimey.Utilities.cs</Link>
     </Compile>
   </ItemGroup>
