@@ -483,10 +483,10 @@ namespace Cor.Demo
             indexArray[5] = 3;
 
             // Four vertices per face.
-            vertArray[0] = new VertPosTexCol(new Vector3(-0.5f, -0.5f, 0f), new Vector2(0f, 1f), Rgba32.Yellow);
-            vertArray[1] = new VertPosTexCol(new Vector3(-0.5f,  0.5f, 0f), new Vector2(0f, 0f), Rgba32.Green);
-            vertArray[2] = new VertPosTexCol(new Vector3( 0.5f, -0.5f, 0f), new Vector2(0f, 1f), Rgba32.Blue);
-            vertArray[3] = new VertPosTexCol(new Vector3( 0.5f,  0.5f, 0f), new Vector2(0f, 0f), Rgba32.Red);
+            vertArray[0] = new VertPosTexCol(new Vector3(-0.5f, -0.5f, 0f), new Vector2(0f, 0f), Rgba32.Yellow);
+            vertArray[1] = new VertPosTexCol(new Vector3(-0.5f,  0.5f, 0f), new Vector2(0f, 1f), Rgba32.Green);
+            vertArray[2] = new VertPosTexCol(new Vector3( 0.5f, -0.5f, 0f), new Vector2(1f, 0f), Rgba32.Blue);
+            vertArray[3] = new VertPosTexCol(new Vector3( 0.5f,  0.5f, 0f), new Vector2(1f, 1f), Rgba32.Red);
         }
     }
 
@@ -515,10 +515,10 @@ namespace Cor.Demo
             indexArray[5] = 3;
 
             // Four vertices per face.
-            vertArray[0] = new VertPosTex(new Vector3(-0.5f, -0.5f, 0f), new Vector2(0f, 1f));
-            vertArray[1] = new VertPosTex(new Vector3(-0.5f,  0.5f, 0f), new Vector2(0f, 0f));
-            vertArray[2] = new VertPosTex(new Vector3( 0.5f, -0.5f, 0f), new Vector2(0f, 1f));
-            vertArray[3] = new VertPosTex(new Vector3( 0.5f,  0.5f, 0f), new Vector2(0f, 0f));
+            vertArray[0] = new VertPosTex(new Vector3(-0.5f, -0.5f, 0f), new Vector2(0f, 0f));
+            vertArray[1] = new VertPosTex(new Vector3(-0.5f,  0.5f, 0f), new Vector2(0f, 1f));
+            vertArray[2] = new VertPosTex(new Vector3( 0.5f, -0.5f, 0f), new Vector2(1f, 0f));
+            vertArray[3] = new VertPosTex(new Vector3( 0.5f,  0.5f, 0f), new Vector2(1f, 1f));
         }
     }
 
