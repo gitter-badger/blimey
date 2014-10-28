@@ -1633,7 +1633,8 @@ namespace Cor
                 int numUnmatchedVertElems = matchResult.NumUnmatchedInputs;
                 int numMissingNonOptionalInputs = matchResult.NumUnmatchedRequiredInputs;
 
-                InternalUtils.Log.Info ("GFX", " - " + i);
+                InternalUtils.Log.Info ("GFX", String.Format ("[{3}] {4} ~ matched:{0}, unmatched:{1}, missing:{2}",
+                    numMatchedVertElems, numUnmatchedVertElems, numMissingNonOptionalInputs, i, variantIdentifiers[i] ));
 
                 if (i == 0 )
                 {
@@ -1664,7 +1665,7 @@ namespace Cor
                 }
             }
 
-            InternalUtils.Log.Info ("GFX", "Chosen variant: " + variantIdentifiers[best]);
+            InternalUtils.Log.Info ("GFX", "Chosen variant = [" + best +"]");
 
             return best;
         }
@@ -1744,13 +1745,6 @@ namespace Cor
                 }
 
             }
-
-            //InternalUtils.Log.Info ("GFX",
-            //    String.Format (
-            //        "[{0}, {1}, {2}]",
-            //        result.NumMatchedInputs,
-            //        result.NumUnmatchedInputs,
-            //        result.NumUnmatchedRequiredInputs));
 
             return result;
         }
