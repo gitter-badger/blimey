@@ -319,6 +319,11 @@ namespace Cor
                 this.userApp.Stop (this);
                 this.platform.Program.Stop ();
             }
+
+            VertexBuffer.CollectGpuGarbage (this.platform.Api);
+            IndexBuffer.CollectGpuGarbage (this.platform.Api);
+            Texture.CollectGpuGarbage (this.platform.Api);
+            Shader.CollectGpuGarbage (this.platform.Api);
         }
 
         void Render ()
@@ -496,7 +501,7 @@ namespace Cor
         /// </summary>
         public void SetActiveTexture (Texture tex, Int32 slot)
         {
-            platform.gfx_tex_Activate (tex.Handle, slot);
+            platform.gfx_tex_Activate (tex != null ? tex.Handle : null, slot);
         }
 
 
@@ -667,6 +672,7 @@ namespace Cor
             this.MultiTouchController = humanInputDevices.AddEx (new MultiTouchController ());
             this.Mouse = humanInputDevices.AddEx (new Mouse ());
             this.Keyboard = humanInputDevices.AddEx (new Keyboard ());
+            this.GenericGamepad = new GenericGamepad ();
         }
 
         public override int GetHashCode ()
@@ -690,6 +696,7 @@ namespace Cor
             inputFrame.AnalogControlStates.Clear ();
             inputFrame.PressedCharacters.Clear ();
             inputFrame.ActiveTouches.Clear ();
+            inputFrame.BinaryControlStates.Clear ();
             
             var digitalControlStates = this.platform.hid_GetDigitalControlStates ();
             var analogControlStates = this.platform.hid_GetAnalogControlStates ();
@@ -1010,10 +1017,27 @@ namespace Cor
     
         Boolean disposed;
 
+        static Int32 vertexBufferCount = 0;
+        static System.Collections.Concurrent.ConcurrentQueue <Handle> vertexBuffersToClean =
+            new System.Collections.Concurrent.ConcurrentQueue<Handle> ();
+
+        public static void CollectGpuGarbage (IApi platform)
+        {
+            Handle handle = null;
+            while (vertexBuffersToClean.TryDequeue (out handle))
+            {
+                platform.gfx_DestroyVertexBuffer (handle);
+                --vertexBufferCount;
+                InternalUtils.Log.Info ("GFX", "Vertex buffer destroyed: " + handle.Identifier);
+            }
+        }
+
         internal VertexBuffer (IApi platform, VertexDeclaration vertexDeclaration, Int32 vertexCount)
         {
             this.platform = platform;
             this.handle = platform.gfx_CreateVertexBuffer (vertexDeclaration, vertexCount);
+            ++vertexBufferCount;
+            InternalUtils.Log.Info ("GFX", "Vertex buffer created: " + handle.Identifier);
         }
 
         // This finalizer will run only if the Dispose method
@@ -1067,9 +1091,9 @@ namespace Cor
                 // unmanaged resources here.
                 // If disposing is false,
                 // only the following code is executed.
-    
-                platform.gfx_DestroyVertexBuffer (handle);
-    
+
+                InternalUtils.Log.Info ("GFX", "Enqueuing vertex buffer for destruction: " + handle.Identifier);
+                vertexBuffersToClean.Enqueue (handle);
                 // Note disposing has been done.
                 disposed = true;
             }
@@ -1150,10 +1174,27 @@ namespace Cor
     
         Boolean disposed;
 
+        static Int32 indexBufferCount = 0;
+        static System.Collections.Concurrent.ConcurrentQueue <Handle> indexBuffersToClean =
+            new System.Collections.Concurrent.ConcurrentQueue<Handle> ();
+
+        public static void CollectGpuGarbage (IApi platform)
+        {
+            Handle handle = null;
+            while (indexBuffersToClean.TryDequeue (out handle))
+            {
+                platform.gfx_DestroyIndexBuffer (handle);
+                --indexBufferCount;
+                InternalUtils.Log.Info ("GFX", "Index buffer destroyed: " + handle.Identifier);
+            }
+        }
+
         internal IndexBuffer (IApi platform, Int32 indexCount)
         {
             this.platform = platform;
             this.handle = platform.gfx_CreateIndexBuffer (indexCount);
+            ++indexBufferCount;
+            InternalUtils.Log.Info ("GFX", "Index buffer created: " + handle.Identifier);
         }
 
         // This finalizer will run only if the Dispose method
@@ -1207,8 +1248,9 @@ namespace Cor
                 // unmanaged resources here.
                 // If disposing is false,
                 // only the following code is executed.
-    
-                platform.gfx_DestroyIndexBuffer (handle);
+
+                InternalUtils.Log.Info ("GFX", "Enqueuing index buffer for destruction: " + handle.Identifier);
+                indexBuffersToClean.Enqueue (handle);
     
                 // Note disposing has been done.
                 disposed = true;
@@ -1276,6 +1318,21 @@ namespace Cor
         // IDisposable
         Boolean disposed;
 
+        static Int32 shaderCount = 0;
+        static System.Collections.Concurrent.ConcurrentQueue <Handle> shadersToClean =
+            new System.Collections.Concurrent.ConcurrentQueue<Handle> ();
+
+        public static void CollectGpuGarbage (IApi platform)
+        {
+            Handle handle = null;
+            while (shadersToClean.TryDequeue (out handle))
+            {
+                platform.gfx_DestroyShader (handle);
+                --shaderCount;
+                InternalUtils.Log.Info ("GFX", "Shader destroyed: " + handle.Identifier);
+            }
+        }
+
         // Variant Tracking
         readonly Int32 variantCount;
         readonly Dictionary <Int32, String> variantIdentifiers = new Dictionary <Int32, String> ();
@@ -1295,6 +1352,8 @@ namespace Cor
 
             // Get the platform implementation to build create the shader on the GPU.
             this.shaderHandle = platform.gfx_CreateShader (shaderDeclaration, shaderFormat, source);
+            ++shaderCount;
+            InternalUtils.Log.Info ("GFX", "Shader created: " + shaderHandle.Identifier);
 
             // Cache off constants from the API so we don't need to hit the API each time we need the same info.
             this.variantCount = platform.gfx_shdr_GetVariantCount (shaderHandle);
@@ -1466,16 +1525,15 @@ namespace Cor
                 if (disposing)
                 {
                     // Dispose managed resources.
-    
                 }
     
                 // Call the appropriate methods to clean up
                 // unmanaged resources here.
                 // If disposing is false,
                 // only the following code is executed.
-    
-                platform.gfx_DestroyShader (shaderHandle);
-    
+                InternalUtils.Log.Info ("GFX", "Enqueuing shader for destruction: " + shaderHandle.Identifier);
+                shadersToClean.Enqueue (shaderHandle);
+
                 // Note disposing has been done.
                 disposed = true;
             }
@@ -1788,11 +1846,29 @@ namespace Cor
         public Handle Handle { get { return textureHandle; } }
     
         Boolean disposed;
+
+        static Int32 textureCount = 0;
+        static System.Collections.Concurrent.ConcurrentQueue <Handle> texturesToClean =
+            new System.Collections.Concurrent.ConcurrentQueue<Handle> ();
+
+        public static void CollectGpuGarbage (IApi platform)
+        {
+            Handle handle = null;
+            while (texturesToClean.TryDequeue (out handle))
+            {
+                platform.gfx_DestroyTexture (handle);
+                --textureCount;
+                InternalUtils.Log.Info ("GFX", "Texture destroyed: " + handle.Identifier);
+            }
+        }
         
         public Texture (IApi platform, TextureFormat textureFormat, Int32 width, Int32 height, Byte[] source)
         {
             this.platform = platform;
             this.textureHandle = platform.gfx_CreateTexture (textureFormat, width, height, source);
+            ++textureCount;
+
+            InternalUtils.Log.Info ("GFX", "Texture created: " + textureHandle.Identifier);
         }
 
         // This finalizer will run only if the Dispose method
@@ -1846,9 +1922,10 @@ namespace Cor
                 // unmanaged resources here.
                 // If disposing is false,
                 // only the following code is executed.
-    
-                platform.gfx_DestroyTexture (textureHandle);
-    
+   
+                InternalUtils.Log.Info ("GFX", "Enqueuing texture for destruction: " + textureHandle.Identifier);
+                texturesToClean.Enqueue (textureHandle);
+
                 // Note disposing has been done.
                 disposed = true;
             }
