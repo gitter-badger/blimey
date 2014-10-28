@@ -247,17 +247,19 @@ namespace Cor.Platform.MonoMac
 
         public Boolean? app_IsFullscreen ()
         {
-            throw new NotImplementedException ();
+            return false;
         }
         
         public Int32 app_GetWidth ()
         {
-            throw new NotImplementedException ();
+            //throw new NotImplementedException ();
+            return 800;
         }
         
         public Int32 app_GetHeight ()
         {
-            throw new NotImplementedException ();
+            //throw new NotImplementedException ();
+            return 600;
         }
         
         #endregion
