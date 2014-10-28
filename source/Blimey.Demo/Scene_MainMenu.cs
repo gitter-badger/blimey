@@ -112,7 +112,8 @@ namespace Blimey.Demo
         public override void Shutdown ()
         {
             _menuSceneObjects.Clear();
-
+            _menuSceneObjects = null;
+            _menuItemMaterials = null;
             this.Blimey.InputEventSystem.Tap -= this.OnTap;
             this.Blimey.InputEventSystem.Flick -= this.OnFlick;
         }

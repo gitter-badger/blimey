@@ -43,8 +43,11 @@ namespace Blimey.Demo
     public class Scene_Particles
         : Scene
     {
+        Scene returnScene = null;
+
         public override void Start()
         {
+            returnScene = this;
         }
 
         public override void Shutdown()
@@ -53,7 +56,14 @@ namespace Blimey.Demo
 
         public override Scene Update(AppTime time)
         {
-            return this;
+            if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
+                Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
+                Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
+            {
+                returnScene = new Scene_MainMenu();
+            }
+
+            return returnScene;
         }
     }
 }
