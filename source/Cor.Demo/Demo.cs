@@ -324,19 +324,18 @@ namespace Cor.Demo
                     20,
                     VertexElementFormat.Colour,
                     VertexElementUsage.Colour,
-                    0)
-            );
+                    0));
         }
 
         public Vector3 Position;
         public Vector2 UV;
         public Rgba32 Colour;
 
-        public VertPosTexCol (Vector3 position, Vector2 uv, Rgba32 color)
+        public VertPosTexCol (Vector3 position, Vector2 uv, Rgba32 colour)
         {
             this.Position = position;
             this.UV = uv;
-            this.Colour = color;
+            this.Colour = colour;
         }
 
         public VertexDeclaration VertexDeclaration { get { return _vertexDeclaration; } }
@@ -359,8 +358,7 @@ namespace Cor.Demo
                     12,
                     VertexElementFormat.Vector2,
                     VertexElementUsage.TextureCoordinate,
-                    0)
-            );
+                    0));
         }
 
         public Vector3 Position;
@@ -397,8 +395,7 @@ namespace Cor.Demo
                     24,
                     VertexElementFormat.Vector2,
                     VertexElementUsage.TextureCoordinate,
-                    0)
-            );
+                    0));
         }
 
         public Vector3 Position;
