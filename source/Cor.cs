@@ -2467,6 +2467,12 @@ namespace Cor
     /// </summary>
     public sealed class GenericGamepad
     {
+        public GenericGamepad ()
+        {
+            Buttons = new GenericGamepadButtons ();
+            DPad = new GamepadDPad (0);
+        }
+
         /// <summary>
         /// Represents the state of the buttons.
         /// </summary>
