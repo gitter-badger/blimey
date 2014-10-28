@@ -461,13 +461,17 @@ namespace Cor.Library.OpenTK
 
         public void gfx_DestroyTexture (Handle handle)
         {
-            throw new NotImplementedException ();
+            OpenTKHelper.DestroyTexture (handle);
         }
 
         public void gfx_DestroyShader (Handle handle)
         {
+            Console.WriteLine ("");
             foreach (var variantHandle in (handle as ShaderHandle).VariantHandles)
+            {
                 OpenTKHelper.DestroyShaderProgram (variantHandle.ProgramHandle);
+            }
+            Console.WriteLine ("");
         }
 
         public void gfx_vbff_Activate (Handle handle)
@@ -630,22 +634,24 @@ namespace Cor.Library.OpenTK
 
         public Int32 gfx_dbg_BeginEvent (Rgba32 colour, String eventName)
         {
-            throw new NotImplementedException ();
+            //throw new NotImplementedException ();
+            return 0;
         }
 
         public Int32 gfx_dbg_EndEvent ()
         {
-            throw new NotImplementedException ();
+            //throw new NotImplementedException ();
+            return 0;
         }
 
         public void gfx_dbg_SetMarker (Rgba32 colour, String marker)
         {
-            throw new NotImplementedException ();
+            //throw new NotImplementedException ();
         }
 
         public void gfx_dbg_SetRegion (Rgba32 colour, String region)
         {
-            throw new NotImplementedException ();
+            //throw new NotImplementedException ();
         }
 
         public Int32 gfx_vbff_GetVertexCount (Handle h)
@@ -1432,7 +1438,7 @@ namespace Cor.Library.OpenTK
                 }
                 catch (Exception ex)
                 {
-                    //InternalUtils.Log.Error ("FUCK! (It seems like OpenTK is broken): " + ex.Message);
+                    InternalUtils.Log.Error ("FUCK! (It seems like OpenTK is broken): " + ex.Message);
                 }
                 #endif
 
@@ -1725,7 +1731,7 @@ namespace Cor.Library.OpenTK
             const BufferTarget type = BufferTarget.ArrayBuffer;
             GL.BindBuffer (type, 0);
             OpenTKHelper.ThrowErrors ();
-                 }
+        }
 
         public static void DeactivateIndexBuffer (IndexBufferHandle handle)
         {
@@ -1737,8 +1743,8 @@ namespace Cor.Library.OpenTK
         public static void DestroyTexture (Handle textureHandle)
         {
             int glTextureId = (textureHandle as TextureHandle).TextureId;
-
             GL.DeleteTextures (1, ref glTextureId);
+            OpenTKHelper.ThrowErrors ();
         }
 
         public static ShaderVariantHandle CreateInternalShaderVariant (String identifier, String vertexShaderSource, String fragmentShaderSource)
