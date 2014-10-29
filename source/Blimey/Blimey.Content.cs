@@ -251,8 +251,8 @@ namespace Blimey
         // for efficient rendering.
         protected void InitializePrimitive(Graphics gfx)
         {
-            gfx.CreateVertexBuffer (VertDecl, vertices.Count);
-            gfx.CreateIndexBuffer (indices.Count);
+            VertexBuffer = gfx.CreateVertexBuffer (VertDecl, vertices.Count);
+            IndexBuffer = gfx.CreateIndexBuffer (indices.Count);
 
             VertexBuffer.SetData(vertices.ToArray());
             IndexBuffer.SetData(indices.ToArray());
