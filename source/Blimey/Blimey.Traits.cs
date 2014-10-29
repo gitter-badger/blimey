@@ -504,7 +504,7 @@ namespace Blimey
 	        }
 	    }
 		
-        SpriteMesh spriteMesh;
+        static SpriteMesh spriteMesh;
 
         // all sprites share a quad uploaded to the gpu.
         // right now we are using billboard, however, once
