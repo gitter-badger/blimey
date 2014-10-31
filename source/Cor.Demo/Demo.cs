@@ -771,8 +771,8 @@ namespace Cor.Demo
 
                 Single howFarRound = (Single)i / (Single)(tessellation);
 
-                Vector2 topUV = new Vector2(howFarRound, 0f);
-                Vector2 botUV = new Vector2(howFarRound, 1f);
+                Vector2 topUV = new Vector2(howFarRound * 4f, 0f);
+                Vector2 botUV = new Vector2(howFarRound * 4f, 1f);
 
                 vertList.Add(new VertPosTex(topPos, topUV));
                 vertList.Add(new VertPosTex(botPos, botUV));
@@ -994,7 +994,8 @@ varying vec4 v_tint;
 void main()
 {
     gl_FragColor = v_tint * texture2D(s_tex0, v_texCoord);
-}";
+}
+";
                 #else
                 #endif
             
