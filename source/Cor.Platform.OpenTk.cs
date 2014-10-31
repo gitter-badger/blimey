@@ -94,7 +94,10 @@ namespace Cor.Library.OpenTK
     #endif
     #if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
     {
-        VertexDeclaration currentVertexDeclaration;
+        // Keeping global state around like is rather hacky and should refactored out.
+        VertexDeclaration currentActiveVertexBufferVertexDeclaration;
+        ShaderHandle currentActiveShaderHandle;
+        Int32? currentActiveShaderVariantIndex;
 
         #region gfx
 
@@ -406,7 +409,7 @@ namespace Cor.Library.OpenTK
             {
                 var variantHandle = variantHandles [i];
 
-                InternalUtils.Log.Info ("GFX", variantIdentifiers [i] + ": Linking");
+                InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Linking");
                 int index = 0;
                 shaderDeclaration
                     .InputDeclarations
@@ -419,16 +422,16 @@ namespace Cor.Library.OpenTK
                         if (success) index++;
                     });
 
-                InternalUtils.Log.Info ("GFX", variantIdentifiers [i] + ": Validating shader program");
+                InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Validating shader program");
                 #if DEBUG
                 OpenTKHelper.ValidateProgram (variantHandle.ProgramHandle);
                 #endif
 
-                InternalUtils.Log.Info ("GFX", variantIdentifiers [i] + ": Detaching frag & vert sources");
+                InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Detaching frag & vert sources");
                 OpenTKHelper.DetachShader (variantHandle.ProgramHandle, variantHandle.FragmentShaderHandle);
                 OpenTKHelper.DetachShader (variantHandle.ProgramHandle, variantHandle.VertexShaderHandle);
 
-                InternalUtils.Log.Info ("GFX", variantIdentifiers [i] + ": Deleting frag & vert sources");
+                InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Deleting frag & vert sources");
                 OpenTKHelper.DeleteShader (variantHandle.ProgramHandle,  variantHandle.FragmentShaderHandle);
                 OpenTKHelper.DeleteShader (variantHandle.ProgramHandle, variantHandle.VertexShaderHandle);
             }
@@ -476,13 +479,14 @@ namespace Cor.Library.OpenTK
 
         public void gfx_vbff_Activate (Handle handle)
         {
+            currentActiveVertexBufferVertexDeclaration = null;
             if (handle == null)
                 return;
 
             var vd = OpenTkCache.Get <VertexDeclaration> (handle, "VertexDeclaration");
 
             // Keep track of this for later draw calls that do not provide it.
-            currentVertexDeclaration = vd;
+            currentActiveVertexBufferVertexDeclaration = vd;
 
             const BufferTarget type = BufferTarget.ArrayBuffer;
             GL.BindBuffer (type, (handle as VertexBufferHandle).GLHandle);
@@ -865,7 +869,9 @@ namespace Cor.Library.OpenTK
 
         public void gfx_shdr_Activate (Handle h, Int32 variantIndex)
         {
-            GL.UseProgram ((h as ShaderHandle).VariantHandles [variantIndex].ProgramHandle);
+            currentActiveShaderHandle = (h as ShaderHandle);
+            currentActiveShaderVariantIndex = variantIndex;
+            GL.UseProgram (currentActiveShaderHandle.VariantHandles [variantIndex].ProgramHandle);
             OpenTKHelper.ThrowErrors ();
         }
 
@@ -882,7 +888,7 @@ namespace Cor.Library.OpenTK
         public ShaderInputInfo[] gfx_shdr_GetInputs (Handle h, Int32 variantIndex)
         {
             string id = gfx_shdr_GetIdentifier (h, variantIndex);
-            InternalUtils.Log.Info ("GFX", id + ": Initilise Attributes");
+            InternalUtils.Log.Info ("gfx_shdr_GetInputs", id + ": Initilise Attributes");
             var attributes = OpenTKHelper.GetAttributes ((h as ShaderHandle).VariantHandles[variantIndex].ProgramHandle);
 
             var inputs = attributes
@@ -897,7 +903,7 @@ namespace Cor.Library.OpenTK
             {
                 logInputs += input.Name + ", ";
             }
-            InternalUtils.Log.Info ("GFX", logInputs);
+            InternalUtils.Log.Info ("gfx_shdr_GetInputs", logInputs);
 
             return inputs;
         }
@@ -905,7 +911,7 @@ namespace Cor.Library.OpenTK
         public ShaderVariableInfo[] gfx_shdr_GetVariables (Handle h, Int32 variantIndex)
         {
             string id = gfx_shdr_GetIdentifier (h, variantIndex);
-            InternalUtils.Log.Info ("GFX", id + ": Initilise Uniforms");
+            InternalUtils.Log.Info ("gfx_shdr_GetVariables", id + ": Initilise Uniforms");
 
             var uniforms = OpenTKHelper.GetUniforms ((h as ShaderHandle).VariantHandles[variantIndex].ProgramHandle);
 
@@ -924,7 +930,7 @@ namespace Cor.Library.OpenTK
             {
                 logVars += variable.Name + ", ";
             }
-            InternalUtils.Log.Info ("GFX", logVars);
+            InternalUtils.Log.Info ("gfx_shdr_GetVariables", logVars);
 
             return variables;
         }
@@ -932,7 +938,7 @@ namespace Cor.Library.OpenTK
         public ShaderSamplerInfo[] gfx_shdr_GetSamplers (Handle h, Int32 variantIndex)
         {
             string id = gfx_shdr_GetIdentifier (h, variantIndex);
-            InternalUtils.Log.Info ("GFX", id + ": Initilise Samplers");
+            InternalUtils.Log.Info ("gfx_shdr_GetSamplers", id + ": Initilise Samplers");
 
             var uniforms = OpenTKHelper.GetUniforms ((h as ShaderHandle).VariantHandles[variantIndex].ProgramHandle);
 
@@ -949,7 +955,7 @@ namespace Cor.Library.OpenTK
             {
                 logVars += sampler.Name + ", ";
             }
-            InternalUtils.Log.Info ("GFX", logVars);
+            InternalUtils.Log.Info ("gfx_shdr_GetSamplers", logVars);
 
             return samplers;
         }
@@ -1007,7 +1013,12 @@ namespace Cor.Library.OpenTK
         [Conditional ("DEBUG")]
         public static void ThrowErrors ()
         {
+            #if COR_PLATFORM_MONOMAC
             var ec = GL.GetError ();
+            #else
+            var ec = GL.GetErrorCode ();
+            #endif
+
 
             if (ec != ErrorCode.NoError)
             {
@@ -1492,7 +1503,7 @@ namespace Cor.Library.OpenTK
                     out temp,
                     infoLog);
 
-                string log = infoLog.ToString ();
+                //string log = infoLog.ToString ();
 
                 //InternalUtils.Log.Info ("GFX", src);
                 //InternalUtils.Log.Info ("GFX", log);
@@ -1528,7 +1539,7 @@ namespace Cor.Library.OpenTK
             {
                 var sb = new StringBuilder ();
 
-                int buffSize = 0;
+                //int buffSize = 0;
                 int length = 0;
                 int size = 0;
                 ActiveUniformType type;
@@ -1591,7 +1602,7 @@ namespace Cor.Library.OpenTK
             {
                 var sb = new StringBuilder ();
 
-                int buffSize = 0;
+                //int buffSize = 0;
                 int length = 0;
                 int size = 0;
                 ActiveAttribType type;

@@ -1333,6 +1333,24 @@ namespace Cor
             }
         }
 
+        //String GetIdentifier (Int32 variantIndex) { variantVariableInfos [variantIndex]; }
+        //ShaderInputInfo[] GetInputInfos (Int32 variantIndex) { variantVariableInfos [variantIndex]; }
+        //ShaderVariableInfo[] GetVariableInfo (Int32 variantIndex) { variantVariableInfos [variantIndex]; }
+        //ShaderSamplerInfo[] GetSamplerInfo (Int32 variantIndex) { variantSamplerInfos [variantIndex]; }
+
+        // Returned, in order, only the shader input declaration supported by the given variant.
+        public ShaderInputDeclaration[] GetSupportedInputDeclarations (Int32 variantIndex)
+        {
+            Int32 length = variantInputInfos [variantIndex].Length;
+            var result = new ShaderInputDeclaration [length];
+            for(Int32 i = 0; i < length; ++i)
+            {
+                var inputInfo = variantInputInfos [variantIndex][i];
+                result [i] = inputActualNameToDeclaration[inputInfo.Name];
+            }
+            return result;
+        }
+
         // Variant Tracking
         readonly Int32 variantCount;
         readonly Dictionary <Int32, String> variantIdentifiers = new Dictionary <Int32, String> ();

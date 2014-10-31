@@ -100,10 +100,10 @@ namespace Cor.Platform.MonoMac
 
         public void Start (IApi platformImplementation, Action update, Action render)
         {
-            var frame = new System.Drawing.RectangleF (0, 0, 800, 600);
+            var initialAppSize = new System.Drawing.RectangleF (0, 0, 800, 600);
 
             mainWindow = new MacGameNSWindow (
-                frame,
+                initialAppSize,
                 NSWindowStyle.Titled |
                 NSWindowStyle.Closable |
                 NSWindowStyle.Miniaturizable |
@@ -121,8 +121,7 @@ namespace Cor.Platform.MonoMac
             mainWindow.AcceptsMouseMovedEvents = false;
             mainWindow.Center ();
 
-            openGLView = new OpenGLView (update, render, frame);
-
+            openGLView = new OpenGLView (update, render, initialAppSize);
             mainWindow.ContentView.AddSubview (openGLView);
 
             mainWindow.MakeKeyAndOrderFront (mainWindow);
@@ -217,22 +216,20 @@ namespace Cor.Platform.MonoMac
             return "Mono v?";
         }
 
-        public int sys_GetPrimaryScreenResolutionWidth ()
+        public Int32 sys_GetPrimaryScreenResolutionWidth ()
         {
-            // TODO: this should return the number of pixels the primary screen has horizontally.
-            return 800;
+            return (Int32) NSScreen.MainScreen.Frame.Width;
         }
 
-        public int sys_GetPrimaryScreenResolutionHeight ()
+        public Int32 sys_GetPrimaryScreenResolutionHeight ()
         {
             // TODO: this should return the number of pixels the primary screen has vertically.
-            return 600;
+            return (Int32) NSScreen.MainScreen.Frame.Height;
         }
 
         public Vector2? sys_GetPrimaryPanelPhysicalSize ()
         {
-            // TODO: this is total guess atm
-            return new Vector2 (0.32f, 0.18f);
+            return null;
         }
 
         public PanelType sys_GetPrimaryPanelType ()
@@ -252,14 +249,12 @@ namespace Cor.Platform.MonoMac
         
         public Int32 app_GetWidth ()
         {
-            //throw new NotImplementedException ();
-            return 800;
+            return (Int32) Program.OpenGLView.Window.Frame.Width;
         }
         
         public Int32 app_GetHeight ()
         {
-            //throw new NotImplementedException ();
-            return 600;
+            return (Int32) Program.OpenGLView.Window.Frame.Height;
         }
         
         #endregion
@@ -451,9 +446,6 @@ namespace Cor.Platform.MonoMac
 
         protected override void OnLoad (EventArgs e)
         {
-            //gameEngine = new Engine (
-            //    this.settings, this.entryPoint, (Int32) this.Frame.Width, (Int32) this.Frame.Height);
-
             Console.WriteLine ("MonoMacGameView.OnLoad");
             base.OnLoad (e);
         }
@@ -477,9 +469,6 @@ namespace Cor.Platform.MonoMac
             // Occurs whenever GameWindow is resized.
             // Update the OpenGL Viewport and Projection Matrix here.
             Console.WriteLine ("MonoMacGameView.OnResize -> Bounds:" + Bounds + ", Frame:" + Frame);
-
-            //gameEngine.DisplayStatusImplementation.UpdateSize ((Int32)Frame.Width, (Int32)Frame.Height);
-
             base.OnResize (e);
         }
 
