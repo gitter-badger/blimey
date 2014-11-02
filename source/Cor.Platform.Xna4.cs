@@ -767,7 +767,8 @@ namespace Cor.Platform.Xna4
         public void SetRegion(Rgba32 colour, String eventName) { }
     }
 
-#endif    internal class DisplayStatus
+#endif
+    internal class DisplayStatus
         : IDisplayStatus
     {
         Microsoft.Xna.Framework.GraphicsDeviceManager gfxManager;
