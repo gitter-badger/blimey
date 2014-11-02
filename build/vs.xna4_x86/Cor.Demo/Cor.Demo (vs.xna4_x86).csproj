@@ -102,17 +102,17 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\submodules\abacus\build\vs.xna4_x86\Abacus %28vs.xna4_x86%29.csproj">
+    <ProjectReference Include="..\..\..\submodules\abacus\build\vs.xna4_x86\Abacus\Abacus %28vs.xna4_x86%29.csproj">
       <Project>{D87E8FF2-EECC-4C5C-88A9-2E2497C34012}</Project>
-      <Name>Abacus %28xna4.x86%29</Name>
+      <Name>Abacus %28vs.xna4_x86%29</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\submodules\cor.platform.managed.xna4\build\Cor.Platform.Xna4\Cor.Platform.Xna4 %28xna4.x86%29.csproj">
-      <Project>{1F19C87D-2A40-4642-A5A4-38346C471FBF}</Project>
-      <Name>Cor.Xna4 %28xna4.x86%29</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\submodules\cor\build\vs.xna4_x86\Cor\Cor %28xna4_x86%29.csproj">
+    <ProjectReference Include="..\..\..\submodules\cor\build\vs.xna4_x86\Cor\Cor %28vs.xna4_x86%29.csproj">
       <Project>{A6223F87-F0B4-4CA5-AB3E-B4C77DEE6B1C}</Project>
-      <Name>Cor %28xna4.x86%29</Name>
+      <Name>Cor %28vs.xna4_x86%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\fudge\build\vs.xna4_x86\Fudge\Fudge %28vs.xna4_x86%29.csproj">
+      <Project>{586051CD-27BC-4C33-B5EE-34001120012A}</Project>
+      <Name>Fudge %28vs.xna4_x86%29</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

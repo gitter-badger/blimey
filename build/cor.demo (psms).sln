@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacus (psms)", "..\submodules\abacus\build\psms\Abacus\Abacus (psms).csproj", "{D7DE17E0-DD0E-4AE2-9596-E9BD352DC92D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fudge (psms)", "..\submodules\fudge\build\psms\Fudge\Fudge (psms).csproj", "{71E27374-BD28-4F04-BD23-C2068AA2F233}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor (psms)", "..\submodules\cor\build\psms\Cor\Cor (psms).csproj", "{2375F7C7-85D4-4E6C-8EDF-20FE1E21CC63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor.Demo (psms)", "psms\Cor.Demo\Cor.Demo (psms).csproj", "{B40455AB-4B94-4009-97AA-DE828B38B7E4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2375F7C7-85D4-4E6C-8EDF-20FE1E21CC63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2375F7C7-85D4-4E6C-8EDF-20FE1E21CC63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2375F7C7-85D4-4E6C-8EDF-20FE1E21CC63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2375F7C7-85D4-4E6C-8EDF-20FE1E21CC63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71E27374-BD28-4F04-BD23-C2068AA2F233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71E27374-BD28-4F04-BD23-C2068AA2F233}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71E27374-BD28-4F04-BD23-C2068AA2F233}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71E27374-BD28-4F04-BD23-C2068AA2F233}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B40455AB-4B94-4009-97AA-DE828B38B7E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B40455AB-4B94-4009-97AA-DE828B38B7E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B40455AB-4B94-4009-97AA-DE828B38B7E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B40455AB-4B94-4009-97AA-DE828B38B7E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7DE17E0-DD0E-4AE2-9596-E9BD352DC92D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7DE17E0-DD0E-4AE2-9596-E9BD352DC92D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7DE17E0-DD0E-4AE2-9596-E9BD352DC92D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7DE17E0-DD0E-4AE2-9596-E9BD352DC92D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = psms\Cor.Demo\Cor.Demo (psms).csproj
+	EndGlobalSection
+EndGlobal
