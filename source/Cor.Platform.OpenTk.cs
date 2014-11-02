@@ -530,7 +530,7 @@ namespace Cor.Library.OpenTK
             Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
             Int32 count = primitiveCount * nVertsInPrim;
 
-            OpenTKHelper.EnableVertAttribs (currentVertexDeclaration, (IntPtr) 0 );
+            OpenTKHelper.EnableVertAttribs (currentActiveVertexBufferVertexDeclaration, (IntPtr) 0 );
 
             GL.DrawElements (
                 otkpType,
@@ -540,7 +540,7 @@ namespace Cor.Library.OpenTK
 
             OpenTKHelper.ThrowErrors ();
 
-            OpenTKHelper.DisableVertAttribs (currentVertexDeclaration);
+            OpenTKHelper.DisableVertAttribs (currentActiveVertexBufferVertexDeclaration);
         }
 
         public void gfx_DrawUserPrimitives <T> (
