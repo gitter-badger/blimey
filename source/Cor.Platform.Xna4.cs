@@ -36,18 +36,496 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using System.Drawing;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
 
-using Abacus;
-using Abacus.Packed;
+using Cor;
+using Cor.Platform;
+using Fudge;
 using Abacus.SinglePrecision;
-using Abacus.Int32Precision;
+
 
 namespace Cor.Platform.Xna4
 {
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public sealed class Xna4Platform
+        : IPlatform
+    {
+        public Xna4Platform()
+        {
+            var program = new Xna4Program();
+            var api = new Xna4Api();
+
+            api.InitialiseDependencies (program);
+            program.InitialiseDependencies (api);
+
+            Api = api;
+            Program = program;
+        }
+
+        public IProgram Program { get; private set; }
+        public IApi Api { get; private set; }
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public sealed class Xna4Program
+        : IProgram
+    {
+        Xna4Api Api { get; set; }
+
+        internal void InitialiseDependencies(Xna4Api api) { Api = api; }
+
+        public void Start (IApi platformImplementation, Action update, Action render)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void Stop ()
+        {
+            throw new NotImplementedException ();
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public class Xna4Api
+        : IApi
+    {
+        Xna4Program Program { get; set; }
+
+        internal void InitialiseDependencies(Xna4Program program)
+        {
+            Program = program;
+        }
+
+        /**
+         * Audio
+         */
+        public void sfx_SetVolume (Single volume)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Single sfx_GetVolume ()
+        {
+            throw new NotImplementedException ();
+        }
+
+
+        /**
+         * Graphics
+         */
+        public void gfx_ClearColourBuffer (Rgba32 colour)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_ClearDepthBuffer (Single depth)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_SetCullMode (CullMode cullMode)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_SetBlendEquation (BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb, BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Handle gfx_CreateVertexBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Handle gfx_CreateIndexBuffer (Int32 indexCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Handle gfx_CreateTexture (TextureFormat textureFormat, Int32 width, Int32 height, Byte[] source)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Handle gfx_CreateShader (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[] source)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DestroyVertexBuffer (Handle vertexBufferHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DestroyIndexBuffer (Handle indexBufferHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DestroyTexture (Handle textureHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DestroyShader (Handle shaderHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DrawPrimitives (PrimitiveType primitiveType, Int32 startVertex, Int32 primitiveCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DrawIndexedPrimitives (PrimitiveType primitiveType, Int32 baseVertex, Int32 minVertexIndex,Int32 numVertices, Int32 startIndex, Int32 primitiveCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DrawUserPrimitives <T> (PrimitiveType primitiveType, T[] vertexData, Int32 vertexOffset,Int32 primitiveCount) where T: struct, IVertexType
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DrawUserIndexedPrimitives <T> (PrimitiveType primitiveType, T[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount) where T: struct, IVertexType
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Byte[] gfx_CompileShader (String source)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_dbg_BeginEvent (Rgba32 colour, String eventName)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_dbg_EndEvent ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_dbg_SetMarker (Rgba32 colour, String marker)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_dbg_SetRegion (Rgba32 colour, String region)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_vbff_GetVertexCount (Handle vertexBufferHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public VertexDeclaration gfx_vbff_GetVertexDeclaration (Handle vertexBufferHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_vbff_SetData<T> (Handle vertexBufferHandle, T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType
+        {
+            throw new NotImplementedException ();
+        }
+
+        public T[] gfx_vbff_GetData<T> (Handle vertexBufferHandle, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_vbff_Activate (Handle vertexBufferHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_ibff_GetIndexCount (Handle indexBufferHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_ibff_SetData (Handle indexBufferHandle, Int32[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32[] gfx_ibff_GetData (Handle indexBufferHandle, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_ibff_Activate (Handle indexBufferHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_tex_GetWidth (Handle textureHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_tex_GetHeight (Handle textureHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public TextureFormat gfx_tex_GetTextureFormat (Handle textureHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Byte[] gfx_tex_GetData (Handle textureHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_tex_Activate (Handle textureHandle, Int32 slot)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_shdr_SetVariable<T> (Handle shaderHandle, Int32 variantIndex, String name, T value)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_shdr_SetSampler (Handle shaderHandle, Int32 variantIndex, String name, Int32 slot)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_shdr_Activate (Handle shaderHandle, Int32 variantIndex)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_shdr_GetVariantCount (Handle shaderHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public String gfx_shdr_GetIdentifier (Handle shaderHandle, Int32 variantIndex)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public ShaderInputInfo[] gfx_shdr_GetInputs (Handle shaderHandle, Int32 variantIndex)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public ShaderVariableInfo[] gfx_shdr_GetVariables (Handle shaderHandle, Int32 variantIndex)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public ShaderSamplerInfo[] gfx_shdr_GetSamplers (Handle shaderHandle, Int32 variantIndex)
+        {
+            throw new NotImplementedException ();
+        }
+
+        /**
+         * Resources
+         */
+        public Stream res_GetFileStream (String fileName)
+        {
+            throw new NotImplementedException ();
+        }
+
+
+        /**
+         * System
+         */
+        public String sys_GetMachineIdentifier ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public String sys_GetOperatingSystemIdentifier ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public String sys_GetVirtualMachineIdentifier ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 sys_GetPrimaryScreenResolutionWidth ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 sys_GetPrimaryScreenResolutionHeight ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Vector2? sys_GetPrimaryPanelPhysicalSize ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public PanelType sys_GetPrimaryPanelType ()
+        {
+            throw new NotImplementedException ();
+        }
+
+
+        /**
+         * Application
+         */
+        public Boolean? app_IsFullscreen ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 app_GetWidth ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 app_GetHeight ()
+        {
+            throw new NotImplementedException ();
+        }
+
+
+        /**
+         * Input
+         */
+        public DeviceOrientation? hid_GetCurrentOrientation ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Dictionary <DigitalControlIdentifier, Int32> hid_GetDigitalControlStates ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Dictionary <AnalogControlIdentifier, Single> hid_GetAnalogControlStates ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public HashSet <BinaryControlIdentifier> hid_GetBinaryControlStates ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public HashSet <Char> hid_GetPressedCharacters ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public HashSet <RawTouch> hid_GetActiveTouches ()
+        {
+            throw new NotImplementedException ();
+        }
+    }
+
+
+    /*
+
+    class XnaGame
+        : Microsoft.Xna.Framework.Game
+    {
+        Engine engine;
+        Microsoft.Xna.Framework.GraphicsDeviceManager graphics;
+        IApp startGame;
+        Single elapsed;
+        Int64 frameNumber = -1;
+        AppSettings startSettings;
+
+        public XnaGame(AppSettings startSettings, IApp startGame)
+        {
+            this.graphics = new Microsoft.Xna.Framework.GraphicsDeviceManager(this);
+            this.startGame = startGame;
+
+            this.startSettings = startSettings;
+            this.Content.RootDirectory = "Content";
+            this.IsFixedTimeStep = false;
+            this.InactiveSleepTime = TimeSpan.FromSeconds(1);
+
+            this.IsMouseVisible = true;
+            this.Window.AllowUserResizing = true;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            graphics.PreferredDepthStencilFormat = Microsoft.Xna.Framework.Graphics.DepthFormat.Depth24;
+#if XBOX
+            
+            graphics.PreferMultiSampling = true;
+            graphics.PreferredBackBufferWidth = 1920;
+            graphics.PreferredBackBufferHeight = 1200;
+            graphics.ApplyChanges();
+
+#elif WINDOWS
+            graphics.PreferMultiSampling = true;
+            graphics.PreferredBackBufferWidth = 800;
+            graphics.PreferredBackBufferHeight = 480;
+            graphics.ApplyChanges();
+
+#elif WP7
+
+            //graphics.SupportedOrientations = Microsoft.Xna.Framework.DisplayOrientation.Portrait;
+
+            //graphics.PreferredBackBufferWidth = 480;
+            //graphics.PreferredBackBufferHeight = 800;
+            //graphics.ApplyChanges();
+#endif
+            engine = new Engine(graphics, Content, startSettings, startGame);
+        }
+
+
+        protected override void LoadContent()
+        {
+
+        }
+
+
+        protected override void UnloadContent()
+        {
+
+        }
+
+        protected override void Update(Microsoft.Xna.Framework.GameTime xnaGameTime)
+        {
+
+#if WP7
+            (engine.SystemManager as SystemManager).SetDeviceOrientation(EnumConverter.ToBlimey(this.Window.CurrentOrientation));
+#endif
+
+            Single dt = (float)xnaGameTime.ElapsedGameTime.TotalSeconds;
+            elapsed += dt;
+            var appTime = new AppTime(dt, elapsed, ++frameNumber);
+            engine.Update(appTime);
+
+            base.Update(xnaGameTime);
+        }
+
+
+        protected override void Draw(Microsoft.Xna.Framework.GameTime xnaGameTime)
+        {
+            engine.Render();
+
+            base.Draw(xnaGameTime);
+        }
+    }
+
     public class BasicEffectShaderAdapter
         : IShader
     {
@@ -975,17 +1453,15 @@ namespace Cor.Platform.Xna4
             //_xnaIndexBuf.GetData<UInt16>(data);
         }
 
-        /*
-        public void GetData(UInt16[] data, int startIndex, int elementCount)
-        {
-            _xnaIndexBuf.GetData<UInt16>(data, startIndex, elementCount);
-        }
-
-        public void GetData(int offsetInBytes, UInt16[] data, int startIndex, int elementCount)
-        {
-            _xnaIndexBuf.GetData<UInt16>(offsetInBytes, data, startIndex, elementCount);
-        }
-         */
+        //public void GetData(UInt16[] data, int startIndex, int elementCount)
+        //{
+        //    _xnaIndexBuf.GetData<UInt16>(data, startIndex, elementCount);
+        //}
+    //
+        //public void GetData(int offsetInBytes, UInt16[] data, int startIndex, int elementCount)
+       // {
+       //     _xnaIndexBuf.GetData<UInt16>(offsetInBytes, data, startIndex, elementCount);
+       // }
 
         public void SetData(Int32[] data)
         {
@@ -999,17 +1475,16 @@ namespace Cor.Platform.Xna4
             _xnaIndexBuf.SetData<UInt16>(udata);
         }
 
-        /*
-        public void SetData(UInt16[] data, int startIndex, int elementCount)
-        {
-            _xnaIndexBuf.SetData<UInt16>(data, startIndex, elementCount);
-        }
+        
+        //public void SetData(UInt16[] data, int startIndex, int elementCount)
+        //{
+        //    _xnaIndexBuf.SetData<UInt16>(data, startIndex, elementCount);
+        //}
 
-        public void SetData(int offsetInBytes, UInt16[] data, int startIndex, int elementCount)
-        {
-            _xnaIndexBuf.SetData(offsetInBytes, data, startIndex, elementCount);
-        }
-        */
+        //public void SetData(int offsetInBytes, UInt16[] data, int startIndex, int elementCount)
+        //{
+        //    _xnaIndexBuf.SetData(offsetInBytes, data, startIndex, elementCount);
+        //}
 
         public int IndexCount 
         { 
@@ -1654,93 +2129,6 @@ namespace Cor.Platform.Xna4
     public
 #endif
         
-    class XnaGame
-        : Microsoft.Xna.Framework.Game
-    {
-        Engine engine;
-        Microsoft.Xna.Framework.GraphicsDeviceManager graphics;
-        IApp startGame;
-        Single elapsed;
-        Int64 frameNumber = -1;
-        AppSettings startSettings;
-
-        public XnaGame(AppSettings startSettings, IApp startGame)
-        {
-            this.graphics = new Microsoft.Xna.Framework.GraphicsDeviceManager(this);
-            this.startGame = startGame;
-
-            this.startSettings = startSettings;
-            this.Content.RootDirectory = "Content";
-            this.IsFixedTimeStep = false;
-            this.InactiveSleepTime = TimeSpan.FromSeconds(1);
-
-            this.IsMouseVisible = true;
-            this.Window.AllowUserResizing = true;
-        }
-
-        protected override void Initialize()
-        {
-            base.Initialize();
-
-            graphics.PreferredDepthStencilFormat = Microsoft.Xna.Framework.Graphics.DepthFormat.Depth24;
-#if XBOX
-            
-            graphics.PreferMultiSampling = true;
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1200;
-            graphics.ApplyChanges();
-
-#elif WINDOWS
-            graphics.PreferMultiSampling = true;
-            graphics.PreferredBackBufferWidth = 800;
-            graphics.PreferredBackBufferHeight = 480;
-            graphics.ApplyChanges();
-
-#elif WP7
-
-            //graphics.SupportedOrientations = Microsoft.Xna.Framework.DisplayOrientation.Portrait;
-
-            //graphics.PreferredBackBufferWidth = 480;
-            //graphics.PreferredBackBufferHeight = 800;
-            //graphics.ApplyChanges();
-#endif
-            engine = new Engine(graphics, Content, startSettings, startGame);
-        }
-
-
-        protected override void LoadContent()
-        {
-
-        }
-
-
-        protected override void UnloadContent()
-        {
-
-        }
-
-        protected override void Update(Microsoft.Xna.Framework.GameTime xnaGameTime)
-        {
-
-#if WP7
-            (engine.SystemManager as SystemManager).SetDeviceOrientation(EnumConverter.ToBlimey(this.Window.CurrentOrientation));
-#endif
-
-            Single dt = (float)xnaGameTime.ElapsedGameTime.TotalSeconds;
-            elapsed += dt;
-            var appTime = new AppTime(dt, elapsed, ++frameNumber);
-            engine.Update(appTime);
-
-            base.Update(xnaGameTime);
-        }
-
-
-        protected override void Draw(Microsoft.Xna.Framework.GameTime xnaGameTime)
-        {
-            engine.Render();
-
-            base.Draw(xnaGameTime);
-        }
-    }
-
+    
+    */
 }
