@@ -854,12 +854,13 @@ namespace Cor.Demo
     {
         static ShaderFormat GetShaderFormat ()
         {
-            #if COR_PLATFORM_MONOMAC
+#if COR_PLATFORM_MONOMAC
             return ShaderFormat.GLSL;
-            #elif COR_PLATFORM_XIOS
+#elif COR_PLATFORM_XIOS || COR_PLATFORM_PSM
             return ShaderFormat.GLSL_ES;
-            #else
-            #endif
+#elif COR_PLATFORM_XNA4
+            return ShaderFormat.HLSL;
+#endif
         }
 
         static ShaderDeclaration GetUnlitShaderDeclaration ()
@@ -934,8 +935,9 @@ namespace Cor.Demo
 
         static Byte[] GetUnlit_VertPos ()
         {
-            String source =
-                #if COR_PLATFORM_MONOMAC || COR_PLATFORM_XIOS
+            String source = "";
+#if COR_PLATFORM_MONOMAC || COR_PLATFORM_XIOS || COR_PLATFORM_PSM
+                source =
 @"Vertex Position
 =VSH=
 attribute vec4 a_vertPosition;
@@ -956,21 +958,25 @@ void main()
     gl_FragColor = v_tint;
 }
 ";
-                #else
-                #endif
+#endif
 
+#if COR_PLATFORM_XNA4_X86
+            source = "";
+#endif
 
-            #if COR_PLATFORM_XIOS
+#if COR_PLATFORM_XIOS || COR_PLATFORM_PSM
             source = ConvertToES (source);
-            #endif
+#endif
 
             return Encoding.UTF8.GetBytes (source);
         }
 
         static Byte[] GetUnlit_VertPosTex ()
         {
-            String source =
-                #if COR_PLATFORM_MONOMAC || COR_PLATFORM_XIOS
+            String source = "";
+
+#if COR_PLATFORM_MONOMAC || COR_PLATFORM_XIOS || COR_PLATFORM_PSM
+            source =
 @"Vertex Position & Texture Coordinate
 =VSH=
 attribute vec4 a_vertPosition;
@@ -996,21 +1002,24 @@ void main()
     gl_FragColor = v_tint * texture2D(s_tex0, v_texCoord);
 }
 ";
-                #else
-                #endif
-            
+#endif
 
-            #if COR_PLATFORM_XIOS
+#if COR_PLATFORM_XNA4_X86
+            source = "";
+#endif
+
+#if COR_PLATFORM_XIOS || COR_PLATFORM_PSM
             source = ConvertToES (source);
-            #endif
+#endif
 
             return Encoding.UTF8.GetBytes (source);
         }
 
         static Byte[] GetUnlit_VertPosCol ()
         {
-            String source =
-                #if COR_PLATFORM_MONOMAC || COR_PLATFORM_XIOS
+            String source = "";
+#if COR_PLATFORM_MONOMAC || COR_PLATFORM_XIOS || COR_PLATFORM_PSM
+            source = 
 @"Vertex Position & Colour
 =VSH=
 attribute vec4 a_vertPosition;
@@ -1032,21 +1041,24 @@ void main()
     gl_FragColor = v_tint;
 }
 ";
-                #else
-                #endif
-            
+#endif
 
-            #if COR_PLATFORM_XIOS
+#if COR_PLATFORM_XNA4_X86
+            source = "";
+#endif
+
+#if COR_PLATFORM_XIOS || COR_PLATFORM_PSM
             source = ConvertToES (source);
-            #endif
+#endif
 
             return Encoding.UTF8.GetBytes (source);
         }
 
         static Byte[] GetUnlit_VertPosTexCol ()
         {
-            String source =
-                #if COR_PLATFORM_MONOMAC || COR_PLATFORM_XIOS
+            String source = "";
+#if COR_PLATFORM_MONOMAC || COR_PLATFORM_XIOS || COR_PLATFORM_PSM
+            source =
 @"Vertex Position, Texture Coordinate & Colour
 =VSH=
 attribute vec4 a_vertPosition;
@@ -1073,14 +1085,15 @@ void main()
     gl_FragColor = v_tint * texture2D(s_tex0, v_texCoord);
 }
 ";
-                #else
-                #endif
+#endif
+
+#if COR_PLATFORM_XNA4_X86
+           source = "";
+#endif
             
-
-            #if COR_PLATFORM_XIOS
+#if COR_PLATFORM_XIOS || COR_PLATFORM_PSM
             source = ConvertToES (source);
-            #endif
-
+#endif
             return Encoding.UTF8.GetBytes (source);
         }
 
