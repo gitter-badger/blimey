@@ -62,6 +62,7 @@ namespace Blimey
                     blendMode.AlphaBlendFunction, blendMode.SourceAlpha, blendMode.DestinationAlpha
                     );
 
+                neverSet = false;
                 lastSet = blendMode;
             }
         }
