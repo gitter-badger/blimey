@@ -58,29 +58,15 @@ namespace Cor.Demo
             var shader = ShaderHelper.CreateUnlit (engine);
             elements = new IElement[]
             {
-                // The following elements
-                // are working as expected.
-                //new Element <FlowerPosCol, VertPosCol> (shader),
-                //new Element <CubePosTex, VertPosTex> (shader),
+                //working
+                new Element <CubePosTex, VertPosTex> (shader),
                 new Element <CylinderPosTex, VertPosTex> (shader),
-
-                // The following elements
-                // have problems on OpenTK implementations.
-                // Further investigation is required.
-                // Here's what is known right now:
-
-                // Doesn't show up at all, vertex colour is not coming through properly
-                // if hard coded to white in the vert shader then the element shows up.
-                //new Element <BillboardPosTexCol, VertPosTexCol> (shader), 
-
-                // UV's are wrong, the full texture should be evenly stretched across the billboard.
-                //new Element <BillboardPosTex, VertPosTex> (shader),
-
-                // UV's are wrong.  This is an interesting case because Normal attribute data is
-                // provided, but should be ignored as it is being rendered with a shader declaration
-                // that knows nothing about Normals.
+                new Element <BillboardPosTexCol, VertPosTexCol> (shader), 
+                new Element <BillboardPosTex, VertPosTex> (shader),
                 new Element <CylinderPosNormTex, VertPosNormTex> (shader),
                 new Element <CylinderNormTexPos, VertNormTexPos> (shader),
+                // broken
+                new Element <FlowerPosCol, VertPosCol> (shader), // vertex colour not showing through
             };
 
             Double s = Math.Sqrt (elements.Length);
@@ -210,7 +196,7 @@ namespace Cor.Demo
         public Element (Shader shader)
         {
             this.shader = shader;
-            this.Colour = Rgba32.White;
+            this.Colour = Rgba32.LightGrey;
             View = Matrix44.CreateLookAt (Vector3.UnitZ, Vector3.Forward, Vector3.Up);
         }
 
@@ -257,13 +243,13 @@ namespace Cor.Demo
             vertexBuffer.Bind (shader);
 
             // set the variable on the shader to our desired variables
+            shader.Activate (vertexBuffer.VertexDeclaration);
             shader.ResetVariables ();
             shader.SetVariable ("World", World);
             shader.SetVariable ("View", View);
             shader.SetVariable ("Projection", projection);
             shader.SetVariable ("Colour", Colour);
             shader.SetSamplerTarget ("TextureSampler", 0);
-            shader.Activate (vertexBuffer.VertexDeclaration);
 
             engine.Graphics.DrawIndexedPrimitives (
                 PrimitiveType.TriangleList,
@@ -475,10 +461,10 @@ namespace Cor.Demo
         public Vector3 Position;
         public Rgba32 Colour;
 
-        public VertPosCol (Vector3 position, Rgba32 color)
+        public VertPosCol (Vector3 position, Rgba32 colour)
         {
             this.Position = position;
-            this.Colour = color;
+            this.Colour = colour;
         }
 
         public VertexDeclaration VertexDeclaration
@@ -1180,6 +1166,7 @@ void main()
 {
     gl_Position = u_proj * u_view * u_world * a_vertPosition;
     v_tint = a_vertColour * u_colour;
+//    v_tint = a_vertColour * vec4 (1.0, 0.9, 0.1, 1.0);
 }
 =FSH=
 varying vec4 v_tint;
