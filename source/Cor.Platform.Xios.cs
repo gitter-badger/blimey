@@ -186,23 +186,31 @@ namespace Cor.Platform.Xios
         /**
          * Resources
          */
-        public Stream res_GetFileStream (String fileName)
+        public Stream res_GetFileStream (String filename)
         {
-            string ext = Path.GetExtension (fileName);
+            string os = sys_GetOperatingSystemIdentifier ();
 
-            string filename = fileName.Substring (0, fileName.Length - ext.Length);
 
-            string path = Path.Combine ("assets/xios", filename);
+            string ext = Path.GetExtension (filename);
 
-            var resourcePathname =
-                MonoTouch.Foundation.NSBundle.MainBundle.PathForResource (
-                    path,
-                    ext.Substring (1, ext.Length - 1)
-                );
+            string filenameNoExt = filename.Substring (0, filename.Length - ext.Length);
+
+            string path = Path.Combine ("assets/xios", filenameNoExt);
+
+            var resourcePathname = NSBundle.MainBundle.PathForResource (
+                path, ext.Substring (1, ext.Length - 1));
+
+            if (os == "iPhone OS : 8.1")
+            {
+                //resourcePathname = NSFileManager.DefaultManager.GetUrls (
+                //                    NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomain.User) [0].AbsoluteString;
+
+                resourcePathname = Path.Combine ("assets/xios", filename);
+            }
 
             if (resourcePathname == null)
             {
-                throw new Exception ("Resource [" + fileName + "] not found");
+                throw new Exception ("Resource [" + filename + "] not found");
             }
 
             var fStream = new FileStream (resourcePathname, FileMode.Open);
