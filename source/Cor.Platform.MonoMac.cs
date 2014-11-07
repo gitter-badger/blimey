@@ -134,9 +134,6 @@ namespace Cor.Platform.MonoMac
             openGLView.Stop ();
             openGLView.Close ();
             openGLView.Dispose ();
-
-            mainWindow.Close ();
-            mainWindow.Dispose ();
         }
     }
 
@@ -667,6 +664,11 @@ namespace Cor.Platform.MonoMac
         public override Boolean ShouldZoom (NSWindow window, System.Drawing.RectangleF newFrame)
         {
             return true;
+        }
+
+        public override void WillClose (NSNotification notification)
+        {
+            owner.Stop ();
         }
     }
 
