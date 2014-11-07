@@ -49,6 +49,34 @@ namespace Blimey
     using Cor;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    internal static class Rgba32Extensions
+    {
+        public static Vector4 ToVector4 (this Rgba32 value)
+        {
+            return new Vector4 (
+                (Single)value.R / 255f,
+                (Single)value.G / 255f,
+                (Single)value.B / 255f,
+                (Single)value.A / 255f);
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    internal static class Vector4Extensions
+    {
+        public static Rgba32 ToRgba32 (this Vector4 value)
+        {
+            return new Rgba32 (
+                (Byte) (value.X * 255f),
+                (Byte) (value.Y * 255f),
+                (Byte) (value.Z * 255f),
+                (Byte) (value.W * 255f));
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
     
     internal static class Int32Extensions
     {
