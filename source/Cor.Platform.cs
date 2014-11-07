@@ -103,6 +103,10 @@ namespace Cor.Platform
         T[]                     gfx_vbff_GetData<T>                     (Handle vertexBufferHandle, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
         void                    gfx_vbff_Activate                       (Handle vertexBufferHandle);
 
+        // This function looks at the vertex elements in the given vertex buffer and activate an array of generic
+        // vertex attribute data that correspond to the given indices.  If null, all will be activated.
+        void                    gfx_vbff_Bind                           (Handle vertexBufferHandle, Int32[] vertexElementIndices);
+
         Int32                   gfx_ibff_GetIndexCount                  (Handle indexBufferHandle);
         void                    gfx_ibff_SetData                        (Handle indexBufferHandle, Int32[] data, Int32 startIndex, Int32 elementCount);
         Int32[]                 gfx_ibff_GetData                        (Handle indexBufferHandle, Int32 startIndex, Int32 elementCount);
@@ -1217,21 +1221,36 @@ namespace Cor.Platform
         }
     }
 
-
     public sealed class ShaderInputInfo
     {
+        // The index of the input with respect to this shader's other inputs.
+        public Int32 Index { get; internal set; }
+
+        // The name in the shader's source code for the input.
         public String Name { get; internal set; }
+
+        // The C# type used to represent the input.
         public Type Type { get; internal set; }
     }
 
     public sealed class ShaderVariableInfo
     {
+        // The index of the variable with respect to this shader's other variables.
+        public Int32 Index { get; internal set; }
+
+        // The name in the shader's source code for the variable.
         public String Name { get; internal set; }
+
+        // The C# type used to represent the variable.
         public Type Type { get; internal set; }
     }
 
     public sealed class ShaderSamplerInfo
     {
+        // The index of the sampler with respect to this shader's other samplers.
+        public Int32 Index { get; internal set; }
+
+        // The name in the shader's source code for the sampler.
         public String Name { get; internal set; }
     }
     

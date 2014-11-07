@@ -183,6 +183,7 @@ namespace Cor.Library.OpenTK
 
             UInt32 bufferHandle = 0;
             GL.GenBuffers (1, out bufferHandle);
+
             OpenTKHelper.ThrowErrors ();
 
             var handle = new VertexBufferHandle (bufferHandle);
@@ -410,17 +411,19 @@ namespace Cor.Library.OpenTK
                 var variantHandle = variantHandles [i];
 
                 InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Linking");
+
                 int index = 0;
                 shaderDeclaration
                     .InputDeclarations
                     .Select (x => x.Name)
                     .ToList () // ordered attributes as per declaration
                     .ForEach (attName => {
-                        GL.BindAttribLocation (variantHandle.ProgramHandle, index, attName);
+                        // https://www.khronos.org/opengles/sdk/docs/man/xhtml/glBindAttribLocation.xml
+                        GL.BindAttribLocation (variantHandle.ProgramHandle, index++, attName);
                         OpenTKHelper.ThrowErrors ();
-                        bool success = OpenTKHelper.LinkProgram (variantHandle.ProgramHandle);
-                        if (success) index++;
                     });
+
+                OpenTKHelper.LinkProgram (variantHandle.ProgramHandle);
 
                 InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Validating shader program");
                 #if DEBUG
@@ -530,8 +533,6 @@ namespace Cor.Library.OpenTK
             Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
             Int32 count = primitiveCount * nVertsInPrim;
 
-            OpenTKHelper.EnableVertAttribs (currentActiveVertexBufferVertexDeclaration, (IntPtr) 0 );
-
             GL.DrawElements (
                 otkpType,
                 count,
@@ -539,8 +540,6 @@ namespace Cor.Library.OpenTK
                 (System.IntPtr) 0 );
 
             OpenTKHelper.ThrowErrors ();
-
-            OpenTKHelper.DisableVertAttribs (currentActiveVertexBufferVertexDeclaration);
         }
 
         public void gfx_DrawUserPrimitives <T> (
@@ -597,8 +596,6 @@ namespace Cor.Library.OpenTK
             OpenTKHelper.ThrowErrors ();
 
 
-            OpenTKHelper.EnableVertAttribs (vertDecl, pointer);
-
             Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
             Int32 count = primitiveCount * nVertsInPrim;
 
@@ -608,10 +605,6 @@ namespace Cor.Library.OpenTK
                 count); // specifies the number of indicies to be drawn
 
             OpenTKHelper.ThrowErrors ();
-
-
-            OpenTKHelper.DisableVertAttribs (vertDecl);
-
 
             pinnedArray.Free ();
         }
@@ -713,8 +706,8 @@ namespace Cor.Library.OpenTK
 
             GL.BufferSubData (
                 type,
-                (System.IntPtr) (vd.VertexStride * startIndex),
-                (System.IntPtr) (vd.VertexStride * elementCount),
+                (IntPtr) (vd.VertexStride * startIndex),
+                (IntPtr) (vd.VertexStride * elementCount),
                 data);
 
             OpenTKHelper.ThrowErrors ();
@@ -726,6 +719,89 @@ namespace Cor.Library.OpenTK
             , IVertexType
         {
             throw new NotImplementedException ();
+        }
+
+        public void gfx_vbff_Bind (Handle h, Int32[] elementIndicesToActivate)
+        {
+            var vd = OpenTkCache.Get <VertexDeclaration> (h, "VertexDeclaration");
+
+            // https://www.khronos.org/opengles/sdk/docs/man/xhtml/glVertexAttribPointer.xmlbindd
+            var vertElems = vd.GetVertexElements ();
+
+            for(Int32 i = 0; i < vertElems.Length; ++i)
+            {
+                GL.DisableVertexAttribArray (i);
+                OpenTKHelper.ThrowErrors ();
+            }
+
+            Int32 j = 0;
+            for(Int32 i = 0; i < vertElems.Length; ++i)
+            {
+                if (elementIndicesToActivate != null && !elementIndicesToActivate.Contains (i))
+                {
+                    //GL.DisableVertexAttribArray (i);
+                    //OpenTKHelper.ThrowErrors ();
+                    continue;
+                }
+
+                Int32 vertIndex = i;//elementIndicesToActivate [j];
+                Int32 attribIndex = elementIndicesToActivate.ToList().IndexOf (i);
+                j++;
+
+                // https://www.khronos.org/opengles/sdk/docs/man/xhtml/glEnableVertexAttribArray.xml
+                GL.EnableVertexAttribArray (attribIndex);
+                OpenTKHelper.ThrowErrors ();
+
+                var vertElemUsage = vertElems [vertIndex].VertexElementUsage;
+                var vertElemFormat = vertElems [vertIndex].VertexElementFormat;
+                var vertElemOffset = vertElems [vertIndex].Offset;
+
+                Int32 numComponentsInVertElem = 0;
+                Boolean vertElemNormalized = false;
+                VertexAttribPointerType glVertElemFormat;
+
+                OpenTKHelper.Convert (vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
+
+                IntPtr ptr = (IntPtr) 0;
+                int counter = 0;
+                while (counter < vertIndex)
+                {
+                    ptr = OpenTKHelper.Add (ptr, vertElems [counter].Offset);
+                    counter++;
+                }
+
+                // https://www.khronos.org/opengles/sdk/docs/man/xhtml/glVertexAttribPointer.xml
+                GL.VertexAttribPointer (
+                    // index
+                    // specifies the generic vertex attribute index.  This value is 0 to
+                    // max vertex attributes supported - 1.
+                    attribIndex,
+                    // size
+                    // number of components specified in the vertex array for the
+                    // vertex attribute referenced by index.  Valid values are 1 - 4.
+                    numComponentsInVertElem,
+                    // type
+                    // Data format, valid values are GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT,
+                    // GL_FLOAT, GL_FIXED, GL_HALF_FLOAT_OES*(Optional feature of es2)
+                    glVertElemFormat,
+                    // normalised
+                    // used to indicate whether the non-floating data format type should be normalised
+                    // or not when converted to floating point.
+                    vertElemNormalized,
+                    // stride
+                    // the components of vertex attribute specified by size are stored sequentially for each
+                    // vertex.  stride specifies the delta between data for vertex index i and vertex (i + 1).
+                    // If stride is 0, attribute data for all vertices are stored sequentially.
+                    // If stride is > 0, then we use the stride valude tas the pitch to get vertex data
+                    // for the next index.
+                    vd.VertexStride,
+                    // offset into the vert data
+                    ptr
+
+                );
+
+                OpenTKHelper.ThrowErrors ();
+            }
         }
 
         public Int32 gfx_ibff_GetIndexCount (Handle h)
@@ -893,7 +969,8 @@ namespace Cor.Library.OpenTK
 
             var inputs = attributes
                 .OrderBy (y => y.Location)
-                .Select (x => new ShaderInputInfo {
+                .Select ((x, i) => new ShaderInputInfo {
+                    Index = i,
                     Name = x.Name,
                     Type = OpenTKHelper.ConvertToType (x.Type) })
                 .ToArray ();
@@ -920,7 +997,8 @@ namespace Cor.Library.OpenTK
                     y.Type != ActiveUniformType.Sampler2D &&
                     y.Type != ActiveUniformType.SamplerCube)
                 .OrderBy (z => z.Location)
-                .Select (x => new ShaderVariableInfo { 
+                .Select ((x, i) => new ShaderVariableInfo {
+                    Index = i,
                     Name = x.Name,
                     Type = OpenTKHelper.ConvertToType (x.Type) })
                 .ToArray ();
@@ -947,7 +1025,7 @@ namespace Cor.Library.OpenTK
                     y.Type == ActiveUniformType.Sampler2D ||
                     y.Type == ActiveUniformType.SamplerCube)
                 .OrderBy (z => z.Location)
-                .Select (x => new ShaderSamplerInfo { Name = x.Name })
+                .Select ((x, i) => new ShaderSamplerInfo { Index = i, Name = x.Name })
                 .ToArray ();
 
             String logVars = id + ": Samplers : ";
@@ -1041,69 +1119,6 @@ namespace Cor.Library.OpenTK
             unsafe
             {
                 return (IntPtr) (unchecked (((byte *) pointer) - offset));
-            }
-        }
-
-        public static void EnableVertAttribs (VertexDeclaration vertDecl, IntPtr pointer)
-        {
-            var vertElems = vertDecl.GetVertexElements ();
-
-            IntPtr ptr = pointer;
-
-            int counter = 0;
-            foreach (var elem in vertElems)
-            {
-                GL.EnableVertexAttribArray (counter);
-                OpenTKHelper.ThrowErrors ();
-
-                //var vertElemUsage = elem.VertexElementUsage;
-                var vertElemFormat = elem.VertexElementFormat;
-                var vertElemOffset = elem.Offset;
-
-                Int32 numComponentsInVertElem = 0;
-                Boolean vertElemNormalized = false;
-                VertexAttribPointerType glVertElemFormat;
-
-                Convert (vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
-
-                if (counter != 0)
-                {
-                    ptr = Add (ptr, vertElemOffset);
-                }
-
-                GL.VertexAttribPointer (
-                    counter,                // index - specifies the generic vertex attribute index.  This value is 0 to
-                    //         max vertex attributes supported - 1.
-                    numComponentsInVertElem,// size - number of components specified in the vertex array for the
-                    //        vertex attribute referenced by index.  Valid values are 1 - 4.
-                    glVertElemFormat,       // type - Data format, valid values are GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT,
-                    //        GL_FLOAT, GL_FIXED, GL_HALF_FLOAT_OES*(Optional feature of es2)
-                    vertElemNormalized,     // normalised - used to indicate whether the non-floating data format type should be normalised
-                    //              or not when converted to floating point.
-                    vertDecl.VertexStride,  // stride - the components of vertex attribute specified by size are stored sequentially for each
-                    //          vertex.  stride specifies the delta between data for vertex index i and vertex (i + 1).
-                    //          If stride is 0, attribute data for all vertices are stored sequentially.
-                    //          If stride is > 0, then we use the stride valude tas the pitch to get vertex data
-                    //          for the next index.
-                    ptr
-
-                );
-
-                OpenTKHelper.ThrowErrors ();
-
-                counter++;
-
-            }
-        }
-
-        public static void DisableVertAttribs (VertexDeclaration vertDecl)
-        {
-            var vertElems = vertDecl.GetVertexElements ();
-
-            for (int i = 0; i < vertElems.Length; ++i)
-            {
-                GL.DisableVertexAttribArray (i);
-                OpenTKHelper.ThrowErrors ();
             }
         }
 

@@ -478,33 +478,6 @@ namespace Cor
             shader.Dispose ();
         }
 
-
-        /// <summary>
-        /// Sets the active vertex buffer.
-        /// </summary>
-        public void SetActiveVertexBuffer (VertexBuffer vb)
-        {
-            platform.gfx_vbff_Activate (vb.Handle);
-        }
-
-        /// <summary>
-        /// Sets the active index buffer.
-        /// </summary>
-        public void SetActiveIndexBuffer (IndexBuffer ib)
-        {
-            platform.gfx_ibff_Activate (ib.Handle);
-        }
-
-
-        /// <summary>
-        /// Sets the active texture for a given slot.
-        /// </summary>
-        public void SetActiveTexture (Texture tex, Int32 slot)
-        {
-            platform.gfx_tex_Activate (tex != null ? tex.Handle : null, slot);
-        }
-
-
         /// <summary>
         /// Defines how we blend colours
         /// </summary>
@@ -1040,6 +1013,14 @@ namespace Cor
             InternalUtils.Log.Info ("GFX", "Vertex buffer created: " + handle.Identifier);
         }
 
+        /// <summary>
+        /// Sets the active vertex buffer.
+        /// </summary>
+        public void Activate ()
+        {
+            platform.gfx_vbff_Activate (handle);
+        }
+
         // This finalizer will run only if the Dispose method
         // does not get called.
         // It gives your base class the opportunity to finalize.
@@ -1108,6 +1089,12 @@ namespace Cor
         ///
         /// </summary>
         public VertexDeclaration VertexDeclaration { get { return platform.gfx_vbff_GetVertexDeclaration (handle); } }
+
+
+        public void Bind (Shader shader)
+        {
+            platform.gfx_vbff_Bind (this.handle, shader.GetElementsIndicesToEnable (this.VertexDeclaration));
+        }
 
         /// <summary>
         ///
@@ -1258,6 +1245,14 @@ namespace Cor
         }
 
         /// <summary>
+        /// Sets the active index buffer.
+        /// </summary>
+        public void Activate ()
+        {
+            platform.gfx_ibff_Activate (handle);
+        }
+
+        /// <summary>
         /// The cardinality of the index buffer,
         /// </summary>
         public Int32 IndexCount { get { return platform.gfx_ibff_GetIndexCount (handle); } }
@@ -1305,15 +1300,16 @@ namespace Cor
         public Handle Handle { get { return shaderHandle; } }
 
         // For each vert decl seen, defines the index of the most suitable shader variant.
-        Dictionary<VertexDeclaration, Int32> bestVariantMap = new Dictionary<VertexDeclaration, Int32>();
+        readonly Dictionary<VertexDeclaration, Int32> bestVariantMap = new Dictionary<VertexDeclaration, Int32>();
+        readonly Dictionary<VertexDeclaration, Int32[]> bestVariantMapVertexIndicies = new Dictionary<VertexDeclaration, Int32[]>();
 
         // Current state (acts as a buffer for adjusting shader settings, only when needed will the changes
         // be applied to the GPU).
-        Dictionary<String, Object> currentVariables = new Dictionary<String, Object>();
-        Dictionary<String, Int32> currentSamplerTargets = new Dictionary<String, Int32>();
+        readonly Dictionary<String, Object> currentVariables = new Dictionary<String, Object>();
+        readonly Dictionary<String, Int32> currentSamplerTargets = new Dictionary<String, Int32>();
 
         // Debug
-        Dictionary<String, bool> logHistory = new Dictionary<String, bool>();
+        readonly Dictionary<String, bool> logHistory = new Dictionary<String, bool>();
     
         // IDisposable
         Boolean disposed;
@@ -1333,14 +1329,16 @@ namespace Cor
             }
         }
 
-        //String GetIdentifier (Int32 variantIndex) { variantVariableInfos [variantIndex]; }
-        //ShaderInputInfo[] GetInputInfos (Int32 variantIndex) { variantVariableInfos [variantIndex]; }
-        //ShaderVariableInfo[] GetVariableInfo (Int32 variantIndex) { variantVariableInfos [variantIndex]; }
-        //ShaderSamplerInfo[] GetSamplerInfo (Int32 variantIndex) { variantSamplerInfos [variantIndex]; }
-
         // Returned, in order, only the shader input declaration supported by the given variant.
-        public ShaderInputDeclaration[] GetSupportedInputDeclarations (Int32 variantIndex)
+        ShaderInputDeclaration[] GetSupportedInputs (VertexDeclaration vertexDeclaration)
         {
+            if (!bestVariantMap.ContainsKey (vertexDeclaration))
+            {
+                WorkOutBestVariantFor (vertexDeclaration);
+            }
+
+            Int32 variantIndex = bestVariantMap[vertexDeclaration];
+
             Int32 length = variantInputInfos [variantIndex].Length;
             var result = new ShaderInputDeclaration [length];
             for(Int32 i = 0; i < length; ++i)
@@ -1349,6 +1347,16 @@ namespace Cor
                 result [i] = inputActualNameToDeclaration[inputInfo.Name];
             }
             return result;
+        }
+
+        public Int32[] GetElementsIndicesToEnable (VertexDeclaration vertexDeclaration)
+        {
+            if (!bestVariantMap.ContainsKey (vertexDeclaration))
+            {
+                WorkOutBestVariantFor (vertexDeclaration);
+            }
+
+            return bestVariantMapVertexIndicies[vertexDeclaration];
         }
 
         // Variant Tracking
@@ -1435,10 +1443,6 @@ namespace Cor
                 {
                     throw new Exception ("problem");
                 }
-                //else
-                //{
-                //    input.RegisterExtraInfo (find);
-                //}
             }
         }
 
@@ -1457,10 +1461,6 @@ namespace Cor
                 {
                     throw new Exception ("problem");
                 }
-                //else
-                //{
-                //    variable.RegisterExtraInfo (find);
-                //}
             }
         }
 
@@ -1490,10 +1490,6 @@ namespace Cor
                 {
                     throw new Exception ("problem");
                 }
-                //else
-                //{
-                //    sampler.RegisterExtraInfo (find);
-                //}
             }
         }
 
@@ -1616,7 +1612,7 @@ namespace Cor
         {
             if (!bestVariantMap.ContainsKey (vertexDeclaration))
             {
-                bestVariantMap[vertexDeclaration] = WorkOutBestVariantFor (vertexDeclaration);
+                WorkOutBestVariantFor (vertexDeclaration);
             }
 
             Int32 bestVariantIndex = bestVariantMap[vertexDeclaration];
@@ -1698,16 +1694,22 @@ namespace Cor
             int bestNumUnmatchedVertElems = 0;
             int bestNumMissingNonOptionalInputs = 0;
 
+            var matches = new CompareShaderInputsResult [variantCount];
+
+            for (int i = 0; i < variantCount; ++i)
+            {
+                matches [i] = CompareShaderInputs (vertexDeclaration, i);
+            }
+
+
             // foreach variant
             for (int i = 0; i < variantCount; ++i)
             {
                 // work out how many vert inputs match
 
-                var matchResult = CompareShaderInputs (vertexDeclaration, i);
-
-                int numMatchedVertElems = matchResult.NumMatchedInputs;
-                int numUnmatchedVertElems = matchResult.NumUnmatchedInputs;
-                int numMissingNonOptionalInputs = matchResult.NumUnmatchedRequiredInputs;
+                int numMatchedVertElems = matches[i].NumMatchedInputs;
+                int numUnmatchedVertElems = matches[i].NumUnmatchedInputs;
+                int numMissingNonOptionalInputs = matches[i].NumUnmatchedRequiredInputs;
 
                 InternalUtils.Log.Info ("GFX", String.Format ("[{3}] {4} ~ matched:{0}, unmatched:{1}, missing:{2}",
                     numMatchedVertElems, numUnmatchedVertElems, numMissingNonOptionalInputs, i, variantIdentifiers[i] ));
@@ -1743,6 +1745,26 @@ namespace Cor
 
             InternalUtils.Log.Info ("GFX", "Chosen variant = [" + best +"]");
 
+            bestVariantMap[vertexDeclaration] = best;
+
+            var matchShaderIndices = matches [best].ShaderInputIndexToVertexIndex.Keys.ToList ();
+
+            matchShaderIndices.Sort ();
+
+            bestVariantMapVertexIndicies[vertexDeclaration] = new Int32[matchShaderIndices.Count];
+
+            try
+            {
+                for (Int32 i = 0; i < matchShaderIndices.Count; ++i)
+                {
+                    bestVariantMapVertexIndicies[vertexDeclaration][i] =  matches [best].ShaderInputIndexToVertexIndex[i];
+                }
+            }
+            catch (Exception)
+            {
+                throw new NotImplementedException ();
+            }
+
             return best;
         }
 
@@ -1755,6 +1777,9 @@ namespace Cor
 
             var vertElems = vertexDeclaration.GetVertexElements ();
 
+            // shader index - vert index
+            Dictionary<Int32, Int32> usedVertIndices = new  Dictionary<Int32, Int32>();
+            Int32 i = 0;
             // itterate over each input defined in the vert decl
             foreach (var vertElem in vertElems)
             {
@@ -1762,7 +1787,6 @@ namespace Cor
 
                 var format = vertElem.VertexElementFormat;
                 /*
-
                 foreach (var input in oglesShader.Inputs)
                 {
                     // the vertDecl knows what each input's intended use is,
@@ -1776,12 +1800,11 @@ namespace Cor
                 // find all inputs that could match
                 var matchingInputs = oglesShader.Inputs.FindAll (
                     x =>
-
                         x.Usage == usage &&
                         (x.Type == VertexElementFormatHelper.FromEnum (format) ||
                         ( (x.Type.GetType () == typeof (Vector4)) && (format == VertexElementFormat.Colour) ))
-
-                );*/
+                );
+                */
 
                 var matchingInputs = variantInputInfos [variantIndex]
                     .ToList ()
@@ -1800,9 +1823,14 @@ namespace Cor
                     else
                     {
                         inputsUsed.Add (potentialInput);
+                        usedVertIndices [potentialInput.Index] = i;
                     }
                 }
+
+                ++i;
             }
+
+            result.ShaderInputIndexToVertexIndex = usedVertIndices;
 
             result.NumMatchedInputs = inputsUsed.Count;
 
@@ -1827,6 +1855,8 @@ namespace Cor
 
         internal struct CompareShaderInputsResult
         {
+            public Dictionary<Int32, Int32> ShaderInputIndexToVertexIndex;
+
             // the nume
             public int NumMatchedInputs;
             public int NumUnmatchedInputs;
@@ -1942,6 +1972,17 @@ namespace Cor
                 disposed = true;
             }
         }
+
+
+
+        /// <summary>
+        /// Sets the active texture for a given slot.
+        /// </summary>
+        public void Activate (Int32 slot)
+        {
+            platform.gfx_tex_Activate (textureHandle, slot);
+        }
+
         
         /// <summary>
         /// The width of the texture in pixels.
