@@ -60,8 +60,8 @@ namespace Cor.Demo
             {
                 // The following elements
                 // are working as expected.
-                new Element <FlowerPosCol, VertPosCol> (shader),
-                new Element <CubePosTex, VertPosTex> (shader),
+                //new Element <FlowerPosCol, VertPosCol> (shader),
+                //new Element <CubePosTex, VertPosTex> (shader),
                 new Element <CylinderPosTex, VertPosTex> (shader),
 
                 // The following elements
@@ -71,15 +71,16 @@ namespace Cor.Demo
 
                 // Doesn't show up at all, vertex colour is not coming through properly
                 // if hard coded to white in the vert shader then the element shows up.
-                new Element <BillboardPosTexCol, VertPosTexCol> (shader), 
+                //new Element <BillboardPosTexCol, VertPosTexCol> (shader), 
 
                 // UV's are wrong, the full texture should be evenly stretched across the billboard.
-                new Element <BillboardPosTex, VertPosTex> (shader),
+                //new Element <BillboardPosTex, VertPosTex> (shader),
 
                 // UV's are wrong.  This is an interesting case because Normal attribute data is
                 // provided, but should be ignored as it is being rendered with a shader declaration
                 // that knows nothing about Normals.
                 new Element <CylinderPosNormTex, VertPosNormTex> (shader),
+                new Element <CylinderNormTexPos, VertNormTexPos> (shader),
             };
 
             Double s = Math.Sqrt (elements.Length);
@@ -121,7 +122,7 @@ namespace Cor.Demo
 
             tex = engine.Graphics.CreateTexture (TextureFormat.Rgba32, texSize, texSize, texData );
 
-            engine.Graphics.SetActiveTexture(tex, 0);
+            tex.Activate (0);
 
             foreach (var element in elements) element.Load (engine);
         }
@@ -251,8 +252,9 @@ namespace Cor.Demo
 
         public void Render (Engine engine, Matrix44 projection)
         {
-            engine.Graphics.SetActiveVertexBuffer (this.vertexBuffer);
-            engine.Graphics.SetActiveIndexBuffer (this.indexBuffer);
+            vertexBuffer.Activate ();
+            indexBuffer.Activate ();
+            vertexBuffer.Bind (shader);
 
             // set the variable on the shader to our desired variables
             shader.ResetVariables ();
@@ -260,9 +262,7 @@ namespace Cor.Demo
             shader.SetVariable ("View", View);
             shader.SetVariable ("Projection", projection);
             shader.SetVariable ("Colour", Colour);
-
             shader.SetSamplerTarget ("TextureSampler", 0);
-
             shader.Activate (vertexBuffer.VertexDeclaration);
 
             engine.Graphics.DrawIndexedPrimitives (
@@ -407,6 +407,45 @@ namespace Cor.Demo
             this.Position = position;
             this.Normal = normal;
             this.UV = uv;
+        }
+
+        public VertexDeclaration VertexDeclaration { get { return _vertexDeclaration; } }
+    }
+
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertNormTexPos : IVertexType
+    {
+        readonly static VertexDeclaration _vertexDeclaration;
+
+        static VertNormTexPos ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Normal,
+                    0),
+                new VertexElement (
+                    12,
+                    VertexElementFormat.Vector2,
+                    VertexElementUsage.TextureCoordinate,
+                    0),
+                new VertexElement (
+                    20,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0));
+        }
+
+        public Vector3 Normal;
+        public Vector2 UV;
+        public Vector3 Position;
+
+        public VertNormTexPos (Vector3 normal, Vector2 uv, Vector3 position)
+        {
+            this.Normal = normal;
+            this.UV = uv;
+            this.Position = position;
         }
 
         public VertexDeclaration VertexDeclaration { get { return _vertexDeclaration; } }
@@ -631,6 +670,114 @@ namespace Cor.Demo
         }
     }
 
+    public class CylinderNormTexPos : IMesh <VertNormTexPos>
+    {
+        readonly VertNormTexPos[] vertArray;
+        readonly Int32[] indexArray;
+
+        #region IMesh <VertPosNormTex>
+
+        public VertNormTexPos[] VertArray { get { return vertArray; } }
+        public Int32[] IndexArray { get { return indexArray; } }
+        public VertexDeclaration VertexDeclaration { get { return vertArray [0].VertexDeclaration; } }
+
+        #endregion
+
+        const int tessellation = 9; // must be greater han 2
+        const float height = 0.5f;
+        const float radius = 0.5f;
+
+        public CylinderNormTexPos ()
+        {
+            var vertList = new List<VertNormTexPos>();
+            var indexList = new List<Int32>();
+
+            // Create a ring of triangles around the outside of the cylinder.
+            for (Int32 i = 0; i <= tessellation; i++)
+            {
+                Vector3 normal = GetCircleVector(i);
+
+                Vector3 topPos = normal * radius + Vector3.Up * height;
+                Vector3 botPos = normal * radius + Vector3.Down * height;
+
+                Single howFarRound = (Single)i / (Single)(tessellation);
+
+                Vector2 topUV = new Vector2(howFarRound * 3f, 0f);
+                Vector2 botUV = new Vector2(howFarRound * 3f, 1f);
+
+                vertList.Add(new VertNormTexPos(normal, topUV, topPos));
+                vertList.Add(new VertNormTexPos(normal, botUV, botPos));
+            }
+
+            for (Int32 i = 0; i < tessellation; i++)
+            {
+                indexList.Add(i * 2);
+                indexList.Add(i * 2 + 1);
+                indexList.Add(i * 2 + 2);
+
+                indexList.Add(i * 2 + 1);
+                indexList.Add(i * 2 + 3);
+                indexList.Add(i * 2 + 2);
+            }
+
+
+            // Create flat triangle fan caps to seal the top and bottom.
+            CreateCap(vertList, indexList, Vector3.Up);
+            CreateCap(vertList, indexList, Vector3.Down);
+
+            vertArray = vertList.ToArray ();
+            indexArray = indexList.ToArray ();
+        }
+
+        /// Helper method creates a triangle fan to close the ends of the cylinder.
+        static void CreateCap(List<VertNormTexPos> vertList, List<Int32> indexList, Vector3 normal)
+        {
+            // Create cap indices.
+            for (int i = 0; i < tessellation - 2; i++)
+            {
+                if (normal.Y > 0)
+                {
+                    indexList.Add(vertList.Count);
+                    indexList.Add(vertList.Count + (i + 1) % tessellation);
+                    indexList.Add(vertList.Count + (i + 2) % tessellation);
+                }
+                else
+                {
+                    indexList.Add(vertList.Count);
+                    indexList.Add(vertList.Count + (i + 2) % tessellation);
+                    indexList.Add(vertList.Count + (i + 1) % tessellation);
+                }
+            }
+
+            // Create cap vertices.
+            for (int i = 0; i < tessellation; i++)
+            {
+                Vector3 circleVec = GetCircleVector(i);
+                Vector3 position = circleVec * radius +
+                    normal * height;
+
+                vertList.Add(
+                    new VertNormTexPos(
+                        normal,
+                        new Vector2((circleVec.X + 1f) / 2f, (circleVec.Z + 1f) / 2f), 
+                        position));
+            }
+        }
+
+
+        /// Helper method computes a point on a circle.
+        static Vector3 GetCircleVector(int i)
+        {
+            Single tau; Maths.Tau(out tau);
+            float angle = i * tau / tessellation;
+
+            float dx = (float)Math.Cos(angle);
+            float dz = (float)Math.Sin(angle);
+
+            return new Vector3(dx, 0, dz);
+        }
+    }
+
     public class CylinderPosNormTex : IMesh <VertPosNormTex>
     {
         readonly VertPosNormTex[] vertArray;
@@ -663,8 +810,8 @@ namespace Cor.Demo
 
                 Single howFarRound = (Single)i / (Single)(tessellation);
 
-                Vector2 topUV = new Vector2(howFarRound, 0f);
-                Vector2 botUV = new Vector2(howFarRound, 1f);
+                Vector2 topUV = new Vector2(howFarRound * 3f, 0f);
+                Vector2 botUV = new Vector2(howFarRound * 3f, 1f);
 
                 vertList.Add(new VertPosNormTex(topPos, normal, topUV));
                 vertList.Add(new VertPosNormTex(botPos, normal, botUV));
@@ -674,7 +821,7 @@ namespace Cor.Demo
             {
                 indexList.Add(i * 2);
                 indexList.Add(i * 2 + 1);
-                indexList.Add((i * 2 + 2));
+                indexList.Add(i * 2 + 2);
 
                 indexList.Add(i * 2 + 1);
                 indexList.Add(i * 2 + 3);
@@ -771,8 +918,8 @@ namespace Cor.Demo
 
                 Single howFarRound = (Single)i / (Single)(tessellation);
 
-                Vector2 topUV = new Vector2(howFarRound * 4f, 0f);
-                Vector2 botUV = new Vector2(howFarRound * 4f, 1f);
+                Vector2 topUV = new Vector2(howFarRound * 3f, 0f);
+                Vector2 botUV = new Vector2(howFarRound * 3f, 1f);
 
                 vertList.Add(new VertPosTex(topPos, topUV));
                 vertList.Add(new VertPosTex(botPos, botUV));
