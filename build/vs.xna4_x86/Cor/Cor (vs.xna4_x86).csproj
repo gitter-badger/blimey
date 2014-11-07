@@ -13,8 +13,6 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
-    <XnaProfile>Reach</XnaProfile>
-    <XnaCrossPlatformGroupID>88d063cd-f7e6-46df-9d1d-07cce52c926f</XnaCrossPlatformGroupID>
     <XnaOutputType>Library</XnaOutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -22,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\x86\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;COR_PLATFORM_XNA4_X86</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -34,7 +32,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\x86\Release</OutputPath>
-    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;COR_PLATFORM_XNA4_X86</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -43,6 +41,7 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -50,14 +49,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cor.cs" />
-    <Compile Include="Cor.Platform.Xna4.cs" />
+    <Compile Include="..\..\..\source\Cor.cs">
+      <Link>Cor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Cor.Platform.cs">
+      <Link>Cor.Platform.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Cor.Platform.Xna4.cs">
+      <Link>Cor.Platform.Xna4.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Foundation.cs">
+      <Link>Foundation.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\abacus\build\vs.xna4_x86\Abacus %28vs.xna4_x86%29.csproj">
+    <ProjectReference Include="..\..\..\..\abacus\build\vs.xna4_x86\Abacus\Abacus %28vs.xna4_x86%29.csproj">
       <Project>{D87E8FF2-EECC-4C5C-88A9-2E2497C34012}</Project>
-      <Name>Abacus %28xna4.x86%29</Name>
+      <Name>Abacus %28vs.xna4_x86%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\fudge\build\vs.xna4_x86\Fudge\Fudge %28vs.xna4_x86%29.csproj">
+      <Project>{586051CD-27BC-4C33-B5EE-34001120012A}</Project>
+      <Name>Fudge %28vs.xna4_x86%29</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

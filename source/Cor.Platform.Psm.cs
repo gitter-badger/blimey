@@ -36,18 +36,404 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using System.Drawing;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
 
-using Abacus;
-using Abacus.Packed;
+using Fudge;
 using Abacus.SinglePrecision;
-using Abacus.Int32Precision;
 
-namespace Cor.Platform.MonoMac
+namespace Cor.Platform.Psm
 {
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public sealed class PsmPlatform
+        : IPlatform
+    {
+        public PsmPlatform ()
+        {
+            var program = new PsmProgram ();
+            var api = new PsmApi ();
+
+            api.InitialiseDependencies (program);
+            program.InitialiseDependencies (api);
+
+            Api = api;
+            Program = program;
+        }
+
+        public IProgram Program { get; private set; }
+        public IApi Api { get; private set; }
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public sealed class PsmProgram
+        : IProgram
+    {
+        PsmApi Api { get; set; }
+
+        internal void InitialiseDependencies (PsmApi api) { Api = api; }
+
+        public void Start (IApi platformImplementation, Action update, Action render)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void Stop ()
+        {
+            throw new NotImplementedException ();
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public class PsmApi
+        : IApi
+    {
+        PsmProgram Program { get; set; }
+
+        internal void InitialiseDependencies (PsmProgram program)
+        {
+            Program = program;
+        }
+
+        /**
+         * Audio
+         */
+        public void sfx_SetVolume (Single volume)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Single sfx_GetVolume ()
+        {
+            throw new NotImplementedException ();
+        }
+
+
+        /**
+         * Graphics
+         */
+        public void gfx_ClearColourBuffer (Rgba32 colour)
+        {
+            throw new NotImplementedException ();
+        }
+        
+        public void gfx_ClearDepthBuffer (Single depth)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_SetCullMode (CullMode cullMode)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_SetBlendEquation (BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb, BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Handle gfx_CreateVertexBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Handle gfx_CreateIndexBuffer (Int32 indexCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Handle gfx_CreateTexture (TextureFormat textureFormat, Int32 width, Int32 height, Byte[] source)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Handle gfx_CreateShader (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[] source)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DestroyVertexBuffer (Handle vertexBufferHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DestroyIndexBuffer (Handle indexBufferHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DestroyTexture (Handle textureHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DestroyShader (Handle shaderHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DrawPrimitives (PrimitiveType primitiveType, Int32 startVertex, Int32 primitiveCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DrawIndexedPrimitives (PrimitiveType primitiveType, Int32 baseVertex, Int32 minVertexIndex,Int32 numVertices, Int32 startIndex, Int32 primitiveCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DrawUserPrimitives <T> (PrimitiveType primitiveType, T[] vertexData, Int32 vertexOffset,Int32 primitiveCount) where T: struct, IVertexType
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_DrawUserIndexedPrimitives <T> (PrimitiveType primitiveType, T[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount) where T: struct, IVertexType
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Byte[] gfx_CompileShader (String source)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_dbg_BeginEvent (Rgba32 colour, String eventName)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_dbg_EndEvent ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_dbg_SetMarker (Rgba32 colour, String marker)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_dbg_SetRegion (Rgba32 colour, String region)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_vbff_GetVertexCount (Handle vertexBufferHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public VertexDeclaration gfx_vbff_GetVertexDeclaration (Handle vertexBufferHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_vbff_SetData<T> (Handle vertexBufferHandle, T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType
+        {
+            throw new NotImplementedException ();
+        }
+
+        public T[] gfx_vbff_GetData<T> (Handle vertexBufferHandle, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_vbff_Activate (Handle vertexBufferHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_ibff_GetIndexCount (Handle indexBufferHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_ibff_SetData (Handle indexBufferHandle, Int32[] data, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32[] gfx_ibff_GetData (Handle indexBufferHandle, Int32 startIndex, Int32 elementCount)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_ibff_Activate (Handle indexBufferHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_tex_GetWidth (Handle textureHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_tex_GetHeight (Handle textureHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public TextureFormat gfx_tex_GetTextureFormat (Handle textureHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Byte[] gfx_tex_GetData (Handle textureHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_tex_Activate (Handle textureHandle, Int32 slot)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_shdr_SetVariable<T> (Handle shaderHandle, Int32 variantIndex, String name, T value)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_shdr_SetSampler (Handle shaderHandle, Int32 variantIndex, String name, Int32 slot)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public void gfx_shdr_Activate (Handle shaderHandle, Int32 variantIndex)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 gfx_shdr_GetVariantCount (Handle shaderHandle)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public String gfx_shdr_GetIdentifier (Handle shaderHandle, Int32 variantIndex)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public ShaderInputInfo[] gfx_shdr_GetInputs (Handle shaderHandle, Int32 variantIndex)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public ShaderVariableInfo[] gfx_shdr_GetVariables (Handle shaderHandle, Int32 variantIndex)
+        {
+            throw new NotImplementedException ();
+        }
+
+        public ShaderSamplerInfo[] gfx_shdr_GetSamplers (Handle shaderHandle, Int32 variantIndex)
+        {
+            throw new NotImplementedException ();
+        }
+
+        /**
+         * Resources
+         */
+        public Stream res_GetFileStream (String fileName)
+        {
+            throw new NotImplementedException ();
+        }
+
+
+        /**
+         * System
+         */
+        public String sys_GetMachineIdentifier ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public String sys_GetOperatingSystemIdentifier ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public String sys_GetVirtualMachineIdentifier ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 sys_GetPrimaryScreenResolutionWidth ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 sys_GetPrimaryScreenResolutionHeight ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Vector2? sys_GetPrimaryPanelPhysicalSize ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public PanelType sys_GetPrimaryPanelType ()
+        {
+            throw new NotImplementedException ();
+        }
+
+
+        /**
+         * Application
+         */
+        public Boolean? app_IsFullscreen ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 app_GetWidth ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Int32 app_GetHeight ()
+        {
+            throw new NotImplementedException ();
+        }
+
+
+        /**
+         * Input
+         */
+        public DeviceOrientation? hid_GetCurrentOrientation ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Dictionary <DigitalControlIdentifier, Int32> hid_GetDigitalControlStates ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public Dictionary <AnalogControlIdentifier, Single> hid_GetAnalogControlStates ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public HashSet <BinaryControlIdentifier> hid_GetBinaryControlStates ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public HashSet <Char> hid_GetPressedCharacters ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        public HashSet <RawTouch> hid_GetActiveTouches ()
+        {
+            throw new NotImplementedException ();
+        }
+
+    }
+
+    /*
+
     public static class Vector2Converter
     {
         // VECTOR 2
@@ -1874,5 +2260,5 @@ namespace Cor.Platform.MonoMac
                 base.Buttons.LeftShoulder = ButtonState.Pressed;
         }
     }
-
+    */
 }
