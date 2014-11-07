@@ -33,16 +33,9 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
-    using System.Globalization;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    
-    using Fudge;
     using Abacus.SinglePrecision;
-    
-    using System.Linq;
     using Cor;
     using Cor.Platform;
 

@@ -34,8 +34,6 @@ namespace Blimey
 {
     using System;
     using System.Runtime.InteropServices;
-    using System.Globalization;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     
@@ -74,7 +72,6 @@ namespace Blimey
                 fps = 0;
                 sampleFrames = 0;
                 stopwatch = Stopwatch.StartNew();
-
             }
 
             public void Update(AppTime time)
