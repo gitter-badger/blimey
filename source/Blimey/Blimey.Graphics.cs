@@ -48,7 +48,7 @@ namespace Blimey
 	
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 	
-	public static class GraphicsBExtensions
+	public static class GraphicsExtensions
 	{
 		static BlendMode lastSet = BlendMode.Default;
         static Boolean neverSet = true;
