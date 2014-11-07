@@ -54,13 +54,13 @@ namespace Cor.Library.OpenTK
     using Abacus.SinglePrecision;
     using Cor.Platform;
 
-    #if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
+#if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
 
     using System.Drawing;
 
-    #endif
+#endif
 
-    #if COR_PLATFORM_XIOS
+#if COR_PLATFORM_XIOS
 
     using OpenTK.Graphics.ES20;
     using GLShaderType = OpenTK.Graphics.ES20.ShaderType;
@@ -71,7 +71,7 @@ namespace Cor.Library.OpenTK
     using KhronosVector4 = OpenTK.Vector4;
     using KhronosMatrix4 = OpenTK.Matrix4;
 
-    #elif COR_PLATFORM_MONOMAC
+#elif COR_PLATFORM_MONOMAC
 
     using global::MonoMac.OpenGL;
     using GLShaderType = global::MonoMac.OpenGL.ShaderType;
@@ -82,17 +82,17 @@ namespace Cor.Library.OpenTK
     using KhronosVector4 = global::MonoMac.OpenGL.Vector4;
     using KhronosMatrix4 = global::MonoMac.OpenGL.Matrix4;
 
-    #endif
+#endif
 
     using Boolean = System.Boolean;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    #if COR_PLATFORM_XIOS
+#if COR_PLATFORM_XIOS
     public partial class XiosApi
-    #elif COR_PLATFORM_MONOMAC
+#elif COR_PLATFORM_MONOMAC
     public partial class MonoMacApi
-    #endif
-    #if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
+#endif
+#if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
     {
         // Keeping global state around like is rather hacky and should refactored out.
         VertexDeclaration currentActiveVertexBufferVertexDeclaration;
@@ -428,9 +428,9 @@ namespace Cor.Library.OpenTK
                 OpenTKHelper.LinkProgram (variantHandle.ProgramHandle);
 
                 InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Validating shader program");
-                #if DEBUG
+#if DEBUG
                 OpenTKHelper.ValidateProgram (variantHandle.ProgramHandle);
-                #endif
+#endif
 
                 InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Detaching frag & vert sources");
                 OpenTKHelper.DetachShader (variantHandle.ProgramHandle, variantHandle.FragmentShaderHandle);
@@ -685,8 +685,8 @@ namespace Cor.Library.OpenTK
             // store can be initialized or updated using the glBufferSubData FN
             GL.BufferSubData (
                 type,
-                (System.IntPtr) (vd.VertexStride * startIndex),
-                (System.IntPtr) (vd.VertexStride * elementCount),
+                (IntPtr) (vd.VertexStride * startIndex),
+                (IntPtr) (vd.VertexStride * elementCount),
                 data);
 
             OpenTKHelper.ThrowErrors ();
@@ -723,32 +723,34 @@ namespace Cor.Library.OpenTK
             throw new NotImplementedException ();
         }
 
+        //elementIndicesToActivate
+        // ~ The order of this array maps to the order of the variables in the shader
+        // ~ The elements themselves are Vertex Element indices.
         public void gfx_vbff_Bind (Handle h, Int32[] elementIndicesToActivate)
         {
+            // Clear the custom vertex array
+            // this is rather hacky...
+            const Int32 max = 8;
+            if (elementIndicesToActivate.Length > max)
+            {
+                throw new NotImplementedException ();
+            }
+            for(Int32 i = 0; i < max; ++i)
+            {
+                GL.DisableVertexAttribArray (i);
+                OpenTKHelper.ThrowErrors ();
+            }
+            // TODO: Find a better way to do this.
+
             var vd = OpenTkCache.Get <VertexDeclaration> (h, "VertexDeclaration");
 
             // https://www.khronos.org/opengles/sdk/docs/man/xhtml/glVertexAttribPointer.xmlbindd
             var vertElems = vd.GetVertexElements ();
 
-            for(Int32 i = 0; i < vertElems.Length; ++i)
+            for(Int32 i = 0; i < elementIndicesToActivate.Length; ++i)
             {
-                GL.DisableVertexAttribArray (i);
-                OpenTKHelper.ThrowErrors ();
-            }
-
-            Int32 j = 0;
-            for(Int32 i = 0; i < vertElems.Length; ++i)
-            {
-                if (elementIndicesToActivate != null && !elementIndicesToActivate.Contains (i))
-                {
-                    //GL.DisableVertexAttribArray (i);
-                    //OpenTKHelper.ThrowErrors ();
-                    continue;
-                }
-
-                Int32 vertIndex = i;//elementIndicesToActivate [j];
-                Int32 attribIndex = elementIndicesToActivate.ToList().IndexOf (i);
-                j++;
+                Int32 vertIndex = elementIndicesToActivate [i];
+                Int32 attribIndex = i;
 
                 // https://www.khronos.org/opengles/sdk/docs/man/xhtml/glEnableVertexAttribArray.xml
                 GL.EnableVertexAttribArray (attribIndex);
@@ -763,14 +765,6 @@ namespace Cor.Library.OpenTK
                 VertexAttribPointerType glVertElemFormat;
 
                 OpenTKHelper.Convert (vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
-
-                IntPtr ptr = (IntPtr) 0;
-                int counter = 0;
-                while (counter < vertIndex)
-                {
-                    ptr = OpenTKHelper.Add (ptr, vertElems [counter].Offset);
-                    counter++;
-                }
 
                 // https://www.khronos.org/opengles/sdk/docs/man/xhtml/glVertexAttribPointer.xml
                 GL.VertexAttribPointer (
@@ -798,8 +792,7 @@ namespace Cor.Library.OpenTK
                     // for the next index.
                     vd.VertexStride,
                     // offset into the vert data
-                    ptr
-
+                    (IntPtr) vertElemOffset
                 );
 
                 OpenTKHelper.ThrowErrors ();
@@ -1065,7 +1058,7 @@ namespace Cor.Library.OpenTK
         #endregion
 
     }
-    #endif
+#endif
 
 
 
@@ -1093,12 +1086,11 @@ namespace Cor.Library.OpenTK
         [Conditional ("DEBUG")]
         public static void ThrowErrors ()
         {
-            #if COR_PLATFORM_MONOMAC
+#if COR_PLATFORM_MONOMAC
             var ec = GL.GetError ();
-            #else
+#else
             var ec = GL.GetErrorCode ();
-            #endif
-
+#endif
 
             if (ec != ErrorCode.NoError)
             {
@@ -1251,19 +1243,13 @@ namespace Cor.Library.OpenTK
             {
                 case BlendFactor.Zero: return BlendingFactorSrc.Zero;
                 case BlendFactor.One: return BlendingFactorSrc.One;
-
-                    #if COR_PLATFORM_MONOMAC
-
+#if COR_PLATFORM_MONOMAC
                 case BlendFactor.SourceColour: return BlendingFactorSrc.Src1Color; // todo: check this src1 stuff
                 case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrc1Color;
-
-                    #elif COR_PLATFORM_XIOS
-
-                    case BlendFactor.SourceColour: return BlendingFactorSrc.SrcColor;
-                    case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrcColor;
-
-                    #endif
-
+#elif COR_PLATFORM_XIOS
+                case BlendFactor.SourceColour: return BlendingFactorSrc.SrcColor;
+                case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrcColor;
+#endif
                 case BlendFactor.SourceAlpha: return BlendingFactorSrc.SrcAlpha;
                 case BlendFactor.InverseSourceAlpha: return BlendingFactorSrc.OneMinusSrcAlpha;
                 case BlendFactor.DestinationAlpha: return BlendingFactorSrc.DstAlpha;
@@ -1457,18 +1443,19 @@ namespace Cor.Library.OpenTK
         {
             if (programHandle != 0)
             {
-                #if             COR_PLATFORM_XIOS
+#if             COR_PLATFORM_XIOS
                 GL.DeleteProgram (programHandle);
-                #elif           COR_PLATFORM_MONOMAC
+#elif           COR_PLATFORM_MONOMAC
                 try
                 {
                     GL.DeleteProgram (1, ref programHandle);
                 }
                 catch (Exception ex)
                 {
+                    // TODO: ...
                     InternalUtils.Log.Error ("FUCK! (It seems like OpenTK is broken): " + ex.Message);
                 }
-                #endif
+#endif
 
                 programHandle = 0;
                 OpenTKHelper.ThrowErrors ();
@@ -1483,17 +1470,17 @@ namespace Cor.Library.OpenTK
             OpenTKHelper.ThrowErrors ();
 
             // Replace the source code in the vertex shader object
-            #if COR_PLATFORM_XIOS
+#if COR_PLATFORM_XIOS
             GL.ShaderSource (
             shaderHandle,
             1,
             new String[] { src },
             (Int32[]) null);
-            #elif COR_PLATFORM_MONOMAC
+#elif COR_PLATFORM_MONOMAC
             GL.ShaderSource (
                 shaderHandle,
                 src);
-            #endif
+#endif
 
             OpenTKHelper.ThrowErrors ();
 
@@ -1501,7 +1488,7 @@ namespace Cor.Library.OpenTK
 
             OpenTKHelper.ThrowErrors ();
 
-            #if DEBUG
+#if DEBUG
             Int32 logLength = 0;
             GL.GetShader (
                 shaderHandle,
@@ -1526,7 +1513,7 @@ namespace Cor.Library.OpenTK
                 //InternalUtils.Log.Info ("GFX", log);
                 //InternalUtils.Log.Info ("GFX", type.ToString ());
             }
-            #endif
+#endif
             Int32 status = 0;
 
             GL.GetShader (
@@ -1661,7 +1648,7 @@ namespace Cor.Library.OpenTK
 
             OpenTKHelper.ThrowErrors ();
 
-            #if DEBUG
+#if DEBUG
             Int32 logLength = 0;
 
             GL.GetProgram (
@@ -1692,7 +1679,7 @@ namespace Cor.Library.OpenTK
 
                 //InternalUtils.Log.Info ("GFX", string.Format ("[Cor.Resources] Program link log:\n{0}", infoLog));
             }
-            #endif
+#endif
             Int32 status = 0;
 
             GL.GetProgram (
