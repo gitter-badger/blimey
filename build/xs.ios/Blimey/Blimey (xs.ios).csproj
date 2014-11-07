@@ -18,7 +18,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <MtouchLink>None</MtouchLink>
-    <DefineConstants>COR_PLATFORM_MANAGED_XIOS;</DefineConstants>
+    <DefineConstants>PLATFORM__XIOS;</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
@@ -30,7 +30,7 @@
     <WarningLevel>4</WarningLevel>
     <MtouchLink>None</MtouchLink>
     <ConsolePause>False</ConsolePause>
-    <DefineConstants>COR_PLATFORM_MANAGED_XIOS;DEBUG;</DefineConstants>
+    <DefineConstants>PLATFORM_XIOS;DEBUG;</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
