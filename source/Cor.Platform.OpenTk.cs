@@ -162,16 +162,18 @@ namespace Cor.Library.OpenTK
             BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb, 
             BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha)
         {
-            GL.BlendEquationSeparate (
-                OpenTKHelper.ConvertToOpenTKBlendEquationModeEnum (rgbBlendFunction),
-                OpenTKHelper.ConvertToOpenTKBlendEquationModeEnum (alphaBlendFunction) );
+            var gl_rgbBlendFunction = OpenTKHelper.ConvertToOpenTKBlendEquationModeEnum (rgbBlendFunction);
+            var gl_alphaBlendFunction = OpenTKHelper.ConvertToOpenTKBlendEquationModeEnum (alphaBlendFunction); 
+
+            GL.BlendEquationSeparate (gl_rgbBlendFunction, gl_alphaBlendFunction);
             OpenTKHelper.ThrowErrors ();
 
-            GL.BlendFuncSeparate (
-                OpenTKHelper.ConvertToOpenTKBlendingFactorSrcEnum (sourceRgb),
-                OpenTKHelper.ConvertToOpenTKBlendingFactorDestEnum (destinationRgb),
-                OpenTKHelper.ConvertToOpenTKBlendingFactorSrcEnum (sourceAlpha),
-                OpenTKHelper.ConvertToOpenTKBlendingFactorDestEnum (destinationAlpha) );
+            var gl_sourceRgb = OpenTKHelper.ConvertToOpenTKBlendingFactorSrcEnum (sourceRgb);
+            var gl_destinationRgb = OpenTKHelper.ConvertToOpenTKBlendingFactorDestEnum (destinationRgb);
+            var gl_sourceAlpha = OpenTKHelper.ConvertToOpenTKBlendingFactorSrcEnum (sourceAlpha);
+            var gl_destinationAlpha = OpenTKHelper.ConvertToOpenTKBlendingFactorDestEnum (destinationAlpha);
+
+            GL.BlendFuncSeparate (gl_sourceRgb, gl_destinationRgb, gl_sourceAlpha, gl_destinationAlpha);
             OpenTKHelper.ThrowErrors ();
         }
 
