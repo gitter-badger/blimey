@@ -96,7 +96,7 @@ namespace Blimey
         class FrameBufferHelper
         {
             Rgba32 randomColour = Rgba32.CornflowerBlue;
-            Single colourChangeTime = 5.0f;
+            const Single colourChangeTime = 5.0f;
             Single colourChangeTimer = 0.0f;
 
             Graphics gfx;
@@ -125,6 +125,7 @@ namespace Blimey
 
         Scene startScene;
         SceneManager sceneManager;
+        protected Blimey blimey;
 
         FpsHelper fps;
         FrameBufferHelper frameBuffer;
@@ -144,7 +145,8 @@ namespace Blimey
         {
             fps = new FpsHelper();
             frameBuffer = new FrameBufferHelper(cor.Graphics);
-            this.sceneManager = new SceneManager(cor, startScene);
+            blimey = new Blimey (cor);
+            sceneManager = new SceneManager(cor, blimey, startScene);
         }
 
 		/// <summary>
@@ -189,43 +191,35 @@ namespace Blimey
 
     public class Blimey
     {
-        internal Blimey (Engine engine, Scene.SceneConfiguration settings)
+        internal Blimey (Engine engine)
         {
             this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem(engine);
-            this.DebugShapeRenderer = new DebugShapeRenderer(engine, settings.RenderPasses);
+            this.InputEventSystem = new InputEventSystem (engine);
+            this.DebugRenderer = new DebugRenderer (engine);
+            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
 
         }
-
-
 
         public Assets Assets { get; private set; }
 
         public InputEventSystem InputEventSystem { get; private set; }
 
-        public DebugShapeRenderer DebugShapeRenderer { get; private set; }
+        public DebugRenderer DebugRenderer { get; private set; }
+
+        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
 
         internal void PreUpdate (AppTime time)
         {
-            this.DebugShapeRenderer.Update(time);
+            this.DebugRenderer.Update(time);
             this.InputEventSystem.Update(time);
         }
 
         internal void PostUpdate(AppTime time)
         {
-
-        }
-
-        internal void PreRender()
-        {
-
-        }
-
-        internal void PostRender()
-        {
-
+            this.PrimitiveRenderer.PostUpdate (time);
         }
     }
+
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -495,10 +489,11 @@ namespace Blimey
 		// Blimey internal calls //
 		// ===================== //
 		
-        internal void Initialize (Engine cor)
+        internal void Initialize (Engine cor, Blimey blimey)
         {
 			this.cor = cor;
-			this.blimey = new Blimey (cor, this.configuration);
+            this.blimey = blimey;
+            //this.blimey.SetSceneConfig (this.configuration);
 			this.sceneGraph = new SceneSceneGraph (this);
             this.cameraManager = new CameraManager(this);
             this.Start();
@@ -513,6 +508,8 @@ namespace Blimey
 			{
                 go.Update(time);
             }
+
+            this.blimey.PostUpdate (time);
 
             var ret =  this.Update(time);
             return ret;
@@ -805,19 +802,21 @@ namespace Blimey
     {
         Scene activeScene;
         Engine cor;
+        Blimey blimey;
 
-        SceneRenderManager renderManager;
+        SceneRenderer renderManager;
 
         public event System.EventHandler SimulationStateChanged;
 
         public Scene ActiveState { get { return activeScene; } }
 
-        public SceneManager (Engine cor, Scene startScene)
+        public SceneManager (Engine cor, Blimey blimey, Scene startScene)
         {
             this.cor = cor;
+            this.blimey = blimey;
             activeScene = startScene;
-            activeScene.Initialize(cor);
-            renderManager = new SceneRenderManager(cor);
+            activeScene.Initialize(cor, blimey);
+            renderManager = new SceneRenderer(cor);
 
         }
 
@@ -845,7 +844,7 @@ namespace Blimey
 
                 GC.Collect();
 
-                activeScene.Initialize (cor);
+                activeScene.Initialize (cor, blimey);
 
                 if (SimulationStateChanged != null)
                 {
@@ -877,185 +876,15 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    internal class SceneRenderManager
-    {
-        Engine Cor { get; set; }
-
-        internal SceneRenderManager(Engine cor)
-        {
-            this.Cor = cor;
-        }
-
-        internal void Render(Scene scene)
-        {
-            // Clear the background colour if the scene settings want us to.
-			if (scene.Configuration.BackgroundColour.HasValue)
-            {
-				this.Cor.Graphics.ClearColourBuffer(scene.Configuration.BackgroundColour.Value);
-            }
-			
-            foreach (var renderPass in scene.Configuration.RenderPasses)
-            {
-                this.RenderPass(scene, renderPass);
-            }
-        }
-
-        List<MeshRenderer> list = new List<MeshRenderer>();
-        List<MeshRenderer> GetMeshRenderersWithMaterials(Scene scene, string pass)
-        {
-            list.Clear ();
-			foreach (var go in scene.SceneGraph.GetAllObjects())
-            {
-                if (!go.Enabled) continue;
-                
-                var mr = go.GetTrait<MeshRenderer>();
-
-                if (mr == null)
-                {
-                    continue;
-                }
-
-                if (mr.Material == null)
-                {
-                    continue;
-                }
-
-                // if the material is for this pass
-                if (mr.Material.RenderPass == pass)
-                {
-                    list.Add(mr);
-                }
-            }
-
-            return list;
-        }
-
-		void RenderPass(Scene scene, RenderPass pass)
-        {
-            // init pass
-            var gfxManager = this.Cor.Graphics;
-
-			if (pass.Configuration.ClearDepthBuffer)
-            {
-                gfxManager.ClearDepthBuffer();
-            }
-
-            var cam = scene.CameraManager.GetActiveCamera(pass.Name);
-
-            var meshRenderers = this.GetMeshRenderersWithMaterials(scene, pass.Name);
-
-            // TODO: big one
-            // we really need to group the mesh renderers by material
-            // and only make a new draw call when there are changes.
-            foreach (var mr in meshRenderers)
-            {
-                _renderMeshRenderer (gfxManager, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44, mr);
-            }
-
-            scene.Blimey.DebugShapeRenderer.Render(gfxManager, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
-        }
-        
-        static void _renderMeshRenderer (Graphics zGfx, string renderPass, Matrix44 zView, Matrix44 zProjection, MeshRenderer mr)
-        {
-            if (!mr.Active)
-                return;
-            
-            if (mr.Material.RenderPass != renderPass )
-                return;
-            
-            zGfx.GpuUtils.BeginEvent(Rgba32.Red, "MeshRenderer.Render");
-
-            using (new ProfilingTimer(t => FrameStats.SetCullModeTime += t))
-            {
-                zGfx.SetCullMode(mr.CullMode);
-            }
-
-            using (new ProfilingTimer(t => FrameStats.ActivateVertexBufferTime += t))
-            {
-                // Set our vertex declaration, vertex buffer, and index buffer.
-                zGfx.SetActiveVertexBuffer(mr.Mesh.VertexBuffer);
-            }
-
-            using (new ProfilingTimer(t => FrameStats.ActivateIndexBufferTime += t))
-            {
-                // Set our vertex declaration, vertex buffer, and index buffer.
-                zGfx.SetActiveIndexBuffer(mr.Mesh.IndexBuffer);
-            }
-
-            using (new ProfilingTimer(t => FrameStats.MaterialTime += t))
-            {
-                mr.Material.UpdateGpuSettings (zGfx);
-
-                // The lighing manager right now just grabs the shader and tries to set
-                // all variables to do with lighting, without even knowing if the shader
-                // supports lighting.
-                mr.Material.SetColour( "AmbientLightColour", LightingManager.ambientLightColour );
-                mr.Material.SetColour( "EmissiveColour", LightingManager.emissiveColour );
-                mr.Material.SetColour( "SpecularColour", LightingManager.specularColour );
-                mr.Material.SetFloat( "SpecularPower", LightingManager.specularPower );
-
-                mr.Material.SetFloat( "FogEnabled", LightingManager.fogEnabled ? 1f : 0f );
-                mr.Material.SetFloat( "FogStart", LightingManager.fogStart );
-                mr.Material.SetFloat( "FogEnd", LightingManager.fogEnd );
-                mr.Material.SetColour( "FogColour", LightingManager.fogColour );
-
-                mr.Material.SetVector3( "DirectionalLight0Direction", LightingManager.dirLight0Direction );
-                mr.Material.SetColour( "DirectionalLight0DiffuseColour", LightingManager.dirLight0DiffuseColour );
-                mr.Material.SetColour( "DirectionalLight0SpecularColour", LightingManager.dirLight0SpecularColour );
-
-                mr.Material.SetVector3( "DirectionalLight1Direction", LightingManager.dirLight1Direction );
-                mr.Material.SetColour( "DirectionalLight1DiffuseColour", LightingManager.dirLight1DiffuseColour );
-                mr.Material.SetColour( "DirectionalLight1SpecularColour", LightingManager.dirLight1SpecularColour );
-
-                mr.Material.SetVector3( "DirectionalLight2Direction", LightingManager.dirLight2Direction );
-                mr.Material.SetColour( "DirectionalLight2DiffuseColour", LightingManager.dirLight2DiffuseColour );
-                mr.Material.SetColour( "DirectionalLight2SpecularColour", LightingManager.dirLight2SpecularColour );
-
-                mr.Material.SetVector3( "EyePosition", zView.Translation );
-
-                // Get the material's shader and apply all of the settings
-                // it needs.
-                mr.Material.UpdateShaderVariables (
-                    mr.Parent.Transform.Location,
-                    zView,
-                    zProjection
-                    );
-            }
-
-            var shader = mr.Material.GetShader ();
-
-            if( shader != null)
-            {
-                using (new ProfilingTimer(t => FrameStats.ActivateShaderTime += t))
-                {
-                    shader.Activate (mr.Mesh.VertexBuffer.VertexDeclaration);
-                }
-
-                using (new ProfilingTimer(t => FrameStats.DrawTime += t))
-                {
-                    FrameStats.DrawIndexedPrimitivesCount ++;
-                    zGfx.DrawIndexedPrimitives (
-                        PrimitiveType.TriangleList, 0, 0,
-                        mr.Mesh.VertexCount, 0, mr.Mesh.TriangleCount);
-                }
-            }
-
-            zGfx.GpuUtils.EndEvent();
-        }
-    }
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
 	public class CameraManager
     {
 		public Entity GetRenderPassCamera (String renderPass)
 		{
 			return GetActiveCamera(renderPass).Parent;
 		}
-		internal Camera GetActiveCamera(String RenderPass)
+		internal CameraTrait GetActiveCamera(String RenderPass)
         {
-            return _activeCameras[RenderPass].GetTrait<Camera> ();
+            return _activeCameras[RenderPass].GetTrait<CameraTrait> ();
         }
 
         Dictionary<String, Entity> _defaultCameras = new Dictionary<String,Entity>();
@@ -1079,16 +908,16 @@ namespace Blimey
             {
 				var go = scene.SceneGraph.CreateSceneObject("RenderPass(" + renderPass + ") Provided Camera");
 
-                var cam = go.AddTrait<Camera>();
+                var cam = go.AddTrait<CameraTrait>();
 
                 if (renderPass.Configuration.CameraProjectionType == CameraProjectionType.Perspective)
                 {
                     go.Transform.Position = new Vector3(2, 1, 5);
 
-                    var orbit = go.AddTrait<OrbitAroundSubject>();
+                    var orbit = go.AddTrait<OrbitAroundSubjectTrait>();
                     orbit.CameraSubject = Transform.Origin;
 
-                    var lookAtSub = go.AddTrait<LookAtSubject>();
+                    var lookAtSub = go.AddTrait<LookAtSubjectTrait>();
                     lookAtSub.Subject = Transform.Origin;
                 }
                 else

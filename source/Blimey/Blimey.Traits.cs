@@ -41,13 +41,13 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class DebugRenderer
+    public sealed class DebugRendererTrait
         : Trait
     {
         public Rgba32 Colour { get; set; }
         public String RenderPass { get; set; }
 
-        public DebugRenderer ()
+        public DebugRendererTrait ()
         {
             this.Colour = Rgba32.Red;
             this.RenderPass = "Debug";
@@ -62,7 +62,7 @@ namespace Blimey
             b.Min = this.Parent.Transform.Location.Translation - (this.Parent.Transform.Scale / 2f);
             b.Max = this.Parent.Transform.Location.Translation + (this.Parent.Transform.Scale / 2f);
 
-            this.Parent.Owner.Blimey.DebugShapeRenderer.AddBoundingBox (RenderPass, b, Colour);
+            this.Parent.Owner.Blimey.DebugRenderer.AddBoundingBox (RenderPass, b, Colour);
         }
     }
 
@@ -76,7 +76,7 @@ namespace Blimey
     // Optionally you can set the LockToY member variable which will keep the SceneObjects
     // Up Vector as (0,1,0).  This is good for billboard sprites.
     //
-    public sealed class LookAtSubject
+    public sealed class LookAtSubjectTrait
         : Trait
     {
         #region SETTINGS (These are values that can be set per instance of this behaviour)
@@ -109,7 +109,7 @@ namespace Blimey
     // This behaviour takes a Blimey.Model and a Material, it then renders the models
     // at location, scale and orientaion of the parent SceneObject's Transform.
     //
-    public sealed class MeshRenderer
+    public sealed class MeshRendererTrait
         : Trait
     {
 
@@ -117,7 +117,7 @@ namespace Blimey
         public Material Material { get; set; }
         public CullMode CullMode { get; set; }
 
-        public MeshRenderer()
+        public MeshRendererTrait()
         {
             this.Mesh = null;
             this.Material = null;
@@ -135,7 +135,7 @@ namespace Blimey
     // around the Subject.  This radius of the orbit is the distance from the parent SceneObject
     // to the Subject.  If this distance changes at runtime the orbit radius will also change.
     //
-    public sealed class OrbitAroundSubject
+    public sealed class OrbitAroundSubjectTrait
         : Trait
     {
         #region SETTINGS (These are values that can be set per instance of this behaviour)
@@ -164,7 +164,7 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class PointLight
+    public class PointLightTrait
         : Trait
     {
     }
@@ -172,7 +172,7 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class SlowRotate
+    public class SlowRotateTrait
         : Trait
     {
         public override void OnUpdate(AppTime time)
@@ -196,7 +196,7 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class ChaseSubject
+    public class ChaseSubjectTrait
         : Trait
     {
         Transform subject;
@@ -293,20 +293,9 @@ namespace Blimey
         }
     }
 
-
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class FreeTransform
-        : Trait
-    {
-        public FreeTransform()
-        {
-        }
-    }
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public class FreeCam
+    public class FreeCamTrait
         : Trait
     {
         public struct FreeCamInputs
@@ -414,7 +403,7 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Sprite
+    public class SpriteTrait
         : Trait
     {
         public struct SpriteConfiguration
@@ -545,7 +534,7 @@ namespace Blimey
 
         // PRIVATES!
 
-        MeshRenderer meshRendererTrait;
+        MeshRendererTrait meshRendererTrait;
 
         // track the current status of the sprite
         Single      currentWidth;
@@ -594,7 +583,7 @@ namespace Blimey
         public Texture Texture { get { return desiredTexture; } set { desiredTexture = value; } }
 
         //--------------------------------------------------------------------//
-        public Sprite()
+        public SpriteTrait()
         {
             Configuration = SpriteConfiguration.Default;
             desiredColour = Rgba32.White;
@@ -621,11 +610,11 @@ namespace Blimey
 
         public override void OnAwake()
         {
-            meshRendererTrait = this.Parent.GetTrait<MeshRenderer>();
+            meshRendererTrait = this.Parent.GetTrait<MeshRendererTrait>();
 
             if(meshRendererTrait == null)
             {
-                meshRendererTrait = this.Parent.AddTrait<MeshRenderer>();
+                meshRendererTrait = this.Parent.AddTrait<MeshRendererTrait>();
             }
 
             if( spriteMesh == null )
@@ -677,7 +666,7 @@ namespace Blimey
                 c = this.Parent.Transform.LocalPosition + c;
                 d = this.Parent.Transform.LocalPosition + d;
 
-                this.Blimey.DebugShapeRenderer.AddQuad(
+                this.Blimey.DebugRenderer.AddQuad(
                     this.DebugRender,
                     a,
                     b,
@@ -819,7 +808,7 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class Camera
+    public sealed class CameraTrait
         : Trait
     {
         public CameraProjectionType Projection = CameraProjectionType.Perspective;
@@ -874,8 +863,8 @@ namespace Blimey
                 {
                     _projection =
                         Matrix44.CreateOrthographic(
-                            width / Sprite.SpriteConfiguration.Default.SpriteSpaceScale,
-                            height / Sprite.SpriteConfiguration.Default.SpriteSpaceScale,
+                            width / SpriteTrait.SpriteConfiguration.Default.SpriteSpaceScale,
+                            height / SpriteTrait.SpriteConfiguration.Default.SpriteSpaceScale,
                             1, -1);
                 }
                 else

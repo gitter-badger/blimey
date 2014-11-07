@@ -129,6 +129,38 @@ namespace Blimey
             return new Rgba32(r, g, b, a);
         }
 
+        public Rgba32 GetRandomColourNearby(Rgba32 zColour, float zVariation)
+        {
+            Vector4 data = zColour.ToVector4();
+
+
+            float variation = zVariation / 2.0f;
+
+            //float lowerW = data.W - variation;
+            //float upperW = data.W + variation;
+            //float w = Random_Float(lowerW, upperW);
+            //data.W = Euclid.Limit(ref w, 0.0f, 1.0f);
+
+            float lowerX = data.X - variation;
+            float upperX = data.X + variation;
+            float x = GetRandomSingle(lowerX, upperX);
+            data.X = BlimeyMathsHelper.Limit(ref x, 0.0f, 1.0f);
+
+            float lowerY = data.Y - variation;
+            float upperY = data.Y + variation;
+            float y = GetRandomSingle(lowerY, upperY);
+            data.Y = BlimeyMathsHelper.Limit(ref y, 0.0f, 1.0f);
+
+            float lowerZ = data.Z - variation;
+            float upperZ = data.Z + variation;
+            float z = GetRandomSingle(lowerZ, upperZ);
+            data.Z = BlimeyMathsHelper.Limit(ref z, 0.0f, 1.0f);
+
+
+            Rgba32 col = new Rgba32(data.X, data.Y, data.Z, data.W);
+            return col;
+        }
+
         [CLSCompliant(false)]
         public Vector2 GetRandomVector2(Single min, Single max)
         {
