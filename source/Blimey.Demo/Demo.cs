@@ -34,36 +34,120 @@ namespace Blimey.Demo
 {
     using System;
     using Cor;
+    using System.Collections.Generic;
+    using Abacus.SinglePrecision;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-	public class Demo
-		: App
+	public class Demo : App
 	{
-        public Demo()
-			: base (new Scene_MainMenu())
-        {
-        }
-		
-        public override void Start (Engine cor)
-		{
-			base.Start (cor);
-		}
-
-        public override Boolean Update (Engine cor, AppTime time)
-		{
-			return base.Update (cor, time);
-		}
-
-        public override void Render (Engine cor)
-		{
-			base.Render (cor);
-		}
-
-        public override void Stop (Engine cor)
-		{
-			base.Stop (cor);
-		}
+        public Demo() : base (new Scene_MainMenu()) {}
 	}
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public static class RandomObjectHelper
+    {
+        public static List<Entity> Generate(Scene scene)
+        {
+            var objects = new List<Entity>();
+            var cubeModel = new CubePrimitive(scene.Cor.Graphics);
+            var billboardModel = new BillboardPrimitive(scene.Cor.Graphics);
+            var teapotModel = new TeapotPrimitive(scene.Cor.Graphics);
+            var cylinderModel = new CylinderPrimitive(scene.Cor.Graphics);
+            var sphereModel = new SpherePrimitive(scene.Cor.Graphics);
+            var torusModel = new TorusPrimitive(scene.Cor.Graphics);
+
+            objects.Add(CreateShapeGO(scene, "Default", cubeModel, 2));
+            objects.Add(CreateShapeGO(scene, "Default", billboardModel));
+            objects.Add(CreateShapeGO(scene, "Default", teapotModel, 1));
+            objects.Add(CreateShapeGO(scene, "Default", cylinderModel));
+            objects.Add(CreateShapeGO(scene, "Default", sphereModel));
+            objects.Add(CreateShapeGO(scene, "Default", torusModel, 1));
+            objects.Add(CreateShapeGO(scene, "Default", torusModel, 2));
+            objects.Add(CreateShapeGO(scene, "Default", torusModel, 0));
+            return objects;
+        }
+
+
+        public static Entity CreateShapeGO(Scene scene, string renderPass,  Mesh modelpart, int shaderIndex = 0)
+        {
+            // create a game object
+            Entity testGO = scene.SceneGraph.CreateSceneObject ("test");
+
+
+            Single scale = RandomGenerator.Default.GetRandomSingle(0.25f, 0.5f);
+
+
+            // size it
+            testGO.Transform.LocalPosition = new Vector3(
+                RandomGenerator.Default.GetRandomSingle(-1.28f, 1.28f),
+                RandomGenerator.Default.GetRandomSingle(-1.28f, 1.28f),
+                RandomGenerator.Default.GetRandomSingle(-1.28f, 1.28f));
+
+            testGO.Transform.LocalScale = new Vector3(scale, scale, scale);
+            testGO.AddTrait<RandomLocalRotate>();
+
+            // load a texture
+            //Texture tex = null;//scene.Engine.Resources.Load<Texture> (new Uri("\\Textures\\recycle"));
+
+
+            Shader shader = null;
+            if (shaderIndex == 0) shader = CommonDemoResources.VertexLitShader;
+            else if (shaderIndex == 1) shader = CommonDemoResources.VertexLitShader;
+            else shader = CommonDemoResources.UnlitShader;
+
+            // create a material on the fly
+            var mat = new Material(renderPass, shader);
+            //mat.SetTexture("_texture", tex);
+
+            // add a mesh renderer
+            MeshRendererTrait meshRendererTrait = testGO.AddTrait<MeshRendererTrait> ();
+
+            // set the mesh renderer's material
+            meshRendererTrait.Material = mat;
+
+            // and it's model
+            meshRendererTrait.Mesh = modelpart;
+
+            testGO.AddTrait<ColourChanger>();
+
+            return testGO;
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public static class CommonDemoResources
+    {
+        public static Shader UnlitShader;
+        public static Shader VertexLitShader;
+        public static Shader PixelLitShader;
+
+        public static void Create (Engine cor, Blimey blimey)
+        {
+            var unlitShaderAsset = blimey.Assets.Load<ShaderAsset>("unlit.bba");
+            var vertexLitShaderAsset = blimey.Assets.Load<ShaderAsset>("vertex_lit.bba");
+            var pixelLitShaderAsset = blimey.Assets.Load<ShaderAsset>("pixel_lit.bba");
+
+            UnlitShader = cor.Graphics.CreateShader (unlitShaderAsset);
+            VertexLitShader = cor.Graphics.CreateShader (vertexLitShaderAsset);
+            PixelLitShader = cor.Graphics.CreateShader (pixelLitShaderAsset);
+        }
+
+        public static void Destroy ()
+        {
+            UnlitShader.Dispose ();
+            VertexLitShader.Dispose ();
+            PixelLitShader.Dispose ();
+
+            UnlitShader = null;
+            VertexLitShader = null;
+            PixelLitShader = null;
+        }
+    }
+
 }
 

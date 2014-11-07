@@ -328,13 +328,10 @@ namespace Blimey.Demo
 
         public override void Start()
         {
-            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
-			this.Blimey.DebugShapeRenderer.DebugShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
-
 			var newCamSo = this.SceneGraph.CreateSceneObject("ortho");
             newCamSo.Transform.LocalPosition = new Vector3(0, 0, 1);
 
-            var orthoCam = newCamSo.AddTrait<Camera>();
+            var orthoCam = newCamSo.AddTrait<CameraTrait>();
             orthoCam.NearPlaneDistance = 0;
             orthoCam.FarPlaneDistance = 2;
             orthoCam.Projection = CameraProjectionType.Orthographic;
@@ -377,25 +374,25 @@ namespace Blimey.Demo
             float top = (float) leveltop;
             float bottom = (float)levelbottom;
 
-            this.Blimey.DebugShapeRenderer.AddLine(
+            this.Blimey.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(left, top, 0),
 				new Vector3(right, top, 0),
 				Rgba32.Red);
 
-            this.Blimey.DebugShapeRenderer.AddLine(
+            this.Blimey.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(left, top, 0),
 				new Vector3(left, bottom, 0),
 				Rgba32.Red);
 
-            this.Blimey.DebugShapeRenderer.AddLine(
+            this.Blimey.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(left, bottom, 0),
 				new Vector3(right, bottom, 0),
 				Rgba32.Red);
 
-            this.Blimey.DebugShapeRenderer.AddLine(
+            this.Blimey.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(right, top, 0),
 				new Vector3(right, bottom, 0),
@@ -406,25 +403,25 @@ namespace Blimey.Demo
             top = (float) cagetop;
             bottom = (float) cagebottom;
 
-            this.Blimey.DebugShapeRenderer.AddLine(
+            this.Blimey.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(left, top, 0),
 				new Vector3(right, top, 0),
 				Rgba32.Yellow);
 
-            this.Blimey.DebugShapeRenderer.AddLine(
+            this.Blimey.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(left, top, 0),
 				new Vector3(left, bottom, 0),
 				Rgba32.Yellow);
 
-            this.Blimey.DebugShapeRenderer.AddLine(
+            this.Blimey.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(left, bottom, 0),
 				new Vector3(right, bottom, 0),
 				Rgba32.Yellow);
 
-            this.Blimey.DebugShapeRenderer.AddLine(
+            this.Blimey.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(right, top, 0),
 				new Vector3(right, bottom, 0),
@@ -433,7 +430,7 @@ namespace Blimey.Demo
 			Single boidHalfSize = 15f;
 			foreach (var boid in boidManager.Prey)
 			{
-				this.Blimey.DebugShapeRenderer.AddQuad(
+				this.Blimey.DebugRenderer.AddQuad(
 	                "Gui",
 					new Vector3(boid.position.X - boidHalfSize, boid.position.Y - boidHalfSize, 0),
 					new Vector3(boid.position.X + boidHalfSize, boid.position.Y - boidHalfSize, 0),

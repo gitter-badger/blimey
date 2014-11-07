@@ -62,14 +62,26 @@ namespace Blimey.Demo
 
         Scene _returnScene;
 
+        PrimitiveRenderer.Triple q;
+
         public override void Start ()
         {
+            q = new PrimitiveRenderer.Triple ();
+            q.blend = BlendMode.Additive;
+           
+            q.v [0].Colour = Rgba32.Blue;
+            q.v [0].Position.X = -0.3f;
+            q.v [0].Position.Y = -0.3f;
+            q.v [1].Colour = Rgba32.Green;
+            q.v [1].Position.X = 0.3f;
+            q.v [1].Position.Y = 0.3f;
+            q.v [2].Colour = Rgba32.Red;
+            q.v [2].Position.X = 0f;
+            q.v [2].Position.Y = 0.3f;
+
             _returnScene = this;
 
-			// set up the debug renderer
-			ShaderAsset shaderAsset = this.Blimey.Assets.Load<ShaderAsset>("unlit.bba");
-			this.Blimey.DebugShapeRenderer.DebugShader = 
-				this.Cor.Graphics.CreateShader (shaderAsset);
+            CommonDemoResources.Create (Cor, Blimey);
 
 			this.Configuration.BackgroundColour = _startCol;
             var teaPotModel = new TeapotPrimitive(this.Cor.Graphics);
@@ -89,13 +101,12 @@ namespace Blimey.Demo
 			so6.Transform.LocalPosition = new Vector3(+0.25f, 0f, 0f);
 
 
-			_menuItemMaterials.Add(so1.GetTrait<MeshRenderer>().Material);
-			_menuItemMaterials.Add(so2.GetTrait<MeshRenderer>().Material);
-			_menuItemMaterials.Add(so3.GetTrait<MeshRenderer>().Material);
-			_menuItemMaterials.Add(so4.GetTrait<MeshRenderer>().Material);
-			_menuItemMaterials.Add(so5.GetTrait<MeshRenderer>().Material);
-			_menuItemMaterials.Add(so6.GetTrait<MeshRenderer>().Material);
-
+			_menuItemMaterials.Add(so1.GetTrait<MeshRendererTrait>().Material);
+			_menuItemMaterials.Add(so2.GetTrait<MeshRendererTrait>().Material);
+			_menuItemMaterials.Add(so3.GetTrait<MeshRendererTrait>().Material);
+			_menuItemMaterials.Add(so4.GetTrait<MeshRendererTrait>().Material);
+			_menuItemMaterials.Add(so5.GetTrait<MeshRendererTrait>().Material);
+			_menuItemMaterials.Add(so6.GetTrait<MeshRendererTrait>().Material);
 
 			_menuSceneObjects.Add(so1);
 			_menuSceneObjects.Add(so2);
@@ -116,6 +127,8 @@ namespace Blimey.Demo
             _menuItemMaterials = null;
             this.Blimey.InputEventSystem.Tap -= this.OnTap;
             this.Blimey.InputEventSystem.Flick -= this.OnFlick;
+
+            CommonDemoResources.Destroy ();
         }
 
         void OnFlick(Gesture gesture)
@@ -206,8 +219,11 @@ namespace Blimey.Demo
         {
             var menuResult = this.CheckForMenuInput();
 
+            this.Blimey.PrimitiveRenderer.AddTriple ("Gui", q);
+
             if (menuResult != this)
                 return menuResult;
+
 
             for (int i = 0; i < _menuSceneObjects.Count; ++i)
             {

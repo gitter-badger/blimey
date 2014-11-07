@@ -50,7 +50,7 @@ namespace Blimey.Demo
             Single deltaScale;
             Single deltaRotation;
     
-            Sprite sprite;
+            SpriteTrait sprite;
 			
 			int currentBlendMode = 0;
 			
@@ -63,7 +63,7 @@ namespace Blimey.Demo
     
             public override void OnAwake()
             {
-                this.sprite = this.Parent.AddTrait<Sprite>();
+                this.sprite = this.Parent.AddTrait<SpriteTrait>();
     
                 this.sprite.Texture = Scene_Sprites.texZa;
     
@@ -149,8 +149,6 @@ namespace Blimey.Demo
 
         readonly List<Hare> hares = new List<Hare>();
 
-        GridRenderer gr;
-
         bool debugLinesOn = false;
 
         Single timer = 0f;
@@ -168,10 +166,7 @@ namespace Blimey.Demo
         public override void Start ()
         {
             ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
-			this.Blimey.DebugShapeRenderer.DebugShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
-            Sprite.SpriteShader = this.Cor.Graphics.CreateShader(unlitShaderAsset);
-            
-            gr = new GridRenderer (this.Blimey.DebugShapeRenderer, "Default");
+            SpriteTrait.SpriteShader = this.Cor.Graphics.CreateShader(unlitShaderAsset);
 
 			screenWidth = this.Cor.Status.Width;
 			screenHeight = this.Cor.Status.Height;
@@ -183,7 +178,7 @@ namespace Blimey.Demo
             
             var soBG = this.SceneGraph.CreateSceneObject ("bg");
 
-            var spr = soBG.AddTrait <Sprite> ();
+            var spr = soBG.AddTrait <SpriteTrait> ();
             spr.Width = 256f;
             spr.Height = 256f;
             spr.Texture = texBg;
@@ -198,7 +193,7 @@ namespace Blimey.Demo
             var newCamSo = this.SceneGraph.CreateSceneObject("ortho");
             newCamSo.Transform.LocalPosition = new Vector3(0, 0, 1);
 
-            var orthoCam = newCamSo.AddTrait<Camera>();
+            var orthoCam = newCamSo.AddTrait<CameraTrait>();
             orthoCam.NearPlaneDistance = 0;
             orthoCam.FarPlaneDistance = 2;
             orthoCam.Projection = CameraProjectionType.Orthographic;
@@ -249,10 +244,10 @@ namespace Blimey.Demo
             this.Blimey.InputEventSystem.Tap -= this.HandleTap;
 
 			// Clean up the things we allocated on the GPU.
-			this.Cor.Graphics.DestroyShader (Sprite.SpriteShader);
+			this.Cor.Graphics.DestroyShader (SpriteTrait.SpriteShader);
             this.Cor.Graphics.DestroyTexture (texZa);
             this.Cor.Graphics.DestroyTexture (texBg);
-			Sprite.SpriteShader = null;
+			SpriteTrait.SpriteShader = null;
             texZa = null;
 			texBg = null;
         }
@@ -300,7 +295,7 @@ namespace Blimey.Demo
             }
             
             if (debugLinesOn)
-                gr.Update ();
+                this.Blimey.DebugRenderer.AddGrid ("Debug");
 
             if (debugLinesOn)
             {
@@ -309,7 +304,7 @@ namespace Blimey.Demo
                 float top = (float)(screenHeight / 2) / 100f;
                 float bottom = -(float)(screenHeight / 2) / 100f;
 
-                this.Blimey.DebugShapeRenderer.AddQuad (
+                this.Blimey.DebugRenderer.AddQuad (
                     "Default",
                     new Vector3 (left, bottom, 0),
                     new Vector3 (right, bottom, 0),

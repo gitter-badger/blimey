@@ -95,8 +95,6 @@ namespace Blimey.Demo
 		Scene returnScene;
 		Entity earthGo;
 
-		GridRenderer gr;
-
 		List<Airport> airports = new List<Airport>();
 
 		Shader shader = null;
@@ -104,11 +102,6 @@ namespace Blimey.Demo
 
 		public override void Start()
 		{
-            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
-			this.Blimey.DebugShapeRenderer.DebugShader = 
-                this.Cor.Graphics.CreateShader (unlitShaderAsset);
-			gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Debug");
-            
             var lines = Blimey.Assets.Load <TextAsset> ("airports.bba")
                 .Text
                 .Split ('\n')
@@ -146,10 +139,10 @@ namespace Blimey.Demo
 			earthGo = this.SceneGraph.CreateSceneObject("earth");
 
 			Entity camSo = SceneGraph.CreateSceneObject ("Scene 5 Camera");
-			camSo.AddTrait<Camera>();
-			var lookatTrait = camSo.AddTrait<LookAtSubject>();
+			camSo.AddTrait<CameraTrait>();
+			var lookatTrait = camSo.AddTrait<LookAtSubjectTrait>();
 			lookatTrait.Subject = Transform.Origin;
-			var orbitTrait = camSo.AddTrait<OrbitAroundSubject>();
+			var orbitTrait = camSo.AddTrait<OrbitAroundSubjectTrait>();
 			orbitTrait.CameraSubject = Transform.Origin;
 
 			camSo.Transform.LocalPosition = new Vector3(10f,4f,10f);
@@ -159,7 +152,7 @@ namespace Blimey.Demo
 
 			earthGo.Transform.LocalScale = new Vector3(2 * radius, 2 * radius, 2 * radius);
 
-			var mr = earthGo.AddTrait<MeshRenderer>();
+			var mr = earthGo.AddTrait<MeshRendererTrait>();
 			mr.Mesh = sphereMesh;
 			mr.Material = mat;
 
@@ -175,7 +168,7 @@ namespace Blimey.Demo
 
                 so.Transform.Parent = earthGo.Transform;
 
-				var sodr = so.AddTrait<DebugRenderer>();
+				var sodr = so.AddTrait<DebugRendererTrait>();
 				//sodr.RenderPass = "Default";
 				sodr.Colour = Rgba32.Blue;
 				//var somr = so.AddTrait<MeshRenderer>();
@@ -212,7 +205,7 @@ namespace Blimey.Demo
 
 		public override Scene Update(AppTime time)
 		{
-			gr.Update ();
+            this.Blimey.DebugRenderer.AddGrid ("Debug");
 
 			if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
 				Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape) ||

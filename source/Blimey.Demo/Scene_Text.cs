@@ -44,7 +44,6 @@ namespace Blimey.Demo
 		: Scene
 	{
 		Scene returnScene;
-		GridRenderer gr;
 		Shader unlitShader = null;
 		Texture fntTex = null;
 
@@ -54,11 +53,8 @@ namespace Blimey.Demo
 
 			// set up the debug renderer
             ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
-			this.Blimey.DebugShapeRenderer.DebugShader = 
-				this.Cor.Graphics.CreateShader (unlitShaderAsset);
-			gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Default", 1f, 10);
 
-			Sprite.SpriteShader = this.Cor.Graphics.CreateShader(unlitShaderAsset);
+			SpriteTrait.SpriteShader = this.Cor.Graphics.CreateShader(unlitShaderAsset);
 
             TextAsset fntUvAsset = this.Blimey.Assets.Load <TextAsset> ("blimey_fnt_uv.bba");
 
@@ -71,12 +67,12 @@ namespace Blimey.Demo
 			returnScene = this;
 
 			var cam = this.CameraManager.GetRenderPassCamera ("Default");
-			cam.GetTrait <OrbitAroundSubject> ().Active = false;
+			cam.GetTrait <OrbitAroundSubjectTrait> ().Active = false;
 
 			// create a sprite
 			var so = this.SceneGraph.CreateSceneObject ("fnt_spr");
 
-			var spr = so.AddTrait <Sprite> ();
+			var spr = so.AddTrait <SpriteTrait> ();
 			spr.Width = 256f;
 			spr.Height = 256f;
 			spr.Texture = fntTex;
@@ -93,8 +89,8 @@ namespace Blimey.Demo
 		}
 
 		public override Scene Update(AppTime time)
-		{
-			gr.Update ();
+        {
+            this.Blimey.DebugRenderer.AddGrid ("Debug", 1f, 10);
 
 			if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
 				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||

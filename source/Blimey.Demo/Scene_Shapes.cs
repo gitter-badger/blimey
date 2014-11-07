@@ -82,7 +82,7 @@ namespace Blimey.Demo
 
         Single _timer;
 
-        MeshRenderer _renderer;
+        MeshRendererTrait _renderer;
 
         public ColourChanger()
         {
@@ -94,7 +94,7 @@ namespace Blimey.Demo
 
         public override void OnAwake()
         {
-            _renderer = this.Parent.GetTrait<MeshRenderer>();
+            _renderer = this.Parent.GetTrait<MeshRendererTrait>();
         }
 
         public override void OnUpdate(AppTime time)
@@ -117,92 +117,12 @@ namespace Blimey.Demo
         }
     }
 
-    public static class RandomObjectHelper
-    {
-        public static List<Entity> Generate(Scene scene)
-        {
-            var objects = new List<Entity>();
-            var cubeModel = new CubePrimitive(scene.Cor.Graphics);
-            var billboardModel = new BillboardPrimitive(scene.Cor.Graphics);
-            var teapotModel = new TeapotPrimitive(scene.Cor.Graphics);
-            var cylinderModel = new CylinderPrimitive(scene.Cor.Graphics);
-            var sphereModel = new SpherePrimitive(scene.Cor.Graphics);
-            var torusModel = new TorusPrimitive(scene.Cor.Graphics);
-
-            objects.Add(CreateShapeGO(scene, "Default", cubeModel, 2));
-            objects.Add(CreateShapeGO(scene, "Default", billboardModel));
-            objects.Add(CreateShapeGO(scene, "Default", teapotModel, 1));
-            objects.Add(CreateShapeGO(scene, "Default", cylinderModel));
-            objects.Add(CreateShapeGO(scene, "Default", sphereModel));
-            objects.Add(CreateShapeGO(scene, "Default", torusModel, 1));
-            objects.Add(CreateShapeGO(scene, "Default", torusModel, 2));
-            objects.Add(CreateShapeGO(scene, "Default", torusModel, 0));
-            return objects;
-        }
-
-
-        public static Entity CreateShapeGO(Scene scene, string renderPass,  Mesh modelpart, int shaderIndex = 0)
-        {
-            // create a game object
-            Entity testGO = scene.SceneGraph.CreateSceneObject ("test");
-
-
-            Single scale = RandomGenerator.Default.GetRandomSingle(0.25f, 0.5f);
-
-
-            // size it
-            testGO.Transform.LocalPosition = new Vector3(
-                RandomGenerator.Default.GetRandomSingle(-1.28f, 1.28f),
-                RandomGenerator.Default.GetRandomSingle(-1.28f, 1.28f),
-                RandomGenerator.Default.GetRandomSingle(-1.28f, 1.28f));
-
-            testGO.Transform.LocalScale = new Vector3(scale, scale, scale);
-            testGO.AddTrait<RandomLocalRotate>();
-
-            // load a texture
-            //Texture tex = null;//scene.Engine.Resources.Load<Texture> (new Uri("\\Textures\\recycle"));
-
-            ShaderAsset shaderAsset = null;
-
-            if (shaderIndex == 0)
-                shaderAsset = scene.Blimey.Assets.Load<ShaderAsset>("vertex_lit.bba");
-            else if (shaderIndex == 1)
-                shaderAsset = scene.Blimey.Assets.Load<ShaderAsset>("pixel_lit.bba");
-            else
-                shaderAsset = scene.Blimey.Assets.Load<ShaderAsset>("unlit.bba");;
-
-            Shader shader = scene.Cor.Graphics.CreateShader (shaderAsset);
-
-            // create a material on the fly
-            var mat = new Material(renderPass, shader);
-            //mat.SetTexture("_texture", tex);
-
-
-
-
-            // add a mesh renderer
-            MeshRenderer meshRendererTrait = testGO.AddTrait<MeshRenderer> ();
-
-            // set the mesh renderer's material
-            meshRendererTrait.Material = mat;
-
-            // and it's model
-            meshRendererTrait.Mesh = modelpart;
-
-            testGO.AddTrait<ColourChanger>();
-
-            return testGO;
-        }
-    }
-
     public class Scene_Shapes1
         : Scene
     {
         List<Entity> _objects;
 
         Entity _alternateCamera;
-
-        GridRenderer gr;
 
         const Single _cameraChangeTime = 5f;
 
@@ -217,16 +137,9 @@ namespace Blimey.Demo
 
         public override void Start ()
         {
-            // set up the debug renderer
-            ShaderAsset shaderAsset = this.Blimey.Assets.Load<ShaderAsset>("unlit.bba");
-            this.Blimey.DebugShapeRenderer.DebugShader = 
-                this.Cor.Graphics.CreateShader (shaderAsset);
-
-            gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Default");
-
             _alternateCamera = this.SceneGraph.CreateSceneObject("Alternate Camera");
 
-            _alternateCamera.AddTrait<Camera>();
+            _alternateCamera.AddTrait<CameraTrait>();
 
             _alternateCamera.Transform.Position = new Vector3(0.65f, 1f, -2.50f) * 3;
             _alternateCamera.Transform.LookAt(Vector3.Zero);
@@ -250,7 +163,7 @@ namespace Blimey.Demo
 
             var cowMesh = new TeapotPrimitive(this.Cor.Graphics);
 
-            var mr = landmarkGo.AddTrait<MeshRenderer>();
+            var mr = landmarkGo.AddTrait<MeshRendererTrait>();
 
             mr.Mesh = cowMesh;
 
@@ -275,7 +188,7 @@ namespace Blimey.Demo
                 _returnScene = new Scene_Shapes2();
             }
 
-            gr.Update();
+            this.Blimey.DebugRenderer.AddGrid ("Debug");
 
             _timer -= time.Delta;
 
@@ -320,9 +233,7 @@ namespace Blimey.Demo
         Scene returnScene;
         Entity billboardGo;
 
-        GridRenderer gr;
-
-        LookAtSubject las;
+        LookAtSubjectTrait las;
 
         Entity cam;
 
@@ -345,9 +256,6 @@ namespace Blimey.Demo
 
             // set up the debug renderer
             ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
-            this.Blimey.DebugShapeRenderer.DebugShader = 
-                this.Cor.Graphics.CreateShader (unlitShaderAsset);
-            gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Default", 1f, 10);
 
             returnScene = this;
 
@@ -358,7 +266,7 @@ namespace Blimey.Demo
             unlitShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
             billboardGo = this.SceneGraph.CreateSceneObject("billboard");
 
-            var mr = billboardGo.AddTrait<MeshRenderer>();
+            var mr = billboardGo.AddTrait<MeshRendererTrait>();
             mr.Mesh = billboard;
             mr.Material = new Material("Default", unlitShader);
             mr.Material.SetColour("MaterialColour", RandomGenerator.Default.GetRandomColour());
@@ -369,7 +277,7 @@ namespace Blimey.Demo
 
             markerGo.Transform.LocalScale = new Vector3 (0.05f, 0.05f, 0.05f);
 
-            var markerMR = markerGo.AddTrait<MeshRenderer> ();
+            var markerMR = markerGo.AddTrait<MeshRendererTrait> ();
             markerMR.Mesh = new CubePrimitive(this.Cor.Graphics);
             markerMR.Material = new Material("Default", unlitShader);
             markerMR.Material.SetColour("MaterialColour", Rgba32.Red);
@@ -381,9 +289,9 @@ namespace Blimey.Demo
 
             this.RuntimeConfiguration.SetRenderPassCameraTo ("Debug", cam);
             cam.Transform.Position = new Vector3(2, 1, 5);
-            cam.RemoveTrait<OrbitAroundSubject> ();
+            cam.RemoveTrait<OrbitAroundSubjectTrait> ();
 
-            las = cam.GetTrait<LookAtSubject> ();
+            las = cam.GetTrait<LookAtSubjectTrait> ();
             las.Subject = billboardGo.Transform;
 
             this.Blimey.InputEventSystem.Tap += this.OnTap;
@@ -396,7 +304,7 @@ namespace Blimey.Demo
 
         public override Scene Update(AppTime time)
         {
-            gr.Update ();
+            this.Blimey.DebugRenderer.AddGrid ("Debug", 1f, 10);
 
             timer -= time.Delta;
 
@@ -422,13 +330,13 @@ namespace Blimey.Demo
                 0,
                 x ? 0f : f);
 
-            this.Blimey.DebugShapeRenderer.AddLine (
+            this.Blimey.DebugRenderer.AddLine (
                 "Default",
                 target.Position,
                 target.Position + new Vector3 (0f, 10f, 0f),
                 Rgba32.Orange);
 
-            this.Blimey.DebugShapeRenderer.AddLine (
+            this.Blimey.DebugRenderer.AddLine (
                 "Default",
                 las.Subject.Position,
                 new Vector3(cam.Transform.Position.X, 0f, cam.Transform.Position.Z),
@@ -464,8 +372,6 @@ namespace Blimey.Demo
 
         Mesh teapotGPUMesh;
         Int32 teapotCounter;
-        GridRenderer gr;
-
 		
 		// GPU Resources.
 		Shader shader = null;
@@ -475,10 +381,10 @@ namespace Blimey.Demo
 			this.Configuration.BackgroundColour = Rgba32.Black;
 
             Entity camSo = SceneGraph.CreateSceneObject ("Scene 3 Camera");
-			camSo.AddTrait <Camera> ();
-            var lookatTrait = camSo.AddTrait<LookAtSubject>();
+			camSo.AddTrait <CameraTrait> ();
+            var lookatTrait = camSo.AddTrait<LookAtSubjectTrait>();
             lookatTrait.Subject = Transform.Origin;
-            var orbitTrait = camSo.AddTrait<OrbitAroundSubject>();
+            var orbitTrait = camSo.AddTrait<OrbitAroundSubjectTrait>();
             orbitTrait.CameraSubject = Transform.Origin;
 
             camSo.Transform.LocalPosition = new Vector3(1f,0.5f,5f);
@@ -490,12 +396,6 @@ namespace Blimey.Demo
             this.Blimey.InputEventSystem.Tap += this.OnTap;
 
             teapotGPUMesh = new TeapotPrimitive(Cor.Graphics);
-
-			// set up the debug renderer
-            ShaderAsset shaderAsset = this.Blimey.Assets.Load<ShaderAsset>("unlit.bba");
-			this.Blimey.DebugShapeRenderer.DebugShader = 
-				this.Cor.Graphics.CreateShader (shaderAsset);
-            gr = new GridRenderer(this.Blimey.DebugShapeRenderer, "Debug");
 
             AddTeapot(0);
             AddTeapot(-1.5f);
@@ -527,7 +427,7 @@ namespace Blimey.Demo
 
             //mat.SetTexture("_texture", null);
             // add a mesh renderer
-            var meshRendererTrait = testGO.AddTrait<MeshRenderer> ();
+            var meshRendererTrait = testGO.AddTrait<MeshRendererTrait> ();
 
             // set the mesh renderer's material
             meshRendererTrait.Material = mat;
@@ -552,9 +452,9 @@ namespace Blimey.Demo
                 _returnScene = new Scene_MainMenu();
             }
 
-            gr.Update();
+            this.Blimey.DebugRenderer.AddGrid ("Debug");
 
-            this.Blimey.DebugShapeRenderer.AddLine(
+            this.Blimey.DebugRenderer.AddLine(
                 "Gui",
                 new Vector3(-0.5f, -0.5f, 0),
                 new Vector3(0.5f, 0.5f, 0),
