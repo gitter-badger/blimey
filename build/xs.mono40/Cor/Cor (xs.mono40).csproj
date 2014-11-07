@@ -42,8 +42,8 @@
     <Compile Include="..\..\..\source\Cor.Platform.Native.cs">
       <Link>Cor.Platform.Native.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Library.Foundation.cs">
-      <Link>Cor.Library.Foundation.cs</Link>
+    <Compile Include="..\..\..\source\Foundation.cs">
+      <Link>Foundation.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

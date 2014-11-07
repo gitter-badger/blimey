@@ -55,8 +55,8 @@
     <Compile Include="..\..\..\source\Cor.Platform.cs">
       <Link>Cor.Platform.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Library.Foundation.cs">
-      <Link>Cor.Library.Foundation.cs</Link>
+    <Compile Include="..\..\..\source\Foundation.cs">
+      <Link>Foundation.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Cor.cs">
       <Link>Cor.cs</Link>
