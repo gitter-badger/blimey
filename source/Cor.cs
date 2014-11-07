@@ -994,7 +994,7 @@ namespace Cor
         static System.Collections.Concurrent.ConcurrentQueue <Handle> vertexBuffersToClean =
             new System.Collections.Concurrent.ConcurrentQueue<Handle> ();
 
-        public static void CollectGpuGarbage (IApi platform)
+        internal static void CollectGpuGarbage (IApi platform)
         {
             Handle handle = null;
             while (vertexBuffersToClean.TryDequeue (out handle))
@@ -1165,7 +1165,7 @@ namespace Cor
         static System.Collections.Concurrent.ConcurrentQueue <Handle> indexBuffersToClean =
             new System.Collections.Concurrent.ConcurrentQueue<Handle> ();
 
-        public static void CollectGpuGarbage (IApi platform)
+        internal static void CollectGpuGarbage (IApi platform)
         {
             Handle handle = null;
             while (indexBuffersToClean.TryDequeue (out handle))
@@ -1318,7 +1318,7 @@ namespace Cor
         static System.Collections.Concurrent.ConcurrentQueue <Handle> shadersToClean =
             new System.Collections.Concurrent.ConcurrentQueue<Handle> ();
 
-        public static void CollectGpuGarbage (IApi platform)
+        internal static void CollectGpuGarbage (IApi platform)
         {
             Handle handle = null;
             while (shadersToClean.TryDequeue (out handle))
@@ -1893,7 +1893,7 @@ namespace Cor
         static System.Collections.Concurrent.ConcurrentQueue <Handle> texturesToClean =
             new System.Collections.Concurrent.ConcurrentQueue<Handle> ();
 
-        public static void CollectGpuGarbage (IApi platform)
+        internal static void CollectGpuGarbage (IApi platform)
         {
             Handle handle = null;
             while (texturesToClean.TryDequeue (out handle))

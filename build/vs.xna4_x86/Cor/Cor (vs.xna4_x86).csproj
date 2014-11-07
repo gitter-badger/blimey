@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\x86\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;COR_PLATFORM_XNA4_X86</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -32,7 +32,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\x86\Release</OutputPath>
-    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;COR_PLATFORM_XNA4_X86</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -41,6 +41,7 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -54,9 +55,9 @@
     <Compile Include="..\..\..\source\Cor.Platform.cs">
       <Link>Cor.Platform.cs</Link>
     </Compile>
-    <None Include="..\..\..\source\Cor.Platform.Xna4.cs">
+    <Compile Include="..\..\..\source\Cor.Platform.Xna4.cs">
       <Link>Cor.Platform.Xna4.cs</Link>
-    </None>
+    </Compile>
     <Compile Include="..\..\..\source\Foundation.cs">
       <Link>Foundation.cs</Link>
     </Compile>
