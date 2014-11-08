@@ -394,6 +394,9 @@ namespace Cor.Platform.Xios
             LayerRetainsBacking = true;
             LayerColorFormat = MonoTouch.OpenGLES.EAGLColorFormat.RGBA8;
             ContextRenderingApi = MonoTouch.OpenGLES.EAGLRenderingAPI.OpenGLES2;
+
+
+            OpenTKHelper.InitilizeRenderSettings ();
         }
 
         public Boolean IsAnimating
@@ -438,47 +441,12 @@ namespace Cor.Platform.Xios
             eaglLayer.Opaque = true;
         }
 
-        protected override void CreateFrameBuffer ()
-        {
-            base.CreateFrameBuffer ();
-            /**
-            //
-            // Enable the depth buffer
-            //
-            OpenTK.Graphics.ES20.GL.GenRenderbuffers (1, out _depthRenderbuffer);
-            KrErrorHandler.Check ();
-
-            OpenTK.Graphics.ES20.GL.BindRenderbuffer (
-                OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer,
-                _depthRenderbuffer);
-            KrErrorHandler.Check ();
-
-            OpenTK.Graphics.ES20.GL.RenderbufferStorage (
-                OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer,
-                OpenTK.Graphics.ES20.RenderbufferInternalFormat.DepthComponent16,
-                Size.Width,
-                Size.Height);
-            KrErrorHandler.Check ();
-
-            OpenTK.Graphics.ES20.GL.FramebufferRenderbuffer (
-                OpenTK.Graphics.ES20.FramebufferTarget.Framebuffer,
-                OpenTK.Graphics.ES20.FramebufferSlot.DepthAttachment,
-                OpenTK.Graphics.ES20.RenderbufferTarget.Renderbuffer,
-                _depthRenderbuffer);
-            KrErrorHandler.Check ();
-            */
-        }
-
-        protected override void DestroyFrameBuffer ()
-        {
-            base.DestroyFrameBuffer ();
-        }
-
         public void StartAnimating ()
         {
             if (IsAnimating)
                 return;
 
+            OpenTKHelper.InitilizeRenderTargets (Size.Width, Size.Height);
             CreateFrameBuffer ();
 
             displayLink = UIScreen.MainScreen.CreateDisplayLink (this, new MonoTouch.ObjCRuntime.Selector ("drawFrame"));

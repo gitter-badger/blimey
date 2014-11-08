@@ -92,7 +92,6 @@ namespace Cor.Library.OpenTK
 #elif COR_PLATFORM_MONOMAC
     public partial class MonoMacApi
 #endif
-#if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
     {
         // Keeping global state around like is rather hacky and should refactored out.
         VertexDeclaration currentActiveVertexBufferVertexDeclaration;
@@ -1058,14 +1057,13 @@ namespace Cor.Library.OpenTK
         #endregion
 
     }
-#endif
 
 
 
     internal static class OpenTKHelper
     {
         // this is a haaccky place to put opentk initilisation, todo: move it to somewhere more appropriate
-        static OpenTKHelper ()
+        internal static void InitilizeRenderSettings ()
         {
             GL.Enable (EnableCap.Blend);
             OpenTKHelper.ThrowErrors ();
@@ -1076,19 +1074,77 @@ namespace Cor.Library.OpenTK
             GL.DepthMask (true);
             OpenTKHelper.ThrowErrors ();
 
+            GL.ClearDepth (1.0f);
+            GL.ClearColor (Color.Black);
+
             GL.DepthRange (0f, 1f);
             OpenTKHelper.ThrowErrors ();
 
             GL.DepthFunc (DepthFunction.Lequal);
             OpenTKHelper.ThrowErrors ();
+
+            #if COR_PLATFORM_XIOS
+
+            #elif COR_PLATFORM_MONOMAC
+            // Enables Smooth Shading
+            GL.ShadeModel (ShadingModel.Smooth);
+
+            // Setup Depth Testing
+            // Really Nice Perspective Calculations
+            GL.Hint (HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
+            #endif
         }
+
+        internal static void InitilizeRenderTargets (Int32 width, Int32 height)
+        {
+            Int32 depthRenderbuffer;
+            GL.GenRenderbuffers (1, out depthRenderbuffer);
+            OpenTKHelper.ThrowErrors ();
+
+            GL.BindRenderbuffer (RenderbufferTarget.Renderbuffer, depthRenderbuffer);
+            OpenTKHelper.ThrowErrors ();
+
+#if COR_PLATFORM_XIOS
+
+            GL.RenderbufferStorage (
+            RenderbufferTarget.Renderbuffer,
+            RenderbufferInternalFormat.DepthComponent16,
+            width,
+            height);
+            OpenTKHelper.ThrowErrors ();
+
+            GL.FramebufferRenderbuffer (
+            FramebufferTarget.Framebuffer,
+            FramebufferSlot.DepthAttachment,
+            RenderbufferTarget.Renderbuffer,
+            depthRenderbuffer);
+            OpenTKHelper.ThrowErrors ();
+
+#elif COR_PLATFORM_MONOMAC
+
+            GL.RenderbufferStorage (
+                RenderbufferTarget.Renderbuffer,
+                RenderbufferStorage.DepthComponent16,
+                width,
+                height);
+            OpenTKHelper.ThrowErrors ();
+
+            GL.FramebufferRenderbuffer (
+                FramebufferTarget.Framebuffer,
+                FramebufferAttachment.DepthAttachment,
+                RenderbufferTarget.Renderbuffer,
+                depthRenderbuffer);
+            OpenTKHelper.ThrowErrors ();
+#endif
+        }
+
 
         [Conditional ("DEBUG")]
         public static void ThrowErrors ()
         {
 #if COR_PLATFORM_MONOMAC
             var ec = GL.GetError ();
-#else
+#elif COR_PLATFORM_XIOS
             var ec = GL.GetErrorCode ();
 #endif
 
@@ -1507,10 +1563,10 @@ namespace Cor.Library.OpenTK
                     out temp,
                     infoLog);
 
-                //string log = infoLog.ToString ();
+                string log = infoLog.ToString ();
 
                 //InternalUtils.Log.Info ("GFX", src);
-                //InternalUtils.Log.Info ("GFX", log);
+                InternalUtils.Log.Info ("GFX", log);
                 //InternalUtils.Log.Info ("GFX", type.ToString ());
             }
 #endif
