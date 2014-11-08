@@ -278,6 +278,13 @@ namespace Cor.Platform.Native
         }
 
         [DllImport ("__Internal")]
+        static extern void __gfx_vbff_Bind (Handle vertexBufferHandle, Int32[] attributes);
+        public void gfx_vbff_Bind (Handle vertexBufferHandle, Int32[] attributes)
+        {
+            __gfx_vbff_Bind (vertexBufferHandle, attributes);
+        }
+
+        [DllImport ("__Internal")]
         static extern void __gfx_vbff_SetData ();
         public void gfx_vbff_SetData<T> (Handle vertexBufferHandle, T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType
         {

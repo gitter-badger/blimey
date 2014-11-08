@@ -1058,11 +1058,8 @@ namespace Cor.Library.OpenTK
 
     }
 
-
-
     internal static class OpenTKHelper
     {
-        // this is a haaccky place to put opentk initilisation, todo: move it to somewhere more appropriate
         internal static void InitilizeRenderSettings ()
         {
             GL.Enable (EnableCap.Blend);
@@ -1074,34 +1071,37 @@ namespace Cor.Library.OpenTK
             GL.DepthMask (true);
             OpenTKHelper.ThrowErrors ();
 
-            GL.ClearDepth (1.0f);
-            GL.ClearColor (Color.Black);
-
             GL.DepthRange (0f, 1f);
             OpenTKHelper.ThrowErrors ();
 
             GL.DepthFunc (DepthFunction.Lequal);
             OpenTKHelper.ThrowErrors ();
-
+           
             #if COR_PLATFORM_XIOS
 
             #elif COR_PLATFORM_MONOMAC
+
+            GL.Enable (EnableCap.Texture2D);
+            OpenTKHelper.ThrowErrors ();
+
             // Enables Smooth Shading
             GL.ShadeModel (ShadingModel.Smooth);
+            OpenTKHelper.ThrowErrors ();
 
             // Setup Depth Testing
             // Really Nice Perspective Calculations
             GL.Hint (HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
+            OpenTKHelper.ThrowErrors ();
             #endif
         }
 
         internal static void InitilizeRenderTargets (Int32 width, Int32 height)
         {
-            Int32 depthRenderbuffer;
-            GL.GenRenderbuffers (1, out depthRenderbuffer);
+            Int32 renderbuffer;
+            GL.GenRenderbuffers (1, out renderbuffer);
             OpenTKHelper.ThrowErrors ();
 
-            GL.BindRenderbuffer (RenderbufferTarget.Renderbuffer, depthRenderbuffer);
+            GL.BindRenderbuffer (RenderbufferTarget.Renderbuffer, renderbuffer);
             OpenTKHelper.ThrowErrors ();
 
 #if COR_PLATFORM_XIOS
@@ -1117,14 +1117,14 @@ namespace Cor.Library.OpenTK
             FramebufferTarget.Framebuffer,
             FramebufferSlot.DepthAttachment,
             RenderbufferTarget.Renderbuffer,
-            depthRenderbuffer);
+            renderbuffer);
             OpenTKHelper.ThrowErrors ();
 
 #elif COR_PLATFORM_MONOMAC
 
             GL.RenderbufferStorage (
                 RenderbufferTarget.Renderbuffer,
-                RenderbufferStorage.DepthComponent16,
+                RenderbufferStorage.DepthComponent32,
                 width,
                 height);
             OpenTKHelper.ThrowErrors ();
@@ -1133,7 +1133,7 @@ namespace Cor.Library.OpenTK
                 FramebufferTarget.Framebuffer,
                 FramebufferAttachment.DepthAttachment,
                 RenderbufferTarget.Renderbuffer,
-                depthRenderbuffer);
+                renderbuffer);
             OpenTKHelper.ThrowErrors ();
 #endif
         }

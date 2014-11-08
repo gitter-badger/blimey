@@ -396,7 +396,6 @@ namespace Cor.Platform.Xios
             ContextRenderingApi = MonoTouch.OpenGLES.EAGLRenderingAPI.OpenGLES2;
 
 
-            OpenTKHelper.InitilizeRenderSettings ();
         }
 
         public Boolean IsAnimating
@@ -448,6 +447,7 @@ namespace Cor.Platform.Xios
 
             OpenTKHelper.InitilizeRenderTargets (Size.Width, Size.Height);
             CreateFrameBuffer ();
+            OpenTKHelper.InitilizeRenderSettings ();
 
             displayLink = UIScreen.MainScreen.CreateDisplayLink (this, new MonoTouch.ObjCRuntime.Selector ("drawFrame"));
             displayLink.FrameInterval = frameInterval;

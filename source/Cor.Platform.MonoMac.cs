@@ -121,7 +121,10 @@ namespace Cor.Platform.MonoMac
             mainWindow.AcceptsMouseMovedEvents = false;
             mainWindow.Center ();
 
+
             openGLView = new OpenGLView (update, render, initialAppSize);
+
+
             mainWindow.ContentView.AddSubview (openGLView);
 
             mainWindow.MakeKeyAndOrderFront (mainWindow);
@@ -410,6 +413,18 @@ namespace Cor.Platform.MonoMac
                 global::MonoMac.AppKit.NSViewResizingMask.MaxXMargin |
                 global::MonoMac.AppKit.NSViewResizingMask.MinYMargin |
                 global::MonoMac.AppKit.NSViewResizingMask.WidthSizable;
+
+            MakeCurrent ();
+        }
+
+        public override void MakeCurrent ()
+        {
+            base.MakeCurrent ();
+            OpenTKHelper.InitilizeRenderSettings ();
+            // todo: I'm not sure how to properly set up render buffers with the Mono Mac game view thing
+            //       perhaps it is worth taking this approach:
+            //       https://github.com/xamarin/mac-samples/blob/master/OpenGL-NeHe/NeHeLesson17/MyOpenGLView.cs
+            //OpenTKHelper.InitilizeRenderTargets (Size.Width, Size.Height);
         }
 
         void toggleFullScreen (NSObject sender)
