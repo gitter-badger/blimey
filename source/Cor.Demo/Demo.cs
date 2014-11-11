@@ -56,27 +56,6 @@ namespace Cor.Demo
         public void Start (Engine engine)
         {
             var shader = ShaderHelper.CreateUnlit (engine);
-            elements = new IElement[]
-            {
-                //working
-                new Element <CubePosTex, VertPosTex> (shader),
-                new Element <CylinderPosTex, VertPosTex> (shader),
-                new Element <BillboardPosTexCol, VertPosTexCol> (shader), 
-                new Element <BillboardPosTex, VertPosTex> (shader),
-                new Element <CylinderPosNormTex, VertPosNormTex> (shader),
-                new Element <CylinderNormTexPos, VertNormTexPos> (shader),
-                // broken
-                new Element <FlowerPosCol, VertPosCol> (shader), // vertex colour not showing through
-            };
-
-            Double s = Math.Sqrt (elements.Length);
-
-            numCols = (Int32) Math.Ceiling (s);
-
-            numRows = (Int32) Math.Floor (s);
-
-            while (elements.Length > numCols * numRows) ++numRows;
-
 
             Int32 texSize = 256;
             Int32 gridSize = 4;
@@ -108,7 +87,26 @@ namespace Cor.Demo
 
             tex = engine.Graphics.CreateTexture (TextureFormat.Rgba32, texSize, texSize, texData );
 
-            tex.Activate (0);
+            elements = new IElement[]
+            {
+                new Element <CubePosTex, VertPosTex> (shader, tex),
+                new Element <CylinderPosTex, VertPosTex> (shader, tex),
+                new Element <BillboardPosTexCol, VertPosTexCol> (shader, tex), 
+                new Element <BillboardPosTex, VertPosTex> (shader, tex),
+                new Element <CylinderPosNormTex, VertPosNormTex> (shader, tex),
+                new Element <CylinderNormTexPos, VertNormTexPos> (shader, tex),
+                new Element <FlowerPosCol, VertPosCol> (shader, null),
+                new Element <FlowerPos, VertPos> (shader, null),
+            };
+
+            Double s = Math.Sqrt (elements.Length);
+
+            numCols = (Int32) Math.Ceiling (s);
+
+            numRows = (Int32) Math.Floor (s);
+
+            while (elements.Length > numCols * numRows) ++numRows;
+
 
             foreach (var element in elements) element.Load (engine);
         }
@@ -135,6 +133,7 @@ namespace Cor.Demo
 
         public void Render (Engine cor)
         {
+            cor.Graphics.Reset ();
             cor.Graphics.ClearColourBuffer(Rgba32.Lerp (currentColour, nextColour, colourChangeProgress));
             cor.Graphics.ClearDepthBuffer(1f);
 
@@ -185,6 +184,7 @@ namespace Cor.Demo
             , IVertexType
     {
         readonly Shader shader;
+        readonly Texture texture;
 
         VertexBuffer vertexBuffer;
         IndexBuffer indexBuffer;
@@ -193,10 +193,11 @@ namespace Cor.Demo
         public Matrix44 World { get; private set; }
         public Matrix44 View { get; private set; }
 
-        public Element (Shader shader)
+        public Element (Shader shader, Texture texture)
         {
             this.shader = shader;
-            this.Colour = Rgba32.LightGrey;
+            this.texture = texture;
+            this.Colour = Rgba32.LightGoldenrodYellow;
             View = Matrix44.CreateLookAt (Vector3.UnitZ, Vector3.Forward, Vector3.Up);
         }
 
@@ -240,6 +241,7 @@ namespace Cor.Demo
         {
             vertexBuffer.Activate ();
             indexBuffer.Activate ();
+
             vertexBuffer.Bind (shader);
 
             // set the variable on the shader to our desired variables
@@ -251,13 +253,11 @@ namespace Cor.Demo
             shader.SetVariable ("Colour", Colour);
             shader.SetSamplerTarget ("TextureSampler", 0);
 
+            if (texture != null)
+                texture.Activate (0);
+
             engine.Graphics.DrawIndexedPrimitives (
-                PrimitiveType.TriangleList,
-                0,
-                0,
-                vertexBuffer.VertexCount,
-                0,
-                indexBuffer.IndexCount / 3);
+                PrimitiveType.TriangleList, 0, 0, vertexBuffer.VertexCount, 0, indexBuffer.IndexCount / 3);
         }
     }
 
@@ -287,6 +287,31 @@ namespace Cor.Demo
     }
 
     #region Vertex Formats
+
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertPos : IVertexType
+    {
+        readonly static VertexDeclaration _vertexDeclaration;
+
+        static VertPos ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0));
+        }
+
+        public Vector3 Position;
+
+        public VertPos (Vector3 position)
+        {
+            this.Position = position;
+        }
+
+        public VertexDeclaration VertexDeclaration { get { return _vertexDeclaration; } }
+    }
 
     [StructLayout (LayoutKind.Sequential)]
     public struct VertPosTexCol : IVertexType
@@ -582,6 +607,59 @@ namespace Cor.Demo
                 new VertPosCol( new Vector3(0.8f, 0.2f, 0.0f), RandomColours.GetNext() ),
                 new VertPosCol( new Vector3(0.8f, 0.0f, 0.0f), RandomColours.GetNext() ),
                 new VertPosCol( new Vector3(1.0f, 0.0f, 0.0f), RandomColours.GetNext() ),
+            };
+
+            indexArray = new [] {
+                // Top
+                0, 1, 3, 0, 3, 2, 3, 1, 4, 3, 4, 2,
+                // Bottom
+                0, 7, 5, 0, 6, 7, 7, 8, 5, 7, 6, 8,
+                // Left
+                0, 9, 11, 0, 11, 10, 11, 9, 12, 11, 12, 10,
+                // Right
+                0, 15, 13, 0, 14, 15, 15, 16, 13, 15, 14, 16
+            };
+        }
+    }
+
+    public class FlowerPos : IMesh <VertPos>
+    {
+        readonly VertPos[] vertArray;
+        readonly Int32[] indexArray;
+
+        #region IMesh <VertPos>
+
+        public VertPos[] VertArray { get { return vertArray; } }
+        public Int32[] IndexArray { get { return indexArray; } }
+        public VertexDeclaration VertexDeclaration { get { return vertArray [0].VertexDeclaration; } }
+
+        #endregion
+
+        public FlowerPos ()
+        {
+            vertArray = new[]
+            {
+                new VertPos( new Vector3(0.0f, 0.0f, 0.0f) ),
+                // Top
+                new VertPos( new Vector3(-0.2f, 0.8f, 0.0f) ),
+                new VertPos( new Vector3(0.2f, 0.8f, 0.0f) ),
+                new VertPos( new Vector3(0.0f, 0.8f, 0.0f) ),
+                new VertPos( new Vector3(0.0f, 1.0f, 0.0f) ),
+                // Bottom
+                new VertPos( new Vector3(-0.2f, -0.8f, 0.0f) ),
+                new VertPos( new Vector3(0.2f, -0.8f, 0.0f) ),
+                new VertPos( new Vector3(0.0f, -0.8f, 0.0f) ),
+                new VertPos( new Vector3(0.0f, -1.0f, 0.0f) ),
+                // Left
+                new VertPos( new Vector3(-0.8f, -0.2f, 0.0f) ),
+                new VertPos( new Vector3(-0.8f, 0.2f, 0.0f) ),
+                new VertPos( new Vector3(-0.8f, 0.0f, 0.0f) ),
+                new VertPos( new Vector3(-1.0f, 0.0f, 0.0f) ),
+                // Right
+                new VertPos( new Vector3(0.8f, -0.2f, 0.0f) ),
+                new VertPos( new Vector3(0.8f, 0.2f, 0.0f) ),
+                new VertPos( new Vector3(0.8f, 0.0f, 0.0f) ),
+                new VertPos( new Vector3(1.0f, 0.0f, 0.0f) ),
             };
 
             indexArray = new [] {
@@ -1166,7 +1244,6 @@ void main()
 {
     gl_Position = u_proj * u_view * u_world * a_vertPosition;
     v_tint = a_vertColour * u_colour;
-//    v_tint = a_vertColour * vec4 (1.0, 0.9, 0.1, 1.0);
 }
 =FSH=
 varying vec4 v_tint;
