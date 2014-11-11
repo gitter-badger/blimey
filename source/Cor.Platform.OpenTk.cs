@@ -419,11 +419,18 @@ namespace Cor.Library.OpenTK
                     .ToList () // ordered attributes as per declaration
                     .ForEach (attName => {
                         // https://www.khronos.org/opengles/sdk/docs/man/xhtml/glBindAttribLocation.xml
-                        GL.BindAttribLocation (variantHandle.ProgramHandle, index++, attName);
+                        GL.BindAttribLocation (variantHandle.ProgramHandle, index, attName);
                         OpenTKHelper.ThrowErrors ();
+                        // incremental linkage
+                        Boolean success = OpenTKHelper.LinkProgram (variantHandle.ProgramHandle);
+                        // Only increment the index if we managed to link.  The shader may not implement
+                        // all of the inputs in the shader declaration.  Cor requires the subset of inputs that the
+                        // shader implements have sequential indices, starting at zero, ordered in the same way as the
+                        // shader declaration.
+                        if (success)
+                            index++;
                     });
 
-                OpenTKHelper.LinkProgram (variantHandle.ProgramHandle);
 
                 InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Validating shader program");
 #if DEBUG
