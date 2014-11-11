@@ -771,6 +771,9 @@ namespace Cor.Library.OpenTK
 
                 OpenTKHelper.Convert (vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
 
+                IntPtr ptr = (IntPtr)0;
+                ptr = OpenTKHelper.Add (ptr, vertElemOffset);
+
                 // https://www.khronos.org/opengles/sdk/docs/man/xhtml/glVertexAttribPointer.xml
                 GL.VertexAttribPointer (
                     // index
@@ -797,7 +800,7 @@ namespace Cor.Library.OpenTK
                     // for the next index.
                     vd.VertexStride,
                     // offset into the vert data
-                    (IntPtr) vertElemOffset
+                    ptr
                 );
 
                 OpenTKHelper.ThrowErrors ();
@@ -1040,17 +1043,23 @@ namespace Cor.Library.OpenTK
 
         public void gfx_tex_Activate (Handle h, int slot)
         {
-            TextureUnit oglTexSlot = OpenTKHelper.ConvertToOpenTKTextureSlotEnum (slot);
-            GL.ActiveTexture (oglTexSlot);
+            const TextureTarget textureTarget = TextureTarget.Texture2D;
 
-            var oglt0 = h as TextureHandle;
-
-            if (oglt0 != null)
+            if (h == null)
             {
-                const TextureTarget textureTarget = TextureTarget.Texture2D;
+                GL.BindTexture (textureTarget, 0);
+                OpenTKHelper.ThrowErrors ();
+            }
+            else
+            {
+                TextureUnit oglTexSlot = OpenTKHelper.ConvertToOpenTKTextureSlotEnum (slot);
+
+                GL.ActiveTexture (oglTexSlot);
+                OpenTKHelper.ThrowErrors ();
+                var oglt0 = h as TextureHandle;
 
                 // we need to bind the texture object so that we can opperate on it.
-                GL.BindTexture (textureTarget, oglt0.TextureId);
+                GL.BindTexture (textureTarget, oglt0.TextureId );
                 OpenTKHelper.ThrowErrors ();
             }
         }
