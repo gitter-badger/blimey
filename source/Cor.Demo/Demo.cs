@@ -239,22 +239,18 @@ namespace Cor.Demo
 
         public void Render (Engine engine, Matrix44 projection)
         {
-            vertexBuffer.Activate ();
-            indexBuffer.Activate ();
-
-            vertexBuffer.Bind (shader);
+            engine.Graphics.SetActive (vertexBuffer);
+            engine.Graphics.SetActive (indexBuffer);
+            engine.Graphics.SetActive (shader);
+            engine.Graphics.SetActive (texture, 0);
 
             // set the variable on the shader to our desired variables
-            shader.Activate (vertexBuffer.VertexDeclaration);
             shader.ResetVariables ();
             shader.SetVariable ("World", World);
             shader.SetVariable ("View", View);
             shader.SetVariable ("Projection", projection);
             shader.SetVariable ("Colour", Colour);
             shader.SetSamplerTarget ("TextureSampler", 0);
-
-            if (texture != null)
-                texture.Activate (0);
 
             engine.Graphics.DrawIndexedPrimitives (
                 PrimitiveType.TriangleList, 0, 0, vertexBuffer.VertexCount, 0, indexBuffer.IndexCount / 3);
