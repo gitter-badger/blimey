@@ -736,7 +736,7 @@ namespace Cor.Library.OpenTK
             // Clear the custom vertex array
             // this is rather hacky...
             const Int32 max = 8;
-            if (elementIndicesToActivate.Length > max)
+            if (elementIndicesToActivate != null && elementIndicesToActivate.Length > max)
             {
                 throw new NotImplementedException ();
             }
@@ -746,6 +746,9 @@ namespace Cor.Library.OpenTK
                 OpenTKHelper.ThrowErrors ();
             }
             // TODO: Find a better way to do this.
+
+            if (elementIndicesToActivate == null)
+                return;
 
             var vd = OpenTkCache.Get <VertexDeclaration> (h, "VertexDeclaration");
 
