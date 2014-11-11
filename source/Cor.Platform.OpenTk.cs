@@ -201,8 +201,8 @@ namespace Cor.Library.OpenTK
 
             GL.BufferData (
                 type,
-                (System.IntPtr) (vertexDeclaration.VertexStride * vertexCount),
-                (System.IntPtr) null,
+                (IntPtr) (vertexDeclaration.VertexStride * vertexCount),
+                (IntPtr) null,
                 bufferUsage);
 
             OpenTKHelper.ThrowErrors ();
@@ -212,7 +212,6 @@ namespace Cor.Library.OpenTK
 
         public Handle gfx_CreateIndexBuffer (Int32 indexCount)
         {
-
             UInt32 glHandle;
             const BufferTarget type = BufferTarget.ElementArrayBuffer;
             const GLBufferUsage bufferUsage = GLBufferUsage.DynamicDraw;
@@ -234,8 +233,8 @@ namespace Cor.Library.OpenTK
 
             GL.BufferData (
                 type,
-                (System.IntPtr) (sizeof (UInt16) * indexCount),
-                (System.IntPtr) null,
+                (IntPtr) (sizeof (UInt16) * indexCount),
+                (IntPtr) null,
                 bufferUsage);
 
             OpenTKHelper.ThrowErrors ();
@@ -829,8 +828,8 @@ namespace Cor.Library.OpenTK
             // store can be initialized or updated using the glBufferSubData FN
             GL.BufferSubData (
                 type,
-                (System.IntPtr) 0,
-                (System.IntPtr) (sizeof (UInt16) * indexCount),
+                (IntPtr) 0,
+                (IntPtr) (sizeof (UInt16) * indexCount),
                 udata);
 
             udata = null;
@@ -1701,48 +1700,26 @@ namespace Cor.Library.OpenTK
             bool retVal = true;
 
             GL.LinkProgram (prog);
-
             OpenTKHelper.ThrowErrors ();
 
 #if DEBUG
             Int32 logLength = 0;
 
-            GL.GetProgram (
-                prog,
-                ProgramParameter.InfoLogLength,
-                out logLength);
-
+            GL.GetProgram ( prog, ProgramParameter.InfoLogLength, out logLength);
             OpenTKHelper.ThrowErrors ();
 
             if (logLength > 0)
             {
                 retVal = false;
-
-                /*
-                var infoLog = new System.Text.StringBuilder ();
-
-                GL.GetProgramInfoLog (
-                    prog,
-                    logLength,
-                    out logLength,
-                    infoLog);
-                */
                 var infoLog = string.Empty;
                 GL.GetProgramInfoLog (prog, out infoLog);
-
-
                 OpenTKHelper.ThrowErrors ();
-
-                //InternalUtils.Log.Info ("GFX", string.Format ("[Cor.Resources] Program link log:\n{0}", infoLog));
+                InternalUtils.Log.Info ("GFX", string.Format ("Program link log:\n{0}", infoLog));
             }
 #endif
             Int32 status = 0;
 
-            GL.GetProgram (
-                prog,
-                ProgramParameter.LinkStatus,
-                out status);
-
+            GL.GetProgram (prog, ProgramParameter.LinkStatus, out status);
             OpenTKHelper.ThrowErrors ();
 
             if (status == 0)
@@ -1771,7 +1748,7 @@ namespace Cor.Library.OpenTK
 
             if (logLength > 0)
             {
-                var infoLog = new System.Text.StringBuilder ();
+                var infoLog = new StringBuilder ();
 
                 GL.GetProgramInfoLog (
                     programHandle,
