@@ -410,20 +410,21 @@ namespace Cor
             platform.gfx_tex_Activate (null, 0);
         }
 
+        VertexBuffer currentVertexBuffer = null;
+        IndexBuffer currentIndexBuffer = null;
+        readonly Dictionary<Int32, Texture> currentTextureMap = new Dictionary<Int32, Texture> ();
+        Tuple<Shader, VertexBuffer> currentShaderBinding = null;
+
         /// <summary>
         /// Sets the active vertex buffer.
         /// </summary>
         public void SetActive (VertexBuffer vertexBuffer)
         {
-            platform.gfx_vbff_Activate (vertexBuffer != null ? vertexBuffer.Handle : null);
-        }
+            if (currentVertexBuffer == vertexBuffer)
+                return;
 
-        /// <summary>
-        /// Bind the desired elements of the active vertex buffer.
-        /// </summary>
-        public void Bind (VertexBuffer vertexBuffer, Shader shader)
-        {
-            platform.gfx_vbff_Bind (vertexBuffer.Handle, shader.GetElementsIndicesToEnable (vertexBuffer.VertexDeclaration));
+            platform.gfx_vbff_Activate (vertexBuffer != null ? vertexBuffer.Handle : null);
+            currentVertexBuffer = vertexBuffer;
         }
 
         /// <summary>
@@ -431,7 +432,11 @@ namespace Cor
         /// </summary>
         public void SetActive (IndexBuffer indexBuffer)
         {
+            if (currentIndexBuffer == indexBuffer)
+                return;
+
             platform.gfx_ibff_Activate (indexBuffer != null ? indexBuffer.Handle : null);
+            currentIndexBuffer = indexBuffer;
         }
 
         /// <summary>
@@ -439,7 +444,27 @@ namespace Cor
         /// </summary>
         public void SetActive (Texture texture, Int32 slot)
         {
+            if (currentTextureMap.ContainsKey (slot) && currentTextureMap [slot] == texture)
+                return;
+
             platform.gfx_tex_Activate (texture != null ? texture.Handle : null, slot);
+            currentTextureMap [slot] = texture;
+        }
+
+        /// <summary>
+        /// Bind the desired elements of the active vertex buffer.
+        /// </summary>
+        public void SetActive (Shader shader)
+        {
+            if (currentVertexBuffer == null)
+                throw new Exception ();
+
+            if (currentShaderBinding != null && currentShaderBinding.Item1 == shader && currentShaderBinding.Item2 == currentVertexBuffer)
+                return;
+
+            shader.Activate (currentVertexBuffer.VertexDeclaration);
+            platform.gfx_vbff_Bind (currentVertexBuffer.Handle, shader.GetElementsIndicesToEnable (currentVertexBuffer.VertexDeclaration));
+            currentShaderBinding = new Tuple<Shader, VertexBuffer> (shader, currentVertexBuffer);
         }
 
 
@@ -1618,7 +1643,7 @@ namespace Cor
         /// this shader's current state to the GPU.  This must be called before using the
         /// GPU to draw primitives.
         /// </summary>
-        public void Activate (VertexDeclaration vertexDeclaration)
+        internal void Activate (VertexDeclaration vertexDeclaration)
         {
             if (!bestVariantMap.ContainsKey (vertexDeclaration))
             {
