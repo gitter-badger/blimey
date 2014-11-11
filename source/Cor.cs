@@ -411,6 +411,39 @@ namespace Cor
         }
 
         /// <summary>
+        /// Sets the active vertex buffer.
+        /// </summary>
+        public void SetActive (VertexBuffer vertexBuffer)
+        {
+            platform.gfx_vbff_Activate (vertexBuffer != null ? vertexBuffer.Handle : null);
+        }
+
+        /// <summary>
+        /// Bind the desired elements of the active vertex buffer.
+        /// </summary>
+        public void Bind (VertexBuffer vertexBuffer, Shader shader)
+        {
+            platform.gfx_vbff_Bind (vertexBuffer.Handle, shader.GetElementsIndicesToEnable (vertexBuffer.VertexDeclaration));
+        }
+
+        /// <summary>
+        /// Sets the active index buffer.
+        /// </summary>
+        public void SetActive (IndexBuffer indexBuffer)
+        {
+            platform.gfx_ibff_Activate (indexBuffer != null ? indexBuffer.Handle : null);
+        }
+
+        /// <summary>
+        /// Sets the active index buffer.
+        /// </summary>
+        public void SetActive (Texture texture, Int32 slot)
+        {
+            platform.gfx_tex_Activate (texture != null ? texture.Handle : null, slot);
+        }
+
+
+        /// <summary>
         /// Clears the colour buffer to the specified colour.
         /// </summary>
         public void ClearColourBuffer (Rgba32 colour = new Rgba32())
@@ -1012,14 +1045,6 @@ namespace Cor
             InternalUtils.Log.Info ("GFX", "Vertex buffer created: " + handle.Identifier);
         }
 
-        /// <summary>
-        /// Sets the active vertex buffer.
-        /// </summary>
-        public void Activate ()
-        {
-            platform.gfx_vbff_Activate (handle);
-        }
-
         // This finalizer will run only if the Dispose method
         // does not get called.
         // It gives your base class the opportunity to finalize.
@@ -1088,12 +1113,6 @@ namespace Cor
         ///
         /// </summary>
         public VertexDeclaration VertexDeclaration { get { return platform.gfx_vbff_GetVertexDeclaration (handle); } }
-
-
-        public void Bind (Shader shader)
-        {
-            platform.gfx_vbff_Bind (this.handle, shader.GetElementsIndicesToEnable (this.VertexDeclaration));
-        }
 
         /// <summary>
         ///
@@ -1241,14 +1260,6 @@ namespace Cor
                 // Note disposing has been done.
                 disposed = true;
             }
-        }
-
-        /// <summary>
-        /// Sets the active index buffer.
-        /// </summary>
-        public void Activate ()
-        {
-            platform.gfx_ibff_Activate (handle);
         }
 
         /// <summary>
@@ -1972,17 +1983,6 @@ namespace Cor
             }
         }
 
-
-
-        /// <summary>
-        /// Sets the active texture for a given slot.
-        /// </summary>
-        public void Activate (Int32 slot)
-        {
-            platform.gfx_tex_Activate (textureHandle, slot);
-        }
-
-        
         /// <summary>
         /// The width of the texture in pixels.
         /// </summary>
