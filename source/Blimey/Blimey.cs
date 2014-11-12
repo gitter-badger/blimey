@@ -805,13 +805,12 @@ namespace Blimey
 
     internal class SceneManager
     {
-        Scene activeScene;
         Engine cor;
         Blimey blimey;
 
         SceneRenderer renderManager;
-
-        public event System.EventHandler SimulationStateChanged;
+        Scene activeScene = null;
+        Scene nextScene = null;
 
         public Scene ActiveState { get { return activeScene; } }
 
@@ -819,62 +818,50 @@ namespace Blimey
         {
             this.cor = cor;
             this.blimey = blimey;
-            activeScene = startScene;
-            activeScene.Initialize(cor, blimey);
+            nextScene = startScene;
             renderManager = new SceneRenderer(cor);
 
         }
 
         public Boolean Update(AppTime time)
         {
-            Scene a = activeScene.RunUpdate (time);
-
             // If the active state returns a game state other than itself then we need to shut
             // it down and start the returned state.  If a game state returns null then we need to
             // shut the engine down.
 
             //quitting the game
-            if (a == null)
+            if (nextScene == null)
             {
                 activeScene.Uninitilise ();
+                activeScene = null;
                 return true;
             }
-            else if (a != activeScene)
+
+            if (nextScene != activeScene && activeScene != null)
             {
                 activeScene.Uninitilise ();
-
-                activeScene = a;
-
-                this.cor.Graphics.Reset();
-
-                GC.Collect();
-
-                activeScene.Initialize (cor, blimey);
-
-                if (SimulationStateChanged != null)
-                {
-                    SimulationStateChanged(this, System.EventArgs.Empty);
-                }
-
-                this.Update(time);
-
+                activeScene = null;
+                GC.Collect ();
+                return false;
             }
 
-            return false;
+            if (nextScene != activeScene)
+            {
+                activeScene = nextScene;
+                activeScene.Initialize (cor, blimey);
+            }
 
+            nextScene = activeScene.RunUpdate (time);
+
+            return false;
         }
 
         public void Render()
         {
+            this.cor.Graphics.Reset ();
+
             if (activeScene != null && activeScene.Active)
-            {
-				
                 renderManager.Render(activeScene);
-            }
-            else
-            {
-                Console.WriteLine("Beep");
-            }
         }
     }
 
@@ -892,8 +879,8 @@ namespace Blimey
             return _activeCameras[RenderPass].GetTrait<CameraTrait> ();
         }
 
-        Dictionary<String, Entity> _defaultCameras = new Dictionary<String,Entity>();
-        Dictionary<String, Entity> _activeCameras = new Dictionary<String,Entity>();
+        readonly Dictionary<String, Entity> _defaultCameras = new Dictionary<String,Entity>();
+        readonly Dictionary<String, Entity> _activeCameras = new Dictionary<String,Entity>();
 
         internal void SetDefaultCamera(String RenderPass)
         {
