@@ -2006,19 +2006,16 @@ void main()
 
         void RenderPass(Scene scene, RenderPass pass)
         {
-            // #0: Apply this pass' clear settings.
-            var gfxManager = this.engine.Graphics;
 
+            // #0: Apply this pass' clear settings.
             if (pass.Configuration.ClearDepthBuffer)
             {
-                gfxManager.ClearDepthBuffer();
+                this.engine.Graphics.ClearDepthBuffer();
             }
 
             var cam = scene.CameraManager.GetActiveCamera(pass.Name);
 
-
             // #1 Render everything in the scene graph that has a material on this pass.
-
             var meshRenderers = this.GetMeshRenderersWithMaterials(scene, pass.Name);
 
             // TODO: big one
@@ -2026,15 +2023,15 @@ void main()
             // and only make a new draw call when there are changes.
             foreach (var mr in meshRenderers)
             {
-                _renderMeshRenderer (gfxManager, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44, mr);
+                _renderMeshRenderer (this.engine.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44, mr);
             }
 
             // #2: Render all primitives that are associated with this pass.
             //scene.Blimey.PrimitiveBatch.Render(gfxManager, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
-            scene.Blimey.PrimitiveRenderer.Render(gfxManager, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
+            scene.Blimey.PrimitiveRenderer.Render(this.engine.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
 
             // #3: Render all debug primitives that are associated with this pass.
-            scene.Blimey.DebugRenderer.Render(gfxManager, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
+            scene.Blimey.DebugRenderer.Render(this.engine.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
         }
 
         static void _renderMeshRenderer (Graphics zGfx, string renderPass, Matrix44 zView, Matrix44 zProjection, MeshRendererTrait mr)
