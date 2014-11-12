@@ -195,7 +195,7 @@ namespace Blimey.Demo
         Scene GetSceneForCurrentSelection()
         {
             if (_selectedIndex == 0)
-                return new Scene_Shapes1 ();
+                return new Scene_Shapes ();
 
             if (_selectedIndex == 1)
                 return new Scene_Airports ();

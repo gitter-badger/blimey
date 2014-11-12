@@ -97,11 +97,10 @@ namespace Blimey.Demo
 
 		List<Airport> airports = new List<Airport>();
 
-		Shader shader = null;
-		Shader shader2 = null;
-
 		public override void Start()
 		{
+            CommonDemoResources.Create (Cor, Blimey);
+
             var lines = Blimey.Assets.Load <TextAsset> ("airports.bba")
                 .Text
                 .Split ('\n')
@@ -131,10 +130,8 @@ namespace Blimey.Demo
 			// create a sprite
 			var sphereMesh = new SpherePrimitive(this.Cor.Graphics);
 
-            ShaderAsset shaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("vertex_lit.bba");
-            shader = this.Cor.Graphics.CreateShader (shaderAsset);
 
-            var mat = new Material("Default",shader);
+            var mat = new Material("Default",CommonDemoResources.VertexLitShader);
             mat.SetColour("MaterialColour", Rgba32.LightGrey);
 			earthGo = this.SceneGraph.CreateSceneObject("earth");
 
@@ -156,10 +153,7 @@ namespace Blimey.Demo
 			mr.Mesh = sphereMesh;
 			mr.Material = mat;
 
-            ShaderAsset shaderAsset2 = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
-			shader2 = this.Cor.Graphics.CreateShader (shaderAsset2);
-
-			var mat2 = new Material("Default", shader2);
+            var mat2 = new Material("Default", CommonDemoResources.UnlitShader);
 			mat2.SetColour("MaterialColour", Rgba32.Blue);
 
             foreach (var airport in airports)
@@ -199,8 +193,7 @@ namespace Blimey.Demo
 		public override void Shutdown()
 		{
 			this.Blimey.InputEventSystem.Tap -= this.OnTap;
-			this.Cor.Graphics.DestroyShader (shader2);
-			this.Cor.Graphics.DestroyShader (shader);
+            CommonDemoResources.Destroy ();
 		}
 
 		public override Scene Update(AppTime time)
@@ -221,10 +214,6 @@ namespace Blimey.Demo
 		void OnTap(Gesture gesture)
 		{
 			returnScene = new Scene_MainMenu();
-
-			// Clean up the things we allocated on the GPU.
-			this.Cor.Graphics.DestroyShader (shader);
-			shader = null;
 		}
 	}
 }

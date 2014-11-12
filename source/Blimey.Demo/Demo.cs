@@ -76,9 +76,7 @@ namespace Blimey.Demo
             // create a game object
             Entity testGO = scene.SceneGraph.CreateSceneObject ("test");
 
-
             Single scale = RandomGenerator.Default.GetRandomSingle(0.25f, 0.5f);
-
 
             // size it
             testGO.Transform.LocalPosition = new Vector3(

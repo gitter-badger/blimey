@@ -117,7 +117,7 @@ namespace Blimey.Demo
         }
     }
 
-    public class Scene_Shapes1
+    public class Scene_Shapes
         : Scene
     {
         List<Entity> _objects;
@@ -132,12 +132,11 @@ namespace Blimey.Demo
 
         Scene _returnScene;
 
-        // GPU Resources.
-        Shader shader = null;
-
         public override void Start ()
         {
             _alternateCamera = this.SceneGraph.CreateSceneObject("Alternate Camera");
+
+            CommonDemoResources.Create (Cor, Blimey);
 
             _alternateCamera.AddTrait<CameraTrait>();
 
@@ -167,10 +166,7 @@ namespace Blimey.Demo
 
             mr.Mesh = cowMesh;
 
-            ShaderAsset shaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("pixel_lit.bba");
-            shader = this.Cor.Graphics.CreateShader (shaderAsset);
-
-            var mat = new Material("Default", shader);
+            var mat = new Material("Default", CommonDemoResources.PixelLitShader);
 
             mat.SetColour("MaterialColour", Rgba32.CornflowerBlue);
 
@@ -185,7 +181,7 @@ namespace Blimey.Demo
                 Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
                 Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
             {
-                _returnScene = new Scene_Shapes2();
+                _returnScene = new Scene_MainMenu();
             }
 
             this.Blimey.DebugRenderer.AddGrid ("Debug");
@@ -217,13 +213,12 @@ namespace Blimey.Demo
             this.Blimey.InputEventSystem.Tap -= this.OnTap;
 
             // Clean up the things we allocated on the GPU.
-            this.Cor.Graphics.DestroyShader (shader);
-            shader = null;
+            CommonDemoResources.Destroy ();
         }
 
         void OnTap(Gesture gesture)
         {
-            _returnScene = new Scene_Shapes2();
+            _returnScene = new Scene_MainMenu();
         }
     }
 
@@ -247,15 +242,12 @@ namespace Blimey.Demo
 
         Entity markerGo;
 
-        // GPU Resources
-        Shader unlitShader = null;
 
         public override void Start()
         {
             this.Configuration.BackgroundColour = Rgba32.LightSlateGrey;
 
-            // set up the debug renderer
-            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
+            CommonDemoResources.Create (Cor, Blimey);
 
             returnScene = this;
 
@@ -263,12 +255,11 @@ namespace Blimey.Demo
             var billboard = new BillboardPrimitive(this.Cor.Graphics);
 
 
-            unlitShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
             billboardGo = this.SceneGraph.CreateSceneObject("billboard");
 
             var mr = billboardGo.AddTrait<MeshRendererTrait>();
             mr.Mesh = billboard;
-            mr.Material = new Material("Default", unlitShader);
+            mr.Material = new Material("Default", CommonDemoResources.UnlitShader);
             mr.Material.SetColour("MaterialColour", RandomGenerator.Default.GetRandomColour());
 
             target = billboardGo.Transform;
@@ -279,7 +270,7 @@ namespace Blimey.Demo
 
             var markerMR = markerGo.AddTrait<MeshRendererTrait> ();
             markerMR.Mesh = new CubePrimitive(this.Cor.Graphics);
-            markerMR.Material = new Material("Default", unlitShader);
+            markerMR.Material = new Material("Default", CommonDemoResources.UnlitShader);
             markerMR.Material.SetColour("MaterialColour", Rgba32.Red);
 
             cam = this.CameraManager.GetRenderPassCamera ("Default");
@@ -300,6 +291,7 @@ namespace Blimey.Demo
         public override void Shutdown()
         {
             this.Blimey.InputEventSystem.Tap -= this.OnTap;
+            CommonDemoResources.Destroy ();
         }
 
         public override Scene Update(AppTime time)
@@ -357,10 +349,6 @@ namespace Blimey.Demo
         void OnTap(Gesture gesture)
         {
             returnScene = new Scene_Shapes3();
-
-            // Clean up the things we allocated on the GPU.
-            this.Cor.Graphics.DestroyShader (unlitShader);
-            unlitShader = null;
         }
     }
 
@@ -379,6 +367,8 @@ namespace Blimey.Demo
         public override void Start()
         {
 			this.Configuration.BackgroundColour = Rgba32.Black;
+
+            CommonDemoResources.Create (Cor, Blimey);
 
             Entity camSo = SceneGraph.CreateSceneObject ("Scene 3 Camera");
 			camSo.AddTrait <CameraTrait> ();
@@ -418,12 +408,7 @@ namespace Blimey.Demo
 
             testGO.Transform.LocalScale = new Vector3(scale, scale, scale);
 
-
-            ShaderAsset shaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("pixel_lit.bba");
-
-			shader = this.Cor.Graphics.CreateShader (shaderAsset);
-
-            var mat = new Material("Default", shader);
+            var mat = new Material("Default", CommonDemoResources.PixelLitShader);
 
             //mat.SetTexture("_texture", null);
             // add a mesh renderer
@@ -441,6 +426,7 @@ namespace Blimey.Demo
         public override void Shutdown()
         {
             this.Blimey.InputEventSystem.Tap -= this.OnTap;
+            CommonDemoResources.Destroy ();
         }
 
         public override Scene Update(AppTime time)
@@ -466,10 +452,6 @@ namespace Blimey.Demo
         void OnTap(Gesture gesture)
         {
 			_returnScene = new Scene_MainMenu();
-
-			// Clean up the things we allocated on the GPU.
-			this.Cor.Graphics.DestroyShader (shader);
-			shader = null;
         }
     }
 }
