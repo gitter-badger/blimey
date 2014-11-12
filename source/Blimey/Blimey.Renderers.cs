@@ -1070,9 +1070,9 @@ void main()
             public float fSize;
             public float fSizeDelta;
 
-            public Rgba32 colColor;      // + alpha
-            public Rgba32 colColorStart;
-            public Rgba32 colColorEnd;
+            public Rgba32 colColour;      // + alpha
+            public Rgba32 colColourStart;
+            public Rgba32 colColourEnd;
 
             public float fAge;
             public float fTerminalAge;
@@ -1094,9 +1094,9 @@ void main()
                 this.fSize = o.fSize;
                 this.fSizeDelta = o.fSizeDelta;
 
-                this.colColor = o.colColor;     // + alpha
-                this.colColorStart = o.colColorStart;
-                this.colColorEnd = o.colColorEnd;
+                this.colColour = o.colColour;     // + alpha
+                this.colColourStart = o.colColourStart;
+                this.colColourEnd = o.colColourEnd;
 
                 this.fAge = o.fAge;
                 this.fTerminalAge = o.fTerminalAge;
@@ -1129,10 +1129,10 @@ void main()
             public float fSpinEnd;
             public float fSpinVar;
 
-            public Rgba32 colColorStart; // + alpha
-            public Rgba32 colColorEnd;
-            public float fColorStartVar;
-            public float fColorEndVar;
+            public Rgba32 colColourStart; // + alpha
+            public Rgba32 colColourEnd;
+            public float fColourStartVar;
+            public float fColourEndVar;
         }
 
         public class BoundingRectangle
@@ -1282,9 +1282,9 @@ void main()
                     Particle par = particles[i];
 
                     System.Diagnostics.Debug.Assert(par != null);
-                    //Color temp = info.sprite.GetColour();
-                    //temp.A = par.colColor.A;
-                    info.sprite.SetColour(par.colColor);
+                    //Rgba32 temp = info.sprite.GetColour();
+                    //temp.A = par.colColour.A;
+                    info.sprite.SetColour(par.colColour);
 
                     info.sprite.DrawEx(renderPass,
                         par.vecLocation.X * fScale + fTx,
@@ -1381,8 +1381,8 @@ void main()
                     par.fSize += par.fSizeDelta*fDeltaTime;
 
                     float factor = par.fAge / par.fTerminalAge;
-                    par.colColor = Rgba32.Lerp(par.colColorStart, par.colColorEnd, factor);
-                    //par.colColor = new Color(par.colColor.ToVector4() + (par.colColorEnd.ToVector4() * fDeltaTime));
+                    par.colColour = Rgba32.Lerp(par.colColourStart, par.colColourEnd, factor);
+                    //par.colColour = new Rgba32(par.colColour.ToVector4() + (par.colColourEnd.ToVector4() * fDeltaTime));
                 }
 
                 if (bUpdateBoundingBox)
@@ -1429,27 +1429,27 @@ void main()
                         par.fSpinDelta = (info.fSpinEnd-par.fSpin) / par.fTerminalAge;
 
 
-                        //Vector4 start = info.colColorStart.ToVector4();
-                        //Vector4 finish = info.colColorEnd.ToVector4();
+                        //Vector4 start = info.colColourStart.ToVector4();
+                        //Vector4 finish = info.colColourEnd.ToVector4();
 
-                        //Vector4 colColorV = new Vector4(
-                        //    Euclid.RandomHelper.Random_Float(start.W, finish.W + (finish.W - start.W) * info.fColorEndVar),
-                        //    Euclid.RandomHelper.Random_Float(start.X, start.X + (finish.X - start.X) * info.fColorStartVar),
-                        //    Euclid.RandomHelper.Random_Float(start.Y, finish.Y + (finish.Y - start.Y) * info.fColorStartVar),
-                        //    Euclid.RandomHelper.Random_Float(start.Z, finish.Z + (finish.Z - start.Z) * info.fColorStartVar)
+                        //Vector4 colColourV = new Vector4(
+                        //    Euclid.RandomHelper.Random_Float(start.W, finish.W + (finish.W - start.W) * info.fColourEndVar),
+                        //    Euclid.RandomHelper.Random_Float(start.X, start.X + (finish.X - start.X) * info.fColourStartVar),
+                        //    Euclid.RandomHelper.Random_Float(start.Y, finish.Y + (finish.Y - start.Y) * info.fColourStartVar),
+                        //    Euclid.RandomHelper.Random_Float(start.Z, finish.Z + (finish.Z - start.Z) * info.fColourStartVar)
                         //    );
-                        //par.colColorStart = new Color(colColorV);
+                        //par.colColourStart = new Rgba32(colColourV);
 
-                        //Vector4 colColorDeltaV = new Vector4();
+                        //Vector4 colColourDeltaV = new Vector4();
 
-                        //colColorDeltaV.W = (finish.W - start.W) / par.fTerminalAge;
-                        //colColorDeltaV.X = (finish.X - start.X) / par.fTerminalAge;
-                        //colColorDeltaV.Y = (finish.Y - start.Y) / par.fTerminalAge;
-                        //colColorDeltaV.Z = (finish.Z - start.Z) / par.fTerminalAge;
-                        //par.colColorEnd = new Color(colColorDeltaV);
+                        //colColourDeltaV.W = (finish.W - start.W) / par.fTerminalAge;
+                        //colColourDeltaV.X = (finish.X - start.X) / par.fTerminalAge;
+                        //colColourDeltaV.Y = (finish.Y - start.Y) / par.fTerminalAge;
+                        //colColourDeltaV.Z = (finish.Z - start.Z) / par.fTerminalAge;
+                        //par.colColourEnd = new Rgba32(colColourDeltaV);
 
-                        par.colColorStart = RandomGenerator.Default.GetRandomColourNearby(info.colColorStart, info.fColorStartVar);
-                        par.colColorEnd = RandomGenerator.Default.GetRandomColourNearby(info.colColorEnd, info.fColorEndVar);
+                        par.colColourStart = RandomGenerator.Default.GetRandomColourNearby(info.colColourStart, info.fColourStartVar);
+                        par.colColourEnd = RandomGenerator.Default.GetRandomColourNearby(info.colColourEnd, info.fColourEndVar);
 
                         if (bUpdateBoundingBox) 
                             rectBoundingBox.Encapsulate(par.vecLocation.X, par.vecLocation.Y);
