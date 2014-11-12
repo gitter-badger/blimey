@@ -350,16 +350,13 @@ namespace Blimey
         internal void UpdateGpuSettings(Graphics graphics)
         {
             // Update the render states on the gpu
-			graphics.SetBlendEquation (this.BlendMode);
-
-            graphics.SetActiveTexture (null, 0);
+            graphics.SetBlendEquation (this.BlendMode);
 
             // Set the active textures on the gpu
             int i = 0;
             foreach(var key in textureSamplerSettings.Keys)
             {
-                graphics.SetActiveTexture (textureSamplerSettings[key], i);
-                i++;
+                graphics.SetActive (textureSamplerSettings [key], i++);
             }
         }
 

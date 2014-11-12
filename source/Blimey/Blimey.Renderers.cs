@@ -182,7 +182,7 @@ namespace Blimey
                 }
 
                 // Start our effect to begin rendering.
-                debugShader.Activate (VertexPositionColour.Default.VertexDeclaration);
+                zGfx.SetActive (debugShader);
 
                 // We draw in a loop because the Reach profile only supports 65,535 primitives. While it's
                 // not incredibly likely, if a game tries to render more than 65,535 lines we don't want to
@@ -1772,7 +1772,7 @@ void main()
             zGfx.ClearDepthBuffer (1f);
             zGfx.SetCullMode (CullMode.None);
 
-            shader.Activate (VertexPositionTextureColour.Default.VertexDeclaration);
+            zGfx.SetActive (shader);
             shader.SetVariable ("View", zView);
             shader.SetVariable ("Projection", zProjection);
 
@@ -1793,7 +1793,7 @@ void main()
 
                 if (!blendMode.HasValue || texture != batch.Texture)
                 {
-                    gfx.SetActiveTexture(batch.Texture, 0);
+                    gfx.SetActive(batch.Texture, 0);
                     texture = batch.Texture;
                 }
 
@@ -2055,13 +2055,13 @@ void main()
             using (new ProfilingTimer(t => FrameStats.ActivateVertexBufferTime += t))
             {
                 // Set our vertex declaration, vertex buffer, and index buffer.
-                zGfx.SetActiveVertexBuffer(mr.Mesh.VertexBuffer);
+                zGfx.SetActive(mr.Mesh.VertexBuffer);
             }
 
             using (new ProfilingTimer(t => FrameStats.ActivateIndexBufferTime += t))
             {
                 // Set our vertex declaration, vertex buffer, and index buffer.
-                zGfx.SetActiveIndexBuffer(mr.Mesh.IndexBuffer);
+                zGfx.SetActive(mr.Mesh.IndexBuffer);
             }
 
             using (new ProfilingTimer(t => FrameStats.MaterialTime += t))
@@ -2110,7 +2110,7 @@ void main()
             {
                 using (new ProfilingTimer(t => FrameStats.ActivateShaderTime += t))
                 {
-                    shader.Activate (mr.Mesh.VertexBuffer.VertexDeclaration);
+                    zGfx.SetActive (shader);
                 }
 
                 using (new ProfilingTimer(t => FrameStats.DrawTime += t))
