@@ -461,6 +461,7 @@ namespace Blimey
 		CameraManager cameraManager = null;
 		SceneSceneGraph sceneGraph = null;
 		Boolean isRunning = false;
+        Boolean firstUpdate = true;
 
 		
 		// ======================= //
@@ -497,11 +498,16 @@ namespace Blimey
 			this.sceneGraph = new SceneSceneGraph (this);
             this.cameraManager = new CameraManager(this);
             this.Start();
-            this.isRunning = true;
         }
 
         internal Scene RunUpdate(AppTime time)
         {
+            if (firstUpdate)
+            {
+                firstUpdate = false;
+                isRunning = true;
+            }
+
 			this.blimey.PreUpdate (time);
 			
 			foreach (Entity go in sceneGraph.GetAllObjects())
@@ -518,7 +524,6 @@ namespace Blimey
         internal virtual void Uninitilise ()
         {
             this.Shutdown ();
-
             this.isRunning = false;
 
             List<Entity> onesToDestroy = new List<Entity> ();
