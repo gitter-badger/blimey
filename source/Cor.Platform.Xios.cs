@@ -10,9 +10,7 @@
 // │                                    \/           \//_____/         \/     \/                                    │ \\
 // │                                                                                                                │ \\
 // ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2008-2014 A.J.Pook (http://ajpook.github.io)                                                       │ \\
-// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
-// │ Authors: A.J.Pook                                                                                              │ \\
+// │ Copyright © 2008-2014 Sungiant ~ http://www.blimey3d.com ~ Authors: A.J.Pook                                   │ \\
 // ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated   │ \\
 // │ documentation files (the "Software"), to deal in the Software without restriction, including without           │ \\
