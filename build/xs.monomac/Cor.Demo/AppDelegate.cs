@@ -38,6 +38,8 @@ using MonoMac.AppKit;
 using Cor;
 using Cor.Platform;
 using Cor.Platform.MonoMac;
+using System.IO;
+
 
 namespace Cor.Demo
 {
@@ -46,6 +48,9 @@ namespace Cor.Demo
         , IDisposable
 	{
         Engine engine;
+
+        MemoryStream memory;
+        StreamWriter writer;
 
 		public override void FinishedLaunching (NSObject notification)
 		{
@@ -56,10 +61,22 @@ namespace Cor.Demo
 
             var entryPoint = new BasicApp();
 
-			engine = new Engine(
-                new MonoMacPlatform (),
+            var platform = new MonoMacPlatform ();
+
+#if LOGGED_PROXY
+
+            memory = new MemoryStream ();
+            writer = new StreamWriter (memory);
+
+            engine = new Engine(new LoggedProxyPlatform (platform, writer), appSettings, entryPoint);
+
+
+#else
+            engine = new Engine(
+                platform,
                 appSettings,
                 entryPoint);
+#endif
 		}
 
 		public override bool ApplicationShouldTerminateAfterLastWindowClosed (NSApplication sender)
@@ -70,6 +87,8 @@ namespace Cor.Demo
         public new void Dispose ()
         {
             engine.Dispose ();
+            writer.Dispose ();
+            memory.Dispose ();
             base.Dispose ();
         }
 	}
