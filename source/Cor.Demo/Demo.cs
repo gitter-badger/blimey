@@ -52,10 +52,12 @@ namespace Cor.Demo
         Int32 numCols;
         Int32 numRows;
         Texture tex;
+        Shader shader;
+
 
         public void Start (Engine engine)
         {
-            var shader = ShaderHelper.CreateUnlit (engine);
+            shader = ShaderHelper.CreateUnlit (engine);
 
             Int32 texSize = 256;
             Int32 gridSize = 4;
@@ -241,16 +243,18 @@ namespace Cor.Demo
         {
             engine.Graphics.SetActive (vertexBuffer);
             engine.Graphics.SetActive (indexBuffer);
-            engine.Graphics.SetActive (shader);
             engine.Graphics.SetActive (texture, 0);
 
             // set the variable on the shader to our desired variables
+            shader.ResetSamplers ();
             shader.ResetVariables ();
             shader.SetVariable ("World", World);
             shader.SetVariable ("View", View);
             shader.SetVariable ("Projection", projection);
             shader.SetVariable ("Colour", Colour);
             shader.SetSamplerTarget ("TextureSampler", 0);
+
+            engine.Graphics.SetActive (shader);
 
             engine.Graphics.DrawIndexedPrimitives (
                 PrimitiveType.TriangleList, 0, 0, vertexBuffer.VertexCount, 0, indexBuffer.IndexCount / 3);
