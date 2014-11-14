@@ -173,6 +173,11 @@ namespace Cor.Platform
             var g = Guid.NewGuid();
             guid = g.ToString ();
         }
+
+        public override String ToString ()
+        {
+            return guid;
+        }
         
         public String Identifier { get { return guid; } }
         
