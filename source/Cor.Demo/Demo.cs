@@ -55,6 +55,13 @@ namespace Cor.Demo
         Shader shader;
 
 
+        VertPosCol[] testLines = new [] {
+            new VertPosCol (new Vector3 (-1, -1, 0.5f), Rgba32.Red),
+            new VertPosCol (new Vector3 (1f, 1f, 0.5f), Rgba32.Yellow),
+            new VertPosCol (new Vector3 (-1, 1, 0.5f), Rgba32.Blue),
+            new VertPosCol (new Vector3 (-1f, 1f, 0.5f), Rgba32.Green)
+        };
+
         public void Start (Engine engine)
         {
             shader = ShaderHelper.CreateUnlit (engine);
@@ -138,6 +145,19 @@ namespace Cor.Demo
             cor.Graphics.Reset ();
             cor.Graphics.ClearColourBuffer(Rgba32.Lerp (currentColour, nextColour, colourChangeProgress));
             cor.Graphics.ClearDepthBuffer(1f);
+
+            var world = Matrix44.Identity;
+            var view = Matrix44.CreateLookAt (Vector3.UnitZ, Vector3.Forward, Vector3.Up);
+            var projection = Matrix44.CreateOrthographicOffCenter (-1f, 1f, -1f, 1f, 1f, -1f);
+            shader.ResetVariables ();
+            shader.ResetSamplers ();
+            shader.SetVariable ("World", world);
+            shader.SetVariable ("View", view);
+            shader.SetVariable ("Projection", projection);
+            shader.SetVariable ("Colour", Rgba32.White);
+            shader.SetSamplerTarget ("TextureSampler", 0);
+            cor.Graphics.SetActive (shader, testLines[0].VertexDeclaration);
+            cor.Graphics.DrawUserPrimitives (PrimitiveType.LineList, testLines, 0, testLines.Length / 2); 
 
             // grid index
             Int32 x = 0;
