@@ -82,7 +82,7 @@ namespace Cor
             program.Start (
                 platformImplementation,
                 () => {
-                    stream.WriteLine ("UPDATE #" + updateCount++);
+                    stream.WriteLine (Environment.NewLine + "UPDATE #" + updateCount++);
                     update ();
                     },
                 () => {
@@ -121,7 +121,7 @@ namespace Cor
 
         void EndLog (Object v = null)
         {
-            StartLog (" = " + (v ?? "✓"));
+            StartLog (" = " + (v ?? "✓") + Environment.NewLine);
         }
 
         /*
@@ -168,7 +168,7 @@ namespace Cor
 
         public void gfx_SetBlendEquation (BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb, BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha)
         {
-            StartLog ("gfx_SetBlendEquationSetVolume ({0}, {1}, {2}, {3}, {4}, {5}) <- ", rgbBlendFunction, sourceRgb, destinationRgb, alphaBlendFunction, sourceAlpha, destinationAlpha);
+            StartLog ("gfx_SetBlendEquationSetVolume ({0}, {1}, {2}, {3}, {4}, {5})", rgbBlendFunction, sourceRgb, destinationRgb, alphaBlendFunction, sourceAlpha, destinationAlpha);
             api.gfx_SetBlendEquation (rgbBlendFunction, sourceRgb, destinationRgb, alphaBlendFunction, sourceAlpha, destinationAlpha);
             EndLog ();
         }
@@ -192,7 +192,7 @@ namespace Cor
         public Handle gfx_CreateTexture (TextureFormat textureFormat, Int32 width, Int32 height, Byte[] source)
         {
             StartLog ("gfx_CreateTexture ({0}, {1}, {2}, {3})", textureFormat, width, height, source);
-            Handle handle = gfx_CreateTexture (textureFormat, width, height, source);
+            Handle handle = api.gfx_CreateTexture (textureFormat, width, height, source);
             EndLog (handle);
             return handle;
         }
@@ -200,7 +200,7 @@ namespace Cor
         public Handle gfx_CreateShader (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[] source)
         {
             StartLog ("gfx_CreateShader ({0}, {1}, {2})", shaderDeclaration, shaderFormat, source);
-            Handle handle = gfx_CreateShader (shaderDeclaration, shaderFormat, source);
+            Handle handle = api.gfx_CreateShader (shaderDeclaration, shaderFormat, source);
             EndLog (handle);
             return handle;
         }
@@ -208,63 +208,63 @@ namespace Cor
         public void gfx_DestroyVertexBuffer (Handle vertexBufferHandle)
         {
             StartLog ("gfx_DestroyVertexBuffer ({0})", vertexBufferHandle);
-            gfx_DestroyVertexBuffer (vertexBufferHandle);
+            api.gfx_DestroyVertexBuffer (vertexBufferHandle);
             EndLog ();
         }
 
         public void gfx_DestroyIndexBuffer (Handle indexBufferHandle)
         {
             StartLog ("gfx_DestroyIndexBuffer ({0})", indexBufferHandle);
-            gfx_DestroyIndexBuffer (indexBufferHandle);
+            api.gfx_DestroyIndexBuffer (indexBufferHandle);
             EndLog ();
         }
 
         public void gfx_DestroyTexture (Handle textureHandle)
         {
             StartLog ("gfx_DestroyTexture ({0})", textureHandle);
-            gfx_DestroyTexture (textureHandle);
+            api.gfx_DestroyTexture (textureHandle);
             EndLog ();
         }
 
         public void gfx_DestroyShader (Handle shaderHandle)
         {
             StartLog ("gfx_DestroyShader ({0})", shaderHandle);
-            gfx_DestroyShader (shaderHandle);
+            api.gfx_DestroyShader (shaderHandle);
             EndLog ();
         }
 
         public void gfx_DrawPrimitives (PrimitiveType primitiveType, Int32 startVertex, Int32 primitiveCount)
         {
             StartLog ("gfx_DrawPrimitives ({0}, {1}, {2})", primitiveType, startVertex, primitiveCount);
-            gfx_DrawPrimitives (primitiveType, startVertex, primitiveCount);
+            api.gfx_DrawPrimitives (primitiveType, startVertex, primitiveCount);
             EndLog ();
         }
 
         public void gfx_DrawIndexedPrimitives (PrimitiveType primitiveType, Int32 baseVertex, Int32 minVertexIndex, Int32 numVertices, Int32 startIndex, Int32 primitiveCount)
         {
             StartLog ("gfx_DrawIndexedPrimitives ({0}, {1}, {2}, {3}, {4}, {5})", primitiveType, baseVertex, minVertexIndex, numVertices, startIndex, primitiveCount);
-            gfx_DrawIndexedPrimitives (primitiveType, baseVertex, minVertexIndex, numVertices, startIndex, primitiveCount);
+            api.gfx_DrawIndexedPrimitives (primitiveType, baseVertex, minVertexIndex, numVertices, startIndex, primitiveCount);
             EndLog ();
         }
 
         public void gfx_DrawUserPrimitives <T> (PrimitiveType primitiveType, T[] vertexData, Int32 vertexOffset, Int32 primitiveCount) where T: struct, IVertexType
         {
             StartLog ("gfx_DrawUserPrimitives ({0}, {1}, {2}, {3})", primitiveType, vertexData, vertexOffset, primitiveCount);
-            gfx_DrawUserPrimitives (primitiveType, vertexData, vertexOffset, primitiveCount);
+            api.gfx_DrawUserPrimitives (primitiveType, vertexData, vertexOffset, primitiveCount);
             EndLog ();
         }
 
         public void gfx_DrawUserIndexedPrimitives <T> (PrimitiveType primitiveType, T[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount) where T: struct, IVertexType
         {
             StartLog ("gfx_DrawUserIndexedPrimitives ({0}, {1}, {2}, {3}, {4}, {5}, {6})", primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount);
-            gfx_DrawUserIndexedPrimitives (primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount);
+            api.gfx_DrawUserIndexedPrimitives (primitiveType, vertexData, vertexOffset, numVertices, indexData, indexOffset, primitiveCount);
             EndLog ();
         }
 
         public Byte[] gfx_CompileShader (String source)
         {
             StartLog ("gfx_CompileShader (*)");
-            Byte[] compiled = gfx_CompileShader (source);
+            Byte[] compiled = api.gfx_CompileShader (source);
             EndLog (compiled);
             return compiled;
         }
@@ -272,7 +272,7 @@ namespace Cor
         public Int32 gfx_dbg_BeginEvent (Rgba32 colour, String eventName)
         {
             StartLog ("gfx_dbg_BeginEvent ({0}, {1})", colour, eventName);
-            Int32 code = gfx_dbg_BeginEvent (colour, eventName);
+            Int32 code = api.gfx_dbg_BeginEvent (colour, eventName);
             EndLog (code);
             return code;
         }
@@ -280,7 +280,7 @@ namespace Cor
         public Int32 gfx_dbg_EndEvent ()
         {
             StartLog ("gfx_dbg_EndEvent ()");
-            Int32 code = gfx_dbg_EndEvent ();
+            Int32 code = api.gfx_dbg_EndEvent ();
             EndLog (code);
             return code;
         }
@@ -288,21 +288,21 @@ namespace Cor
         public void gfx_dbg_SetMarker (Rgba32 colour, String marker)
         {
             StartLog ("gfx_dbg_SetMarker ({0}, {1})", colour, marker);
-            gfx_dbg_SetMarker (colour, marker);
+            api.gfx_dbg_SetMarker (colour, marker);
             EndLog ();
         }
 
         public void gfx_dbg_SetRegion (Rgba32 colour, String region)
         {
             StartLog ("gfx_dbg_SetRegion ({0}, {1})", colour, region);
-            gfx_dbg_SetRegion (colour, region);
+            api.gfx_dbg_SetRegion (colour, region);
             EndLog ();
         }
 
         public Int32 gfx_vbff_GetVertexCount (Handle vertexBufferHandle)
         {
             StartLog ("gfx_vbff_GetVertexCount ({0})", vertexBufferHandle);
-            Int32 count = gfx_vbff_GetVertexCount (vertexBufferHandle);
+            Int32 count = api.gfx_vbff_GetVertexCount (vertexBufferHandle);
             EndLog (count);
             return count;
         }
@@ -310,7 +310,7 @@ namespace Cor
         public VertexDeclaration gfx_vbff_GetVertexDeclaration (Handle vertexBufferHandle)
         {
             StartLog ("gfx_vbff_GetVertexDeclaration ({0})", vertexBufferHandle);
-            VertexDeclaration vertexDeclaration = gfx_vbff_GetVertexDeclaration (vertexBufferHandle);
+            VertexDeclaration vertexDeclaration = api.gfx_vbff_GetVertexDeclaration (vertexBufferHandle);
             EndLog (vertexDeclaration);
             return vertexDeclaration;
         }
@@ -318,14 +318,14 @@ namespace Cor
         public void gfx_vbff_SetData<T> (Handle vertexBufferHandle, T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType
         {
             StartLog ("gfx_vbff_SetData ({0}, {1}, {2}, {3})", vertexBufferHandle, data, startIndex, elementCount);
-            gfx_vbff_SetData (vertexBufferHandle, data, startIndex, elementCount);
+            api.gfx_vbff_SetData (vertexBufferHandle, data, startIndex, elementCount);
             EndLog ();
         }
 
         public T[] gfx_vbff_GetData<T> (Handle vertexBufferHandle, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType
         {
             StartLog ("gfx_vbff_GetData ({0}, {1}, {2})", vertexBufferHandle, startIndex, elementCount);
-            T[] data = gfx_vbff_GetData<T> (vertexBufferHandle, startIndex, elementCount);
+            T[] data = api.gfx_vbff_GetData<T> (vertexBufferHandle, startIndex, elementCount);
             EndLog (data);
             return data;
         }
@@ -333,21 +333,21 @@ namespace Cor
         public void gfx_vbff_Activate (Handle vertexBufferHandle)
         {
             StartLog ("gfx_vbff_Activate ({0})", vertexBufferHandle);
-            gfx_vbff_Activate (vertexBufferHandle);
+            api.gfx_vbff_Activate (vertexBufferHandle);
             EndLog ();
         }
 
         public void gfx_vbff_Bind (VertexDeclaration vertexDeclaration, Int32[] vertexElementIndices)
         {
             StartLog ("gfx_vbff_Activate ({0}, {1})", vertexDeclaration, vertexElementIndices);
-            gfx_vbff_Bind (vertexDeclaration, vertexElementIndices);
+            api.gfx_vbff_Bind (vertexDeclaration, vertexElementIndices);
             EndLog ();
         }
 
         public Int32 gfx_ibff_GetIndexCount (Handle indexBufferHandle)
         {
             StartLog ("gfx_ibff_GetIndexCount ({0})", indexBufferHandle);
-            Int32 count = gfx_ibff_GetIndexCount (indexBufferHandle);
+            Int32 count = api.gfx_ibff_GetIndexCount (indexBufferHandle);
             EndLog ();
             return count;
         }
@@ -355,14 +355,14 @@ namespace Cor
         public void gfx_ibff_SetData (Handle indexBufferHandle, Int32[] data, Int32 startIndex, Int32 elementCount)
         {
             StartLog ("gfx_ibff_SetData ({0}, {1}, {2}, {3})", indexBufferHandle, data, startIndex, elementCount);
-            gfx_ibff_SetData (indexBufferHandle, data, startIndex, elementCount);
+            api.gfx_ibff_SetData (indexBufferHandle, data, startIndex, elementCount);
             EndLog ();
         }
 
         public Int32[] gfx_ibff_GetData (Handle indexBufferHandle, Int32 startIndex, Int32 elementCount)
         {
             StartLog ("gfx_ibff_GetData ({0}, {1}, {2})", indexBufferHandle, startIndex, elementCount);
-            Int32[] data = gfx_ibff_GetData (indexBufferHandle, startIndex, elementCount);
+            Int32[] data = api.gfx_ibff_GetData (indexBufferHandle, startIndex, elementCount);
             EndLog (data);
             return data;
         }
@@ -370,14 +370,14 @@ namespace Cor
         public void gfx_ibff_Activate (Handle indexBufferHandle)
         {
             StartLog ("gfx_ibff_Activate ({0})", indexBufferHandle);
-            gfx_ibff_Activate (indexBufferHandle);
+            api.gfx_ibff_Activate (indexBufferHandle);
             EndLog ();
         }
 
         public Int32 gfx_tex_GetWidth (Handle textureHandle)
         {
             StartLog ("gfx_tex_GetWidth ({0})", textureHandle);
-            Int32 width = gfx_tex_GetWidth (textureHandle);
+            Int32 width = api.gfx_tex_GetWidth (textureHandle);
             EndLog (width);
             return width;
         }
@@ -385,7 +385,7 @@ namespace Cor
         public Int32 gfx_tex_GetHeight (Handle textureHandle)
         {
             StartLog ("gfx_tex_GetHeight ({0})", textureHandle);
-            Int32 height = gfx_tex_GetHeight (textureHandle);
+            Int32 height = api.gfx_tex_GetHeight (textureHandle);
             EndLog (height);
             return height;
         }
@@ -393,7 +393,7 @@ namespace Cor
         public TextureFormat gfx_tex_GetTextureFormat (Handle textureHandle)
         {
             StartLog ("gfx_tex_GetTextureFormat ({0})", textureHandle);
-            TextureFormat textureFormat = gfx_tex_GetTextureFormat (textureHandle);
+            TextureFormat textureFormat = api.gfx_tex_GetTextureFormat (textureHandle);
             EndLog (textureFormat);
             return textureFormat;
         }
@@ -401,7 +401,7 @@ namespace Cor
         public Byte[] gfx_tex_GetData (Handle textureHandle)
         {
             StartLog ("gfx_tex_GetData ({0})", textureHandle);
-            Byte[] data = gfx_tex_GetData (textureHandle);
+            Byte[] data = api.gfx_tex_GetData (textureHandle);
             EndLog (data);
             return data;
         }
@@ -409,35 +409,35 @@ namespace Cor
         public void gfx_tex_Activate (Handle textureHandle, Int32 slot)
         {
             StartLog ("gfx_tex_Activate ({0}, {1})", textureHandle, slot);
-            gfx_tex_Activate (textureHandle, slot);
+            api.gfx_tex_Activate (textureHandle, slot);
             EndLog ();
         }
 
         public void gfx_shdr_SetVariable<T> (Handle shaderHandle, Int32 variantIndex, String name, T value)
         {
             StartLog ("gfx_shdr_SetVariable ({0}, {1}, {2}, {3})", shaderHandle, variantIndex, name, value);
-            gfx_shdr_SetVariable<T> (shaderHandle, variantIndex, name, value);
+            api.gfx_shdr_SetVariable<T> (shaderHandle, variantIndex, name, value);
             EndLog ();
         }
 
         public void gfx_shdr_SetSampler (Handle shaderHandle, Int32 variantIndex, String name, Int32 slot)
         {
             StartLog ("gfx_shdr_SetSampler ({0}, {1}, {2}, {3})", shaderHandle, variantIndex, name, slot);
-            gfx_shdr_SetSampler (shaderHandle, variantIndex, name, slot);
+            api.gfx_shdr_SetSampler (shaderHandle, variantIndex, name, slot);
             EndLog ();
         }
 
         public void gfx_shdr_Activate (Handle shaderHandle, Int32 variantIndex)
         {
             StartLog ("gfx_shdr_Activate ({0}, {1})", shaderHandle, variantIndex);
-            gfx_shdr_Activate (shaderHandle, variantIndex);
+            api.gfx_shdr_Activate (shaderHandle, variantIndex);
             EndLog ();
         }
 
         public Int32 gfx_shdr_GetVariantCount (Handle shaderHandle)
         {
             StartLog ("gfx_shdr_GetVariantCount ({0})", shaderHandle);
-            Int32 count = gfx_shdr_GetVariantCount (shaderHandle);
+            Int32 count = api.gfx_shdr_GetVariantCount (shaderHandle);
             EndLog (count);
             return count;
         }
@@ -445,7 +445,7 @@ namespace Cor
         public String gfx_shdr_GetIdentifier (Handle shaderHandle, Int32 variantIndex)
         {
             StartLog ("gfx_shdr_GetIdentifier ({0}, {1})", shaderHandle, variantIndex);
-            String identifier = gfx_shdr_GetIdentifier (shaderHandle, variantIndex);
+            String identifier = api.gfx_shdr_GetIdentifier (shaderHandle, variantIndex);
             EndLog (identifier);
             return identifier;
         }
@@ -453,7 +453,7 @@ namespace Cor
         public ShaderInputInfo[] gfx_shdr_GetInputs (Handle shaderHandle, Int32 variantIndex)
         {
             StartLog ("gfx_shdr_GetInputs ({0}, {1})", shaderHandle, variantIndex);
-            ShaderInputInfo[] inputs = gfx_shdr_GetInputs (shaderHandle, variantIndex);
+            ShaderInputInfo[] inputs = api.gfx_shdr_GetInputs (shaderHandle, variantIndex);
             EndLog (inputs);
             return inputs;
         }
@@ -461,7 +461,7 @@ namespace Cor
         public ShaderVariableInfo[] gfx_shdr_GetVariables (Handle shaderHandle, Int32 variantIndex)
         {
             StartLog ("gfx_shdr_GetVariables ({0}, {1})", shaderHandle, variantIndex);
-            ShaderVariableInfo[] variables = gfx_shdr_GetVariables (shaderHandle, variantIndex);
+            ShaderVariableInfo[] variables = api.gfx_shdr_GetVariables (shaderHandle, variantIndex);
             EndLog (variables);
             return variables;
         }
@@ -469,7 +469,7 @@ namespace Cor
         public ShaderSamplerInfo[] gfx_shdr_GetSamplers (Handle shaderHandle, Int32 variantIndex)
         {
             StartLog ("gfx_shdr_GetSamplers ({0}, {1})", shaderHandle, variantIndex);
-            ShaderSamplerInfo[] samplers = gfx_shdr_GetSamplers (shaderHandle, variantIndex);
+            ShaderSamplerInfo[] samplers = api.gfx_shdr_GetSamplers (shaderHandle, variantIndex);
             EndLog (samplers);
             return samplers;
         }
@@ -480,7 +480,7 @@ namespace Cor
         public Stream res_GetFileStream (String fileName)
         {
             StartLog ("res_GetFileStream ({0})", fileName);
-            Stream stream = res_GetFileStream (fileName);
+            Stream stream = api.res_GetFileStream (fileName);
             EndLog (stream);
             return stream;
         }
@@ -491,7 +491,7 @@ namespace Cor
         public String sys_GetMachineIdentifier ()
         {
             StartLog ("sys_GetMachineIdentifier ()");
-            String identifier = sys_GetMachineIdentifier ();
+            String identifier = api.sys_GetMachineIdentifier ();
             EndLog (identifier);
             return identifier;
         }
@@ -499,7 +499,7 @@ namespace Cor
         public String sys_GetOperatingSystemIdentifier ()
         {
             StartLog ("sys_GetOperatingSystemIdentifier ()");
-            String identifier = sys_GetOperatingSystemIdentifier ();
+            String identifier = api.sys_GetOperatingSystemIdentifier ();
             EndLog (identifier);
             return identifier;
         }
@@ -507,7 +507,7 @@ namespace Cor
         public String sys_GetVirtualMachineIdentifier ()
         {
             StartLog ("sys_GetVirtualMachineIdentifier ()");
-            String identifier = sys_GetVirtualMachineIdentifier ();
+            String identifier = api.sys_GetVirtualMachineIdentifier ();
             EndLog (identifier);
             return identifier;
         }
@@ -515,7 +515,7 @@ namespace Cor
         public Int32 sys_GetPrimaryScreenResolutionWidth ()
         {
             StartLog ("sys_GetPrimaryScreenResolutionWidth ()");
-            Int32 width = sys_GetPrimaryScreenResolutionWidth ();
+            Int32 width = api.sys_GetPrimaryScreenResolutionWidth ();
             EndLog (width);
             return width;
         }
@@ -523,7 +523,7 @@ namespace Cor
         public Int32 sys_GetPrimaryScreenResolutionHeight ()
         {
             StartLog ("sys_GetPrimaryScreenResolutionHeight ()");
-            Int32 height = sys_GetPrimaryScreenResolutionHeight ();
+            Int32 height = api.sys_GetPrimaryScreenResolutionHeight ();
             EndLog (height);
             return height;
         }
@@ -531,7 +531,7 @@ namespace Cor
         public Vector2? sys_GetPrimaryPanelPhysicalSize ()
         {
             StartLog ("sys_GetPrimaryPanelPhysicalSize ()");
-            Vector2? panelPhysicalSize = sys_GetPrimaryPanelPhysicalSize ();
+            Vector2? panelPhysicalSize = api.sys_GetPrimaryPanelPhysicalSize ();
             EndLog (panelPhysicalSize);
             return panelPhysicalSize;
         }
@@ -539,7 +539,7 @@ namespace Cor
         public PanelType sys_GetPrimaryPanelType ()
         {
             StartLog ("sys_GetPrimaryPanelType ()");
-            PanelType panelType = sys_GetPrimaryPanelType ();
+            PanelType panelType = api.sys_GetPrimaryPanelType ();
             EndLog (panelType);
             return panelType;
         }
@@ -550,7 +550,7 @@ namespace Cor
         public Boolean? app_IsFullscreen ()
         {
             StartLog ("app_IsFullscreen ()");
-            Boolean? isFullscreen = app_IsFullscreen ();
+            Boolean? isFullscreen = api.app_IsFullscreen ();
             EndLog (isFullscreen);
             return isFullscreen;
         }
@@ -558,7 +558,7 @@ namespace Cor
         public Int32 app_GetWidth ()
         {
             StartLog ("app_GetWidth ()");
-            Int32 width = app_GetWidth ();
+            Int32 width = api.app_GetWidth ();
             EndLog (width);
             return width;
         }
@@ -566,7 +566,7 @@ namespace Cor
         public Int32 app_GetHeight ()
         {
             StartLog ("app_GetHeight ()");
-            Int32 height = app_GetHeight ();
+            Int32 height = api.app_GetHeight ();
             EndLog (height);
             return height;
         }
@@ -577,7 +577,7 @@ namespace Cor
         public DeviceOrientation? hid_GetCurrentOrientation ()
         {
             StartLog ("hid_GetCurrentOrientation ()");
-            DeviceOrientation? currentOrientation = hid_GetCurrentOrientation ();
+            DeviceOrientation? currentOrientation = api.hid_GetCurrentOrientation ();
             EndLog (currentOrientation);
             return currentOrientation;
         }
@@ -585,7 +585,7 @@ namespace Cor
         public Dictionary <DigitalControlIdentifier, Int32> hid_GetDigitalControlStates ()
         {
             StartLog ("hid_GetDigitalControlStates ()");
-            var digitalControlStates = hid_GetDigitalControlStates ();
+            var digitalControlStates = api.hid_GetDigitalControlStates ();
             EndLog (digitalControlStates);
             return digitalControlStates;
         }
@@ -593,7 +593,7 @@ namespace Cor
         public Dictionary <AnalogControlIdentifier, Single> hid_GetAnalogControlStates ()
         {
             StartLog ("hid_GetAnalogControlStates ()");
-            var analogControlStates = hid_GetAnalogControlStates ();
+            var analogControlStates = api.hid_GetAnalogControlStates ();
             EndLog (analogControlStates);
             return analogControlStates;
         }
@@ -601,7 +601,7 @@ namespace Cor
         public HashSet <BinaryControlIdentifier> hid_GetBinaryControlStates ()
         {
             StartLog ("hid_GetBinaryControlStates ()");
-            var binaryControlStates = hid_GetBinaryControlStates ();
+            var binaryControlStates = api.hid_GetBinaryControlStates ();
             EndLog (binaryControlStates);
             return binaryControlStates;
         }
@@ -609,7 +609,7 @@ namespace Cor
         public HashSet <Char> hid_GetPressedCharacters ()
         {
             StartLog ("hid_GetPressedCharacters ()");
-            var pressedCharacters = hid_GetPressedCharacters ();
+            var pressedCharacters = api.hid_GetPressedCharacters ();
             EndLog (pressedCharacters);
             return pressedCharacters;
         }
@@ -617,7 +617,7 @@ namespace Cor
         public HashSet <RawTouch> hid_GetActiveTouches ()
         {
             StartLog ("hid_GetActiveTouches ()");
-            var activeTouches = hid_GetActiveTouches ();
+            var activeTouches = api.hid_GetActiveTouches ();
             EndLog (activeTouches);
             return activeTouches;
         }
