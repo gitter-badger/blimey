@@ -40,7 +40,6 @@ using Cor.Platform;
 using Cor.Platform.MonoMac;
 using System.IO;
 
-
 namespace Cor.Demo
 {
 	class AppDelegate
@@ -49,8 +48,10 @@ namespace Cor.Demo
 	{
         Engine engine;
 
-        MemoryStream memory;
-        StreamWriter writer;
+#if LOGGED_PROXY
+        readonly FileStream memory;
+        readonly StreamWriter writer;
+#endif
 
 		public override void FinishedLaunching (NSObject notification)
 		{
@@ -64,13 +65,9 @@ namespace Cor.Demo
             var platform = new MonoMacPlatform ();
 
 #if LOGGED_PROXY
-
-            memory = new MemoryStream ();
+            memory = new FileStream (Path.Combine (Environment.GetEnvironmentVariable ("HOME"), "log.txt"), FileMode.Create);
             writer = new StreamWriter (memory);
-
             engine = new Engine(new LoggedProxyPlatform (platform, writer), appSettings, entryPoint);
-
-
 #else
             engine = new Engine(
                 platform,
@@ -87,8 +84,10 @@ namespace Cor.Demo
         public new void Dispose ()
         {
             engine.Dispose ();
+#if LOGGED_PROXY
             writer.Dispose ();
             memory.Dispose ();
+#endif
             base.Dispose ();
         }
 	}
