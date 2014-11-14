@@ -406,8 +406,17 @@ namespace Cor
             platform.gfx_vbff_Activate (null);
             platform.gfx_ibff_Activate (null);
 
+            currentVertexBuffer = null;
+            currentIndexBuffer = null;
+
             // todo, here we need to set all the texture slots to point to null
-            platform.gfx_tex_Activate (null, 0);
+            foreach (var slot in currentTextureMap.Keys)
+                platform.gfx_tex_Activate (null, slot);
+
+            currentTextureMap.Clear ();
+
+            platform.gfx_vbff_Bind (null, null);
+            currentShaderBinding = null;
         }
 
         VertexBuffer currentVertexBuffer = null;
@@ -459,11 +468,33 @@ namespace Cor
             if (currentVertexBuffer == null)
                 throw new Exception ();
 
-            if (currentShaderBinding != null && currentShaderBinding.Item1 == shader && currentShaderBinding.Item2 == currentVertexBuffer)
-                return;
+            // todo: optimise this: see teapot dissapearing example
+            //if (currentShaderBinding != null
+            //    && currentShaderBinding.Item1 == shader
+            //    && currentShaderBinding.Item2 == currentVertexBuffer) return;
 
             shader.Activate (currentVertexBuffer.VertexDeclaration);
-            platform.gfx_vbff_Bind (currentVertexBuffer.Handle, shader.GetElementsIndicesToEnable (currentVertexBuffer.VertexDeclaration));
+            platform.gfx_vbff_Bind (
+                currentVertexBuffer.VertexDeclaration,
+                shader.GetElementsIndicesToEnable (currentVertexBuffer.VertexDeclaration));
+
+            currentShaderBinding = new Tuple<Shader, VertexBuffer> (shader, currentVertexBuffer);
+        }
+
+        public void SetActive (Shader shader, VertexDeclaration vertexDeclaration)
+        {
+            if (currentVertexBuffer != null || currentIndexBuffer != null)
+                throw new Exception ();
+
+
+            //if (currentShaderBinding != null
+            //    && currentShaderBinding.Item1 == shader
+            //    && currentShaderBinding.Item2 == currentVertexBuffer) return;
+
+            shader.Activate (vertexDeclaration);
+            var indices = shader.GetElementsIndicesToEnable (vertexDeclaration);
+            platform.gfx_vbff_Bind (vertexDeclaration, indices);
+
             currentShaderBinding = new Tuple<Shader, VertexBuffer> (shader, currentVertexBuffer);
         }
 

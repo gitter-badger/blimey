@@ -731,7 +731,7 @@ namespace Cor.Library.OpenTK
         //elementIndicesToActivate
         // ~ The order of this array maps to the order of the variables in the shader
         // ~ The elements themselves are Vertex Element indices.
-        public void gfx_vbff_Bind (Handle h, Int32[] elementIndicesToActivate)
+        public void gfx_vbff_Bind (VertexDeclaration vd, Int32[] elementIndicesToActivate)
         {
             // Clear the custom vertex array
             // this is rather hacky...
@@ -749,8 +749,6 @@ namespace Cor.Library.OpenTK
 
             if (elementIndicesToActivate == null)
                 return;
-
-            var vd = OpenTkCache.Get <VertexDeclaration> (h, "VertexDeclaration");
 
             // https://www.khronos.org/opengles/sdk/docs/man/xhtml/glVertexAttribPointer.xmlbindd
             var vertElems = vd.GetVertexElements ();

@@ -104,8 +104,8 @@ namespace Cor.Platform
         void                    gfx_vbff_Activate                       (Handle vertexBufferHandle);
 
         // This function looks at the vertex elements in the given vertex buffer and activate an array of generic
-        // vertex attribute data that correspond to the given indices.  If null, all will be activated.
-        void                    gfx_vbff_Bind                           (Handle vertexBufferHandle, Int32[] vertexElementIndices);
+                                                                                                               // vertex attribute data that correspond to the given indices.  If null, all will be activated.
+        void                    gfx_vbff_Bind                           (VertexDeclaration vertexDeclaration, Int32[] vertexElementIndices);
 
         Int32                   gfx_ibff_GetIndexCount                  (Handle indexBufferHandle);
         void                    gfx_ibff_SetData                        (Handle indexBufferHandle, Int32[] data, Int32 startIndex, Int32 elementCount);
