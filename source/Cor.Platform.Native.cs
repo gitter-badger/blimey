@@ -277,10 +277,10 @@ namespace Cor.Platform.Native
         }
 
         [DllImport ("__Internal")]
-        static extern void __gfx_vbff_Bind (Handle vertexBufferHandle, Int32[] attributes);
-        public void gfx_vbff_Bind (Handle vertexBufferHandle, Int32[] attributes)
+        static extern void __gfx_vbff_Bind (VertexDeclaration vertexDeclaration, Int32[] attributes);
+        public void gfx_vbff_Bind (VertexDeclaration vertexDeclaration, Int32[] attributes)
         {
-            __gfx_vbff_Bind (vertexBufferHandle, attributes);
+            __gfx_vbff_Bind (vertexDeclaration, attributes);
         }
 
         [DllImport ("__Internal")]

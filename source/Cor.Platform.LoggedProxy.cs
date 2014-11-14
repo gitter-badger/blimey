@@ -337,10 +337,10 @@ namespace Cor
             EndLog ();
         }
 
-        public void gfx_vbff_Bind (Handle vertexBufferHandle, Int32[] vertexElementIndices)
+        public void gfx_vbff_Bind (VertexDeclaration vertexDeclaration, Int32[] vertexElementIndices)
         {
-            StartLog ("gfx_vbff_Activate ({0}, {1})", vertexBufferHandle, vertexElementIndices);
-            gfx_vbff_Bind (vertexBufferHandle, vertexElementIndices);
+            StartLog ("gfx_vbff_Activate ({0}, {1})", vertexDeclaration, vertexElementIndices);
+            gfx_vbff_Bind (vertexDeclaration, vertexElementIndices);
             EndLog ();
         }
 
