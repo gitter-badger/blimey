@@ -527,7 +527,7 @@ namespace Cor.Library.OpenTK
             Int32 startIndex, 
             Int32 primitiveCount)
         {
-            if (baseVertex != 0 || minVertexIndex != 0 || startIndex != 0 )
+            if (baseVertex != 0 || minVertexIndex != 0 || startIndex != 0)
             {
                 throw new NotImplementedException ();
             }
@@ -542,7 +542,7 @@ namespace Cor.Library.OpenTK
                 otkpType,
                 count,
                 DrawElementsType.UnsignedShort,
-                (System.IntPtr) 0 );
+                (IntPtr) 0 );
 
             OpenTKHelper.ThrowErrors ();
         }
@@ -552,13 +552,13 @@ namespace Cor.Library.OpenTK
             T[] vertexData, 
             Int32 vertexOffset,
             Int32 primitiveCount) 
-            where T
+        where T
             : struct
             , IVertexType
         {
             // do i need to do this? todo: find out
-            gfx_vbff_Activate (null);
-            gfx_ibff_Activate (null);
+            //gfx_vbff_Activate (null);
+            //gfx_ibff_Activate (null);
 
             var vertDecl = vertexData[0].VertexDeclaration;
 
@@ -592,6 +592,8 @@ namespace Cor.Library.OpenTK
                 pointer = OpenTKHelper.Add (pointer, vertexOffset * vertDecl.VertexStride * sizeof (byte));
             }
 
+            __bindVertices (vertDecl, null, pointer);
+
             var glDrawMode = OpenTKHelper.ConvertToOpenTKBeginModeEnum (primitiveType);
             var glDrawModeAll = glDrawMode;
 
@@ -622,9 +624,9 @@ namespace Cor.Library.OpenTK
             Int32[] indexData, 
             Int32 indexOffset, 
             Int32 primitiveCount) 
-            where T
+        where T
             : struct
-        , IVertexType
+            , IVertexType
         {
             throw new NotImplementedException ();
         }
@@ -731,6 +733,11 @@ namespace Cor.Library.OpenTK
         // ~ The elements themselves are Vertex Element indices.
         public void gfx_vbff_Bind (VertexDeclaration vd, Int32[] elementIndicesToActivate)
         {
+            __bindVertices (vd, elementIndicesToActivate, (IntPtr) 0);
+        }
+
+        internal void __bindVertices (VertexDeclaration vd, Int32[] elementIndicesToActivate, IntPtr ptr)
+        {
             // Clear the custom vertex array
             // this is rather hacky...
             const Int32 max = 8;
@@ -744,12 +751,14 @@ namespace Cor.Library.OpenTK
                 OpenTKHelper.ThrowErrors ();
             }
             // TODO: Find a better way to do this.
-
-            if (elementIndicesToActivate == null)
+            if (vd == null)
                 return;
 
             // https://www.khronos.org/opengles/sdk/docs/man/xhtml/glVertexAttribPointer.xmlbindd
             var vertElems = vd.GetVertexElements ();
+
+            if (elementIndicesToActivate == null)
+                elementIndicesToActivate = vertElems.Select ((x, i) => i).ToArray ();
 
             for(Int32 i = 0; i < elementIndicesToActivate.Length; ++i)
             {
@@ -770,8 +779,7 @@ namespace Cor.Library.OpenTK
 
                 OpenTKHelper.Convert (vertElemFormat, out glVertElemFormat, out vertElemNormalized, out numComponentsInVertElem);
 
-                IntPtr ptr = (IntPtr)0;
-                ptr = OpenTKHelper.Add (ptr, vertElemOffset);
+                IntPtr ptr2 = OpenTKHelper.Add (ptr, vertElemOffset);
 
                 // https://www.khronos.org/opengles/sdk/docs/man/xhtml/glVertexAttribPointer.xml
                 GL.VertexAttribPointer (
@@ -799,7 +807,7 @@ namespace Cor.Library.OpenTK
                     // for the next index.
                     vd.VertexStride,
                     // offset into the vert data
-                    ptr
+                    ptr2
                 );
 
                 OpenTKHelper.ThrowErrors ();
