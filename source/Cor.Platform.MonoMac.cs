@@ -109,24 +109,16 @@ namespace Cor.Platform.MonoMac
                 NSBackingStore.Buffered,
                 true);
 
-            mainWindow.Title = "Cor Blimey!";
-
+            mainWindow.Title = "Cor";
             mainWindow.WindowController = new NSWindowController (mainWindow);
             mainWindow.Delegate = new MainWindowDelegate (this);
-
             mainWindow.IsOpaque = true;
             mainWindow.EnableCursorRects ();
             mainWindow.AcceptsMouseMovedEvents = false;
             mainWindow.Center ();
-
-
             openGLView = new OpenGLView (update, render, initialAppSize);
-
-
             mainWindow.ContentView.AddSubview (openGLView);
-
             mainWindow.MakeKeyAndOrderFront (mainWindow);
-
             openGLView.StartRunLoop (60f);
         }
 
