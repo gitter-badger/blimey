@@ -55,7 +55,7 @@ namespace Cor.Demo
 
 		public override void FinishedLaunching (NSObject notification)
 		{
-            var appSettings = new AppSettings ("Cor Demo") {
+            var appSettings = new AppSettings ("Cor") {
                 FullScreen = true,
                 MouseGeneratesTouches = true
             };
