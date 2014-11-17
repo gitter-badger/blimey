@@ -600,8 +600,6 @@ namespace Cor.Library.OpenTK
                 pointer = OpenTKHelper.Add (pointer, vertexOffset * vertDecl.VertexStride * sizeof (byte));
             }
 
-            __bindVertices (vertDecl, null, pointer);
-
             var glDrawMode = OpenTKHelper.ConvertToOpenTKBeginModeEnum (primitiveType);
             var glDrawModeAll = glDrawMode;
 
@@ -609,6 +607,9 @@ namespace Cor.Library.OpenTK
 
             GL.BindBuffer (bindTarget, 0);
             OpenTKHelper.ThrowErrors ();
+
+
+            __bindVertices (vertDecl, null, pointer);
 
 
             Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
