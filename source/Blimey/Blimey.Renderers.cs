@@ -143,14 +143,6 @@ namespace Blimey
             if (!activeShapes.ContainsKey(pass))
                 return;
 
-            // Update the render states on the gpu
-            zGfx.SetBlendEquation (BlendMode.Default);
-
-            debugShader.SetVariable ("View", zView);
-            debugShader.SetVariable ("Projection", zProjection);
-
-            zGfx.GpuUtils.BeginEvent(Rgba32.Red, "DebugRenderer.Render");
-
             var shapesForThisPass = this.activeShapes[pass];
 
             // Calculate the total number of vertices we're going to be rendering.
@@ -181,8 +173,18 @@ namespace Blimey
                         verts[vertIndex++] = shape.Vertices[i];
                 }
 
+                zGfx.GpuUtils.BeginEvent (Rgba32.Red, "DebugRenderer.Render");
+
+                zGfx.SetCullMode (CullMode.None);
+
+                // Update the render states on the gpu
+                zGfx.SetBlendEquation (BlendMode.Default);
+
+                debugShader.SetVariable ("View", zView);
+                debugShader.SetVariable ("Projection", zProjection);
+
                 // Start our effect to begin rendering.
-                zGfx.SetActive (debugShader);
+                zGfx.SetActive (debugShader, VertexPositionColour.Default.VertexDeclaration);
 
                 // We draw in a loop because the Reach profile only supports 65,535 primitives. While it's
                 // not incredibly likely, if a game tries to render more than 65,535 lines we don't want to
@@ -192,15 +194,10 @@ namespace Blimey
                 while (lineCount > 0)
                 {
                     // Figure out how many lines we're going to draw
-                    int linesToDraw = Math.Min(lineCount, 65535);
+                    int linesToDraw = Math.Min (lineCount, 65535);
 
                     FrameStats.DrawUserPrimitivesCount ++;
-                    zGfx.DrawUserPrimitives(
-                        PrimitiveType.LineList,
-                        verts,
-                        vertexOffset,
-                        linesToDraw
-                    );
+                    zGfx.DrawUserPrimitives (PrimitiveType.LineList, verts, vertexOffset, linesToDraw);
 
                     // Move our vertex offset ahead based on the lines we drew
                     vertexOffset += linesToDraw * 2;
@@ -209,7 +206,7 @@ namespace Blimey
                     lineCount -= linesToDraw;
                 }
 
-                zGfx.GpuUtils.EndEvent();
+                zGfx.GpuUtils.EndEvent ();
             }
         }
 
@@ -262,6 +259,7 @@ varying vec4 v_tint;
 void main()
 {
     gl_Position = u_proj * u_view * a_vertPosition;
+    gl_Position = u_proj * u_view * a_vertPosition;
     v_tint = a_vertColour;
 }
 =FSH=
@@ -302,17 +300,17 @@ void main()
                     bin.Write (shaderUTF8);
                 }
 
-                #if PLATFORM_MONOMAC
+#if PLATFORM_MONOMAC
                 return engine.Graphics.CreateShader (
                     shaderDecl,
                     ShaderFormat.GLSL,
                     mem.GetBuffer ());
-                #elif PLATFORM_XIOS
+#elif PLATFORM_XIOS
                 return engine.Graphics.CreateShader (
                     shaderDecl,
                     ShaderFormat.GLSL_ES,
                     mem.GetBuffer ());
-                #endif
+#endif
             }
         }
 
@@ -1665,7 +1663,34 @@ void main()
 
             Byte[] shaderUTF8 = null;
 
-#if PLATFORM_MONOMAC
+#if PLATFORM_XIOS
+            shaderUTF8 = System.Text.Encoding.UTF8.GetBytes(
+@"Primitive Batch Shader
+=VSH=
+attribute mediump vec4 a_vertPosition;
+attribute mediump vec2 a_vertTexcoord;
+attribute mediump vec4 a_vertColour;
+uniform mediump mat4 u_view;
+uniform mediump mat4 u_proj;
+varying mediump vec2 v_texCoord;
+varying mediump vec4 v_tint;
+void main()
+{
+    gl_Position = u_proj * u_view * a_vertPosition;
+    v_texCoord = a_vertTexcoord;
+    v_tint = a_vertColour;
+}
+=FSH=
+uniform mediump sampler2D s_tex0;
+varying mediump vec2 v_texCoord;
+varying mediump vec4 v_tint;
+void main()
+{
+    mediump vec4 a = texture2D(s_tex0, v_texCoord);
+    gl_FragColor = v_tint * a;
+}
+");
+#elif PLATFORM_MONOMAC
 shaderUTF8 = System.Text.Encoding.UTF8.GetBytes(
 @"Primitive Batch Shader
 =VSH=
@@ -1689,34 +1714,7 @@ varying vec4 v_tint;
 void main()
 {
     vec4 a = texture2D(s_tex0, v_texCoord);
-    gl_FragColor = v_tint;
-}
-");
-#elif PLATFORM_XIOS
-shaderUTF8 = System.Text.Encoding.UTF8.GetBytes(
-@"Primitive Batch Shader
-=VSH=
-attribute mediump vec4 a_vertPosition;
-attribute mediump vec2 a_vertTexcoord;
-attribute mediump vec4 a_vertColour;
-uniform mediump mat4 u_view;
-uniform mediump mat4 u_proj;
-varying mediump vec2 v_texCoord;
-varying mediump vec4 v_tint;
-void main()
-{
-    gl_Position = u_proj * u_view * a_vertPosition;
-    v_texCoord = a_vertTexcoord;
-    v_tint = a_vertColour;
-}
-=FSH=
-uniform mediump sampler2D s_tex0;
-varying mediump vec2 v_texCoord;
-varying mediump vec4 v_tint;
-void main()
-{
-    vec4 a = texture2D(s_tex0, v_texCoord);
-    gl_FragColor = v_tint;
+    gl_FragColor = v_tint * a;
 }
 ");
 #endif
@@ -1731,7 +1729,12 @@ void main()
                 }
                 shader = engine.Graphics.CreateShader (
                     shaderDecl,
+
+                    #if PLATFORM_XIOS
+                    ShaderFormat.GLSL_ES,
+                    #elif PLATFORM_MONOMAC
                     ShaderFormat.GLSL,
+                    #endif
                     mem.GetBuffer ());
             }
 
@@ -1768,13 +1771,14 @@ void main()
             if (!passState.ContainsKey (pass))
                 return;
 
-            zGfx.GpuUtils.BeginEvent( Rgba32.Blue, "Blimey: Primitive Batch" );
-            zGfx.ClearDepthBuffer (1f);
+            zGfx.GpuUtils.BeginEvent( Rgba32.Blue, "PrimitiveBatch.Render" );
             zGfx.SetCullMode (CullMode.None);
-
-            zGfx.SetActive (shader);
+            zGfx.SetActive ((VertexBuffer)null);
+            zGfx.SetActive ((IndexBuffer)null);
+            zGfx.SetActive ((Texture)null, 0);
             shader.SetVariable ("View", zView);
             shader.SetVariable ("Projection", zProjection);
+            zGfx.SetActive (shader, VertexPositionTextureColour.Default.VertexDeclaration);
 
             _render_batch(zGfx, pass);
 
@@ -2027,7 +2031,6 @@ void main()
             }
 
             // #2: Render all primitives that are associated with this pass.
-            //scene.Blimey.PrimitiveBatch.Render(gfxManager, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
             scene.Blimey.PrimitiveRenderer.Render(this.engine.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
 
             // #3: Render all debug primitives that are associated with this pass.

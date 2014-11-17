@@ -494,9 +494,9 @@ namespace Blimey
         {
 			this.cor = cor;
             this.blimey = blimey;
-            //this.blimey.SetSceneConfig (this.configuration);
 			this.sceneGraph = new SceneSceneGraph (this);
             this.cameraManager = new CameraManager(this);
+
             this.Start();
         }
 

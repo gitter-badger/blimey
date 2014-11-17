@@ -38,7 +38,7 @@
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\iPhone\Debug</OutputPath>
-    <DefineConstants>DEBUG;COR_PLATFORM_MANAGED_XIOS;AOT;</DefineConstants>
+    <DefineConstants>DEBUG;PLATFORM_XIOS;AOT;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
@@ -60,7 +60,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
-    <DefineConstants>COR_PLATFORM_MANAGED_XIOS;AOT;</DefineConstants>
+    <DefineConstants>PLATFORM_XIOS;AOT;</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
