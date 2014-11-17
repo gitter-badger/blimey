@@ -91,11 +91,6 @@ namespace Cor.Library.OpenTK
     public partial class MonoMacApi
 #endif
     {
-        // Keeping global state around like is rather hacky and should refactored out.
-        VertexDeclaration currentActiveVertexBufferVertexDeclaration;
-        ShaderHandle currentActiveShaderHandle;
-        Int32? currentActiveShaderVariantIndex;
-
         #region gfx
 
         public void gfx_ClearColourBuffer (Rgba32 colour)
@@ -487,14 +482,12 @@ namespace Cor.Library.OpenTK
 
         public void gfx_vbff_Activate (Handle handle)
         {
-            currentActiveVertexBufferVertexDeclaration = null;
             if (handle == null)
                 return;
 
             var vd = OpenTkCache.Get <VertexDeclaration> (handle, "VertexDeclaration");
 
             // Keep track of this for later draw calls that do not provide it.
-            currentActiveVertexBufferVertexDeclaration = vd;
 
             const BufferTarget type = BufferTarget.ArrayBuffer;
             GL.BindBuffer (type, (handle as VertexBufferHandle).GLHandle);
@@ -955,9 +948,8 @@ namespace Cor.Library.OpenTK
 
         public void gfx_shdr_Activate (Handle h, Int32 variantIndex)
         {
-            currentActiveShaderHandle = (h as ShaderHandle);
-            currentActiveShaderVariantIndex = variantIndex;
-            GL.UseProgram (currentActiveShaderHandle.VariantHandles [variantIndex].ProgramHandle);
+            var shaderHandle = (h as ShaderHandle);
+            GL.UseProgram (shaderHandle.VariantHandles [variantIndex].ProgramHandle);
             OpenTKHelper.ThrowErrors ();
         }
 
