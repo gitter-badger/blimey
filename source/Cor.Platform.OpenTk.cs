@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ \\
 // │ Cor.Lib.OpenTK                                                                                                 │ \\
 // ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
 // │                     Brought to you by:                                                                         │ \\
@@ -482,24 +482,32 @@ namespace Cor.Library.OpenTK
 
         public void gfx_vbff_Activate (Handle handle)
         {
-            if (handle == null)
-                return;
+            const BufferTarget type = BufferTarget.ArrayBuffer;
 
+            if (handle == null)
+            {
+                GL.BindBuffer (type, 0);
+                OpenTKHelper.ThrowErrors ();
+                return;
+            }
             var vd = OpenTkCache.Get <VertexDeclaration> (handle, "VertexDeclaration");
 
             // Keep track of this for later draw calls that do not provide it.
 
-            const BufferTarget type = BufferTarget.ArrayBuffer;
             GL.BindBuffer (type, (handle as VertexBufferHandle).GLHandle);
             OpenTKHelper.ThrowErrors ();
         }
 
         public void gfx_ibff_Activate (Handle handle)
         {
-            if (handle == null)
-                return;
-
             const BufferTarget type = BufferTarget.ElementArrayBuffer;
+            if (handle == null)
+            {
+                GL.BindBuffer (type, 0);
+                OpenTKHelper.ThrowErrors ();
+                return;
+            }
+
             GL.BindBuffer (type, (handle as IndexBufferHandle).GLHandle);
             OpenTKHelper.ThrowErrors ();
         }
@@ -585,8 +593,6 @@ namespace Cor.Library.OpenTK
                 pointer = OpenTKHelper.Add (pointer, vertexOffset * vertDecl.VertexStride * sizeof (byte));
             }
 
-            __bindVertices (vertDecl, null, pointer);
-
             var glDrawMode = OpenTKHelper.ConvertToOpenTKBeginModeEnum (primitiveType);
             var glDrawModeAll = glDrawMode;
 
@@ -594,6 +600,9 @@ namespace Cor.Library.OpenTK
 
             GL.BindBuffer (bindTarget, 0);
             OpenTKHelper.ThrowErrors ();
+
+
+            __bindVertices (vertDecl, null, pointer);
 
 
             Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
