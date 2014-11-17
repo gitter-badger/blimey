@@ -217,6 +217,8 @@ namespace Blimey.Demo
 
         public override Scene Update(AppTime time)
         {
+            //this.Blimey.DebugRenderer.AddGrid ("Debug");
+
             var menuResult = this.CheckForMenuInput();
 
             this.Blimey.PrimitiveRenderer.AddTriple ("Gui", q);

@@ -70,11 +70,12 @@ namespace Blimey.Demo
             return objects;
         }
 
+        static int c = 0;
 
         public static Entity CreateShapeGO(Scene scene, string renderPass,  Mesh modelpart, int shaderIndex = 0)
         {
             // create a game object
-            Entity testGO = scene.SceneGraph.CreateSceneObject ("test");
+            Entity testGO = scene.SceneGraph.CreateSceneObject ("test-" + c++);
 
             Single scale = RandomGenerator.Default.GetRandomSingle(0.25f, 0.5f);
 
@@ -92,7 +93,7 @@ namespace Blimey.Demo
 
 
             Shader shader = null;
-            if (shaderIndex == 0) shader = CommonDemoResources.VertexLitShader;
+            if (shaderIndex == 0) shader = CommonDemoResources.PixelLitShader;
             else if (shaderIndex == 1) shader = CommonDemoResources.VertexLitShader;
             else shader = CommonDemoResources.UnlitShader;
 

@@ -56,6 +56,7 @@ namespace Blimey.Demo
 
         public override Scene Update(AppTime time)
         {
+            this.Blimey.DebugRenderer.AddGrid ("Debug");
             if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
                 Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
                 Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))

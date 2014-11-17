@@ -163,6 +163,7 @@
     </BundleResource>
     <BundleResource Include="..\..\..\assets\xios\unlit.bba">
       <Link>assets\xios\unlit.bba</Link>
+      <LogicalName>assets\xios\unlit.bba</LogicalName>
     </BundleResource>
     <BundleResource Include="..\..\..\assets\xios\vertex_lit.bba">
       <Link>assets\xios\vertex_lit.bba</Link>
