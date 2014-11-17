@@ -487,26 +487,34 @@ namespace Cor.Library.OpenTK
 
         public void gfx_vbff_Activate (Handle handle)
         {
+            const BufferTarget type = BufferTarget.ArrayBuffer;
+
             currentActiveVertexBufferVertexDeclaration = null;
             if (handle == null)
+            {
+                GL.BindBuffer (type, 0);
+                OpenTKHelper.ThrowErrors ();
                 return;
-
+            }
             var vd = OpenTkCache.Get <VertexDeclaration> (handle, "VertexDeclaration");
 
             // Keep track of this for later draw calls that do not provide it.
             currentActiveVertexBufferVertexDeclaration = vd;
 
-            const BufferTarget type = BufferTarget.ArrayBuffer;
             GL.BindBuffer (type, (handle as VertexBufferHandle).GLHandle);
             OpenTKHelper.ThrowErrors ();
         }
 
         public void gfx_ibff_Activate (Handle handle)
         {
-            if (handle == null)
-                return;
-
             const BufferTarget type = BufferTarget.ElementArrayBuffer;
+            if (handle == null)
+            {
+                GL.BindBuffer (type, 0);
+                OpenTKHelper.ThrowErrors ();
+                return;
+            }
+
             GL.BindBuffer (type, (handle as IndexBufferHandle).GLHandle);
             OpenTKHelper.ThrowErrors ();
         }
