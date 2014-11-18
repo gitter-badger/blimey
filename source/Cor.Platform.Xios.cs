@@ -186,8 +186,6 @@ namespace Cor.Platform.Xios
          */
         public Stream res_GetFileStream (String filename)
         {
-            string os = sys_GetOperatingSystemIdentifier ();
-
             string ext = Path.GetExtension (filename);
 
             string filenameNoExt = filename.Substring (0, filename.Length - ext.Length);
@@ -201,7 +199,7 @@ namespace Cor.Platform.Xios
                 throw new Exception ("Resource [" + filename + "] not found");
             }
 
-            var fStream = new FileStream (resourcePathname, FileMode.Open);
+            var fStream = new FileStream (resourcePathname, FileMode.Open, FileAccess.Read);
 
             return fStream;
 
