@@ -476,7 +476,7 @@ namespace Blimey
 		public SceneSceneGraph SceneGraph { get { return sceneGraph; } }
 		public CameraManager CameraManager { get { return cameraManager; } }
 
-		public Scene (SceneConfiguration configuration = null)
+        protected Scene (SceneConfiguration configuration = null)
 		{
 			if (configuration == null)
 				this.configuration = SceneConfiguration.CreateDefault ();

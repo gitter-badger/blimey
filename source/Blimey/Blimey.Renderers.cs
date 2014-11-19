@@ -180,6 +180,9 @@ namespace Blimey
                 // Update the render states on the gpu
                 zGfx.SetBlendEquation (BlendMode.Default);
 
+                zGfx.SetActive ((VertexBuffer)null);
+                zGfx.SetActive ((IndexBuffer)null);
+
                 debugShader.SetVariable ("View", zView);
                 debugShader.SetVariable ("Projection", zProjection);
 
@@ -1545,6 +1548,20 @@ void main()
                 v[1].Position.Z = 0.5f;
                 v[2].Position.Z = 0.5f;
             }
+
+            public static Triple Create (Vector3 a, Vector3 b, Vector3 c, Rgba32 colour)
+            {
+                var t = new Triple ();
+                t.v = new [] {
+                    new VertexPositionTextureColour (a, new Vector2 (0, 0), colour),
+                    new VertexPositionTextureColour (b, new Vector2 (0, 1), colour),
+                    new VertexPositionTextureColour (c, new Vector2 (1, 0), colour),
+                };
+                t.blend = BlendMode.Default;
+                t.tex = null;
+
+                return t;
+            }
         }
 
         public sealed class Quad
@@ -1572,6 +1589,21 @@ void main()
                 }
                 tex = from.tex;
                 blend = from.blend;
+            }
+
+            public static Quad Create (Vector3 a, Vector3 b, Vector3 c, Vector3 d, Rgba32 colour)
+            {
+                var q = new Quad ();
+                q.v = new [] {
+                    new VertexPositionTextureColour (a, new Vector2 (0, 0), colour),
+                    new VertexPositionTextureColour (b, new Vector2 (0, 1), colour),
+                    new VertexPositionTextureColour (c, new Vector2 (1, 1), colour),
+                    new VertexPositionTextureColour (d, new Vector2 (1, 0), colour),
+                };
+                q.blend = BlendMode.Default;
+                q.tex = null;
+
+                return q;
             }
         }
 
