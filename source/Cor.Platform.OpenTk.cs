@@ -557,10 +557,6 @@ namespace Cor.Library.OpenTK
             : struct
             , IVertexType
         {
-            // do i need to do this? todo: find out
-            //gfx_vbff_Activate (null);
-            //gfx_ibff_Activate (null);
-
             var vertDecl = vertexData[0].VertexDeclaration;
 
             //MSDN
@@ -601,9 +597,7 @@ namespace Cor.Library.OpenTK
             GL.BindBuffer (bindTarget, 0);
             OpenTKHelper.ThrowErrors ();
 
-
             __bindVertices (vertDecl, null, pointer);
-
 
             Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
             Int32 count = primitiveCount * nVertsInPrim;
@@ -614,6 +608,7 @@ namespace Cor.Library.OpenTK
                 count); // specifies the number of indicies to be drawn
 
             OpenTKHelper.ThrowErrors ();
+
 
             pinnedArray.Free ();
         }
@@ -630,7 +625,25 @@ namespace Cor.Library.OpenTK
             : struct
             , IVertexType
         {
-            throw new NotImplementedException ();
+            Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
+            var vd = vertexData [0].VertexDeclaration;
+
+            Handle vb = gfx_CreateVertexBuffer (vd, numVertices);
+            gfx_vbff_SetData (vb, vertexData, vertexOffset, numVertices);
+
+            Handle ib = gfx_CreateIndexBuffer (primitiveCount);
+            gfx_ibff_SetData (ib, indexData, indexOffset, nVertsInPrim * primitiveCount);
+
+            gfx_vbff_Activate (vb);
+            gfx_ibff_Activate (ib);
+
+            gfx_DrawIndexedPrimitives (primitiveType, 0, 0, numVertices, 0, primitiveCount);
+
+            gfx_vbff_Activate (null);
+            gfx_ibff_Activate (null);
+
+            gfx_DestroyIndexBuffer (ib);
+            gfx_DestroyVertexBuffer (vb);
         }
 
         public Byte[] gfx_CompileShader (String source)
