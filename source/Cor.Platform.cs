@@ -1648,6 +1648,7 @@ namespace Cor.Platform
     
     public class RawTouch
     {
+        public String Id { get; set; }
         public Vector2 Position { get; set; }
         public TouchPhase Phase { get; set; }
     }

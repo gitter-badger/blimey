@@ -399,10 +399,10 @@ namespace Cor.Platform.MonoMac
             this.WantsBestResolutionOpenGLSurface = true;
 
             this.AutoresizingMask =
-                global::MonoMac.AppKit.NSViewResizingMask.HeightSizable |
-                global::MonoMac.AppKit.NSViewResizingMask.MaxXMargin |
-                global::MonoMac.AppKit.NSViewResizingMask.MinYMargin |
-                global::MonoMac.AppKit.NSViewResizingMask.WidthSizable;
+                NSViewResizingMask.HeightSizable |
+                NSViewResizingMask.MaxXMargin |
+                NSViewResizingMask.MinYMargin |
+                NSViewResizingMask.WidthSizable;
 
             MakeCurrent ();
         }

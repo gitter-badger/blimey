@@ -77,9 +77,11 @@ namespace Cor.Platform.Xios
         : IProgram
     {
         OpenGLViewController viewController;
-        MonoTouch.UIKit.UIWindow window;
+        UIWindow window;
 
         XiosApi Api { get; set; }
+
+        public OpenGLViewController OpenGLViewController { get { return viewController; } }
 
         internal void InitialiseDependencies (XiosApi api) { Api = api; }
 
@@ -92,7 +94,7 @@ namespace Cor.Platform.Xios
             // create a new window instance based on the screen size
             window = new UIWindow (UIScreen.MainScreen.Bounds);
 
-            viewController = new OpenGLViewController (update, render);
+            viewController = new OpenGLViewController (Api, update, render);
 
             window.RootViewController = viewController;
 
@@ -296,7 +298,8 @@ namespace Cor.Platform.Xios
 
         public HashSet <RawTouch> hid_GetActiveTouches ()
         {
-            return new HashSet<RawTouch> ();
+            EAGLView view = Program.OpenGLViewController.View as EAGLView;
+            return view.GetRawTouches ();
         }
 
 
@@ -306,16 +309,16 @@ namespace Cor.Platform.Xios
 
     public static class EnumConverter
     {
-        public static DeviceOrientation ToCor (MonoTouch.UIKit.UIDeviceOrientation monoTouch)
+        public static DeviceOrientation ToCor (UIDeviceOrientation monoTouch)
         {
             switch (monoTouch)
             {
-                case MonoTouch.UIKit.UIDeviceOrientation.FaceDown: return DeviceOrientation.Default;
-                case MonoTouch.UIKit.UIDeviceOrientation.FaceUp: return DeviceOrientation.Default;
-                case MonoTouch.UIKit.UIDeviceOrientation.LandscapeLeft: return DeviceOrientation.Leftside;
-                case MonoTouch.UIKit.UIDeviceOrientation.LandscapeRight: return DeviceOrientation.Rightside;
-                case MonoTouch.UIKit.UIDeviceOrientation.Portrait: return DeviceOrientation.Default;
-                case MonoTouch.UIKit.UIDeviceOrientation.PortraitUpsideDown: return DeviceOrientation.Upsidedown;
+                case UIDeviceOrientation.FaceDown: return DeviceOrientation.Default;
+                case UIDeviceOrientation.FaceUp: return DeviceOrientation.Default;
+                case UIDeviceOrientation.LandscapeLeft: return DeviceOrientation.Leftside;
+                case UIDeviceOrientation.LandscapeRight: return DeviceOrientation.Rightside;
+                case UIDeviceOrientation.Portrait: return DeviceOrientation.Default;
+                case UIDeviceOrientation.PortraitUpsideDown: return DeviceOrientation.Upsidedown;
 
                 default:
                     Console.WriteLine ("WARNING: Unknown device orientaton: " + monoTouch);
@@ -323,15 +326,15 @@ namespace Cor.Platform.Xios
             }
         }
 
-        public static TouchPhase ToCorPrimitiveType (MonoTouch.UIKit.UITouchPhase phase)
+        public static TouchPhase ToCorPrimitiveType (UITouchPhase phase)
         {
             switch (phase)
             {
-                case MonoTouch.UIKit.UITouchPhase.Began: return TouchPhase.JustPressed;
-                case MonoTouch.UIKit.UITouchPhase.Cancelled: return TouchPhase.JustReleased;
-                case MonoTouch.UIKit.UITouchPhase.Ended: return TouchPhase.JustReleased;
-                case MonoTouch.UIKit.UITouchPhase.Moved: return TouchPhase.Active;
-                case MonoTouch.UIKit.UITouchPhase.Stationary: return TouchPhase.Active;
+                case UITouchPhase.Began: return TouchPhase.JustPressed;
+                case UITouchPhase.Cancelled: return TouchPhase.JustReleased;
+                case UITouchPhase.Ended: return TouchPhase.JustReleased;
+                case UITouchPhase.Moved: return TouchPhase.Active;
+                case UITouchPhase.Stationary: return TouchPhase.Active;
             }
 
             return TouchPhase.Invalid;
@@ -343,12 +346,12 @@ namespace Cor.Platform.Xios
 
     public static class Vector2Converter
     {
-		public static global::System.Drawing.PointF ToSystemDrawing (this Vector2 vec)
+		public static PointF ToSystemDrawing (this Vector2 vec)
         {
-			return new global::System.Drawing.PointF (vec.X, vec.Y);
+			return new PointF (vec.X, vec.Y);
         }
 
-		public static Vector2 ToAbacus (this global::System.Drawing.PointF vec)
+		public static Vector2 ToAbacus (this PointF vec)
         {
             return new Vector2 (vec.X, vec.Y);
         }
@@ -366,22 +369,27 @@ namespace Cor.Platform.Xios
 
         MonoTouch.CoreAnimation.CADisplayLink displayLink;
 
+        internal Dictionary<Int32, iOSTouchState> iOSTouches
+        {
+            get { return touchState; }
+        }
+
         readonly Dictionary<Int32, iOSTouchState> touchState = new Dictionary<int, iOSTouchState>();
 
+        readonly IApi api;
         readonly Action update;
         readonly Action render;
 
-        public EAGLView (Action update, Action render, RectangleF frame)
+        public EAGLView (IApi api, Action update, Action render, RectangleF frame)
             : base (frame)
         {
+            this.api = api;
             this.update = update;
             this.render = render;
 
             LayerRetainsBacking = true;
             LayerColorFormat = MonoTouch.OpenGLES.EAGLColorFormat.RGBA8;
             ContextRenderingApi = MonoTouch.OpenGLES.EAGLRenderingAPI.OpenGLES2;
-
-
         }
 
         public Boolean IsAnimating
@@ -485,8 +493,8 @@ namespace Cor.Platform.Xios
             {
                 var ts = touchState[key];
 
-                if (ts.Phase == MonoTouch.UIKit.UITouchPhase.Cancelled ||
-                    ts.Phase == MonoTouch.UIKit.UITouchPhase.Ended)
+                if (ts.Phase == UITouchPhase.Cancelled ||
+                    ts.Phase == UITouchPhase.Ended)
                 {
                     if (ts.LastUpdated < this.frameCounter)
                     {
@@ -512,37 +520,40 @@ namespace Cor.Platform.Xios
             this.SwapBuffers ();
         }
 
-        public override void TouchesBegan (MonoTouch.Foundation.NSSet touches, MonoTouch.UIKit.UIEvent evt)
+        public override void TouchesBegan (NSSet touches, UIEvent evt)
         {
             ProcessTouchChange (touches);
 
             base.TouchesBegan (touches, evt);
         }
 
-        public override void TouchesMoved (MonoTouch.Foundation.NSSet touches, MonoTouch.UIKit.UIEvent evt)
+        public override void TouchesMoved (NSSet touches, UIEvent evt)
         {
             ProcessTouchChange (touches);
 
             base.TouchesMoved (touches, evt);
         }
 
-        public override void TouchesCancelled (MonoTouch.Foundation.NSSet touches, MonoTouch.UIKit.UIEvent evt)
+        public override void TouchesCancelled (NSSet touches, UIEvent evt)
         {
             ProcessTouchChange (touches);
 
             base.TouchesCancelled (touches, evt);
         }
 
-        public override void TouchesEnded (MonoTouch.Foundation.NSSet touches, MonoTouch.UIKit.UIEvent evt)
+        public override void TouchesEnded (NSSet touches, UIEvent evt)
         {
             ProcessTouchChange (touches);
 
             base.TouchesEnded (touches, evt);
         }
 
-        void ProcessTouchChange (MonoTouch.Foundation.NSSet touches)
+        Int32 changedCount = -1;
+        Int32 lastUpdated = -1;
+
+        void ProcessTouchChange (NSSet touches)
         {
-            var touchesArray = touches.ToArray<MonoTouch.UIKit.UITouch> ();
+            var touchesArray = touches.ToArray<UITouch> ();
 
             for (int i = 0; i < touchesArray.Length; ++i)
             {
@@ -553,13 +564,21 @@ namespace Cor.Platform.Xios
                 var id = touch.Handle.ToInt32 ();
                 var phase = touch.Phase;
 
+                // seems to be a problem with mono touch reporting a new touch with
+                // the same id across multiple frames.
+                if (touchState.Keys.Contains (id) && phase == UITouchPhase.Began)
+                {
+                    phase = UITouchPhase.Stationary;
+                }
+
                 var ts = new iOSTouchState ();
                 ts.Handle = id;
                 ts.LastUpdated = this.frameCounter;
                 ts.Location = location;
+
                 ts.Phase = phase;
 
-                if (phase == MonoTouch.UIKit.UITouchPhase.Began)
+                if (phase == UITouchPhase.Began)
                 {
                     //Console.WriteLine ("add "+id);
                     touchState.Add (id, ts);
@@ -570,9 +589,9 @@ namespace Cor.Platform.Xios
                     {
                         touchState[id] = ts;
 
-                        if (ts.Phase == MonoTouch.UIKit.UITouchPhase.Began)
+                        if (ts.Phase == UITouchPhase.Began)
                         {
-                            ts.Phase = MonoTouch.UIKit.UITouchPhase.Stationary;
+                            ts.Phase = UITouchPhase.Stationary;
                         }
 
                     }
@@ -581,6 +600,72 @@ namespace Cor.Platform.Xios
                         throw new Exception ("eerrr???");
                     }
                 }
+            }
+
+            UpdateRawTouches ();
+
+            changedCount++;
+        }
+
+
+        readonly Dictionary <int, RawTouch> intermediateTouchMap = new Dictionary<int, RawTouch> ();
+        readonly HashSet <RawTouch> rawTouchesHS = new HashSet<RawTouch> ();
+
+
+        public HashSet <RawTouch> GetRawTouches ()
+        {
+            if (lastUpdated < changedCount)
+            {
+                rawTouchesHS.Clear ();
+                foreach (var v in intermediateTouchMap.Values)
+                {
+                    rawTouchesHS.Add (v);
+                }
+
+                lastUpdated = changedCount;
+            }
+
+            return rawTouchesHS;
+        }
+
+        Vector2 GetTouchPos (PointF location)
+        {
+            var pos = new Vector2(location.X, location.Y);
+            pos.X = pos.X / api.app_GetWidth ();
+            pos.Y = pos.Y / api.app_GetHeight ();
+            pos -= new Vector2(0.5f, 0.5f);
+            pos.Y = -pos.Y;
+            return pos;
+        }
+
+        void UpdateRawTouches ()
+        {
+            foreach (var iOSTouchHandle in iOSTouches.Keys)
+            {
+                var p = iOSTouches [iOSTouchHandle].Phase;
+                var l = iOSTouches [iOSTouchHandle].Location;
+
+                if (!intermediateTouchMap.ContainsKey (iOSTouchHandle))
+                {
+                    var r = new RawTouch ();
+                    r.Id = new Guid ().ToString ();
+                    r.Phase = EnumConverter.ToCorPrimitiveType(p);
+                    r.Position = GetTouchPos(l);
+                    intermediateTouchMap.Add (iOSTouchHandle, r);
+                }
+                else
+                {
+                    var rt = intermediateTouchMap [iOSTouchHandle];
+                    rt.Phase = EnumConverter.ToCorPrimitiveType(p);
+                    rt.Position = GetTouchPos(l);
+
+                }
+            }
+
+            foreach (var iOSTouchHandle in intermediateTouchMap.Keys)
+            {
+                if (!iOSTouches.ContainsKey (iOSTouchHandle))
+                    intermediateTouchMap.Remove (iOSTouchHandle);
             }
         }
     }
@@ -601,18 +686,20 @@ namespace Cor.Platform.Xios
 
     [MonoTouch.Foundation.Register ("OpenGLViewController")]
     public sealed class OpenGLViewController
-        : MonoTouch.UIKit.UIViewController
+        : UIViewController
     {
+        readonly IApi api;
         readonly Action update;
         readonly Action render;
 
-        public OpenGLViewController (Action update, Action render)
+        public OpenGLViewController (IApi api, Action update, Action render)
         {
+            this.api = api;
             this.update = update;
             this.render = render;
         }
 
-        new EAGLView View
+        internal new EAGLView View
         {
             get
             {
@@ -624,45 +711,44 @@ namespace Cor.Platform.Xios
         {
             //var size = MonoTouch.UIKit.UIScreen.MainScreen.CurrentMode.Size;
             //var frame = new System.Drawing.RectangleF (0, 0, size.Width, size.Height);
-            var frame = MonoTouch.UIKit.UIScreen.MainScreen.Bounds;
-            base.View = new EAGLView (update, render, frame);
+            var frame = UIScreen.MainScreen.Bounds;
+            base.View = new EAGLView (api, update, render, frame);
         }
+
         public override void ViewDidLoad ()
         {
             base.ViewDidLoad ();
 
-            MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
-                MonoTouch.UIKit.UIApplication.WillResignActiveNotification, a => {
+            NSNotificationCenter.DefaultCenter.AddObserver (
+                UIApplication.WillResignActiveNotification, a => {
                 if (IsViewLoaded && View.Window != null)
                     View.StopAnimating ();
                 },
                 this
             );
 
-            MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
-                MonoTouch.UIKit.UIApplication.DidBecomeActiveNotification, a => {
+            NSNotificationCenter.DefaultCenter.AddObserver (
+                UIApplication.DidBecomeActiveNotification, a => {
                 if (IsViewLoaded && View.Window != null)
                     View.StartAnimating ();
                 },
                 this
             );
 
-            MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.AddObserver (
-                MonoTouch.UIKit.UIApplication.WillTerminateNotification, a => {
+            NSNotificationCenter.DefaultCenter.AddObserver (
+                UIApplication.WillTerminateNotification, a => {
                 if (IsViewLoaded && View.Window != null)
                     View.StopAnimating ();
                 },
                 this
             );
-
-            //View.SetEngineDetails (_settings, _game);
         }
 
         protected override void Dispose (Boolean disposing)
         {
             base.Dispose (disposing);
 
-            MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.RemoveObserver (this);
+            NSNotificationCenter.DefaultCenter.RemoveObserver (this);
         }
 
         public override void DidReceiveMemoryWarning ()
@@ -673,7 +759,7 @@ namespace Cor.Platform.Xios
             // Release any cached data, images, etc that aren't in use.
         }
 
-        public override void DidRotate (MonoTouch.UIKit.UIInterfaceOrientation fromInterfaceOrientation)
+        public override void DidRotate (UIInterfaceOrientation fromInterfaceOrientation)
         {
             base.DidRotate (fromInterfaceOrientation);
         }
@@ -691,134 +777,4 @@ namespace Cor.Platform.Xios
             View.StopAnimating ();
         }
     }
-
-    /*
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public sealed class TouchScreen
-        : IMultiTouchController
-        , IPanelSpecification
-        , IScreenSpecification
-    {
-        readonly Dictionary<Int32, iOSTouchState> touchData;
-        readonly MonoTouch.UIKit.UIView view;
-        readonly TouchCollection collection = new TouchCollection ();
-        readonly EngineBase engine;
-
-        internal TouchScreen (
-            EngineBase engine,
-            MonoTouch.UIKit.UIView view,
-            Dictionary<Int32, iOSTouchState> touches)
-        {
-            this.view = view;
-            this.engine = engine;
-            this.touchData = touches;
-
-            Console.WriteLine (
-                string.Format (
-                    "Screen Specification - Width: {0}, Height: {1}",
-                    ScreenResolutionWidth,
-                    ScreenResolutionHeight));
-        }
-
-        public IPanelSpecification PanelSpecification
-        {
-            get { return this; }
-        }
-
-        internal void Update (AppTime time)
-        {
-            // seems to be a problem with mono touch reporting a new touch with
-            // the same id across multiple frames.
-            List<Int32> touchIDsLastFrame = new List<int>();
-
-            foreach (var touch in this.collection)
-            {
-                touchIDsLastFrame.Add (touch.ID);
-            }
-
-            this.collection.ClearBuffer ();
-
-
-            foreach (var key in touchData.Keys)
-            {
-                var uiKitTouch = touchData[key];
-				global::System.Drawing.PointF location = uiKitTouch.Location;
-
-                Int32 id = uiKitTouch.Handle;
-
-                Vector2 pos = new Vector2(location.X, location.Y);
-
-                //Console.WriteLine (string.Format ("UIKitTouch - id: {0}, pos: {1}", id, pos));
-
-                // todo: this needs to be current display res, not just the screen specs
-
-				pos.X = pos.X / engine.Status.Width;
-				pos.Y = pos.Y / engine.Status.Height;
-
-                pos -= new Vector2(0.5f, 0.5f);
-
-                pos.Y = -pos.Y;
-
-                var state = EnumConverter.ToCorPrimitiveType (uiKitTouch.Phase);
-
-                if (touchIDsLastFrame.Contains (id) )
-                {
-                    if (state == TouchPhase.JustPressed)
-                    {
-                        //Core.Teletype.WriteLine ("ignoring " + id);
-
-                        state = TouchPhase.Active;
-                    }
-                }
-
-                if (state == TouchPhase.JustPressed)
-                {
-                    Console.WriteLine (string.Format ("Touch - id: {0}, pos: {1}", id, pos));
-                }
-
-                this.collection.RegisterTouch (id, pos, state, time.FrameNumber, time.Elapsed);
-            }
-        }
-
-        public float ScreenResolutionAspectRatio
-        {
-            get { return this.ScreenResolutionWidth / this.ScreenResolutionHeight; }
-        }
-
-        // need to think about
-        public Single PixelDensity
-        {
-            get { return 1f; }
-            set { ; }
-        }
-
-        public Int32 ScreenResolutionHeight
-        {
-            get
-            {
-                return (Int32) (
-                    MonoTouch.UIKit.UIScreen.MainScreen.Bounds.Height *
-                    MonoTouch.UIKit.UIScreen.MainScreen.Scale);
-            }
-        }
-
-        public Int32 ScreenResolutionWidth
-        {
-            get
-            {
-                return (Int32) (
-                    MonoTouch.UIKit.UIScreen.MainScreen.Bounds.Width *
-                    MonoTouch.UIKit.UIScreen.MainScreen.Scale);
-            }
-        }
-
-        public TouchCollection TouchCollection
-        {
-            get { return this.collection; }
-        }
-    }
-
-    */
 }
