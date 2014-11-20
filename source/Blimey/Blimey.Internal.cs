@@ -96,7 +96,12 @@ namespace Blimey
 
         public static void SlowLog ()
         {
-            if (UpdateTime > 5.0)
+            // Right now we are targeting 30 FPS
+            // and have allocated 10ms to update
+            // and 10ms to render per frame which
+            // gives us plenty of headroom.
+
+            if (UpdateTime > 10)
             {
                 Console.WriteLine(
                     string.Format(
@@ -104,7 +109,7 @@ namespace Blimey
                         UpdateTime ));
             }
 
-            if (RenderTime > 10.0)
+            if (RenderTime > 10)
             {
                 Console.WriteLine(
                     string.Format(

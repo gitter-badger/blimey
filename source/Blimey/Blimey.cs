@@ -154,7 +154,7 @@ namespace Blimey
 		/// </summary>
 		public virtual Boolean Update(Engine cor, AppTime time)
         {
-			//FrameStats.SlowLog ();
+			FrameStats.SlowLog ();
 			FrameStats.Reset ();
 
             using (new ProfilingTimer(t => FrameStats.UpdateTime += t))
