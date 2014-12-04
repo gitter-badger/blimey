@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ \\
 // │ Cor! Mono Mac Platform Implementation                                                                          │ \\
 // ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
 // │                     Brought to you by:                                                                         │ \\
@@ -32,14 +32,14 @@ namespace Cor.Platform.MonoMac
 {
     using global::System;
     using global::System.Text;
-	using global::System.Globalization;
-	using global::System.Collections;
-	using global::System.Collections.Generic;
-	using global::System.Linq;
-	using global::System.IO;
-	using global::System.Diagnostics;
-	using global::System.Runtime.InteropServices;
-	using global::System.Runtime.ConstrainedExecution;
+    using global::System.Globalization;
+    using global::System.Collections;
+    using global::System.Collections.Generic;
+    using global::System.Linq;
+    using global::System.IO;
+    using global::System.Diagnostics;
+    using global::System.Runtime.InteropServices;
+    using global::System.Runtime.ConstrainedExecution;
 
     using global::MonoMac.Foundation;
     using global::MonoMac.AppKit;
@@ -132,8 +132,8 @@ namespace Cor.Platform.MonoMac
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-	public partial class MonoMacApi
-		: IApi
+    public partial class MonoMacApi
+        : IApi
     {
         MonoMacProgram Program { get; set; }
 
@@ -142,9 +142,9 @@ namespace Cor.Platform.MonoMac
             Program = program;
         }
 
-		Single volume = 1f;
+        Single volume = 1f;
 
-		internal MonoMacApi ()
+        internal MonoMacApi ()
         {
             this.volume = 1f;
         }
@@ -155,9 +155,9 @@ namespace Cor.Platform.MonoMac
 
         public Single sfx_GetVolume () { return this.volume; }
 
-		public void sfx_SetVolume (Single value)
-		{
-	        this.volume = value;
+        public void sfx_SetVolume (Single value)
+        {
+            this.volume = value;
         }
         
         #endregion
@@ -683,12 +683,12 @@ namespace Cor.Platform.MonoMac
 
     static class Vector2Converter
     {
-		internal static global::System.Drawing.PointF ToSystemDrawing (this Vector2 vec)
+        internal static global::System.Drawing.PointF ToSystemDrawing (this Vector2 vec)
         {
-			return new global::System.Drawing.PointF (vec.X, vec.Y);
+            return new global::System.Drawing.PointF (vec.X, vec.Y);
         }
 
-		internal static Vector2 ToAbacus (this global::System.Drawing.PointF vec)
+        internal static Vector2 ToAbacus (this global::System.Drawing.PointF vec)
         {
             return new Vector2 (vec.X, vec.Y);
         }
