@@ -5,7 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using Cor;
-using Blimey.Assets.Pipline;
+using Blimey.Assets.Pipeline;
 
 namespace Blimey.Assets.Builders
 {

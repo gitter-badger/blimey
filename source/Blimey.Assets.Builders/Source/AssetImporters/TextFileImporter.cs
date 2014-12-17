@@ -1,6 +1,4 @@
 ﻿using System;
-using MonoMac.AppKit;
-using MonoMac.CoreGraphics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Fudge;
@@ -8,7 +6,7 @@ using Fudge;
 using System.IO;
 
 using Cor;
-using Blimey.Assets.Pipline;
+using Blimey.Assets.Pipeline;
 
 namespace Blimey.Assets.Builders
 {

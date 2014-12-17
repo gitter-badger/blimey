@@ -4,7 +4,7 @@ using ServiceStack.Text;
 using Oats;
 using System.Collections.Generic;
 using Cor.Platform;
-using Blimey.Assets.Pipline;
+using Blimey.Assets.Pipeline;
 using System.Text;
 
 namespace Blimey.Assets.Builders

@@ -1,6 +1,8 @@
 using System;
+#if OSX
 using MonoMac.AppKit;
 using MonoMac.CoreGraphics;
+#endif
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Fudge;
@@ -13,7 +15,8 @@ using System.Drawing.Imaging;
 using System.IO;
 
 using Cor;
-using Blimey.Assets.Pipline;
+using Blimey.Assets.Pipeline;
+using Hjg.Pngcs;
 
 namespace Blimey.Assets.Builders
 {
@@ -22,62 +25,8 @@ namespace Blimey.Assets.Builders
     {
         public override String [] SupportedSourceFileExtensions
         {
-            get { return new [] { "png", "jpg", "bmp" }; }
+            get { return new [] { "png" }; }
         }
-
-        #if OSX
-        //Store pixel data as an RGBA Bitmap
-        static IntPtr RequestImagePixelData (NSImage inImage)
-        {
-            var imageSize = inImage.Size;
-
-            CGBitmapContext ctxt = CreateRgbaBitmapContext (inImage.CGImage);
-
-            var rect = new RectangleF (0, 0, imageSize.Width, imageSize.Height);
-
-            ctxt.DrawImage (rect, inImage.CGImage);
-            var data = ctxt.Data;
-
-            if (ctxt.BitsPerPixel != 32) throw new Exception ();
-
-            return data;
-        }
-
-        static CGBitmapContext CreateRgbaBitmapContext (CGImage inImage)
-        {
-            var pixelsWide = inImage.Width;
-            var pixelsHigh = inImage.Height;
-
-            using (var colorSpace = CGColorSpace.CreateDeviceRGB())
-            {
-                var bitmapBytesPerRow = pixelsWide * 4;
-                var bitmapByteCount = bitmapBytesPerRow * pixelsHigh;
-                var bitmapData = Marshal.AllocHGlobal (bitmapByteCount);
-
-                if (bitmapData == IntPtr.Zero)
-                {
-                    throw new Exception ("Memory not allocated.");
-                }
-
-                var context = new CGBitmapContext (
-                    bitmapData,
-                    pixelsWide,
-                    pixelsHigh,
-                    8,
-                    bitmapBytesPerRow,
-                    colorSpace,
-                    CGImageAlphaInfo.PremultipliedLast);
-
-                if (context == null)
-                {
-                    throw new Exception ("Context not created");
-                }
-
-                return context;
-            }
-        }
-        #endif
-
 
 		public override AssetImporterOutput <ColourmapAsset> Import (
 			AssetImporterInput input, String platformId)
@@ -91,70 +40,37 @@ namespace Blimey.Assets.Builders
 
             if (!File.Exists (input.Files[0]))
                 throw new Exception ("ColourmapAssetImporter cannot find input file.");
+            
+            string filename = input.Files[0];
 
+            PngReader pngr = FileHelper.CreatePngReader(filename);
+            Console.WriteLine(pngr.ToString()); // just information
+            var pixmap = new Rgba32[pngr.ImgInfo.Cols, pngr.ImgInfo.Rows];
 
-            #if WINDOWS
-
-            var bmp = new Bitmap (input.Files[0]);
-
-            outputResource.Bitmap = bmp;
-
-            var width = outputResource.Bitmap.Width;
-            var height = outputResource.Bitmap.Height;
-
-            // Force the input's pixelformat to ARGB32, so we can have a
-            // common pixel format to deal with.
-            if (outputResource.Bitmap.PixelFormat != PixelFormat.Format32bppArgb)
+            for (int row = 0; row < pngr.ImgInfo.Rows; row++)
             {
-                var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+                ImageLine line = pngr.ReadRowInt(row); // format: RGBRGB... or RGBARGBA...
 
-                using (var graphics = Graphics.FromImage(bitmap))
+                for (int col = 0; col < pngr.ImgInfo.Cols;col++)
                 {
-                    graphics.DrawImage(outputResource.Bitmap, 0,0, width, height);
-                }
+                    if (pngr.ImgInfo.Indexed)
+                        throw new NotSupportedException ("Indexed PNG files are not yet supported.");
 
-                outputResource.Bitmap = bitmap;
+                    if (pngr.ImgInfo.Channels != 4)
+                        throw new NotSupportedException ("Only PNG files with 4 channels are currently supported.");
+
+                    Int32 pixelARGB = ImageLineHelper.GetPixelToARGB8 (line, col);
+
+                    Byte b = (Byte)((pixelARGB) & 0xff);
+                    Byte g = (Byte)((pixelARGB >> 8) & 0xff);
+                    Byte r = (Byte)((pixelARGB >> 16) & 0xff);
+                    Byte a = (Byte)((pixelARGB >> 24) & 0xff);
+
+                    pixmap [col, row] = new Rgba32(r, g, b, a);
+                }
             }
 
-
-            #elif OSX
-
-            using(var fStream = new FileStream (input.Files[0], FileMode.Open))
-            {
-                var nsImage = NSImage.FromStream (fStream);
-                IntPtr dataPointer = RequestImagePixelData (nsImage);
-
-
-                int width = (int) nsImage.Size.Width;
-                int height = (int) nsImage.Size.Height;
-
-                int bytecount = width * height * 4;
-
-                byte[] pixdatabytes = new byte [bytecount];
-                Marshal.Copy(dataPointer, pixdatabytes, 0, bytecount);
-
-                var pixmap = new Rgba32[width, height];
-
-                int offset = 0;
-
-                for (int y = 0; y < height; ++y)
-                {
-                    for (int x = 0; x < width; ++x)
-                    {
-                        pixmap [x, y] = new Rgba32 ();
-                        pixmap [x, y].R = pixdatabytes [offset++];
-                        pixmap [x, y].G = pixdatabytes [offset++];
-                        pixmap [x, y].B = pixdatabytes [offset++];
-                        pixmap [x, y].A = pixdatabytes [offset++];
-                    }
-                }
-
-                outputResource.Data = pixmap;
-            }
-
-            #else
-            throw new NotSupportedException ();
-            #endif
+            outputResource.Data = pixmap;
 
             //Debug.DumpToPPM (output.Resource, input.Files[0] + "test.ppm");
 

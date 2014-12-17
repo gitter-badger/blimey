@@ -1,7 +1,7 @@
 ﻿using System;
 using Cor;
 
-namespace Blimey.Assets.Pipline
+namespace Blimey.Assets.Pipeline
 {
     public abstract class AssetProcessorInput
     {
