@@ -5,15 +5,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacus (xs.mono40)", "..\su
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cor (xs.mono40)", "..\submodules\cor\build\xs.mono40\Cor\Cor (xs.mono40).csproj", "{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.Text", "..\submodules\ServiceStack.Text\src\ServiceStack.Text\ServiceStack.Text.csproj", "{579B3FDB-CDAD-44E1-8417-885C38E49A0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Assets.AssImp (xs.mono45)", "..\source\Blimey.Assets.AssImp\Blimey.Assets.AssImp (xs.mono45).csproj", "{6C72B877-5395-4BF1-BE47-0E67D5557168}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Assets.AssImp (xs.mono45)", "Blimey.Assets.AssImp\Blimey.Assets.AssImp (xs.mono45).csproj", "{6C72B877-5395-4BF1-BE47-0E67D5557168}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Assets.Pipeline (xs.mono45)", "..\source\Blimey.Assets.Pipeline\Blimey.Assets.Pipeline (xs.mono45).csproj", "{60BC671B-7C9C-48C8-9A25-6A4303381C06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Assets.Pipeline (xs.mono45)", "Blimey.Assets.Pipeline\Blimey.Assets.Pipeline (xs.mono45).csproj", "{60BC671B-7C9C-48C8-9A25-6A4303381C06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Assets.Builders (xs.mono45)", "..\source\Blimey.Assets.Builders\Blimey.Assets.Builders (xs.mono45).csproj", "{E42ABA06-F20C-48AA-B039-96EA5191377E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Assets.Builders (xs.mono45)", "Blimey.Assets.Builders\Blimey.Assets.Builders (xs.mono45).csproj", "{E42ABA06-F20C-48AA-B039-96EA5191377E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.AssetBuilder (xs.mono45)", "Blimey.AssetBuilder\Blimey.AssetBuilder (xs.mono45).csproj", "{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.AssetBuilder (xs.mono45)", "..\source\Blimey.AssetBuilder\Blimey.AssetBuilder (xs.mono45).csproj", "{2A0A72E5-F5D3-4CCC-B4E5-5FB0E89F1EF9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oats (xs.mono40)", "..\submodules\oats\build\Oats\Oats (xs.mono40).csproj", "{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}"
 EndProject
@@ -25,7 +23,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oats.Tests (xs.mono40)", ".
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Tests (xs.mono40)", "..\submodules\blimey\build\xs.mono40\Blimey.Tests\Blimey.Tests (xs.mono40).csproj", "{B0FDF03B-01B8-439B-8A59-C48D5B915899}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hjg.Pngcs", "Hjg.Pngcs\Hjg.Pngcs.csproj", "{FD3B0D50-46B3-4A83-9A6D-C641569142CF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "contrib", "contrib", "{0CB56559-1E7F-4E46-AEA3-AC8BBD8F6C08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.Text", "..\contrib\ServiceStack.Text\src\ServiceStack.Text\ServiceStack.Text.csproj", "{579B3FDB-CDAD-44E1-8417-885C38E49A0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hjg.Pngcs", "..\contrib\Hjg.Pngcs\Hjg.Pngcs.csproj", "{FD3B0D50-46B3-4A83-9A6D-C641569142CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -167,7 +169,11 @@ Global
 		{FD3B0D50-46B3-4A83-9A6D-C641569142CF}.Release45|Any CPU.ActiveCfg = Release45|Any CPU
 		{FD3B0D50-46B3-4A83-9A6D-C641569142CF}.Release45|Any CPU.Build.0 = Release45|Any CPU
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{579B3FDB-CDAD-44E1-8417-885C38E49A0E} = {0CB56559-1E7F-4E46-AEA3-AC8BBD8F6C08}
+		{FD3B0D50-46B3-4A83-9A6D-C641569142CF} = {0CB56559-1E7F-4E46-AEA3-AC8BBD8F6C08}
+	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Blimey.AssetBuilder\Blimey.AssetBuilder (xs.mono45).csproj
+		StartupItem = ..\source\Blimey.AssetBuilder\Blimey.AssetBuilder (xs.mono45).csproj
 	EndGlobalSection
 EndGlobal

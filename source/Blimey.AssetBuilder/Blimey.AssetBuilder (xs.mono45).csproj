@@ -48,10 +48,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\submodules\ServiceStack.Text\src\ServiceStack.Text\ServiceStack.Text.csproj">
-      <Project>{579B3FDB-CDAD-44E1-8417-885C38E49A0E}</Project>
-      <Name>ServiceStack.Text</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\submodules\abacus\build\xs.mono40\Abacus\Abacus %28xs.mono40%29.csproj">
       <Project>{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}</Project>
       <Name>Abacus (xs.mono40)</Name>
@@ -83,6 +79,10 @@
     <ProjectReference Include="..\Blimey.Assets.Pipeline\Blimey.Assets.Pipeline %28xs.mono45%29.csproj">
       <Project>{60BC671B-7C9C-48C8-9A25-6A4303381C06}</Project>
       <Name>Blimey.Assets.Pipeline (xs.mono45)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\contrib\ServiceStack.Text\src\ServiceStack.Text\ServiceStack.Text.csproj">
+      <Project>{579B3FDB-CDAD-44E1-8417-885C38E49A0E}</Project>
+      <Name>ServiceStack.Text</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

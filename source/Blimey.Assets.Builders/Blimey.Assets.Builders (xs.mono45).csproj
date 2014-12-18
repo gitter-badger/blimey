@@ -72,10 +72,6 @@
       <Project>{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}</Project>
       <Name>Cor (xs.mono40)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\submodules\ServiceStack.Text\src\ServiceStack.Text\ServiceStack.Text.csproj">
-      <Project>{579B3FDB-CDAD-44E1-8417-885C38E49A0E}</Project>
-      <Name>ServiceStack.Text</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\submodules\oats\build\Oats\Oats %28xs.mono40%29.csproj">
       <Project>{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}</Project>
       <Name>Oats (xs.mono40)</Name>
@@ -92,9 +88,13 @@
       <Project>{60BC671B-7C9C-48C8-9A25-6A4303381C06}</Project>
       <Name>Blimey.Assets.Pipeline (xs.mono45)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Hjg.Pngcs\Hjg.Pngcs.csproj">
+    <ProjectReference Include="..\..\contrib\Hjg.Pngcs\Hjg.Pngcs.csproj">
       <Project>{FD3B0D50-46B3-4A83-9A6D-C641569142CF}</Project>
       <Name>Hjg.Pngcs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\contrib\ServiceStack.Text\src\ServiceStack.Text\ServiceStack.Text.csproj">
+      <Project>{579B3FDB-CDAD-44E1-8417-885C38E49A0E}</Project>
+      <Name>ServiceStack.Text</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
