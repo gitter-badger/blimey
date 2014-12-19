@@ -315,6 +315,8 @@ void main()
                     mem.GetBuffer ());
 #endif
             }
+
+            return null;
         }
 
         static int CachedShapesSort(DebugShape s1, DebugShape s2)
@@ -1759,15 +1761,17 @@ void main()
                     bin.Write (shaderUTF8.Length);
                     bin.Write (shaderUTF8);
                 }
+#if PLATFORM_XIOS
                 shader = engine.Graphics.CreateShader (
                     shaderDecl,
-
-                    #if PLATFORM_XIOS
                     ShaderFormat.GLSL_ES,
-                    #elif PLATFORM_MONOMAC
-                    ShaderFormat.GLSL,
-                    #endif
                     mem.GetBuffer ());
+#elif PLATFORM_MONOMAC
+                shader = engine.Graphics.CreateShader (
+                    shaderDecl,
+                    ShaderFormat.GLSL,
+                    mem.GetBuffer ());
+#endif
             }
 
             // Set the index buffer for each vertex, using
