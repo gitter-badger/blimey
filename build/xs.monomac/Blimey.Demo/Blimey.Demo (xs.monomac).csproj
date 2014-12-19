@@ -143,6 +143,9 @@
     <BundleResource Include="..\..\..\assets\monomac\zazaka.bba">
       <Link>assets\monomac\zazaka.bba</Link>
     </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\particles.bba">
+      <Link>assets\monomac\particles.bba</Link>
+    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\submodules\abacus\build\xs.monomac\Abacus\Abacus %28xs.monomac%29.csproj">

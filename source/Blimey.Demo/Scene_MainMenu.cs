@@ -68,6 +68,8 @@ namespace Blimey.Demo
         {
             q = new PrimitiveRenderer.Triple ();
             q.blend = BlendMode.Additive;
+            var ta_q = this.Blimey.Assets.Load<TextureAsset> ("particles.bba");
+            q.tex = this.Cor.Graphics.CreateTexture (ta_q);
            
             q.v [0].Colour = Rgba32.Blue;
             q.v [0].Position.X = -0.3f;
@@ -127,6 +129,7 @@ namespace Blimey.Demo
             _menuItemMaterials = null;
             this.Blimey.InputEventSystem.Tap -= this.OnTap;
             this.Blimey.InputEventSystem.Flick -= this.OnFlick;
+            this.Cor.Graphics.DestroyTexture (q.tex);
 
             CommonDemoResources.Destroy ();
         }
