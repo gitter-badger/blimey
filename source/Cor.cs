@@ -419,6 +419,7 @@ namespace Cor
 
         VertexBuffer currentVertexBuffer = null;
         IndexBuffer currentIndexBuffer = null;
+        CullMode? currentCullMode = null;
         readonly Dictionary<Int32, Texture> currentTextureMap = new Dictionary<Int32, Texture> ();
         Tuple<Shader, VertexBuffer> currentShaderBinding = null;
 
@@ -518,6 +519,9 @@ namespace Cor
         /// </summary>
         public void SetCullMode (CullMode cullMode)
         {
+            if (currentCullMode.HasValue && currentCullMode.Value == cullMode)
+                return;
+
             platform.gfx_SetCullMode (cullMode);
         }
             
