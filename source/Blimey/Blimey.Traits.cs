@@ -121,7 +121,7 @@ namespace Blimey
         {
             this.Mesh = null;
             this.Material = null;
-            this.CullMode = CullMode.CW;
+            this.CullMode = CullMode.None;
         }
     }
 
