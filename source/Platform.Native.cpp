@@ -28,7 +28,7 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-#include "Cor.Platform.Native.hpp"
+#include "Platform.Native.hpp"
 
 #include <iostream>
 #include <list>
@@ -55,7 +55,7 @@ template <typename T> T* cSingleton<T>::ms_Singleton = NULL;
 //void cManagedBindings::Boot (char* settings, char* entryPoint)
 //{
     // this needs to make a call into:
-    // - Cor.Platform.Native.Linux.Bindings.dll
+    // - Platform.Native.Linux.Bindings.dll
     // to trigger starting the users app from their desired
     // entry point with their desired settings
 

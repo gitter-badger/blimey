@@ -41,7 +41,7 @@ using System.Runtime.ConstrainedExecution;
 using Fudge;
 using Abacus.SinglePrecision;
 
-namespace Cor.Platform.Psm
+namespace Platform.Psm
 {
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 

@@ -28,7 +28,7 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Cor.Platform.Native
+namespace Platform.Native
 {
     
     using System;

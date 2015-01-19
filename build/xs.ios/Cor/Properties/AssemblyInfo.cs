@@ -47,10 +47,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: CLSCompliant(false)]
 
-[assembly: InternalsVisibleTo("Cor.Platform.Xios")]
-[assembly: InternalsVisibleTo("Cor.Platform.Xna4")]
-[assembly: InternalsVisibleTo("Cor.Platform.Psm")]
-[assembly: InternalsVisibleTo("Cor.Platform.MonoMac")]
-[assembly: InternalsVisibleTo("Cor.Platform.Stub")]
+[assembly: InternalsVisibleTo("Platform.Xios")]
+[assembly: InternalsVisibleTo("Platform.Xna4")]
+[assembly: InternalsVisibleTo("Platform.Psm")]
+[assembly: InternalsVisibleTo("Platform.MonoMac")]
+[assembly: InternalsVisibleTo("Platform.Stub")]
 [assembly: InternalsVisibleTo("Cor.Lib.Khronos")]
 

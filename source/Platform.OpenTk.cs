@@ -29,9 +29,9 @@
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
 #if COR_PLATFORM_XIOS
-namespace Cor.Platform.Xios
+namespace Platform.Xios
 #elif COR_PLATFORM_MONOMAC
-namespace Cor.Platform.MonoMac
+namespace Platform.MonoMac
 #else
 namespace Cor.Library.OpenTK
 #endif
@@ -50,7 +50,7 @@ namespace Cor.Library.OpenTK
     
     using Fudge;
     using Abacus.SinglePrecision;
-    using Cor.Platform;
+    using Platform;
 
 #if COR_PLATFORM_XIOS || COR_PLATFORM_MONOMAC
 

@@ -42,7 +42,7 @@ namespace Cor
     using System.Threading;
 
     using Abacus.SinglePrecision;
-    using Cor.Platform;
+    using Platform;
     using Fudge;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //

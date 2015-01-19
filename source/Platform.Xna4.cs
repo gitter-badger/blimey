@@ -39,12 +39,12 @@ using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
 
 using Cor;
-using Cor.Platform;
+using Platform;
 using Fudge;
 using Abacus.SinglePrecision;
 
 
-namespace Cor.Platform.Xna4
+namespace Platform.Xna4
 {
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 

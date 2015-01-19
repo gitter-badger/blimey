@@ -28,7 +28,7 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Cor.Platform.MonoMac
+namespace Platform.MonoMac
 {
     using global::System;
     using global::System.Text;

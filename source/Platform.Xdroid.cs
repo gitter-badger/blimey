@@ -28,7 +28,7 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Cor.Platform.Xdroid
+namespace Platform.Xdroid
 {
     using System;
     using System.Runtime.InteropServices;

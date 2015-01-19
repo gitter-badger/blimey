@@ -28,7 +28,7 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Cor.Platform.Xios
+namespace Platform.Xios
 {
     using global::System;
     using global::System.Globalization;
@@ -179,7 +179,7 @@ namespace Cor.Platform.Xios
 
 
         /**
-         * Graphics ~ Implemented in Cor.Platform.OpenTk.cs
+         * Graphics ~ Implemented in Platform.OpenTk.cs
          */
 
 

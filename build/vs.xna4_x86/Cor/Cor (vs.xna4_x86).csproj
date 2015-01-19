@@ -52,11 +52,11 @@
     <Compile Include="..\..\..\source\Cor.cs">
       <Link>Cor.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.cs">
-      <Link>Cor.Platform.cs</Link>
+    <Compile Include="..\..\..\source\Platform.cs">
+      <Link>Platform.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.Xna4.cs">
-      <Link>Cor.Platform.Xna4.cs</Link>
+    <Compile Include="..\..\..\source\Platform.Xna4.cs">
+      <Link>Platform.Xna4.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Foundation.cs">
       <Link>Foundation.cs</Link>

@@ -28,7 +28,7 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Cor.Platform
+namespace Platform
 {
     using System;
     using System.Runtime.InteropServices;

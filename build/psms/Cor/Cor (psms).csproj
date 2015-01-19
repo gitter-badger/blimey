@@ -43,11 +43,11 @@
     <Compile Include="..\..\..\source\Cor.cs">
       <Link>Cor.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.cs">
-      <Link>Cor.Platform.cs</Link>
+    <Compile Include="..\..\..\source\Platform.cs">
+      <Link>Platform.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.Psm.cs">
-      <Link>Cor.Platform.Psm.cs</Link>
+    <Compile Include="..\..\..\source\Platform.Psm.cs">
+      <Link>Platform.Psm.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Foundation.cs">
       <Link>Foundation.cs</Link>
