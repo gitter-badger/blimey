@@ -131,6 +131,9 @@
     <Compile Include="..\..\..\source\Blimey.Demo\Scene.Parallax.cs">
       <Link>source\Scene.Parallax.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_Go.cs">
+      <Link>source\Scene_Go.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />

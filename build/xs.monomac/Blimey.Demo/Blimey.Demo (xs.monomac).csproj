@@ -26,6 +26,7 @@
     <EnablePackageSigning>false</EnablePackageSigning>
     <EnableCodeSigning>false</EnableCodeSigning>
     <CreatePackage>false</CreatePackage>
+    <UseRefCounting>false</UseRefCounting>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>full</DebugType>
@@ -42,6 +43,7 @@
     <CodeSigningKey>Developer ID Application</CodeSigningKey>
     <EnableCodeSigning>true</EnableCodeSigning>
     <EnablePackageSigning>false</EnablePackageSigning>
+    <UseRefCounting>false</UseRefCounting>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|x86' ">
     <DebugType>full</DebugType>
@@ -59,6 +61,7 @@
     <CodeSigningKey>3rd Party Mac Developer Application</CodeSigningKey>
     <EnableCodeSigning>true</EnableCodeSigning>
     <EnablePackageSigning>true</EnablePackageSigning>
+    <UseRefCounting>false</UseRefCounting>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -97,6 +100,9 @@
     </Compile>
     <Compile Include="..\..\..\source\Blimey.Demo\Scene.Parallax.cs">
       <Link>source\Scene.Parallax.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\source\Blimey.Demo\Scene_Go.cs">
+      <Link>source\Scene_Go.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +151,9 @@
     </BundleResource>
     <BundleResource Include="..\..\..\assets\monomac\particles.bba">
       <Link>assets\monomac\particles.bba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\wood.bba">
+      <Link>assets\monomac\wood.bba</Link>
     </BundleResource>
   </ItemGroup>
   <ItemGroup>

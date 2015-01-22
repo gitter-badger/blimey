@@ -94,13 +94,17 @@ namespace Blimey.Demo
 			var so4 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
 			var so5 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
 			var so6 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
+            var so7 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
+            var so8 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
 
-			so1.Transform.LocalPosition = new Vector3(-0.25f, 0f, 0f);
-			so2.Transform.LocalPosition = new Vector3(-0.15f, 0f, 0f);
-			so3.Transform.LocalPosition = new Vector3(-0.05f, 0f, 0f);
-			so4.Transform.LocalPosition = new Vector3(+0.05f, 0f, 0f);
-			so5.Transform.LocalPosition = new Vector3(+0.15f, 0f, 0f);
-			so6.Transform.LocalPosition = new Vector3(+0.25f, 0f, 0f);
+            so1.Transform.LocalPosition = new Vector3(-0.35f, 0f, 0f);
+			so2.Transform.LocalPosition = new Vector3(-0.25f, 0f, 0f);
+			so3.Transform.LocalPosition = new Vector3(-0.15f, 0f, 0f);
+			so4.Transform.LocalPosition = new Vector3(-0.05f, 0f, 0f);
+			so5.Transform.LocalPosition = new Vector3(+0.05f, 0f, 0f);
+			so6.Transform.LocalPosition = new Vector3(+0.15f, 0f, 0f);
+			so7.Transform.LocalPosition = new Vector3(+0.25f, 0f, 0f);
+            so8.Transform.LocalPosition = new Vector3(+0.35f, 0f, 0f);
 
 
 			_menuItemMaterials.Add(so1.GetTrait<MeshRendererTrait>().Material);
@@ -109,6 +113,8 @@ namespace Blimey.Demo
 			_menuItemMaterials.Add(so4.GetTrait<MeshRendererTrait>().Material);
 			_menuItemMaterials.Add(so5.GetTrait<MeshRendererTrait>().Material);
 			_menuItemMaterials.Add(so6.GetTrait<MeshRendererTrait>().Material);
+            _menuItemMaterials.Add(so7.GetTrait<MeshRendererTrait>().Material);
+            _menuItemMaterials.Add(so8.GetTrait<MeshRendererTrait>().Material);
 
 			_menuSceneObjects.Add(so1);
 			_menuSceneObjects.Add(so2);
@@ -116,6 +122,8 @@ namespace Blimey.Demo
 			_menuSceneObjects.Add(so4);
 			_menuSceneObjects.Add(so5);
 			_menuSceneObjects.Add(so6);
+            _menuSceneObjects.Add(so7);
+            _menuSceneObjects.Add(so8);
 
             this.Blimey.InputEventSystem.Tap += this.OnTap;
             this.Blimey.InputEventSystem.Flick += this.OnFlick;
@@ -214,6 +222,12 @@ namespace Blimey.Demo
 
 			if (_selectedIndex == 5)
 				return new Scene_Boids ();
+
+            if (_selectedIndex == 6)
+                return new Scene_Go ();
+
+            if (_selectedIndex == 7)
+                return new Scene_Parallax ();
 
             return this;
         }
