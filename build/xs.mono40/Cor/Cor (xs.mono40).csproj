@@ -36,11 +36,11 @@
     <Compile Include="..\..\..\source\Cor.cs">
       <Link>Cor.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.cs">
-      <Link>Cor.Platform.cs</Link>
+    <Compile Include="..\..\..\source\Platform.cs">
+      <Link>Platform.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.Native.cs">
-      <Link>Cor.Platform.Native.cs</Link>
+    <Compile Include="..\..\..\source\Platform.Native.cs">
+      <Link>Platform.Native.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Foundation.cs">
       <Link>Foundation.cs</Link>

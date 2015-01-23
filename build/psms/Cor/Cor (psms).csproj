@@ -16,7 +16,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;COR_PLATFORM_PSM</DefineConstants>
+    <DefineConstants>DEBUG;PLATFORM_PSM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -28,7 +28,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <DefineConstants>COR_PLATFORM_PSM</DefineConstants>
+    <DefineConstants>PLATFORM_PSM</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -43,11 +43,11 @@
     <Compile Include="..\..\..\source\Cor.cs">
       <Link>Cor.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.cs">
-      <Link>Cor.Platform.cs</Link>
+    <Compile Include="..\..\..\source\Platform.cs">
+      <Link>Platform.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.Psm.cs">
-      <Link>Cor.Platform.Psm.cs</Link>
+    <Compile Include="..\..\..\source\Platform.Psm.cs">
+      <Link>Platform.Psm.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Foundation.cs">
       <Link>Foundation.cs</Link>

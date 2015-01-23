@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;COR_PLATFORM_MONOMAC;</DefineConstants>
+    <DefineConstants>DEBUG;PLATFORM_MONOMAC;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -39,7 +39,7 @@
     <IncludeMonoRuntime>false</IncludeMonoRuntime>
     <UseSGen>false</UseSGen>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DefineConstants>COR_PLATFORM_MONOMAC;</DefineConstants>
+    <DefineConstants>PLATFORM_MONOMAC;</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -49,11 +49,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\..\source\Cor.Platform.MonoMac.cs">
-      <Link>Cor.Platform.MonoMac.cs</Link>
+    <Compile Include="..\..\..\source\Platform.MonoMac.cs">
+      <Link>Platform.MonoMac.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.cs">
-      <Link>Cor.Platform.cs</Link>
+    <Compile Include="..\..\..\source\Platform.cs">
+      <Link>Platform.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Foundation.cs">
       <Link>Foundation.cs</Link>
@@ -61,11 +61,11 @@
     <Compile Include="..\..\..\source\Cor.cs">
       <Link>Cor.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.OpenTk.cs">
-      <Link>Cor.Platform.OpenTk.cs</Link>
+    <Compile Include="..\..\..\source\Platform.Partial.OpenTk.cs">
+      <Link>Platform.Partial.OpenTk.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Cor.Platform.LoggedProxy.cs">
-      <Link>Cor.Platform.LoggedProxy.cs</Link>
+    <Compile Include="..\..\..\source\Platform.LoggedProxy.cs">
+      <Link>Platform.LoggedProxy.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
