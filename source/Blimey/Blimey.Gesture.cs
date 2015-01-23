@@ -44,7 +44,7 @@ namespace Blimey
     
     using System.Linq;
     using Cor;
-    using Cor.Platform;
+    using Platform;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 

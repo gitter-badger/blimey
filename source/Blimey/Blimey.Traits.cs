@@ -37,7 +37,7 @@ namespace Blimey
     using Fudge;
     using Abacus.SinglePrecision;
     using Cor;
-    using Cor.Platform;
+    using Platform;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 

@@ -72,7 +72,7 @@
     <ConsolePause>False</ConsolePause>
     <BuildIpa>True</BuildIpa>
     <CodesignKey>iPhone Distribution</CodesignKey>
-    <DefineConstants>COR_PLATFORM_MANAGED_XIOS;AOT;</DefineConstants>
+    <DefineConstants>PLATFORM_XIOS;AOT;</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
@@ -83,7 +83,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Distribution</CodesignKey>
-    <DefineConstants>COR_PLATFORM_MANAGED_XIOS;AOT;</DefineConstants>
+    <DefineConstants>PLATFORM_XIOS;AOT;</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>

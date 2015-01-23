@@ -37,7 +37,7 @@ namespace Blimey
     using System.Diagnostics;
     using Abacus.SinglePrecision;
     using Cor;
-    using Cor.Platform;
+    using Platform;
 
     // Provides a suite of easy to access programatically defined resources.
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
