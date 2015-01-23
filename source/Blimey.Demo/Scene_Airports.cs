@@ -153,8 +153,8 @@ namespace Blimey.Demo
 			mr.Mesh = sphereMesh;
 			mr.Material = mat;
 
-            var mat2 = new Material("Default", CommonDemoResources.UnlitShader);
-			mat2.SetColour("MaterialColour", Rgba32.Blue);
+            //var mat2 = new Material("Default", CommonDemoResources.UnlitShader);
+			//mat2.SetColour("MaterialColour", Rgba32.Blue);
 
             foreach (var airport in airports)
 			{

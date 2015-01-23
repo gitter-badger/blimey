@@ -64,20 +64,26 @@ namespace Blimey.Demo
 
         PrimitiveRenderer.Triple q;
 
+        Texture tex = null;
         public override void Start ()
         {
+            var ta = Blimey.Assets.Load <TextureAsset> ("bg1.bba");
+            tex = Cor.Graphics.CreateTexture (ta);
             q = new PrimitiveRenderer.Triple ();
-            q.blend = BlendMode.Additive;
-           
+            q.blend = BlendMode.Default;
+            q.tex = tex;
             q.v [0].Colour = Rgba32.Blue;
-            q.v [0].Position.X = -0.3f;
-            q.v [0].Position.Y = -0.3f;
+            q.v [0].Position.X = 0.0f;
+            q.v [0].Position.Y = 0.0f;
+            q.v [0].UV = new Vector2 (0, 0);
             q.v [1].Colour = Rgba32.Green;
-            q.v [1].Position.X = 0.3f;
-            q.v [1].Position.Y = 0.3f;
+            q.v [1].Position.X = 0.5f;
+            q.v [1].Position.Y = 0.5f;
+            q.v [1].UV = new Vector2 (1f, 1f);
             q.v [2].Colour = Rgba32.Red;
             q.v [2].Position.X = 0f;
-            q.v [2].Position.Y = 0.3f;
+            q.v [2].Position.Y = 0.5f;
+            q.v [2].UV = new Vector2 (0, 1f);
 
             _returnScene = this;
 
@@ -128,6 +134,8 @@ namespace Blimey.Demo
             this.Blimey.InputEventSystem.Tap -= this.OnTap;
             this.Blimey.InputEventSystem.Flick -= this.OnFlick;
 
+            tex.Dispose ();
+            tex = null;
             CommonDemoResources.Destroy ();
         }
 
@@ -217,7 +225,7 @@ namespace Blimey.Demo
 
         public override Scene Update(AppTime time)
         {
-            //this.Blimey.DebugRenderer.AddGrid ("Debug");
+            this.Blimey.DebugRenderer.AddGrid ("Debug");
 
             var menuResult = this.CheckForMenuInput();
 
@@ -225,7 +233,6 @@ namespace Blimey.Demo
 
             if (menuResult != this)
                 return menuResult;
-
 
             for (int i = 0; i < _menuSceneObjects.Count; ++i)
             {

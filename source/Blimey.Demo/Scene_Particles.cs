@@ -45,17 +45,87 @@ namespace Blimey.Demo
     {
         Scene returnScene = null;
 
-        public override void Start()
+        PrimitiveRenderer.Triple q;
+        PrimitiveRenderer.Sprite s;
+        PrimitiveRenderer.ParticleSystem ps;
+
+        Texture tex1 = null;
+        Texture tex2 = null;
+
+        public override void Start ()
         {
+            //var meshAsset = Blimey.Assets.Load <MeshAsset> ();
+
+            //var vb = Cor.Graphics.CreateVertexBuffer (meshAsset.VertexDeclaration, meshAsset.VertexCount);
+            //vb.SetData <REFLECTION> ()
+
+
+            var ta = Blimey.Assets.Load <TextureAsset> ("cvan01.bba");
+            tex1 = Cor.Graphics.CreateTexture (ta);
+            var tb = Blimey.Assets.Load <TextureAsset> ("bg2.bba");
+            tex2 = Cor.Graphics.CreateTexture (tb);
+
+
+            q = new PrimitiveRenderer.Triple ();
+            q.blend = BlendMode.Default;
+            q.tex = tex1;
+            q.v [0].Colour = Rgba32.Blue;
+            q.v [0].Position.X = 0.0f;
+            q.v [0].Position.Y = 0.0f;
+            q.v [0].UV = new Vector2 (0, 0);
+            q.v [1].Colour = Rgba32.Green;
+            q.v [1].Position.X = 0.5f;
+            q.v [1].Position.Y = 0.5f;
+            q.v [1].UV = new Vector2 (1f, 1f);
+            q.v [2].Colour = Rgba32.Red;
+            q.v [2].Position.X = 0f;
+            q.v [2].Position.Y = 0.5f;
+            q.v [2].UV = new Vector2 (0, 1f);
             returnScene = this;
+
+            s = new PrimitiveRenderer.Sprite (this.Blimey.PrimitiveRenderer, tex2, 64, 64, 256, 256);
+            s.SetBlendMode (BlendMode.Default);
+
+
+
+            var psi = new PrimitiveRenderer.ParticleSystemInfo ();
+            psi.sprite = s;
+            psi.fLifetime = 3f;
+            psi.colColourStart = Rgba32.Red;
+            psi.colColourEnd = Rgba32.Yellow;
+            psi.nEmission = 10;
+            psi.fSpinStart = 0.3f;
+            psi.fRadialAccel = 0.1f;
+            psi.fSpeed = 3f;
+            psi.fSizeVar = 0.1f;
+
+
+            ps = new PrimitiveRenderer.ParticleSystem (psi);
+
         }
 
         public override void Shutdown()
         {
+            tex1.Dispose ();
+            tex2.Dispose ();
         }
 
         public override Scene Update(AppTime time)
         {
+            //this.Blimey.PrimitiveRenderer.AddTriple ("Debug", q);
+            //this.Blimey.PrimitiveRenderer.AddTriple ("Gui", q);
+            //s.Draw4V ("Gui",
+            //    0.0f, 0.0f,
+            //    0.5f, 0.0f,
+            //    0.0f, 0.5f,
+            //    0.5f, 0.5f);
+
+            s.DrawEx ("Gui", 0f, 0f, 0.5f, 1f / 256f / 4f, 1f / 256f / 4f);
+
+            //s.Draw ("Gui", 0f, 0f);
+            ps.Fire ();
+            ps.Draw ("Default");
+
             this.Blimey.DebugRenderer.AddGrid ("Debug");
             if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
                 Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||

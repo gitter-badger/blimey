@@ -43,155 +43,186 @@ namespace Blimey.Demo
     public class Scene_Sprites
         : Scene
     {
-        public class Hare
+        static class Settings
+        {
+            static Settings ()
+            {
+                Maths.Pi (out PI);
+            }
+
+            public static readonly Single PI;
+            public static readonly Single MaxVelocity = 200;
+            public static readonly Int32 MinHares = 16;
+            public static readonly Int32 MaxHares = 256;
+            public static readonly Single SpriteDepth = 0.01f; // n.b. i think this should be 0f, however when set to 0f there is lots on Z fighting.  todo: investigate
+            public static readonly Single ScaleVariation = 0.2f;
+
+            public static readonly Single PixelToWorldSpace = 0.01f;
+            public static readonly Single WorldToPixelSpace = 100f;
+
+            public static readonly BlendMode[] BlendModes = {
+                BlendMode.Default,
+                BlendMode.Additive,
+                BlendMode.Subtract,
+                BlendMode.Opaque
+            };
+        }
+
+        class Hare
             : Trait
         {
-            Vector2 velocity;
-            Single deltaScale;
-            Single deltaRotation;
-    
-            SpriteTrait sprite;
-			
-			int currentBlendMode = 0;
-			
-			readonly BlendMode[] blendModes = {
-				BlendMode.Default,
-				BlendMode.Additive,
-				BlendMode.Subtract,
-				BlendMode.Opaque
-			};
-    
-            public override void OnAwake()
+            Vector2         velocity;
+            Single          deltaScale;
+            Single          deltaRotation;
+            SpriteTrait     sprite;
+			Int32           currentBlendMode = 0;
+
+            public override void OnAwake ()
             {
-                this.sprite = this.Parent.AddTrait<SpriteTrait>();
-    
-                this.sprite.Texture = Scene_Sprites.texZa;
-    
-				this.sprite.Material.BlendMode = blendModes [currentBlendMode];
-    
-                this.sprite.DebugRender = null;
-    
-                Single width = (Single) Scene_Sprites.screenWidth / 2f;
-                Single height = (Single) Scene_Sprites.screenHeight / 2f;
-    
-                this.velocity = RandomGenerator.Default.GetRandomVector2(-200, 200);
-                this.deltaRotation = RandomGenerator.Default.GetRandomSingle(-0.5f, 0.5f);
-    
-                this.deltaScale = RandomGenerator.Default.GetRandomSingle(-0.2f, 0.2f);
-    
-                Single pi;
-                Maths.Pi(out pi);
-    
-                this.sprite.Rotation = RandomGenerator.Default.GetRandomSingle(0, pi);
-                Single x = RandomGenerator.Default.GetRandomSingle( 0, width );
-                Single y = RandomGenerator.Default.GetRandomSingle( 0 , height );
-                this.sprite.Position = new Vector2(x, y);
-                this.sprite.Scale = RandomGenerator.Default.GetRandomSingle(0.8f, 1.2f);
-    
-                this.sprite.Width = 64f;
-                this.sprite.Height = 64f;
-    
-                this.sprite.Colour = RandomGenerator.Default.GetRandomColour();
-                //this.sprite.FlipVertical = RandomGenerator.Default.GetRandomBoolean();
-                //this.sprite.FlipHorizontal = RandomGenerator.Default.GetRandomBoolean();
+                Single x = RandomGenerator.Default.GetRandomSingle (0, (Single) Scene_Sprites.AppWidth / 2f);
+                Single y = RandomGenerator.Default.GetRandomSingle (0 , (Single) Scene_Sprites.AppHeight / 2f);
+
+                this.velocity                       = RandomGenerator.Default.GetRandomVector2 (-Settings.MaxVelocity, Settings.MaxVelocity);
+                this.deltaRotation                  = RandomGenerator.Default.GetRandomSingle (-0.5f, 0.5f);
+                this.deltaScale                     = RandomGenerator.Default.GetRandomSingle (-0.2f, 0.2f);
+
+                this.sprite                         = this.Parent.AddTrait<SpriteTrait>();
+                this.sprite.Texture                 = Scene_Sprites.texZa;
+				this.sprite.Material.BlendMode      = Settings.BlendModes [currentBlendMode];
+                this.sprite.DebugRender             = null;
+                this.sprite.Rotation                = RandomGenerator.Default.GetRandomSingle (0, Settings.PI);
+                this.sprite.Position                = new Vector2 (x, y);
+                this.sprite.Scale                   = RandomGenerator.Default.GetRandomSingle (1f - Settings.ScaleVariation, 1f + Settings.ScaleVariation);
+                this.sprite.Depth                   = Settings.SpriteDepth;
+                this.sprite.Width                   = Scene_Sprites.texZa.Width;
+                this.sprite.Height                  = Scene_Sprites.texZa.Height;
+                this.sprite.Colour                  = RandomGenerator.Default.GetRandomColour ();
+                this.sprite.FlipVertical            = RandomGenerator.Default.GetRandomBoolean ();
+                this.sprite.FlipHorizontal          = RandomGenerator.Default.GetRandomBoolean ();
             }
-			
+
 			public void NextBlendMode ()
 			{
-				this.sprite.Material.BlendMode = 
-					blendModes [++currentBlendMode >= blendModes.Length ? currentBlendMode = 0 : currentBlendMode];
+				this.sprite.Material.BlendMode =
+                    Settings.BlendModes [++currentBlendMode >= Settings.BlendModes.Length ? currentBlendMode = 0 : currentBlendMode];
 			}
-    
+
             public void EnabledDebugRenderer (Boolean on)
             {
                 this.sprite.DebugRender = on ? "Default" : null;
             }
-    
-            public override void OnUpdate(AppTime time)
+
+            public override void OnUpdate (AppTime time)
             {
-                Single width = (Single) Scene_Sprites.screenWidth / 2f;
-                Single height = (Single) Scene_Sprites.screenHeight / 2f;
-    
+                Single width = (Single) Scene_Sprites.AppWidth / 2f;
+                Single height = (Single) Scene_Sprites.AppHeight / 2f;
+
                 this.sprite.Position += this.velocity * time.Delta;
-    
-                if (this.sprite.Position.X > width || this.sprite.Position.X < -width)
+
+                if (this.sprite.Position.X > width)
                 {
                     this.velocity.X = -this.velocity.X;
+                    this.sprite.Position = new Vector2 (width, this.sprite.Position.Y);
                 }
-    
-                if (this.sprite.Position.Y > height || this.sprite.Position.Y < -height)
+
+                if (this.sprite.Position.X < -width)
+                {
+                    this.velocity.X = -this.velocity.X;
+                    this.sprite.Position = new Vector2 (-width, this.sprite.Position.Y);
+                }
+
+                if (this.sprite.Position.Y > height)
                 {
                     this.velocity.Y = -this.velocity.Y;
+                    this.sprite.Position = new Vector2 (this.sprite.Position.X, height);
                 }
-    
+
+                if (this.sprite.Position.Y < -height)
+                {
+                    this.velocity.Y = -this.velocity.Y;
+                    this.sprite.Position = new Vector2 (this.sprite.Position.X, -height);
+                }
+
                 this.sprite.Scale += this.deltaScale * time.Delta;
-    
-                if (this.sprite.Scale > 1.2f || this.sprite.Scale < 0.8f)
+
+                if (this.sprite.Scale > 1.2f)
                 {
                     this.deltaScale = -this.deltaScale;
+                    this.sprite.Scale = 1.2f;
                 }
-    
+
+                if (this.sprite.Scale < 0.8f)
+                {
+                    this.deltaScale = -this.deltaScale;
+                    this.sprite.Scale = 0.8f;
+                }
+
                 this.sprite.Rotation += this.deltaRotation * time.Delta;
             }
-    
+
             public override void OnDestroy ()
             {
-    
+
             }
         }
-        
-        Scene _returnScene;
 
-        const Int32 MinHares = 16;
-        const Int32 MaxHares = 256;
-
-        Int32 currentNumVans = 32;
+        Scene returnScene;
+        Int32 currentNumVans = 16;
+        Boolean debugLinesOn = false;
+        Single timer = 0f;
 
         readonly List<Hare> hares = new List<Hare>();
 
-        bool debugLinesOn = false;
-
-        Single timer = 0f;
-
-        public static Int32 screenWidth;
-        public static Int32 screenHeight;
+        public static Int32 AppWidth;
+        public static Int32 AppHeight;
         public static Texture texZa;
         public static Texture texBg;
 
-        public Scene_Sprites()
+        PrimitiveRenderer.Sprite bgSprite;
+
+        public Scene_Sprites ()
         {
-            _returnScene = this;
+            returnScene = this;
         }
 
         public override void Start ()
         {
             ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
-            SpriteTrait.SpriteShader = this.Cor.Graphics.CreateShader(unlitShaderAsset);
+            SpriteTrait.SpriteShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
 
-			screenWidth = this.Cor.Status.Width;
-			screenHeight = this.Cor.Status.Height;
+			AppWidth = this.Cor.Status.Width;
+			AppHeight = this.Cor.Status.Height;
 
-            var ta_za = this.Blimey.Assets.Load<TextureAsset> ("cvan02.bba");
-            var ta_bg = this.Blimey.Assets.Load<TextureAsset> ("bg2.bba");
+            var ta_za = this.Blimey.Assets.Load<TextureAsset> ("zazaka.bba");
             texZa = this.Cor.Graphics.CreateTexture (ta_za);
-            texBg = this.Cor.Graphics.CreateTexture (ta_bg);
-            
-            var soBG = this.SceneGraph.CreateSceneObject ("bg");
 
+            // Create the background.
+            var ta_bg = this.Blimey.Assets.Load<TextureAsset> ("bg2.bba");
+            texBg = this.Cor.Graphics.CreateTexture (ta_bg);
+            /*
+            var soBG = this.SceneGraph.CreateSceneObject ("bg");
             var spr = soBG.AddTrait <SpriteTrait> ();
-            spr.Width = 256f;
-            spr.Height = 256f;
+            spr.Width = 64f;
+            spr.Height = 64f;
             spr.Texture = texBg;
             spr.Depth = 1f;
             //spr.Material.Offset = new Vector2 (0.5f, 0.5f);
             spr.Material.SetColour ("MaterialColour", Rgba32.Yellow);
-            
+
+            */
+
+            bgSprite = new PrimitiveRenderer.Sprite (
+                this.Blimey.PrimitiveRenderer, texBg,
+                64, 64,
+                this.Cor.Host.ScreenSpecification.ScreenResolutionWidth,
+                this.Cor.Host.ScreenSpecification.ScreenResolutionHeight);
+
 
             Single pi = 0;
-            Maths.Pi(out pi);
+            Maths.Pi (out pi);
 
-            var newCamSo = this.SceneGraph.CreateSceneObject("ortho");
-            newCamSo.Transform.LocalPosition = new Vector3(0, 0, 1);
+            var newCamSo = this.SceneGraph.CreateSceneObject ("ortho");
+            newCamSo.Transform.LocalPosition = new Vector3 (0, 0, 1);
 
             var orthoCam = newCamSo.AddTrait<CameraTrait>();
             orthoCam.NearPlaneDistance = 0;
@@ -200,46 +231,46 @@ namespace Blimey.Demo
 
             orthoCam.TempWORKOUTANICERWAY = true;
 
-            this.RuntimeConfiguration.SetRenderPassCameraTo("Default", newCamSo);
+            this.RuntimeConfiguration.SetRenderPassCameraTo ("Debug", newCamSo);
+            this.RuntimeConfiguration.SetRenderPassCameraTo ("Default", newCamSo);
 			this.Configuration.BackgroundColour = Rgba32.Aquamarine;
 
-            while (hares.Count != MaxHares )
+            while (hares.Count != Settings.MaxHares)
             {
-                var so = this.SceneGraph.CreateSceneObject("van #" + hares.Count);
+                var so = this.SceneGraph.CreateSceneObject ("van #" + hares.Count);
                 var vanTrait = so.AddTrait<Hare>();
-                hares.Add(vanTrait);
+                hares.Add (vanTrait);
 
             }
 
             this.Blimey.InputEventSystem.Tap += this.HandleTap;
 
         }
-        
+
         void HandleTap (Gesture gesture)
         {
             ChangeNumHares ();
         }
-            
-            
+
         void ChangeNumHares ()
-        { 
+        {
             currentNumVans = currentNumVans << 1;
 
-            if( currentNumVans > MaxHares )
+            if (currentNumVans > Settings.MaxHares)
             {
-                currentNumVans = MinHares;
+                currentNumVans = Settings.MinHares;
             }
-            
-            for(Int32 i = 0; i < hares.Count; ++i)
+
+            for (Int32 i = 0; i < hares.Count; ++i)
             {
                 var vanTrait = hares[i];
 
                 vanTrait.Parent.Enabled = (i < currentNumVans);
-                
+
             }
         }
 
-        public override void Shutdown()
+        public override void Shutdown ()
         {
             this.Blimey.InputEventSystem.Tap -= this.HandleTap;
 
@@ -254,55 +285,56 @@ namespace Blimey.Demo
 
         public override Scene Update (AppTime time)
         {
+            AppWidth = this.Cor.Status.Width;
+            AppHeight = this.Cor.Status.Height;
+
+            bgSprite.DrawEx ("Debug", 0f, 0f, 0.0f, 1f / 100f, 1f / 100f);
+
             if (timer > 0f)
             {
                 timer -= time.Delta;
-
-                if( timer < 0f )
-                    timer = 0f;
             }
 
-            if (timer == 0f)
+            if (timer <= 0f)
             {
 				if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
 					Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape) ||
-					Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
+					Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Backspace))
                 {
-                    _returnScene = new Scene_MainMenu ();
+                    returnScene = new Scene_MainMenu ();
                 }
 
 				if (Cor.Input.GenericGamepad.Buttons.North == ButtonState.Pressed ||
                     Cor.Input.Keyboard.IsCharacterKeyDown ('d'))
                 {
                     debugLinesOn = !debugLinesOn;
-
-                    hares.ForEach( x => x.EnabledDebugRenderer(debugLinesOn) );
+                    hares.ForEach (x => x.EnabledDebugRenderer (debugLinesOn));
                 }
 
 				if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
                     Cor.Input.Keyboard.IsCharacterKeyDown ('b'))
                 {
-					hares.ForEach(x => x.NextBlendMode());
+					hares.ForEach (x => x.NextBlendMode ());
                 }
-                
+
                 if (Cor.Input.GenericGamepad.Buttons.South == ButtonState.Pressed ||
-                    Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Spacebar))
+                    Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Spacebar))
                 {
                     ChangeNumHares ();
                 }
 
-                timer = 0.1f;
+                timer = 0.2f;
             }
-            
+
             if (debugLinesOn)
                 this.Blimey.DebugRenderer.AddGrid ("Debug");
 
             if (debugLinesOn)
             {
-                float left = -(float)(screenWidth / 2) / 100f;
-                float right = (float)(screenWidth / 2) / 100f;
-                float top = (float)(screenHeight / 2) / 100f;
-                float bottom = -(float)(screenHeight / 2) / 100f;
+                Single left = -(Single)(AppWidth / 2) * Settings.PixelToWorldSpace;
+                Single right = (Single)(AppWidth / 2) * Settings.PixelToWorldSpace;
+                Single top = (Single)(AppHeight / 2) * Settings.PixelToWorldSpace;
+                Single bottom = -(Single)(AppHeight / 2) * Settings.PixelToWorldSpace;
 
                 this.Blimey.DebugRenderer.AddQuad (
                     "Default",
@@ -312,9 +344,9 @@ namespace Blimey.Demo
                     new Vector3 (left, top, 0),
                     Rgba32.Yellow);
             }
-            
 
-            return _returnScene;
+
+            return returnScene;
         }
 
     }
