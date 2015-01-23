@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;COR_PLATFORM_MONOMAC;</DefineConstants>
+    <DefineConstants>DEBUG;PLATFORM_MONOMAC;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -39,7 +39,7 @@
     <IncludeMonoRuntime>false</IncludeMonoRuntime>
     <UseSGen>false</UseSGen>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DefineConstants>COR_PLATFORM_MONOMAC;</DefineConstants>
+    <DefineConstants>PLATFORM_MONOMAC;</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -61,8 +61,8 @@
     <Compile Include="..\..\..\source\Cor.cs">
       <Link>Cor.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\source\Platform.OpenTk.cs">
-      <Link>Platform.OpenTk.cs</Link>
+    <Compile Include="..\..\..\source\Platform.Partial.OpenTk.cs">
+      <Link>Platform.Partial.OpenTk.cs</Link>
     </Compile>
     <Compile Include="..\..\..\source\Platform.LoggedProxy.cs">
       <Link>Platform.LoggedProxy.cs</Link>

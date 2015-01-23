@@ -16,7 +16,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;COR_PLATFORM_PSM</DefineConstants>
+    <DefineConstants>DEBUG;PLATFORM_PSM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -28,7 +28,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <DefineConstants>COR_PLATFORM_PSM</DefineConstants>
+    <DefineConstants>PLATFORM_PSM</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
