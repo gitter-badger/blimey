@@ -1,7 +1,7 @@
 ﻿using System;
 
 using Cor;
-using Blimey.Assets.Pipline;
+using Blimey.Assets.Pipeline;
 
 namespace Blimey.Assets.Builders
 {
@@ -16,7 +16,7 @@ namespace Blimey.Assets.Builders
         public override AssetImporterOutput <MeshAsset> Import (
             AssetImporterInput input, String platformId)
         {
-
+            throw new NotImplementedException ();
         }
     }
 }

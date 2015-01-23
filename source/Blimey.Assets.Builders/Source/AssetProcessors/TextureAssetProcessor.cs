@@ -5,7 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Fudge;
 using Cor;
-using Cor.Platform;
+using Platform;
 using Blimey.Assets.Pipeline;
 
 namespace Blimey.Assets.Builders
@@ -20,7 +20,7 @@ namespace Blimey.Assets.Builders
 
         TextureAsset ProcessRgba32 (ColourmapAsset resource)
         {
-            // In the asset pipeline it is fine if the 
+            // In the asset pipeline it is fine if the
             // texture lives in system memory, not gpu memory.
             // Infact, if the asset pipeline only uses system
             // memory textures it removes the dependency on

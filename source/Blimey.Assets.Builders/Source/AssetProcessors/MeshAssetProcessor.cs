@@ -9,9 +9,11 @@ using Blimey.Assets.Pipeline;
 
 namespace Blimey.Assets.Builders
 {
+    /*
     public class MeshAssetProcessor
-        : AssetBuilder <ImageResource, MeshAsset>
+        : AssetProcessor <ImageResource, MeshAsset>
     {
 
     }
+    */
 }
