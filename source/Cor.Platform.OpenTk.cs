@@ -625,14 +625,32 @@ namespace Cor.Library.OpenTK
             : struct
             , IVertexType
         {
+            // OpenTK doesn't seem to support DrawUserIndexedPrimitives like DX8
             Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
+            Int32 n = primitiveCount * nVertsInPrim;
+            var v = new T [n];
+
+            for (int i = indexOffset; i < nVertsInPrim * primitiveCount; ++i)
+            {
+                int idx = indexData [i];
+                v [i] = vertexData [idx];
+            }
+
+            gfx_DrawUserPrimitives <T> (primitiveType, v, 0, primitiveCount);
+
+            /*
             var vd = vertexData [0].VertexDeclaration;
 
             Handle vb = gfx_CreateVertexBuffer (vd, numVertices);
             gfx_vbff_SetData (vb, vertexData, vertexOffset, numVertices);
 
-            Handle ib = gfx_CreateIndexBuffer (primitiveCount);
-            gfx_ibff_SetData (ib, indexData, indexOffset, nVertsInPrim * primitiveCount);
+            Int32 numIndicesNeeded = primitiveCount * nVertsInPrim;
+            Int32[] c = new Int32 [numIndicesNeeded];
+            Array.Copy (indexData, indexOffset, c, 0, c.Length);
+
+            Handle ib = gfx_CreateIndexBuffer (c.Length);
+
+            gfx_ibff_SetData (ib, c, 0, c.Length);
 
             gfx_vbff_Activate (vb);
             gfx_ibff_Activate (ib);
@@ -644,6 +662,8 @@ namespace Cor.Library.OpenTK
 
             gfx_DestroyIndexBuffer (ib);
             gfx_DestroyVertexBuffer (vb);
+            */
+
         }
 
         public Byte[] gfx_CompileShader (String source)
@@ -838,14 +858,14 @@ namespace Cor.Library.OpenTK
         {
             Int32 indexCount = OpenTkCache.Get <Int32> (h, "IndexCount");
 
-            if (data.Length != indexCount)
+            if (data.Length < indexCount)
             {
                 throw new Exception ("?");
             }
 
-            UInt16[] udata = new UInt16[data.Length];
+            UInt16[] udata = new UInt16[indexCount];
 
-            for (Int32 i = 0; i < data.Length; ++i)
+            for (Int32 i = 0; i < indexCount; ++i)
             {
                 udata[i] = (UInt16) data[i];
             }
@@ -863,8 +883,6 @@ namespace Cor.Library.OpenTK
                 (IntPtr) 0,
                 (IntPtr) (sizeof (UInt16) * indexCount),
                 udata);
-
-            udata = null;
 
             OpenTKHelper.ThrowErrors ();
         }
@@ -1112,7 +1130,10 @@ namespace Cor.Library.OpenTK
 
             GL.DepthFunc (DepthFunction.Lequal);
             OpenTKHelper.ThrowErrors ();
-           
+
+            GL.Enable (EnableCap.AlphaTest);
+            OpenTKHelper.ThrowErrors ();
+
             #if COR_PLATFORM_XIOS
 
             #elif COR_PLATFORM_MONOMAC

@@ -3277,15 +3277,13 @@ namespace Cor
     {
         readonly TouchCollection touches = new TouchCollection ();
 
-        static Int32 nextTouchId = 0;
-
         internal override void Poll (AppTime time, Input.InputFrame inputFrame)
         {
             touches.ClearBuffer ();
             foreach (var rawTouch in inputFrame.ActiveTouches)
             {
                 touches.RegisterTouch (
-                    nextTouchId++, rawTouch.Position, rawTouch.Phase, time.FrameNumber, time.Elapsed);
+                    rawTouch.Id, rawTouch.Position, rawTouch.Phase, time.FrameNumber, time.Elapsed);
             }
         }
 
@@ -3531,7 +3529,7 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        Int32 id;
+        String id;
 
         /// <summary>
         /// The position of a touch ranges between -0.5 and 0.5 in both X and Y
@@ -3561,7 +3559,7 @@ namespace Cor
         /// <summary>
         /// 
         /// </summary>
-        public Int32 ID { get { return id; } }
+        public String ID { get { return id; } }
 
         /// <summary>
         /// 
@@ -3590,7 +3588,7 @@ namespace Cor
         /// 
         /// </summary>
         public Touch (
-            Int32 id,
+            String id,
             Vector2 normalisedEngineSpacePosition,
             TouchPhase phase,
             Int64 frame,
@@ -3625,7 +3623,7 @@ namespace Cor
         static Touch ()
         {
             invalidTouch = new Touch (
-                -1, 
+                null, 
                 Vector2.Zero, 
                 TouchPhase.Invalid, 
                 -1, 
@@ -3680,7 +3678,7 @@ namespace Cor
         ///
         /// </summary>
         internal void RegisterTouch (
-            Int32 id,
+            String id,
             Vector2 normalisedEngineSpacePosition,
             TouchPhase phase,
             Int64 frameNum,
@@ -3746,11 +3744,12 @@ namespace Cor
         /// <summary>
         ///
         /// </summary>
-        public Touch GetTouchFromTouchID (int zTouchID)
+        public Touch GetTouchFromTouchID (String zTouchID)
         {
             foreach (var touch in touchBuffer)
             {
-                if (touch.ID == zTouchID) return touch;
+                if (touch.ID == zTouchID)
+                    return touch;
             }
 
             //System.Diagnostics.Debug.WriteLine (

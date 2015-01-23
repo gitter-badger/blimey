@@ -662,11 +662,15 @@ namespace Cor.Platform.Xios
                 }
             }
 
+            var toRemove = new List <Int32> ();
             foreach (var iOSTouchHandle in intermediateTouchMap.Keys)
             {
                 if (!iOSTouches.ContainsKey (iOSTouchHandle))
-                    intermediateTouchMap.Remove (iOSTouchHandle);
+                    toRemove.Add (iOSTouchHandle);
             }
+
+            foreach (var key in toRemove)
+                intermediateTouchMap.Remove (key);
         }
     }
 
