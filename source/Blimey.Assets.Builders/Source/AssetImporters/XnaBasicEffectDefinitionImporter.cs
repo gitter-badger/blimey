@@ -1,7 +1,7 @@
 ﻿using System;
 
 using Cor;
-using Blimey.Assets.Pipline;
+using Blimey.Assets.Pipeline;
 
 namespace Blimey.Assets.Builders
 {

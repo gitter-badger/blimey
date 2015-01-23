@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using Cor;
 using System.Reflection;
 using Blimey.Assets.Builders;
-using Blimey.Assets.Pipline;
+using Blimey.Assets.Pipeline;
 using Oats;
 using Blimey;
 

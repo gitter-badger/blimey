@@ -1,5 +1,7 @@
 ﻿using System;
+#if OSX
 using MonoMac.AppKit;
+#endif
 
 namespace Blimey.Assets.Builders
 {

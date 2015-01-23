@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Fudge;
 using Cor;
 using Cor.Platform;
-using Blimey.Assets.Pipline;
+using Blimey.Assets.Pipeline;
 
 namespace Blimey.Assets.Builders
 {
