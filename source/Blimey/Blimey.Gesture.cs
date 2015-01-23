@@ -81,13 +81,13 @@ namespace Blimey
         InputEventSystem inputEventSystem;
         Int32 id;
         GestureType type;
-        Int32[] touchIDs;
+        String[] touchIDs;
 
         public Vector2 GetFinishingPosition(TouchPositionSpace space)
         {
 
             Vector2 averageFinishPos = Vector2.Zero ;
-            foreach (Int32 touchID in TouchIDs)
+            foreach (String touchID in TouchIDs)
             {
                 var tracker = inputEventSystem.GetTouchTracker(touchID);
 
@@ -101,7 +101,7 @@ namespace Blimey
             return averageFinishPos;
         }
 
-        public Gesture(InputEventSystem inputEventSystem, GestureType type, Int32[] touchIDs)
+        public Gesture(InputEventSystem inputEventSystem, GestureType type, String[] touchIDs)
         {
             this.inputEventSystem = inputEventSystem;
             this.id = GestureIDAssigner;
@@ -126,7 +126,7 @@ namespace Blimey
             }
         }
 
-        public Int32[] TouchIDs
+        public String[] TouchIDs
         {
             get
             {
@@ -140,7 +140,7 @@ namespace Blimey
             {
                 var tt = new List<TouchTracker>();
 
-                foreach (Int32 touchID in TouchIDs)
+                foreach (String touchID in TouchIDs)
                 {
                     var tracker = inputEventSystem.GetTouchTracker(touchID);
                     tt.Add(tracker);
@@ -178,7 +178,7 @@ namespace Blimey
         //public event GestureDelegate Pinch;
 
 
-        internal TouchTracker GetTouchTracker(Int32 id)
+        internal TouchTracker GetTouchTracker(String id)
         {
             var found = touchTrackers.Find(q => q.TouchID == id);
 
@@ -244,7 +244,8 @@ namespace Blimey
 
             // assert if there are any trackers in the list that have not been updated this frame
             var problems = touchTrackers.FindAll(x => (x.LatestTouch.FrameNumber != time.FrameNumber));
-            System.Diagnostics.Debug.Assert(problems.Count == 0);
+            if (problems.Count != 0)
+                throw new Exception ();
         }
 
         void UpdateGestureDetection(AppTime time)
@@ -259,17 +260,17 @@ namespace Blimey
                     var potentialTapGesture =
                         new PotentialTapGesture(
                             this,
-                            new Int32[]{touchTracker.TouchID} );
+                            new String[]{touchTracker.TouchID} );
 
                     var potentialDoubleTapGesture =
                         new PotentialDoubleTapGesture(
                             this,
-                            new Int32[]{touchTracker.TouchID} );
+                            new String[]{touchTracker.TouchID} );
 
                     var potentialFlickGesture =
                         new PotentialFlickGesture(
                             this,
-                            new Int32[]{touchTracker.TouchID} );
+                            new String[]{touchTracker.TouchID} );
 
                     potentialGestures.Add(potentialTapGesture);
                     potentialGestures.Add(potentialDoubleTapGesture);
@@ -346,7 +347,7 @@ namespace Blimey
     {
         internal PotentialDoubleTapGesture(
             InputEventSystem inputEventSystem,
-            Int32[] touchIDs)
+            String[] touchIDs)
             : base(inputEventSystem, GestureType.DoubleTap, touchIDs)
         {
 
@@ -378,7 +379,7 @@ namespace Blimey
 
         internal PotentialFlickGesture(
             InputEventSystem inputEventSystem,
-            Int32[] touchIDs)
+            String[] touchIDs)
             : base(inputEventSystem, GestureType.Flick, touchIDs)
         {
 
@@ -434,7 +435,7 @@ namespace Blimey
 
         internal PotentialGesture(
             InputEventSystem inputEventSystem,
-            GestureType type, Int32[] touchIDs)
+            GestureType type, String[] touchIDs)
         {
             this.id = PotentialGestureIDAssigner;
             this.inputEventSystem = inputEventSystem;
@@ -453,7 +454,7 @@ namespace Blimey
 
         protected Int32 id;
         protected GestureType type;
-        protected Int32[] touchIDs;
+        protected String[] touchIDs;
     }
 
 
@@ -467,7 +468,7 @@ namespace Blimey
 
         Single timer = 0f;
 
-        internal PotentialTapGesture(InputEventSystem inputEventSystem, Int32[] touchIDs)
+        internal PotentialTapGesture(InputEventSystem inputEventSystem, String[] touchIDs)
             : base(inputEventSystem, GestureType.Tap, touchIDs)
         {
 
@@ -519,7 +520,7 @@ namespace Blimey
         const Int32 NumFramesPerTrackedTouch = 15;
 
         Int32 trackCounter = -1;
-        Int32 id;
+        string id;
         List<Touch> samples = new List<Touch>();
         ScreenSpecification screenSpec;
         PanelSpecification panelSpec;
@@ -529,7 +530,7 @@ namespace Blimey
             Engine engine,
             ScreenSpecification displayMode,
             PanelSpecification panelMode,
-            Int32 id )
+            string id )
         {
             this.engine = engine;
             this.screenSpec = displayMode;
@@ -563,7 +564,7 @@ namespace Blimey
 
         internal Touch LatestTouch { get { return this.samples.Last(); } }
 
-        internal Int32 TouchID { get { return this.id; } }
+        internal String TouchID { get { return this.id; } }
 
         internal TouchPhase Phase { get { return samples.Last().Phase; } }
 

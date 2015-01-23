@@ -669,12 +669,19 @@ void main()
                 bHSFlip = zFrom.bHSFlip;
             }
 
-            public Sprite(PrimitiveRenderer zPrimitiveRenderer, Texture zTexture)
+            public Sprite (PrimitiveRenderer zPrimitiveRenderer, Texture zTexture)
             {
                 primitiveRenderer = zPrimitiveRenderer;
                 float w = (float) zTexture.Width;
                 float h = (float) zTexture.Height;
                 Init(zTexture, 0, 0, w, h );
+                SetHotSpot(w/2.0f, h/2.0f);
+            }
+
+            public Sprite(PrimitiveRenderer zPrimitiveRenderer, Texture texture, float texx, float texy, float w, float h)
+            {
+                primitiveRenderer = zPrimitiveRenderer;
+                Init(texture, texx, texy, w, h);
                 SetHotSpot(w/2.0f, h/2.0f);
             }
 
@@ -709,20 +716,15 @@ void main()
                 texx2 = (texx + w) / tex_width;
                 texy2 = (texy + h) / tex_height;
 
-                quad.v[0].UV.X = texx1; quad.v[0].UV.Y = texy1;
-                quad.v[1].UV.X = texx2; quad.v[1].UV.Y = texy1;
-                quad.v[2].UV.X = texx2; quad.v[2].UV.Y = texy2;
-                quad.v[3].UV.X = texx1; quad.v[3].UV.Y = texy2;
+                quad.v[2].UV.X = texx1; quad.v[2].UV.Y = texy1;
+                quad.v[3].UV.X = texx2; quad.v[3].UV.Y = texy1;
+                quad.v[0].UV.X = texx2; quad.v[0].UV.Y = texy2;
+                quad.v[1].UV.X = texx1; quad.v[1].UV.Y = texy2;
 
                 quad.v[0].Position.Z = quad.v[1].Position.Z = quad.v[2].Position.Z = quad.v[3].Position.Z = 0.5f;
                 quad.v[0].Colour = quad.v[1].Colour = quad.v[2].Colour = quad.v[3].Colour = Rgba32.White;
 
                 quad.blend = BlendMode.Default;
-            }
-
-            public Sprite(Texture texture, float texx, float texy, float w, float h)
-            {
-                Init(texture, texx, texy, w, h);
             }
 
             public void SetColour(Rgba32 _col)
@@ -1819,7 +1821,6 @@ void main()
 
         void _render_batch (Graphics gfx, String pass)
         {
-
             Texture texture = null;
             BlendMode? blendMode = null;
 
@@ -1848,10 +1849,10 @@ void main()
                             PrimitiveType.TriangleList, //primitiveType
                             batch.Buffer, //vertexData
                             0, //vertexOffset
-                            n * 4, //numVertices
+                            n, //numVertices
                             quadIndices, //indexData
                             0, //indexOffset
-                            n * 4 / 2);//primitiveCount
+                            n / 4 * 2);//primitiveCount
                         break;
 
                     case Type.PRIM_TRIPLES:
@@ -1859,7 +1860,7 @@ void main()
                             PrimitiveType.TriangleList,//primitiveType
                             batch.Buffer, //vertexData
                             0,//vertexOffset
-                            n);//primitiveCount
+                            n / 3);//primitiveCount
                         break;
 
                     case Type.PRIM_LINES:
@@ -1867,7 +1868,7 @@ void main()
                             PrimitiveType.LineList,//primitiveType
                             batch.Buffer, //vertexData
                             0,//vertexOffset
-                            n);//primitiveCount
+                            n / 2);//primitiveCount
                         break;
                 }
             }
@@ -2062,11 +2063,17 @@ void main()
                 _renderMeshRenderer (this.engine.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44, mr);
             }
 
-            // #2: Render all primitives that are associated with this pass.
-            scene.Blimey.PrimitiveRenderer.Render(this.engine.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
+            using (new ProfilingTimer (t => FrameStats.PrimitiveRendererTime += t))
+            {
+                // #2: Render all primitives that are associated with this pass.
+                scene.Blimey.PrimitiveRenderer.Render (this.engine.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
 
-            // #3: Render all debug primitives that are associated with this pass.
-            scene.Blimey.DebugRenderer.Render(this.engine.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
+            }
+            using (new ProfilingTimer (t => FrameStats.DebugRendererTime += t))
+            {
+                // #3: Render all debug primitives that are associated with this pass.
+                scene.Blimey.DebugRenderer.Render (this.engine.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
+            }
         }
 
         static void _renderMeshRenderer (Graphics zGfx, string renderPass, Matrix44 zView, Matrix44 zProjection, MeshRendererTrait mr)

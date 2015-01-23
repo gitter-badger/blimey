@@ -69,11 +69,16 @@ namespace Blimey
 
             DrawUserPrimitivesCount = 0;
             DrawIndexedPrimitivesCount = 0;
+            DebugRendererTime = 0;
+            PrimitiveRendererTime = 0;
         }
 
         public static Double UpdateTime { get; set; }
         public static Double RenderTime { get; set; }
 
+
+        public static Double DebugRendererTime { get; set; }
+        public static Double PrimitiveRendererTime { get; set; }
         public static Double SetCullModeTime { get; set; }
         public static Double ActivateVertexBufferTime { get; set; }
         public static Double ActivateIndexBufferTime { get; set; }
@@ -146,9 +151,18 @@ namespace Blimey
                     string.Format(
                         "\tMeshRenderer -> DrawTime -> {0:0.##}ms",
                         DrawTime ));
+
+                Console.WriteLine(
+                    string.Format(
+                        "\tDebugRenderer -> RenderTime -> {0:0.##}ms",
+                        DebugRendererTime ));
+                Console.WriteLine(
+                    string.Format(
+                        "\tPrimitiveRenderer -> RenderTime -> {0:0.##}ms",
+                        PrimitiveRendererTime ));
             }
 
-            if (DrawCallCount > 25)
+            if (DrawCallCount > 50)
             {
                 Console.WriteLine(
                     string.Format(

@@ -54,9 +54,9 @@ namespace Blimey
     public abstract class Asset
         : IAsset
     {
-        String id;
+        readonly String id;
 
-        public Asset ()
+        protected Asset ()
         {
             id = new Guid ().ToString ();
         }
@@ -120,6 +120,18 @@ namespace Blimey
         // public Byte[,] Mipmaps { get; set; }
 
         // public Int32 MipmapCount { get { return Data.GetLength (0); } }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public sealed class MeshAsset
+        : Asset
+    {
+        public VertexDeclaration VertexDeclaration { get; set; }
+
+        public Byte[] VertexData { get; set; }
+        public Byte[] IndexData { get; set; }
     }
 
 

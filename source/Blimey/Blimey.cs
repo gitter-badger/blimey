@@ -808,7 +808,7 @@ namespace Blimey
         Engine cor;
         Blimey blimey;
 
-        SceneRenderer renderManager;
+        readonly SceneRenderer sceneRenderer;
         Scene activeScene = null;
         Scene nextScene = null;
 
@@ -819,7 +819,7 @@ namespace Blimey
             this.cor = cor;
             this.blimey = blimey;
             nextScene = startScene;
-            renderManager = new SceneRenderer(cor);
+            sceneRenderer = new SceneRenderer(cor);
 
         }
 
@@ -861,7 +861,9 @@ namespace Blimey
             this.cor.Graphics.Reset ();
 
             if (activeScene != null && activeScene.Active)
-                renderManager.Render(activeScene);
+            {
+                sceneRenderer.Render (activeScene);
+            }
         }
     }
 
