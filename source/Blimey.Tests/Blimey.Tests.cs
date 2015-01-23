@@ -2,7 +2,7 @@
 using System;
 using Blimey;
 using Oats;
-using Cor.Platform;
+using Platform;
 using System.Collections.Generic;
 using Abacus.SinglePrecision;
 using Fudge;

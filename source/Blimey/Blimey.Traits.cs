@@ -37,7 +37,7 @@ namespace Blimey
     using Fudge;
     using Abacus.SinglePrecision;
     using Cor;
-    using Cor.Platform;
+    using Platform;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -121,7 +121,7 @@ namespace Blimey
         {
             this.Mesh = null;
             this.Material = null;
-            this.CullMode = CullMode.CW;
+            this.CullMode = CullMode.None;
         }
     }
 
