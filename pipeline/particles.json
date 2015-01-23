@@ -1,0 +1,26 @@
+{
+    "AssetId" : "particles",
+    "AssetType" : "Blimey.ColourmapAsset, Blimey",
+    "SourceSets" :
+    [
+        {
+            "Platforms" : [ "xios", "monomac" ],
+            "Importer" :
+            {
+                "Files" : [ "particles.png" ],
+                "AssetImporterType" : "Blimey.Assets.Builders.ImageFileImporter, Blimey.Assets.Builders",
+                "AssetImporterSettings" : {}
+            },
+            "Processors" :
+            [
+                {
+                    "AssetProcessorType" : "Blimey.Assets.Builders.TextureAssetProcessor, Blimey.Assets.Builders",
+                    "AssetProcessorSettings" :
+                    {
+                        "SurfaceFormat" : "Rgba32"
+                    }
+                }
+            ]
+        }
+    ]
+}
