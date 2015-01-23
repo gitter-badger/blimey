@@ -180,6 +180,12 @@
     <BundleResource Include="..\..\..\assets\xios\blimey_fnt_uv.bba">
       <Link>assets\xios\blimey_fnt_uv.bba</Link>
     </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\particles.bba">
+      <Link>assets\xios\particles.bba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\wood.bba">
+      <Link>assets\xios\wood.bba</Link>
+    </BundleResource>
     <BundleResource Include="Resources\Icon.png" />
     <BundleResource Include="Resources\Icon%402x.png" />
     <BundleResource Include="Resources\Icon-60%402x.png" />
@@ -200,9 +206,6 @@
     <BundleResource Include="Resources\Default-Landscape.png" />
     <BundleResource Include="Resources\Default-Portrait%402x.png" />
     <BundleResource Include="Resources\Default-Landscape%402x.png" />
-    <BundleResource Include="..\..\..\assets\xios\particles.bba">
-      <Link>assets\xios\particles.bba</Link>
-    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\submodules\abacus\build\xs.ios\Abacus\Abacus %28xs.ios%29.csproj">

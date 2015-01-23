@@ -37,7 +37,7 @@
 using System;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
-using Cor.Platform.MonoMac;
+using Platform.MonoMac;
 using Cor;
 using System.IO;
 
