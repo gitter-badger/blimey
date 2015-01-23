@@ -9,9 +9,9 @@ using Blimey.Assets.Pipline;
 
 namespace Blimey.Assets.Builders
 {
-    //public class MeshBuilder
-    //    : AssetBuilder <ImageResource, MeshAsset>
-    //{
+    public class MeshAssetProcessor
+        : AssetBuilder <ImageResource, MeshAsset>
+    {
 
-    //}
+    }
 }

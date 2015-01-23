@@ -56,6 +56,7 @@
     <Compile Include="Source\AssetImporters\ImageFileImporter.cs" />
     <Compile Include="Source\AssetImporters\TextFileImporter.cs" />
     <Compile Include="Source\AssetImporters\OpenTKShaderImporter.cs" />
+    <Compile Include="Source\AssetImporters\MeshImporter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
