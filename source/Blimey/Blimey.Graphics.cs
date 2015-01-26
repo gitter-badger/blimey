@@ -130,23 +130,26 @@ namespace Blimey
         public override Boolean Equals (Object obj)
         {
             Boolean flag = false;
-            if (obj is BlendMode) {
-                flag = this.Equals ((BlendMode)obj);
-            }
+            if (obj is BlendMode) flag = this.Equals ((BlendMode)obj);
             return flag;
         }
 
         public override Int32 GetHashCode ()
         {
-            int a = (int) rgbBlendFunction.GetHashCode();
-            int b = (int) sourceRgb.GetHashCode();
-            int c = (int) destinationRgb.GetHashCode();
+            int a = rgbBlendFunction.GetHashCode();
+            int b = sourceRgb.GetHashCode();
+            int c = destinationRgb.GetHashCode();
 
-            int d = (int) alphaBlendFunction.GetHashCode();
-            int e = (int) sourceAlpha.GetHashCode();
-            int f = (int) destinationAlpha.GetHashCode();
+            int d = alphaBlendFunction.GetHashCode();
+            int e = sourceAlpha.GetHashCode();
+            int f = destinationAlpha.GetHashCode();
 
-			return a.ShiftAndWrap(10) ^ b.ShiftAndWrap(8) ^ c.ShiftAndWrap(6) ^ d.ShiftAndWrap(4) ^ e.ShiftAndWrap(2) ^ f;
+			return a
+                ^ b.ShiftAndWrap(2)
+                ^ c.ShiftAndWrap(4)
+                ^ d.ShiftAndWrap(6)
+                ^ e.ShiftAndWrap(8)
+                ^ f.ShiftAndWrap(10);
         }
 
         public static Boolean operator != (BlendMode value1, BlendMode value2)
@@ -243,22 +246,119 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public class Material
+        : IEquatable <Material>
     {
-        Shader shader;
-        string renderPass;
+        readonly String renderPass;
+        readonly Shader shader;
+
+        readonly Dictionary<String, Rgba32> colourSettings = new Dictionary<String, Rgba32>();
+        readonly Dictionary<String, Single> floatSettings = new Dictionary<String, Single>();
+        readonly Dictionary<String, Matrix44> matrixSettings = new Dictionary<String, Matrix44>();
+        readonly Dictionary<String, Vector4> vector4Settings = new Dictionary<String, Vector4>();
+        readonly Dictionary<String, Vector3> vector3Settings = new Dictionary<String, Vector3>();
+        readonly Dictionary<String, Vector2> vector2Settings = new Dictionary<String, Vector2>();
+        readonly Dictionary<String, Vector2> scaleSettings = new Dictionary<String, Vector2>();
+        readonly Dictionary<String, Vector2> texOffsetSettings = new Dictionary<String, Vector2>();
+        readonly Dictionary<String, Texture> texSamplerSettings = new Dictionary<String, Texture>();
+
+        public String RenderPass { get { return renderPass; } }
+        public Shader Shader { get { return shader; } }
 
         public BlendMode BlendMode { get; set; }
-        public string RenderPass { get { return renderPass; } }
+        public Vector2 Tiling { get; set; }
+        public Vector2 Offset { get; set; }
 
-        public Material(string renderPass, Shader shader)
+        public override int GetHashCode ()
         {
-            this.BlendMode = BlendMode.Default;
-
-            this.renderPass = renderPass;
-            this.shader = shader;
+            return renderPass.GetHashCode ()
+                ^ shader.GetHashCode ().ShiftAndWrap(1)
+                ^ colourSettings.GetHashCode ().ShiftAndWrap(2)
+                ^ floatSettings.GetHashCode ().ShiftAndWrap(3)
+                ^ matrixSettings.GetHashCode ().ShiftAndWrap(4)
+                ^ vector4Settings.GetHashCode ().ShiftAndWrap(5)
+                ^ vector3Settings.GetHashCode ().ShiftAndWrap(6)
+                ^ vector2Settings.GetHashCode ().ShiftAndWrap(7)
+                ^ scaleSettings.GetHashCode ().ShiftAndWrap(8)
+                ^ texOffsetSettings.GetHashCode ().ShiftAndWrap(9)
+                ^ texSamplerSettings.GetHashCode ().ShiftAndWrap(10)
+                ^ BlendMode.GetHashCode ().ShiftAndWrap(11)
+                ^ Tiling.GetHashCode ().ShiftAndWrap(12)
+                ^ Offset.GetHashCode ().ShiftAndWrap(13);
         }
 
-        internal void UpdateShaderVariables(Matrix44 world, Matrix44 view, Matrix44 proj)
+
+        public Material(String renderPass, Shader shader)
+        {
+            this.renderPass = renderPass;
+            this.shader = shader;
+
+            BlendMode = BlendMode.Default;
+            Tiling = Vector2.One;
+            Offset = Vector2.Zero;
+        }
+
+        public override Boolean Equals (Object obj)
+        {
+            Boolean flag = false;
+            if (obj is Material) flag = Equals ((Material) obj);
+            return flag;
+        }
+
+        public Boolean Equals (Material other)
+        {
+            if (renderPass != other.renderPass)
+                return false;
+
+            if (shader != other.shader)
+                return false;
+
+            if (colourSettings.Count != other.colourSettings.Count) return false;
+            if (floatSettings.Count != other.floatSettings.Count) return false;
+            if (matrixSettings.Count != other.matrixSettings.Count) return false;
+            if (vector4Settings.Count != other.vector4Settings.Count) return false;
+            if (vector3Settings.Count != other.vector3Settings.Count) return false;
+            if (vector2Settings.Count != other.vector2Settings.Count) return false;
+            if (scaleSettings.Count != other.scaleSettings.Count) return false;
+            if (texOffsetSettings.Count != other.texOffsetSettings.Count) return false;
+            if (texSamplerSettings.Count != other.texSamplerSettings.Count) return false;
+
+            foreach (var key in colourSettings.Keys) if (!other.colourSettings.ContainsKey (key)) return false;
+            foreach (var key in floatSettings.Keys) if (!other.floatSettings.ContainsKey (key)) return false;
+            foreach (var key in matrixSettings.Keys) if (!other.matrixSettings.ContainsKey (key)) return false;
+            foreach (var key in vector4Settings.Keys) if (!other.vector4Settings.ContainsKey (key)) return false;
+            foreach (var key in vector3Settings.Keys) if (!other.vector3Settings.ContainsKey (key)) return false;
+            foreach (var key in vector2Settings.Keys) if (!other.vector2Settings.ContainsKey (key)) return false;
+            foreach (var key in scaleSettings.Keys) if (!other.scaleSettings.ContainsKey (key)) return false;
+            foreach (var key in texOffsetSettings.Keys) if (!other.texOffsetSettings.ContainsKey (key)) return false;
+            foreach (var key in texSamplerSettings.Keys) if (!other.texSamplerSettings.ContainsKey (key)) return false;
+
+            foreach (var key in colourSettings.Keys) if (colourSettings[key] != other.colourSettings[key]) return false;
+            foreach (var key in floatSettings.Keys) if (Math.Abs (floatSettings [key] - other.floatSettings [key]) > 0.0001f) return false;
+            foreach (var key in matrixSettings.Keys) if (matrixSettings[key] != other.matrixSettings[key]) return false;
+            foreach (var key in vector4Settings.Keys) if (vector4Settings[key] != other.vector4Settings[key]) return false;
+            foreach (var key in vector3Settings.Keys) if (vector3Settings[key] != other.vector3Settings[key]) return false;
+            foreach (var key in vector2Settings.Keys) if (vector2Settings[key] != other.vector2Settings[key]) return false;
+            foreach (var key in scaleSettings.Keys) if (scaleSettings[key] != other.scaleSettings[key]) return false;
+            foreach (var key in texOffsetSettings.Keys) if (texOffsetSettings[key] != other.texOffsetSettings[key]) return false;
+            foreach (var key in texSamplerSettings.Keys) if (texSamplerSettings[key] != other.texSamplerSettings[key]) return false;
+
+            return true;
+        }
+
+        public static Boolean operator == (Material a, Material b) { return Equals (a, b); }
+        public static Boolean operator != (Material a, Material b) { return !Equals (a, b); }
+
+        public void SetColour (String id, Rgba32 colour) { colourSettings[id] = colour; }
+        public void SetFloat (String id, Single value) { floatSettings[id] = value; }
+        public void SetMatrix (String id, Matrix44 matrix) { matrixSettings[id] = matrix; }
+        public void SetVector4 (String id, Vector4 vector) { vector4Settings[id] = vector; }
+        public void SetVector3 (String id, Vector3 vector) { vector3Settings[id] = vector; }
+        public void SetVector2 (String id, Vector2 vector) { vector2Settings[id] = vector; }
+        public void SetTextureScale (String id, Vector2 scale) { scaleSettings[id] = scale; }
+        public void SetTextureOffset (String id, Vector2 offset) { texOffsetSettings[id] = offset; }
+        public void SetTexture (String id, Texture texture) { texSamplerSettings[id] = texture; }
+      
+        internal void UpdateShaderState ()
         {
             if(shader == null)
                 return;
@@ -281,11 +381,8 @@ namespace Blimey
 
             // Right now, just use the easy option and optimise later ;-D
 
-            shader.ResetVariables();
-
-            shader.SetVariable ("World", world);
-            shader.SetVariable ("View", view);
-            shader.SetVariable ("Projection", proj);
+            // The solution is to add a SET BATCHED function to the shader so the shader itself can work out what needs
+            // to change.
 
             foreach(var propertyName in colourSettings.Keys)
             {
@@ -302,14 +399,19 @@ namespace Blimey
                 shader.SetVariable (propertyName, matrixSettings[propertyName]);
             }
 
+            foreach(var propertyName in vector4Settings.Keys)
+            {
+                shader.SetVariable (propertyName, vector4Settings[propertyName]);
+            }
+
             foreach(var propertyName in vector3Settings.Keys)
             {
                 shader.SetVariable (propertyName, vector3Settings[propertyName]);
             }
 
-            foreach(var propertyName in vector4Settings.Keys)
+            foreach(var propertyName in vector2Settings.Keys)
             {
-                shader.SetVariable (propertyName, vector4Settings[propertyName]);
+                shader.SetVariable (propertyName, vector2Settings[propertyName]);
             }
 
             foreach(var propertyName in scaleSettings.Keys)
@@ -317,97 +419,30 @@ namespace Blimey
                 shader.SetVariable (propertyName, scaleSettings[propertyName]);
             }
 
-            foreach(var propertyName in textureOffsetSettings.Keys)
+            foreach(var propertyName in texOffsetSettings.Keys)
             {
-                shader.SetVariable (propertyName, textureOffsetSettings[propertyName]);
+                shader.SetVariable (propertyName, texOffsetSettings[propertyName]);
             }
 
             int i = 0;
-            foreach(var key in textureSamplerSettings.Keys)
+            foreach(var key in texSamplerSettings.Keys)
             {
                 shader.SetSamplerTarget (key, i);
                 i++;
             }
         }
 
-        internal Shader GetShader()
-        {
-            return shader;
-        }
-
-        public Vector2 Tiling
-        {
-            get { throw new NotImplementedException (); }
-            set { throw new NotImplementedException (); }
-        }
-
-        public Vector2 Offset
-        {
-            get { throw new NotImplementedException (); }
-            set { throw new NotImplementedException (); }
-        }
-
-        internal void UpdateGpuSettings(Graphics graphics)
+        internal void UpdateRenderState (Graphics graphics)
         {
             // Update the render states on the gpu
             graphics.SetBlendEquation (this.BlendMode);
 
             // Set the active textures on the gpu
             int i = 0;
-            foreach(var key in textureSamplerSettings.Keys)
+            foreach(var key in texSamplerSettings.Keys)
             {
-                graphics.SetActive (textureSamplerSettings [key], i++);
+                graphics.SetActive (texSamplerSettings [key], i++);
             }
-        }
-
-        Dictionary<string, Rgba32> colourSettings = new Dictionary<string, Rgba32>();
-        Dictionary<string, Single> floatSettings = new Dictionary<string, Single>();
-        Dictionary<string, Matrix44> matrixSettings = new Dictionary<string, Matrix44>();
-        Dictionary<string, Vector3> vector3Settings = new Dictionary<string, Vector3>();
-        Dictionary<string, Vector4> vector4Settings = new Dictionary<string, Vector4>();
-        Dictionary<string, Vector2> scaleSettings = new Dictionary<string, Vector2>();
-        Dictionary<string, Vector2> textureOffsetSettings = new Dictionary<string, Vector2>();
-        Dictionary<string, Texture> textureSamplerSettings = new Dictionary<string, Texture>();
-
-        public void SetColour(string propertyName, Rgba32 colour)
-        {
-            colourSettings[propertyName] = colour;
-        }
-
-        public void SetFloat(string propertyName, Single value)
-        {
-            floatSettings[propertyName] = value;
-        }
-
-        public void SetMatrix(string propertyName, Matrix44 matrix)
-        {
-            matrixSettings[propertyName] = matrix;
-        }
-
-        public void SetVector4(string propertyName, Vector4 vector)
-        {
-            vector4Settings[propertyName] = vector;
-        }
-
-        public void SetVector3(string propertyName, Vector3 vector)
-        {
-            vector3Settings[propertyName] = vector;
-        }
-
-        public void SetTextureOffset(string propertyName, Vector2 offset)
-        {
-            textureOffsetSettings[propertyName] = offset;
-        }
-
-        public void SetTextureScale(string propertyName, Vector2 scale)
-        {
-            scaleSettings[propertyName] = scale;
-        }
-
-
-        public void SetTexture(string propertyName, Texture texture)
-        {
-            textureSamplerSettings[propertyName] = texture;
         }
     }
 }

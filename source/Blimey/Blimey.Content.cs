@@ -233,27 +233,21 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public abstract class GeometricPrimitive
-        : Mesh
     {
-        public static IVertexType vertType = new VertexPositionNormal();
-
-        public override VertexDeclaration VertDecl { get { return vertType.VertexDeclaration; } }
+        public Mesh Mesh { get; private set; }
 
         // Once all the geometry has been specified by calling AddVertex and AddIndex,
         // this method copies the vertex and index data into GPU format buffers, ready
         // for efficient rendering.
         protected void InitializePrimitive(Graphics gfx)
         {
-            VertexBuffer = gfx.CreateVertexBuffer (VertDecl, vertices.Count);
-            IndexBuffer = gfx.CreateIndexBuffer (indices.Count);
+            var vertexBuffer = gfx.CreateVertexBuffer (VertexPositionNormal.Default.VertexDeclaration, vertices.Count);
+            var indexBuffer = gfx.CreateIndexBuffer (indices.Count);
 
-            VertexBuffer.SetData(vertices.ToArray());
-            IndexBuffer.SetData(indices.ToArray());
+            vertexBuffer.SetData (vertices.ToArray());
+            indexBuffer.SetData (indices.ToArray());
 
-            //todo, move to base mesh abstract class
-            TriangleCount = indices.Count / 3;
-            VertexCount = vertices.Count;
-
+            Mesh = new Mesh (vertexBuffer, indexBuffer);
         }
 
         /// <summary>
@@ -274,7 +268,6 @@ namespace Blimey
             var vertElement = new VertexPositionNormal(position, normal);
             vertices.Add(vertElement);
         }
-
 
         /// <summary>
         /// Adds a new index to the primitive model. This should only be called
