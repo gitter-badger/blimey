@@ -164,7 +164,7 @@ namespace Blimey.Demo
 
             var mr = landmarkGo.AddTrait<MeshRendererTrait>();
 
-            mr.Mesh = cowMesh;
+            mr.Mesh = cowMesh.Mesh;
 
             var mat = new Material("Default", CommonDemoResources.PixelLitShader);
 
@@ -258,7 +258,7 @@ namespace Blimey.Demo
             billboardGo = this.SceneGraph.CreateSceneObject("billboard");
 
             var mr = billboardGo.AddTrait<MeshRendererTrait>();
-            mr.Mesh = billboard;
+            mr.Mesh = billboard.Mesh;
             mr.Material = new Material("Default", CommonDemoResources.UnlitShader);
             mr.Material.SetColour("MaterialColour", RandomGenerator.Default.GetRandomColour());
 
@@ -269,7 +269,7 @@ namespace Blimey.Demo
             markerGo.Transform.LocalScale = new Vector3 (0.05f, 0.05f, 0.05f);
 
             var markerMR = markerGo.AddTrait<MeshRendererTrait> ();
-            markerMR.Mesh = new CubePrimitive(this.Cor.Graphics);
+            markerMR.Mesh = new CubePrimitive(this.Cor.Graphics).Mesh;
             markerMR.Material = new Material("Default", CommonDemoResources.UnlitShader);
             markerMR.Material.SetColour("MaterialColour", Rgba32.Red);
 
@@ -385,7 +385,7 @@ namespace Blimey.Demo
             _returnScene = this;
             this.Blimey.InputEventSystem.Tap += this.OnTap;
 
-            teapotGPUMesh = new TeapotPrimitive(Cor.Graphics);
+            teapotGPUMesh = new TeapotPrimitive(Cor.Graphics).Mesh;
 
             AddTeapot(0);
             AddTeapot(-1.5f);

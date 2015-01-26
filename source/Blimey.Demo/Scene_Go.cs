@@ -66,7 +66,7 @@ namespace Blimey.Demo
             mat.SetTexture ("TextureSampler", woodTex);
             MeshRendererTrait meshRendererTrait = goBoard.AddTrait<MeshRendererTrait> ();
             meshRendererTrait.Material = mat;
-            meshRendererTrait.Mesh = goBoardMesh;
+            meshRendererTrait.Mesh = goBoardMesh.Mesh;
 
             returnScene = this;
 

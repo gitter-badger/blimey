@@ -59,14 +59,14 @@ namespace Blimey.Demo
             var sphereModel = new SpherePrimitive(scene.Cor.Graphics);
             var torusModel = new TorusPrimitive(scene.Cor.Graphics);
 
-            objects.Add(CreateShapeGO(scene, "Default", cubeModel, 2));
-            objects.Add(CreateShapeGO(scene, "Default", billboardModel));
-            objects.Add(CreateShapeGO(scene, "Default", teapotModel, 1));
-            objects.Add(CreateShapeGO(scene, "Default", cylinderModel));
-            objects.Add(CreateShapeGO(scene, "Default", sphereModel));
-            objects.Add(CreateShapeGO(scene, "Default", torusModel, 1));
-            objects.Add(CreateShapeGO(scene, "Default", torusModel, 2));
-            objects.Add(CreateShapeGO(scene, "Default", torusModel, 0));
+            objects.Add(CreateShapeGO(scene, "Default", cubeModel.Mesh, 2));
+            objects.Add(CreateShapeGO(scene, "Default", billboardModel.Mesh));
+            objects.Add(CreateShapeGO(scene, "Default", teapotModel.Mesh, 1));
+            objects.Add(CreateShapeGO(scene, "Default", cylinderModel.Mesh));
+            objects.Add(CreateShapeGO(scene, "Default", sphereModel.Mesh));
+            objects.Add(CreateShapeGO(scene, "Default", torusModel.Mesh, 1));
+            objects.Add(CreateShapeGO(scene, "Default", torusModel.Mesh, 2));
+            objects.Add(CreateShapeGO(scene, "Default", torusModel.Mesh, 0));
             return objects;
         }
 

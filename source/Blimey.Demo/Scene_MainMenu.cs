@@ -92,14 +92,14 @@ namespace Blimey.Demo
 			this.Configuration.BackgroundColour = _startCol;
             var teaPotModel = new TeapotPrimitive(this.Cor.Graphics);
 
-			var so1 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
-			var so2 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
-			var so3 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
-			var so4 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
-			var so5 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
-			var so6 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
-            var so7 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
-            var so8 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel, 1);
+            var so1 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel.Mesh, 1);
+            var so2 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel.Mesh, 1);
+            var so3 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel.Mesh, 1);
+            var so4 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel.Mesh, 1);
+            var so5 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel.Mesh, 1);
+            var so6 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel.Mesh, 1);
+            var so7 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel.Mesh, 1);
+            var so8 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel.Mesh, 1);
 
             so1.Transform.LocalPosition = new Vector3(-0.35f, 0f, 0f);
 			so2.Transform.LocalPosition = new Vector3(-0.25f, 0f, 0f);

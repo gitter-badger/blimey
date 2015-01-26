@@ -150,7 +150,7 @@ namespace Blimey.Demo
 			earthGo.Transform.LocalScale = new Vector3(2 * radius, 2 * radius, 2 * radius);
 
 			var mr = earthGo.AddTrait<MeshRendererTrait>();
-			mr.Mesh = sphereMesh;
+            mr.Mesh = sphereMesh.Mesh;
 			mr.Material = mat;
 
             //var mat2 = new Material("Default", CommonDemoResources.UnlitShader);

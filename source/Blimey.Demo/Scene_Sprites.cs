@@ -79,8 +79,8 @@ namespace Blimey.Demo
 
             public override void OnAwake ()
             {
-                Single x = RandomGenerator.Default.GetRandomSingle (0, (Single) Scene_Sprites.AppWidth / 2f);
-                Single y = RandomGenerator.Default.GetRandomSingle (0 , (Single) Scene_Sprites.AppHeight / 2f);
+                Single x = RandomGenerator.Default.GetRandomSingle (-(Single) Scene_Sprites.AppWidth / 2f, (Single) Scene_Sprites.AppWidth / 2f);
+                Single y = RandomGenerator.Default.GetRandomSingle (-(Single) Scene_Sprites.AppHeight / 2f , (Single) Scene_Sprites.AppHeight / 2f);
 
                 this.velocity                       = RandomGenerator.Default.GetRandomVector2 (-Settings.MaxVelocity, Settings.MaxVelocity);
                 this.deltaRotation                  = RandomGenerator.Default.GetRandomSingle (-0.5f, 0.5f);
@@ -167,7 +167,7 @@ namespace Blimey.Demo
         }
 
         Scene returnScene;
-        Int32 currentNumVans = 16;
+        Int32 currentNumHares = 16;
         Boolean debugLinesOn = false;
         Single timer = 0f;
 
@@ -237,10 +237,15 @@ namespace Blimey.Demo
 
             while (hares.Count != Settings.MaxHares)
             {
-                var so = this.SceneGraph.CreateSceneObject ("van #" + hares.Count);
-                var vanTrait = so.AddTrait<Hare>();
-                hares.Add (vanTrait);
+                var so = this.SceneGraph.CreateSceneObject ("hare #" + hares.Count);
+                var hareTrait = so.AddTrait<Hare>();
+                hares.Add (hareTrait);
+            }
 
+            for (Int32 i = 0; i < hares.Count; ++i)
+            {
+                var hareTrait = hares[i];
+                hareTrait.Parent.Enabled = (i < currentNumHares);
             }
 
             this.Blimey.InputEventSystem.Tap += this.HandleTap;
@@ -254,19 +259,17 @@ namespace Blimey.Demo
 
         void ChangeNumHares ()
         {
-            currentNumVans = currentNumVans << 1;
+            currentNumHares = currentNumHares << 1;
 
-            if (currentNumVans > Settings.MaxHares)
+            if (currentNumHares > Settings.MaxHares)
             {
-                currentNumVans = Settings.MinHares;
+                currentNumHares = Settings.MinHares;
             }
 
             for (Int32 i = 0; i < hares.Count; ++i)
             {
-                var vanTrait = hares[i];
-
-                vanTrait.Parent.Enabled = (i < currentNumVans);
-
+                var hareTrait = hares[i];
+                hareTrait.Parent.Enabled = (i < currentNumHares);
             }
         }
 
