@@ -1088,6 +1088,7 @@ namespace Cor
     public sealed class VertexBuffer
         : IDisposable
         , ICorResource
+        , IEquatable <VertexBuffer>
     {
         readonly IApi platform;
         readonly Handle handle;
@@ -1118,6 +1119,24 @@ namespace Cor
             ++vertexBufferCount;
             InternalUtils.Log.Info ("GFX", "Vertex buffer created: " + handle.Identifier);
         }
+
+        public override Boolean Equals (Object obj)
+        {
+            Boolean flag = false;
+            if (obj is VertexBuffer) flag = this.Equals ((VertexBuffer) obj);
+            return flag;
+        }
+
+        public Boolean Equals (VertexBuffer other)
+        {
+            if (this.Handle != other.Handle)
+                return false;
+
+            return true;
+        }
+
+        public static Boolean operator == (VertexBuffer a, VertexBuffer b) { return Equals (a, b); }
+        public static Boolean operator != (VertexBuffer a, VertexBuffer b) { return !Equals (a, b); }
 
         // This finalizer will run only if the Dispose method
         // does not get called.
@@ -1245,6 +1264,7 @@ namespace Cor
     public sealed class IndexBuffer
         : IDisposable
         , ICorResource
+        , IEquatable <IndexBuffer>
     {
         readonly IApi platform;
         readonly Handle handle;
@@ -1275,6 +1295,24 @@ namespace Cor
             ++indexBufferCount;
             InternalUtils.Log.Info ("GFX", "Index buffer created: " + handle.Identifier);
         }
+
+        public override Boolean Equals (Object obj)
+        {
+            Boolean flag = false;
+            if (obj is IndexBuffer) flag = this.Equals ((IndexBuffer) obj);
+            return flag;
+        }
+
+        public Boolean Equals (IndexBuffer other)
+        {
+            if (this.Handle != other.Handle)
+                return false;
+
+            return true;
+        }
+
+        public static Boolean operator == (IndexBuffer a, IndexBuffer b) { return Equals (a, b); }
+        public static Boolean operator != (IndexBuffer a, IndexBuffer b) { return !Equals (a, b); }
 
         // This finalizer will run only if the Dispose method
         // does not get called.
@@ -1377,6 +1415,7 @@ namespace Cor
     public sealed class Shader
         : IDisposable
         , ICorResource
+        , IEquatable <Shader>
     {
         readonly IApi platform;
         readonly Handle shaderHandle;
@@ -1500,6 +1539,24 @@ namespace Cor
                 ValidateShaderSamplers (shaderDeclaration.SamplerDeclarations, variantSamplerInfos [i]);
             }
         }
+
+        public override Boolean Equals (Object obj)
+        {
+            Boolean flag = false;
+            if (obj is Shader) flag = this.Equals ((Shader) obj);
+            return flag;
+        }
+
+        public Boolean Equals (Shader other)
+        {
+            if (this.Handle != other.Handle)
+                return false;
+
+            return true;
+        }
+
+        public static Boolean operator == (Shader a, Shader b) { return Equals (a, b); }
+        public static Boolean operator != (Shader a, Shader b) { return !Equals (a, b); }
 
         void ValidateShaderInputs (List<ShaderInputDeclaration> inputDeclarations, ShaderInputInfo[] inputInfos)
         {
@@ -1785,12 +1842,10 @@ namespace Cor
                 matches [i] = CompareShaderInputs (vertexDeclaration, i);
             }
 
-
             // foreach variant
             for (int i = 0; i < variantCount; ++i)
             {
                 // work out how many vert inputs match
-
                 int numMatchedVertElems = matches[i].NumMatchedInputs;
                 int numUnmatchedVertElems = matches[i].NumUnmatchedInputs;
                 int numMissingNonOptionalInputs = matches[i].NumUnmatchedRequiredInputs;
@@ -1868,7 +1923,6 @@ namespace Cor
             foreach (var vertElem in vertElems)
             {
                 var usage = vertElem.VertexElementUsage;
-
                 var format = vertElem.VertexElementFormat;
                 /*
                 foreach (var input in oglesShader.Inputs)
@@ -1965,6 +2019,7 @@ namespace Cor
     public sealed class Texture
         : IDisposable
         , ICorResource
+        , IEquatable <Texture>
     {
         readonly IApi platform;
         readonly Handle textureHandle;
@@ -1996,6 +2051,24 @@ namespace Cor
 
             InternalUtils.Log.Info ("GFX", "Texture created: " + textureHandle.Identifier);
         }
+
+        public override Boolean Equals (Object obj)
+        {
+            Boolean flag = false;
+            if (obj is Texture) flag = this.Equals ((Texture) obj);
+            return flag;
+        }
+
+        public Boolean Equals (Texture other)
+        {
+            if (this.Handle != other.Handle)
+                return false;
+
+            return true;
+        }
+
+        public static Boolean operator == (Texture a, Texture b) { return Equals (a, b); }
+        public static Boolean operator != (Texture a, Texture b) { return !Equals (a, b); }
 
         // This finalizer will run only if the Dispose method
         // does not get called.

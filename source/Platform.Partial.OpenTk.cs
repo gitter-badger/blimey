@@ -1173,12 +1173,12 @@ namespace Platform.Wpf
             GL.DepthFunc (DepthFunction.Lequal);
             OpenTKHelper.ThrowErrors ();
 
-            GL.Enable (EnableCap.AlphaTest);
-            OpenTKHelper.ThrowErrors ();
-
 #if PLATFORM_XIOS
 
-            #elif PLATFORM_MONOMAC
+#elif PLATFORM_MONOMAC
+
+            GL.Enable (EnableCap.AlphaTest);
+            OpenTKHelper.ThrowErrors ();
 
             GL.Enable (EnableCap.Texture2D);
             OpenTKHelper.ThrowErrors ();

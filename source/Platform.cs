@@ -164,6 +164,7 @@ namespace Platform
 
     public abstract class Handle
         : IDisposable
+        , IEquatable <Handle>
     {
         readonly String guid;
         Boolean alreadyDisposed;
@@ -200,6 +201,24 @@ namespace Platform
 
             alreadyDisposed = true;
         }
+
+        public override Boolean Equals (Object obj)
+        {
+            Boolean flag = false;
+            if (obj is Handle) flag = this.Equals ((Handle) obj);
+            return flag;
+        }
+
+        public Boolean Equals (Handle other)
+        {
+            if (this.guid != other.guid)
+                return false;
+
+            return true;
+        }
+
+        public static Boolean operator == (Handle a, Handle b) { return Equals (a, b); }
+        public static Boolean operator != (Handle a, Handle b) { return !Equals (a, b); }
     }
 
 
