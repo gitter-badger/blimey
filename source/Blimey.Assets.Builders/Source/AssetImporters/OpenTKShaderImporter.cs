@@ -3,7 +3,7 @@ using System.IO;
 using ServiceStack.Text;
 using Oats;
 using System.Collections.Generic;
-using Cor.Platform;
+using Platform;
 using Blimey.Assets.Pipeline;
 using System.Text;
 
@@ -96,7 +96,7 @@ namespace Blimey.Assets.Builders
 
                 sources [i] = Encoding.UTF8.GetBytes (s);
             }
-			
+
             using (var mem = new MemoryStream ())
             {
                 using (var binW = new BinaryWriter (mem))
