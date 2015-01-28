@@ -36,10 +36,10 @@ namespace Blimey.Assets.Builders
             output.OutputAsset = outputResource;
 
             if (input.Files.Count != 1)
-                throw new Exception ("ColourmapAssetImporter only supports one input file.");
+                throw new Exception ("ImageFileImporter only supports one input file.");
 
             if (!File.Exists (input.Files[0]))
-                throw new Exception ("ColourmapAssetImporter cannot find input file.");
+                throw new Exception ("ImageFileImporter cannot find input file.");
             
             string filename = input.Files[0];
 

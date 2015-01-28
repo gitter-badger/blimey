@@ -47,7 +47,6 @@
     <Compile Include="Source\Builders.cs" />
     <Compile Include="Source\Debug.cs" />
     <Compile Include="Source\AssetProcessors\HeightmapAssetProcessor.cs" />
-    <Compile Include="Source\AssetProcessors\MeshAssetProcessor.cs" />
     <Compile Include="Source\AssetProcessors\TextureAssetProcessor.cs" />
     <Compile Include="Source\AssetImporters\PsmShaderImporter.cs" />
     <Compile Include="Source\AssetImporters\XnaShaderImporter.cs" />
