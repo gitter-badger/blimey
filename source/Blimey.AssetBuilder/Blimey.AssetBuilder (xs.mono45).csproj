@@ -18,12 +18,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <EnvironmentVariables>
-      <EnvironmentVariables>
-        <Variable name="DYLD_FALLBACK_LIBRARY_PATH" value="$(HOME)/lib:/usr/local/lib:/lib:/usr/lib:/Users/ash/repos/sungiant@github/assimp/bin/assimp_Debug_MacOSX" />
-      </EnvironmentVariables>
-    </EnvironmentVariables>
-    <Commandlineparameters>monomac ~/repos/ajp/blimey-demo/</Commandlineparameters>
+    <Commandlineparameters>xios ~/repos/ajp/blimey-demo/</Commandlineparameters>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -90,5 +85,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="bab" />
+    <None Include="..\Blimey.Assets.AssImp\libassimpd.dylib">
+      <Link>libassimpd.dylib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
