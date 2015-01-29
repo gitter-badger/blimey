@@ -155,6 +155,9 @@
     <BundleResource Include="..\..\..\assets\monomac\wood.bba">
       <Link>assets\monomac\wood.bba</Link>
     </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\big_mushroom.bba">
+      <Link>assets\monomac\big_mushroom.bba</Link>
+    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\submodules\abacus\build\xs.monomac\Abacus\Abacus %28xs.monomac%29.csproj">

@@ -5,14 +5,12 @@
 [Tt]est[Rr]esults
 [Tt]est-[Rr]esults/
 assets/
-
 *.userprefs
 *.suo
 *.user
 *.sln.docstates
 *.userprefs
 *.meta
-*.obj
 *.pch
 *.pdb
 *.tmp

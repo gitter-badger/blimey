@@ -53,6 +53,13 @@ namespace Blimey.Demo
             this.Configuration.BackgroundColour = Rgba32.DarkSlateGrey;
             var goBoardMesh = new CubePrimitive (this.Cor.Graphics);
 
+            MeshAsset mushMeshAsset = this.Blimey.Assets.Load<MeshAsset> ("big_mushroom.bba");
+            //var vb = Cor.Graphics.CreateVertexBuffer (mushMeshAsset.VertexDeclaration, mushMeshAsset.VertexData.Length);
+            //var ib = Cor.Graphics.CreateIndexBuffer (mushMeshAsset.IndexData.Length);
+            // vb.SetData
+            //ib.SetData (mushMeshAsset.IndexData)
+            //var mushMesh = new Mesh (vb, ib);
+
             // set up the debug renderer
             ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("pixel_lit.bba");
             shader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
