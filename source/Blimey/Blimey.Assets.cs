@@ -130,8 +130,8 @@ namespace Blimey
     {
         public VertexDeclaration VertexDeclaration { get; set; }
 
-        public Byte[] VertexData { get; set; }
-        public Byte[] IndexData { get; set; }
+        public IVertexType[] VertexData { get; set; }
+        public Int32[] IndexData { get; set; }
     }
 
 

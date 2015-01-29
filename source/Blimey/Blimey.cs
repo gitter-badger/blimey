@@ -1920,13 +1920,13 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// An explict Oats.Serialiser for the Cor.ColourmapAsset type.
+    /// An explict Oats.Serialiser for the Blimey.ColourmapAsset type.
     /// </summary>
     public class ColourmapAssetSerialiser
         : Serialiser<ColourmapAsset>
     {
         /// <summary>
-        /// Returns a Cor.ColourmapAsset object read from an Oats.ISerialisationChannel.
+        /// Returns a Blimey.ColourmapAsset object read from an Oats.ISerialisationChannel.
         /// </summary>
         public override ColourmapAsset Read (ISerialisationChannel ss)
         {
@@ -1950,7 +1950,7 @@ namespace Blimey
         }
 
         /// <summary>
-        /// Writes a Cor.ColourmapAsset object to an Oats.ISerialisationChannel.
+        /// Writes a Blimey.ColourmapAsset object to an Oats.ISerialisationChannel.
         /// </summary>
         public override void Write (ISerialisationChannel ss, ColourmapAsset obj)
         {
@@ -1971,13 +1971,13 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// An explict Oats.Serialiser for the Cor.ShaderAsset type.
+    /// An explict Oats.Serialiser for the Blimey.ShaderAsset type.
     /// </summary>
     public class ShaderAssetSerialiser
         : Serialiser<ShaderAsset>
     {
         /// <summary>
-        /// Returns a Cor.ShaderAsset object read from an Oats.ISerialisationChannel.
+        /// Returns a Blimey.ShaderAsset object read from an Oats.ISerialisationChannel.
         /// </summary>
         public override ShaderAsset Read (ISerialisationChannel ss)
         {
@@ -1991,7 +1991,7 @@ namespace Blimey
         }
 
         /// <summary>
-        /// Writes a Cor.ShaderAsset object to an Oats.ISerialisationChannel.
+        /// Writes a Blimey.ShaderAsset object to an Oats.ISerialisationChannel.
         /// </summary>
         public override void Write (ISerialisationChannel ss, ShaderAsset obj)
         {
@@ -2005,13 +2005,13 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// An explict Oats.Serialiser for the Cor.TextAsset type.
+    /// An explict Oats.Serialiser for the Blimey.TextAsset type.
     /// </summary>
     public class TextAssetSerialiser
         : Serialiser<TextAsset>
     {
         /// <summary>
-        /// Returns a Cor.TextAsset object read from an Oats.ISerialisationChannel.
+        /// Returns a Blimey.TextAsset object read from an Oats.ISerialisationChannel.
         /// </summary>
         public override TextAsset Read (ISerialisationChannel ss)
         {
@@ -2023,11 +2023,359 @@ namespace Blimey
         }
 
         /// <summary>
-        /// Writes a Cor.TextAsset object to an Oats.ISerialisationChannel.
+        /// Writes a Blimey.TextAsset object to an Oats.ISerialisationChannel.
         /// </summary>
         public override void Write (ISerialisationChannel ss, TextAsset obj)
         {
             ss.Write <String> (obj.Text);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Blimey.MeshAsset type.
+    /// </summary>
+    public class MeshAssetSerialiser
+        : Serialiser<MeshAsset>
+    {
+        /// <summary>
+        /// Returns a Blimey.MeshAsset object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override MeshAsset Read (ISerialisationChannel ss)
+        {
+            var asset = new MeshAsset ();
+
+            asset.VertexDeclaration = ss.Read <VertexDeclaration> ();
+            asset.VertexData = ss.Read <IVertexType[]> ();
+            asset.IndexData = ss.Read <Int32[]> ();
+
+            return asset;
+        }
+
+        /// <summary>
+        /// Writes a Blimey.MeshAsset object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, MeshAsset obj)
+        {
+            ss.Write <VertexDeclaration> (obj.VertexDeclaration);
+            ss.Write <IVertexType[]> (obj.VertexData);
+            ss.Write <Int32[]> (obj.IndexData);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Blimey.VertexPosition type.
+    /// </summary>
+    public class VertexPositionSerialiser
+        : Serialiser<VertexPosition>
+    {
+        /// <summary>
+        /// Returns a Blimey.VertexPosition object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override VertexPosition Read (ISerialisationChannel ss)
+        {
+            Vector3 pos = ss.Read <Vector3> ();
+
+            return new VertexPosition (pos);
+        }
+
+        /// <summary>
+        /// Writes a Blimey.VertexPosition object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, VertexPosition obj)
+        {
+            ss.Write <Vector3> (obj.Position);
+        }
+    }
+
+
+   
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Blimey.VertexPositionNormal type.
+    /// </summary>
+    public class VertexPositionNormalSerialiser
+        : Serialiser<VertexPositionNormal>
+    {
+        /// <summary>
+        /// Returns a Blimey.VertexPositionNormal object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override VertexPositionNormal Read (ISerialisationChannel ss)
+        {
+            Vector3 pos = ss.Read <Vector3> ();
+            Vector3 norm = ss.Read <Vector3> ();
+
+            return new VertexPositionNormal (pos, norm);
+        }
+
+        /// <summary>
+        /// Writes a Blimey.VertexPositionNormal object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, VertexPositionNormal obj)
+        {
+            ss.Write <Vector3> (obj.Position);
+            ss.Write <Vector3> (obj.Normal);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Blimey.VertexPositionTexture type.
+    /// </summary>
+    public class VertexPositionTextureSerialiser
+        : Serialiser<VertexPositionTexture>
+    {
+        /// <summary>
+        /// Returns a Blimey.VertexPositionTexture object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override VertexPositionTexture Read (ISerialisationChannel ss)
+        {
+            Vector3 pos = ss.Read <Vector3> ();
+            Vector2 tex = ss.Read <Vector2> ();
+
+            return new VertexPositionTexture (pos, tex);
+        }
+
+        /// <summary>
+        /// Writes a Blimey.VertexPositionTexture object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, VertexPositionTexture obj)
+        {
+            ss.Write <Vector3> (obj.Position);
+            ss.Write <Vector2> (obj.UV);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Blimey.VertexPositionNormalTexture type.
+    /// </summary>
+    public class VertexPositionNormalTextureSerialiser
+        : Serialiser<VertexPositionNormalTexture>
+    {
+        /// <summary>
+        /// Returns a Blimey.VertexPositionNormalTexture object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override VertexPositionNormalTexture Read (ISerialisationChannel ss)
+        {
+            Vector3 pos = ss.Read <Vector3> ();
+            Vector3 norm = ss.Read <Vector3> ();
+            Vector2 tex = ss.Read <Vector2> ();
+
+            return new VertexPositionNormalTexture (pos, norm, tex);
+        }
+
+        /// <summary>
+        /// Writes a Blimey.VertexPositionNormalTexture object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, VertexPositionNormalTexture obj)
+        {
+            ss.Write <Vector3> (obj.Position);
+            ss.Write <Vector3> (obj.Normal);
+            ss.Write <Vector2> (obj.UV);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Blimey.VertexPositionColour type.
+    /// </summary>
+    public class VertexPositionColourSerialiser
+        : Serialiser<VertexPositionColour>
+    {
+        /// <summary>
+        /// Returns a Blimey.VertexPositionColour object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override VertexPositionColour Read (ISerialisationChannel ss)
+        {
+            Vector3 pos = ss.Read <Vector3> ();
+            Rgba32 col = ss.Read <Rgba32> ();
+
+            return new VertexPositionColour (pos, col);
+        }
+
+        /// <summary>
+        /// Writes a Blimey.VertexPositionColour object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, VertexPositionColour obj)
+        {
+            ss.Write <Vector3> (obj.Position);
+            ss.Write <Rgba32> (obj.Colour);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Blimey.VertexPositionNormalColour type.
+    /// </summary>
+    public class VertexPositionNormalColourSerialiser
+        : Serialiser<VertexPositionNormalColour>
+    {
+        /// <summary>
+        /// Returns a Blimey.VertexPositionNormalColour object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override VertexPositionNormalColour Read (ISerialisationChannel ss)
+        {
+            Vector3 pos = ss.Read <Vector3> ();
+            Vector3 norm = ss.Read <Vector3> ();
+            Rgba32 col = ss.Read <Rgba32> ();
+
+            return new VertexPositionNormalColour (pos, norm, col);
+        }
+
+        /// <summary>
+        /// Writes a Blimey.VertexPositionNormalColour object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, VertexPositionNormalColour obj)
+        {
+            ss.Write <Vector3> (obj.Position);
+            ss.Write <Vector3> (obj.Normal);
+            ss.Write <Rgba32> (obj.Colour);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Blimey.VertexPositionTextureColour type.
+    /// </summary>
+    public class VertexPositionTextureColourSerialiser
+        : Serialiser<VertexPositionTextureColour>
+    {
+        /// <summary>
+        /// Returns a Blimey.VertexPositionTextureColour object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override VertexPositionTextureColour Read (ISerialisationChannel ss)
+        {
+            Vector3 pos = ss.Read <Vector3> ();
+            Vector2 tex = ss.Read <Vector2> ();
+            Rgba32 col = ss.Read <Rgba32> ();
+
+            return new VertexPositionTextureColour (pos, tex, col);
+        }
+
+        /// <summary>
+        /// Writes a Blimey.VertexPositionTextureColour object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, VertexPositionTextureColour obj)
+        {
+            ss.Write <Vector3> (obj.Position);
+            ss.Write <Vector2> (obj.UV);
+            ss.Write <Rgba32> (obj.Colour);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Blimey.VertexPositionNormalTextureColour type.
+    /// </summary>
+    public class VertexPositionNormalTextureColourSerialiser
+        : Serialiser<VertexPositionNormalTextureColour>
+    {
+        /// <summary>
+        /// Returns a Blimey.VertexPositionNormalTextureColour object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override VertexPositionNormalTextureColour Read (ISerialisationChannel ss)
+        {
+            Vector3 pos = ss.Read <Vector3> ();
+            Vector3 norm = ss.Read <Vector3> ();
+            Vector2 tex = ss.Read <Vector2> ();
+            Rgba32 col = ss.Read <Rgba32> ();
+
+            return new VertexPositionNormalTextureColour (pos, norm, tex, col);
+        }
+
+        /// <summary>
+        /// Writes a Blimey.VertexPositionNormalTextureColour object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, VertexPositionNormalTextureColour obj)
+        {
+            ss.Write <Vector3> (obj.Position);
+            ss.Write <Vector3> (obj.Normal);
+            ss.Write <Vector2> (obj.UV);
+            ss.Write <Rgba32> (obj.Colour);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Plaform.VertexDeclaration type.
+    /// </summary>
+    public class VertexDeclarationSerialiser
+        : Serialiser<VertexDeclaration>
+    {
+        /// <summary>
+        /// Returns a Plaform.VertexDeclaration object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override VertexDeclaration Read (ISerialisationChannel ss)
+        {
+            Int32 vertexStride = ss.Read <Int32> ();
+            var elements = ss.Read <VertexElement[]> ();
+
+            return new VertexDeclaration (vertexStride, elements);
+        }
+
+        /// <summary>
+        /// Writes a Plaform.VertexDeclaration object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, VertexDeclaration obj)
+        {
+            var elements = obj.GetVertexElements ();
+
+            ss.Write <Int32> (obj.VertexStride);
+            ss.Write <VertexElement[]> (elements);
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Plaform.VertexElement type.
+    /// </summary>
+    public class VertexElementSerialiser
+        : Serialiser<VertexElement>
+    {
+        /// <summary>
+        /// Returns a Plaform.VertexElement object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override VertexElement Read (ISerialisationChannel ss)
+        {
+            Int32 offset = ss.Read <Int32> ();
+            VertexElementFormat vertexElementFormat = ss.Read <VertexElementFormat> ();
+            VertexElementUsage vertexElementUsage = ss.Read <VertexElementUsage> ();
+            Int32 usageIndex = ss.Read <Int32> ();
+            return new VertexElement (offset, vertexElementFormat, vertexElementUsage, usageIndex);
+        }
+
+        /// <summary>
+        /// Writes a Plaform.VertexElement object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, VertexElement obj)
+        {
+            ss.Write <Int32> (obj.Offset);
+            ss.Write <VertexElementFormat> (obj.VertexElementFormat);
+            ss.Write <VertexElementUsage> (obj.VertexElementUsage);
+            ss.Write <Int32> (obj.UsageIndex);
         }
     }
 
