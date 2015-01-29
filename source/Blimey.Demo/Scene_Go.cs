@@ -37,6 +37,7 @@ namespace Blimey.Demo
     using Abacus.SinglePrecision;
     using Cor;
     using System.Collections.Generic;
+    using System.Reflection;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -54,11 +55,28 @@ namespace Blimey.Demo
             var goBoardMesh = new CubePrimitive (this.Cor.Graphics);
 
             MeshAsset mushMeshAsset = this.Blimey.Assets.Load<MeshAsset> ("big_mushroom.bba");
-            //var vb = Cor.Graphics.CreateVertexBuffer (mushMeshAsset.VertexDeclaration, mushMeshAsset.VertexData.Length);
-            //var ib = Cor.Graphics.CreateIndexBuffer (mushMeshAsset.IndexData.Length);
-            // vb.SetData
-            //ib.SetData (mushMeshAsset.IndexData)
-            //var mushMesh = new Mesh (vb, ib);
+            var vb = Cor.Graphics.CreateVertexBuffer (mushMeshAsset.VertexDeclaration, mushMeshAsset.VertexData.Length);
+            var ib = Cor.Graphics.CreateIndexBuffer (mushMeshAsset.IndexData.Length);
+
+            MethodInfo mi = typeof(VertexBuffer).GetMethod ("SetDataR");
+
+            var vertType = mushMeshAsset.VertexData [0].GetType ();
+            var gmi = mi.MakeGenericMethod(vertType);
+
+            try
+            {
+                gmi.Invoke(vb, new [] { mushMeshAsset.VertexData });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception (
+                    "Failed to invoke SetData for type [" + vertType + "]" +
+                    "\n" + ex.Message + 
+                    "\n" + ex.InnerException.Message);
+            }
+
+            ib.SetData (mushMeshAsset.IndexData);
+            var mushMesh = new Mesh (vb, ib);
 
             // set up the debug renderer
             ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("pixel_lit.bba");
@@ -73,7 +91,7 @@ namespace Blimey.Demo
             mat.SetTexture ("TextureSampler", woodTex);
             MeshRendererTrait meshRendererTrait = goBoard.AddTrait<MeshRendererTrait> ();
             meshRendererTrait.Material = mat;
-            meshRendererTrait.Mesh = goBoardMesh.Mesh;
+            meshRendererTrait.Mesh = mushMesh;
 
             returnScene = this;
 
