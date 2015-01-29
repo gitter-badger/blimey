@@ -5,12 +5,74 @@ using Blimey.Assets.Pipeline;
 using System.IO;
 using System.Collections.Generic;
 using Platform;
+using Abacus.SinglePrecision;
+using System.Text.RegularExpressions;
 
 namespace Blimey.Assets.Builders
 {
     public class MeshImporter
         : AssetImporter <MeshAsset>
     {
+        struct Vert
+        {
+            public Int32 VertIndex;
+            public Int32? NormIndex;
+            public Int32? TexIndex;
+
+            public static Vert Parse (String s, Int32 vCount, Int32 nCount, Int32 tCount)
+            {
+                var v = new Vert ();
+                Int32 t = 0;
+                String b = "";
+
+                foreach (var c in (s + "E").ToCharArray ())
+                {
+                    int x;
+                    if (Int32.TryParse (c.ToString (), out x))
+                        b += c;
+                    else
+                    {
+                        Int32 idx = Int32.Parse (b) - 1;
+                        b = "";
+                        if (t == 0) v.VertIndex = idx;
+                        if (t == 1) v.TexIndex = idx;
+                        if (t == 2) v.NormIndex = idx;
+                        t++;
+                    }
+                }
+
+                if (v.VertIndex >= vCount)
+                    throw new Exception ();
+
+                if (v.NormIndex.HasValue && v.NormIndex.Value >= nCount)
+                    throw new Exception ();
+
+                if (v.TexIndex.HasValue && v.TexIndex.Value >= tCount)
+                    throw new Exception ();
+
+                return v;
+            }
+        }
+
+        struct Face
+        {
+            public Vert A;
+            public Vert B;
+            public Vert C;
+
+            public static Face Parse (String s, Int32 vCount, Int32 nCount, Int32 tCount)
+            {
+                var f = new Face ();
+                var verts = s.Split (' ');
+
+                f.A = Vert.Parse (verts [0], vCount, nCount, tCount);
+                f.B = Vert.Parse (verts [1], vCount, nCount, tCount);
+                f.C = Vert.Parse (verts [2], vCount, nCount, tCount);
+
+                return f;
+            }
+        }
+
         public override String [] SupportedSourceFileExtensions
         {
             get { return new [] { "obj" }; }
@@ -29,28 +91,105 @@ namespace Blimey.Assets.Builders
 
             var objFile = File.ReadAllText (filename).Split ('\n');
 
-            var verts = new List<String> ();
-            var normals = new List<String> ();
-            var textureCoordinates = new List<String> ();
-            var faces = new List<String> ();
+            var verts = new List<Vector3> ();
+            var normals = new List<Vector3> ();
+            var textureCoordinates = new List<Vector2> ();
+            var faces = new List<Face> ();
 
             foreach (var line in objFile)
             {
                 if (line.IndexOf ("v ") == 0)
-                    verts.Add (line.Remove (2));
+                {
+                    var strs = line.Substring (2, line.Length - 2).Split (' ');
+                    var val = new Vector3 (Single.Parse (strs [0]), Single.Parse (strs [1]), Single.Parse (strs [2]));
+                    verts.Add (val); 
+                }
                 else if (line.IndexOf ("vn ") == 0)
-                    normals.Add (line.Remove (3));
+                {
+                    var strs = line.Substring (3, line.Length - 3).Split (' ');
+                    var val = new Vector3 (Single.Parse (strs [0]), Single.Parse (strs [1]), Single.Parse (strs [2]));
+                    normals.Add (val); 
+                }
                 else if (line.IndexOf ("vt ") == 0)
-                    textureCoordinates.Add (line.Remove (3));
+                {
+                    var strs = line.Substring (3, line.Length - 3).Split (' ');
+                    var val = new Vector2 (Single.Parse (strs [0]), Single.Parse (strs [1]));
+                    textureCoordinates.Add (val); 
+                }
                 else if (line.IndexOf ("f ") == 0)
-                    faces.Add (line.Remove (2));
+                {
+                    var str = line.Substring (2, line.Length - 2);
+                    faces.Add (Face.Parse (str, verts.Count, normals.Count, textureCoordinates.Count)); 
+                }
             }
 
+ 
             var outputResource = new MeshAsset ();
 
             if (normals.Count > 0 && textureCoordinates.Count > 0)
             {
                 outputResource.VertexDeclaration = VertexPositionNormalTexture.Default.VertexDeclaration;
+
+                var vertDict = new Dictionary <VertexPositionNormalTexture, Int32> ();
+                var vb = new List <IVertexType> ();
+                var ib = new List <Int32> ();
+
+                foreach (var face in faces)
+                {
+                    var v0 = new VertexPositionNormalTexture ();
+                    v0.Position = verts [face.A.VertIndex];
+                    v0.Normal = normals [face.A.NormIndex.Value];
+                    v0.UV = textureCoordinates [face.A.TexIndex.Value];
+                    if (!vertDict.ContainsKey (v0))
+                    {
+                        vertDict.Add (v0, vb.Count);
+                        vb.Add (v0);
+                    }
+
+                    var v1 = new VertexPositionNormalTexture ();
+                    v1.Position = verts [face.B.VertIndex];
+                    v1.Normal = normals [face.B.NormIndex.Value];
+                    v1.UV = textureCoordinates [face.B.TexIndex.Value];
+                    if (!vertDict.ContainsKey (v1))
+                    {
+                        vertDict.Add (v1, vb.Count);
+                        vb.Add (v1);
+                    }
+
+                    var v2 = new VertexPositionNormalTexture ();
+                    v2.Position = verts [face.B.VertIndex];
+                    v2.Normal = normals [face.B.NormIndex.Value];
+                    v2.UV = textureCoordinates [face.B.TexIndex.Value];
+                    if (!vertDict.ContainsKey (v2))
+                    {
+                        vertDict.Add (v2, vb.Count);
+                        vb.Add (v2);
+                    }
+                }
+
+                foreach (var face in faces)
+                {
+                    var v0 = new VertexPositionNormalTexture ();
+                    v0.Position = verts [face.A.VertIndex];
+                    v0.Normal = normals [face.A.NormIndex.Value];
+                    v0.UV = textureCoordinates [face.A.TexIndex.Value];
+                    ib.Add (vertDict [v0]);
+
+                    var v1 = new VertexPositionNormalTexture ();
+                    v1.Position = verts [face.B.VertIndex];
+                    v1.Normal = normals [face.B.NormIndex.Value];
+                    v1.UV = textureCoordinates [face.B.TexIndex.Value];
+                    ib.Add (vertDict [v1]);
+
+                    var v2 = new VertexPositionNormalTexture ();
+                    v2.Position = verts [face.B.VertIndex];
+                    v2.Normal = normals [face.B.NormIndex.Value];
+                    v2.UV = textureCoordinates [face.B.TexIndex.Value];
+                    ib.Add (vertDict [v2]);
+                }
+
+                outputResource.IndexData = ib.ToArray ();
+                outputResource.VertexData = vb.ToArray ();
             }
             else if (normals.Count > 0)
             {
