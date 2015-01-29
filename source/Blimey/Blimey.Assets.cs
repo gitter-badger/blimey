@@ -167,10 +167,7 @@ namespace Blimey
         {
             using (Stream stream = engine.Resources.GetFileStream (assetId))
             {
-                using (var channel = 
-                    new SerialisationChannel
-                    <BinaryStreamSerialiser> 
-                    (stream, ChannelMode.Read)) 
+                using (var channel = new SerialisationChannel<BinaryStreamSerialiser> (stream, ChannelMode.Read)) 
                 {
                     ProcessFileHeader (channel);
                     T asset = channel.Read <T> ();
