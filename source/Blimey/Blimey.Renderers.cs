@@ -199,7 +199,7 @@ namespace Blimey
                     // Figure out how many lines we're going to draw
                     int linesToDraw = Math.Min (lineCount, 65535);
 
-                    FrameStats.DrawUserPrimitivesCount ++;
+                    FrameStats.Add ("DrawUserPrimitivesCount", 1);
                     zGfx.DrawUserPrimitives (PrimitiveType.LineList, verts, vertexOffset, linesToDraw);
 
                     // Move our vertex offset ahead based on the lines we drew
@@ -1846,6 +1846,7 @@ void main()
 
                 Int32 n = batch.Buffer.Length;
 
+                FrameStats.Add ("DrawUserPrimitivesCount", 1);
                 switch(batch.Type.Value)
                 {
                     case Type.PRIM_QUADS:
@@ -1995,7 +1996,6 @@ void main()
     sealed class SceneRenderer
     {
         readonly Engine engine;
-        readonly List<MeshRendererTrait> list = new List<MeshRendererTrait>();
 
         internal SceneRenderer(Engine cor)
         {
@@ -2016,38 +2016,35 @@ void main()
             }
         }
 
-        List<MeshRendererTrait> GetMeshRenderersWithMaterials(Scene scene, string pass)
+        Dictionary<Material, List<MeshRendererTrait>> GroupMeshRenderersByMaterials(Scene scene, String pass)
         {
-            list.Clear ();
+            // TODO, make this fast
+            var grouping = new Dictionary<Material, List<MeshRendererTrait>> ();
             foreach (var go in scene.SceneGraph.GetAllObjects())
             {
                 if (!go.Enabled) continue;
 
                 var mr = go.GetTrait<MeshRendererTrait>();
 
-                if (mr == null)
-                {
-                    continue;
-                }
-
-                if (mr.Material == null)
-                {
-                    continue;
-                }
+                if (mr == null) continue;
+                if (!mr.Active) continue;
+                if (mr.Material == null) continue;
 
                 // if the material is for this pass
                 if (mr.Material.RenderPass == pass)
                 {
-                    list.Add(mr);
+                    if (!grouping.ContainsKey (mr.Material))
+                        grouping [mr.Material] = new List<MeshRendererTrait> ();
+
+                    grouping [mr.Material].Add (mr);
                 }
             }
 
-            return list;
+            return grouping;
         }
 
         void RenderPass(Scene scene, RenderPass pass)
         {
-
             // #0: Apply this pass' clear settings.
             if (pass.Configuration.ClearDepthBuffer)
             {
@@ -2056,116 +2053,120 @@ void main()
 
             var cam = scene.CameraManager.GetActiveCamera(pass.Name);
 
+            // todo, move this to the update loop
             // #1 Render everything in the scene graph that has a material on this pass.
-            var meshRenderers = this.GetMeshRenderersWithMaterials(scene, pass.Name);
+            var groupedMeshRenderers = this.GroupMeshRenderersByMaterials(scene, pass.Name);
 
-            // TODO: big one
-            // we really need to group the mesh renderers by material
-            // and only make a new draw call when there are changes.
-            foreach (var mr in meshRenderers)
+            // Group all mesh renderers by material.  If the material is the same, the shader is the same.
+            foreach (var material in groupedMeshRenderers.Keys)
             {
-                _renderMeshRenderer (this.engine.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44, mr);
+                // skip nulls
+                if (material.Shader == null)
+                    continue;
+
+                // materials define render state, set it now, just the once
+                using (new ProfilingTimer (t => FrameStats.Add ("MaterialUpdateRenderStateTime", t)))
+                {
+                    material.UpdateRenderState (engine.Graphics);
+                }
+
+                // perhaps something else has used this shader before us.  for now, to be sure
+                // just reset all variables to their defaults.  this can be optimised later.
+                using (new ProfilingTimer (t => FrameStats.Add ("ResetShaderTime", t)))
+                {
+                    material.Shader.ResetVariables ();
+                }
+
+                using (new ProfilingTimer(t => FrameStats.Add ("MaterialUpdateShaderTime", t)))
+                {
+                    material.UpdateShaderState ();
+                    material.Shader.SetVariable ("View", cam.ViewMatrix44);
+                    material.Shader.SetVariable ("Projection", cam.ProjectionMatrix44);
+
+                    /*
+                // The lighing manager right now just grabs the shader and tries to set
+                    // all variables to do with lighting, without even knowing if the shader
+                    // supports lighting.
+                    material.SetColour( "AmbientLightColour", LightingManager.ambientLightColour );
+                    material.SetColour( "EmissiveColour", LightingManager.emissiveColour );
+                    material.SetColour( "SpecularColour", LightingManager.specularColour );
+                    material.SetFloat( "SpecularPower", LightingManager.specularPower );
+
+                    material.SetFloat( "FogEnabled", LightingManager.fogEnabled ? 1f : 0f );
+                    material.SetFloat( "FogStart", LightingManager.fogStart );
+                    material.SetFloat( "FogEnd", LightingManager.fogEnd );
+                    material.SetColour( "FogColour", LightingManager.fogColour );
+
+                    material.SetVector3( "DirectionalLight0Direction", LightingManager.dirLight0Direction );
+                    material.SetColour( "DirectionalLight0DiffuseColour", LightingManager.dirLight0DiffuseColour );
+                    material.SetColour( "DirectionalLight0SpecularColour", LightingManager.dirLight0SpecularColour );
+
+                    material.SetVector3( "DirectionalLight1Direction", LightingManager.dirLight1Direction );
+                    material.SetColour( "DirectionalLight1DiffuseColour", LightingManager.dirLight1DiffuseColour );
+                    material.SetColour( "DirectionalLight1SpecularColour", LightingManager.dirLight1SpecularColour );
+
+                    material.SetVector3( "DirectionalLight2Direction", LightingManager.dirLight2Direction );
+                    material.SetColour( "DirectionalLight2DiffuseColour", LightingManager.dirLight2DiffuseColour );
+                    material.SetColour( "DirectionalLight2SpecularColour", LightingManager.dirLight2SpecularColour );
+
+                    material.SetVector3( "EyePosition", zView.Translation );
+                    */
+                    // Get the material's shader and apply all of the settings
+                    // it needs.
+                }
+
+
+                // TODO: big one
+                // we really need to group the mesh renderers by material
+                // and only make a new draw call when there are changes.
+                foreach (var mr in groupedMeshRenderers[material])
+                {
+                    material.Shader.SetVariable ("World", mr.Parent.Transform.Location);
+
+                    using (new ProfilingTimer(t => FrameStats.Add ("SetCullModeTime", t)))
+                    {
+                        engine.Graphics.SetCullMode(mr.CullMode);
+                    }
+
+                    using (new ProfilingTimer(t => FrameStats.Add ("ActivateVertexBufferTime", t)))
+                    {
+                        // Set our vertex declaration, vertex buffer, and index buffer.
+                        engine.Graphics.SetActive(mr.Mesh.VertexBuffer);
+                    }
+
+                    using (new ProfilingTimer(t => FrameStats.Add ("ActivateIndexBufferTime", t)))
+                    {
+                        // Set our vertex declaration, vertex buffer, and index buffer.
+                        engine.Graphics.SetActive(mr.Mesh.IndexBuffer);
+                    }
+
+                    using (new ProfilingTimer(t => FrameStats.Add ("ActivateShaderTime", t)))
+                    {
+                        engine.Graphics.SetActive (material.Shader);
+                    }
+
+                    using (new ProfilingTimer(t => FrameStats.Add ("DrawTime", t)))
+                    {
+                        FrameStats.Add ("DrawIndexedPrimitivesCount", 1);
+                        engine.Graphics.DrawIndexedPrimitives (
+                            PrimitiveType.TriangleList, 0, 0,
+                            mr.Mesh.VertexBuffer.VertexCount, 0, mr.Mesh.TriangleCount);
+                    }
+                }
             }
 
-            using (new ProfilingTimer (t => FrameStats.PrimitiveRendererTime += t))
+            using (new ProfilingTimer (t => FrameStats.Add ("PrimitiveRendererTime", t)))
             {
                 // #2: Render all primitives that are associated with this pass.
                 scene.Blimey.PrimitiveRenderer.Render (this.engine.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
 
             }
-            using (new ProfilingTimer (t => FrameStats.DebugRendererTime += t))
+            using (new ProfilingTimer (t => FrameStats.Add ("DebugRendererTime", t)))
             {
                 // #3: Render all debug primitives that are associated with this pass.
                 scene.Blimey.DebugRenderer.Render (this.engine.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
             }
         }
 
-        static void _renderMeshRenderer (Graphics zGfx, string renderPass, Matrix44 zView, Matrix44 zProjection, MeshRendererTrait mr)
-        {
-            if (!mr.Active)
-                return;
-
-            if (mr.Material.RenderPass != renderPass )
-                return;
-
-            zGfx.GpuUtils.BeginEvent(Rgba32.Red, "MeshRenderer.Render");
-
-            using (new ProfilingTimer(t => FrameStats.SetCullModeTime += t))
-            {
-                zGfx.SetCullMode(mr.CullMode);
-            }
-
-            using (new ProfilingTimer(t => FrameStats.ActivateVertexBufferTime += t))
-            {
-                // Set our vertex declaration, vertex buffer, and index buffer.
-                zGfx.SetActive(mr.Mesh.VertexBuffer);
-            }
-
-            using (new ProfilingTimer(t => FrameStats.ActivateIndexBufferTime += t))
-            {
-                // Set our vertex declaration, vertex buffer, and index buffer.
-                zGfx.SetActive(mr.Mesh.IndexBuffer);
-            }
-
-            using (new ProfilingTimer(t => FrameStats.MaterialTime += t))
-            {
-                mr.Material.UpdateGpuSettings (zGfx);
-
-                // The lighing manager right now just grabs the shader and tries to set
-                // all variables to do with lighting, without even knowing if the shader
-                // supports lighting.
-                mr.Material.SetColour( "AmbientLightColour", LightingManager.ambientLightColour );
-                mr.Material.SetColour( "EmissiveColour", LightingManager.emissiveColour );
-                mr.Material.SetColour( "SpecularColour", LightingManager.specularColour );
-                mr.Material.SetFloat( "SpecularPower", LightingManager.specularPower );
-
-                mr.Material.SetFloat( "FogEnabled", LightingManager.fogEnabled ? 1f : 0f );
-                mr.Material.SetFloat( "FogStart", LightingManager.fogStart );
-                mr.Material.SetFloat( "FogEnd", LightingManager.fogEnd );
-                mr.Material.SetColour( "FogColour", LightingManager.fogColour );
-
-                mr.Material.SetVector3( "DirectionalLight0Direction", LightingManager.dirLight0Direction );
-                mr.Material.SetColour( "DirectionalLight0DiffuseColour", LightingManager.dirLight0DiffuseColour );
-                mr.Material.SetColour( "DirectionalLight0SpecularColour", LightingManager.dirLight0SpecularColour );
-
-                mr.Material.SetVector3( "DirectionalLight1Direction", LightingManager.dirLight1Direction );
-                mr.Material.SetColour( "DirectionalLight1DiffuseColour", LightingManager.dirLight1DiffuseColour );
-                mr.Material.SetColour( "DirectionalLight1SpecularColour", LightingManager.dirLight1SpecularColour );
-
-                mr.Material.SetVector3( "DirectionalLight2Direction", LightingManager.dirLight2Direction );
-                mr.Material.SetColour( "DirectionalLight2DiffuseColour", LightingManager.dirLight2DiffuseColour );
-                mr.Material.SetColour( "DirectionalLight2SpecularColour", LightingManager.dirLight2SpecularColour );
-
-                mr.Material.SetVector3( "EyePosition", zView.Translation );
-
-                // Get the material's shader and apply all of the settings
-                // it needs.
-                mr.Material.UpdateShaderVariables (
-                    mr.Parent.Transform.Location,
-                    zView,
-                    zProjection
-                );
-            }
-
-            var shader = mr.Material.GetShader ();
-
-            if( shader != null)
-            {
-                using (new ProfilingTimer(t => FrameStats.ActivateShaderTime += t))
-                {
-                    zGfx.SetActive (shader);
-                }
-
-                using (new ProfilingTimer(t => FrameStats.DrawTime += t))
-                {
-                    FrameStats.DrawIndexedPrimitivesCount ++;
-                    zGfx.DrawIndexedPrimitives (
-                        PrimitiveType.TriangleList, 0, 0,
-                        mr.Mesh.VertexCount, 0, mr.Mesh.TriangleCount);
-                }
-            }
-
-            zGfx.GpuUtils.EndEvent();
-        }
     }
 }

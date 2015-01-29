@@ -50,124 +50,52 @@ namespace Blimey
 
     internal static class FrameStats
     {
+        static readonly Dictionary <String, Double> timers = new Dictionary <String, Double> ();
+
         static FrameStats ()
         {
             Reset ();
         }
 
+        public static void Add (String key, Double delta)
+        {
+            if (!timers.ContainsKey (key))
+                timers [key] = 0;
+            timers [key] += delta;
+        }
+
         public static void Reset ()
         {
-            UpdateTime = 0.0;
-            RenderTime = 0.0;
-
-            SetCullModeTime = 0.0;
-            ActivateVertexBufferTime = 0.0;
-            ActivateIndexBufferTime = 0.0;
-            MaterialTime = 0.0;
-            ActivateShaderTime = 0.0;
-            DrawTime = 0.0;
-
-            DrawUserPrimitivesCount = 0;
-            DrawIndexedPrimitivesCount = 0;
-            DebugRendererTime = 0;
-            PrimitiveRendererTime = 0;
+            timers.Clear ();
         }
 
-        public static Double UpdateTime { get; set; }
-        public static Double RenderTime { get; set; }
-
-
-        public static Double DebugRendererTime { get; set; }
-        public static Double PrimitiveRendererTime { get; set; }
-        public static Double SetCullModeTime { get; set; }
-        public static Double ActivateVertexBufferTime { get; set; }
-        public static Double ActivateIndexBufferTime { get; set; }
-        public static Double MaterialTime { get; set; }
-        public static Double ActivateShaderTime { get; set; }
-        public static Double DrawTime { get; set; }
-
-        public static Int32 DrawUserPrimitivesCount { get; set; }
-        public static Int32 DrawIndexedPrimitivesCount { get; set; }
-
-        public static Int32 DrawCallCount
-        {
-            get
-            {
-                return
-                    DrawUserPrimitivesCount +
-                    DrawIndexedPrimitivesCount;
-            }
-        }
-
+        static Int32 counter = 0;
         public static void SlowLog ()
         {
+            if (counter++ % 30 != 0)
+                return;
             // Right now we are targeting 30 FPS
             // and have allocated 10ms to update
             // and 10ms to render per frame which
             // gives us plenty of headroom.
 
-            if (UpdateTime > 10)
+            foreach (var key in timers.Keys)
             {
-                Console.WriteLine(
-                    string.Format(
-                        "UpdateTime -> {0:0.##}ms",
-                        UpdateTime ));
-            }
-
-            if (RenderTime > 10)
-            {
-                Console.WriteLine(
-                    string.Format(
-                        "RenderTime -> {0:0.##}ms",
-                        RenderTime ));
-
-
-                Console.WriteLine(
-                    string.Format(
-                        "\tMeshRenderer -> SetCullModeTime -> {0:0.##}ms",
-                        SetCullModeTime ));
-
-                Console.WriteLine(
-                    string.Format(
-                        "\tActivateVertexBufferTime -> DrawTime -> {0:0.##}ms",
-                        ActivateVertexBufferTime ));
-
-                Console.WriteLine(
-                    string.Format(
-                        "\tActivateIndexBufferTime -> DrawTime -> {0:0.##}ms",
-                        ActivateIndexBufferTime ));
-
-                Console.WriteLine(
-                    string.Format(
-                        "\tMeshRenderer -> MaterialTime -> {0:0.##}ms",
-                        MaterialTime ));
-
-                Console.WriteLine(
-                    string.Format(
-                        "\tMeshRenderer -> ActivateShaderTime -> {0:0.##}ms",
-                        ActivateShaderTime ));
-
-                Console.WriteLine(
-                    string.Format(
-                        "\tMeshRenderer -> DrawTime -> {0:0.##}ms",
-                        DrawTime ));
-
-                Console.WriteLine(
-                    string.Format(
-                        "\tDebugRenderer -> RenderTime -> {0:0.##}ms",
-                        DebugRendererTime ));
-                Console.WriteLine(
-                    string.Format(
-                        "\tPrimitiveRenderer -> RenderTime -> {0:0.##}ms",
-                        PrimitiveRendererTime ));
-            }
-
-            if (DrawCallCount > 50)
-            {
-                Console.WriteLine(
-                    string.Format(
-                        "Draw Call Count -> {0}",
-                        DrawCallCount ));
+                if (key == "DrawUserPrimitivesCount" || key == "DrawIndexedPrimitivesCount")
+                {
+                    if (timers [key] > 50)
+                        Console.WriteLine (String.Format ("{0} -> {1}", key, timers [key]));
+                }
+                else if (key == "RenderTime" || key == "UpdateTime")
+                {
+                    if (timers [key] > 10)
+                        Console.WriteLine (String.Format ("{0} -> {1:0.##}ms", key, timers [key]));
+                }
+                else
+                {
+                    if (timers [key] > 0.5)
+                        Console.WriteLine (String.Format ("{0} -> {1:0.##}ms", key, timers [key]));
+                }
             }
         }
     }

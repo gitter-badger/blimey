@@ -157,7 +157,7 @@ namespace Blimey
 			FrameStats.SlowLog ();
 			FrameStats.Reset ();
 
-            using (new ProfilingTimer(t => FrameStats.UpdateTime += t))
+            using (new ProfilingTimer(t => FrameStats.Add ("UpdateTime", t)))
             {
                 fps.Update(time);
                 frameBuffer.Update(time);
@@ -171,7 +171,7 @@ namespace Blimey
 		/// </summary>
 		public virtual void Render(Engine cor)
         {
-            using (new ProfilingTimer(t => FrameStats.RenderTime += t))
+            using (new ProfilingTimer(t => FrameStats.Add ("RenderTime", t)))
             {
                 fps.LogRender();
                 frameBuffer.Clear();
@@ -224,38 +224,28 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public abstract class Mesh
+    public sealed class Mesh
     {
-        /// <summary>
-        /// todo
-        /// </summary>
-        public Int32 TriangleCount;
+        readonly VertexBuffer vertexBuffer;
+        readonly IndexBuffer indexBuffer;
 
-        /// <summary>
-        /// todo
-        /// </summary>
-        public Int32 VertexCount;
+        public Mesh (VertexBuffer vertexBuffer, IndexBuffer indexBuffer)
+        {
+            this.vertexBuffer = vertexBuffer;
+            this.indexBuffer = indexBuffer;
+        }
 
-        /// <summary>
-        /// todo
-        /// </summary>
-        public abstract VertexDeclaration VertDecl { get; }
+        public Int32 TriangleCount { get { return indexBuffer.IndexCount / 3; } }
 
-        /// <summary>
-        /// todo
-        /// </summary>
-        public VertexBuffer VertexBuffer;
 
-        /// <summary>
-        /// todo
-        /// </summary>
-        public IndexBuffer IndexBuffer;
+        public VertexBuffer VertexBuffer { get { return vertexBuffer; } }
+        public IndexBuffer IndexBuffer { get { return indexBuffer; } }
     }
 
 
  	// ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
     
-	public class RenderPass
+	public sealed class RenderPass
 	{
 		public struct RenderPassConfiguration
 	    {

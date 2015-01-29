@@ -443,57 +443,39 @@ namespace Blimey
 
         }
 
-		class SpriteMesh
-        	: Mesh
+		static class SpriteMesh
 	    {
-	        VertexPositionTexture[] spriteVerts;
-	        Int32[] spriteIndices;
-	
-	        private SpriteMesh()
+	        public static Mesh Create(Graphics gfx)
 	        {
-	            spriteVerts = new VertexPositionTexture[]
-	            {
-	                new VertexPositionTexture ((-Vector3.Right - Vector3.Forward) / 2, new Vector2(0f, 1f)),
-	                new VertexPositionTexture ((-Vector3.Right + Vector3.Forward) / 2, new Vector2(0f, 0f)),
-	                new VertexPositionTexture ((Vector3.Right + Vector3.Forward) / 2, new Vector2(1f, 0f)),
-	                new VertexPositionTexture ((Vector3.Right - Vector3.Forward) / 2, new Vector2(1f, 1f))
-	            };
-	
-	            spriteIndices = new Int32[]
-	            {
-	                0,1,2,
-	                0,2,3
-	            };
-	        }
-	
-	        public static SpriteMesh Create(Graphics gfx)
-	        {
-	            var sm = new SpriteMesh();
-                sm.VertexBuffer = gfx.CreateVertexBuffer(
+                var spriteVerts = new VertexPositionTexture[]
+                {
+                    new VertexPositionTexture ((-Vector3.Right - Vector3.Forward) / 2, new Vector2(0f, 1f)),
+                    new VertexPositionTexture ((-Vector3.Right + Vector3.Forward) / 2, new Vector2(0f, 0f)),
+                    new VertexPositionTexture ((Vector3.Right + Vector3.Forward) / 2, new Vector2(1f, 0f)),
+                    new VertexPositionTexture ((Vector3.Right - Vector3.Forward) / 2, new Vector2(1f, 1f))
+                };
+
+                var spriteIndices = new Int32[]
+                {
+                    0,1,2,
+                    0,2,3
+                };
+
+                var vertexBuffer = gfx.CreateVertexBuffer(
 	                VertexPositionTexture.Default.VertexDeclaration,
-	                sm.spriteVerts.Length);
-                sm.IndexBuffer = gfx.CreateIndexBuffer(
-                    sm.spriteIndices.Length);
+	                spriteVerts.Length);
+                var indexBuffer = gfx.CreateIndexBuffer(
+                    spriteIndices.Length);
 	
-	            sm.VertexBuffer.SetData(sm.spriteVerts);
+	            vertexBuffer.SetData(spriteVerts);
+	            indexBuffer.SetData(spriteIndices);
 	
-	            sm.IndexBuffer.SetData(sm.spriteIndices);
-	
-	            sm.TriangleCount = 2;
-	            sm.VertexCount = 4;
-	            return sm;
+                return new Mesh (vertexBuffer, indexBuffer);
 	        }
 	
-	        public override VertexDeclaration VertDecl
-	        {
-	            get
-	            {
-	                return VertexPositionTexture.Default.VertexDeclaration;
-	            }
-	        }
 	    }
 		
-        static SpriteMesh spriteMesh;
+        static Mesh spriteMesh;
 
         // all sprites share a quad uploaded to the gpu.
         // right now we are using billboard, however, once
