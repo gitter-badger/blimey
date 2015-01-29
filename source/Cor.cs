@@ -1210,6 +1210,7 @@ namespace Cor
         /// <summary>
         ///
         /// </summary>
+        public void SetDataR<T> (T[] data) where T: struct, IVertexType { SetData (data); } 
         public void SetData<T> (T[] data)
         where T
             : struct
