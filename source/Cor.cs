@@ -1207,10 +1207,35 @@ namespace Cor
         /// </summary>
         public VertexDeclaration VertexDeclaration { get { return platform.gfx_vbff_GetVertexDeclaration (handle); } }
 
+        public void SetDataEx (IVertexType[] data)
+        {
+            MethodInfo mi = typeof(VertexBuffer).GetMethod ("SetDataR");
+
+            var vertType = data [0].GetType ();
+            var gmi = mi.MakeGenericMethod (vertType);
+
+            try
+            {
+                gmi.Invoke (this, new [] { data });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception (
+                    "Failed to invoke SetDataR for type [" + vertType + "]" +
+                    "\n" + ex.Message + 
+                    "\n" + ex.InnerException.Message);
+            }
+        }
+
         /// <summary>
         ///
         /// </summary>
-        public void SetDataR<T> (T[] data) where T: struct, IVertexType { SetData (data); } 
+        public void SetDataR<T> (IVertexType[] data) where T: struct, IVertexType
+        {
+            var cast = data.Cast <T> ().ToArray ();
+            SetData (cast);
+        }
+
         public void SetData<T> (T[] data)
         where T
             : struct
