@@ -158,6 +158,15 @@
     <BundleResource Include="..\..\..\assets\monomac\big_mushroom.bba">
       <Link>assets\monomac\big_mushroom.bba</Link>
     </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\small_mushroom_1.bba">
+      <Link>assets\monomac\small_mushroom_1.bba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\small_mushroom_2.bba">
+      <Link>assets\monomac\small_mushroom_2.bba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\monomac\toadstool_diffuse.bba">
+      <Link>assets\monomac\toadstool_diffuse.bba</Link>
+    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\submodules\abacus\build\xs.monomac\Abacus\Abacus %28xs.monomac%29.csproj">

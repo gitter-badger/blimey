@@ -1,0 +1,27 @@
+{
+    "AssetId" : "toadstool_diffuse",
+    "AssetType" : "Blimey.ColourmapAsset, Blimey",
+    "SourceSets" :
+    [
+        {
+            "Platforms" : [ "xios", "monomac" ],
+            "Importer" :
+            {
+                "Files" : [ "toadstool_diffuse.png" ],
+                "AssetImporterType" : "Blimey.Assets.Builders.ImageFileImporter, Blimey.Assets.Builders",
+                "AssetImporterSettings" : {}
+            },
+            "Processors" :
+            [
+                {
+                    "AssetProcessorType" : "Blimey.Assets.Builders.TextureAssetProcessor, Blimey.Assets.Builders",
+                    "AssetProcessorSettings" :
+                    {
+                        "SurfaceFormat" : "Rgba32"
+                    }
+                }
+            ]
+        }
+    ]
+}
+

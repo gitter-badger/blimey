@@ -38,65 +38,102 @@ namespace Blimey.Demo
     using Cor;
     using System.Collections.Generic;
     using System.Reflection;
+    using System.Linq;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Scene_Go
-    : Scene
+    public class Scene_Go : Scene
     {
         Scene returnScene;
         Shader shader = null;
         Texture woodTex = null;
-        Entity goBoard = null;
+        Entity mush0 = null;
+        Entity mush1 = null;
+        Entity mush2 = null;
+        VertexBuffer vb0;
+        IndexBuffer ib0;
+        VertexBuffer vb1;
+        IndexBuffer ib1;
+        VertexBuffer vb2;
+        IndexBuffer ib2;
 
         public override void Start ()
         {
             this.Configuration.BackgroundColour = Rgba32.DarkSlateGrey;
-            var goBoardMesh = new CubePrimitive (this.Cor.Graphics);
+            //var goBoardMesh = new CubePrimitive (this.Cor.Graphics).Mesh;
 
-            MeshAsset mushMeshAsset = this.Blimey.Assets.Load<MeshAsset> ("big_mushroom.bba");
-            var vb = Cor.Graphics.CreateVertexBuffer (mushMeshAsset.VertexDeclaration, mushMeshAsset.VertexData.Length);
-            var ib = Cor.Graphics.CreateIndexBuffer (mushMeshAsset.IndexData.Length);
+            MeshAsset mushMeshAsset0 = this.Blimey.Assets.Load<MeshAsset> ("big_mushroom.bba");
+            vb0 = Cor.Graphics.CreateVertexBuffer (mushMeshAsset0.VertexDeclaration, mushMeshAsset0.VertexData.Length);
+            ib0 = Cor.Graphics.CreateIndexBuffer (mushMeshAsset0.IndexData.Length);
+            vb0.SetDataEx (mushMeshAsset0.VertexData);
+            ib0.SetData (mushMeshAsset0.IndexData);
+            var mushMesh0 = new Mesh (vb0, ib0);
 
-            MethodInfo mi = typeof(VertexBuffer).GetMethod ("SetDataR");
+            MeshAsset mushMeshAsset1 = this.Blimey.Assets.Load<MeshAsset> ("small_mushroom_1.bba");
+            vb1 = Cor.Graphics.CreateVertexBuffer (mushMeshAsset1.VertexDeclaration, mushMeshAsset1.VertexData.Length);
+            ib1 = Cor.Graphics.CreateIndexBuffer (mushMeshAsset1.IndexData.Length);
+            vb1.SetDataEx (mushMeshAsset1.VertexData);
+            ib1.SetData (mushMeshAsset1.IndexData);
+            var mushMesh1 = new Mesh (vb1, ib1);
 
-            var vertType = mushMeshAsset.VertexData [0].GetType ();
-            var gmi = mi.MakeGenericMethod(vertType);
-
-            try
-            {
-                gmi.Invoke(vb, new [] { mushMeshAsset.VertexData });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception (
-                    "Failed to invoke SetData for type [" + vertType + "]" +
-                    "\n" + ex.Message + 
-                    "\n" + ex.InnerException.Message);
-            }
-
-            ib.SetData (mushMeshAsset.IndexData);
-            var mushMesh = new Mesh (vb, ib);
+            MeshAsset mushMeshAsset2 = this.Blimey.Assets.Load<MeshAsset> ("small_mushroom_2.bba");
+            vb2 = Cor.Graphics.CreateVertexBuffer (mushMeshAsset2.VertexDeclaration, mushMeshAsset2.VertexData.Length);
+            ib2 = Cor.Graphics.CreateIndexBuffer (mushMeshAsset2.IndexData.Length);
+            vb2.SetDataEx (mushMeshAsset2.VertexData);
+            ib2.SetData (mushMeshAsset2.IndexData);
+            var mushMesh2 = new Mesh (vb2, ib2);
 
             // set up the debug renderer
             ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("pixel_lit.bba");
             shader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
-            TextureAsset woodTexAsset = this.Blimey.Assets.Load <TextureAsset> ("cvan01.bba");
+            TextureAsset woodTexAsset = this.Blimey.Assets.Load <TextureAsset> ("toadstool_diffuse.bba");
             woodTex = this.Cor.Graphics.CreateTexture (woodTexAsset);
-            goBoard = SceneGraph.CreateSceneObject ("go-board");
-            goBoard.Transform.LocalPosition = new Vector3 (0f, 0f, 0f);
-            goBoard.Transform.LocalScale = new Vector3 (1f, 0.1f, 1f);
+
+            mush0 = SceneGraph.CreateSceneObject ("mush0");
+            mush0.Transform.LocalPosition = new Vector3 (0f, 0f, 0f);
+            mush0.Transform.LocalScale = new Vector3 (1f, 1f, 1f);
+
+            mush1 = SceneGraph.CreateSceneObject ("mush1");
+            mush1.Transform.LocalPosition = new Vector3 (0.8f, 0f, 0.8f);
+            mush1.Transform.LocalScale = new Vector3 (1f, 1f, 1f);
+
+            mush2 = SceneGraph.CreateSceneObject ("mush2");
+            mush2.Transform.LocalPosition = new Vector3 (0.5f, 0f, 0f);
+            mush2.Transform.LocalScale = new Vector3 (1f, 1f, 1f);
 
             var mat = new Material ("Default", shader);
             mat.SetTexture ("TextureSampler", woodTex);
-            MeshRendererTrait meshRendererTrait = goBoard.AddTrait<MeshRendererTrait> ();
-            meshRendererTrait.Material = mat;
-            meshRendererTrait.Mesh = mushMesh;
+
+            MeshRendererTrait meshRendererTrait0 = mush0.AddTrait<MeshRendererTrait> ();
+            meshRendererTrait0.Material = mat;
+            meshRendererTrait0.Mesh = mushMesh0;
+            meshRendererTrait0.CullMode = Platform.CullMode.None;
+
+            MeshRendererTrait meshRendererTrait1 = mush1.AddTrait<MeshRendererTrait> ();
+            meshRendererTrait1.Material = mat;
+            meshRendererTrait1.Mesh = mushMesh1;
+            meshRendererTrait1.CullMode = Platform.CullMode.None;
+
+            MeshRendererTrait meshRendererTrait2 = mush2.AddTrait<MeshRendererTrait> ();
+            meshRendererTrait2.Material = mat;
+            meshRendererTrait2.Mesh = mushMesh2;
+            meshRendererTrait2.CullMode = Platform.CullMode.None;
 
             returnScene = this;
 
-            var cam = this.CameraManager.GetRenderPassCamera ("Default");
-            cam.GetTrait <OrbitAroundSubjectTrait> ().Active = false;
+            var t = SceneGraph.CreateSceneObject ("T");
+            t.Transform.LocalPosition = new Vector3 (0, 1f, 0);
+            Entity camSo = SceneGraph.CreateSceneObject ("Scene X Camera");
+            camSo.AddTrait<CameraTrait>();
+            var lookatTrait = camSo.AddTrait<LookAtSubjectTrait>();
+            lookatTrait.Subject = t.Transform;
+            var orbitTrait = camSo.AddTrait<OrbitAroundSubjectTrait>();
+            orbitTrait.CameraSubject = Transform.Origin;
+
+            camSo.Transform.LocalPosition = new Vector3(6f,3f,6f);
+
+            this.RuntimeConfiguration.SetRenderPassCameraTo("Debug", camSo);
+            this.RuntimeConfiguration.SetRenderPassCameraTo("Default", camSo);
 
             this.Blimey.InputEventSystem.Tap += this.OnTap;
         }
