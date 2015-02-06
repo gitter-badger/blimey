@@ -389,19 +389,11 @@ namespace Cor
     public sealed class Graphics
     {
         readonly IApi platform;
-        readonly GpuUtils gpuUtils;
 
         public Graphics (IApi platform)
         {
             this.platform = platform;
-            this.gpuUtils = new GpuUtils (platform);
         }
-
-        /// <summary>
-        /// Debugging utilies, if not supported on your platform, this will still exist, but the functions will
-        /// do nothing.
-        /// </summary>
-        public GpuUtils GpuUtils { get { return gpuUtils; } }
 
         /// <summary>
         /// Resets the graphics manager to it's default state.
@@ -420,8 +412,8 @@ namespace Cor
             platform.gfx_vbff_Activate (null);
             platform.gfx_ibff_Activate (null);
 
-            currentVertexBuffer = null;
-            currentIndexBuffer = null;
+            currentActiveVertexBuffer = null;
+            currentActiveIndexBuffer = null;
 
             // todo, here we need to set all the texture slots to point to null
             foreach (var slot in currentTextureMap.Keys)
@@ -433,8 +425,17 @@ namespace Cor
             currentShaderBinding = null;
         }
 
-        VertexBuffer currentVertexBuffer = null;
-        IndexBuffer currentIndexBuffer = null;
+
+        VertexBuffer currentActiveVertexBuffer = null;
+        IndexBuffer currentActiveIndexBuffer = null;
+        Texture currentActiveTexture = null;
+        Shader currentActiveShader = null;
+
+        //internal event ActiveVertexBufferChanged (Handle h);
+        //internal event ActiveIndexBufferChanged;
+        //internal event ActiveTextureChanged;
+        //internal event ActiveShaderChanged;
+
         CullMode? currentCullMode = null;
         readonly Dictionary<Int32, Texture> currentTextureMap = new Dictionary<Int32, Texture> ();
         Tuple<Shader, VertexBuffer> currentShaderBinding = null;
@@ -444,11 +445,11 @@ namespace Cor
         /// </summary>
         public void SetActive (VertexBuffer vertexBuffer)
         {
-            if (currentVertexBuffer == vertexBuffer)
+            if (currentActiveVertexBuffer == vertexBuffer)
                 return;
 
             platform.gfx_vbff_Activate (vertexBuffer != null ? vertexBuffer.Handle : null);
-            currentVertexBuffer = vertexBuffer;
+            currentActiveVertexBuffer = vertexBuffer;
         }
 
         /// <summary>
@@ -456,11 +457,11 @@ namespace Cor
         /// </summary>
         public void SetActive (IndexBuffer indexBuffer)
         {
-            if (currentIndexBuffer == indexBuffer)
+            if (currentActiveIndexBuffer == indexBuffer)
                 return;
 
             platform.gfx_ibff_Activate (indexBuffer != null ? indexBuffer.Handle : null);
-            currentIndexBuffer = indexBuffer;
+            currentActiveIndexBuffer = indexBuffer;
         }
 
         /// <summary>
@@ -480,7 +481,7 @@ namespace Cor
         /// </summary>
         public void SetActive (Shader shader)
         {
-            if (currentVertexBuffer == null)
+            if (currentActiveVertexBuffer == null)
                 throw new Exception ();
 
             // todo: optimise this: see teapot dissapearing example
@@ -488,17 +489,17 @@ namespace Cor
             //    && currentShaderBinding.Item1 == shader
             //    && currentShaderBinding.Item2 == currentVertexBuffer) return;
 
-            shader.Activate (currentVertexBuffer.VertexDeclaration);
+            shader.Activate (currentActiveVertexBuffer.VertexDeclaration);
             platform.gfx_vbff_Bind (
-                currentVertexBuffer.VertexDeclaration,
-                shader.GetElementsIndicesToEnable (currentVertexBuffer.VertexDeclaration));
+                currentActiveVertexBuffer.VertexDeclaration,
+                shader.GetElementsIndicesToEnable (currentActiveVertexBuffer.VertexDeclaration));
 
-            currentShaderBinding = new Tuple<Shader, VertexBuffer> (shader, currentVertexBuffer);
+            currentShaderBinding = new Tuple<Shader, VertexBuffer> (shader, currentActiveVertexBuffer);
         }
 
         public void SetActive (Shader shader, VertexDeclaration vertexDeclaration)
         {
-            if (currentVertexBuffer != null || currentIndexBuffer != null)
+            if (currentActiveVertexBuffer != null || currentActiveIndexBuffer != null)
                 throw new Exception ();
 
 
@@ -510,7 +511,7 @@ namespace Cor
             var indices = shader.GetElementsIndicesToEnable (vertexDeclaration);
             platform.gfx_vbff_Bind (vertexDeclaration, indices);
 
-            currentShaderBinding = new Tuple<Shader, VertexBuffer> (shader, currentVertexBuffer);
+            currentShaderBinding = new Tuple<Shader, VertexBuffer> (shader, currentActiveVertexBuffer);
         }
 
 
@@ -953,55 +954,6 @@ namespace Cor
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// Provided a means to profile the performance of the GPU on platforms that support GPU event, markers and regions.
-    /// </summary>
-    public sealed class GpuUtils
-    {
-        readonly IApi platform;
-
-        internal GpuUtils (IApi platform)
-        {
-            this.platform = platform;
-        }
-
-        /// <summary>
-        /// Starts a profiler event.
-        /// </summary>
-        public Int32 BeginEvent (Rgba32 colour, String eventName)
-        {
-            return this.platform.gfx_dbg_BeginEvent (colour, eventName);
-        }
-
-        /// <summary>
-        /// Closes the last opened profiler event.
-        /// </summary>
-        public Int32 EndEvent ()
-        {
-            return this.platform.gfx_dbg_EndEvent ();
-        }
-
-        /// <summary>
-        /// Registers a profiler marker.
-        /// </summary>
-        public void SetMarker (Rgba32 colour, String marker)
-        {
-            this.platform.gfx_dbg_SetMarker (colour, marker);
-        }
-
-        /// <summary>
-        /// Registers a profiler region.
-        /// </summary>
-        public void SetRegion (Rgba32 colour, String region)
-        {
-            this.platform.gfx_dbg_SetRegion (colour, region);
-            this.platform.sys_GetPrimaryPanelType ();
-        }
-    }
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    /// <summary>
     /// Specifies the attributes of a panel, a panel could be a screen, a touch device, or both.  A system / machine
     /// may have a number of panels, a desktop could have two monitors and a PlayStation Vita has a touchscreen on the
     /// front and a touch panel on the back.
@@ -1118,6 +1070,11 @@ namespace Cor
             this.handle = platform.gfx_CreateVertexBuffer (vertexDeclaration, vertexCount);
             ++vertexBufferCount;
             InternalUtils.Log.Info ("GFX", "Vertex buffer created: " + handle.Identifier);
+        }
+
+        public override int GetHashCode ()
+        {
+            return Handle.GetHashCode ();
         }
 
         public override Boolean Equals (Object obj)
@@ -1322,6 +1279,11 @@ namespace Cor
             InternalUtils.Log.Info ("GFX", "Index buffer created: " + handle.Identifier);
         }
 
+        public override int GetHashCode ()
+        {
+            return Handle.GetHashCode ();
+        }
+
         public override Boolean Equals (Object obj)
         {
             Boolean flag = false;
@@ -1437,6 +1399,7 @@ namespace Cor
 
     /// <summary>
     /// Provides a means to interact with a shader loaded on the GPU.
+    /// This class is a little comlicated because it provides an abstraction that hides shader variants.
     /// </summary>
     public sealed class Shader
         : IDisposable
@@ -1458,7 +1421,7 @@ namespace Cor
         readonly Dictionary<String, Int32> currentSamplerTargets = new Dictionary<String, Int32>();
 
         // Debug
-        readonly Dictionary<String, bool> logHistory = new Dictionary<String, bool>();
+        readonly Dictionary<String, Boolean> logHistory = new Dictionary<String, Boolean>();
     
         // IDisposable
         Boolean disposed;
@@ -1466,6 +1429,11 @@ namespace Cor
         static Int32 shaderCount = 0;
         static System.Collections.Concurrent.ConcurrentQueue <Handle> shadersToClean =
             new System.Collections.Concurrent.ConcurrentQueue<Handle> ();
+
+        public override int GetHashCode ()
+        {
+            return Handle.GetHashCode ();
+        }
 
         internal static void CollectGpuGarbage (IApi platform)
         {
@@ -1520,6 +1488,23 @@ namespace Cor
         readonly Dictionary <String, ShaderVariableDeclaration> variableActualNameToDeclaration;
         readonly Dictionary <String, String> variableNiceNameToActualName;
         readonly Dictionary <String, String> samplerNiceNameToActualName;
+
+        Boolean iAmActive = false;
+
+        void OnActiveShaderChanged (Handle previousActive, Handle newActiveShader)
+        {
+            if (previousActive == Handle)
+            {
+                iAmActive = false;
+                // I've just lost focus.
+            }
+
+            if (newActiveShader == Handle)
+            {
+                iAmActive = true;
+                // I've just gained focus.
+            }
+        }
 
         public Shader (IApi platform, ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[] source)
         {
@@ -2076,6 +2061,11 @@ namespace Cor
             ++textureCount;
 
             InternalUtils.Log.Info ("GFX", "Texture created: " + textureHandle.Identifier);
+        }
+
+        public override int GetHashCode ()
+        {
+            return Handle.GetHashCode ();
         }
 
         public override Boolean Equals (Object obj)

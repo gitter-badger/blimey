@@ -90,20 +90,27 @@ namespace Platform
 
         Byte[]                  gfx_CompileShader                       (String source);
 
-        Int32                   gfx_dbg_BeginEvent                      (Rgba32 colour, String eventName);
-        Int32                   gfx_dbg_EndEvent                        ();
-        void                    gfx_dbg_SetMarker                       (Rgba32 colour, String marker);
-        void                    gfx_dbg_SetRegion                       (Rgba32 colour, String region);
-
         Int32                   gfx_vbff_GetVertexCount                 (Handle vertexBufferHandle);
         VertexDeclaration       gfx_vbff_GetVertexDeclaration           (Handle vertexBufferHandle);
         void                    gfx_vbff_SetData<T>                     (Handle vertexBufferHandle, T[] data, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
         T[]                     gfx_vbff_GetData<T>                     (Handle vertexBufferHandle, Int32 startIndex, Int32 elementCount) where T: struct, IVertexType;
-        void                    gfx_vbff_Activate                       (Handle vertexBufferHandle);
 
-        // This function looks at the vertex elements in the given vertex buffer and activate an array of generic
-                                                                                                               // vertex attribute data that correspond to the given indices.  If null, all will be activated.
-        void                    gfx_vbff_Bind                           (VertexDeclaration vertexDeclaration, Int32[] vertexElementIndices);
+        /// <summary>
+        /// This function looks at the vertex elements in the given vertex buffer and activate an array of generic
+        /// vertex attribute data that correspond to the given indices.  If null, all will be activated.
+        /// </summary>
+        void
+        gfx_vbff_Bind
+        (VertexDeclaration vertexDeclaration, Int32[] vertexElementIndices);
+
+        /// <summary>
+        // Makes the vertex buffer associated with the given handle active on the GPU.
+        // Activate does not have to be called if you only want to call the other gfx_vbff_* functions to change 
+        // or get something about the vertex buffer.
+        /// </summary>
+        void
+        gfx_vbff_Activate
+        (Handle vertexBufferHandle);
 
         Int32                   gfx_ibff_GetIndexCount                  (Handle indexBufferHandle);
         void                    gfx_ibff_SetData                        (Handle indexBufferHandle, Int32[] data, Int32 startIndex, Int32 elementCount);
@@ -118,12 +125,12 @@ namespace Platform
 
         void                    gfx_shdr_SetVariable<T>                 (Handle shaderHandle, Int32 variantIndex, String name, T value);
         void                    gfx_shdr_SetSampler                     (Handle shaderHandle, Int32 variantIndex, String name, Int32 slot);
-        void                    gfx_shdr_Activate                       (Handle shaderHandle, Int32 variantIndex);
         Int32                   gfx_shdr_GetVariantCount                (Handle shaderHandle);
         String                  gfx_shdr_GetIdentifier                  (Handle shaderHandle, Int32 variantIndex);
         ShaderInputInfo[]       gfx_shdr_GetInputs                      (Handle shaderHandle, Int32 variantIndex);
         ShaderVariableInfo[]    gfx_shdr_GetVariables                   (Handle shaderHandle, Int32 variantIndex);
         ShaderSamplerInfo[]     gfx_shdr_GetSamplers                    (Handle shaderHandle, Int32 variantIndex);
+        void                    gfx_shdr_Activate                       (Handle shaderHandle, Int32 variantIndex);
 
         /*
          * Resources

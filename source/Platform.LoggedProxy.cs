@@ -269,36 +269,6 @@ namespace Cor
             return compiled;
         }
 
-        public Int32 gfx_dbg_BeginEvent (Rgba32 colour, String eventName)
-        {
-            StartLog ("gfx_dbg_BeginEvent ({0}, {1})", colour, eventName);
-            Int32 code = api.gfx_dbg_BeginEvent (colour, eventName);
-            EndLog (code);
-            return code;
-        }
-
-        public Int32 gfx_dbg_EndEvent ()
-        {
-            StartLog ("gfx_dbg_EndEvent ()");
-            Int32 code = api.gfx_dbg_EndEvent ();
-            EndLog (code);
-            return code;
-        }
-
-        public void gfx_dbg_SetMarker (Rgba32 colour, String marker)
-        {
-            StartLog ("gfx_dbg_SetMarker ({0}, {1})", colour, marker);
-            api.gfx_dbg_SetMarker (colour, marker);
-            EndLog ();
-        }
-
-        public void gfx_dbg_SetRegion (Rgba32 colour, String region)
-        {
-            StartLog ("gfx_dbg_SetRegion ({0}, {1})", colour, region);
-            api.gfx_dbg_SetRegion (colour, region);
-            EndLog ();
-        }
-
         public Int32 gfx_vbff_GetVertexCount (Handle vertexBufferHandle)
         {
             StartLog ("gfx_vbff_GetVertexCount ({0})", vertexBufferHandle);
