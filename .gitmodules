@@ -1,18 +1,18 @@
 [submodule "submodules/abacus"]
 	path = submodules/abacus
-    url=https://github.com/blimey3D/abacus.git
+url=https://github.com/blimey/abacus.git
     branch = development
 [submodule "submodules/cor"]
 	path = submodules/cor
-    url=https://github.com/blimey3D/cor.git
+url=https://github.com/blimey/cor.git
     branch = development
 [submodule "submodules/blimey"]
 	path = submodules/blimey
-    url=https://github.com/blimey3D/blimey.git
+url=https://github.com/blimey/blimey.git
 	branch = development
 [submodule "submodules/oats"]
 	path = submodules/oats
-    url=https://github.com/blimey3D/oats.git
+url=https://github.com/blimey/oats.git
 [submodule "submodules/fudge"]
 	path = submodules/fudge
-	url = git@github.com:blimey3D/fudge.git
+url=git@github.com:blimey/fudge.git
