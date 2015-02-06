@@ -32,7 +32,7 @@
 
 using System;
 using Cor;
-using Cor.Platform.Xios;
+using Platform.Xios;
 
 namespace Cor.Demo
 {

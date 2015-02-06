@@ -36,8 +36,8 @@ using System;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
 using Cor;
-using Cor.Platform;
-using Cor.Platform.MonoMac;
+using Platform;
+using Platform.MonoMac;
 using System.IO;
 
 namespace Cor.Demo

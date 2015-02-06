@@ -1,9 +1,9 @@
 [submodule "submodules/abacus"]
 	path = submodules/abacus
-	url = git@github.com:blimey3D/abacus.git
+url=git@github.com:blimey/abacus.git
 [submodule "submodules/cor"]
 	path = submodules/cor
-	url = git@github.com:blimey3D/cor.git
+url=git@github.com:blimey/cor.git
 [submodule "submodules/fudge"]
 	path = submodules/fudge
-	url = git@github.com:blimey3D/fudge.git
+url=git@github.com:blimey/fudge.git

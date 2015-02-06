@@ -39,7 +39,7 @@ namespace Cor.Demo
     using Fudge;
     using Cor;
     using System.Collections.Generic;
-    using Cor.Platform;
+    using Platform;
     using System.Runtime.InteropServices;
 
     public class BasicApp : IApp

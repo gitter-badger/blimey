@@ -375,7 +375,4 @@ Global
 		{EBCCA629-D4CF-40C7-A82C-AB603461A485} = {73FFD31A-F0FF-48BE-A61F-8CE2BBB4A7F8}
 		{115DA08F-B055-4AE4-917B-26727E226805} = {73FFD31A-F0FF-48BE-A61F-8CE2BBB4A7F8}
 	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = xs.monomac\Cor.Demo\Cor.Demo (xs.monomac).csproj
-	EndGlobalSection
 EndGlobal
