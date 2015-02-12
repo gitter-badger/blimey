@@ -1,32 +1,41 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor - A Low Level, Cross Platform, 3D App Engine                                                               │ \\
-// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
-// │                     Brought to you by:                                                                         │ \\
-// │                              _________                    .__               __                                 │ \\
-// │                             /   _____/__ __  ____    ____ |__|____    _____/  |_                               │ \\
-// │                             \_____  \|  |  \/    \  / ___\|  \__  \  /    \   __\                              │ \\
-// │                             /        \  |  /   |  \/ /_/  >  |/ __ \|   |  \  |                                │ \\
-// │                            /_______  /____/|___|  /\___  /|__(____  /___|  /__|                                │ \\
-// │                                    \/           \//_____/         \/     \/                                    │ \\
-// │                                                                                                                │ \\
-// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2008-2014 Sungiant ~ http://www.blimey3d.com ~ Authors: A.J.Pook                                   │ \\
-// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
-// │ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated   │ \\
-// │ documentation files (the "Software"), to deal in the Software without restriction, including without           │ \\
-// │ limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sellcopies of the   │ \\
-// │ Software, and to permit persons to whom the Software is furnished to do so, subject to the following           │ \\
-// │ conditions:                                                                                                    │ \\
-// │                                                                                                                │ \\
-// │ The above copyright notice and this permission notice shall be included in all copies or substantial portions  │ \\
-// │ of the Software.                                                                                               │ \\
-// │                                                                                                                │ \\
-// │ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED  │ \\
-// │ TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL │ \\
-// │ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  │ \\
-// │ CONTRACT, TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        │ \\
-// │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
-// └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
+﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// │ _________                ._.                                           │ \\
+// │ \_   ___ \  ___________  | |                                           │ \\
+// │ /    \  \/ /  _ \_  __ \ | |                                           │ \\
+// │ \     \___(  <_> )  | \/  \|                                           │ \\
+// │  \______  /\____/|__|     __                                           │ \\
+// │         \/                \/                                           │ \\
+// │                                                                        │ \\
+// │ A low level engine for building graphical apps, built directly on top  │ \\
+// │ of the Blimey Platform API.  Cor is pretty much an object oriented     │ \\
+// │ wrapper around the Blimey Platform API with some additional features   │ \\
+// │ for making things easier.                                              │ \\
+// │                                                                        │ \\
+// ├────────────────────────────────────────────────────────────────────────┤ \\
+// │ Copyright © 2012 - 2015 ~ Blimey3D (http://www.blimey3d.com)           │ \\
+// ├────────────────────────────────────────────────────────────────────────┤ \\
+// │ Authors:                                                               │ \\
+// │ ~ Ash Pook (http://www.ajpook.com)                                     │ \\
+// ├────────────────────────────────────────────────────────────────────────┤ \\
+// │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
+// │ a copy of this software and associated documentation files (the        │ \\
+// │ "Software"), to deal in the Software without restriction, including    │ \\
+// │ without limitation the rights to use, copy, modify, merge, publish,    │ \\
+// │ distribute, sublicense, and/or sellcopies of the Software, and to      │ \\
+// │ permit persons to whom the Software is furnished to do so, subject to  │ \\
+// │ the following conditions:                                              │ \\
+// │                                                                        │ \\
+// │ The above copyright notice and this permission notice shall be         │ \\
+// │ included in all copies or substantial portions of the Software.        │ \\
+// │                                                                        │ \\
+// │ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,        │ \\
+// │ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF     │ \\
+// │ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. │ \\
+// │ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY   │ \\
+// │ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,   │ \\
+// │ TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE       │ \\
+// │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
+// └────────────────────────────────────────────────────────────────────────┘ \\
 
 namespace Cor
 {
@@ -43,7 +52,7 @@ namespace Cor
     using Platform;
     using Fudge;
 
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────── //
 
     internal static class ListExtensions
     {
