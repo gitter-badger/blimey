@@ -1035,8 +1035,10 @@ void main()
                     height = h;
                 }
 
-                tx1 = tx / tex_width; ty1 = ty / tex_height;
-                tx2 = (tx + w) / tex_width; ty2 = (ty + h) / tex_height;
+                tx1 = tx / tex_width;
+                ty1 = ty / tex_height;
+                tx2 = (tx + w) / tex_width;
+                ty2 = (ty + h) / tex_height;
 
                 quad.v[0].UV.X = tx1;
                 quad.v[0].UV.Y = ty1;
@@ -1047,8 +1049,11 @@ void main()
                 quad.v[3].UV.X = tx1;
                 quad.v[3].UV.Y = ty2;
 
-                bX = bXFlip; bY = bYFlip; bHS = bHSFlip;
-                bXFlip = false; bYFlip = false;
+                bX = bXFlip;
+                bY = bYFlip;
+                bHS = bHSFlip;
+                bXFlip = false;
+                bYFlip = false;
                 SetFlip(bX, bY, bHS);
             }
 
