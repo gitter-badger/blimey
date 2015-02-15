@@ -2,8 +2,8 @@
 
 startPath=`pwd`
 
-cd ../build/xs.mono40/Fudge.Tests/
+cd ../build/xamarin_studio.mono40/Fudge.Tests/
 
-xbuild "Fudge.Tests (xs.mono40).csproj" /p:Configuration=Debug
+xbuild "Fudge.Tests (xamarin_studio.mono40).csproj" /p:Configuration=Debug
 
 cd $startPath

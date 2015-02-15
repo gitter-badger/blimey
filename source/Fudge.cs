@@ -6,10 +6,10 @@
 // │  \___  / |____/\____ |\___  / \___  >                                  │ \\
 // │      \/             \/_____/      \/                                   │ \\
 // │                                                                        │ \\
-// │ A data packaging library.                                              │ \\
+// │ A fast data packaging library.                                         │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2012 - 2015 ~ Blimey3D (http://www.blimey3d.com)           │ \\
+// │ Copyright © 2012 - 2015 ~ Blimey3D (http://www.blimey.io)              │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Authors:                                                               │ \\
 // │ ~ Ash Pook (http://www.ajpook.com)                                     │ \\
@@ -33,6 +33,7 @@
 // │ TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE       │ \\
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
+
 
 using System;
 using System.Runtime.InteropServices;
