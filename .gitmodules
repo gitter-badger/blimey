@@ -7,3 +7,9 @@ url=git@github.com:blimey/cor.git
 [submodule "submodules/fudge"]
 	path = submodules/fudge
 url=git@github.com:blimey/fudge.git
+[submodule "submodules/platform"]
+	path = submodules/platform
+	url = git@github.com:blimey/platform.git
+[submodule "submodules/foundation"]
+	path = submodules/foundation
+	url = git@github.com:blimey/foundation.git

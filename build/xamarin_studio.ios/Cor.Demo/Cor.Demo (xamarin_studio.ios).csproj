@@ -134,17 +134,25 @@
     <BundleResource Include="Resources\Default-Landscape%402x.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\submodules\abacus\build\xs.ios\Abacus\Abacus %28xs.ios%29.csproj">
+    <ProjectReference Include="..\..\..\submodules\abacus\build\xamarin_studio.ios\Abacus\Abacus %28xamarin_studio.ios%29.csproj">
       <Project>{DE5491E6-4DF9-4BBB-9985-E7CD86905D41}</Project>
-      <Name>Abacus (xs.ios)</Name>
+      <Name>Abacus (xamarin_studio.ios)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\submodules\cor\build\xs.ios\Cor\Cor %28xs.ios%29.csproj">
+    <ProjectReference Include="..\..\..\submodules\cor\build\xamarin_studio.ios\Cor\Cor %28xamarin_studio.ios%29.csproj">
       <Project>{C8436444-EAAC-4B9A-A8E3-6F8494186F57}</Project>
-      <Name>Cor (xs.ios)</Name>
+      <Name>Cor (xamarin_studio.ios)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\submodules\fudge\build\xs.ios\Fudge\Fudge %28xs.ios%29.csproj">
+    <ProjectReference Include="..\..\..\submodules\foundation\build\xamarin_studio.ios\Foundation\Foundation %28xamarin_studio.ios%29.csproj">
+      <Project>{E2CABBB0-8D05-4351-BC28-732592D76DAB}</Project>
+      <Name>Foundation (xamarin_studio.ios)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\fudge\build\xamarin_studio.ios\Fudge\Fudge %28xamarin_studio.ios%29.csproj">
       <Project>{C29C81F0-E234-4CAE-B162-E3AEF7CBC4F5}</Project>
-      <Name>Fudge (xs.ios)</Name>
+      <Name>Fudge (xamarin_studio.ios)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\platform\build\xamarin_studio.ios\Platform\Platform %28xamarin_studio.ios%29.csproj">
+      <Project>{8BD236B6-D7DD-4931-8B89-E58A0BD73448}</Project>
+      <Name>Platform (xamarin_studio.ios)</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

@@ -1,36 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐ \\
-// │ Cor - A Low Level, Cross Platform, 3D App Engine                                                               │ \\
-// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
-// │                     Built by:                                                                                  │ \\
-// │                              _________                    .__               __                                 │ \\
-// │                             /   _____/__ __  ____    ____ |__|____    _____/  |_                               │ \\
-// │                             \_____  \|  |  \/    \  / ___\|  \__  \  /    \   __\                              │ \\
-// │                             /        \  |  /   |  \/ /_/  >  |/ __ \|   |  \  |                                │ \\
-// │                            /_______  /____/|___|  /\___  /|__(____  /___|  /__|                                │ \\
-// │                                    \/           \//_____/         \/     \/                                    │ \\
-// │                                                                                                                │ \\
-// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2008-2014 A.J.Pook (http://ajpook.github.io)                                                       │ \\
-// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
-// │ Authors: A.J.Pook                                                                                              │ \\
-// ├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤ \\
-// │ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated   │ \\
-// │ documentation files (the "Software"), to deal in the Software without restriction, including without           │ \\
-// │ limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sellcopies of the   │ \\
-// │ Software, and to permit persons to whom the Software is furnished to do so, subject to the following           │ \\
-// │ conditions:                                                                                                    │ \\
-// │                                                                                                                │ \\
-// │ The above copyright notice and this permission notice shall be included in all copies or substantial portions  │ \\
-// │ of the Software.                                                                                               │ \\
-// │                                                                                                                │ \\
-// │ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED  │ \\
-// │ TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL │ \\
-// │ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  │ \\
-// │ CONTRACT, TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        │ \\
-// │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
-// └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
-
-namespace Cor.Demo
+﻿namespace Cor.Demo
 {
     using System;
     using System.Text;
@@ -100,7 +68,7 @@ namespace Cor.Demo
             {
                 new Element <CubePosTex, VertPosTex> (shader, tex),
                 new Element <CylinderPosTex, VertPosTex> (shader, tex),
-                new Element <BillboardPosTexCol, VertPosTexCol> (shader, tex), 
+                new Element <BillboardPosTexCol, VertPosTexCol> (shader, tex),
                 new Element <BillboardPosTex, VertPosTex> (shader, tex),
                 new Element <CylinderPosNormTex, VertPosNormTex> (shader, tex),
                 new Element <CylinderNormTexPos, VertNormTexPos> (shader, tex),
@@ -843,7 +811,7 @@ namespace Cor.Demo
                 vertList.Add(
                     new VertNormTexPos(
                         normal,
-                        new Vector2((circleVec.X + 1f) / 2f, (circleVec.Z + 1f) / 2f), 
+                        new Vector2((circleVec.X + 1f) / 2f, (circleVec.Z + 1f) / 2f),
                         position));
             }
         }
@@ -1250,7 +1218,7 @@ void main()
         {
             String source = "";
 #if COR_PLATFORM_MONOMAC || COR_PLATFORM_XIOS || COR_PLATFORM_PSM
-            source = 
+            source =
 @"Vertex Position & Colour
 =VSH=
 attribute vec4 a_vertPosition;
@@ -1321,7 +1289,7 @@ void main()
 #if COR_PLATFORM_XNA4_X86
            source = "";
 #endif
-            
+
 #if COR_PLATFORM_XIOS || COR_PLATFORM_PSM
             source = ConvertToES (source);
 #endif
