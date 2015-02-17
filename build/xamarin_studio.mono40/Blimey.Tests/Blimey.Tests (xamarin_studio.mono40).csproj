@@ -40,25 +40,25 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Blimey\Blimey %28xs.mono40%29.csproj">
+    <ProjectReference Include="..\Blimey\Blimey %28xamarin_studio.mono40%29.csproj">
       <Project>{751BD674-BDC0-427B-9FAD-ED3D275C3595}</Project>
-      <Name>Blimey (xs.mono40)</Name>
+      <Name>Blimey (xamarin_studio.mono40)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\abacus\build\xs.mono40\Abacus\Abacus %28xs.mono40%29.csproj">
+    <ProjectReference Include="..\..\..\..\abacus\build\xamarin_studio.mono40\Abacus\Abacus %28xamarin_studio.mono40%29.csproj">
       <Project>{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}</Project>
-      <Name>Abacus (xs.mono40)</Name>
+      <Name>Abacus (xamarin_studio.mono40)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\fudge\build\xs.mono40\Fudge\Fudge %28xs.mono40%29.csproj">
+    <ProjectReference Include="..\..\..\..\fudge\build\xamarin_studio.mono40\Fudge\Fudge %28xamarin_studio.mono40%29.csproj">
       <Project>{C3491695-CFAE-427F-86F9-EEB25E58FB37}</Project>
-      <Name>Fudge (xs.mono40)</Name>
+      <Name>Fudge (xamarin_studio.mono40)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\cor\build\xs.mono40\Cor\Cor %28xs.mono40%29.csproj">
+    <ProjectReference Include="..\..\..\..\cor\build\xamarin_studio.mono40\Cor\Cor %28xamarin_studio.mono40%29.csproj">
       <Project>{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}</Project>
-      <Name>Cor (xs.mono40)</Name>
+      <Name>Cor (xamarin_studio.mono40)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\oats\build\Oats\Oats %28xs.mono40%29.csproj">
+    <ProjectReference Include="..\..\..\..\oats\build\Oats\Oats %28xamarin_studio.mono40%29.csproj">
       <Project>{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}</Project>
-      <Name>Oats (xs.mono40)</Name>
+      <Name>Oats (xamarin_studio.mono40)</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
