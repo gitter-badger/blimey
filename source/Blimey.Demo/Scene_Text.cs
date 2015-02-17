@@ -38,14 +38,95 @@ namespace Blimey.Demo
     using Cor;
     using System.Collections.Generic;
 
+    class SpriteFontData
+    {
+        public String FontFace { get; set; }
+        public Int32 FontSize { get; set; }
+        public Int32 LineHeight { get; set; }
+        public Int32 BaseLine { get; set; }
+
+        readonly Dictionary <Char, SpriteFontCharacterData> characterData = new Dictionary<Char, SpriteFontCharacterData> ();
+
+        readonly Dictionary <SpriteFontKerningPair, Int32> kerning = new Dictionary<SpriteFontKerningPair, Int32> ();
+
+        public SpriteFontData (String bmFontFile)
+        {
+        }
+        /*
+        #fontFace="Arial" #fontSize=50
+        #lineHeight=56 #baseLine=46 textureWidth=384 #textureHeight=320
+        #textureFile="blimey.png"
+        #charsCount=95
+        #charId=64 #uvStart=(0.0052, 0.0063) #uvEnd=(0.1354, 0.1625) #size=(50.0, 50.0) #xOffset=3 #yOffset=8 #xAdvance=51 
+        ...
+        #kerningsCount=64
+        #kerning #first=86 #second=117 #amount=-1
+        ...
+        */
+
+    }
+
+    struct SpriteFontKerningPair
+    {
+        public Char First;
+        public Char Second;
+    }
+
+    class SpriteFontCharacterData
+    {
+        public Vector2 StartUV { get; set; }
+        public Vector2 EndUV { get; set; }
+        public Vector2 Size { get; set; }
+        public Int32 XOffset { get; set; }
+        public Int32 YOffset { get; set; }
+        public Int32 XAdvance { get; set; }
+    }
+
+    class SpriteFont
+    {
+        readonly Texture fntTex = null;
+        readonly String fntUvData = null;
+        PrimitiveRenderer.Sprite s;
+
+        public SpriteFont (Engine engine, Blimey blimey, TextAsset fntUvAsset, TextureAsset fntTexAsset)
+        {
+            fntUvData = fntUvAsset.Text;
+            fntTex = engine.Graphics.CreateTexture (fntTexAsset);
+            Init (engine ,blimey);
+        }
+
+        public SpriteFont (Engine engine, Blimey blimey, String fntUvData, Texture fntTex)
+        {
+            this.fntUvData = fntUvData;
+            this.fntTex = fntTex;
+            Init (engine, blimey);
+        }
+
+        void Init (Engine engine, Blimey blimey)
+        {
+            Console.WriteLine (fntUvData);
+
+            s = new PrimitiveRenderer.Sprite (blimey.PrimitiveRenderer, fntTex);
+            s.SetBlendMode (BlendMode.Default);
+            s.SetColour (Rgba32.Red);
+            s.SetTextureRect (0.0052f, 0.0063f, 0.1354f, 0.1625f);
+        }
+
+        public void Draw (Single x, Single y, String text)
+        {
+            s.DrawEx ("Gui", 0f, 0f, 0f, 1f / 256f / 4f, 1f / 256f / 4f);
+        }
+    }
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
 	public class Scene_Text
 		: Scene
 	{
 		Scene returnScene;
-		Shader unlitShader = null;
-		Texture fntTex = null;
+        Shader unlitShader = null;
+        Texture fntTex = null;
+        SpriteFont sprFnt = null;
 
 		public override void Start()
 		{
@@ -57,12 +138,11 @@ namespace Blimey.Demo
 			SpriteTrait.SpriteShader = this.Cor.Graphics.CreateShader(unlitShaderAsset);
 
             TextAsset fntUvAsset = this.Blimey.Assets.Load <TextAsset> ("blimey_fnt_uv.bba");
-
-			Console.WriteLine (fntUvAsset.Text);
-
             TextureAsset fntTexAsset = this.Blimey.Assets.Load <TextureAsset> ("blimey_fnt_tex.bba");
 
             fntTex = this.Cor.Graphics.CreateTexture (fntTexAsset);
+
+            sprFnt = new SpriteFont (this.Cor, this.Blimey, fntUvAsset.Text, fntTex);
 
 			returnScene = this;
 
@@ -80,6 +160,8 @@ namespace Blimey.Demo
 			spr.Material.SetColour ("MaterialColour", Rgba32.Yellow);
 
 			unlitShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
+
+
 			this.Blimey.InputEventSystem.Tap += this.OnTap;
 		}
 
@@ -91,6 +173,8 @@ namespace Blimey.Demo
 		public override Scene Update(AppTime time)
         {
             this.Blimey.DebugRenderer.AddGrid ("Debug", 1f, 10);
+
+            sprFnt.Draw (0, 0, "");
 
 			if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
 				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
