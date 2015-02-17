@@ -661,7 +661,7 @@ namespace Blimey
 
             right.Normalise();
 
-            Matrix44.CreateFromAllAxis(ref right, ref up, ref backward, out result);
+            Matrix44.CreateFromCartesianAxes (ref right, ref up, ref backward, out result);
 
             result.R3C0 = position.X;
             result.R3C1 = position.Y;

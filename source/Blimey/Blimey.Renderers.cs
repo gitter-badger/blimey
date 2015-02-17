@@ -177,8 +177,6 @@ namespace Blimey
                         verts[vertIndex++] = shape.Vertices[i];
                 }
 
-                zGfx.GpuUtils.BeginEvent (Rgba32.Red, "DebugRenderer.Render");
-
                 zGfx.SetCullMode (CullMode.None);
 
                 // Update the render states on the gpu
@@ -212,8 +210,6 @@ namespace Blimey
                     // Remove these lines from our total line count
                     lineCount -= linesToDraw;
                 }
-
-                zGfx.GpuUtils.EndEvent ();
             }
         }
 
@@ -1818,7 +1814,6 @@ void main()
             if (!passState.ContainsKey (pass))
                 return;
 
-            zGfx.GpuUtils.BeginEvent( Rgba32.Blue, "PrimitiveBatch.Render" );
             zGfx.SetCullMode (CullMode.None);
             zGfx.SetActive ((VertexBuffer)null);
             zGfx.SetActive ((IndexBuffer)null);
@@ -1828,8 +1823,6 @@ void main()
             zGfx.SetActive (shader, VertexPositionTextureColour.Default.VertexDeclaration);
 
             _render_batch(zGfx, pass);
-
-            zGfx.GpuUtils.EndEvent();
         }
 
         void _render_batch (Graphics gfx, String pass)
