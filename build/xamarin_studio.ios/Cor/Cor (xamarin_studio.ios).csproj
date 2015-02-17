@@ -108,10 +108,6 @@
       <Project>{DE5491E6-4DF9-4BBB-9985-E7CD86905D41}</Project>
       <Name>Abacus (xamarin_studio.ios)</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\foundation\build\xamarin_studio.ios\Foundation\Foundation %28xamarin_studio.ios%29.csproj">
-      <Project>{E2CABBB0-8D05-4351-BC28-732592D76DAB}</Project>
-      <Name>Foundation (xamarin_studio.ios)</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\fudge\build\xamarin_studio.ios\Fudge\Fudge %28xamarin_studio.ios%29.csproj">
       <Project>{C29C81F0-E234-4CAE-B162-E3AEF7CBC4F5}</Project>
       <Name>Fudge (xamarin_studio.ios)</Name>
@@ -119,6 +115,10 @@
     <ProjectReference Include="..\..\..\..\platform\build\xamarin_studio.ios\Platform\Platform %28xamarin_studio.ios%29.csproj">
       <Project>{8BD236B6-D7DD-4931-8B89-E58A0BD73448}</Project>
       <Name>Platform (xamarin_studio.ios)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\foundation\build\xamarin_studio.ios\Foundation\Foundation %28xamarin_studio.ios%29.csproj">
+      <Project>{E2CABBB0-8D05-4351-BC28-732592D76DAB}</Project>
+      <Name>Foundation (xamarin_studio.ios)</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
