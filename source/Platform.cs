@@ -152,7 +152,7 @@ namespace Platform
         //                      todo, multiple screen support
         Int32                   sys_GetPrimaryScreenResolutionWidth     ();
         Int32                   sys_GetPrimaryScreenResolutionHeight    ();
-        Vector2?                sys_GetPrimaryPanelPhysicalSize         ();
+        Vector2?                sys_GetPrimaryPanelPhysicalSize         (); // In meters.
         PanelType               sys_GetPrimaryPanelType                 ();
 
         /*

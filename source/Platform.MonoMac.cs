@@ -228,7 +228,7 @@ namespace Platform.MonoMac
 
         public Vector2? sys_GetPrimaryPanelPhysicalSize ()
         {
-            return null;
+            return new Vector2 (0.32f, 0.18f); //guess for now
         }
 
         public PanelType sys_GetPrimaryPanelType ()
