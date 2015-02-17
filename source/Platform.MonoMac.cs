@@ -265,22 +265,16 @@ namespace Platform.MonoMac
             throw new NotImplementedException ();
         }
 
-        readonly Dictionary<DigitalControlIdentifier, int> digitalControlStates = 
-            new Dictionary<DigitalControlIdentifier, int> ();
-
-        readonly Dictionary<AnalogControlIdentifier, float> analogControlStates = 
-            new Dictionary<AnalogControlIdentifier, float> ();
-
         readonly HashSet<RawTouch> touches = new HashSet<RawTouch>();
 
         public Dictionary<DigitalControlIdentifier, int> hid_GetDigitalControlStates ()
         {
-            return digitalControlStates;
+            return Program.OpenGLView.DigitalControlStates;
         }
 
         public Dictionary<AnalogControlIdentifier, float> hid_GetAnalogControlStates ()
         {
-            return analogControlStates;
+            return Program.OpenGLView.AnalogControlStates;
         }
 
         public HashSet<BinaryControlIdentifier> hid_GetBinaryControlStates ()
@@ -389,9 +383,13 @@ namespace Platform.MonoMac
 
         public HashSet<Char> CharacterKeysThatAreDown { get { return characterKeysThatAreDown; } }
         public HashSet<BinaryControlIdentifier> FunctionalKeysThatAreDown { get { return functionalKeysThatAreDown; } }
+        public Dictionary <DigitalControlIdentifier, Int32> DigitalControlStates { get { return digitalControlStates; } }
+        public Dictionary <AnalogControlIdentifier, float> AnalogControlStates { get { return analogControlStates; } }
 
         readonly HashSet<Char> characterKeysThatAreDown = new HashSet<Char>();
         readonly HashSet<BinaryControlIdentifier> functionalKeysThatAreDown = new HashSet<BinaryControlIdentifier>();
+        readonly Dictionary <DigitalControlIdentifier, Int32> digitalControlStates = new Dictionary <DigitalControlIdentifier, Int32> ();
+        readonly Dictionary<AnalogControlIdentifier, float> analogControlStates = new Dictionary<AnalogControlIdentifier, float> ();
 
         //------------------------------------------------------------------------------------------------------------//
         // Init
@@ -407,11 +405,11 @@ namespace Platform.MonoMac
             // size changes.
             this.WantsBestResolutionOpenGLSurface = true;
 
-            this.AutoresizingMask =
-                NSViewResizingMask.HeightSizable |
-                NSViewResizingMask.MaxXMargin |
-                NSViewResizingMask.MinYMargin |
-                NSViewResizingMask.WidthSizable;
+            this.AutoresizingMask
+                = NSViewResizingMask.HeightSizable
+                | NSViewResizingMask.MaxXMargin
+                | NSViewResizingMask.MinYMargin
+                | NSViewResizingMask.WidthSizable;
 
             MakeCurrent ();
         }
@@ -592,12 +590,12 @@ namespace Platform.MonoMac
         // Mouse //---------------------------------------------------------------------------------------------------//
         public override void MouseDown (NSEvent theEvent)
         {
-            //this.gameEngine.InputImplementation.MouseImplemenatation.LeftMouseDown (theEvent);
+            functionalKeysThatAreDown.Add (BinaryControlIdentifier.Mouse_Left);
         }
 
         public override void MouseUp (NSEvent theEvent)
         {
-            //this.gameEngine.InputImplementation.MouseImplemenatation.LeftMouseUp (theEvent);
+            functionalKeysThatAreDown.Remove (BinaryControlIdentifier.Mouse_Left);
         }
 
         public override void MouseDragged (NSEvent theEvent)
@@ -607,12 +605,12 @@ namespace Platform.MonoMac
 
         public override void RightMouseDown (NSEvent theEvent)
         {
-            //this.gameEngine.InputImplementation.MouseImplemenatation.RightMouseDown (theEvent);
+            functionalKeysThatAreDown.Add (BinaryControlIdentifier.Mouse_Right);
         }
 
         public override void RightMouseUp (NSEvent theEvent)
         {
-            //this.gameEngine.InputImplementation.MouseImplemenatation.RightMouseUp (theEvent);
+            functionalKeysThatAreDown.Remove (BinaryControlIdentifier.Mouse_Right);
         }
 
         public override void RightMouseDragged (NSEvent theEvent)
@@ -622,13 +620,13 @@ namespace Platform.MonoMac
 
         public override void OtherMouseDown (NSEvent theEvent)
         {
-            //this.gameEngine.InputImplementation.MouseImplemenatation.MiddleMouseDown (theEvent);
+            functionalKeysThatAreDown.Add (BinaryControlIdentifier.Mouse_Middle);
         }
 
 
         public override void OtherMouseUp (NSEvent theEvent)
         {
-            //this.gameEngine.InputImplementation.MouseImplemenatation.MiddletMouseUp (theEvent);
+            functionalKeysThatAreDown.Remove (BinaryControlIdentifier.Mouse_Middle);
         }
 
         public override void OtherMouseDragged (NSEvent theEvent)
@@ -638,12 +636,13 @@ namespace Platform.MonoMac
 
         public override void ScrollWheel (NSEvent theEvent)
         {
-            //this.gameEngine.InputImplementation.MouseImplemenatation.ScrollWheel (theEvent);
+            digitalControlStates.Add (DigitalControlIdentifier.Mouse_Y, theEvent.AbsoluteZ);
         }
 
         public override void MouseMoved (NSEvent theEvent)
         {
-            //this.gameEngine.InputImplementation.MouseImplemenatation.MouseMoved (theEvent);
+            digitalControlStates.Add (DigitalControlIdentifier.Mouse_X, theEvent.AbsoluteX);
+            digitalControlStates.Add (DigitalControlIdentifier.Mouse_Y, theEvent.AbsoluteY);
         }
     }
 
