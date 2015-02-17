@@ -228,5 +228,13 @@
       <Project>{58F253D1-DFD7-4D31-AA36-96A7EB3DCC09}</Project>
       <Name>Oats (xamarin_studio.ios)</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\platform\build\xamarin_studio.ios\Platform\Platform %28xamarin_studio.ios%29.csproj">
+      <Project>{8BD236B6-D7DD-4931-8B89-E58A0BD73448}</Project>
+      <Name>Platform (xamarin_studio.ios)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\foundation\build\xamarin_studio.ios\Foundation\Foundation %28xamarin_studio.ios%29.csproj">
+      <Project>{E2CABBB0-8D05-4351-BC28-732592D76DAB}</Project>
+      <Name>Foundation (xamarin_studio.ios)</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

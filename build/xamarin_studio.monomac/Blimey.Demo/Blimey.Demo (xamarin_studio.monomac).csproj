@@ -185,5 +185,17 @@
       <Project>{FB8EF9CB-D3B2-402B-89C6-9F68F1BAFA44}</Project>
       <Name>Fudge (xamarin_studio.monomac)</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\oats\build\Oats\Oats %28xamarin_studio.monomac%29.csproj">
+      <Project>{721349D4-249A-48DE-839E-E7E3CA528BA6}</Project>
+      <Name>Oats (xamarin_studio.monomac)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\foundation\build\xamarin_studio.monomac\Foundation\Foundation %28xamarin_studio.monomac%29.csproj">
+      <Project>{A8B8A9D4-A7E5-4556-8947-037B547373E7}</Project>
+      <Name>Foundation (xamarin_studio.monomac)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\platform\build\xamarin_studio.monomac\Platform\Platform %28xamarin_studio.monomac%29.csproj">
+      <Project>{D59283A6-35FA-45B2-871A-50F982B73A0A}</Project>
+      <Name>Platform (xamarin_studio.monomac)</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
