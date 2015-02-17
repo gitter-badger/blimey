@@ -262,7 +262,7 @@ namespace Platform.MonoMac
         
         public DeviceOrientation? hid_GetCurrentOrientation ()
         {
-            throw new NotImplementedException ();
+            return DeviceOrientation.Default;
         }
 
         readonly HashSet<RawTouch> touches = new HashSet<RawTouch>();
@@ -581,11 +581,6 @@ namespace Platform.MonoMac
             if (fKey.HasValue) functionalKeysThatAreDown.Remove (fKey.Value);
         }
 
-        public override void FlagsChanged (NSEvent theEvent)
-        {
-            base.FlagsChanged (theEvent);
-        }
-
 
         // Mouse //---------------------------------------------------------------------------------------------------//
         public override void MouseDown (NSEvent theEvent)
@@ -598,11 +593,6 @@ namespace Platform.MonoMac
             functionalKeysThatAreDown.Remove (BinaryControlIdentifier.Mouse_Left);
         }
 
-        public override void MouseDragged (NSEvent theEvent)
-        {
-            base.MouseDragged (theEvent);
-        }
-
         public override void RightMouseDown (NSEvent theEvent)
         {
             functionalKeysThatAreDown.Add (BinaryControlIdentifier.Mouse_Right);
@@ -613,36 +603,25 @@ namespace Platform.MonoMac
             functionalKeysThatAreDown.Remove (BinaryControlIdentifier.Mouse_Right);
         }
 
-        public override void RightMouseDragged (NSEvent theEvent)
-        {
-            base.RightMouseDragged (theEvent);
-        }
-
         public override void OtherMouseDown (NSEvent theEvent)
         {
             functionalKeysThatAreDown.Add (BinaryControlIdentifier.Mouse_Middle);
         }
-
 
         public override void OtherMouseUp (NSEvent theEvent)
         {
             functionalKeysThatAreDown.Remove (BinaryControlIdentifier.Mouse_Middle);
         }
 
-        public override void OtherMouseDragged (NSEvent theEvent)
-        {
-            base.OtherMouseDragged (theEvent);
-        }
-
         public override void ScrollWheel (NSEvent theEvent)
         {
-            digitalControlStates.Add (DigitalControlIdentifier.Mouse_Y, theEvent.AbsoluteZ);
+            digitalControlStates [DigitalControlIdentifier.Mouse_Y] = theEvent.AbsoluteZ;
         }
 
         public override void MouseMoved (NSEvent theEvent)
         {
-            digitalControlStates.Add (DigitalControlIdentifier.Mouse_X, theEvent.AbsoluteX);
-            digitalControlStates.Add (DigitalControlIdentifier.Mouse_Y, theEvent.AbsoluteY);
+            digitalControlStates [DigitalControlIdentifier.Mouse_X] = theEvent.AbsoluteX;
+            digitalControlStates [DigitalControlIdentifier.Mouse_Y] = theEvent.AbsoluteY;
         }
     }
 
