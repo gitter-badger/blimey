@@ -216,7 +216,6 @@ namespace Blimey
 
         void UpdateTouchTrackers(AppTime time)
         {
-
             // delete all touch trackers that whose last touch was in the released state
             int num = touchTrackers.RemoveAll(x => (x.Phase == TouchPhase.JustReleased || x.Phase == TouchPhase.Invalid));
 
@@ -577,18 +576,19 @@ namespace Blimey
             var pos = this.samples[index].Position;
 
             var multiplier = Vector2.One;
+            var pps = panelSpec.PanelPhysicalSize.GetValueOrDefault (new Vector2 (0.16f, 0.09f));
             switch (space)
             {
                 case TouchPositionSpace.RealWorld:
-
+                    
                     if(engine.Host.CurrentOrientation == DeviceOrientation.Default ||
                        engine.Host.CurrentOrientation == DeviceOrientation.Upsidedown)
                     {
-                multiplier = new Vector2(panelSpec.PanelPhysicalSize.Value.X, panelSpec.PanelPhysicalSize.Value.Y);
+                        multiplier = new Vector2(pps.X, pps.Y);
                     }
                     else
                     {
-                multiplier = new Vector2(panelSpec.PanelPhysicalSize.Value.Y, panelSpec.PanelPhysicalSize.Value.X);
+                        multiplier = new Vector2(pps.Y, pps.X);
                     }
 
                     break;
