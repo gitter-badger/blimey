@@ -263,7 +263,7 @@ namespace Cor
             this.graphics = new Graphics (this.platform.Api);
             this.resources = new Resources (this.platform.Api);
             this.status = new Status (this.platform.Api);
-            this.input = new Input (this.platform.Api);
+            this.input = new Input (this.platform.Api, appSettings.MouseGeneratesTouches);
             this.host = new Host (this.platform.Api);
 
             this.Settings = appSettings;
@@ -729,6 +729,8 @@ namespace Cor
     public sealed class Input
     {
         readonly IApi platform;
+        readonly Boolean mouseGeneratesTouches;
+        String currentMouseTouchId = null;
         
         readonly InputFrame inputFrame = new InputFrame ();
 
@@ -752,9 +754,10 @@ namespace Cor
             }
         }
         
-        internal Input (IApi platform)
+        internal Input (IApi platform, Boolean mouseGeneratesTouches)
         {
             this.platform = platform;
+            this.mouseGeneratesTouches = mouseGeneratesTouches;
 
             this.Xbox360Gamepad = humanInputDevices.AddEx (new Xbox360Gamepad (PlayerIndex.One));
             this.PsmGamepad = humanInputDevices.AddEx (new PsmGamepad ());
@@ -781,17 +784,62 @@ namespace Cor
 
         void UpdateCurrentInputFrame ()
         {
-            inputFrame.DigitalControlStates.Clear ();
-            inputFrame.AnalogControlStates.Clear ();
-            inputFrame.PressedCharacters.Clear ();
-            inputFrame.ActiveTouches.Clear ();
-            inputFrame.BinaryControlStates.Clear ();
             
             var digitalControlStates = this.platform.hid_GetDigitalControlStates ();
             var analogControlStates = this.platform.hid_GetAnalogControlStates ();
             var binaryControlStates = this.platform.hid_GetBinaryControlStates ();
             var pressedCharacters = this.platform.hid_GetPressedCharacters ();
             var activeTouches = this.platform.hid_GetActiveTouches ();
+
+            RawTouch mouseTouch = null;
+
+            if (mouseGeneratesTouches)
+            {
+                Boolean mouseDownLastFrame = inputFrame.BinaryControlStates.Contains (BinaryControlIdentifier.Mouse_Left);
+                Boolean mouseDownThisFrame = binaryControlStates.Contains (BinaryControlIdentifier.Mouse_Left);
+
+                if (digitalControlStates.ContainsKey (DigitalControlIdentifier.Mouse_X) &&
+                    digitalControlStates.ContainsKey (DigitalControlIdentifier.Mouse_Y))
+                {
+                    Single mouseX = digitalControlStates [DigitalControlIdentifier.Mouse_X];
+                    Single mouseY = digitalControlStates [DigitalControlIdentifier.Mouse_Y];
+    
+                    if (!mouseDownLastFrame && mouseDownThisFrame)
+                    {
+                        currentMouseTouchId = "mouse" + Guid.NewGuid ().ToString ();
+                        mouseTouch = new RawTouch {
+                            Id = currentMouseTouchId,
+                            Position = new Vector2 (mouseX, mouseY),
+                            Phase = TouchPhase.JustPressed
+                        };
+                    }
+                    else if (mouseDownLastFrame && mouseDownThisFrame)
+                    {
+                        mouseTouch = new RawTouch {
+                            Id = currentMouseTouchId,
+                            Position = new Vector2 (mouseX, mouseY),
+                            Phase = TouchPhase.Active
+                        };
+                    }
+                    else if (mouseDownLastFrame && !mouseDownThisFrame)
+                    {
+                        mouseTouch = new RawTouch {
+                            Id = currentMouseTouchId,
+                            Position = new Vector2 (mouseX, mouseY),
+                            Phase = TouchPhase.JustReleased
+                        };
+                    }
+                }
+            }
+
+            inputFrame.DigitalControlStates.Clear ();
+            inputFrame.AnalogControlStates.Clear ();
+            inputFrame.PressedCharacters.Clear ();
+            inputFrame.ActiveTouches.Clear ();
+            inputFrame.BinaryControlStates.Clear ();
+            
+            if (mouseTouch != null)
+                inputFrame.ActiveTouches.Add (mouseTouch);
 
             digitalControlStates.Keys
                 .ToList ()
