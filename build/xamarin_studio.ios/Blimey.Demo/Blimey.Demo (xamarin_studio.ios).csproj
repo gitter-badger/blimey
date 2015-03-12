@@ -164,10 +164,6 @@
     <BundleResource Include="..\..\..\assets\xios\pixel_lit.bba">
       <Link>assets\xios\pixel_lit.bba</Link>
     </BundleResource>
-    <BundleResource Include="..\..\..\assets\xios\unlit.bba">
-      <Link>assets\xios\unlit.bba</Link>
-      <LogicalName>assets\xios\unlit.bba</LogicalName>
-    </BundleResource>
     <BundleResource Include="..\..\..\assets\xios\vertex_lit.bba">
       <Link>assets\xios\vertex_lit.bba</Link>
     </BundleResource>
@@ -206,6 +202,21 @@
     <BundleResource Include="Resources\Default-Landscape.png" />
     <BundleResource Include="Resources\Default-Portrait%402x.png" />
     <BundleResource Include="Resources\Default-Landscape%402x.png" />
+    <BundleResource Include="..\..\..\assets\xios\big_mushroom.bba">
+      <Link>assets\xios\big_mushroom.bba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\small_mushroom_1.bba">
+      <Link>assets\xios\small_mushroom_1.bba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\small_mushroom_2.bba">
+      <Link>assets\xios\small_mushroom_2.bba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\toadstool_diffuse.bba">
+      <Link>assets\xios\toadstool_diffuse.bba</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\assets\xios\unlit.bba">
+      <Link>assets\xios\unlit.bba</Link>
+    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\submodules\abacus\build\xamarin_studio.ios\Abacus\Abacus %28xamarin_studio.ios%29.csproj">
