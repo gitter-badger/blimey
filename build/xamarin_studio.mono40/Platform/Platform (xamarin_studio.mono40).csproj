@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{ECA286F0-0161-4AB0-9367-0D86D3CE2F20}</ProjectGuid>
+    <ProjectGuid>{ECB286F0-0161-4AB0-9367-0D86D3CE2F20}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Platform</RootNamespace>
     <AssemblyName>Platform_mono40</AssemblyName>
