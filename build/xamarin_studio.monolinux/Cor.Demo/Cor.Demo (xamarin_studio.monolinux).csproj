@@ -14,7 +14,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
+    <DefineConstants>DEBUG;COR_PLATFORM_MONOMAC;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -32,5 +32,29 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="..\..\..\source\Cor.Demo\Demo.cs">
+      <Link>source\Demo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\submodules\platform\build\xamarin_studio.monolinux\Platform\Platform %28xamarin_studio.monolinux%29.csproj">
+      <Project>{0768F0BE-1E29-4CCF-A319-E52CB0671C3B}</Project>
+      <Name>Platform (xamarin_studio.monolinux)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\abacus\build\xamarin_studio.mono40\Abacus\Abacus %28xamarin_studio.mono40%29.csproj">
+      <Project>{36D73AA0-0216-4B97-A0A6-7A896AFE6CEA}</Project>
+      <Name>Abacus (xamarin_studio.mono40)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\fudge\build\xamarin_studio.mono40\Fudge\Fudge %28xamarin_studio.mono40%29.csproj">
+      <Project>{C3491695-CFAE-427F-86F9-EEB25E58FB37}</Project>
+      <Name>Fudge (xamarin_studio.mono40)</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\submodules\cor\build\xamarin_studio.monolinux\Cor\Cor %28xamarin_studio.monolinux%29.csproj">
+      <Project>{C1D5CF7E-FB7A-477A-AE24-A9C8EBDC9DF1}</Project>
+      <Name>Cor (xamarin_studio.monolinux)</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="source\" />
   </ItemGroup>
 </Project>
