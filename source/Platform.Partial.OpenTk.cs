@@ -42,6 +42,7 @@
  * - PLATFORM_XIOS
  * - PLATFORM_MONOMAC
  * - PLATFORM_WPF
+ * - PLATFORM_LINUX
  *
  * Other Defines
  * -------------
@@ -49,12 +50,19 @@
  *
  */
 
-#if PLATFORM_XIOS && !PLATFORM_MONOMAC && !PLATFORM_WPF
+
+#if PLATFORM_LINUX || PLATFORM_WPF
+#define OPENTK_GL4
+#endif
+
+#if PLATFORM_XIOS && !PLATFORM_MONOMAC && !PLATFORM_WPF && !PLATFORM_LINUX
 namespace Platform.Xios
-#elif PLATFORM_MONOMAC && !PLATFORM_WPF
+#elif PLATFORM_MONOMAC && !PLATFORM_WPF && !PLATFORM_LINUX
 namespace Platform.MonoMac
-#elif PLATFORM_WPF
+#elif PLATFORM_WPF && !PLATFORM_LINUX
 namespace Platform.Wpf
+#elif PLATFORM_LINUX
+namespace Platform.Linux
 #else
 #error // Platform not specified.
 #endif
@@ -69,13 +77,11 @@ namespace Platform.Wpf
     using System.Diagnostics;
     using System.Runtime.InteropServices;
     using System.Runtime.ConstrainedExecution;
-
-    using Cor;
     using Fudge;
     using Abacus.SinglePrecision;
     using Platform;
 
-#if PLATFORM_XIOS || PLATFORM_MONOMAC || PLATFORM_WPF
+#if PLATFORM_XIOS || PLATFORM_MONOMAC || PLATFORM_WPF || PLATFORM_LINUX
 
     using System.Drawing;
 
@@ -102,8 +108,7 @@ namespace Platform.Wpf
     using KhronosVector3 = global::MonoMac.OpenGL.Vector3;
     using KhronosVector4 = global::MonoMac.OpenGL.Vector4;
     using KhronosMatrix4 = global::MonoMac.OpenGL.Matrix4;
-
-#elif PLATFORM_WPF
+#elif OPENTK_GL4
     using global::OpenTK.Graphics.OpenGL4;
     using GLShaderType = global::OpenTK.Graphics.OpenGL4.ShaderType;
     using GLBufferUsage = global::OpenTK.Graphics.OpenGL4.BufferUsageHint;
@@ -125,8 +130,12 @@ namespace Platform.Wpf
     public partial class MonoMacApi
 #elif PLATFORM_WPF
     public partial class Xna4Api
+#elif PLATFORM_LINUX
+	public partial class LinuxApi
+#else
+#error //Platform not specified
 #endif
-#if PLATFORM_XIOS || PLATFORM_MONOMAC || PLATFORM_WPF
+#if PLATFORM_XIOS || PLATFORM_MONOMAC || PLATFORM_WPF || PLATFORM_LINUX
     {
         // Keeping global state around like is rather hacky and should refactored out.
         VertexDeclaration currentActiveVertexBufferVertexDeclaration;
@@ -465,11 +474,11 @@ namespace Platform.Wpf
                     });
 
 
-                //InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Validating shader program");
 #if DEBUG
+				//InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Validating shader program");
                 OpenTKHelper.ValidateProgram (variantHandle.ProgramHandle);
 #endif
-#if !PLATFORM_WPF
+#if !OPENTK_GL4
                 //InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Detaching frag & vert sources");
                 OpenTKHelper.DetachShader (variantHandle.ProgramHandle, variantHandle.FragmentShaderHandle);
                 OpenTKHelper.DetachShader (variantHandle.ProgramHandle, variantHandle.VertexShaderHandle);
@@ -580,7 +589,7 @@ namespace Platform.Wpf
             Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
             Int32 count = primitiveCount * nVertsInPrim;
 
-#if PLATFORM_WPF
+#if OPENTK_GL4
             GL.DrawElements(
                 otkpType,
                 count,
@@ -651,7 +660,7 @@ namespace Platform.Wpf
             Int32 count = primitiveCount * nVertsInPrim;
 
             GL.DrawArrays (
-#if PLATFORM_WPF
+#if OPENTK_GL4
                 OpenTKHelper.ConvertToOpenTKPrimitiveType (primitiveType),
 #else
                 OpenTKHelper.ConvertToOpenTKBeginModeEnum(primitiveType), // specifies the primitive to render
@@ -1248,7 +1257,7 @@ namespace Platform.Wpf
         [Conditional ("DEBUG")]
         public static void ThrowErrors ()
         {
-#if PLATFORM_MONOMAC || PLATFORM_WPF
+#if PLATFORM_MONOMAC || OPENTK_GL4
             var ec = GL.GetError ();
 #else
             var ec = GL.GetErrorCode ();
@@ -1407,7 +1416,7 @@ namespace Platform.Wpf
                 case BlendFactor.Zero: return BlendingFactorSrc.Zero;
                 case BlendFactor.One: return BlendingFactorSrc.One;
 
-#if PLATFORM_MONOMAC || PLATFORM_WPF
+#if PLATFORM_MONOMAC || OPENTK_GL4
 
                 case BlendFactor.SourceColour: return BlendingFactorSrc.Src1Color; // todo: check this src1 stuff
                 case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrc1Color;
@@ -1509,7 +1518,7 @@ namespace Platform.Wpf
             }
         }
 
-#if PLATFORM_WPF
+#if OPENTK_GL4
         public static KhronosPrimitiveType ConvertToOpenTKPrimitiveType(PrimitiveType blimey)
         {
             switch (blimey)
@@ -1628,7 +1637,7 @@ namespace Platform.Wpf
         {
             if (programHandle != 0)
             {
-#if             PLATFORM_XIOS || PLATFORM_WPF
+#if             PLATFORM_XIOS || PLATFORM_WPF || OPENTK_GL4
                 GL.DeleteProgram (programHandle);
 #elif           PLATFORM_MONOMAC
                 try
@@ -1661,7 +1670,7 @@ namespace Platform.Wpf
             1,
             new String[] { src },
             (Int32[]) null);
-#elif PLATFORM_MONOMAC || PLATFORM_WPF
+#elif PLATFORM_MONOMAC || OPENTK_GL4
             GL.ShaderSource (
                 shaderHandle,
                 src);
@@ -1723,7 +1732,7 @@ namespace Platform.Wpf
 
             GL.GetProgram (
                 prog,
-#if PLATFORM_WPF
+#if OPENTK_GL4
                 GetProgramParameterName.ActiveUniforms,
 #else
                 ProgramParameter.ActiveUniforms,
@@ -1793,7 +1802,7 @@ namespace Platform.Wpf
             // gets the number of active vertex attributes
             GL.GetProgram (
                 prog,
-#if PLATFORM_WPF
+#if OPENTK_GL4
                 GetProgramParameterName.ActiveAttributes,
 #else
                 ProgramParameter.ActiveAttributes,
@@ -1852,7 +1861,7 @@ namespace Platform.Wpf
 
             GL.GetProgram (
                 prog,
-#if PLATFORM_WPF
+#if OPENTK_GL4
                 GetProgramParameterName.InfoLogLength,
 #else
                 ProgramParameter.InfoLogLength,
@@ -1869,12 +1878,12 @@ namespace Platform.Wpf
                 OpenTKHelper.ThrowErrors ();
                 //InternalUtils.Log.Info ("GFX", string.Format ("Program link log:\n{0}", infoLog));
             }
-            #endif
+#endif
             Int32 status = 0;
 
             GL.GetProgram (
                 prog,
-#if PLATFORM_WPF
+#if OPENTK_GL4
                 GetProgramParameterName.LinkStatus,
 #else
                 ProgramParameter.LinkStatus,
@@ -1903,7 +1912,7 @@ namespace Platform.Wpf
 
             GL.GetProgram (
                 programHandle,
-#if PLATFORM_WPF
+#if OPENTK_GL4
                 GetProgramParameterName.InfoLogLength,
 #else
                 ProgramParameter.InfoLogLength,
@@ -1930,7 +1939,7 @@ namespace Platform.Wpf
 
             GL.GetProgram (
                 programHandle,
-#if PLATFORM_WPF
+#if OPENTK_GL4
                 GetProgramParameterName.LinkStatus,
 #else
                 ProgramParameter.LinkStatus,
