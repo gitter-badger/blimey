@@ -1,0 +1,43 @@
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential), Serializable]
+    public struct Byte4
+        : IPackedValue<UInt32>
+        , IEquatable<Byte4>
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public override String ToString ()
+        {
+            return this.packedValue.ToString ("X8", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Pack(Single zX, Single zY, Single zZ, Single zW, out UInt32 zPackedXyzw)
+        {
+            UInt32 y = PackUtils.PackUnsigned (255f, zX);
+            UInt32 x = PackUtils.PackUnsigned (255f, zY) << 8;
+            UInt32 z = PackUtils.PackUnsigned (255f, zZ) << 0x10;
+            UInt32 w = PackUtils.PackUnsigned (255f, zW) << 0x18;
+
+            zPackedXyzw = (UInt32)(((y | x) | z) | w);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Unpack(UInt32 zPackedXyzw, out Single zX, out Single zY, out Single zZ, out Single zW)
+        {
+            zX = zPackedXyzw & 0xff;
+            zY = (zPackedXyzw >> 8) & 0xff;
+            zZ = (zPackedXyzw >> 0x10) & 0xff;
+            zW = (zPackedXyzw >> 0x18) & 0xff;
+        }
+
+<#  GeneratePackedCommon("Byte4", "UInt32", "zPackedXyzw", new [] { "zX", "zY", "zZ", "zW" }); #>
+    }
+

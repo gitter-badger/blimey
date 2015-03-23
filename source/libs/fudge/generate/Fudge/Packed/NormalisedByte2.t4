@@ -1,0 +1,50 @@
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential), Serializable]
+    public struct NormalisedByte2
+        : IPackedValue<UInt16>
+        , IEquatable<NormalisedByte2>
+        , IPackedReal2
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public override String ToString ()
+        {
+            return this.packedValue.ToString ("X4", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Pack(Single zX, Single zY, out UInt16 zPackedXy)
+        {
+            if (zX < -1f || zX > 1f || zY < -1f || zY > 1f)
+            {
+                throw new ArgumentException ("A component of the input source is not normalised.");
+            }
+
+            UInt32 x = PackUtils.PackSignedNormalised(0xff, zX);
+            UInt32 y = PackUtils.PackSignedNormalised(0xff, zY) << 8;
+
+            zPackedXy = (UInt16)(x | y);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Unpack(UInt16 zPackedXy, out Single zX, out Single zY)
+        {
+            zX = PackUtils.UnpackSignedNormalised (0xff, zPackedXy);
+            zY = PackUtils.UnpackSignedNormalised (0xff, (UInt32) (zPackedXy >> 8));
+
+            if (zX < -1f || zX > 1f || zY < -1f || zY > 1f)
+            {
+                throw new Exception ("A the input source doesn't yeild a normalised output: " + zPackedXy);
+            }
+        }
+
+<#  GeneratePackedCommon("NormalisedByte2", "UInt16", "zPackedXy", new [] { "zX", "zY" }); #>
+    }
+

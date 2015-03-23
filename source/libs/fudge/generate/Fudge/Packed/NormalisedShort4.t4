@@ -1,0 +1,54 @@
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential), Serializable]
+    public struct NormalisedShort4
+        : IPackedValue<UInt64>
+        , IEquatable<NormalisedShort4>
+        , IPackedReal4
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public override String ToString ()
+        {
+            return this.packedValue.ToString ("X8", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Pack(Single zX, Single zY, Single zZ, Single zW, out UInt64 zPackedXyzw)
+        {
+            if (zX < -1f || zX > 1f || zY < -1f || zY > 1f || zZ < -1f || zZ > 1f || zW < -1f || zW > 1f )
+            {
+                throw new ArgumentException ("A component of the input source is not normalised.");
+            }
+
+            UInt64 x = (UInt64) PackUtils.PackSignedNormalised(0xffff, zX);
+            UInt64 y = ((UInt64) PackUtils.PackSignedNormalised(0xffff, zY)) << 16;
+            UInt64 z = ((UInt64) PackUtils.PackSignedNormalised(0xffff, zZ)) << 32;
+            UInt64 w = ((UInt64) PackUtils.PackSignedNormalised(0xffff, zW)) << 48;
+
+            zPackedXyzw = (((x | y) | z) | w);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Unpack(UInt64 zPackedXyzw, out Single zX, out Single zY, out Single zZ, out Single zW)
+        {
+            zX = PackUtils.UnpackSignedNormalised (0xffff, (UInt32) zPackedXyzw);
+            zY = PackUtils.UnpackSignedNormalised (0xffff, (UInt32) (zPackedXyzw >> 16));
+            zZ = PackUtils.UnpackSignedNormalised (0xffff, (UInt32) (zPackedXyzw >> 32));
+            zW = PackUtils.UnpackSignedNormalised (0xffff, (UInt32) (zPackedXyzw >> 48));
+
+            if (zX < -1f || zX > 1f || zY < -1f || zY > 1f || zZ < -1f || zZ > 1f || zW < -1f || zW > 1f )
+            {
+                throw new Exception ("A the input source doesn't yeild a normalised output: " + zPackedXyzw);
+            }
+        }
+
+<#  GeneratePackedCommon("NormalisedShort4", "UInt64", "zPackedXyzw", new [] { "zX", "zY", "zZ", "zW" }); #>
+    }
+

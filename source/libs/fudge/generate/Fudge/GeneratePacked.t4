@@ -1,0 +1,252 @@
+﻿<#+
+void GeneratePackedCommon(string type, string packedType, string packedVariableName, string[] realVariableNames)
+{
+    bool clsCompliant = !( packedType == "UInt32" || packedType == "UInt16" || packedType == "UInt64" );
+#>
+        /// <summary>
+        /// todo
+        /// </summary>
+        <#= packedType #> packedValue;
+
+        #region IPackedValue
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        [CLSCompliant (<#= clsCompliant ? "true" : "false" #>)]
+        public <#= packedType #> PackedValue
+        {
+            get
+            {
+                return this.packedValue;
+            }
+            set
+            {
+                this.packedValue = value;
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public override Int32 GetHashCode()
+        {
+            return this.packedValue.GetHashCode();
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public override Boolean Equals(Object obj)
+        {
+            return ((obj is <#= type #>) && this.Equals((<#= type #>)obj));
+        }
+
+        #region IEquatable<<#= type #>>
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public Boolean Equals(<#= type #> other)
+        {
+            return this.packedValue.Equals(other.packedValue);
+        }
+
+        #endregion
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public static Boolean operator ==(<#= type #> a, <#= type #> b)
+        {
+            return a.Equals(b);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public static Boolean operator !=(<#= type #> a, <#= type #> b)
+        {
+            return !a.Equals(b);
+        }
+
+<#+
+if(realVariableNames.Length == 1){
+#>
+        /// <summary>
+        /// todo
+        /// </summary>
+        public <#= type #>(Single <#= realVariableNames [0] #>)
+        {
+            Pack (<#= realVariableNames [0] #>, out this.packedValue);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public void PackFrom (Single <#= realVariableNames [0] #>)
+        {
+            Pack (<#= realVariableNames [0] #>, out this.packedValue);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public void UnpackTo (out Single <#= realVariableNames [0] #>)
+        {
+            Unpack (this.packedValue, out <#= realVariableNames [0] #>);
+        }
+
+<#+
+}
+else if(realVariableNames.Length == 2)
+{
+#>
+        /// <summary>
+        /// todo
+        /// </summary>
+        public <#= type #>(
+            Single <#= realVariableNames [0] #>,
+            Single <#= realVariableNames [1] #>)
+        {
+            Pack(
+                <#= realVariableNames [0] #>,
+                <#= realVariableNames [1] #>,
+                out this.packedValue);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public void PackFrom (
+            Single <#= realVariableNames [0] #>,
+            Single <#= realVariableNames [1] #>)
+        {
+            Pack(
+                <#= realVariableNames [0] #>,
+                <#= realVariableNames [1] #>,
+                out this.packedValue);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public void UnpackTo (
+            out Single <#= realVariableNames [0] #>,
+            out Single <#= realVariableNames [1] #>)
+        {
+            Unpack(
+                this.packedValue,
+                out <#= realVariableNames [0] #>,
+                out <#= realVariableNames [1] #>);
+        }
+<#+
+}
+else if(realVariableNames.Length == 3)
+{
+#>
+        /// <summary>
+        /// todo
+        /// </summary>
+        public <#= type #>(
+            Single <#= realVariableNames [0] #>,
+            Single <#= realVariableNames [1] #>,
+            Single <#= realVariableNames [2] #>)
+        {
+            Pack(
+                <#= realVariableNames [0] #>,
+                <#= realVariableNames [1] #>,
+                <#= realVariableNames [2] #>,
+                out this.packedValue);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public void PackFrom (
+            Single <#= realVariableNames [0] #>,
+            Single <#= realVariableNames [1] #>,
+            Single <#= realVariableNames [2] #>)
+        {
+            Pack(
+                <#= realVariableNames [0] #>,
+                <#= realVariableNames [1] #>,
+                <#= realVariableNames [2] #>,
+                out this.packedValue);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public void UnpackTo (
+            out Single <#= realVariableNames [0] #>,
+            out Single <#= realVariableNames [1] #>,
+            out Single <#= realVariableNames [2] #>)
+        {
+            Unpack(
+                this.packedValue,
+                out <#= realVariableNames [0] #>,
+                out <#= realVariableNames [1] #>,
+                out <#= realVariableNames [2] #>);
+        }
+<#+
+}
+else if(realVariableNames.Length == 4)
+{
+#>
+        /// <summary>
+        /// todo
+        /// </summary>
+        public <#= type #>(
+            Single <#= realVariableNames [0] #>,
+            Single <#= realVariableNames [1] #>,
+            Single <#= realVariableNames [2] #>,
+            Single <#= realVariableNames [3] #>)
+        {
+            Pack(
+                <#= realVariableNames [0] #>,
+                <#= realVariableNames [1] #>,
+                <#= realVariableNames [2] #>,
+                <#= realVariableNames [3] #>,
+                out this.packedValue);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public void PackFrom (
+            Single <#= realVariableNames [0] #>,
+            Single <#= realVariableNames [1] #>,
+            Single <#= realVariableNames [2] #>,
+            Single <#= realVariableNames [3] #>)
+        {
+            Pack(
+                <#= realVariableNames [0] #>,
+                <#= realVariableNames [1] #>,
+                <#= realVariableNames [2] #>,
+                <#= realVariableNames [3] #>,
+                out this.packedValue);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        public void UnpackTo (
+            out Single <#= realVariableNames [0] #>,
+            out Single <#= realVariableNames [1] #>,
+            out Single <#= realVariableNames [2] #>,
+            out Single <#= realVariableNames [3] #>)
+        {
+            Unpack(
+                this.packedValue,
+                out <#= realVariableNames [0] #>,
+                out <#= realVariableNames [1] #>,
+                out <#= realVariableNames [2] #>,
+                out <#= realVariableNames [3] #>);
+        }
+<#+
+}
+}
+#>

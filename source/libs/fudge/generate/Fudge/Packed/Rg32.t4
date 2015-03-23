@@ -1,0 +1,50 @@
+﻿    /// <summary>
+    /// todo
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential), Serializable]
+    public struct Rg32
+        : IPackedValue<UInt32>
+        , IEquatable<Rg32>
+        , IPackedReal2
+    {
+        /// <summary>
+        /// todo
+        /// </summary>
+        public override String ToString ()
+        {
+            return this.packedValue.ToString ("X8", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Pack(Single zR, Single zG, out UInt32 zPackedRg)
+        {
+            if (zR < -1f || zR > 1f || zG < -1f || zG > 1f)
+            {
+                throw new ArgumentException ("A component of the input source is not normalised.");
+            }
+
+            UInt32 x = PackUtils.PackUnsignedNormalisedValue(0xffff, zR);
+            UInt32 y = PackUtils.PackUnsignedNormalisedValue(0xffff, zG) << 16;
+
+            zPackedRg = (x | y);
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        static void Unpack(UInt32 zPackedRg, out Single zR, out Single zG)
+        {
+            zR = PackUtils.UnpackUnsignedNormalisedValue (0xffff, zPackedRg);
+            zG = PackUtils.UnpackUnsignedNormalisedValue (0xffff, (UInt32) (zPackedRg >> 16));
+
+            if (zR < -1f || zR > 1f || zG < -1f || zG > 1f)
+            {
+                throw new Exception ("A the input source doesn't yeild a normalised output: " + zPackedRg);
+            }
+        }
+
+<#  GeneratePackedCommon("Rg32", "UInt32", "zPackedRg", new [] { "zR", "zG" }); #>
+    }
+
