@@ -1,0 +1,12 @@
+/Users/ash/repos/github/blimey3D/assets/submodules/ServiceStack.Text/src/ServiceStack.Text/bin/Debug/ServiceStack.Text.dll.mdb
+/Users/ash/repos/github/blimey3D/assets/submodules/ServiceStack.Text/src/ServiceStack.Text/bin/Debug/ServiceStack.Text.dll
+/Users/ash/repos/github/blimey3D/assets/submodules/ServiceStack.Text/src/ServiceStack.Text/obj/Debug/ServiceStack.Text.dll
+/Users/ash/repos/github/blimey3D/assets/submodules/ServiceStack.Text/src/ServiceStack.Text/obj/Debug/ServiceStack.Text.dll.mdb
+/Users/ash/repos/github/blimey3D/blimey-assetbuilder/submodules/ServiceStack.Text/src/ServiceStack.Text/bin/Debug/ServiceStack.Text.dll.mdb
+/Users/ash/repos/github/blimey3D/blimey-assetbuilder/submodules/ServiceStack.Text/src/ServiceStack.Text/bin/Debug/ServiceStack.Text.dll
+/Users/ash/repos/github/blimey3D/blimey-assetbuilder/submodules/ServiceStack.Text/src/ServiceStack.Text/obj/Debug/ServiceStack.Text.dll
+/Users/ash/repos/github/blimey3D/blimey-assetbuilder/submodules/ServiceStack.Text/src/ServiceStack.Text/obj/Debug/ServiceStack.Text.dll.mdb
+/Users/ash/repos/github/blimey3D/blimey-assetbuilder/contrib/ServiceStack.Text/src/ServiceStack.Text/bin/Debug/ServiceStack.Text.dll.mdb
+/Users/ash/repos/github/blimey3D/blimey-assetbuilder/contrib/ServiceStack.Text/src/ServiceStack.Text/bin/Debug/ServiceStack.Text.dll
+/Users/ash/repos/github/blimey3D/blimey-assetbuilder/contrib/ServiceStack.Text/src/ServiceStack.Text/obj/Debug/ServiceStack.Text.dll
+/Users/ash/repos/github/blimey3D/blimey-assetbuilder/contrib/ServiceStack.Text/src/ServiceStack.Text/obj/Debug/ServiceStack.Text.dll.mdb
