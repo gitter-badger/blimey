@@ -1,0 +1,27 @@
+        /// <summary>
+        /// todo
+        /// </summary>
+        [Test]
+        public void TestStaticFn_CreateFromAxisAngle_i ()
+        {
+            throw new InconclusiveException("Not Implemented");
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        [Test]
+        public void TestStaticFn_CreateFromYawPitchRoll_i ()
+        {
+            throw new InconclusiveException("Not Implemented");
+        }
+
+        /// <summary>
+        /// todo
+        /// </summary>
+        [Test]
+        public void TestStaticFn_CreateFromRotationMatrix_i ()
+        {
+            throw new InconclusiveException("Not Implemented");
+        }
+
