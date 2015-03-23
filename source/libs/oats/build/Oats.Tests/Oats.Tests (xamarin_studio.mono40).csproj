@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1D01A142-3E37-4466-A977-88F9E1D0BED9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Oats.Tests</RootNamespace>
+    <AssemblyName>Oats.Tests</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\libs\NUnit-2.6.3\bin\nunit.framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Source\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\tests\TestObjects.cs">
+      <Link>Source\TestObjects.cs</Link>
+    </Compile>
+    <Compile Include="..\..\tests\Tests.cs">
+      <Link>Source\Tests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\tests\TestTypes.cs">
+      <Link>Source\TestTypes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\tests\TestTypesSerialisers.cs">
+      <Link>Source\TestTypesSerialisers.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Oats\Oats %28xs.mono40%29.csproj">
+      <Project>{44DD7EF6-AB42-48A3-88CA-0B1107F5F126}</Project>
+      <Name>Oats (xs.mono40)</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
