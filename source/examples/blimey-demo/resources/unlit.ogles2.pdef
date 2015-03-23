@@ -1,0 +1,25 @@
+{
+    "VariantDefinitions" :
+    [
+        {
+            "VariantName" = "Unlit_Position",
+            "VertexShaderPath" = "ogles2/Unlit_Position.vsh",
+            "PixelShaderPath" = "ogles2/Unlit_Position.fsh"
+        },
+        {
+            "VariantName" = "Unlit_PositionTexture",
+            "VertexShaderPath" = "ogles2/Unlit_PositionTexture.vsh",
+            "PixelShaderPath" = "ogles2/Unlit_PositionTexture.fsh"
+        },
+        {
+            "VariantName" = "Unlit_PositionColour",
+            "VertexShaderPath" = "ogles2/Unlit_PositionColour.vsh",
+            "PixelShaderPath" = "ogles2/Unlit_PositionColour.fsh"
+        },
+        {
+            "VariantName" = "Unlit_PositionTextureColour",
+            "VertexShaderPath" = "ogles2/Unlit_PositionTextureColour.vsh",
+            "PixelShaderPath" = "ogles2/Unlit_PositionTextureColour.fsh"
+        }
+    ]
+}

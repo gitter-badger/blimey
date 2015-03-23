@@ -1,0 +1,18 @@
+{
+    "AssetId" : "big_mushroom",
+    "AssetType" : "Blimey.MeshAsset, Blimey",
+    "SourceSets" :
+    [
+        {
+            "Platforms" : [ "xios", "monomac" ],
+            "Importer" :
+            {
+                "Files" : [ "big_mushroom.obj" ],
+                "AssetImporterType" : "Blimey.Assets.Builders.MeshImporter, Blimey.Assets.Builders",
+                "AssetImporterSettings" : {}
+            },
+            "Processors" : []
+        }
+    ]
+}
+

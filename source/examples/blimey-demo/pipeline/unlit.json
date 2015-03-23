@@ -1,0 +1,41 @@
+{
+    "AssetId" : "unlit",
+    "AssetType" : "Blimey.ShaderAsset, Blimey",
+    "SourceSets" :
+    [
+        {
+            "Platforms" : [ "monomac" ],
+            "Importer" :
+            {
+                "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, Blimey.Assets.Builders",
+                "AssetImporterSettings" :
+                {
+                    "Format" : "OpenGL 4"
+                },
+                "Files" :
+                [
+                    "unlit.sdef",
+                    "unlit.ogl4.pdef",
+                ]
+            },
+            "Processors" : []
+        },
+        {
+            "Platforms" : [ "xios" ],
+            "Importer" :
+            {
+                "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, Blimey.Assets.Builders",
+                "AssetImporterSettings" :
+                {
+                    "Format" : "OpenGL ES 2"
+                },
+                "Files" :
+                [
+                    "unlit.sdef",
+                    "unlit.ogles2.pdef",
+                ]
+            },
+            "Processors" : []
+        }
+    ]
+}

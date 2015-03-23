@@ -1,0 +1,41 @@
+{
+    "AssetId" : "vertex_lit",
+    "AssetType" : "Blimey.ShaderAsset, Blimey",
+    "SourceSets" :
+    [
+        {
+            "Platforms" : [ "monomac" ],
+            "Importer" :
+            {
+                "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, Blimey.Assets.Builders",
+                "AssetImporterSettings" :
+                {
+                    "Format" : "OpenGL 4",
+                },
+                "Files" :
+                [
+                    "vertex_lit.sdef",
+                    "vertex_lit.ogl4.pdef"
+                ]
+            },
+            "Processors" : []
+        },
+        {
+            "Platforms" : [ "xios" ],
+            "Importer" :
+            {
+                "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, Blimey.Assets.Builders",
+                "AssetImporterSettings" :
+                {
+                    "Format" : "OpenGL ES 2"
+                },
+                "Files" :
+                [
+                    "vertex_lit.sdef",
+                    "vertex_lit.ogles2.pdef"
+                ]
+            },
+            "Processors" : []
+        }
+    ]
+}

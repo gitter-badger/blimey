@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShaderDeclaration xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/Platform">
+<InputDeclarations>
+    <ShaderInputDeclaration>
+        <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">
+        <d4p1:X>0</d4p1:X>
+        <d4p1:Y>0</d4p1:Y>
+        <d4p1:Z>0</d4p1:Z>
+    </DefaultValue>
+    <Name>a_vertPos</Name>
+    <NiceName>a_vertPos</NiceName>
+    <Optional>false</Optional>
+    <Usage>Position</Usage>
+</ShaderInputDeclaration>
+<ShaderInputDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">
+    <d4p1:X>0</d4p1:X>
+    <d4p1:Y>0</d4p1:Y>
+    <d4p1:Z>0</d4p1:Z>
+</DefaultValue>
+<Name>a_vertNormal</Name>
+<NiceName>a_vertNormal</NiceName>
+<Optional>false</Optional>
+<Usage>Normal</Usage>
+</ShaderInputDeclaration>
+<ShaderInputDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector2">
+    <d4p1:X>0</d4p1:X>
+    <d4p1:Y>0</d4p1:Y>
+</DefaultValue>
+<Name>a_vertTexcoord</Name>
+<NiceName>a_vertTexcoord</NiceName>
+<Optional>true</Optional>
+<Usage>TextureCoordinate</Usage>
+</ShaderInputDeclaration>
+<ShaderInputDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Fudge" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4294967295</d4p1:packedValue>
+</DefaultValue>
+<Name>a_vertColour</Name>
+<NiceName>a_vertColour</NiceName>
+<Optional>true</Optional>
+<Usage>Colour</Usage>
+</ShaderInputDeclaration>
+</InputDeclarations>
+<Name>VertexLit</Name>
+<PassNames xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+<d2p1:string>Main</d2p1:string>
+</PassNames>
+<SamplerDeclarations>
+    <ShaderSamplerDeclaration>
+        <Name>s_tex0</Name>
+        <NiceName>TextureSampler</NiceName>
+        <Optional>true</Optional>
+    </ShaderSamplerDeclaration>
+</SamplerDeclarations>
+<VariableDeclarations>
+    <ShaderVariableDeclaration>
+        <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Matrix44">
+        <d4p1:R0C0>1</d4p1:R0C0>
+        <d4p1:R0C1>0</d4p1:R0C1>
+        <d4p1:R0C2>0</d4p1:R0C2>
+        <d4p1:R0C3>0</d4p1:R0C3>
+        <d4p1:R1C0>0</d4p1:R1C0>
+        <d4p1:R1C1>1</d4p1:R1C1>
+        <d4p1:R1C2>0</d4p1:R1C2>
+        <d4p1:R1C3>0</d4p1:R1C3>
+        <d4p1:R2C0>0</d4p1:R2C0>
+        <d4p1:R2C1>0</d4p1:R2C1>
+        <d4p1:R2C2>1</d4p1:R2C2>
+        <d4p1:R2C3>0</d4p1:R2C3>
+        <d4p1:R3C0>0</d4p1:R3C0>
+        <d4p1:R3C1>0</d4p1:R3C1>
+        <d4p1:R3C2>0</d4p1:R3C2>
+        <d4p1:R3C3>1</d4p1:R3C3>
+    </DefaultValue>
+    <Name>u_world</Name>
+    <NiceName>World</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Matrix44">
+    <d4p1:R0C0>1</d4p1:R0C0>
+    <d4p1:R0C1>0</d4p1:R0C1>
+    <d4p1:R0C2>0</d4p1:R0C2>
+    <d4p1:R0C3>0</d4p1:R0C3>
+    <d4p1:R1C0>0</d4p1:R1C0>
+    <d4p1:R1C1>1</d4p1:R1C1>
+    <d4p1:R1C2>0</d4p1:R1C2>
+    <d4p1:R1C3>0</d4p1:R1C3>
+    <d4p1:R2C0>0</d4p1:R2C0>
+    <d4p1:R2C1>0</d4p1:R2C1>
+    <d4p1:R2C2>1</d4p1:R2C2>
+    <d4p1:R2C3>0</d4p1:R2C3>
+    <d4p1:R3C0>0</d4p1:R3C0>
+    <d4p1:R3C1>0</d4p1:R3C1>
+    <d4p1:R3C2>0</d4p1:R3C2>
+    <d4p1:R3C3>1</d4p1:R3C3>
+</DefaultValue>
+<Name>u_view</Name>
+<NiceName>View</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Matrix44">
+    <d4p1:R0C0>1</d4p1:R0C0>
+    <d4p1:R0C1>0</d4p1:R0C1>
+    <d4p1:R0C2>0</d4p1:R0C2>
+    <d4p1:R0C3>0</d4p1:R0C3>
+    <d4p1:R1C0>0</d4p1:R1C0>
+    <d4p1:R1C1>1</d4p1:R1C1>
+    <d4p1:R1C2>0</d4p1:R1C2>
+    <d4p1:R1C3>0</d4p1:R1C3>
+    <d4p1:R2C0>0</d4p1:R2C0>
+    <d4p1:R2C1>0</d4p1:R2C1>
+    <d4p1:R2C2>1</d4p1:R2C2>
+    <d4p1:R2C3>0</d4p1:R2C3>
+    <d4p1:R3C0>0</d4p1:R3C0>
+    <d4p1:R3C1>0</d4p1:R3C1>
+    <d4p1:R3C2>0</d4p1:R3C2>
+    <d4p1:R3C3>1</d4p1:R3C3>
+</DefaultValue>
+<Name>u_proj</Name>
+<NiceName>Projection</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Fudge" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4294967295</d4p1:packedValue>
+</DefaultValue>
+<Name>u_colour</Name>
+<NiceName>MaterialColour</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Fudge" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4286611584</d4p1:packedValue>
+</DefaultValue>
+<Name>u_liAmbient</Name>
+<NiceName>AmbientLightColour</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Fudge" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4278190080</d4p1:packedValue>
+</DefaultValue>
+<Name>u_emissiveColour</Name>
+<NiceName>EmissiveColour</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Fudge" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4294967295</d4p1:packedValue>
+</DefaultValue>
+<Name>u_specularColour</Name>
+<NiceName>SpecularColour</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://www.w3.org/2001/XMLSchema" i:type="d4p1:float">0.7</DefaultValue>
+    <Name>u_specularPower</Name>
+    <NiceName>SpecularPower</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">
+    <d4p1:X>0</d4p1:X>
+    <d4p1:Y>0</d4p1:Y>
+    <d4p1:Z>0</d4p1:Z>
+</DefaultValue>
+<Name>u_eyePosition</Name>
+<NiceName>EyePosition</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://www.w3.org/2001/XMLSchema" i:type="d4p1:float">1</DefaultValue>
+    <Name>u_fogEnabled</Name>
+    <NiceName>FogEnabled</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://www.w3.org/2001/XMLSchema" i:type="d4p1:float">100</DefaultValue>
+    <Name>u_fogStart</Name>
+    <NiceName>FogStart</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://www.w3.org/2001/XMLSchema" i:type="d4p1:float">1000</DefaultValue>
+    <Name>u_fogEnd</Name>
+    <NiceName>FogEnd</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Fudge" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4294901760</d4p1:packedValue>
+</DefaultValue>
+<Name>u_fogColour</Name>
+<NiceName>FogColour</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">
+    <d4p1:X>0</d4p1:X>
+    <d4p1:Y>-1</d4p1:Y>
+    <d4p1:Z>0</d4p1:Z>
+</DefaultValue>
+<Name>u_li0Dir</Name>
+<NiceName>DirectionalLight0Direction</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Fudge" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4278190335</d4p1:packedValue>
+</DefaultValue>
+<Name>u_li0Diffuse</Name>
+<NiceName>DirectionalLight0DiffuseColour</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Fudge" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4285694202</d4p1:packedValue>
+</DefaultValue>
+<Name>u_li0Spec</Name>
+<NiceName>DirectionalLight0SpecularColour</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">
+    <d4p1:X>0</d4p1:X>
+    <d4p1:Y>-1</d4p1:Y>
+    <d4p1:Z>0</d4p1:Z>
+</DefaultValue>
+<Name>u_li1Dir</Name>
+<NiceName>DirectionalLight1Direction</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Fudge" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4278190335</d4p1:packedValue>
+</DefaultValue>
+<Name>u_li1Diffuse</Name>
+<NiceName>DirectionalLight1DiffuseColour</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Fudge" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4285694202</d4p1:packedValue>
+</DefaultValue>
+<Name>u_li1Spec</Name>
+<NiceName>DirectionalLight1SpecularColour</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">
+    <d4p1:X>0</d4p1:X>
+    <d4p1:Y>-1</d4p1:Y>
+    <d4p1:Z>0</d4p1:Z>
+</DefaultValue>
+<Name>u_li2Dir</Name>
+<NiceName>DirectionalLight2Direction</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Fudge" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4278190335</d4p1:packedValue>
+</DefaultValue>
+<Name>u_li2Diffuse</Name>
+<NiceName>DirectionalLight2DiffuseColour</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Fudge" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4285694202</d4p1:packedValue>
+</DefaultValue>
+<Name>u_li2Spec</Name>
+<NiceName>DirectionalLight2SpecularColour</NiceName>
+</ShaderVariableDeclaration>
+</VariableDeclarations>
+</ShaderDeclaration>

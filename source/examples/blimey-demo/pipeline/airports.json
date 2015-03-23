@@ -1,0 +1,18 @@
+{
+    "AssetId" : "airports",
+    "AssetType" : "Blimey.TextAsset, Blimey",
+    "SourceSets" :
+    [
+        {
+            "Platforms" : [ "xios", "monomac" ],
+            "Importer" :
+            {
+                "Files" : [ "airports.dat" ],
+                "AssetImporterType" : "Blimey.Assets.Builders.TextFileImporter, Blimey.Assets.Builders",
+                "AssetImporterSettings" : {}
+            },
+            "Processors" : []
+        }
+    ]
+}
+

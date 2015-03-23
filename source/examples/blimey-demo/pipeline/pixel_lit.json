@@ -1,0 +1,41 @@
+{
+    "AssetId" : "pixel_lit",
+    "AssetType" : "Blimey.ShaderAsset, Blimey",
+    "SourceSets" :
+    [
+        {
+            "Platforms" : [ "monomac" ],
+            "Importer" :
+            {
+                "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, Blimey.Assets.Builders",
+                "AssetImporterSettings" :
+                {
+                    "Format" : "OpenGL 4"
+                },
+                "Files" :
+                [
+                    "pixel_lit.sdef",
+                    "pixel_lit.ogl4.pdef"
+                ]
+            },
+            "Processors" : []
+        },
+        {
+            "Platforms" : [ "xios" ],
+            "Importer" :
+            {
+                "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, Blimey.Assets.Builders",
+                "AssetImporterSettings" :
+                {
+                    "Format" : "OpenGL ES 2"
+                },
+                "Files" :
+                [
+                    "pixel_lit.sdef",
+                    "pixel_lit.ogles2.pdef"
+                ]
+            },
+            "Processors" : []
+        }
+    ]
+}

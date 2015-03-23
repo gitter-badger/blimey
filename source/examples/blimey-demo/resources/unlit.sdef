@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShaderDeclaration xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/Platform">
+<InputDeclarations>
+    <ShaderInputDeclaration>
+        <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">
+        <d4p1:X>0</d4p1:X>
+        <d4p1:Y>0</d4p1:Y>
+        <d4p1:Z>0</d4p1:Z>
+    </DefaultValue>
+    <Name>a_vertPos</Name>
+    <NiceName>a_vertPos</NiceName>
+    <Optional>false</Optional>
+    <Usage>Position</Usage>
+</ShaderInputDeclaration>
+<ShaderInputDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector2">
+    <d4p1:X>0</d4p1:X>
+    <d4p1:Y>0</d4p1:Y>
+</DefaultValue>
+<Name>a_vertTexcoord</Name>
+<NiceName>a_vertTexcoord</NiceName>
+<Optional>true</Optional>
+<Usage>TextureCoordinate</Usage>
+</ShaderInputDeclaration>
+<ShaderInputDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Fudge" i:type="d4p1:Rgba32">
+    <d4p1:packedValue>4294967295</d4p1:packedValue>
+</DefaultValue>
+<Name>a_vertColour</Name>
+<NiceName>a_vertColour</NiceName>
+<Optional>true</Optional>
+<Usage>Colour</Usage>
+</ShaderInputDeclaration>
+</InputDeclarations>
+<Name>Unlit</Name>
+<PassNames xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+<d2p1:string>Main</d2p1:string>
+</PassNames>
+<SamplerDeclarations>
+    <ShaderSamplerDeclaration>
+        <Name>s_tex0</Name>
+        <NiceName>TextureSampler</NiceName>
+        <Optional>true</Optional>
+    </ShaderSamplerDeclaration>
+</SamplerDeclarations>
+<VariableDeclarations>
+    <ShaderVariableDeclaration>
+        <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Fudge" i:type="d4p1:Rgba32">
+        <d4p1:packedValue>4294967295</d4p1:packedValue>
+    </DefaultValue>
+    <Name>u_colour</Name>
+    <NiceName>MaterialColour</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Matrix44">
+    <d4p1:R0C0>1</d4p1:R0C0>
+    <d4p1:R0C1>0</d4p1:R0C1>
+    <d4p1:R0C2>0</d4p1:R0C2>
+    <d4p1:R0C3>0</d4p1:R0C3>
+    <d4p1:R1C0>0</d4p1:R1C0>
+    <d4p1:R1C1>1</d4p1:R1C1>
+    <d4p1:R1C2>0</d4p1:R1C2>
+    <d4p1:R1C3>0</d4p1:R1C3>
+    <d4p1:R2C0>0</d4p1:R2C0>
+    <d4p1:R2C1>0</d4p1:R2C1>
+    <d4p1:R2C2>1</d4p1:R2C2>
+    <d4p1:R2C3>0</d4p1:R2C3>
+    <d4p1:R3C0>0</d4p1:R3C0>
+    <d4p1:R3C1>0</d4p1:R3C1>
+    <d4p1:R3C2>0</d4p1:R3C2>
+    <d4p1:R3C3>1</d4p1:R3C3>
+</DefaultValue>
+<Name>u_world</Name>
+<NiceName>World</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Matrix44">
+    <d4p1:R0C0>1</d4p1:R0C0>
+    <d4p1:R0C1>0</d4p1:R0C1>
+    <d4p1:R0C2>0</d4p1:R0C2>
+    <d4p1:R0C3>0</d4p1:R0C3>
+    <d4p1:R1C0>0</d4p1:R1C0>
+    <d4p1:R1C1>1</d4p1:R1C1>
+    <d4p1:R1C2>0</d4p1:R1C2>
+    <d4p1:R1C3>0</d4p1:R1C3>
+    <d4p1:R2C0>0</d4p1:R2C0>
+    <d4p1:R2C1>0</d4p1:R2C1>
+    <d4p1:R2C2>1</d4p1:R2C2>
+    <d4p1:R2C3>0</d4p1:R2C3>
+    <d4p1:R3C0>0</d4p1:R3C0>
+    <d4p1:R3C1>0</d4p1:R3C1>
+    <d4p1:R3C2>0</d4p1:R3C2>
+    <d4p1:R3C3>1</d4p1:R3C3>
+</DefaultValue>
+<Name>u_view</Name>
+<NiceName>View</NiceName>
+</ShaderVariableDeclaration>
+<ShaderVariableDeclaration>
+    <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Matrix44">
+    <d4p1:R0C0>1</d4p1:R0C0>
+    <d4p1:R0C1>0</d4p1:R0C1>
+    <d4p1:R0C2>0</d4p1:R0C2>
+    <d4p1:R0C3>0</d4p1:R0C3>
+    <d4p1:R1C0>0</d4p1:R1C0>
+    <d4p1:R1C1>1</d4p1:R1C1>
+    <d4p1:R1C2>0</d4p1:R1C2>
+    <d4p1:R1C3>0</d4p1:R1C3>
+    <d4p1:R2C0>0</d4p1:R2C0>
+    <d4p1:R2C1>0</d4p1:R2C1>
+    <d4p1:R2C2>1</d4p1:R2C2>
+    <d4p1:R2C3>0</d4p1:R2C3>
+    <d4p1:R3C0>0</d4p1:R3C0>
+    <d4p1:R3C1>0</d4p1:R3C1>
+    <d4p1:R3C2>0</d4p1:R3C2>
+    <d4p1:R3C3>1</d4p1:R3C3>
+</DefaultValue>
+<Name>u_proj</Name>
+<NiceName>Projection</NiceName>
+</ShaderVariableDeclaration>
+</VariableDeclarations>
+</ShaderDeclaration>

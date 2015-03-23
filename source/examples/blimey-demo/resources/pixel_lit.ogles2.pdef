@@ -1,0 +1,25 @@
+{
+    "VariantDefinitions" :
+    [
+    	{
+            "VariantName" = "PixelLit_PositionNormal",
+            "VertexShaderPath" = "ogles2/PixelLit_PositionNormal.vsh",
+            "PixelShaderPath" = "ogles2/PixelLit_PositionNormal.fsh"
+        },
+        {
+            "VariantName" = "PixelLit_PositionNormalTexture",
+            "VertexShaderPath" = "ogles2/PixelLit_PositionNormalTexture.vsh",
+            "PixelShaderPath" = "ogles2/PixelLit_PositionNormalTexture.fsh"
+        },
+        {
+            "VariantName" = "PixelLit_PositionNormalColour",
+            "VertexShaderPath" = "ogles2/PixelLit_PositionNormalColour.vsh",
+            "PixelShaderPath" = "ogles2/PixelLit_PositionNormalColour.fsh"
+        },
+        {
+            "VariantName" = "PixelLit_PositionNormalTextureColour",
+            "VertexShaderPath" = "ogles2/PixelLit_PositionNormalTextureColour.vsh",
+            "PixelShaderPath" = "ogles2/PixelLit_PositionNormalTextureColour.fsh"
+        }
+    ]
+}
