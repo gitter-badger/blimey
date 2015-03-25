@@ -1,9 +1,0 @@
-﻿        #region IEquatable
-
-        public bool Equals(<#= fixedTypeDefinition.TypeName #> other)
-        {
-            return (this.RawValue == other.RawValue);
-        }
-
-        #endregion
-
