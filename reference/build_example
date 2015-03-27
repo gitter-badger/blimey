@@ -1,0 +1,1 @@
+bab --pipelines=bin/blimey.engine.assets.buildpipelines.dll,bin/blimey.engine.assets.dll,bin/blimey.engine.model.dll,bin/blimey.engine.serialisation.dll --platform=monomac --directory=~/repos/blimey-demo

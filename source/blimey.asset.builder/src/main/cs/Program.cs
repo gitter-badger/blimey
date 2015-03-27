@@ -1,14 +1,15 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using ServiceStack;
 using ServiceStack.Text;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
-using Blimey.Assets.Builders;
 using Blimey.Assets.Pipeline;
 using Oats;
 using Blimey;
+using NDesk.Options;
 
 namespace Blimey.AssetBuilder
 {
@@ -31,17 +32,43 @@ namespace Blimey.AssetBuilder
 	{
         static Configuration.ProjectDefinition projectDefinition;
 
-        static string currentPlatform;
+        static OptionSet OptionSet;
+
+        const string Version = "0.1.1";
+
+        static Int32 LogLevel = 0;
+        static Boolean ShowHelp = false;
+        static String BuildDirectory = null;
+        static String TargetPlatform = null;
+        static List<String> AdditionalDlls = null;
+        static List<Assembly> PipelineAssemblies = null;
+
+        static Program ()
+        {
+            OptionSet = new OptionSet()
+            {
+                { "q|quiet=", x => LogLevel-- },
+                { "v|verbose=", x => LogLevel++ },
+                { "h|?|help", x => ShowHelp = x != null },
+                { "d|directory=", x => BuildDirectory = x },
+                { "pt|platform=", x => TargetPlatform = x },
+                { "pl|pipelines=", x => {
+                    Console.WriteLine (x);
+                    AdditionalDlls = (x == null) ? new List<String> () : x.Split (',').ToList ();
+                    } }
+            };
+        }
+
+        static void PrintHelp()
+        {
+            Console.WriteLine (string.Empty);
+        }
 
         public static void Main (string[] args)
         {
-            Console.WriteLine ("Blimey Asset Builder");
-            Console.WriteLine ("====================");
+            Console.WriteLine ("Blimey Asset Builder v" + Version);
 
             Console.WriteLine ("");
-
-            AssImp.AssImp.PrintVersion ();
-
             Console.WriteLine (
                 "BAB build version: " +
                 File.ReadAllText (
@@ -53,30 +80,45 @@ namespace Blimey.AssetBuilder
 
             Console.WriteLine ("");
 
+            OptionSet.Parse (args);
 
-
-            if (args.Length > 0)
+            if (ShowHelp) 
             {
-                currentPlatform = args [0];
+                PrintHelp ();
+                return;
             }
 
-            if (args.Length > 1)
-            {
-                Console.WriteLine ("Setting working dir to: " + args [0]);
+            Console.WriteLine ("LogLevel:" + LogLevel);
+            Console.WriteLine ("TargetPlatform:" + TargetPlatform);
+            Console.WriteLine ("AdditionalDlls:");
+            PipelineAssemblies = AdditionalDlls.Select (x => {
+                var assemblyPath = Path.GetFullPath (x);
+                Console.WriteLine (" + " + assemblyPath);
+                var SampleAssembly = Assembly.LoadFrom (assemblyPath);
+                var types = SampleAssembly.GetTypes();
+                Console.WriteLine ("Num Types: " + types.Count ());
+                return SampleAssembly;
+            }).ToList ();
 
-                if (args [1].Contains ("~/"))
+
+            if (BuildDirectory != null)
+            {
+                Console.WriteLine ("Setting working dir to: " + BuildDirectory);
+
+                if (BuildDirectory.Contains ("~/"))
                 {
-                    args [1] = args [1].Replace ("~/", "");
-                    args [1] = Path.Combine (
+                    BuildDirectory = BuildDirectory.Replace ("~/", "");
+                    BuildDirectory = Path.Combine (
                         Environment.GetEnvironmentVariable ("HOME"),
-                        args [1]
+                        BuildDirectory
                     );
                 }
 
-                Directory.SetCurrentDirectory (args [1]);
+                Directory.SetCurrentDirectory (BuildDirectory);
                 Console.WriteLine ("");
                 Console.WriteLine (Directory.GetCurrentDirectory () + " $");
             }
+
             Console.WriteLine ("");
             Console.Write ("Looking for project definition .bab file... ");
 
@@ -105,10 +147,7 @@ namespace Blimey.AssetBuilder
 				.ToArray ();
 
             var assetDefinitions = assetDefinitionFiles
-                .Select (
-                    file =>
-                    file.ReadAllText ()
-                        .FromJson<Configuration.AssetDefinition> ())
+                .Select (file => file.ReadAllText ().FromJson<Configuration.AssetDefinition> ())
                 .ToList ();
 
             var platformIds = assetDefinitions
@@ -121,18 +160,14 @@ namespace Blimey.AssetBuilder
             platformIds.ForEach (x => Console.WriteLine ("\t" + x));
             Console.WriteLine ("");
 
-            if (currentPlatform != null)
-                platformIds = new List<string> { currentPlatform };
-
-            Builders.Init ();
+            if (TargetPlatform != null)
+                platformIds = new List<string> { TargetPlatform };
 
             foreach (var platformId in platformIds)
             {
                 var pId = platformId;
                 var platformAssetDeinitions = assetDefinitions
-                    .Where (
-                                                  x =>
-                        x.HasSourceSetForPlatform (pId))
+                    .Where (x => x.HasSourceSetForPlatform (pId))
                     .ToList ();
                 
                 ProcessAssetsForPlatform (pId, platformAssetDeinitions);
