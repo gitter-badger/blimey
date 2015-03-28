@@ -81,12 +81,12 @@ namespace Cor
         public static Int32 ShiftAndWrap (this Int32 value, Int32 positions = 2)
         {
             positions = positions & 0x1F;
-    
-            // Save the existing bit pattern, but interpret it as an unsigned integer. 
+
+            // Save the existing bit pattern, but interpret it as an unsigned integer.
             uint number = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
-            // Preserve the bits to be discarded. 
+            // Preserve the bits to be discarded.
             uint wrapped = number >> (32 - positions);
-            // Shift and wrap the discarded bits. 
+            // Shift and wrap the discarded bits.
             return BitConverter.ToInt32(BitConverter.GetBytes((number << positions) | wrapped), 0);
         }
     }
@@ -240,7 +240,7 @@ namespace Cor
         readonly Status status;
         readonly Input input;
         readonly Host host;
-        
+
         readonly IPlatform platform;
 
         Single elapsedTime;
@@ -434,6 +434,11 @@ namespace Cor
             currentShaderBinding = null;
         }
 
+        public ShaderFormat GetRuntimeShaderFormat ()
+        {
+            return platform.gfx_GetRuntimeShaderFormat ();
+        }
+
 
         VertexBuffer currentActiveVertexBuffer = null;
         IndexBuffer currentActiveIndexBuffer = null;
@@ -550,7 +555,7 @@ namespace Cor
 
             platform.gfx_SetCullMode (cullMode);
         }
-            
+
         public VertexBuffer CreateVertexBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount)
         {
             return new VertexBuffer (this.platform, vertexDeclaration, vertexCount);
@@ -731,11 +736,11 @@ namespace Cor
         readonly IApi platform;
         readonly Boolean mouseGeneratesTouches;
         String currentMouseTouchId = null;
-        
+
         readonly InputFrame inputFrame = new InputFrame ();
 
         readonly List<HumanInputDevice> humanInputDevices = new List<HumanInputDevice> ();
-        
+
         public sealed class InputFrame
         {
             public readonly Dictionary <DigitalControlIdentifier, Int32> DigitalControlStates;
@@ -744,7 +749,7 @@ namespace Cor
             public readonly HashSet <Char> PressedCharacters;
             public readonly HashSet <RawTouch> ActiveTouches;
 
-            internal InputFrame () 
+            internal InputFrame ()
             {
                 DigitalControlStates =  new Dictionary <DigitalControlIdentifier, Int32> ();
                 AnalogControlStates =   new Dictionary <AnalogControlIdentifier, Single> ();
@@ -753,7 +758,7 @@ namespace Cor
                 ActiveTouches =         new HashSet <RawTouch> ();
             }
         }
-        
+
         internal Input (IApi platform, Boolean mouseGeneratesTouches)
         {
             this.platform = platform;
@@ -771,11 +776,11 @@ namespace Cor
         {
             throw new NotImplementedException ();
         }
-        
+
         internal void Update (AppTime appTime)
         {
             UpdateCurrentInputFrame ();
-            
+
             foreach (var hid in this.humanInputDevices)
             {
                 hid.Update (appTime, inputFrame);
@@ -784,7 +789,7 @@ namespace Cor
 
         void UpdateCurrentInputFrame ()
         {
-            
+
             var digitalControlStates = this.platform.hid_GetDigitalControlStates ();
             var analogControlStates = this.platform.hid_GetAnalogControlStates ();
             var binaryControlStates = this.platform.hid_GetBinaryControlStates ();
@@ -803,7 +808,7 @@ namespace Cor
                 {
                     Single mouseX = digitalControlStates [DigitalControlIdentifier.Mouse_X];
                     Single mouseY = digitalControlStates [DigitalControlIdentifier.Mouse_Y];
-    
+
                     if (!mouseDownLastFrame && mouseDownThisFrame)
                     {
                         currentMouseTouchId = "mouse" + Guid.NewGuid ().ToString ();
@@ -837,7 +842,7 @@ namespace Cor
             inputFrame.PressedCharacters.Clear ();
             inputFrame.ActiveTouches.Clear ();
             inputFrame.BinaryControlStates.Clear ();
-            
+
             if (mouseTouch != null)
                 inputFrame.ActiveTouches.Add (mouseTouch);
 
@@ -861,12 +866,12 @@ namespace Cor
                 .ToList ()
                 .ForEach (k => inputFrame.ActiveTouches.Add (k));
         }
-        
+
         /// <summary>
         /// Provides access to an Xbox 360 gamepad.
         /// </summary>
         public Xbox360Gamepad Xbox360Gamepad { get; private set; }
-        
+
         /// <summary>
         /// Provides access to the virtual gamepad used by PlayStation Mobile systems, if you are running on Vita
         /// this will be the Vita itself.
@@ -912,7 +917,7 @@ namespace Cor
             this.screenSpecification = new ScreenSpecification (platform);
             this.panelSpecification = new PanelSpecification (platform);
         }
-        
+
         /// <summary>
         /// Identifies the Machine that Cor's host Virtual Machine is running on.
         /// Ex: PC, Macintosh, iPad2, Samsung Galaxy S4
@@ -980,7 +985,7 @@ namespace Cor
         {
             this.platform = platform;
         }
-        
+
         /// <summary>
         /// Is the device running in fullscreen mode?  For things that don't support fullscreen mode this will be null.
         /// </summary>
@@ -1020,17 +1025,17 @@ namespace Cor
         readonly Vector2? panelPhysicalSize;
         readonly Single? panelPhysicalAspectRatio;
         readonly PanelType panelType;
-        
+
         internal PanelSpecification (IApi platform)
         {
             panelPhysicalSize = platform.sys_GetPrimaryPanelPhysicalSize ();
-            panelPhysicalAspectRatio = 
-                panelPhysicalSize.HasValue 
+            panelPhysicalAspectRatio =
+                panelPhysicalSize.HasValue
                     ? (Single) panelPhysicalSize.Value.X / (Single) panelPhysicalSize.Value.Y
                     : (Single?) null;
             panelType = platform.sys_GetPrimaryPanelType ();
         }
-        
+
         /// <summary>
         /// Provides data about the physical size of the panel measured in meters with the panel (in its default
         /// orientation).  This information is not alway known / available, which is why this property is nullable.
@@ -1068,7 +1073,7 @@ namespace Cor
         {
             this.platform = platform;
         }
-        
+
         /// <summary>
         /// Defines the total width of the screen in question in pixels when the device is in it's default
         /// orientation.
@@ -1101,9 +1106,9 @@ namespace Cor
     {
         readonly IApi platform;
         readonly Handle handle;
-    
+
         public Handle Handle { get { return handle; } }
-    
+
         Boolean disposed;
 
         static Int32 vertexBufferCount = 0;
@@ -1163,14 +1168,14 @@ namespace Cor
             // readability and maintainability.
             Dispose (false);
         }
-    
+
         // Implement IDisposable.
         // Do not make this method virtual.
         // A derived class should not be able to override this method.
         public void Dispose ()
         {
             Dispose (true);
-    
+
             // This object will be cleaned up by the Dispose method.
             // Therefore, you should call GC.SupressFinalize to
             // take this object off the finalization queue
@@ -1178,7 +1183,7 @@ namespace Cor
             // from executing a second time.
             GC.SuppressFinalize (this);
         }
-    
+
         // Dispose(bool disposing) executes in two distinct scenarios.
         // If disposing equals true, the method has been called directly
         // or indirectly by a user's code. Managed and unmanaged resources
@@ -1196,9 +1201,9 @@ namespace Cor
                 if (disposing)
                 {
                     // Dispose managed resources.
-    
+
                 }
-    
+
                 // Call the appropriate methods to clean up
                 // unmanaged resources here.
                 // If disposing is false,
@@ -1236,7 +1241,7 @@ namespace Cor
             {
                 throw new Exception (
                     "Failed to invoke SetDataR for type [" + vertType + "]" +
-                    "\n" + ex.Message + 
+                    "\n" + ex.Message +
                     "\n" + ex.InnerException.Message);
             }
         }
@@ -1308,9 +1313,9 @@ namespace Cor
     {
         readonly IApi platform;
         readonly Handle handle;
-    
+
         public Handle Handle { get { return handle; } }
-    
+
         Boolean disposed;
 
         static Int32 indexBufferCount = 0;
@@ -1370,14 +1375,14 @@ namespace Cor
             // readability and maintainability.
             Dispose (false);
         }
-    
+
         // Implement IDisposable.
         // Do not make this method virtual.
         // A derived class should not be able to override this method.
         public void Dispose ()
         {
             Dispose (true);
-    
+
             // This object will be cleaned up by the Dispose method.
             // Therefore, you should call GC.SupressFinalize to
             // take this object off the finalization queue
@@ -1385,7 +1390,7 @@ namespace Cor
             // from executing a second time.
             GC.SuppressFinalize (this);
         }
-    
+
         // Dispose(bool disposing) executes in two distinct scenarios.
         // If disposing equals true, the method has been called directly
         // or indirectly by a user's code. Managed and unmanaged resources
@@ -1403,9 +1408,9 @@ namespace Cor
                 if (disposing)
                 {
                     // Dispose managed resources.
-    
+
                 }
-    
+
                 // Call the appropriate methods to clean up
                 // unmanaged resources here.
                 // If disposing is false,
@@ -1413,7 +1418,7 @@ namespace Cor
 
                 InternalUtils.Log.Info ("GFX", "Enqueuing index buffer for destruction: " + handle.Identifier);
                 indexBuffersToClean.Enqueue (handle);
-    
+
                 // Note disposing has been done.
                 disposed = true;
             }
@@ -1465,7 +1470,7 @@ namespace Cor
     {
         readonly IApi platform;
         readonly Handle shaderHandle;
-    
+
         public Handle Handle { get { return shaderHandle; } }
 
         // For each vert decl seen, defines the index of the most suitable shader variant.
@@ -1479,7 +1484,7 @@ namespace Cor
 
         // Debug
         readonly Dictionary<String, Boolean> logHistory = new Dictionary<String, Boolean>();
-    
+
         // IDisposable
         Boolean disposed;
 
@@ -1715,14 +1720,14 @@ namespace Cor
             // readability and maintainability.
             Dispose (false);
         }
-    
+
         // Implement IDisposable.
         // Do not make this method virtual.
         // A derived class should not be able to override this method.
         public void Dispose ()
         {
             Dispose (true);
-    
+
             // This object will be cleaned up by the Dispose method.
             // Therefore, you should call GC.SupressFinalize to
             // take this object off the finalization queue
@@ -1730,7 +1735,7 @@ namespace Cor
             // from executing a second time.
             GC.SuppressFinalize (this);
         }
-    
+
         // Dispose(bool disposing) executes in two distinct scenarios.
         // If disposing equals true, the method has been called directly
         // or indirectly by a user's code. Managed and unmanaged resources
@@ -1749,7 +1754,7 @@ namespace Cor
                 {
                     // Dispose managed resources.
                 }
-    
+
                 // Call the appropriate methods to clean up
                 // unmanaged resources here.
                 // If disposing is false,
@@ -1761,7 +1766,7 @@ namespace Cor
                 disposed = true;
             }
         }
-        
+
         /// <summary>
         /// Resets all the shader's variables to their default values.
         /// </summary>
@@ -1787,7 +1792,7 @@ namespace Cor
             //    currentSamplerTargets.Add (v, null);
             //}
         }
-            
+
         /// <summary>
         /// Sets the texture slot that a texture sampler should sample from.
         /// </summary>
@@ -2093,7 +2098,7 @@ namespace Cor
         readonly Handle textureHandle;
 
         public Handle Handle { get { return textureHandle; } }
-    
+
         Boolean disposed;
 
         static Int32 textureCount = 0;
@@ -2110,7 +2115,7 @@ namespace Cor
                 InternalUtils.Log.Info ("GFX", "Texture destroyed: " + handle.Identifier);
             }
         }
-        
+
         public Texture (IApi platform, TextureFormat textureFormat, Int32 width, Int32 height, Byte[] source)
         {
             this.platform = platform;
@@ -2154,14 +2159,14 @@ namespace Cor
             // readability and maintainability.
             Dispose (false);
         }
-    
+
         // Implement IDisposable.
         // Do not make this method virtual.
         // A derived class should not be able to override this method.
         public void Dispose ()
         {
             Dispose (true);
-    
+
             // This object will be cleaned up by the Dispose method.
             // Therefore, you should call GC.SupressFinalize to
             // take this object off the finalization queue
@@ -2169,7 +2174,7 @@ namespace Cor
             // from executing a second time.
             GC.SuppressFinalize (this);
         }
-    
+
         // Dispose(bool disposing) executes in two distinct scenarios.
         // If disposing equals true, the method has been called directly
         // or indirectly by a user's code. Managed and unmanaged resources
@@ -2187,14 +2192,14 @@ namespace Cor
                 if (disposing)
                 {
                     // Dispose managed resources.
-    
+
                 }
-    
+
                 // Call the appropriate methods to clean up
                 // unmanaged resources here.
                 // If disposing is false,
                 // only the following code is executed.
-   
+
                 InternalUtils.Log.Info ("GFX", "Enqueuing texture for destruction: " + textureHandle.Identifier);
                 texturesToClean.Enqueue (textureHandle);
 
@@ -2269,7 +2274,7 @@ namespace Cor
         {
             Components.Add (this);
         }
-        
+
         internal void Update (AppTime appTime, Input.InputFrame inputFrame)
         {
             for (Int32 i = 0; i < Components.Count; ++i)
@@ -2285,7 +2290,7 @@ namespace Cor
     {
         protected static ButtonState GetButtonState (Input.InputFrame inputFrame, BinaryControlIdentifier identifier)
         {
-            return 
+            return
                 inputFrame.BinaryControlStates.Contains (identifier)
                     ? ButtonState.Pressed
                     : ButtonState.Released;
@@ -2293,15 +2298,15 @@ namespace Cor
 
         protected static Int32 GetDigitalState (Input.InputFrame inputFrame, DigitalControlIdentifier identifier)
         {
-            return 
+            return
                 inputFrame.DigitalControlStates.ContainsKey (identifier)
                     ? inputFrame.DigitalControlStates [identifier]
                     : 0;
         }
-        
+
         protected static Single GetAnalogState (Input.InputFrame inputFrame, AnalogControlIdentifier identifier)
         {
-            return 
+            return
                 inputFrame.AnalogControlStates.ContainsKey (identifier)
                     ? inputFrame.AnalogControlStates [identifier]
                     : 0.0f;
@@ -3693,7 +3698,7 @@ namespace Cor
     public struct Touch
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         String id;
 
@@ -3703,32 +3708,32 @@ namespace Cor
         Vector2 normalisedEngineSpacePosition;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         TouchPhase phase;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Int64 frameNumber;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Single timestamp;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         static Touch invalidTouch;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public String ID { get { return id; } }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Vector2 Position
         {
@@ -3736,22 +3741,22 @@ namespace Cor
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public TouchPhase Phase { get { return phase; } }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Int64 FrameNumber { get { return frameNumber; } }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Single Timestamp { get { return timestamp; } }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Touch (
             String id,
@@ -3760,19 +3765,19 @@ namespace Cor
             Int64 frame,
             Single timestamp)
         {
-            if (normalisedEngineSpacePosition.X > 0.5f || 
+            if (normalisedEngineSpacePosition.X > 0.5f ||
                 normalisedEngineSpacePosition.X < -0.5f)
             {
                 throw new Exception (
-                    "Touch has a bad X coordinate: " + 
+                    "Touch has a bad X coordinate: " +
                     normalisedEngineSpacePosition.X);
             }
 
-            if (normalisedEngineSpacePosition.Y > 0.5f || 
+            if (normalisedEngineSpacePosition.Y > 0.5f ||
                 normalisedEngineSpacePosition.X < -0.5f)
             {
                 throw new Exception (
-                    "Touch has a bad Y coordinate: " + 
+                    "Touch has a bad Y coordinate: " +
                     normalisedEngineSpacePosition.Y);
             }
 
@@ -3784,20 +3789,20 @@ namespace Cor
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         static Touch ()
         {
             invalidTouch = new Touch (
-                null, 
-                Vector2.Zero, 
-                TouchPhase.Invalid, 
-                -1, 
+                null,
+                Vector2.Zero,
+                TouchPhase.Invalid,
+                -1,
                 0f);
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public static Touch Invalid { get { return invalidTouch; } }
     }

@@ -41,10 +41,10 @@ namespace Platform
     using System.Collections.Generic;
     using System.Linq;
     using System.IO;
-    
+
     using Fudge;
     using Abacus.SinglePrecision;
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public interface IPlatform
@@ -52,9 +52,9 @@ namespace Platform
         IProgram Program { get; }
         IApi Api { get; }
     }
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
+
     public interface IProgram
     {
         void Start (IApi platformImplementation, Action update, Action render);
@@ -78,12 +78,12 @@ namespace Platform
         void                    gfx_ClearDepthBuffer                    (Single depth);
         void                    gfx_SetCullMode                         (CullMode cullMode);
         void                    gfx_SetBlendEquation                    (BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb, BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha);
-    
+
         Handle                  gfx_CreateVertexBuffer                  (VertexDeclaration vertexDeclaration, Int32 vertexCount);
         Handle                  gfx_CreateIndexBuffer                   (Int32 indexCount);
         Handle                  gfx_CreateTexture                       (TextureFormat textureFormat, Int32 width, Int32 height, Byte[] source);
         Handle                  gfx_CreateShader                        (ShaderDeclaration shaderDeclaration, ShaderFormat shaderFormat, Byte[] source);
-        
+
         void                    gfx_DestroyVertexBuffer                 (Handle vertexBufferHandle);
         void                    gfx_DestroyIndexBuffer                  (Handle indexBufferHandle);
         void                    gfx_DestroyTexture                      (Handle textureHandle);
@@ -95,6 +95,7 @@ namespace Platform
         void                    gfx_DrawUserIndexedPrimitives <T>       (PrimitiveType primitiveType, T[] vertexData, Int32 vertexOffset, Int32 numVertices, Int32[] indexData, Int32 indexOffset, Int32 primitiveCount) where T: struct, IVertexType;
 
         Byte[]                  gfx_CompileShader                       (String source);
+        ShaderFormat            gfx_GetRuntimeShaderFormat              ();
 
         Int32                   gfx_vbff_GetVertexCount                 (Handle vertexBufferHandle);
         VertexDeclaration       gfx_vbff_GetVertexDeclaration           (Handle vertexBufferHandle);
@@ -111,7 +112,7 @@ namespace Platform
 
         /// <summary>
         // Makes the vertex buffer associated with the given handle active on the GPU.
-        // Activate does not have to be called if you only want to call the other gfx_vbff_* functions to change 
+        // Activate does not have to be called if you only want to call the other gfx_vbff_* functions to change
         // or get something about the vertex buffer.
         /// </summary>
         void

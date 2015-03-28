@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{2D399EBD-D7A2-45D8-8BD2-DA9A9A691C48}</ProjectGuid>
+    <ProjectTypeGuids>{948B3504-5B70-4649-8FE4-BDE1FB46EC69};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Cor.Demo</RootNamespace>
+    <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
+    <SuppressXamMacUpsell>True</SuppressXamMacUpsell>
+    <AssemblyName>Cor.Demo</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;COR_PLATFORM_MONOMAC;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+    <UseSGen>true</UseSGen>
+    <IncludeMonoRuntime>false</IncludeMonoRuntime>
+    <EnablePackageSigning>false</EnablePackageSigning>
+    <EnableCodeSigning>false</EnableCodeSigning>
+    <CreatePackage>false</CreatePackage>
+    <UseRefCounting>false</UseRefCounting>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+    <LinkMode>Full</LinkMode>
+    <UseSGen>true</UseSGen>
+    <IncludeMonoRuntime>true</IncludeMonoRuntime>
+    <CreatePackage>true</CreatePackage>
+    <CodeSigningKey>Developer ID Application</CodeSigningKey>
+    <EnableCodeSigning>true</EnableCodeSigning>
+    <EnablePackageSigning>false</EnablePackageSigning>
+    <DefineConstants>COR_PLATFORM_MONOMAC;</DefineConstants>
+    <UseRefCounting>false</UseRefCounting>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="MonoMac" />
+    <Reference Include="abacus">
+      <HintPath>..\..\..\..\bin\abacus.dll</HintPath>
+    </Reference>
+    <Reference Include="blimey.platform.model">
+      <HintPath>..\..\..\..\bin\blimey.platform.model.dll</HintPath>
+    </Reference>
+    <Reference Include="blimey.platform.wrapper">
+      <HintPath>..\..\..\..\bin\blimey.platform.wrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="blimey.platform.packed">
+      <HintPath>..\..\..\..\bin\blimey.platform.packed.dll</HintPath>
+    </Reference>
+    <Reference Include="blimey.platform.foundation">
+      <HintPath>..\..\..\..\bin\blimey.platform.foundation.dll</HintPath>
+    </Reference>
+    <Reference Include="blimey.platform.api">
+      <HintPath>..\..\..\..\bin\blimey.platform.api.dll</HintPath>
+    </Reference>
+    <Reference Include="blimey.platform.api.monomac-app">
+      <HintPath>..\..\..\..\bin\blimey.platform.api.monomac-app.dll</HintPath>
+    </Reference>
+    <Reference Include="blimey.platform.demo">
+      <HintPath>..\..\..\..\bin\blimey.platform.demo.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppDelegate.cs" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="Info.plist" />
+  </ItemGroup>
+</Project>

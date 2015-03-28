@@ -181,7 +181,7 @@ if v_build_platform_api_opentk_game:
   blimey_platform_api_opentk_game.out = 'blimey.platform.api.opentk-game'
   blimey_platform_api_opentk_game.target = 'library'
   blimey_platform_api_opentk_game.path = 'source/blimey.platform.api.opentk-game/src/main/cs/'
-  blimey_platform_api_opentk_game.defines = ['PLATFORM_LINUX']
+  blimey_platform_api_opentk_game.defines = ['PLATFORM_OPENTK']
   blimey_platform_api_opentk_game.references = [abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model, blimey_platform_api]
   blimey_platform_api_opentk_game.additional_references = ['System.Drawing', 'OpenTK.2014-07-23']
   blimey_platform_api_opentk_game.additional_search_paths = ['packages/']
@@ -257,6 +257,32 @@ blimey_engine.additional_search_paths = []
 
 
 
+# Blimey Demo Projects
+################################################################################
+
+
+blimey_platform_demo = Project ()
+blimey_platform_demo.out = 'blimey.platform.demo'
+blimey_platform_demo.target = 'library'
+blimey_platform_demo.path = 'examples/platform-demo/blimey.platform.demo/src/main/cs/'
+blimey_platform_demo.defines = []
+blimey_platform_demo.references = [
+  abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model,
+  blimey_platform_wrapper]
+blimey_platform_demo.additional_references = []
+blimey_platform_demo.additional_search_paths = []
+
+blimey_engine_demo = Project ()
+blimey_engine_demo.out = 'blimey.engine.demo'
+blimey_engine_demo.target = 'library'
+blimey_engine_demo.path = 'examples/engine-demo/blimey.engine.demo/src/main/cs/'
+blimey_engine_demo.defines = []
+blimey_engine_demo.references = [
+  abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model,
+  blimey_platform_wrapper, blimey_asset_model, blimey_engine_model, oats, blimey_engine]
+blimey_engine_demo.additional_references = []
+blimey_engine_demo.additional_search_paths = []
+
 
 ################################################################################
 
@@ -303,7 +329,11 @@ projects = [
   # types found in `blimey.engine.model.dll`, both the location of this dll, and
   # the dll aforementioned should be provided as commandline arguments to the
   # Blimey asset build tool.
-  blimey_engine_assets_buildpipelines
+  blimey_engine_assets_buildpipelines,
+
+  # Demos
+  blimey_platform_demo,
+  blimey_engine_demo
   ]
 
 

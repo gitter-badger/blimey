@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blimey.Platform.Demo.XamarinIOSApp (xamarin_studio)", "Blimey.Platform.Demo.XamarinIOSApp\Blimey.Platform.Demo.XamarinIOSApp (xamarin_studio).csproj", "{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Debug|iPhone = Debug|iPhone
+		Release|iPhone = Release|iPhone
+		Ad-Hoc|iPhone = Ad-Hoc|iPhone
+		AppStore|iPhone = AppStore|iPhone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Debug|iPhone.Build.0 = Debug|iPhone
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Debug|x86.ActiveCfg = Debug|iPhoneSimulator
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Debug|x86.Build.0 = Debug|iPhoneSimulator
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Release|iPhone.ActiveCfg = Release|iPhone
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Release|iPhone.Build.0 = Release|iPhone
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Release|x86.ActiveCfg = Debug|iPhoneSimulator
+		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Release|x86.Build.0 = Debug|iPhoneSimulator
+	EndGlobalSection
+EndGlobal

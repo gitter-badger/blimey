@@ -42,7 +42,7 @@
  * - PLATFORM_XIOS
  * - PLATFORM_MONOMAC
  * - PLATFORM_WPF
- * - PLATFORM_LINUX
+ * - PLATFORM_OPENTK
  *
  * Other Defines
  * -------------
@@ -51,17 +51,17 @@
  */
 
 
-#if PLATFORM_LINUX || PLATFORM_WPF
+#if PLATFORM_OPENTK || PLATFORM_WPF
 #define OPENTK_GL4
 #endif
 
-#if PLATFORM_XIOS && !PLATFORM_MONOMAC && !PLATFORM_WPF && !PLATFORM_LINUX
+#if PLATFORM_XIOS && !PLATFORM_MONOMAC && !PLATFORM_WPF && !PLATFORM_OPENTK
 namespace Platform.Xios
-#elif PLATFORM_MONOMAC && !PLATFORM_WPF && !PLATFORM_LINUX
+#elif PLATFORM_MONOMAC && !PLATFORM_WPF && !PLATFORM_OPENTK
 namespace Platform.MonoMac
-#elif PLATFORM_WPF && !PLATFORM_LINUX
+#elif PLATFORM_WPF && !PLATFORM_OPENTK
 namespace Platform.Wpf
-#elif PLATFORM_LINUX
+#elif PLATFORM_OPENTK
 namespace Platform.Linux
 #else
 #error // Platform not specified.
@@ -81,7 +81,7 @@ namespace Platform.Linux
     using Abacus.SinglePrecision;
     using Platform;
 
-#if PLATFORM_XIOS || PLATFORM_MONOMAC || PLATFORM_WPF || PLATFORM_LINUX
+#if PLATFORM_XIOS || PLATFORM_MONOMAC || PLATFORM_WPF || PLATFORM_OPENTK
 
     using System.Drawing;
 
@@ -130,17 +130,32 @@ namespace Platform.Linux
     public partial class MonoMacApi
 #elif PLATFORM_WPF
     public partial class Xna4Api
-#elif PLATFORM_LINUX
+#elif PLATFORM_OPENTK
 	public partial class LinuxApi
 #else
 #error //Platform not specified
 #endif
-#if PLATFORM_XIOS || PLATFORM_MONOMAC || PLATFORM_WPF || PLATFORM_LINUX
+#if PLATFORM_XIOS || PLATFORM_MONOMAC || PLATFORM_WPF || PLATFORM_OPENTK
     {
         // Keeping global state around like is rather hacky and should refactored out.
         VertexDeclaration currentActiveVertexBufferVertexDeclaration;
         ShaderHandle currentActiveShaderHandle;
         Int32? currentActiveShaderVariantIndex;
+
+        public ShaderFormat gfx_GetRuntimeShaderFormat ()
+        {
+#if PLATFORM_XIOS
+            return ShaderFormat.GLSL_ES;
+#elif PLATFORM_MONOMAC
+            return ShaderFormat.GLSL;
+#elif PLATFORM_WPF
+            return ShaderFormat.HLSL;
+#elif PLATFORM_OPENTK
+            return ShaderFormat.GLSL;
+#else
+#error //Platform not specified
+#endif
+        }
 
         public void gfx_ClearColourBuffer (Rgba32 colour)
         {
