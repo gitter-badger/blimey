@@ -1,6 +1,6 @@
 {
     "AssetId" : "blimey_fnt_uv",
-    "AssetType" : "Blimey.TextAsset, Blimey",
+    "AssetType" : "Blimey.TextAsset, blimey.engine.model",
     "SourceSets" :
     [
         {
@@ -8,7 +8,7 @@
             "Importer" :
             {
                 "Files" : [ "blimey.fnt" ],
-                "AssetImporterType" : "Blimey.Assets.Builders.TextFileImporter, Blimey.Assets.Builders",
+                "AssetImporterType" : "Blimey.Assets.Builders.TextFileImporter, blimey.engine.assets.buildpipelines",
                 "AssetImporterSettings" : {}
             },
             "Processors" : []

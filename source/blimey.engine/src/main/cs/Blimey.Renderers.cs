@@ -157,7 +157,7 @@ namespace Blimey
             // If we have some vertices to draw
             if (vertexCount > 0)
             {
-                // Make sure our array is large enough  
+                // Make sure our array is large enough
                 if (verts.Length < vertexCount)
                 {
                     // If we have to resize, we make our array twice as large as necessary so
@@ -248,10 +248,19 @@ namespace Blimey
                 },
                 SamplerDeclarations = new List<ShaderSamplerDeclaration> ()
             };
-            Byte[] shaderUTF8 = null;
 
-#if PLATFORM_MONOMAC
-shaderUTF8 = System.Text.Encoding.UTF8.GetBytes(
+
+            var runtimeShaderFormat = engine.Graphics.GetRuntimeShaderFormat ();
+
+            String source = "";
+
+            if (runtimeShaderFormat == ShaderFormat.HLSL)
+            {
+                throw new NotImplementedException ();
+            }
+            else if (runtimeShaderFormat == ShaderFormat.GLSL)
+            {
+                source =
 @"Debug Shader
 =VSH=
 attribute vec4 a_vertPosition;
@@ -271,9 +280,11 @@ void main()
 {
     gl_FragColor = v_tint;
 }
-");
-#elif PLATFORM_XIOS
-shaderUTF8 = System.Text.Encoding.UTF8.GetBytes(
+";
+            }
+            else if (runtimeShaderFormat == ShaderFormat.GLSL_ES)
+            {
+                source =
 @"Debug Shader
 =VSH=
 attribute mediump vec4 a_vertPosition;
@@ -292,8 +303,12 @@ void main()
 {
     gl_FragColor = v_tint;
 }
-");
-#endif
+";
+            }
+            else throw new NotSupportedException ();
+
+            Byte[] shaderUTF8 = System.Text.Encoding.UTF8.GetBytes (source);
+
             using (var mem = new System.IO.MemoryStream ())
             {
                 using (var bin = new System.IO.BinaryWriter (mem))
@@ -303,17 +318,10 @@ void main()
                     bin.Write (shaderUTF8);
                 }
 
-#if PLATFORM_MONOMAC
                 return engine.Graphics.CreateShader (
                     shaderDecl,
-                    ShaderFormat.GLSL,
+                    runtimeShaderFormat,
                     mem.GetBuffer ());
-#elif PLATFORM_XIOS
-                return engine.Graphics.CreateShader (
-                    shaderDecl,
-                    ShaderFormat.GLSL_ES,
-                    mem.GetBuffer ());
-#endif
             }
 
             return null;
@@ -774,7 +782,7 @@ void main()
 
             public void GetHotSpot( ref float x, ref float y )
             {
-                x = hotX; 
+                x = hotX;
                 y = hotY;
             }
 
@@ -824,14 +832,14 @@ void main()
                     tx = quad.v[0].UV.X;
                     quad.v[0].UV.X = quad.v[1].UV.X;
                     quad.v[1].UV.X = tx;
-                    ty = quad.v[0].UV.Y; 
-                    quad.v[0].UV.Y = quad.v[1].UV.Y; 
+                    ty = quad.v[0].UV.Y;
+                    quad.v[0].UV.Y = quad.v[1].UV.Y;
                     quad.v[1].UV.Y = ty;
                     tx = quad.v[3].UV.X;
                     quad.v[3].UV.X = quad.v[2].UV.X;
                     quad.v[2].UV.X = tx;
-                    ty = quad.v[3].UV.Y; 
-                    quad.v[3].UV.Y = quad.v[2].UV.Y; 
+                    ty = quad.v[3].UV.Y;
+                    quad.v[3].UV.Y = quad.v[2].UV.Y;
                     quad.v[2].UV.Y = ty;
 
                     bXFlip = !bXFlip;
@@ -947,26 +955,26 @@ void main()
             }
 
             public Texture GetTexture()
-            { 
-                return quad.tex; 
+            {
+                return quad.tex;
             }
 
             public void GetTextureRect(ref float x, ref float y, ref float w, ref float h)
-            { 
-                x=tx; 
-                y=ty; 
-                w=width; 
-                h=height; 
+            {
+                x=tx;
+                y=ty;
+                w=width;
+                h=height;
             }
 
-            public BlendMode GetBlendMode() 
-            { 
-                return quad.blend; 
+            public BlendMode GetBlendMode()
+            {
+                return quad.blend;
             }
 
-            public void SetBlendMode(BlendMode _blend) 
-            { 
-                quad.blend = _blend; 
+            public void SetBlendMode(BlendMode _blend)
+            {
+                quad.blend = _blend;
             }
 
             public void SetTexture(Texture tex)
@@ -1110,7 +1118,7 @@ void main()
 
                 this.fAge = o.fAge;
                 this.fTerminalAge = o.fTerminalAge;
-            } 
+            }
         }
 
         public class ParticleSystemInfo
@@ -1151,21 +1159,21 @@ void main()
             public float    x1, y1, x2, y2;
             bool    bClean;
 
-            public BoundingRectangle(float _x1, float _y1, float _x2, float _y2) 
+            public BoundingRectangle(float _x1, float _y1, float _x2, float _y2)
             {
-                x1=_x1; 
-                y1=_y1; 
-                x2=_x2; 
-                y2=_y2; 
-                bClean=false; 
+                x1=_x1;
+                y1=_y1;
+                x2=_x2;
+                y2=_y2;
+                bClean=false;
             }
 
-            public BoundingRectangle() 
+            public BoundingRectangle()
             {
                 bClean=true;
             }
 
-            public void Clear() 
+            public void Clear()
             {
                 bClean=true;
             }
@@ -1175,22 +1183,22 @@ void main()
                 return bClean;
             }
 
-            public void Set(float _x1, float _y1, float _x2, float _y2) 
-            { 
-                x1=_x1; 
-                x2=_x2; 
-                y1=_y1; 
-                y2=_y2; 
-                bClean=false; 
+            public void Set(float _x1, float _y1, float _x2, float _y2)
+            {
+                x1=_x1;
+                x2=_x2;
+                y1=_y1;
+                y2=_y2;
+                bClean=false;
             }
 
-            public void SetRadius(float x, float y, float r) 
-            { 
-                x1=x-r; 
-                x2=x+r; 
-                y1=y-r; 
-                y2=y+r; 
-                bClean=false; 
+            public void SetRadius(float x, float y, float r)
+            {
+                x1=x-r;
+                x2=x+r;
+                y1=y-r;
+                y2=y+r;
+                bClean=false;
             }
 
             public void Encapsulate(float x, float y)
@@ -1211,7 +1219,7 @@ void main()
             }
             public bool TestPoint(float x, float y)
             {
-                if(x>=x1 && x<x2 && y>=y1 && y<y2) 
+                if(x>=x1 && x<x2 && y>=y1 && y<y2)
                     return true;
 
                 return false;
@@ -1316,9 +1324,9 @@ void main()
 
             public void Fire()
             {
-                if (info.fLifetime == -1.0f) 
+                if (info.fLifetime == -1.0f)
                     fAge = -1.0f;
-                else 
+                else
                     fAge = 0.0f;
             }
 
@@ -1337,7 +1345,7 @@ void main()
                 }
             }
 
-            public void Update(float fDeltaTime) 
+            public void Update(float fDeltaTime)
             {
                 int i;
                 float ang;
@@ -1347,12 +1355,12 @@ void main()
                 if(fAge >= 0)
                 {
                     fAge += fDeltaTime;
-                    if(fAge >= info.fLifetime) 
+                    if(fAge >= info.fLifetime)
                         fAge = -2.0f;
                 }
 
                 // update all alive particles
-                if (bUpdateBoundingBox) 
+                if (bUpdateBoundingBox)
                     rectBoundingBox.Clear();
 
                 for(i=0; i<nParticlesAlive; i++)
@@ -1421,7 +1429,7 @@ void main()
 
                         ang = info.fDirection - ((float)Math.PI / 2.0f) + RandomGenerator.Default.GetRandomSingle(0.0f, info.fSpread) - info.fSpread / 2.0f;
 
-                        if(info.bRelative) 
+                        if(info.bRelative)
                             ang += (  (float) Math.Atan2( (vecPrevLocation-vecLocation).Y, (vecPrevLocation-vecLocation).X )    )+( (float)Math.PI / 2.0f );
 
                         par.vecVelocity.X = (float) Math.Cos(ang);
@@ -1461,7 +1469,7 @@ void main()
                         par.colColourStart = RandomGenerator.Default.GetRandomColourNearby(info.colColourStart, info.fColourStartVar);
                         par.colColourEnd = RandomGenerator.Default.GetRandomColourNearby(info.colColourEnd, info.fColourEndVar);
 
-                        if (bUpdateBoundingBox) 
+                        if (bUpdateBoundingBox)
                             rectBoundingBox.Encapsulate(par.vecLocation.X, par.vecLocation.Y);
 
                         nParticlesAlive++;
@@ -1505,42 +1513,42 @@ void main()
                 vecLocation.Y = y;
             }
 
-            public void Transpose(float x, float y) 
-            { 
-                fTx=x; 
-                fTy=y; 
+            public void Transpose(float x, float y)
+            {
+                fTx=x;
+                fTy=y;
             }
 
-            public void SetScale(float scale) 
-            { 
-                fScale = scale; 
+            public void SetScale(float scale)
+            {
+                fScale = scale;
             }
 
-            public int GetParticlesAlive() 
-            { 
-                return nParticlesAlive; 
+            public int GetParticlesAlive()
+            {
+                return nParticlesAlive;
             }
 
-            public float GetAge() 
-            { 
-                return fAge; 
+            public float GetAge()
+            {
+                return fAge;
             }
 
-            public void GetPosition(ref float x, ref float y) 
-            { 
-                x = vecLocation.X; 
-                y = vecLocation.Y; 
+            public void GetPosition(ref float x, ref float y)
+            {
+                x = vecLocation.X;
+                y = vecLocation.Y;
             }
 
-            public void GetTransposition(ref float x, ref float y) 
-            { 
-                x = fTx; 
-                y = fTy; 
+            public void GetTransposition(ref float x, ref float y)
+            {
+                x = fTx;
+                y = fTy;
             }
 
-            public float GetScale() 
-            { 
-                return fScale; 
+            public float GetScale()
+            {
+                return fScale;
             }
         }
 
@@ -1702,37 +1710,17 @@ void main()
                     }
                 };
 
-            Byte[] shaderUTF8 = null;
+                String source = "";
 
-#if PLATFORM_XIOS
-            shaderUTF8 = System.Text.Encoding.UTF8.GetBytes(
-@"Primitive Batch Shader
-=VSH=
-attribute mediump vec4 a_vertPosition;
-attribute mediump vec2 a_vertTexcoord;
-attribute mediump vec4 a_vertColour;
-uniform mediump mat4 u_view;
-uniform mediump mat4 u_proj;
-varying mediump vec2 v_texCoord;
-varying mediump vec4 v_tint;
-void main()
-{
-    gl_Position = u_proj * u_view * a_vertPosition;
-    v_texCoord = a_vertTexcoord;
-    v_tint = a_vertColour;
-}
-=FSH=
-uniform mediump sampler2D s_tex0;
-varying mediump vec2 v_texCoord;
-varying mediump vec4 v_tint;
-void main()
-{
-    mediump vec4 a = texture2D(s_tex0, v_texCoord);
-    gl_FragColor = v_tint * a;
-}
-");
-#elif PLATFORM_MONOMAC
-shaderUTF8 = System.Text.Encoding.UTF8.GetBytes(
+                var runtimeShaderFormat = engine.Graphics.GetRuntimeShaderFormat ();
+
+                if (runtimeShaderFormat == ShaderFormat.HLSL)
+                {
+                    throw new NotImplementedException ();
+                }
+                else if (runtimeShaderFormat == ShaderFormat.GLSL)
+                {
+                    source =
 @"Primitive Batch Shader
 =VSH=
 attribute vec4 a_vertPosition;
@@ -1757,8 +1745,40 @@ void main()
     vec4 a = texture2D(s_tex0, v_texCoord);
     gl_FragColor = v_tint * a;
 }
-");
-#endif
+";
+            }
+            else if (runtimeShaderFormat == ShaderFormat.GLSL_ES)
+            {
+                source =
+@"Primitive Batch Shader
+=VSH=
+attribute mediump vec4 a_vertPosition;
+attribute mediump vec2 a_vertTexcoord;
+attribute mediump vec4 a_vertColour;
+uniform mediump mat4 u_view;
+uniform mediump mat4 u_proj;
+varying mediump vec2 v_texCoord;
+varying mediump vec4 v_tint;
+void main()
+{
+    gl_Position = u_proj * u_view * a_vertPosition;
+    v_texCoord = a_vertTexcoord;
+    v_tint = a_vertColour;
+}
+=FSH=
+uniform mediump sampler2D s_tex0;
+varying mediump vec2 v_texCoord;
+varying mediump vec4 v_tint;
+void main()
+{
+    mediump vec4 a = texture2D(s_tex0, v_texCoord);
+    gl_FragColor = v_tint * a;
+}
+";
+            }
+            else throw new NotSupportedException ();
+
+            Byte[] shaderUTF8 = System.Text.Encoding.UTF8.GetBytes (source);
 
             using (var mem = new System.IO.MemoryStream ())
             {
@@ -1768,17 +1788,11 @@ void main()
                     bin.Write (shaderUTF8.Length);
                     bin.Write (shaderUTF8);
                 }
-#if PLATFORM_XIOS
+
                 shader = engine.Graphics.CreateShader (
                     shaderDecl,
-                    ShaderFormat.GLSL_ES,
+                    runtimeShaderFormat,
                     mem.GetBuffer ());
-#elif PLATFORM_MONOMAC
-                shader = engine.Graphics.CreateShader (
-                    shaderDecl,
-                    ShaderFormat.GLSL,
-                    mem.GetBuffer ());
-#endif
             }
 
             // Set the index buffer for each vertex, using
@@ -1987,7 +2001,7 @@ void main()
             passState[pass].vertBuffer[i].Colour = passState[pass].vertBuffer[i + 1].Colour = zColour;
             passState[pass].vertBuffer[i].UV.X = passState[pass].vertBuffer[i + 1].UV.X =
             passState[pass].vertBuffer[i].UV.Y = passState[pass].vertBuffer[i + 1].UV.Y = 0.0f;
-             
+
             passState[pass].nPrimsInBuffer++;
         }
     }

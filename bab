@@ -1,2 +1,2 @@
 #!/bin/sh
-mono --debug /usr/local/bin/bab_app/blimey.asset.builder.exe $@
+mono --debug /usr/local/bin/bab_app/blimey.asset.builder.exe --assembly=/usr/local/bin/bab_app/blimey.engine.assets.buildpipelines.dll --assembly=/usr/local/bin/bab_app/blimey.engine.model.dll $@

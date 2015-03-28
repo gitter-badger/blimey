@@ -40,8 +40,7 @@ namespace Blimey.AssetBuilder
         static Boolean ShowHelp = false;
         static String BuildDirectory = null;
         static String TargetPlatform = null;
-        static List<String> AdditionalDlls = null;
-        static List<Assembly> PipelineAssemblies = null;
+        static List<String> AdditionalDlls = new List<String> ();
 
         static Program ()
         {
@@ -52,10 +51,7 @@ namespace Blimey.AssetBuilder
                 { "h|?|help", x => ShowHelp = x != null },
                 { "d|directory=", x => BuildDirectory = x },
                 { "pt|platform=", x => TargetPlatform = x },
-                { "pl|pipelines=", x => {
-                    Console.WriteLine (x);
-                    AdditionalDlls = (x == null) ? new List<String> () : x.Split (',').ToList ();
-                    } }
+                { "a|assembly=", x => AdditionalDlls.Add (x)}
             };
         }
 
@@ -82,7 +78,7 @@ namespace Blimey.AssetBuilder
 
             OptionSet.Parse (args);
 
-            if (ShowHelp) 
+            if (ShowHelp)
             {
                 PrintHelp ();
                 return;
@@ -91,7 +87,7 @@ namespace Blimey.AssetBuilder
             Console.WriteLine ("LogLevel:" + LogLevel);
             Console.WriteLine ("TargetPlatform:" + TargetPlatform);
             Console.WriteLine ("AdditionalDlls:");
-            PipelineAssemblies = AdditionalDlls.Select (x => {
+            var pipelineAssemblies = AdditionalDlls.Select (x => {
                 var assemblyPath = Path.GetFullPath (x);
                 Console.WriteLine (" + " + assemblyPath);
                 var SampleAssembly = Assembly.LoadFrom (assemblyPath);
@@ -169,7 +165,7 @@ namespace Blimey.AssetBuilder
                 var platformAssetDeinitions = assetDefinitions
                     .Where (x => x.HasSourceSetForPlatform (pId))
                     .ToList ();
-                
+
                 ProcessAssetsForPlatform (pId, platformAssetDeinitions);
             }
 		}
@@ -191,7 +187,7 @@ namespace Blimey.AssetBuilder
 
                 sourcefiles.ForEach (x => Console.WriteLine ("\t+ " + x));
 
-				String destFolder = 
+				String destFolder =
 					Path.Combine (
 	                    projectDefinition.DestinationFolder,
 	                    platformId);
@@ -210,20 +206,20 @@ namespace Blimey.AssetBuilder
                 try
                 {
                     Type assetImporterType = Type.GetType (sourceset.Importer.AssetImporterType + ",.dll");
-                    
+
                     if (assetImporterType == null)
                     {
                         throw new Exception ("Failed to find Asset Importer Type: " + sourceset.Importer.AssetImporterType);
                     }
-                    
+
 					IAsset ass = ImportAsset (assetImporterType, sourcefiles, sourceset.Importer.AssetImporterSettings, platformId);
-                    
+
                     foreach (var processor in sourceset.Processors)
                     {
                         Type assetProcessorType = Type.GetType (processor.AssetProcessorType);
 						ass = ProcessAsset (assetProcessorType, ass, processor.AssetProcessorSettings, platformId);
                     }
-                    
+
                     WriteAsset (ass, assetfile);
                 }
                 catch (Exception ex)
@@ -297,38 +293,38 @@ namespace Blimey.AssetBuilder
 
             return output.OutputAsset;
         }
-        
+
 		static void WriteFileHeader (ISerialisationChannel sc)
         {
 			// file type
 			sc.Write <Byte> ((Byte)'C');
 			sc.Write <Byte> ((Byte)'B');
 			sc.Write <Byte> ((Byte)'A');
-            
+
 			// file version
 			sc.Write <Byte> ((Byte)0);
-            
+
 			// platform index
 			sc.Write <Byte> ((Byte)0);
-            
+
             // total filesize
             // ? why does xna have this ?
         }
-			
+
         static void WriteAsset (IAsset a, String destination)
         {
             Console.WriteLine ("\t\tabout to write asset to " + destination);
-            
+
             using (var stream = new FileStream (destination, FileMode.OpenOrCreate))
             {
 				using (var sc = new SerialisationChannel
-					<BinaryStreamSerialiser> 
+					<BinaryStreamSerialiser>
 						(stream, ChannelMode.Write))
                 {
                     // Cor Binary Asset File Header
                     //------------------------------------------------------------------------------------------------//
 					WriteFileHeader (sc);
-                    
+
 					// Now write the object
                     //------------------------------------------------------------------------------------------------//
 					Type assetType = a.GetType ();

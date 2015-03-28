@@ -1,13 +1,13 @@
 {
     "AssetId" : "vertex_lit",
-    "AssetType" : "Blimey.ShaderAsset, Blimey",
+    "AssetType" : "Blimey.ShaderAsset, blimey.engine.model",
     "SourceSets" :
     [
         {
             "Platforms" : [ "monomac" ],
             "Importer" :
             {
-                "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, Blimey.Assets.Builders",
+                "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, blimey.engine.assets.buildpipelines",
                 "AssetImporterSettings" :
                 {
                     "Format" : "OpenGL 4",
@@ -24,7 +24,7 @@
             "Platforms" : [ "xios" ],
             "Importer" :
             {
-                "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, Blimey.Assets.Builders",
+                "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, blimey.engine.assets.buildpipelines",
                 "AssetImporterSettings" :
                 {
                     "Format" : "OpenGL ES 2"

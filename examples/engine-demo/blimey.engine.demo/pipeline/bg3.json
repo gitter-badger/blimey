@@ -1,6 +1,6 @@
 {
     "AssetId" : "bg3",
-    "AssetType" : "Blimey.ColourmapAsset, Blimey",
+    "AssetType" : "Blimey.ColourmapAsset, blimey.engine.model",
     "SourceSets" :
     [
         {
@@ -8,13 +8,13 @@
             "Importer" :
             {
                 "Files" : [ "bg3.png" ],
-                "AssetImporterType" : "Blimey.Assets.Builders.ImageFileImporter, Blimey.Assets.Builders",
+                "AssetImporterType" : "Blimey.Assets.Builders.ImageFileImporter, blimey.engine.assets.buildpipelines",
                 "AssetImporterSettings" : {}
             },
             "Processors" :
             [
                 {
-                    "AssetProcessorType" : "Blimey.Assets.Builders.TextureAssetProcessor, Blimey.Assets.Builders",
+                    "AssetProcessorType" : "Blimey.Assets.Builders.TextureAssetProcessor, blimey.engine.assets.buildpipelines",
                     "AssetProcessorSettings" :
                     {
                         "SurfaceFormat" : "Rgba32"
