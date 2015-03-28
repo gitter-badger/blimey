@@ -200,11 +200,11 @@ namespace Platform.Linux
         }
 
         public void gfx_SetBlendEquation (
-            BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb, 
+            BlendFunction rgbBlendFunction, BlendFactor sourceRgb, BlendFactor destinationRgb,
             BlendFunction alphaBlendFunction, BlendFactor sourceAlpha, BlendFactor destinationAlpha)
         {
             var gl_rgbBlendFunction = OpenTKHelper.ConvertToOpenTKBlendEquationModeEnum (rgbBlendFunction);
-            var gl_alphaBlendFunction = OpenTKHelper.ConvertToOpenTKBlendEquationModeEnum (alphaBlendFunction); 
+            var gl_alphaBlendFunction = OpenTKHelper.ConvertToOpenTKBlendEquationModeEnum (alphaBlendFunction);
 
             GL.BlendEquationSeparate (gl_rgbBlendFunction, gl_alphaBlendFunction);
             OpenTKHelper.ThrowErrors ();
@@ -571,11 +571,11 @@ namespace Platform.Linux
         }
 
         public void gfx_DrawIndexedPrimitives (
-            PrimitiveType primitiveType, 
-            Int32 baseVertex, 
+            PrimitiveType primitiveType,
+            Int32 baseVertex,
             Int32 minVertexIndex,
-            Int32 numVertices, 
-            Int32 startIndex, 
+            Int32 numVertices,
+            Int32 startIndex,
             Int32 primitiveCount)
         {
             if (baseVertex != 0 || minVertexIndex != 0 || startIndex != 0)
@@ -606,10 +606,10 @@ namespace Platform.Linux
         }
 
         public void gfx_DrawUserPrimitives <T> (
-            PrimitiveType primitiveType, 
-            T[] vertexData, 
+            PrimitiveType primitiveType,
+            T[] vertexData,
             Int32 vertexOffset,
-            Int32 primitiveCount) 
+            Int32 primitiveCount)
         where T
             : struct
             , IVertexType
@@ -675,13 +675,13 @@ namespace Platform.Linux
         }
 
         public void gfx_DrawUserIndexedPrimitives <T> (
-            PrimitiveType primitiveType, 
-            T[] vertexData, 
-            Int32 vertexOffset, 
-            Int32 numVertices, 
-            Int32[] indexData, 
-            Int32 indexOffset, 
-            Int32 primitiveCount) 
+            PrimitiveType primitiveType,
+            T[] vertexData,
+            Int32 vertexOffset,
+            Int32 numVertices,
+            Int32[] indexData,
+            Int32 indexOffset,
+            Int32 primitiveCount)
         where T
             : struct
             , IVertexType
@@ -764,7 +764,7 @@ namespace Platform.Linux
             return OpenTkCache.Get <VertexDeclaration> (h, "VertexDeclaration");
         }
 
-        public void gfx_vbff_SetData<T> (Handle h, T[] data, Int32 startIndex, Int32 elementCount) 
+        public void gfx_vbff_SetData<T> (Handle h, T[] data, Int32 startIndex, Int32 elementCount)
             where T
             : struct
             , IVertexType
@@ -2050,7 +2050,7 @@ namespace Platform.Linux
         }
     }
 
-    
+
     // Cross platform wrapper around the Open TK libary, sitting at a slightly higher level.
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -2089,14 +2089,14 @@ namespace Platform.Linux
             base.CleanUpNativeResources ();
         }
     }
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
+
     public class TextureHandle
         : Handle
     {
         public Int32 TextureId { get; private set; }
-        
+
         internal TextureHandle (int textureId)
         {
             this.TextureId = textureId;
@@ -2111,16 +2111,16 @@ namespace Platform.Linux
             base.CleanUpNativeResources ();
         }
     }
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
+
     public class IndexBufferHandle
         : Handle
     {
         static Int32 resourceCounter;
-        
+
         public UInt32 GLHandle { get; private set; }
-        
+
         internal IndexBufferHandle (UInt32 glHandle)
         {
             GLHandle = glHandle;
@@ -2133,20 +2133,20 @@ namespace Platform.Linux
 
             GLHandle = 0;
             resourceCounter--;
-            
+
             base.CleanUpNativeResources ();
         }
     }
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
+
     public class VertexBufferHandle
         : Handle
     {
         static Int32 resourceCounter;
-        
+
         public UInt32 GLHandle { get; private set; }
-        
+
         internal VertexBufferHandle (UInt32 glHandle)
         {
             GLHandle = glHandle;
@@ -2159,7 +2159,7 @@ namespace Platform.Linux
 
             GLHandle = 0;
             resourceCounter--;
-            
+
             base.CleanUpNativeResources ();
         }
     }
@@ -2170,7 +2170,7 @@ namespace Platform.Linux
     // This is a dirty hack for the time being.
     public static class OpenTkCache
     {
-        static readonly Dictionary <String, Dictionary<String, Object>> data = 
+        static readonly Dictionary <String, Dictionary<String, Object>> data =
             new Dictionary<String, Dictionary<String, Object>> ();
 
         public static void Set<T> (Handle h, String identifier, T value)

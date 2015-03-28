@@ -41,10 +41,10 @@ namespace Platform
     using System.Collections.Generic;
     using System.Linq;
     using System.IO;
-    
+
     using Fudge;
     using Abacus.SinglePrecision;
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public abstract class Handle
@@ -53,7 +53,7 @@ namespace Platform
     {
         readonly String guid;
         Boolean alreadyDisposed;
-        
+
         protected Handle ()
         {
             var g = Guid.NewGuid();
@@ -64,9 +64,9 @@ namespace Platform
         {
             return guid;
         }
-        
+
         public String Identifier { get { return guid; } }
-        
+
         protected virtual void CleanUpManagedResources () {}
         protected virtual void CleanUpNativeResources () {}
 
@@ -108,79 +108,79 @@ namespace Platform
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-  
+
     public enum DeviceOrientation
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Default,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Rightside,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Upsidedown,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Leftside,
     }
-    
+
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public enum PanelType
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Screen,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Touch,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         TouchScreen,
     }
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public enum PrimitiveType
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         TriangleList = 0,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         TriangleStrip = 1,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         LineList = 2,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         LineStrip = 3
     }
-    
-    
+
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
+
     public enum BinaryControlIdentifier
     {
         Xbox360_0_DPad_Up,
@@ -197,7 +197,7 @@ namespace Platform
         Xbox360_0_RightThumbstick,
         Xbox360_0_Start,
         Xbox360_0_Back,
-        
+
         Xbox360_1_DPad_Up,
         Xbox360_1_DPad_Down,
         Xbox360_1_DPad_Left,
@@ -212,7 +212,7 @@ namespace Platform
         Xbox360_1_RightThumbstick,
         Xbox360_1_Start,
         Xbox360_1_Back,
-        
+
         Xbox360_2_DPad_Up,
         Xbox360_2_DPad_Down,
         Xbox360_2_DPad_Left,
@@ -227,7 +227,7 @@ namespace Platform
         Xbox360_2_RightThumbstick,
         Xbox360_2_Start,
         Xbox360_2_Back,
-        
+
         Xbox360_3_DPad_Up,
         Xbox360_3_DPad_Down,
         Xbox360_3_DPad_Left,
@@ -242,7 +242,7 @@ namespace Platform
         Xbox360_3_RightThumbstick,
         Xbox360_3_Start,
         Xbox360_3_Back,
-        
+
         PlayStationMobile_DPad_Up,
         PlayStationMobile_DPad_Down,
         PlayStationMobile_DPad_Left,
@@ -255,11 +255,11 @@ namespace Platform
         PlayStationMobile_Select,
         PlayStationMobile_LeftSholder,
         PlayStationMobile_RightSholder,
-        
+
         Mouse_Left,
         Mouse_Middle,
         Mouse_Right,
-        
+
         Keyboard_Backspace,
         Keyboard_Tab,
         Keyboard_Enter,
@@ -267,7 +267,7 @@ namespace Platform
         Keyboard_Escape,
         Keyboard_Spacebar,
         Keyboard_PageUp,
-        Keyboard_PageDown,  
+        Keyboard_PageDown,
         Keyboard_End,
         Keyboard_Home,
         Keyboard_Left,
@@ -335,22 +335,22 @@ namespace Platform
         Keyboard_RightControl,
         Keyboard_LeftAlt,
         Keyboard_RightAlt,
-        
-        
+
+
     }
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
+
     public enum DigitalControlIdentifier
     {
         Mouse_Wheel,
         Mouse_X,
         Mouse_Y,
     }
-    
-    
+
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
+
     public enum AnalogControlIdentifier
     {
         Xbox360_0_Leftstick_X,
@@ -359,61 +359,61 @@ namespace Platform
         Xbox360_0_Rightstick_Y,
         Xbox360_0_LeftTrigger,
         Xbox360_0_RightTrigger,
-        
+
         Xbox360_1_Leftstick_X,
         Xbox360_1_Leftstick_Y,
         Xbox360_1_Rightstick_X,
         Xbox360_1_Rightstick_Y,
         Xbox360_1_LeftTrigger,
         Xbox360_1_RightTrigger,
-        
+
         Xbox360_2_Leftstick_X,
         Xbox360_2_Leftstick_Y,
         Xbox360_2_Rightstick_X,
         Xbox360_2_Rightstick_Y,
         Xbox360_2_LeftTrigger,
         Xbox360_2_RightTrigger,
-        
+
         Xbox360_3_Leftstick_X,
         Xbox360_3_Leftstick_Y,
         Xbox360_3_Rightstick_X,
         Xbox360_3_Rightstick_Y,
         Xbox360_3_LeftTrigger,
         Xbox360_3_RightTrigger,
-        
+
         PlayStationMobile_Leftstick_X,
         PlayStationMobile_Leftstick_Y,
         PlayStationMobile_Rightstick_X,
         PlayStationMobile_Rightstick_Y,
     }
-    
-    
+
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public enum CullMode
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         None,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         CW,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         CCW,
     }
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public enum TextureFormat
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Alpha8,
         Bgr_5_6_5,
@@ -453,14 +453,14 @@ namespace Platform
         // Ericcson Texture Compression (Android)
         RgbEtc1,
     }
-    
+
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
     /// Defines colour blending factors.
     ///               ogles2.0
-    /// 
+    ///
     /// factor        | s | d |
     /// ------------------------------------
     /// zero          | o | o |
@@ -496,7 +496,7 @@ namespace Platform
 
         /// <summary>
         /// Each component of the colour is multiplied by the source colour.  This can be represented as
-        /// (Rs, Gs, Bs, As), where R, G, B, and A respectively stand for the red, green, blue, and alpha source 
+        /// (Rs, Gs, Bs, As), where R, G, B, and A respectively stand for the red, green, blue, and alpha source
         /// values.
         /// </summary>
         SourceColour,
@@ -509,13 +509,13 @@ namespace Platform
         InverseSourceColour,
 
         /// <summary>
-        /// Each component of the colour is multiplied by the alpha value of the source. This can be represented as 
+        /// Each component of the colour is multiplied by the alpha value of the source. This can be represented as
         /// (As, As, As, As), where As is the alpha source value.
         /// </summary>
         SourceAlpha,
 
         /// <summary>
-        /// Each component of the colour is multiplied by the inverse of the alpha value of the source. This can be 
+        /// Each component of the colour is multiplied by the inverse of the alpha value of the source. This can be
         /// represented as (1 − As, 1 − As, 1 − As, 1 − As), where As is the alpha destination value.
         /// </summary>
         InverseSourceAlpha,
@@ -539,7 +539,7 @@ namespace Platform
         DestinationColour,
 
         /// <summary>
-        /// Each component of the colour is multiplied by the inverse of the destination colour. This can be 
+        /// Each component of the colour is multiplied by the inverse of the destination colour. This can be
         /// represented as (1 − Rd, 1 − Gd, 1 − Bd, 1 − Ad), where Rd, Gd, Bd, and Ad respectively stand for the red,
         /// green, blue, and alpha destination values.
         /// </summary>
@@ -562,12 +562,12 @@ namespace Platform
         /// </summary>
         //InverseConstantColour,
     }
-    
+
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum BlendFunction
     {
@@ -601,160 +601,160 @@ namespace Platform
         /// </summary>
         Min,
     }
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum VertexElementUsage
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Position,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Colour,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         TextureCoordinate,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Normal,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Binormal,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Tangent,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         BlendIndices,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         BlendWeight,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Depth,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Fog,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PointSize,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Sample,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         TessellateFactor
     }
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum VertexElementFormat
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Single,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Vector2,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Vector3,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Vector4,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Colour,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Byte4,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Short2,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Short4,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         NormalisedShort2,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         NormalisedShort4,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         HalfVector2,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         HalfVector4
     }
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-	
+
     public interface IVertexType
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         VertexDeclaration VertexDeclaration { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// IntPtr GetAddress (Int32 elementIndex);
     }
@@ -1131,53 +1131,53 @@ namespace Platform
     public sealed class ShaderInputInfo
     {
         // The index of the input with respect to this shader's other inputs.
-        public Int32 Index { get; internal set; }
+        public Int32 Index { get; set; }
 
         // The name in the shader's source code for the input.
-        public String Name { get; internal set; }
+        public String Name { get; set; }
 
         // The C# type used to represent the input.
-        public Type Type { get; internal set; }
+        public Type Type { get; set; }
     }
 
     public sealed class ShaderVariableInfo
     {
         // The index of the variable with respect to this shader's other variables.
-        public Int32 Index { get; internal set; }
+        public Int32 Index { get; set; }
 
         // The name in the shader's source code for the variable.
-        public String Name { get; internal set; }
+        public String Name { get; set; }
 
         // The C# type used to represent the variable.
-        public Type Type { get; internal set; }
+        public Type Type { get; set; }
     }
 
     public sealed class ShaderSamplerInfo
     {
         // The index of the sampler with respect to this shader's other samplers.
-        public Int32 Index { get; internal set; }
+        public Int32 Index { get; set; }
 
         // The name in the shader's source code for the sampler.
-        public String Name { get; internal set; }
+        public String Name { get; set; }
     }
-    
-    
+
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public class VertexDeclaration
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         VertexElement[] _elements;
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Int32 _vertexStride;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public VertexDeclaration (params VertexElement[] elements)
         {
@@ -1187,12 +1187,12 @@ namespace Platform
             }
             else
             {
-                VertexElement[] elementArray = 
+                VertexElement[] elementArray =
                     (VertexElement[]) elements.Clone ();
 
                 this._elements = elementArray;
 
-                Int32 vertexStride = 
+                Int32 vertexStride =
                     VertexElementValidator.GetVertexStride (elementArray);
 
                 this._vertexStride = vertexStride;
@@ -1202,7 +1202,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Boolean Equals (VertexDeclaration other)
         {
@@ -1213,7 +1213,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override int GetHashCode ()
         {
@@ -1228,7 +1228,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override Boolean Equals (object obj)
         {
@@ -1246,7 +1246,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public static Boolean operator != (VertexDeclaration one, VertexDeclaration other)
         {
@@ -1254,7 +1254,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public static Boolean operator == (VertexDeclaration one, VertexDeclaration other)
         {
@@ -1281,7 +1281,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override String ToString ()
         {
@@ -1293,19 +1293,19 @@ namespace Platform
 
                 if (i + 1 < _elements.Length)
                 {
-                    s += ","; 
+                    s += ",";
                 }
 
             }
 
             return string.Format (
-                "[VertexDeclaration: Elements=({0}), Stride={1}]", 
-                s, 
+                "[VertexDeclaration: Elements=({0}), Stride={1}]",
+                s,
                 _vertexStride);
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public VertexDeclaration (Int32 vertexStride, params VertexElement[] elements)
         {
@@ -1315,21 +1315,21 @@ namespace Platform
             }
             else
             {
-                VertexElement[] elementArray = 
+                VertexElement[] elementArray =
                     (VertexElement[])elements.Clone ();
 
                 this._elements = elementArray;
-                
+
                 this._vertexStride = vertexStride;
-                
+
                 VertexElementValidator.Validate (vertexStride, elementArray);
             }
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        internal static VertexDeclaration FromType (Type vertexType)
+        public static VertexDeclaration FromType (Type vertexType)
         {
             if (vertexType == null)
             {
@@ -1345,7 +1345,7 @@ namespace Platform
             }
 #endif
 
-            IVertexType type = 
+            IVertexType type =
                 Activator.CreateInstance (vertexType) as IVertexType;
 
             if (type == null)
@@ -1366,7 +1366,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public VertexElement[] GetVertexElements ()
         {
@@ -1374,11 +1374,11 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Int32 VertexStride { get { return this._vertexStride; } }
     }
-    
+
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -1386,27 +1386,27 @@ namespace Platform
     public struct VertexElement
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        internal Int32 _offset;
+        public Int32 _offset;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        internal VertexElementFormat _format;
+        public VertexElementFormat _format;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        internal VertexElementUsage _usage;
+        public VertexElementUsage _usage;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        internal Int32 _usageIndex;
+        public Int32 _usageIndex;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Int32 Offset
         {
@@ -1415,7 +1415,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public VertexElementFormat VertexElementFormat
         {
@@ -1424,7 +1424,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public VertexElementUsage VertexElementUsage
         {
@@ -1433,7 +1433,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Int32 UsageIndex
         {
@@ -1442,7 +1442,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public VertexElement (
             Int32 offset,
@@ -1457,7 +1457,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override String ToString ()
         {
@@ -1471,7 +1471,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override Int32 GetHashCode ()
         {
@@ -1479,7 +1479,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override Boolean Equals (Object obj)
         {
@@ -1497,7 +1497,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public static Boolean operator ==
             (VertexElement left, VertexElement right)
@@ -1510,7 +1510,7 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public static Boolean operator !=
             (VertexElement left, VertexElement right)
@@ -1519,74 +1519,74 @@ namespace Platform
         }
     }
 
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum TouchPhase
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Invalid = 0,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         JustReleased = 1,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         JustPressed = 2,
-        
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Active = 3,
     }
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
+
     public class RawTouch
     {
         public String Id { get; set; }
         public Vector2 Position { get; set; }
         public TouchPhase Phase { get; set; }
     }
-    
-    
+
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
-    internal static class Int32Extensions
+
+    public static class Int32Extensions
     {
         // http://msdn.microsoft.com/en-us/library/system.object.gethashcode(v=vs.110).aspx
         public static Int32 ShiftAndWrap (this Int32 value, Int32 positions = 2)
         {
             positions = positions & 0x1F;
-    
-            // Save the existing bit pattern, but interpret it as an unsigned integer. 
+
+            // Save the existing bit pattern, but interpret it as an unsigned integer.
             uint number = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
-            // Preserve the bits to be discarded. 
+            // Preserve the bits to be discarded.
             uint wrapped = number >> (32 - positions);
-            // Shift and wrap the discarded bits. 
+            // Shift and wrap the discarded bits.
             return BitConverter.ToInt32(BitConverter.GetBytes((number << positions) | wrapped), 0);
         }
     }
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
     ///
     /// </summary>
-    internal static class VertexElementFormatHelper
+    public static class VertexElementFormatHelper
     {
         /// <summary>
         ///
         /// </summary>
-        internal static Type FromEnum (VertexElementFormat format)
+        public static Type FromEnum (VertexElementFormat format)
         {
             switch (format)
             {
@@ -1626,12 +1626,12 @@ namespace Platform
     /// <summary>
     ///
     /// </summary>
-    internal static class PrimitiveHelper
+    public static class PrimitiveHelper
     {
         /// <summary>
         ///
         /// </summary>
-        internal static Int32 NumVertsIn (PrimitiveType type)
+        public static Int32 NumVertsIn (PrimitiveType type)
         {
             switch (type)
             {
@@ -1648,19 +1648,19 @@ namespace Platform
             }
         }
     }
-    
-        
+
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// 
-    /// </summary>    
-    internal static class VertexElementValidator
+    ///
+    /// </summary>
+    public static class VertexElementValidator
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        internal static Int32 GetTypeSize (VertexElementFormat format)
+        public static Int32 GetTypeSize (VertexElementFormat format)
         {
             switch (format)
             {
@@ -1682,9 +1682,9 @@ namespace Platform
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        internal static int GetVertexStride (VertexElement[] elements)
+        public static int GetVertexStride (VertexElement[] elements)
         {
             Int32 num2 = 0;
 
@@ -1704,58 +1704,58 @@ namespace Platform
         /// <summary>
         /// checks that an effect supports the given vert decl
         /// </summary>
-        //internal static void Validate (IShader effect, VertexDeclaration vertexDeclaration)
+        //public static void Validate (IShader effect, VertexDeclaration vertexDeclaration)
         //{
         //    throw new NotImplementedException ();
        // }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        internal static void Validate (int vertexStride, VertexElement[] elements)
+        public static void Validate (int vertexStride, VertexElement[] elements)
         {
             if (vertexStride <= 0)
             {
                 throw new ArgumentOutOfRangeException ("vertexStride");
             }
-            
+
             if ((vertexStride & 3) != 0)
             {
                 throw new ArgumentException ("VertexElementOffsetNotMultipleFour");
             }
-            
+
             var numArray = new Int32[vertexStride];
-            
+
             for (Int32 i = 0; i < vertexStride; i++)
             {
                 numArray [i] = -1;
             }
-            
+
             for (Int32 j = 0; j < elements.Length; j++)
             {
                 Int32 offset = elements [j].Offset;
-                
+
                 Int32 typeSize = GetTypeSize (elements [j].VertexElementFormat);
-                
-                if ((elements [j].VertexElementUsage < VertexElementUsage.Position) || 
-                    (elements [j].VertexElementUsage > VertexElementUsage.TessellateFactor)) 
+
+                if ((elements [j].VertexElementUsage < VertexElementUsage.Position) ||
+                    (elements [j].VertexElementUsage > VertexElementUsage.TessellateFactor))
                 {
                     throw new ArgumentException ("FrameworkResources.VertexElementBadUsage");
                 }
-                
+
                 if ((offset < 0) || ((offset + typeSize) > vertexStride))
                 {
                     throw new ArgumentException ("FrameworkResources.VertexElementOutsideStride");
                 }
-                
+
                 if ((offset & 3) != 0)
                 {
                     throw new ArgumentException ("VertexElementOffsetNotMultipleFour");
                 }
-                
+
                 for (Int32 k = 0; k < j; k++)
                 {
-                    if ((elements [j].VertexElementUsage == elements [k].VertexElementUsage) && 
+                    if ((elements [j].VertexElementUsage == elements [k].VertexElementUsage) &&
                         (elements [j].UsageIndex == elements [k].UsageIndex))
                     {
                         throw new ArgumentException ("DuplicateVertexElement");
