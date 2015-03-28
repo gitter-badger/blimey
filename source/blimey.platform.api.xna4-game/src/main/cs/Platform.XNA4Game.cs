@@ -12,7 +12,7 @@
 // │ to be compiled alongside the Xna4 partial file.                        │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2012 - 2015 ~ Blimey3D (http://www.blimey3d.com)           │ \\
+// │ Copyright © 2012 - 2015 ~ Blimey Engine (http://www.blimey.io)         │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Authors:                                                               │ \\
 // │ ~ Ash Pook (http://www.ajpook.com)                                     │ \\

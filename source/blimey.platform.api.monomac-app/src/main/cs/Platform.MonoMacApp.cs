@@ -1,18 +1,13 @@
 // ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ __________.__          __    _____                                     │ \\
-// │ \______   \  | _____ _/  |__/ ____\___________  _____                  │ \\
-// │  |     ___/  | \__  \\   __\   __\/  _ \_  __ \/     \                 │ \\
-// │  |    |   |  |__/ __ \|  |  |  | (  <_> )  | \/  Y Y  \                │ \\
-// │  |____|   |____(____  /__|  |__|  \____/|__|  |__|_|  /                │ \\
-// │                     \/                              \/                 │ \\
-// │                                                                        │ \\
-// │ A partial implementation of the Blimey Platform API targeting Xamarin's│ \\
-// │ MonoMac framework.  This partial implementation does not implement any │ \\
-// │ of the Blimey Plaform API's `gfx` calls and is intended to be compiled │ \\
-// │ alongside the OpenTK partial file with PLATFORM_MONOMAC defined.       │ \\
+// │ __________.__  .__                                                     │ \\
+// │ \______   \  | |__| _____   ____ ___.__.                               │ \\
+// │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
+// │  |    |   \  |_|  |  Y Y  \  ___/\___  |                               │ \\
+// │  |______  /____/__|__|_|  /\___  > ____|                               │ \\
+// │         \/              \/     \/\/                                    │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2012 - 2015 ~ Blimey3D (http://www.blimey3d.com)           │ \\
+// │ Copyright © 2012 - 2015 ~ Blimey Engine (http://www.blimey.io)         │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Authors:                                                               │ \\
 // │ ~ Ash Pook (http://www.ajpook.com)                                     │ \\

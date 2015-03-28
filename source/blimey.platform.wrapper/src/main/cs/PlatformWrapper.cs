@@ -1,18 +1,20 @@
 ﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ _________                ._.                                           │ \\
-// │ \_   ___ \  ___________  | |                                           │ \\
-// │ /    \  \/ /  _ \_  __ \ | |                                           │ \\
-// │ \     \___(  <_> )  | \/  \|                                           │ \\
-// │  \______  /\____/|__|     __                                           │ \\
-// │         \/                \/                                           │ \\
+// │ __________.__  .__                                                     │ \\
+// │ \______   \  | |__| _____   ____ ___.__.                               │ \\
+// │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
+// │  |    |   \  |_|  |  Y Y  \  ___/\___  |                               │ \\
+// │  |______  /____/__|__|_|  /\___  > ____|                               │ \\
+// │         \/              \/     \/\/                                    │ \\
 // │                                                                        │ \\
+// │ Blimey Platform Wrapper                                                │ \\
+// │ ───────────────────────                                                │ \\
 // │ A low level engine for building graphical apps, built directly on top  │ \\
 // │ of the Blimey Platform API.  Cor is pretty much an object oriented     │ \\
 // │ wrapper around the Blimey Platform API with some additional features   │ \\
 // │ for making things easier.                                              │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
-// │ Copyright © 2012 - 2015 ~ Blimey3D (http://www.blimey3d.com)           │ \\
+// │ Copyright © 2012 - 2015 ~ Blimey Engine (http://www.blimey.io)         │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Authors:                                                               │ \\
 // │ ~ Ash Pook (http://www.ajpook.com)                                     │ \\
