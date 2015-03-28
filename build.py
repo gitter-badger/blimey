@@ -2,6 +2,11 @@
 
 import os, shutil, subprocess, sys
 
+
+# If on windows you must have the following in your PATH in both the user and system variables:
+# C:\python27\;C:\Program Files (x86)\Mono\bin
+# Also build with Windows Powershell, not the Command Prompt.
+
 print "OS:" + sys.platform
 
 v_build_platform_api_monomac_app = False
@@ -25,14 +30,24 @@ if sys.platform == 'darwin':
 
 
 class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+    if sys.platform == 'win32':
+      HEADER = ''
+      OKBLUE = ''
+      OKGREEN = ''
+      WARNING = ''
+      FAIL = ''
+      ENDC = ''
+      BOLD = ''
+      UNDERLINE = ''
+    else:
+      HEADER = '\033[95m'
+      OKBLUE = '\033[94m'
+      OKGREEN = '\033[92m'
+      WARNING = '\033[93m'
+      FAIL = '\033[91m'
+      ENDC = '\033[0m'
+      BOLD = '\033[1m'
+      UNDERLINE = '\033[4m'
 
 class Project:
   pass
@@ -381,8 +396,12 @@ for project in projects:
   if len (project.additional_references) > 0:
     _reference.extend (map (lambda x: '-reference:' + x + '.dll', project.additional_references))
 
-  _cmd = ['mcs', '-unsafe']
+  if sys.platform == 'win32':
+    _cmd = ['mcs.bat']
+  else:
+    _cmd = ['mcs']
 
+  _cmd.append('-unsafe')
   _cmd.append(_out)
   _cmd.append(_target)
   _cmd.append(_recurse)
