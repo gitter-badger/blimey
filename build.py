@@ -62,6 +62,7 @@ abacus.defines = []
 abacus.references = []
 abacus.additional_references = []
 abacus.additional_search_paths = []
+abacus.additional_sources = []
 
 oats = Project ()
 oats.out = 'oats'
@@ -71,6 +72,7 @@ oats.defines = []
 oats.references = []
 oats.additional_references = []
 oats.additional_search_paths = []
+oats.additional_sources = []
 
 zlib = Project ()
 zlib.out = 'ZLIB'
@@ -80,6 +82,7 @@ zlib.defines = ['NET45']
 zlib.references = []
 zlib.additional_references = []
 zlib.additional_search_paths = []
+zlib.additional_sources = []
 
 pngcs = Project ()
 pngcs.out = 'PNGcs'
@@ -89,6 +92,7 @@ pngcs.defines = []
 pngcs.references = [zlib]
 pngcs.additional_references = []
 pngcs.additional_search_paths = []
+pngcs.additional_sources = []
 
 fastjson = Project ()
 fastjson.out = 'fastJSON'
@@ -98,6 +102,7 @@ fastjson.defines = []
 fastjson.references = []
 fastjson.additional_references = ['System.Data']
 fastjson.additional_search_paths = []
+fastjson.additional_sources = []
 
 sstext = Project ()
 sstext.out = 'sstext'
@@ -107,6 +112,7 @@ sstext.defines = []
 sstext.references = []
 sstext.additional_references = ['System.Runtime.Serialization', 'System.Data', 'System.Data.Linq', 'System.Configuration']
 sstext.additional_search_paths = []
+sstext.additional_sources = []
 
 ndoptions = Project ()
 ndoptions.out = 'ndoptions'
@@ -116,6 +122,7 @@ ndoptions.defines = []
 ndoptions.references = []
 ndoptions.additional_references = ['System.Runtime.Serialization', 'System.Data', 'System.Data.Linq', 'System.Configuration']
 ndoptions.additional_search_paths = []
+ndoptions.additional_sources = []
 
 # Platform Core
 ################################################################################
@@ -128,6 +135,7 @@ blimey_platform_foundation.defines = []
 blimey_platform_foundation.references = []
 blimey_platform_foundation.additional_references = []
 blimey_platform_foundation.additional_search_paths = []
+blimey_platform_foundation.additional_sources = []
 
 blimey_platform_packed = Project ()
 blimey_platform_packed.out = 'blimey.platform.packed'
@@ -137,6 +145,7 @@ blimey_platform_packed.defines = []
 blimey_platform_packed.references = [abacus]
 blimey_platform_packed.additional_references = []
 blimey_platform_packed.additional_search_paths = []
+blimey_platform_packed.additional_sources = []
 
 blimey_platform_model = Project ()
 blimey_platform_model.out = 'blimey.platform.model'
@@ -146,6 +155,7 @@ blimey_platform_model.defines = []
 blimey_platform_model.references = [abacus, blimey_platform_packed]
 blimey_platform_model.additional_references = []
 blimey_platform_model.additional_search_paths = []
+blimey_platform_model.additional_sources = []
 
 blimey_platform_api = Project ()
 blimey_platform_api.out = 'blimey.platform.api'
@@ -155,6 +165,7 @@ blimey_platform_api.defines = []
 blimey_platform_api.references = [abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model]
 blimey_platform_api.additional_references = []
 blimey_platform_api.additional_search_paths = []
+blimey_platform_api.additional_sources = []
 
 blimey_platform_wrapper = Project ()
 blimey_platform_wrapper.out = 'blimey.platform.wrapper'
@@ -164,6 +175,7 @@ blimey_platform_wrapper.defines = []
 blimey_platform_wrapper.references = [abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model, blimey_platform_api]
 blimey_platform_wrapper.additional_references = []
 blimey_platform_wrapper.additional_search_paths = []
+blimey_platform_wrapper.additional_sources = []
 
 
 # Platforms
@@ -179,6 +191,7 @@ if v_build_platform_api_monomac_app:
   blimey_platform_api_monomac_app.references = [abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model, blimey_platform_api]
   blimey_platform_api_monomac_app.additional_references = ['System.Drawing', 'MonoMac']
   blimey_platform_api_monomac_app.additional_search_paths = [c_osx_xamarin_monomac_path]
+  blimey_platform_api_monomac_app.additional_sources = ['source/magic/Platform.Partial.OpenTK.cs']
 
 if v_build_platform_api_xamarin_ios_app:
   blimey_platform_api_xamarin_ios_app = Project ()
@@ -189,7 +202,7 @@ if v_build_platform_api_xamarin_ios_app:
   blimey_platform_api_xamarin_ios_app.references = [abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model, blimey_platform_api]
   blimey_platform_api_xamarin_ios_app.additional_references = ['OpenTK-1.0', 'monotouch']
   blimey_platform_api_xamarin_ios_app.additional_search_paths = [c_osx_xamarin_ios_path]
-
+  blimey_platform_api_xamarin_ios_app.additional_sources = ['source/magic/Platform.Partial.OpenTK.cs']
 
 if v_build_platform_api_opentk_game:
   blimey_platform_api_opentk_game = Project ()
@@ -200,6 +213,7 @@ if v_build_platform_api_opentk_game:
   blimey_platform_api_opentk_game.references = [abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model, blimey_platform_api]
   blimey_platform_api_opentk_game.additional_references = ['System.Drawing', 'OpenTK.2014-07-23']
   blimey_platform_api_opentk_game.additional_search_paths = ['packages/']
+  blimey_platform_api_opentk_game.additional_sources = ['source/magic/Platform.Partial.OpenTK.cs']
 
 
 # Blimey Asset System
@@ -213,6 +227,7 @@ blimey_asset_model.defines = []
 blimey_asset_model.references = []
 blimey_asset_model.additional_references = []
 blimey_asset_model.additional_search_paths = []
+blimey_asset_model.additional_sources = []
 
 blimey_asset_buildpipeline = Project ()
 blimey_asset_buildpipeline.out = 'blimey.asset.buildpipeline'
@@ -222,6 +237,7 @@ blimey_asset_buildpipeline.defines = []
 blimey_asset_buildpipeline.references = [blimey_asset_model]
 blimey_asset_buildpipeline.additional_references = []
 blimey_asset_buildpipeline.additional_search_paths = []
+blimey_asset_buildpipeline.additional_sources = []
 
 blimey_asset_builder = Project ()
 blimey_asset_builder.out = 'blimey.asset.builder'
@@ -231,6 +247,7 @@ blimey_asset_builder.defines = []
 blimey_asset_builder.references = [blimey_asset_model, blimey_asset_buildpipeline, oats, sstext, ndoptions]
 blimey_asset_builder.additional_references = []
 blimey_asset_builder.additional_search_paths = []
+blimey_asset_builder.additional_sources = []
 
 
 
@@ -245,6 +262,7 @@ blimey_engine_model.defines = []
 blimey_engine_model.references = [abacus, oats, blimey_platform_packed, blimey_platform_model, blimey_asset_model]
 blimey_engine_model.additional_references = []
 blimey_engine_model.additional_search_paths = []
+blimey_engine_model.additional_sources = []
 
 blimey_engine_assets_buildpipelines = Project ()
 blimey_engine_assets_buildpipelines.out = 'blimey.engine.assets.buildpipelines'
@@ -257,6 +275,7 @@ blimey_engine_assets_buildpipelines.references = [
   blimey_asset_buildpipeline, sstext]
 blimey_engine_assets_buildpipelines.additional_references = []
 blimey_engine_assets_buildpipelines.additional_search_paths = []
+blimey_engine_assets_buildpipelines.additional_sources = []
 
 blimey_engine = Project ()
 blimey_engine.out = 'blimey.engine'
@@ -268,6 +287,7 @@ blimey_engine.references = [
   blimey_platform_wrapper, blimey_asset_model, blimey_engine_model, oats]
 blimey_engine.additional_references = []
 blimey_engine.additional_search_paths = []
+blimey_engine.additional_sources = []
 
 
 
@@ -286,6 +306,7 @@ blimey_platform_demo.references = [
   blimey_platform_wrapper]
 blimey_platform_demo.additional_references = []
 blimey_platform_demo.additional_search_paths = []
+blimey_platform_demo.additional_sources = []
 
 blimey_engine_demo = Project ()
 blimey_engine_demo.out = 'blimey.engine.demo'
@@ -297,6 +318,7 @@ blimey_engine_demo.references = [
   blimey_platform_wrapper, blimey_asset_model, blimey_engine_model, oats, blimey_engine]
 blimey_engine_demo.additional_references = []
 blimey_engine_demo.additional_search_paths = []
+blimey_engine_demo.additional_sources = []
 
 
 ################################################################################
@@ -384,6 +406,7 @@ for project in projects:
   _out = '-out:bin/' + _output
   _target = '-target:' + project.target
   _recurse = '-recurse:' + project.path + '*.cs'
+
   _lib = ['-lib:bin/']
   _lib.extend (map (lambda x: '-lib:' + x, project.additional_search_paths))
   _define = []
@@ -405,6 +428,7 @@ for project in projects:
   _cmd.append(_out)
   _cmd.append(_target)
   _cmd.append(_recurse)
+  _cmd.extend(map (lambda x: '-recurse:' + x, project.additional_sources))
   _cmd.extend(_lib)
   _cmd.extend(_define)
   _cmd.extend(_reference)
