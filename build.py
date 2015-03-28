@@ -343,7 +343,7 @@ if v_build_platform_api_opentk_game:
 if v_build_platform_api_monomac_app:
   projects.append (blimey_platform_api_monomac_app)
 
-if blimey_platform_api_xamarin_ios_app:
+if v_build_platform_api_xamarin_ios_app:
   projects.append (blimey_platform_api_xamarin_ios_app)
 
 ################################################################################
