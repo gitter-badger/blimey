@@ -133,7 +133,7 @@ namespace Blimey
         {
 #if TKVER_XIOS_ES2
             return ShaderFormat.GLSL_ES;
-#elif TKVER_MONOMAC_GL4 || TKVER_VANILLA_GL4
+#else
             return ShaderFormat.GLSL;
 #endif
         }
@@ -409,14 +409,17 @@ namespace Blimey
                         Int32 variantByteCount = binReader.ReadInt32 ();
                         Byte[] variantEncoded = binReader.ReadBytes (variantByteCount);
 
-                        String corShaderSource = Encoding.ASCII.GetString (variantEncoded);
+                        String corShaderSource = Encoding.UTF8.GetString (variantEncoded);
+
+                        Console.WriteLine (corShaderSource);
+
                         // Noddy parser for the custom GLSL shader format that combines both
                         // the vertex and fragment shaders.
                         String identifier = "";
                         String vertexShaderSource = "";
                         String fragmentShaderSource = "";
                         char state = (char)0;
-                        foreach (var line in corShaderSource.Split ('\n'))
+                        foreach (var line in corShaderSource.Split (new String[] { Environment.NewLine }, StringSplitOptions.None))
                         {
                             if (line == "=VSH=")
                             {
@@ -431,9 +434,9 @@ namespace Blimey
                             if (state == 0)
                                 identifier = line;
                             if (state == 1)
-                                vertexShaderSource += line + "\n";
+                                vertexShaderSource += line + Environment.NewLine;
                             if (state == 2)
-                                fragmentShaderSource += line + "\n";
+                                fragmentShaderSource += line + Environment.NewLine;
                         }
 
                         var variantHandle = OpenTKHelper.CreateInternalShaderVariant (identifier, vertexShaderSource, fragmentShaderSource);
@@ -586,17 +589,9 @@ namespace Blimey
             Int32 count = primitiveCount * nVertsInPrim;
 
 #if TKVER_VANILLA_GL4
-            GL.DrawElements(
-                otkpType,
-                count,
-                DrawElementsType.UnsignedShort,
-                0);
+            GL.DrawElements (otkpType, count, DrawElementsType.UnsignedShort, 0);
 #else
-            GL.DrawElements (
-                otkpType,
-                count,
-                DrawElementsType.UnsignedShort,
-                (System.IntPtr) 0 );
+            GL.DrawElements (otkpType, count, DrawElementsType.UnsignedShort, (System.IntPtr) 0 );
 #endif
             OpenTKHelper.ThrowErrors ();
         }
@@ -655,17 +650,17 @@ namespace Blimey
             Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
             Int32 count = primitiveCount * nVertsInPrim;
 
-            GL.DrawArrays (
 #if TKVER_VANILLA_GL4
-                OpenTKHelper.ConvertToOpenTKPrimitiveType (primitiveType),
+            var tkPrimType = OpenTKHelper.ConvertToOpenTKPrimitiveType (primitiveType);
 #else
-                OpenTKHelper.ConvertToOpenTKBeginModeEnum(primitiveType), // specifies the primitive to render
+            var tkPrimType = OpenTKHelper.ConvertToOpenTKBeginModeEnum(primitiveType);
 #endif
+
+            GL.DrawArrays (
+                tkPrimType, // specifies the primitive to render
                 vertexOffset,  // specifies the starting vertex index in the enabled vertex arrays
                 count); // specifies the number of indicies to be drawn
-
             OpenTKHelper.ThrowErrors ();
-
 
             pinnedArray.Free ();
         }
@@ -793,21 +788,16 @@ namespace Blimey
         public void gfx_vbff_SetData (Handle handle, Byte[] data, Int32 startIndex, Int32 elementCount)
         {
             Int32 vertexCount = OpenTkCache.Get <Int32> (handle, "VertexCount");
-            if (data.Length != vertexCount)
-            {
-                throw new Exception ("?");
-            }
+            if (data.Length != vertexCount) throw new Exception ("?");
 
             gfx_vbff_Activate (handle);
 
             const BufferTarget type = BufferTarget.ArrayBuffer;
             var vd = OpenTkCache.Get <VertexDeclaration> (handle, "VertexDeclaration");
 
-            GL.BufferSubData (
-                type,
+            GL.BufferSubData (type,
                 (IntPtr) (vd.VertexStride * startIndex),
-                (IntPtr) (vd.VertexStride * elementCount),
-                data);
+                (IntPtr) (vd.VertexStride * elementCount), data);
 
             OpenTKHelper.ThrowErrors ();
         }
@@ -1165,6 +1155,21 @@ namespace Blimey
             throw new NotImplementedException ();
         }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
 
     internal static class OpenTKHelper
     {
@@ -1650,63 +1655,52 @@ namespace Blimey
 
         public static void CompileShader (TKShaderType type, String src, out Int32 shaderHandle)
         {
+            if (String.IsNullOrEmpty (src)) throw new Exception ("WTF, shader source is an empty string!");
+
             // Create an empty vertex shader object
             shaderHandle = GL.CreateShader (type);
 
             OpenTKHelper.ThrowErrors ();
 
             // Replace the source code in the vertex shader object
-#if TKVER_XIOS_ES2
-            GL.ShaderSource (
-            shaderHandle,
-            1,
-            new String[] { src },
-            (Int32[]) null);
-#elif TKVER_MONOMAC_GL4 || TKVER_VANILLA_GL4
-            GL.ShaderSource (
-                shaderHandle,
-                src);
+
+#if DEBUG
+            Console.WriteLine ("About to compile:\n" + src);
 #endif
 
+#if TKVER_XIOS_ES2
+            GL.ShaderSource (shaderHandle,  1,  new String[] { src }, (Int32[]) null);
+#elif TKVER_MONOMAC_GL4 || TKVER_VANILLA_GL4
+            GL.ShaderSource (shaderHandle, src);
+#endif
             OpenTKHelper.ThrowErrors ();
 
             GL.CompileShader (shaderHandle);
-
             OpenTKHelper.ThrowErrors ();
 
 #if DEBUG
             Int32 logLength = 0;
-            GL.GetShader (
-                shaderHandle,
-                ShaderParameter.InfoLogLength,
-                out logLength);
 
+            GL.GetShader (shaderHandle, ShaderParameter.InfoLogLength, out logLength);
             OpenTKHelper.ThrowErrors ();
+
             var infoLog = new System.Text.StringBuilder (logLength);
 
             if (logLength > 0)
             {
-                int temp = 0;
-                GL.GetShaderInfoLog (
-                    shaderHandle,
-                    logLength,
-                    out temp,
-                    infoLog);
+                Int32 temp = 0;
+                GL.GetShaderInfoLog (shaderHandle, logLength, out temp, infoLog);
 
-                string log = infoLog.ToString ();
+                String log = infoLog.ToString ();
 
-                Console.WriteLine ("GFX", src);
-                Console.WriteLine ("GFX", log);
-                Console.WriteLine ("GFX", type.ToString ());
+                Console.WriteLine ("GFX: " + src);
+                Console.WriteLine ("GFX: " + log);
+                Console.WriteLine ("GFX: " + type.ToString ());
             }
 #endif
             Int32 status = 0;
 
-            GL.GetShader (
-                shaderHandle,
-                ShaderParameter.CompileStatus,
-                out status);
-
+            GL.GetShader (shaderHandle, ShaderParameter.CompileStatus, out status);
             OpenTKHelper.ThrowErrors ();
 
             if (status == 0)
@@ -1722,21 +1716,17 @@ namespace Blimey
 
             var result = new List<TKShaderUniform>();
 
-            GL.GetProgram (
-                prog,
 #if TKVER_VANILLA_GL4
-                GetProgramParameterName.ActiveUniforms,
+            GL.GetProgram (prog, GetProgramParameterName.ActiveUniforms, out numActiveUniforms);
 #else
-                ProgramParameter.ActiveUniforms,
+            GL.GetProgram (prog, ProgramParameter.ActiveUniforms, out numActiveUniforms);
 #endif
-                out numActiveUniforms);
             OpenTKHelper.ThrowErrors ();
 
             for (int i = 0; i < numActiveUniforms; ++i)
             {
                 var sb = new StringBuilder ();
 
-                //int buffSize = 0;
                 int length = 0;
                 int size = 0;
                 TKActiveUniformType type;
@@ -1766,18 +1756,6 @@ namespace Blimey
                         Name = name,
                         Type = type,
                         Location = uniformLocation });
-
-                /*
-            InternalUtils.Log.Info ("GFX",
-                String.Format (
-                "    Caching Reference to Shader Variable: [Prog={0}, UniIndex={1}, UniLocation={2}, UniName={3}, UniType={4}]",
-                programHandle,
-                uniform.Index,
-                uniformLocation,
-                uniform.Name,
-                uniform.Type));
-                */
-
             }
 
             return result;
@@ -1790,14 +1768,11 @@ namespace Blimey
             var result = new List<TKShaderAttribute>();
 
             // gets the number of active vertex attributes
-            GL.GetProgram (
-                prog,
 #if TKVER_VANILLA_GL4
-                GetProgramParameterName.ActiveAttributes,
+            GL.GetProgram (prog, GetProgramParameterName.ActiveAttributes, out numActiveAttributes);
 #else
-                ProgramParameter.ActiveAttributes,
+            GL.GetProgram (prog, ProgramParameter.ActiveAttributes, out numActiveAttributes);
 #endif
-                out numActiveAttributes);
             OpenTKHelper.ThrowErrors ();
 
             for (int i = 0; i < numActiveAttributes; ++i)
@@ -1808,20 +1783,13 @@ namespace Blimey
                 int length = 0;
                 int size = 0;
                 ActiveAttribType type;
-                GL.GetActiveAttrib (
-                    prog,
-                    i,
-                    64,
-                    out length,
-                    out size,
-                    out type,
-                    sb);
+
+                GL.GetActiveAttrib (prog, i, 64, out length, out size, out type, sb);
                 OpenTKHelper.ThrowErrors ();
 
                 string name = sb.ToString ();
 
                 int attLocation = GL.GetAttribLocation (prog, name);
-
                 OpenTKHelper.ThrowErrors ();
 
                 result.Add (
@@ -1849,15 +1817,12 @@ namespace Blimey
 #if DEBUG
             Int32 logLength = 0;
 
-            GL.GetProgram (
-                prog,
-#if TKVER_VANILLA_GL4
-                GetProgramParameterName.InfoLogLength,
-#else
-                ProgramParameter.InfoLogLength,
-#endif
-                out logLength);
 
+#if TKVER_VANILLA_GL4
+            GL.GetProgram (prog, GetProgramParameterName.InfoLogLength, out logLength);
+#else
+            GL.GetProgram (prog, ProgramParameter.InfoLogLengt, out logLength);
+#endif
             OpenTKHelper.ThrowErrors ();
 
             if (logLength > 0)
@@ -1866,20 +1831,16 @@ namespace Blimey
                 var infoLog = string.Empty;
                 GL.GetProgramInfoLog (prog, out infoLog);
                 OpenTKHelper.ThrowErrors ();
-                Console.WriteLine ("GFX", string.Format ("Program link log:\n{0}", infoLog));
+                Console.WriteLine ("GFX: " + string.Format ("Program link log:\n{0}", infoLog));
             }
 #endif
             Int32 status = 0;
 
-            GL.GetProgram (
-                prog,
 #if TKVER_VANILLA_GL4
-                GetProgramParameterName.LinkStatus,
+            GL.GetProgram (prog, GetProgramParameterName.LinkStatus, out status);
 #else
-                ProgramParameter.LinkStatus,
+            GL.GetProgram (prog, ProgramParameter.LinkStatus, out status);
 #endif
-                out status);
-
             OpenTKHelper.ThrowErrors ();
 
             if (status == 0)
@@ -1899,41 +1860,39 @@ namespace Blimey
 
             Int32 logLength = 0;
 
-            GL.GetProgram (
-                programHandle,
 #if TKVER_VANILLA_GL4
-                GetProgramParameterName.InfoLogLength,
+            GL.GetProgram (programHandle, GetProgramParameterName.InfoLogLength, out logLength);
 #else
-                ProgramParameter.InfoLogLength,
+            GL.GetProgram (programHandle, ProgramParameter.InfoLogLength, out logLength);
 #endif
-                out logLength);
-
             OpenTKHelper.ThrowErrors ();
 
             if (logLength > 0)
             {
                 var infoLog = new StringBuilder ();
 
-                GL.GetProgramInfoLog (
-                    programHandle,
-                    logLength,
-                    out logLength, infoLog);
+                // TODO: This try block shouldn't live here...
+                try
+                {
+                    // Not sure why this is not working with VANILLA TK
+                    GL.GetProgramInfoLog (programHandle, logLength, out logLength, infoLog);
+                    OpenTKHelper.ThrowErrors ();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine ("WTF! " + ex.GetType () + ": " + ex.Message);
+                }
 
-                OpenTKHelper.ThrowErrors ();
-
-                Console.WriteLine ("GFX", string.Format ("[Cor.Resources] Program validate log:\n{0}", infoLog));
+                Console.WriteLine ("GFX: " + string.Format ("[Blimey] Program validate log:\n{0}", infoLog));
             }
 
             Int32 status = 0;
 
-            GL.GetProgram (
-                programHandle,
 #if TKVER_VANILLA_GL4
-                GetProgramParameterName.LinkStatus,
+            GL.GetProgram (programHandle, GetProgramParameterName.LinkStatus, out status);
 #else
-                ProgramParameter.LinkStatus,
+            GL.GetProgram (programHandle, ProgramParameter.LinkStatus, out status);
 #endif
-                out status);
 
             OpenTKHelper.ThrowErrors ();
 
@@ -2038,6 +1997,22 @@ namespace Blimey
                 mat.M41, mat.M42, mat.M43, mat.M44);
         }
     }
+
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
 
 
     // Cross platform wrapper around the Open TK libary, sitting at a slightly higher level.

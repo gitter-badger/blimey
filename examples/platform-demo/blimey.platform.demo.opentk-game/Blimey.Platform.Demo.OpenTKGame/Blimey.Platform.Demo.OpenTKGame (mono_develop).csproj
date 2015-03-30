@@ -58,10 +58,7 @@
       <HintPath>..\..\..\..\bin\blimey.platform.api.opentk-game.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK">
-      <HintPath>..\..\..\..\packages\OpenTK.2014-07-23.dll</HintPath>
+      <HintPath>..\..\..\..\packages\OpenTK.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="source\" />
   </ItemGroup>
 </Project>

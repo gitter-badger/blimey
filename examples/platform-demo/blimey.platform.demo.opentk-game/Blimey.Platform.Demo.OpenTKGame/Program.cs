@@ -7,7 +7,7 @@
 	{
 		public static void Main( string[] args )
 		{
-			var appSettings = new AppSettings ("Cor") {
+			var appSettings = new AppSettings ("Blimey Platform Demo") {
 				FullScreen = true,
 				MouseGeneratesTouches = true
 			};

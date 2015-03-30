@@ -272,7 +272,7 @@ void main()
             {
                 using (var bin = new BinaryWriter (mem))
                 {
-                    bin.Write ((Byte)encodedVariants.Length);
+                    bin.Write ((Byte) encodedVariants.Length);
                     foreach (var variant in encodedVariants)
                     {
                         bin.Write (variant.Length);
@@ -287,13 +287,12 @@ void main()
         public static Shader CreateUnlit (Engine engine)
         {
             var shaderFormat = engine.Graphics.GetRuntimeShaderFormat ();
+            var shaderDecl = GetUnlitShaderDeclaration ();
+            var shaderSource = GetUnlitShaderSource (shaderFormat);
 
+            if (shaderSource == null) throw new Exception ("Not Expected!");
 
-            return engine.Graphics.CreateShader (
-                GetUnlitShaderDeclaration (),
-                shaderFormat,
-                GetUnlitShaderSource (shaderFormat)
-            );
+            return engine.Graphics.CreateShader (shaderDecl, shaderFormat, shaderSource);
         }
     }
 }

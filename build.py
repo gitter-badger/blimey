@@ -211,7 +211,7 @@ if v_build_platform_api_opentk_game:
   blimey_platform_api_opentk_game.path = 'source/blimey.platform.api.opentk-game/src/main/cs/'
   blimey_platform_api_opentk_game.defines = ['PLATFORM_API_OPENTK_GAME']
   blimey_platform_api_opentk_game.references = [abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model, blimey_platform_api]
-  blimey_platform_api_opentk_game.additional_references = ['System.Drawing', 'OpenTK.2014-07-23']
+  blimey_platform_api_opentk_game.additional_references = ['System.Drawing', 'OpenTK']
   blimey_platform_api_opentk_game.additional_search_paths = ['packages/']
   blimey_platform_api_opentk_game.additional_sources = ['source/shared/CommonOpenTK.cs']
 
@@ -425,6 +425,8 @@ for project in projects:
     _cmd = ['mcs']
 
   _cmd.append('-unsafe')
+  #_cmd.append('-debug')
+  _cmd.append('-define:DEBUG')
   _cmd.append(_out)
   _cmd.append(_target)
   _cmd.append(_recurse)
