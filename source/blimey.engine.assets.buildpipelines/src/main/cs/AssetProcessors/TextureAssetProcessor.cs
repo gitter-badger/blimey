@@ -38,7 +38,7 @@ using System.Runtime.InteropServices;
 using System.Linq;
 using System.Collections.Generic;
 using Fudge;
-using Platform;
+
 using Blimey.Assets.Pipeline;
 
 namespace Blimey.Assets.Builders

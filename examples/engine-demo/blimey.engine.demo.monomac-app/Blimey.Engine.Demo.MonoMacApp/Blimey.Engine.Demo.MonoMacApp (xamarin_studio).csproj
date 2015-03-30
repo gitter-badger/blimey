@@ -6,7 +6,7 @@
     <ProjectGuid>{D53DDC86-E2DD-4D46-AD44-6B813C3195C5}</ProjectGuid>
     <ProjectTypeGuids>{948B3504-5B70-4649-8FE4-BDE1FB46EC69};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Blimey.Demo</RootNamespace>
+    <RootNamespace>EngineDemo</RootNamespace>
     <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
     <SuppressXamMacUpsell>True</SuppressXamMacUpsell>
     <AssemblyName>Cor.Demo</AssemblyName>
@@ -16,7 +16,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;COR_PLATFORM_MONOMAC;</DefineConstants>
+    <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
@@ -42,7 +42,6 @@
     <CodeSigningKey>Developer ID Application</CodeSigningKey>
     <EnableCodeSigning>true</EnableCodeSigning>
     <EnablePackageSigning>false</EnablePackageSigning>
-    <DefineConstants>COR_PLATFORM_MONOMAC;</DefineConstants>
     <UseRefCounting>false</UseRefCounting>
   </PropertyGroup>
   <ItemGroup>

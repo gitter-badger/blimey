@@ -35,11 +35,11 @@
 namespace Blimey
 {
     using System;
-    
+
     using Fudge;
     using Abacus.SinglePrecision;
-    using Cor;
-    using Platform;
+
+
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -55,7 +55,7 @@ namespace Blimey
             this.RenderPass = "Debug";
         }
 
-        public override void OnUpdate (Cor.AppTime time)
+        public override void OnUpdate (AppTime time)
         {
             BoundingBox b;
 
@@ -468,15 +468,15 @@ namespace Blimey
 	                spriteVerts.Length);
                 var indexBuffer = gfx.CreateIndexBuffer(
                     spriteIndices.Length);
-	
+
 	            vertexBuffer.SetData(spriteVerts);
 	            indexBuffer.SetData(spriteIndices);
-	
+
                 return new Mesh (vertexBuffer, indexBuffer);
 	        }
-	
+
 	    }
-		
+
         static Mesh spriteMesh;
 
         // all sprites share a quad uploaded to the gpu.
@@ -855,8 +855,8 @@ namespace Blimey
                 {
                     _projection =
                         Matrix44.CreateOrthographicOffCenter(
-							-0.5f * ortho_width * ortho_zoom,  +0.5f * ortho_width * ortho_zoom, 
-							-0.5f * ortho_height * ortho_zoom, +0.5f * ortho_height * ortho_zoom, 
+							-0.5f * ortho_width * ortho_zoom,  +0.5f * ortho_width * ortho_zoom,
+							-0.5f * ortho_height * ortho_zoom, +0.5f * ortho_height * ortho_zoom,
 							+0.5f * ortho_depth,  -0.5f * ortho_depth);
                 }
             }

@@ -30,12 +30,12 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey.Demo
+namespace EngineDemo
 {
     using System;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Cor;
+    using Blimey;
     using System.Collections.Generic;
     using System.Reflection;
     using System.Linq;
@@ -107,17 +107,17 @@ namespace Blimey.Demo
             MeshRendererTrait meshRendererTrait0 = mush0.AddTrait<MeshRendererTrait> ();
             meshRendererTrait0.Material = mat;
             meshRendererTrait0.Mesh = mushMesh0;
-            meshRendererTrait0.CullMode = Platform.CullMode.None;
+            meshRendererTrait0.CullMode = CullMode.None;
 
             MeshRendererTrait meshRendererTrait1 = mush1.AddTrait<MeshRendererTrait> ();
             meshRendererTrait1.Material = mat;
             meshRendererTrait1.Mesh = mushMesh1;
-            meshRendererTrait1.CullMode = Platform.CullMode.None;
+            meshRendererTrait1.CullMode = CullMode.None;
 
             MeshRendererTrait meshRendererTrait2 = mush2.AddTrait<MeshRendererTrait> ();
             meshRendererTrait2.Material = mat;
             meshRendererTrait2.Mesh = mushMesh2;
-            meshRendererTrait2.CullMode = Platform.CullMode.None;
+            meshRendererTrait2.CullMode = CullMode.None;
 
             returnScene = this;
 

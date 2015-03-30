@@ -1,9 +1,9 @@
-using System;
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-
-namespace Blimey.Demo
+namespace EngineDemo
 {
+    using System;
+    using MonoMac.Foundation;
+    using MonoMac.AppKit;
+
 	class Program
 	{
 		static void Main (string [] args)

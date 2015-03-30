@@ -36,7 +36,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Platform
+namespace Blimey
 {
     using System;
     using System.Runtime.InteropServices;

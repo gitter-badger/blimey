@@ -38,8 +38,8 @@ namespace Blimey
     using System.Collections.Generic;
     using System.Diagnostics;
     using Abacus.SinglePrecision;
-    using Cor;
-    using Platform;
+
+
 
     // Provides a suite of easy to access programatically defined resources.
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //

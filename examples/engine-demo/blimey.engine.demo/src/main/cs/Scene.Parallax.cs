@@ -30,16 +30,16 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey.Demo
+namespace EngineDemo
 {
     using System;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Cor;
+    using Blimey;
     using System.Collections.Generic;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
+
     public class Scene_Parallax
         : Scene
     {
@@ -59,7 +59,7 @@ namespace Blimey.Demo
 			{
 				return new Scene_MainMenu();
 			}
-			
+
 			return this;
         }
     }

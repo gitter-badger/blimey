@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Platform.MonoMac
+namespace Blimey
 {
     using global::System;
     using global::System.Text;
@@ -59,13 +59,13 @@ namespace Platform.MonoMac
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class MonoMacPlatform
+    public sealed class Platform
         : IPlatform
     {
-        public MonoMacPlatform ()
+        public Platform ()
         {
-            var program = new MonoMacProgram ();
-            var api = new MonoMacApi ();
+            var program = new Program ();
+            var api = new Api ();
 
             api.InitialiseDependencies (program);
             program.InitialiseDependencies (api);
@@ -80,12 +80,12 @@ namespace Platform.MonoMac
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class MonoMacProgram
+    public sealed class Program
         : IProgram
     {
-        MonoMacApi Api { get; set; }
+        Api Api { get; set; }
 
-        internal void InitialiseDependencies (MonoMacApi api) { Api = api; }
+        internal void InitialiseDependencies (Api api) { Api = api; }
 
         MacGameNSWindow mainWindow;
         OpenGLView openGLView;
@@ -98,7 +98,7 @@ namespace Platform.MonoMac
             return mainWindow.Frame.Height - contentRect.Height;
         }
 
-        internal MonoMacProgram () {}
+        internal Program () {}
 
         public void Start (IApi platformImplementation, Action update, Action render)
         {
@@ -136,25 +136,25 @@ namespace Platform.MonoMac
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public partial class MonoMacApi
+    public partial class Api
         : IApi
     {
-        MonoMacProgram Program { get; set; }
+        Program Program { get; set; }
 
-        internal void InitialiseDependencies (MonoMacProgram program)
+        internal void InitialiseDependencies (Program program)
         {
             Program = program;
         }
 
         Single volume = 1f;
 
-        internal MonoMacApi ()
+        internal Api ()
         {
             this.volume = 1f;
         }
 
         #region IPlatform
-        
+
         #region sfx
 
         public Single sfx_GetVolume () { return this.volume; }
@@ -163,7 +163,7 @@ namespace Platform.MonoMac
         {
             this.volume = value;
         }
-        
+
         #endregion
 
         #region gfx
@@ -171,9 +171,9 @@ namespace Platform.MonoMac
         // Partial implementation in Cor.Library.OpenTK.cs
 
         #endregion
-        
+
         #region res
-        
+
         public Stream res_GetFileStream (String filePath)
         {
             String platformPath = Path.Combine ("assets/monomac", filePath);
@@ -190,21 +190,21 @@ namespace Platform.MonoMac
 
             return new FileStream (correctPath, FileMode.Open);
         }
-        
+
         #endregion
-        
+
         #region sys
-        
+
         public String sys_GetMachineIdentifier ()
         {
             return "Machintosh";
         }
-        
+
         public String sys_GetOperatingSystemIdentifier ()
         {
             return "OSX" + Environment.OSVersion.VersionString;
         }
-        
+
         public String sys_GetVirtualMachineIdentifier ()
         {
             return "Mono v?";
@@ -231,30 +231,30 @@ namespace Platform.MonoMac
             // Mono Mac is just monitor support atm, phew!
             return PanelType.Screen;
         }
-        
+
         #endregion
-        
+
         #region app
 
         public Boolean? app_IsFullscreen ()
         {
             return false;
         }
-        
+
         public Int32 app_GetWidth ()
         {
             return (Int32) Program.OpenGLView.Window.Frame.Width;
         }
-        
+
         public Int32 app_GetHeight ()
         {
             return (Int32) Program.OpenGLView.Window.Frame.Height;
         }
-        
+
         #endregion
 
         #region hid
-        
+
         public DeviceOrientation? hid_GetCurrentOrientation ()
         {
             return DeviceOrientation.Default;
@@ -286,7 +286,7 @@ namespace Platform.MonoMac
         {
             return touches;
         }
-        
+
         #endregion
 
         #endregion
@@ -641,9 +641,9 @@ namespace Platform.MonoMac
     sealed class MainWindowDelegate
         : NSWindowDelegate
     {
-        readonly MonoMacProgram owner;
+        readonly Program owner;
 
-        public MainWindowDelegate (MonoMacProgram owner)
+        public MainWindowDelegate (Program owner)
         {
             if (owner == null) throw new ArgumentNullException ("owner");
             this.owner = owner;

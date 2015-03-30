@@ -39,13 +39,13 @@ namespace Blimey
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
-    
+
     using Fudge;
     using Abacus.SinglePrecision;
-    
+
     using System.Linq;
-    using Cor;
-    using Platform;
+
+
     using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -132,7 +132,7 @@ namespace Blimey
 
         FpsHelper fps;
         FrameBufferHelper frameBuffer;
-		
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Blimey.Blimey"/> class.
 		/// </summary>
@@ -242,7 +242,7 @@ namespace Blimey
         {
             using (Stream stream = engine.Resources.GetFileStream (assetId))
             {
-                using (var channel = new SerialisationChannel<BinaryStreamSerialiser> (stream, ChannelMode.Read)) 
+                using (var channel = new SerialisationChannel<BinaryStreamSerialiser> (stream, ChannelMode.Read))
                 {
                     ProcessFileHeader (channel);
                     T asset = channel.Read <T> ();
@@ -295,7 +295,7 @@ namespace Blimey
 
 
  	// ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
+
 	public sealed class RenderPass
 	{
 		public struct RenderPassConfiguration
@@ -315,7 +315,7 @@ namespace Blimey
 					return rpc;
 				}
 			}
-			
+
 	        public Boolean ClearDepthBuffer;
 	        public Boolean FogEnabled;
 	        public Rgba32 FogColour;
@@ -324,13 +324,13 @@ namespace Blimey
 	        public Boolean EnableDefaultLighting;
 	        public CameraProjectionType CameraProjectionType;
 	    }
-		
+
 		internal RenderPass () {}
 		public String Name { get; set; }
 		public RenderPassConfiguration Configuration { get; set; }
 	}
 
-	
+
  	// ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
 	/// <summary>
@@ -341,80 +341,80 @@ namespace Blimey
     {
 		/// <summary>
 	    /// Game scene settings are used by the engine to detemine how
-	    /// to manage an associated scene.  For example the game scene 
+	    /// to manage an associated scene.  For example the game scene
 	    /// settings are used to define the render pass for the scene.
 		/// </summary>
 	    public class SceneConfiguration
 	    {
 			readonly Dictionary<String, RenderPass> renderPasses = new Dictionary<String, RenderPass> ();
-			
+
 			public Rgba32? BackgroundColour { get; set; }
-			
+
 			public List<RenderPass> RenderPasses { get { return renderPasses.Values.ToList (); } }
-	
+
 	        internal SceneConfiguration() {}
-	
+
 	        public void AddRenderPass (String passName, RenderPass.RenderPassConfiguration renderPassConfig)
 	        {
 				if (renderPasses.ContainsKey (passName))
 	            {
 	                throw new Exception("Can't have render passes with the same name");
 	            }
-				
+
 				var renderPass = new RenderPass ()
 				{
 					Name = passName,
 					Configuration = renderPassConfig
 				};
-	
+
 	            renderPasses.Add(passName, renderPass);
 	        }
-	
+
 			public void RemoveRenderPass (String passName)
 			{
 				renderPasses.Remove (passName);
 			}
-	
+
 	        public RenderPass GetRenderPass(String passName)
 	        {
 				if (!renderPasses.ContainsKey (passName))
 	            {
 					return null;
 				}
-				
+
 	            return renderPasses[passName];
 	        }
-	
+
 			public static SceneConfiguration CreateVanilla ()
 	        {
 				var ss = new SceneConfiguration ();
 				return ss;
 			}
-	
+
 	        public static SceneConfiguration CreateDefault ()
 	        {
 				var ss = new SceneConfiguration ();
-				
+
 				ss.BackgroundColour = Rgba32.Crimson;
-				
+
 				var debugPassSettings = new RenderPass.RenderPassConfiguration ();
 				debugPassSettings.ClearDepthBuffer = true;
 				ss.AddRenderPass ("Debug", debugPassSettings);
-	
+
 	            var defaultPassSettings = new RenderPass.RenderPassConfiguration ();
 	            defaultPassSettings.EnableDefaultLighting = true;
 	            defaultPassSettings.FogEnabled = true;
 	            ss.AddRenderPass ("Default", defaultPassSettings);
-	
+
 	            var guiPassSettings = new RenderPass.RenderPassConfiguration ();
 	            guiPassSettings.ClearDepthBuffer = true;
 	            guiPassSettings.CameraProjectionType = CameraProjectionType.Orthographic;
 	            ss.AddRenderPass ("Gui", guiPassSettings);
-	
+
 				return ss;
 	        }
 	    }
-		
+
 		/// <summary>
 		/// Provides a means to change some scene configuration settings at runtime,
 		/// not settings can be changed at runtime.
@@ -422,51 +422,51 @@ namespace Blimey
 		public class SceneRuntimeConfiguration
 		{
 			readonly Scene parent = null;
-			
+
 			internal SceneRuntimeConfiguration (Scene parent)
 			{
 				this.parent = parent;
 			}
-			
+
 			public void ChangeBackgroundColour (Rgba32? colour)
 			{
 				parent.configuration.BackgroundColour = colour;
 			}
-			
+
 			public void SetRenderPassCameraToDefault(string renderPass)
 	        {
 	            parent.cameraManager.SetDefaultCamera (renderPass);
 	        }
-	        
+
 	        public void SetRenderPassCameraTo (string renderPass, Entity go)
 	        {
 	            parent.cameraManager.SetMainCamera(renderPass, go);
 	        }
-			
+
 		}
-		
+
 		public class SceneSceneGraph
 		{
 			readonly Scene parent = null;
-			
+
 			public SceneSceneGraph (Scene parent)
 			{
 				this.parent = parent;
 			}
 			readonly List<Entity> sceneGraph = new List<Entity> ();
-			
+
 			public List<Entity> GetAllObjects ()
 			{
 				return sceneGraph;
 			}
-			
+
 			public Entity CreateSceneObject (string zName)
 	        {
 				var go = new Entity (parent, zName);
 	            sceneGraph.Add (go);
 	            return go;
 	        }
-	
+
 	        public void DestroySceneObject (Entity zGo)
 	        {
 	            zGo.Shutdown ();
@@ -475,11 +475,11 @@ namespace Blimey
 	                sceneGraph.Remove (go);
 	            }
 	            sceneGraph.Remove (zGo);
-	
+
 	            zGo = null;
 	        }
 		}
-		
+
 		// ======================== //
 		// Consumers must implement //
 		// ======================== //
@@ -489,12 +489,12 @@ namespace Blimey
         public abstract Scene Update (AppTime time);
 
         public abstract void Shutdown ();
-		
-		
+
+
 		// ========== //
 		// Scene Data //
 		// ========== //
-		
+
 		Engine cor = null;
 		Blimey blimey = null;
 		readonly SceneConfiguration configuration = null;
@@ -504,13 +504,13 @@ namespace Blimey
 		Boolean isRunning = false;
         Boolean firstUpdate = true;
 
-		
+
 		// ======================= //
 		// Functions for consumers //
 		// ======================= //
     public Engine Cor { get { return cor; } }
 		public Blimey Blimey { get { return blimey; } }
-		
+
 		public Boolean Active { get { return isRunning;} }
 		public SceneConfiguration Configuration { get { return configuration; } }
 		public SceneRuntimeConfiguration RuntimeConfiguration { get { return runtimeConfiguration; } }
@@ -523,14 +523,14 @@ namespace Blimey
 				this.configuration = SceneConfiguration.CreateDefault ();
 			else
 				this.configuration = configuration;
-			
+
 			this.runtimeConfiguration = new SceneRuntimeConfiguration (this);
 		}
 
 		// ===================== //
 		// Blimey internal calls //
 		// ===================== //
-		
+
         internal void Initialize (Engine cor, Blimey blimey)
         {
 			this.cor = cor;
@@ -550,7 +550,7 @@ namespace Blimey
             }
 
 			this.blimey.PreUpdate (time);
-			
+
 			foreach (Entity go in sceneGraph.GetAllObjects())
 			{
                 go.Update(time);
@@ -561,7 +561,7 @@ namespace Blimey
             var ret =  this.Update(time);
             return ret;
         }
-        
+
         internal virtual void Uninitilise ()
         {
             this.Shutdown ();
@@ -776,7 +776,7 @@ namespace Blimey
         // Called when the Enabled state of the parent gameobject changes
         public virtual void OnEnable() {}
         public virtual void OnDisable() {}
-        
+
         public virtual void OnDestroy () {}
     }
 

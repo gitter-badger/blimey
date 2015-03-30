@@ -30,10 +30,10 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey.Demo
+namespace EngineDemo
 {
     using System;
-    using Cor;
+    using Blimey;
     using System.Collections.Generic;
     using Abacus.SinglePrecision;
 

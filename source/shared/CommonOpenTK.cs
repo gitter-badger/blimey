@@ -36,10 +36,17 @@
  * Platform Defines
  * ----------------
  * One of the following platform targets must be defined:
- * - PLATFORM_XIOS
- * - PLATFORM_MONOMAC
- * - PLATFORM_WPF
- * - PLATFORM_OPENTK
+ *
+ * - PLATFORM_API_XAMARIN_IOS_APP
+ * - PLATFORM_API_MONOMAC_APP
+ * - PLATFORM_API_WPF_OPENTK_CONTROL
+ * - PLATFORM_API_OPENTK_GAME
+ *
+ * OpenTK Version Defines
+ * ----------------------
+ * - TKVER_XIOS_ES2
+ * - TKVER_MONOMAC_GL4
+ * - TKVER_VANILLA_GL4
  *
  * Other Defines
  * -------------
@@ -47,22 +54,18 @@
  *
  */
 
-
-#if PLATFORM_OPENTK || PLATFORM_WPF
-#define OPENTK_GL4
-#endif
-
-#if PLATFORM_XIOS && !PLATFORM_MONOMAC && !PLATFORM_WPF && !PLATFORM_OPENTK
-namespace Platform.Xios
-#elif PLATFORM_MONOMAC && !PLATFORM_WPF && !PLATFORM_OPENTK
-namespace Platform.MonoMac
-#elif PLATFORM_WPF && !PLATFORM_OPENTK
-namespace Platform.Wpf
-#elif PLATFORM_OPENTK
-namespace Platform.Linux
+#if      PLATFORM_API_XAMARIN_IOS_APP
+#define      TKVER_XIOS_ES2
+#elif    PLATFORM_API_MONOMAC_APP
+#define      TKVER_MONOMAC_GL4
+#elif    PLATFORM_API_WPF_OPENTK_CONTROL || PLATFORM_API_OPENTK_GAME
+#define      TKVER_VANILLA_GL4
 #else
-#error // Platform not specified.
+#error       // Platform not specified.
 #endif
+
+
+namespace Blimey
 {
     using System;
     using System.Text;
@@ -74,65 +77,52 @@ namespace Platform.Linux
     using System.Diagnostics;
     using System.Runtime.InteropServices;
     using System.Runtime.ConstrainedExecution;
-    using Fudge;
-    using Abacus.SinglePrecision;
-    using Platform;
-
-#if PLATFORM_XIOS || PLATFORM_MONOMAC || PLATFORM_WPF || PLATFORM_OPENTK
-
     using System.Drawing;
 
-#endif
-
-#if PLATFORM_XIOS
-
+    using Fudge;
+    using Abacus.SinglePrecision;
+#if TKVER_XIOS_ES2
     using OpenTK.Graphics.ES20;
-    using GLShaderType = OpenTK.Graphics.ES20.ShaderType;
-    using GLBufferUsage = OpenTK.Graphics.ES20.BufferUsage;
-    using ActiveUniformType = OpenTK.Graphics.ES20.ActiveUniformType;
-    using KhronosVector2 = OpenTK.Vector2;
-    using KhronosVector3 = OpenTK.Vector3;
-    using KhronosVector4 = OpenTK.Vector4;
-    using KhronosMatrix4 = OpenTK.Matrix4;
-
-#elif PLATFORM_MONOMAC
-
+#elif TKVER_MONOMAC_GL4
     using global::MonoMac.OpenGL;
-    using GLShaderType = global::MonoMac.OpenGL.ShaderType;
-    using GLBufferUsage = global::MonoMac.OpenGL.BufferUsageHint;
-    using ActiveUniformType = global::MonoMac.OpenGL.ActiveUniformType;
-    using KhronosVector2 = global::MonoMac.OpenGL.Vector2;
-    using KhronosVector3 = global::MonoMac.OpenGL.Vector3;
-    using KhronosVector4 = global::MonoMac.OpenGL.Vector4;
-    using KhronosMatrix4 = global::MonoMac.OpenGL.Matrix4;
-#elif OPENTK_GL4
+#elif TKVER_VANILLA_GL4
     using global::OpenTK.Graphics.OpenGL4;
-    using GLShaderType = global::OpenTK.Graphics.OpenGL4.ShaderType;
-    using GLBufferUsage = global::OpenTK.Graphics.OpenGL4.BufferUsageHint;
-    using ActiveUniformType = global::OpenTK.Graphics.OpenGL4.ActiveUniformType;
-    using KhronosVector2 = global::OpenTK.Vector2;
-    using KhronosVector3 = global::OpenTK.Vector3;
-    using KhronosVector4 = global::OpenTK.Vector4;
-    using KhronosMatrix4 = global::OpenTK.Matrix4;
-    using KhronosPrimitiveType = global::OpenTK.Graphics.OpenGL4.PrimitiveType;
-    using PrimitiveType = global::Platform.PrimitiveType;
 #endif
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     using Boolean = System.Boolean;
 
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-#if PLATFORM_XIOS
-    public partial class XiosApi
-#elif PLATFORM_MONOMAC
-    public partial class MonoMacApi
-#elif PLATFORM_WPF
-    public partial class Xna4Api
-#elif PLATFORM_OPENTK
-	public partial class LinuxApi
-#else
-#error //Platform not specified
+#if TKVER_XIOS_ES2
+    using TKShaderType = OpenTK.Graphics.ES20.ShaderType;
+    using TKBufferUsage = OpenTK.Graphics.ES20.BufferUsage;
+    using TKActiveUniformType = OpenTK.Graphics.ES20.ActiveUniformType;
+    using TKVec2 = OpenTK.Vector2;
+    using TKVec3 = OpenTK.Vector3;
+    using TKVec4 = OpenTK.Vector4;
+    using TKMat4 = OpenTK.Matrix4;
+#elif TKVER_MONOMAC_GL4
+    using TKShaderType = global::MonoMac.OpenGL.ShaderType;
+    using TKBufferUsage = global::MonoMac.OpenGL.BufferUsageHint;
+    using TKActiveUniformType = global::MonoMac.OpenGL.ActiveUniformType;
+    using TKVec2 = global::MonoMac.OpenGL.Vector2;
+    using TKVec3 = global::MonoMac.OpenGL.Vector3;
+    using TKVec4 = global::MonoMac.OpenGL.Vector4;
+    using TKMat4 = global::MonoMac.OpenGL.Matrix4;
+#elif TKVER_VANILLA_GL4
+    using TKShaderType = global::OpenTK.Graphics.OpenGL4.ShaderType;
+    using TKBufferUsage = global::OpenTK.Graphics.OpenGL4.BufferUsageHint;
+    using TKActiveUniformType = global::OpenTK.Graphics.OpenGL4.ActiveUniformType;
+    using TKVec2 = global::OpenTK.Vector2;
+    using TKVec3 = global::OpenTK.Vector3;
+    using TKVec4 = global::OpenTK.Vector4;
+    using TKMat4 = global::OpenTK.Matrix4;
+    using TKPrimitiveType = global::OpenTK.Graphics.OpenGL4.PrimitiveType;
 #endif
-#if PLATFORM_XIOS || PLATFORM_MONOMAC || PLATFORM_WPF || PLATFORM_OPENTK
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public partial class Api
     {
         // Keeping global state around like is rather hacky and should refactored out.
         VertexDeclaration currentActiveVertexBufferVertexDeclaration;
@@ -141,16 +131,10 @@ namespace Platform.Linux
 
         public ShaderFormat gfx_GetRuntimeShaderFormat ()
         {
-#if PLATFORM_XIOS
+#if TKVER_XIOS_ES2
             return ShaderFormat.GLSL_ES;
-#elif PLATFORM_MONOMAC
+#elif TKVER_MONOMAC_GL4 || TKVER_VANILLA_GL4
             return ShaderFormat.GLSL;
-#elif PLATFORM_WPF
-            return ShaderFormat.HLSL;
-#elif PLATFORM_OPENTK
-            return ShaderFormat.GLSL;
-#else
-#error //Platform not specified
 #endif
         }
 
@@ -234,7 +218,7 @@ namespace Platform.Linux
         public Handle gfx_CreateVertexBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount)
         {
             const BufferTarget type = BufferTarget.ArrayBuffer;
-            const GLBufferUsage bufferUsage = GLBufferUsage.DynamicDraw;
+            const TKBufferUsage bufferUsage = TKBufferUsage.DynamicDraw;
 
             UInt32 bufferHandle = 0;
             GL.GenBuffers (1, out bufferHandle);
@@ -268,7 +252,7 @@ namespace Platform.Linux
         {
             UInt32 glHandle;
             const BufferTarget type = BufferTarget.ElementArrayBuffer;
-            const GLBufferUsage bufferUsage = GLBufferUsage.DynamicDraw;
+            const TKBufferUsage bufferUsage = TKBufferUsage.DynamicDraw;
 
             GL.GenBuffers (1, out glHandle);
 
@@ -464,7 +448,7 @@ namespace Platform.Linux
             {
                 var variantHandle = variantHandles [i];
 
-                //InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Linking");
+                Console.WriteLine ("gfx_CreateShader", variantIdentifiers [i] + ": Linking");
 
                 int index = 0;
                 shaderDeclaration
@@ -486,19 +470,19 @@ namespace Platform.Linux
                     });
 
 
+                Console.WriteLine ("gfx_CreateShader", variantIdentifiers [i] + ": Validating shader program");
 #if DEBUG
-				//InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Validating shader program");
                 OpenTKHelper.ValidateProgram (variantHandle.ProgramHandle);
 #endif
-#if !OPENTK_GL4
-                //InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Detaching frag & vert sources");
+
+                Console.WriteLine ("gfx_CreateShader", variantIdentifiers [i] + ": Detaching frag & vert sources");
                 OpenTKHelper.DetachShader (variantHandle.ProgramHandle, variantHandle.FragmentShaderHandle);
                 OpenTKHelper.DetachShader (variantHandle.ProgramHandle, variantHandle.VertexShaderHandle);
 
-                //InternalUtils.Log.Info ("gfx_CreateShader", variantIdentifiers [i] + ": Deleting frag & vert sources");
+                Console.WriteLine ("gfx_CreateShader", variantIdentifiers [i] + ": Deleting frag & vert sources");
                 OpenTKHelper.DeleteShader (variantHandle.ProgramHandle,  variantHandle.FragmentShaderHandle);
                 OpenTKHelper.DeleteShader (variantHandle.ProgramHandle, variantHandle.VertexShaderHandle);
-#endif
+
             }
 
             var handle = new ShaderHandle (variantHandles);
@@ -601,7 +585,7 @@ namespace Platform.Linux
             Int32 nVertsInPrim = PrimitiveHelper.NumVertsIn (primitiveType);
             Int32 count = primitiveCount * nVertsInPrim;
 
-#if OPENTK_GL4
+#if TKVER_VANILLA_GL4
             GL.DrawElements(
                 otkpType,
                 count,
@@ -672,7 +656,7 @@ namespace Platform.Linux
             Int32 count = primitiveCount * nVertsInPrim;
 
             GL.DrawArrays (
-#if OPENTK_GL4
+#if TKVER_VANILLA_GL4
                 OpenTKHelper.ConvertToOpenTKPrimitiveType (primitiveType),
 #else
                 OpenTKHelper.ConvertToOpenTKBeginModeEnum(primitiveType), // specifies the primitive to render
@@ -1079,7 +1063,7 @@ namespace Platform.Linux
         public ShaderInputInfo[] gfx_shdr_GetInputs (Handle h, Int32 variantIndex)
         {
             string id = gfx_shdr_GetIdentifier (h, variantIndex);
-            //InternalUtils.Log.Info ("gfx_shdr_GetInputs", id + ": Initilise Attributes");
+            Console.WriteLine ("gfx_shdr_GetInputs", id + ": Initilise Attributes");
             var attributes = OpenTKHelper.GetAttributes ((h as ShaderHandle).VariantHandles[variantIndex].ProgramHandle);
 
             var inputs = attributes
@@ -1095,7 +1079,7 @@ namespace Platform.Linux
             {
                 logInputs += input.Name + ", ";
             }
-            //InternalUtils.Log.Info ("gfx_shdr_GetInputs", logInputs);
+            Console.WriteLine ("gfx_shdr_GetInputs", logInputs);
 
             return inputs;
         }
@@ -1103,14 +1087,14 @@ namespace Platform.Linux
         public ShaderVariableInfo[] gfx_shdr_GetVariables (Handle h, Int32 variantIndex)
         {
             string id = gfx_shdr_GetIdentifier (h, variantIndex);
-            //InternalUtils.Log.Info ("gfx_shdr_GetVariables", id + ": Initilise Uniforms");
+            Console.WriteLine ("gfx_shdr_GetVariables", id + ": Initilise Uniforms");
 
             var uniforms = OpenTKHelper.GetUniforms ((h as ShaderHandle).VariantHandles[variantIndex].ProgramHandle);
 
             var variables = uniforms
                 .Where (y =>
-                    y.Type != ActiveUniformType.Sampler2D &&
-                    y.Type != ActiveUniformType.SamplerCube)
+                    y.Type != TKActiveUniformType.Sampler2D &&
+                    y.Type != TKActiveUniformType.SamplerCube)
                 .OrderBy (z => z.Location)
                 .Select ((x, i) => new ShaderVariableInfo {
                     Index = i,
@@ -1123,7 +1107,7 @@ namespace Platform.Linux
             {
                 logVars += variable.Name + ", ";
             }
-            //InternalUtils.Log.Info ("gfx_shdr_GetVariables", logVars);
+            Console.WriteLine ("gfx_shdr_GetVariables", logVars);
 
             return variables;
         }
@@ -1131,14 +1115,14 @@ namespace Platform.Linux
         public ShaderSamplerInfo[] gfx_shdr_GetSamplers (Handle h, Int32 variantIndex)
         {
             string id = gfx_shdr_GetIdentifier (h, variantIndex);
-            //InternalUtils.Log.Info ("gfx_shdr_GetSamplers", id + ": Initilise Samplers");
+            Console.WriteLine ("gfx_shdr_GetSamplers", id + ": Initilise Samplers");
 
             var uniforms = OpenTKHelper.GetUniforms ((h as ShaderHandle).VariantHandles[variantIndex].ProgramHandle);
 
             var samplers = uniforms
                 .Where (y =>
-                    y.Type == ActiveUniformType.Sampler2D ||
-                    y.Type == ActiveUniformType.SamplerCube)
+                    y.Type == TKActiveUniformType.Sampler2D ||
+                    y.Type == TKActiveUniformType.SamplerCube)
                 .OrderBy (z => z.Location)
                 .Select ((x, i) => new ShaderSamplerInfo { Index = i, Name = x.Name })
                 .ToArray ();
@@ -1148,7 +1132,7 @@ namespace Platform.Linux
             {
                 logVars += sampler.Name + ", ";
             }
-            //InternalUtils.Log.Info ("gfx_shdr_GetSamplers", logVars);
+            Console.WriteLine ("gfx_shdr_GetSamplers", logVars);
 
             return samplers;
         }
@@ -1201,9 +1185,7 @@ namespace Platform.Linux
             GL.DepthFunc (DepthFunction.Lequal);
             OpenTKHelper.ThrowErrors ();
 
-#if PLATFORM_XIOS
-
-#elif PLATFORM_MONOMAC
+#if TKVER_MONOMAC_GL4
 
             GL.Enable (EnableCap.AlphaTest);
             OpenTKHelper.ThrowErrors ();
@@ -1231,7 +1213,7 @@ namespace Platform.Linux
             GL.BindRenderbuffer (RenderbufferTarget.Renderbuffer, renderbuffer);
             OpenTKHelper.ThrowErrors ();
 
-#if PLATFORM_XIOS
+#if TKVER_XIOS_ES2
 
             GL.RenderbufferStorage (
             RenderbufferTarget.Renderbuffer,
@@ -1247,7 +1229,7 @@ namespace Platform.Linux
             renderbuffer);
             OpenTKHelper.ThrowErrors ();
 
-#elif PLATFORM_MONOMAC
+#elif TKVER_MONOMAC_GL4 || TKVER_VANILLA_GL4
 
             GL.RenderbufferStorage (
                 RenderbufferTarget.Renderbuffer,
@@ -1269,7 +1251,7 @@ namespace Platform.Linux
         [Conditional ("DEBUG")]
         public static void ThrowErrors ()
         {
-#if PLATFORM_MONOMAC || OPENTK_GL4
+#if TKVER_MONOMAC_GL4 || TKVER_VANILLA_GL4
             var ec = GL.GetError ();
 #else
             var ec = GL.GetErrorCode ();
@@ -1356,27 +1338,27 @@ namespace Platform.Linux
             throw new NotSupportedException ();
         }
 
-        public static Type ConvertToType (ActiveUniformType ogl)
+        public static Type ConvertToType (TKActiveUniformType ogl)
         {
             switch (ogl)
             {
-                case ActiveUniformType.Bool: return typeof (Boolean);
-                case ActiveUniformType.BoolVec2: throw new NotSupportedException ();
-                case ActiveUniformType.BoolVec3: throw new NotSupportedException ();
-                case ActiveUniformType.BoolVec4: throw new NotSupportedException ();
-                case ActiveUniformType.Float: return typeof (Single);
-                case ActiveUniformType.FloatMat2: throw new NotSupportedException ();
-                case ActiveUniformType.FloatMat3: throw new NotSupportedException ();
-                case ActiveUniformType.FloatMat4: return typeof (Abacus.SinglePrecision.Matrix44);
-                case ActiveUniformType.FloatVec2: return typeof (Abacus.SinglePrecision.Vector2);
-                case ActiveUniformType.FloatVec3: return typeof (Abacus.SinglePrecision.Vector3);
-                case ActiveUniformType.FloatVec4: return typeof (Abacus.SinglePrecision.Vector4);
-                case ActiveUniformType.Int: return typeof (Boolean);
-                case ActiveUniformType.IntVec2: throw new NotSupportedException ();
-                case ActiveUniformType.IntVec3: throw new NotSupportedException ();
-                case ActiveUniformType.IntVec4: throw new NotSupportedException ();
-                case ActiveUniformType.Sampler2D: throw new NotSupportedException ();
-                case ActiveUniformType.SamplerCube: throw new NotSupportedException ();
+                case TKActiveUniformType.Bool: return typeof (Boolean);
+                case TKActiveUniformType.BoolVec2: throw new NotSupportedException ();
+                case TKActiveUniformType.BoolVec3: throw new NotSupportedException ();
+                case TKActiveUniformType.BoolVec4: throw new NotSupportedException ();
+                case TKActiveUniformType.Float: return typeof (Single);
+                case TKActiveUniformType.FloatMat2: throw new NotSupportedException ();
+                case TKActiveUniformType.FloatMat3: throw new NotSupportedException ();
+                case TKActiveUniformType.FloatMat4: return typeof (Abacus.SinglePrecision.Matrix44);
+                case TKActiveUniformType.FloatVec2: return typeof (Abacus.SinglePrecision.Vector2);
+                case TKActiveUniformType.FloatVec3: return typeof (Abacus.SinglePrecision.Vector3);
+                case TKActiveUniformType.FloatVec4: return typeof (Abacus.SinglePrecision.Vector4);
+                case TKActiveUniformType.Int: return typeof (Boolean);
+                case TKActiveUniformType.IntVec2: throw new NotSupportedException ();
+                case TKActiveUniformType.IntVec3: throw new NotSupportedException ();
+                case TKActiveUniformType.IntVec4: throw new NotSupportedException ();
+                case TKActiveUniformType.Sampler2D: throw new NotSupportedException ();
+                case TKActiveUniformType.SamplerCube: throw new NotSupportedException ();
             }
 
             throw new NotSupportedException ();
@@ -1427,12 +1409,10 @@ namespace Platform.Linux
             {
                 case BlendFactor.Zero: return BlendingFactorSrc.Zero;
                 case BlendFactor.One: return BlendingFactorSrc.One;
-
-#if PLATFORM_MONOMAC || OPENTK_GL4
-
+#if TKVER_MONOMAC_GL4 || TKVER_VANILLA_GL4
                 case BlendFactor.SourceColour: return BlendingFactorSrc.Src1Color; // todo: check this src1 stuff
                 case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrc1Color;
-#elif PLATFORM_XIOS
+#elif TKVER_XIOS_ES2
                 case BlendFactor.SourceColour: return BlendingFactorSrc.SrcColor;
                 case BlendFactor.InverseSourceColour: return BlendingFactorSrc.OneMinusSrcColor;
 #endif
@@ -1530,19 +1510,19 @@ namespace Platform.Linux
             }
         }
 
-#if OPENTK_GL4
-        public static KhronosPrimitiveType ConvertToOpenTKPrimitiveType(PrimitiveType blimey)
+#if TKVER_VANILLA_GL4
+        public static TKPrimitiveType ConvertToOpenTKPrimitiveType(PrimitiveType blimey)
         {
             switch (blimey)
             {
                 case PrimitiveType.LineList:
-                    return KhronosPrimitiveType.Lines;
+                    return TKPrimitiveType.Lines;
                 case PrimitiveType.LineStrip:
-                    return KhronosPrimitiveType.LineStrip;
+                    return TKPrimitiveType.LineStrip;
                 case PrimitiveType.TriangleList:
-                    return KhronosPrimitiveType.Triangles;
+                    return TKPrimitiveType.Triangles;
                 case PrimitiveType.TriangleStrip:
-                    return KhronosPrimitiveType.TriangleStrip;
+                    return TKPrimitiveType.TriangleStrip;
 
                 default:
                     throw new Exception("problem");
@@ -1590,7 +1570,7 @@ namespace Platform.Linux
             Int32 vertShaderHandle;
 
             CompileShader (
-                GLShaderType.VertexShader,
+                TKShaderType.VertexShader,
                 source,
                 out vertShaderHandle);
 
@@ -1605,7 +1585,7 @@ namespace Platform.Linux
             Int32 fragShaderHandle;
 
             CompileShader (
-                GLShaderType.FragmentShader,
+                TKShaderType.FragmentShader,
                 source,
                 out fragShaderHandle);
 
@@ -1649,7 +1629,7 @@ namespace Platform.Linux
         {
             if (programHandle != 0)
             {
-#if             PLATFORM_XIOS || PLATFORM_WPF || OPENTK_GL4
+#if             PLATFORM_XIOS || PLATFORM_WPF
                 GL.DeleteProgram (programHandle);
 #elif           PLATFORM_MONOMAC
                 try
@@ -1668,7 +1648,7 @@ namespace Platform.Linux
             }
         }
 
-        public static void CompileShader (GLShaderType type, String src, out Int32 shaderHandle)
+        public static void CompileShader (TKShaderType type, String src, out Int32 shaderHandle)
         {
             // Create an empty vertex shader object
             shaderHandle = GL.CreateShader (type);
@@ -1676,13 +1656,13 @@ namespace Platform.Linux
             OpenTKHelper.ThrowErrors ();
 
             // Replace the source code in the vertex shader object
-#if PLATFORM_XIOS
+#if TKVER_XIOS_ES2
             GL.ShaderSource (
             shaderHandle,
             1,
             new String[] { src },
             (Int32[]) null);
-#elif PLATFORM_MONOMAC || OPENTK_GL4
+#elif TKVER_MONOMAC_GL4 || TKVER_VANILLA_GL4
             GL.ShaderSource (
                 shaderHandle,
                 src);
@@ -1715,9 +1695,9 @@ namespace Platform.Linux
 
                 string log = infoLog.ToString ();
 
-                //InternalUtils.Log.Info ("GFX", src);
-                //InternalUtils.Log.Info ("GFX", log);
-                //InternalUtils.Log.Info ("GFX", type.ToString ());
+                Console.WriteLine ("GFX", src);
+                Console.WriteLine ("GFX", log);
+                Console.WriteLine ("GFX", type.ToString ());
             }
 #endif
             Int32 status = 0;
@@ -1736,15 +1716,15 @@ namespace Platform.Linux
             }
         }
 
-        public static List<OTKShaderUniform> GetUniforms (Int32 prog)
+        public static List<TKShaderUniform> GetUniforms (Int32 prog)
         {
             int numActiveUniforms = 0;
 
-            var result = new List<OTKShaderUniform>();
+            var result = new List<TKShaderUniform>();
 
             GL.GetProgram (
                 prog,
-#if OPENTK_GL4
+#if TKVER_VANILLA_GL4
                 GetProgramParameterName.ActiveUniforms,
 #else
                 ProgramParameter.ActiveUniforms,
@@ -1759,7 +1739,7 @@ namespace Platform.Linux
                 //int buffSize = 0;
                 int length = 0;
                 int size = 0;
-                ActiveUniformType type;
+                TKActiveUniformType type;
 
                 GL.GetActiveUniform (
                     prog,
@@ -1781,13 +1761,11 @@ namespace Platform.Linux
                     throw new Exception ();
 
                 result.Add (
-                    new OTKShaderUniform {
+                    new TKShaderUniform {
                         Index = i,
                         Name = name,
                         Type = type,
                         Location = uniformLocation });
-
-
 
                 /*
             InternalUtils.Log.Info ("GFX",
@@ -1805,16 +1783,16 @@ namespace Platform.Linux
             return result;
         }
 
-        public static List<OTKShaderAttribute> GetAttributes (Int32 prog)
+        public static List<TKShaderAttribute> GetAttributes (Int32 prog)
         {
             int numActiveAttributes = 0;
 
-            var result = new List<OTKShaderAttribute>();
+            var result = new List<TKShaderAttribute>();
 
             // gets the number of active vertex attributes
             GL.GetProgram (
                 prog,
-#if OPENTK_GL4
+#if TKVER_VANILLA_GL4
                 GetProgramParameterName.ActiveAttributes,
 #else
                 ProgramParameter.ActiveAttributes,
@@ -1847,7 +1825,7 @@ namespace Platform.Linux
                 OpenTKHelper.ThrowErrors ();
 
                 result.Add (
-                    new OTKShaderAttribute
+                    new TKShaderAttribute
                     {
                         Index = i,
                         Name = name,
@@ -1873,7 +1851,7 @@ namespace Platform.Linux
 
             GL.GetProgram (
                 prog,
-#if OPENTK_GL4
+#if TKVER_VANILLA_GL4
                 GetProgramParameterName.InfoLogLength,
 #else
                 ProgramParameter.InfoLogLength,
@@ -1888,14 +1866,14 @@ namespace Platform.Linux
                 var infoLog = string.Empty;
                 GL.GetProgramInfoLog (prog, out infoLog);
                 OpenTKHelper.ThrowErrors ();
-                //InternalUtils.Log.Info ("GFX", string.Format ("Program link log:\n{0}", infoLog));
+                Console.WriteLine ("GFX", string.Format ("Program link log:\n{0}", infoLog));
             }
 #endif
             Int32 status = 0;
 
             GL.GetProgram (
                 prog,
-#if OPENTK_GL4
+#if TKVER_VANILLA_GL4
                 GetProgramParameterName.LinkStatus,
 #else
                 ProgramParameter.LinkStatus,
@@ -1908,7 +1886,6 @@ namespace Platform.Linux
             {
                 throw new Exception (String.Format ("Failed to link program: {0:x}", prog));
             }
-#endif
 
             return retVal;
 
@@ -1924,7 +1901,7 @@ namespace Platform.Linux
 
             GL.GetProgram (
                 programHandle,
-#if OPENTK_GL4
+#if TKVER_VANILLA_GL4
                 GetProgramParameterName.InfoLogLength,
 #else
                 ProgramParameter.InfoLogLength,
@@ -1944,19 +1921,19 @@ namespace Platform.Linux
 
                 OpenTKHelper.ThrowErrors ();
 
-                //InternalUtils.Log.Info ("GFX", string.Format ("[Cor.Resources] Program validate log:\n{0}", infoLog));
+                Console.WriteLine ("GFX", string.Format ("[Cor.Resources] Program validate log:\n{0}", infoLog));
             }
 
             Int32 status = 0;
 
             GL.GetProgram (
                 programHandle,
-#if OPENTK_GL4
+#if TKVER_VANILLA_GL4
                 GetProgramParameterName.LinkStatus,
 #else
                 ProgramParameter.LinkStatus,
 #endif
- out status);
+                out status);
 
             OpenTKHelper.ThrowErrors ();
 
@@ -2013,46 +1990,46 @@ namespace Platform.Linux
 
     internal static class TypeConversionExtensions
     {
-        public static KhronosVector2 ToOpenTK (this Abacus.SinglePrecision.Vector2 vec)
+        public static TKVec2 ToOpenTK (this Abacus.SinglePrecision.Vector2 vec)
         {
-            return new KhronosVector2 (vec.X, vec.Y);
+            return new TKVec2 (vec.X, vec.Y);
         }
 
-        public static Abacus.SinglePrecision.Vector2 ToAbacus (this KhronosVector2 vec)
+        public static Abacus.SinglePrecision.Vector2 ToAbacus (this TKVec2 vec)
         {
             return new Abacus.SinglePrecision.Vector2 (vec.X, vec.Y);
         }
 
-        public static KhronosVector3 ToOpenTK (this Abacus.SinglePrecision.Vector3 vec)
+        public static TKVec3 ToOpenTK (this Abacus.SinglePrecision.Vector3 vec)
         {
-            return new KhronosVector3 (vec.X, vec.Y, vec.Z);
+            return new TKVec3 (vec.X, vec.Y, vec.Z);
         }
 
-        public static Abacus.SinglePrecision.Vector3 ToAbacus (this KhronosVector3 vec)
+        public static Abacus.SinglePrecision.Vector3 ToAbacus (this TKVec3 vec)
         {
             return new Abacus.SinglePrecision.Vector3 (vec.X, vec.Y, vec.Z);
         }
 
-        public static KhronosVector4 ToOpenTK (this Abacus.SinglePrecision.Vector4 vec)
+        public static TKVec4 ToOpenTK (this Abacus.SinglePrecision.Vector4 vec)
         {
-            return new KhronosVector4 (vec.X, vec.Y, vec.Z, vec.W);
+            return new TKVec4 (vec.X, vec.Y, vec.Z, vec.W);
         }
 
-        public static Abacus.SinglePrecision.Vector4 ToAbacus (this KhronosVector4 vec)
+        public static Abacus.SinglePrecision.Vector4 ToAbacus (this TKVec4 vec)
         {
             return new Abacus.SinglePrecision.Vector4 (vec.X, vec.Y, vec.Z, vec.W);
         }
 
-        public static KhronosMatrix4 ToOpenTK (this Abacus.SinglePrecision.Matrix44 mat)
+        public static TKMat4 ToOpenTK (this Abacus.SinglePrecision.Matrix44 mat)
         {
-            return new KhronosMatrix4(
+            return new TKMat4(
                 mat.R0C0, mat.R0C1, mat.R0C2, mat.R0C3,
                 mat.R1C0, mat.R1C1, mat.R1C2, mat.R1C3,
                 mat.R2C0, mat.R2C1, mat.R2C2, mat.R2C3,
                 mat.R3C0, mat.R3C1, mat.R3C2, mat.R3C3);
         }
 
-        public static Abacus.SinglePrecision.Matrix44 ToAbacus (this KhronosMatrix4 mat)
+        public static Abacus.SinglePrecision.Matrix44 ToAbacus (this TKMat4 mat)
         {
             return new Abacus.SinglePrecision.Matrix44(
                 mat.M11, mat.M12, mat.M13, mat.M14,
@@ -2204,15 +2181,15 @@ namespace Platform.Linux
         }
     }
 
-    sealed class OTKShaderUniform
+    sealed class TKShaderUniform
     {
         public Int32 Index { get; set; }
         public String Name { get; set; }
-        public ActiveUniformType Type { get; set; }
+        public TKActiveUniformType Type { get; set; }
         public Int32 Location { get; set; }
     }
 
-    sealed class OTKShaderAttribute
+    sealed class TKShaderAttribute
     {
         public Int32 Index { get; set; }
         public String Name { get; set; }

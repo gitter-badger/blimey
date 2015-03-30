@@ -45,9 +45,9 @@ namespace Blimey
 
     using Fudge;
     using Abacus.SinglePrecision;
-    
+
     using System.Linq;
-    using Cor;
+
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -74,24 +74,6 @@ namespace Blimey
                 (Byte) (value.Y * 255f),
                 (Byte) (value.Z * 255f),
                 (Byte) (value.W * 255f));
-        }
-    }
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
-    internal static class Int32Extensions
-    {
-        // http://msdn.microsoft.com/en-us/library/system.object.gethashcode(v=vs.110).aspx
-        public static Int32 ShiftAndWrap (this Int32 value, Int32 positions = 2)
-        {
-            positions = positions & 0x1F;
-    
-            // Save the existing bit pattern, but interpret it as an unsigned integer. 
-            uint number = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
-            // Preserve the bits to be discarded. 
-            uint wrapped = number >> (32 - positions);
-            // Shift and wrap the discarded bits. 
-            return BitConverter.ToInt32(BitConverter.GetBytes((number << positions) | wrapped), 0);
         }
     }
 

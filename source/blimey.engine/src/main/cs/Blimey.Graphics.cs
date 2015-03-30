@@ -40,16 +40,16 @@ namespace Blimey
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    
+
     using Fudge;
     using Abacus.SinglePrecision;
-    
+
     using System.Linq;
-    using Cor;
-    using Platform;
-	
+
+
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-	
+
 	public static class GraphicsExtensions
 	{
 		static BlendMode lastSet = BlendMode.Default;
@@ -105,7 +105,7 @@ namespace Blimey
         BlendFunction alphaBlendFunction;
         BlendFactor sourceAlpha;
         BlendFactor destinationAlpha;
-		
+
 		internal BlendFunction RgbBlendFunction { get { return rgbBlendFunction;} }
         internal BlendFactor SourceRgb { get { return sourceRgb;} }
         internal BlendFactor DestinationRgb { get { return destinationRgb;} }
@@ -117,7 +117,7 @@ namespace Blimey
         public override String ToString ()
         {
             return string.Format (
-                "{{rgbBlendFunction:{0} sourceRgb:{1} destinationRgb:{2}" + 
+                "{{rgbBlendFunction:{0} sourceRgb:{1} destinationRgb:{2}" +
 				" alphaBlendFunction:{3} sourceAlpha:{4} destinationAlpha:{5}}}",
 				rgbBlendFunction.ToString (), sourceRgb.ToString (), destinationRgb.ToString (),
                 alphaBlendFunction.ToString (), sourceAlpha.ToString (), destinationAlpha.ToString ()
@@ -359,7 +359,7 @@ namespace Blimey
         public void SetTextureScale (String id, Vector2 scale) { scaleSettings[id] = scale; }
         public void SetTextureOffset (String id, Vector2 offset) { texOffsetSettings[id] = offset; }
         public void SetTexture (String id, Texture texture) { texSamplerSettings[id] = texture; }
-      
+
         internal void UpdateShaderState ()
         {
             if(shader == null)

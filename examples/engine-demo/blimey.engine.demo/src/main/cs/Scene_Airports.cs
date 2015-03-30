@@ -30,12 +30,12 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey.Demo
+namespace EngineDemo
 {
     using System;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Cor;
+    using Blimey;
     using System.Collections.Generic;
 	using System.Linq;
 
@@ -72,23 +72,23 @@ namespace Blimey.Demo
         public char Dst { get; private set; }
 
     }
-    
+
 	public static class ListExtensions
 	{
-		public static void Shuffle<T>(this IList<T> list)  
-		{  
-			Random rng = new Random();  
-			int n = list.Count;  
-			while (n > 1) {  
-				n--;  
-				int k = rng.Next(n + 1);  
-				T value = list[k];  
-				list[k] = list[n];  
-				list[n] = value;  
-			}  
+		public static void Shuffle<T>(this IList<T> list)
+		{
+			Random rng = new Random();
+			int n = list.Count;
+			while (n > 1) {
+				n--;
+				int k = rng.Next(n + 1);
+				T value = list[k];
+				list[k] = list[n];
+				list[n] = value;
+			}
 		}
 	}
-    
+
 	public class Scene_Airports
 		: Scene
 	{
@@ -105,11 +105,11 @@ namespace Blimey.Demo
                 .Text
                 .Split ('\n')
                 .ToList ();
-                
+
             foreach (var line in lines)
 			{
 				string[] items = line.Split(',');
-    
+
     			if (items.Length == 11)
     			{
     				airports.Add(new Airport(items));

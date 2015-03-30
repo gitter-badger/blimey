@@ -52,8 +52,8 @@ namespace Cor.Platform.Wpf
     using System.Runtime.ConstrainedExecution;
     using System.Threading;
 
-    using Cor;
-    using Platform;
+
+
     using Fudge;
     using Abacus.SinglePrecision;
     using System.Windows.Forms.Integration;

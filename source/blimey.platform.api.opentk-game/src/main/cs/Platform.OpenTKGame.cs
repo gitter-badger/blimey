@@ -40,27 +40,25 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Platform.Linux
+namespace Blimey
 {
     using System;
-	using Platform;
     using System.Collections.Generic;
     using System.IO;
     using System.Diagnostics;
-    
     using global::OpenTK;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
     public class Foo { public Int32 bar; }
 
-    public class MonoLinuxPlatform
+    public class Platform
 		: IPlatform
     {
 
-        public MonoLinuxPlatform()
+        public Platform()
         {
-            var program = new LinuxProgram();
-            var api = new LinuxApi();
+            var program = new Program();
+            var api = new Api();
 
             api.InitialiseDependencies(program);
             program.InitialiseDependencies(api);
@@ -75,18 +73,18 @@ namespace Platform.Linux
 			_linuxProgram.Run (24, 32);
 		}
 
-		private readonly LinuxProgram _linuxProgram;
+		private readonly Program _linuxProgram;
 		public IProgram Program { get { return _linuxProgram; } }
         public IApi Api { get; private set; }
     }
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class LinuxProgram : GameWindow, IProgram
+    public sealed class Program : GameWindow, IProgram
     {
-        LinuxApi Api { get; set; }
+        Api Api { get; set; }
 
-		internal void InitialiseDependencies(LinuxApi api) { Api = api; }
+		internal void InitialiseDependencies(Api api) { Api = api; }
         Action update;
         Action render;
 
@@ -100,7 +98,7 @@ namespace Platform.Linux
 
 			Load += (object sender, EventArgs e) => { this.loaded = true; };
 
-			this.UpdateFrame += (object sender, FrameEventArgs e) => 
+			this.UpdateFrame += (object sender, FrameEventArgs e) =>
 			{
 				if( !firstUpdate )
 				{
@@ -111,9 +109,9 @@ namespace Platform.Linux
 				Accumulate(milliseconds);
 				update();
 				Animate(milliseconds);
-			}; 
+			};
 
-			this.RenderFrame += (object sender, FrameEventArgs e) => 
+			this.RenderFrame += (object sender, FrameEventArgs e) =>
 			{
 				//don't render until we have loaded and run the first update
 				if (!loaded || !firstUpdate)
@@ -133,7 +131,7 @@ namespace Platform.Linux
         {
             float deltaRotation = (float)milliseconds / 20.0f;
             rotation += deltaRotation;
-		
+
             //glControl.Invalidate();
         }
 
@@ -165,12 +163,12 @@ namespace Platform.Linux
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public partial class LinuxApi
+    public partial class Api
         : IApi
     {
-        LinuxProgram Program { get; set; }
+        Program Program { get; set; }
 
-        internal void InitialiseDependencies(LinuxProgram program)
+        internal void InitialiseDependencies(Program program)
         {
             Program = program;
         }

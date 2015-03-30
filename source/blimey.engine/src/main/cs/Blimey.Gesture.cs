@@ -40,13 +40,13 @@ namespace Blimey
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    
+
     using Fudge;
     using Abacus.SinglePrecision;
-    
+
     using System.Linq;
-    using Cor;
-    using Platform;
+
+
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -578,7 +578,7 @@ namespace Blimey
             switch (space)
             {
                 case TouchPositionSpace.RealWorld:
-                    
+
                     if(engine.Host.CurrentOrientation == DeviceOrientation.Default ||
                        engine.Host.CurrentOrientation == DeviceOrientation.Upsidedown)
                     {

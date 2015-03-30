@@ -1,11 +1,10 @@
-using System;
-using MonoMac.Foundation;
-using MonoMac.AppKit;
-using Cor;
-using Platform.MonoMac;
-
-namespace Blimey.Demo
+namespace EngineDemo
 {
+    using System;
+    using MonoMac.Foundation;
+    using MonoMac.AppKit;
+    using Blimey;
+
 	class AppDelegate: NSApplicationDelegate, IDisposable
 	{
         Engine engine;
@@ -18,8 +17,8 @@ namespace Blimey.Demo
             };
 
             var entryPoint = new Demo();
-         
-            var platform = new MonoMacPlatform ();
+
+            var platform = new Platform ();
 
             engine = new Engine (platform, appSettings, entryPoint);
 		}
@@ -28,7 +27,7 @@ namespace Blimey.Demo
 		{
 			return true;
 		}
-        
+
         public new void Dispose ()
         {
             engine.Dispose ();

@@ -40,12 +40,12 @@ namespace Blimey
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    
+
     using Fudge;
     using Abacus.SinglePrecision;
-    
+
     using System.Linq;
-    using Cor;
+
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -74,8 +74,8 @@ namespace Blimey
         Back,
         Intersecting
     }
-    
-    
+
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public static class BlimeyMathsHelper
@@ -425,9 +425,9 @@ namespace Blimey
             result.R3C2 = position.Z;
             result.R3C3 = 1;
         }
-        
+
         public static void CreateTranslation (Single xPosition, Single yPosition, Single zPosition, out Matrix44 result)
-        {   
+        {
             result.R0C0 = 1;
             result.R0C1 = 0;
             result.R0C2 = 0;
@@ -445,7 +445,7 @@ namespace Blimey
             result.R3C2 = zPosition;
             result.R3C3 = 1;
         }
-        
+
         // Creates a scaling matrix based on x, y, z.
         public static void CreateScale (Single xScale, Single yScale, Single zScale, out Matrix44 result)
         {
@@ -558,7 +558,7 @@ namespace Blimey
             result.R3C2 = 0;
             result.R3C3 = 1;
         }
-        
+
         public static void CreateRotationZ (Single radians, out Matrix44 result)
         {
             // http://en.wikipedia.org/wiki/Rotation_matrix
@@ -583,7 +583,7 @@ namespace Blimey
             result.R3C2 = 0;
             result.R3C3 = 1;
         }
-        
+
         public static void CreateFromAxisAngle (ref Vector3 axis, Single angle, out Matrix44 result)
         {
             Single one = 1;
@@ -623,7 +623,7 @@ namespace Blimey
             result.R3C2 = 0;
             result.R3C3 = one;
         }
-        
+
         public static void CreateFromAllAxis (ref Vector3 right, ref Vector3 up, ref Vector3 backward, out Matrix44 result)
         {
             if(!right.IsUnit() || !up.IsUnit() || !backward.IsUnit() )
@@ -711,7 +711,7 @@ namespace Blimey
             Single zero = 0;
             Single one = 1;
 
-            Single xs = quaternion.I + quaternion.I;   
+            Single xs = quaternion.I + quaternion.I;
             Single ys = quaternion.J + quaternion.J;
             Single zs = quaternion.K + quaternion.K;
             Single wx = quaternion.U * xs;
@@ -728,12 +728,12 @@ namespace Blimey
             result.R1C0 = xy - wz;
             result.R2C0 = xz + wy;
             result.R3C0 = zero;
-    
+
             result.R0C1 = xy + wz;
             result.R1C1 = one - (xx + zz);
             result.R2C1 = yz - wx;
             result.R3C1 = zero;
-    
+
             result.R0C2 = xz - wy;
             result.R1C2 = yz + wx;
             result.R2C2 = one - (xx + yy);
@@ -809,8 +809,8 @@ namespace Blimey
         // FROM XNA
         // --------
         // Creates a cylindrical billboard that rotates around a specified axis.
-        // This method computes the facing direction of the billboard from the object position and camera position. 
-        // When the object and camera positions are too close, the matrix will not be accurate. 
+        // This method computes the facing direction of the billboard from the object position and camera position.
+        // When the object and camera positions are too close, the matrix will not be accurate.
         // To avoid this problem, the method uses the optional camera forward vector if the positions are too close.
         public static void CreateBillboard (ref Vector3 ObjectPosition, ref Vector3 cameraPosition, ref Vector3 cameraUpVector, Vector3? cameraForwardVector, out Matrix44 result)
         {
@@ -835,7 +835,7 @@ namespace Blimey
 				Single t = (Single)(one / (Maths.Sqrt (num)));
 				Vector3.Multiply (ref vector, ref t, out vector);
             }
-			
+
             Vector3.Cross (ref cameraUpVector, ref vector, out vector3);
             vector3.Normalise ();
             Vector3.Cross (ref vector, ref vector3, out vector2);
@@ -856,7 +856,7 @@ namespace Blimey
             result.R3C2 = ObjectPosition.Z;
             result.R3C3 = one;
         }
-        
+
         public static void CreateConstrainedBillboard (ref Vector3 objectPosition, ref Vector3 cameraPosition, ref Vector3 rotateAxis, Vector3? cameraForwardVector, Vector3? objectForwardVector, out Matrix44 result)
         {
             Single zero = 0;
@@ -1014,7 +1014,7 @@ namespace Blimey
             result.R3C2 = (nearPlaneDistance * farPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
             result.R3C0 = result.R3C1 = result.R3C3 = zero;
         }
-        
+
         // ref: http://msdn.microsoft.com/en-us/library/bb205349(v=vs.85).aspx
         public static void CreateOrthographic (Single width, Single height, Single zNearPlane, Single zFarPlane, out Matrix44 result)
         {
@@ -1051,7 +1051,7 @@ namespace Blimey
             result.R3C2 = zNearPlane / (zNearPlane - zFarPlane);
             result.R3C3 = one;
         }
-        
+
         // ref: http://msdn.microsoft.com/en-us/library/bb205343(v=VS.85).aspx
         public static void CreateLookAt (ref Vector3 cameraPosition, ref Vector3 cameraTarget, ref Vector3 cameraUpVector, out Matrix44 result)
         {
@@ -1062,7 +1062,7 @@ namespace Blimey
 
             Vector3 vector; Vector3.Normalise (ref targetToPosition, out vector);
 
-            Vector3 cross; Vector3.Cross (ref cameraUpVector, ref vector, out cross); 
+            Vector3 cross; Vector3.Cross (ref cameraUpVector, ref vector, out cross);
 
             Vector3 vector2; Vector3.Normalise (ref cross, out vector2);
             Vector3 vector3; Vector3.Cross (ref vector, ref vector2, out vector3);
@@ -1082,7 +1082,7 @@ namespace Blimey
             Vector3.Dot (ref vector2, ref cameraPosition, out result.R3C0);
             Vector3.Dot (ref vector3, ref cameraPosition, out result.R3C1);
             Vector3.Dot (ref vector, ref cameraPosition, out result.R3C2);
-            
+
             result.R3C0 *= -one;
             result.R3C1 *= -one;
             result.R3C2 *= -one;
@@ -1090,14 +1090,14 @@ namespace Blimey
             result.R3C3 = one;
         }
 
-        
-    
+
+
 
         // ref: http://msdn.microsoft.com/en-us/library/bb205364(v=VS.85).aspx
         public static void CreateShadow (ref Vector3 lightDirection, ref Plane plane, out Matrix44 result)
         {
             Single zero = 0;
-            
+
             Plane plane2;
             Plane.Normalise (ref plane, out plane2);
             Single num = ((plane2.Normal.X * lightDirection.X) + (plane2.Normal.Y * lightDirection.Y)) + (plane2.Normal.Z * lightDirection.Z);
@@ -1131,19 +1131,19 @@ namespace Blimey
             Single two = 2;
 
             Plane plane;
-            
+
             Plane.Normalise (ref value, out plane);
-            
+
             value.Normalise ();
-            
+
             Single x = plane.Normal.X;
             Single y = plane.Normal.Y;
             Single z = plane.Normal.Z;
-            
+
             Single num3 = -two * x;
             Single num2 = -two * y;
             Single num = -two * z;
-            
+
             result.R0C0 = (num3 * x) + one;
             result.R0C1 = num2 * x;
             result.R0C2 = num * x;
@@ -1161,7 +1161,7 @@ namespace Blimey
             result.R3C2 = num * plane.D;
             result.R3C3 = one;
         }
-        
+
         #endregion
 
     }
@@ -1776,7 +1776,7 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     [StructLayout (LayoutKind.Sequential)]
-    public struct BoundingBox 
+    public struct BoundingBox
         : IEquatable<BoundingBox>
     {
         public const int CornerCount = 8;
@@ -1947,7 +1947,7 @@ namespace Blimey
                     return null;
                 }
             }
-            
+
 
             if (Maths.Abs (ray.Direction.Z) < epsilon) {
                 if ((ray.Position.Z < this.Min.Z) || (ray.Position.Z > this.Max.Z)) {
@@ -2065,7 +2065,7 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class BoundingFrustum 
+    public class BoundingFrustum
         : IEquatable<BoundingFrustum>
     {
         const int BottomPlaneIndex = 5;
@@ -2620,7 +2620,7 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     [StructLayout (LayoutKind.Sequential)]
-    public struct BoundingSphere 
+    public struct BoundingSphere
         : IEquatable<BoundingSphere>
     {
         public Vector3 Center;
@@ -2697,7 +2697,7 @@ namespace Blimey
         }
 
         public static void CreateFromPoints (IEnumerable<Vector3> points, out BoundingSphere sphere)
-        {   
+        {
             Single half; Maths.Half(out half);
             Single one = 1;
 
@@ -2706,7 +2706,7 @@ namespace Blimey
             Vector3 vector2;
             Single num4;
             Single num5;
-            
+
             Vector3 vector5;
             Vector3 vector6;
             Vector3 vector7;
@@ -2978,7 +2978,7 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     [StructLayout (LayoutKind.Sequential)]
-    public struct Plane 
+    public struct Plane
         : IEquatable<Plane>
     {
         public Vector3 Normal;
@@ -3132,7 +3132,7 @@ namespace Blimey
             result.Normal.Z = ((x * num18) + (y * num17)) + (z * num16);
             result.D = plane.D;
         }
-        
+
 
 
         public Single Dot(ref Vector4 value)
@@ -3215,12 +3215,12 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     [StructLayout (LayoutKind.Sequential)]
-    public struct Ray 
+    public struct Ray
         : IEquatable<Ray>
     {
         // The starting position of this ray
         public Vector3 Position;
-        
+
         // Normalised vector that defines the direction of this ray
         public Vector3 Direction;
 
@@ -3302,16 +3302,16 @@ namespace Blimey
             Single nearZero; Maths.FromString("0.00001", out nearZero);
 
             Single num2 = ((plane.Normal.X * this.Direction.X) + (plane.Normal.Y * this.Direction.Y)) + (plane.Normal.Z * this.Direction.Z);
-            
+
             if (Maths.Abs (num2) < nearZero)
             {
                 return null;
             }
-            
+
             Single num3 = ((plane.Normal.X * this.Position.X) + (plane.Normal.Y * this.Position.Y)) + (plane.Normal.Z * this.Position.Z);
 
             Single num = (-plane.D - num3) / num2;
-            
+
             if (num < zero)
             {
                 if (num < -nearZero)
@@ -3335,9 +3335,9 @@ namespace Blimey
             Single initialXOffset = sphere.Center.X - this.Position.X;
 
             Single initialYOffset = sphere.Center.Y - this.Position.Y;
-            
+
             Single initialZOffset = sphere.Center.Z - this.Position.Z;
-            
+
             Single num7 = ((initialXOffset * initialXOffset) + (initialYOffset * initialYOffset)) + (initialZOffset * initialZOffset);
 
             Single num2 = sphere.Radius * sphere.Radius;
@@ -3352,13 +3352,13 @@ namespace Blimey
             {
                 return null;
             }
-            
+
             Single num6 = num7 - (num * num);
             if (num6 > num2)
             {
                 return null;
             }
-            
+
             Single num8 = Maths.Sqrt ((num2 - num6));
 
             return new Single? (num - num8);

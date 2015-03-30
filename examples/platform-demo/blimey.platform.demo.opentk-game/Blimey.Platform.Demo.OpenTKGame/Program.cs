@@ -1,10 +1,8 @@
-﻿using System;
-using Cor;
-using Platform.Linux;
-using Platform;
-
-namespace Cor.Demo
+﻿namespace PlatformDemo
 {
+    using System;
+    using Blimey;
+
 	public class Program
 	{
 		public static void Main( string[] args )
@@ -16,7 +14,7 @@ namespace Cor.Demo
 
 			var entryPoint = new BasicApp();
 
-			MonoLinuxPlatform platform = new MonoLinuxPlatform ();
+			var platform = new Platform ();
 
 			using( var engine = new Engine(platform, appSettings, entryPoint) )
 			{

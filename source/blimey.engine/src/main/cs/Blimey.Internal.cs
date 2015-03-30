@@ -40,12 +40,12 @@ namespace Blimey
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    
+
     using Fudge;
     using Abacus.SinglePrecision;
-    
+
     using System.Linq;
-    using Cor;
+
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //

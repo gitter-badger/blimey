@@ -1,13 +1,12 @@
-namespace Cor.Demo
+namespace PlatformDemo
 {
     using System;
     using System.Text;
     using System.IO;
     using Abacus.SinglePrecision;
     using Fudge;
-    using Cor;
+    using Blimey;
     using System.Collections.Generic;
-    using Platform;
     using System.Runtime.InteropServices;
 
     public static class RandomColours

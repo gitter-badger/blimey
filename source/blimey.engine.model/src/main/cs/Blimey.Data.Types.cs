@@ -42,10 +42,10 @@ namespace Blimey
     using System.Diagnostics;
     using System.Linq;
     using System.IO;
-    
+
     using Abacus.SinglePrecision;
     using Fudge;
-    using Platform;
+
 
 
     // Definitions for common vertex types.

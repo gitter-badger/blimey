@@ -50,7 +50,7 @@ namespace Cor
     using System.Threading;
 
     using Abacus.SinglePrecision;
-    using Platform;
+
     using Fudge;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -67,9 +67,9 @@ namespace Cor
         public IProgram Program { get; private set; }
         public IApi Api { get; private set; }
     }
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
+
     public class LoggedProxyProgram
         : IProgram
     {
@@ -95,7 +95,7 @@ namespace Cor
                     },
                 () => {
                     stream.WriteLine ("RENDER #" + renderCount++);
-                    render ();} 
+                    render ();}
                 );
         }
 
@@ -180,7 +180,7 @@ namespace Cor
             api.gfx_SetBlendEquation (rgbBlendFunction, sourceRgb, destinationRgb, alphaBlendFunction, sourceAlpha, destinationAlpha);
             EndLog ();
         }
-    
+
         public Handle gfx_CreateVertexBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount)
         {
             StartLog ("gfx_CreateVertexBuffer ({0}, {1})", vertexDeclaration, vertexCount);
@@ -212,7 +212,7 @@ namespace Cor
             EndLog (handle);
             return handle;
         }
-        
+
         public void gfx_DestroyVertexBuffer (Handle vertexBufferHandle)
         {
             StartLog ("gfx_DestroyVertexBuffer ({0})", vertexBufferHandle);

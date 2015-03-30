@@ -39,7 +39,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Cor
+namespace Blimey
 {
     using System;
     using System.Collections;
@@ -51,7 +51,6 @@ namespace Cor
     using System.Text;
 
     using Abacus.SinglePrecision;
-    using Platform;
     using Fudge;
 
     // ────────────────────────────────────────────────────────────────────── //

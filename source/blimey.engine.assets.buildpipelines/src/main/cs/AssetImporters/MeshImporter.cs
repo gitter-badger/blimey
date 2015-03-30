@@ -37,7 +37,7 @@ using System;
 using Blimey.Assets.Pipeline;
 using System.IO;
 using System.Collections.Generic;
-using Platform;
+
 using Abacus.SinglePrecision;
 using System.Text.RegularExpressions;
 
@@ -144,7 +144,7 @@ namespace Blimey.Assets.Builders
 
             if (!File.Exists (input.Files[0]))
                 throw new Exception ("MeshImporter cannot find input file.");
-            
+
             String filename = input.Files[0];
 
             var objFile = File.ReadAllText (filename).Split ('\n');
@@ -160,28 +160,28 @@ namespace Blimey.Assets.Builders
                 {
                     var strs = line.Substring (2, line.Length - 2).Split (' ');
                     var val = new Vector3 (Single.Parse (strs [0]), Single.Parse (strs [1]), Single.Parse (strs [2]));
-                    verts.Add (val); 
+                    verts.Add (val);
                 }
                 else if (line.IndexOf ("vn ") == 0)
                 {
                     var strs = line.Substring (3, line.Length - 3).Split (' ');
                     var val = new Vector3 (Single.Parse (strs [0]), Single.Parse (strs [1]), Single.Parse (strs [2]));
-                    normals.Add (val); 
+                    normals.Add (val);
                 }
                 else if (line.IndexOf ("vt ") == 0)
                 {
                     var strs = line.Substring (3, line.Length - 3).Split (' ');
                     var val = new Vector2 (Single.Parse (strs [0]), 1f - Single.Parse (strs [1]));
-                    textureCoordinates.Add (val); 
+                    textureCoordinates.Add (val);
                 }
                 else if (line.IndexOf ("f ") == 0)
                 {
                     var str = line.Substring (2, line.Length - 2);
-                    faces.Add (Face.Parse (str, verts.Count, normals.Count, textureCoordinates.Count)); 
+                    faces.Add (Face.Parse (str, verts.Count, normals.Count, textureCoordinates.Count));
                 }
             }
 
- 
+
             var outputResource = new MeshAsset ();
 
             if (normals.Count > 0 && textureCoordinates.Count > 0)

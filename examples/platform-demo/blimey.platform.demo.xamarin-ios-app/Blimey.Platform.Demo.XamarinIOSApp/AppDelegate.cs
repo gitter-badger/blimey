@@ -1,9 +1,8 @@
-using System;
-using Cor;
-using Platform.Xios;
-
-namespace Cor.Demo
+namespace PlatformDemo
 {
+    using System;
+    using Blimey;
+
 	[MonoTouch.Foundation.Register ("AppDelegate")]
 	public partial class AppDelegate
 		: MonoTouch.UIKit.UIApplicationDelegate
@@ -24,7 +23,7 @@ namespace Cor.Demo
 
             var entryPoint = new BasicApp();
 
-            engine = new Engine(new XiosPlatform (), appSettings, entryPoint);
+            engine = new Engine(new Platform (), appSettings, entryPoint);
 
 			return true;
 		}

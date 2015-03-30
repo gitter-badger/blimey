@@ -30,12 +30,12 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey.Demo
+namespace EngineDemo
 {
     using System;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Cor;
+    using Blimey;
     using System.Collections.Generic;
 
     class SpriteFontData
@@ -57,7 +57,7 @@ namespace Blimey.Demo
         #lineHeight=56 #baseLine=46 textureWidth=384 #textureHeight=320
         #textureFile="blimey.png"
         #charsCount=95
-        #charId=64 #uvStart=(0.0052, 0.0063) #uvEnd=(0.1354, 0.1625) #size=(50.0, 50.0) #xOffset=3 #yOffset=8 #xAdvance=51 
+        #charId=64 #uvStart=(0.0052, 0.0063) #uvEnd=(0.1354, 0.1625) #size=(50.0, 50.0) #xOffset=3 #yOffset=8 #xAdvance=51
         ...
         #kerningsCount=64
         #kerning #first=86 #second=117 #amount=-1

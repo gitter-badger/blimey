@@ -42,11 +42,11 @@ namespace Blimey
     using System.Diagnostics;
     using System.Linq;
     using System.IO;
-    
+
     using Abacus.SinglePrecision;
     using Fudge;
     using Oats;
-    using Platform;
+
 
 
     // Oats serialisers for types used in the Asset Pipeline.
@@ -461,7 +461,7 @@ namespace Blimey
     }
 
 
-   
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>

@@ -37,7 +37,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Platform.Xios
+namespace Blimey
 {
     using global::System;
     using global::System.Globalization;
@@ -61,13 +61,13 @@ namespace Platform.Xios
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class XiosPlatform
+    public sealed class Platform
         : IPlatform
     {
-        public XiosPlatform ()
+        public Platform ()
         {
-            var program = new XiosProgram ();
-            var api = new XiosApi ();
+            var program = new Program ();
+            var api = new Api ();
 
             api.InitialiseDependencies (program);
             program.InitialiseDependencies (api);
@@ -82,17 +82,17 @@ namespace Platform.Xios
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class XiosProgram
+    public sealed class Program
         : IProgram
     {
         OpenGLViewController viewController;
         UIWindow window;
 
-        XiosApi Api { get; set; }
+        Api Api { get; set; }
 
         public OpenGLViewController OpenGLViewController { get { return viewController; } }
 
-        internal void InitialiseDependencies (XiosApi api) { Api = api; }
+        internal void InitialiseDependencies (Api api) { Api = api; }
 
         public void Start (IApi platformImplementation, Action update, Action render)
         {
@@ -163,12 +163,12 @@ namespace Platform.Xios
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public partial class XiosApi
+    public partial class Api
         : IApi
     {
-        XiosProgram Program { get; set; }
+        Program Program { get; set; }
 
-        internal void InitialiseDependencies (XiosProgram program)
+        internal void InitialiseDependencies (Program program)
         {
             Program = program;
         }
@@ -188,7 +188,7 @@ namespace Platform.Xios
 
 
         /**
-         * Graphics ~ Implemented in Platform.OpenTk.cs
+         * Graphics ~ Implemented in CommonOpenTk.cs
          */
 
 

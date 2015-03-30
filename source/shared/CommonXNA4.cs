@@ -42,8 +42,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
 
-using Cor;
-using Platform;
+
+
 using Fudge;
 using Abacus.SinglePrecision;
 
@@ -181,7 +181,7 @@ namespace Cor.Platform.Xna4
         {
             this.Program.Graphics.Clear(colour.ToXna());
         }
-        
+
         public void gfx_ClearDepthBuffer (Single depth)
         {
             this.Program.Graphics.Clear(Microsoft.Xna.Framework.Graphics.ClearOptions.DepthBuffer, Rgba32.White.ToXna(), depth, 0);
@@ -874,7 +874,7 @@ namespace Cor.Platform.Xna4
     {
         VertexBufferWrapper _vertexBufWrap;
         IndexBufferWrapper _indexBufWrap;
-        
+
 
         public GeometryBuffer(Microsoft.Xna.Framework.Graphics.GraphicsDevice graphicsDevice, VertexDeclaration vertexDeclaration, Int32 vertexCount, Int32 indexCount)
         {
@@ -1154,9 +1154,9 @@ namespace Cor.Platform.Xna4
         public IndexBufferWrapper(Microsoft.Xna.Framework.Graphics.GraphicsDevice gfx, Int32 indexCount)
         {
             _xnaIndexBuf = new Microsoft.Xna.Framework.Graphics.IndexBuffer(
-                gfx, 
-                typeof(UInt16), 
-                indexCount, 
+                gfx,
+                typeof(UInt16),
+                indexCount,
                 Microsoft.Xna.Framework.Graphics.BufferUsage.None
                 );
 
@@ -1190,7 +1190,7 @@ namespace Cor.Platform.Xna4
             _xnaIndexBuf.SetData<UInt16>(udata);
         }
 
-        
+
         //public void SetData(UInt16[] data, int startIndex, int elementCount)
         //{
         //    _xnaIndexBuf.SetData<UInt16>(data, startIndex, elementCount);
@@ -1201,8 +1201,8 @@ namespace Cor.Platform.Xna4
         //    _xnaIndexBuf.SetData(offsetInBytes, data, startIndex, elementCount);
         //}
 
-        public int IndexCount 
-        { 
+        public int IndexCount
+        {
             get
             {
                 return _xnaIndexBuf.IndexCount;
@@ -1216,7 +1216,7 @@ namespace Cor.Platform.Xna4
         public MultiTouchController GetMultiTouchController() { return _touchScreen; }
         public PsmGamepad GetPsmGamepad() { return null; }
         public GenericGamepad GetGenericGamepad(){ return _genericPad; }
-        
+
         TouchScreenImplementation _touchScreen;
 
         GenericGamepad _genericPad;
@@ -1237,7 +1237,7 @@ namespace Cor.Platform.Xna4
                 case PlayerIndex.Four: return _pad4;
                 default: throw new System.NotSupportedException();
             }
-            
+
         }
 
         public InputManager(ICor engine)
@@ -1351,7 +1351,7 @@ namespace Cor.Platform.Xna4
         {
 #if WINDOWS
             realWorldSize = new Vector2(
-                this.ScreenResolutionWidth, 
+                this.ScreenResolutionWidth,
                 this.ScreenResolutionHeight
                 ) / 5000f;
 #endif
@@ -1363,7 +1363,7 @@ namespace Cor.Platform.Xna4
 
 
 #if XBOX
-            //guess 
+            //guess
             realWorldSize = new Vector2(0.8f, 0.45f);
 #endif
         }
@@ -1409,12 +1409,12 @@ namespace Cor.Platform.Xna4
         }
 
         public PanelType PanelType
-        { 
-            get 
+        {
+            get
             {
 
 #if TARGET_XBOX
-                return PanelType.Screen; 
+                return PanelType.Screen;
 #elif TARGET_WINDOWS_PHONE
                 return PanelType.TouchScreen;
 #elif TARGET_WINDOWS || WINDOWS
@@ -1425,10 +1425,10 @@ namespace Cor.Platform.Xna4
                 }
                 else
                 {
-                    return PanelType.Screen; 
+                    return PanelType.Screen;
                 }
 #endif
-            } 
+            }
 
         }
     }
@@ -1437,7 +1437,7 @@ namespace Cor.Platform.Xna4
         : ISystemManager
     {
         ScreenImplementation mainDisplayPanel;
-        
+
 
         internal ScreenImplementation MainDisplayPanel
         {
@@ -1465,7 +1465,7 @@ namespace Cor.Platform.Xna4
 
         public SystemManager(ICor engine, Microsoft.Xna.Framework.GraphicsDeviceManager gfxManager)
         {
-            
+
             mainDisplayPanel = new ScreenImplementation(engine, gfxManager.GraphicsDevice);
         }
 
@@ -1601,7 +1601,7 @@ namespace Cor.Platform.Xna4
                 pos.Y = -pos.Y;
 
                 var state = TouchPhase.Invalid;
-                
+
                 if (pressedThisFrame && !pressedLastFrame)
                 {
                     // new press
@@ -1642,8 +1642,8 @@ namespace Cor.Platform.Xna4
         Microsoft.Xna.Framework.Graphics.VertexBuffer _xnaVertBuf;
         VertexDeclaration _vertexDeclaration;
 
-        public VertexDeclaration VertexDeclaration 
-        { 
+        public VertexDeclaration VertexDeclaration
+        {
             get
             {
                 return _vertexDeclaration;
@@ -1665,8 +1665,8 @@ namespace Cor.Platform.Xna4
             _vertexDeclaration = vertexDeclaration;
             _xnaVertBuf = new Microsoft.Xna.Framework.Graphics.VertexBuffer(
                 gfx,
-                xnaVertDecl, 
-                vertexCount, 
+                xnaVertDecl,
+                vertexCount,
                 Microsoft.Xna.Framework.Graphics.BufferUsage.None
                 );
         }
@@ -1778,7 +1778,7 @@ namespace Cor.Platform.Xna4
     {
         XnaGame game;
 
-        // Track whether Dispose has been called. 
+        // Track whether Dispose has been called.
         private bool disposed = false;
 
 
@@ -1792,43 +1792,43 @@ namespace Cor.Platform.Xna4
             game.Run();
         }
 
-        // Implement IDisposable. 
-        // Do not make this method virtual. 
-        // A derived class should not be able to override this method. 
+        // Implement IDisposable.
+        // Do not make this method virtual.
+        // A derived class should not be able to override this method.
         public void Dispose()
         {
             Dispose(true);
-            // This object will be cleaned up by the Dispose method. 
-            // Therefore, you should call GC.SupressFinalize to 
-            // take this object off the finalization queue 
-            // and prevent finalization code for this object 
+            // This object will be cleaned up by the Dispose method.
+            // Therefore, you should call GC.SupressFinalize to
+            // take this object off the finalization queue
+            // and prevent finalization code for this object
             // from executing a second time.
             GC.SuppressFinalize(this);
         }
 
-        // Dispose(bool disposing) executes in two distinct scenarios. 
-        // If disposing equals true, the method has been called directly 
-        // or indirectly by a user's code. Managed and unmanaged resources 
-        // can be disposed. 
-        // If disposing equals false, the method has been called by the 
-        // runtime from inside the finalizer and you should not reference 
-        // other objects. Only unmanaged resources can be disposed. 
+        // Dispose(bool disposing) executes in two distinct scenarios.
+        // If disposing equals true, the method has been called directly
+        // or indirectly by a user's code. Managed and unmanaged resources
+        // can be disposed.
+        // If disposing equals false, the method has been called by the
+        // runtime from inside the finalizer and you should not reference
+        // other objects. Only unmanaged resources can be disposed.
         protected virtual void Dispose(bool disposing)
         {
-            // Check to see if Dispose has already been called. 
+            // Check to see if Dispose has already been called.
             if (!this.disposed)
             {
-                // If disposing equals true, dispose all managed 
-                // and unmanaged resources. 
+                // If disposing equals true, dispose all managed
+                // and unmanaged resources.
                 if (disposing)
                 {
                     // Dispose managed resources.
                     game.Dispose();
                 }
 
-                // Call the appropriate methods to clean up 
-                // unmanaged resources here. 
-                // If disposing is false, 
+                // Call the appropriate methods to clean up
+                // unmanaged resources here.
+                // If disposing is false,
                 // only the following code is executed.
                 // ..
 
@@ -1839,11 +1839,11 @@ namespace Cor.Platform.Xna4
         }
     }
 
-    internal 
+    internal
 #else
     public
 #endif
-        
-    
+
+
     */
 }

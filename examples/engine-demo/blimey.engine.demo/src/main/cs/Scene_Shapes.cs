@@ -30,12 +30,12 @@
 // │ DEALINGS IN THE SOFTWARE.                                                                                      │ \\
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey.Demo
+namespace EngineDemo
 {
     using System;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Cor;
+    using Blimey;
     using System.Collections.Generic;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -59,7 +59,7 @@ namespace Blimey.Demo
 
             Vector3.Normalise(ref _vec, out _vec);
         }
-        
+
         public override void OnUpdate(AppTime time)
         {
             _timer += time.Delta;
@@ -71,7 +71,7 @@ namespace Blimey.Demo
             this.Parent.Transform.LocalRotation = rot;
         }
     }
-    
+
     public class ColourChanger
         : Trait
     {
@@ -360,7 +360,7 @@ namespace Blimey.Demo
 
         Mesh teapotGPUMesh;
         Int32 teapotCounter;
-		
+
 		// GPU Resources.
 		Shader shader = null;
 
