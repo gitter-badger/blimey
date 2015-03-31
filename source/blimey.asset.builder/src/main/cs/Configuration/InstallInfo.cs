@@ -32,10 +32,10 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-using System;
-
 namespace Blimey.AssetBuilder.Configuration
 {
+	using System;
+
     public class InstallInfo
     {
         public Int32 InstallTime { get; set; }

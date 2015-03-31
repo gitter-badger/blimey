@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ShaderDeclaration xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/Platform">
+<ShaderDeclaration xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/Blimey">
 <InputDeclarations>
     <ShaderInputDeclaration>
         <DefaultValue xmlns:d4p1="http://schemas.datacontract.org/2004/07/Abacus.SinglePrecision" i:type="d4p1:Vector3">

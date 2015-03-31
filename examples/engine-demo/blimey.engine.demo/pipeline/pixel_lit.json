@@ -4,7 +4,7 @@
     "SourceSets" :
     [
         {
-            "Platforms" : [ "monomac" ],
+            "Platforms" : [ "monomac", "opentk" ],
             "Importer" :
             {
                 "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, blimey.engine.assets.buildpipelines",

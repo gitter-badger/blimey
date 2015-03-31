@@ -32,21 +32,22 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-using System;
-using System.IO;
-using System.Runtime.InteropServices;
-using ServiceStack;
-using ServiceStack.Text;
-using System.Linq;
-using System.Collections.Generic;
-using System.Reflection;
-using Blimey.Assets.Pipeline;
-using Oats;
-using Blimey;
-using NDesk.Options;
 
 namespace Blimey.AssetBuilder
 {
+    using System;
+    using System.IO;
+    using System.Runtime.InteropServices;
+    using ServiceStack;
+    using ServiceStack.Text;
+    using System.Linq;
+    using System.Collections.Generic;
+    using System.Reflection;
+    using Blimey.Assets.Pipeline;
+    using Oats;
+    using Blimey;
+    using NDesk.Options;
+
     public static class DateTimeHelper
     {
         public static DateTime FromUnixTime (Int32 epoch)
@@ -98,17 +99,30 @@ namespace Blimey.AssetBuilder
         {
             Console.WriteLine ("Blimey Asset Builder v" + Version);
 
-            Console.WriteLine ("");
-            Console.WriteLine (
-                "BAB build version: " +
-                File.ReadAllText (
-                    Path.Combine (
-                        Environment.GetEnvironmentVariable ("HOME"),
-						".bab.installation"))
-                .FromJson<Configuration.InstallInfo> ()
-                .InstallDateTime);
+            String homePath = (Environment.OSVersion.Platform == PlatformID.Unix || 
+                   Environment.OSVersion.Platform == PlatformID.MacOSX)
+                        ? Environment.GetEnvironmentVariable("HOME")
+                        : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
 
-            Console.WriteLine ("");
+            String installPath = Path.Combine (homePath, ".bab.installation");
+
+            try
+            {
+                Console.WriteLine ("");
+
+                var installedVersion =
+                    File.ReadAllText (installPath)
+                        .FromJson<Configuration.InstallInfo> ()
+                        .InstallDateTime;
+
+                Console.WriteLine ("BAB build version: " + installedVersion);
+
+                Console.WriteLine ("");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine ("No installation found.");
+            }
 
             OptionSet.Parse (args);
 

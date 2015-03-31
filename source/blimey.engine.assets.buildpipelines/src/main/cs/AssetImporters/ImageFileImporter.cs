@@ -91,6 +91,8 @@ namespace Blimey.Assets.Builders
                 }
             }
 
+            pngr.End ();
+
             outputResource.Data = pixmap;
 
             //Debug.DumpToPPM (output.Resource, input.Files[0] + "test.ppm");
