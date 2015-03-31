@@ -419,7 +419,7 @@ namespace Blimey
                         String vertexShaderSource = "";
                         String fragmentShaderSource = "";
                         char state = (char)0;
-                        foreach (var line in corShaderSource.Split (new String[] { Environment.NewLine }, StringSplitOptions.None))
+                        foreach (var line in corShaderSource.Split (new String[] { "\n\r", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries))
                         {
                             if (line == "=VSH=")
                             {
