@@ -1644,7 +1644,7 @@ namespace Blimey
                 catch (Exception ex)
                 {
                     // TODO: ...
-                    //InternalUtils.Log.Error ("FUCK! (It seems like OpenTK is broken): " + ex.Message);
+                    Console.WriteLine ("FUCK! (It seems like OpenTK is broken) " + ex.GetType () + ": " + ex.Message);
                 }
 #endif
 
@@ -1877,13 +1877,13 @@ namespace Blimey
                     // Not sure why this is not working with VANILLA TK
                     GL.GetProgramInfoLog (programHandle, logLength, out logLength, infoLog);
                     OpenTKHelper.ThrowErrors ();
+
+                    Console.WriteLine ("GFX: " + string.Format ("[Blimey] Program validate log:\n{0}", infoLog));
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine ("WTF! " + ex.GetType () + ": " + ex.Message);
+                    Console.WriteLine ("WTF! Failed to get program validation log ~ " + ex.GetType () + ": " + ex.Message);
                 }
-
-                Console.WriteLine ("GFX: " + string.Format ("[Blimey] Program validate log:\n{0}", infoLog));
             }
 
             Int32 status = 0;
