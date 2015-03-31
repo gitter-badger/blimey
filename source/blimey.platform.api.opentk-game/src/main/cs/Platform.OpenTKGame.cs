@@ -189,9 +189,14 @@ namespace Blimey
         /**
          * Resources
          */
-        public Stream res_GetFileStream(String fileName)
+        public Stream res_GetFileStream (String fileName)
         {
-            throw new NotImplementedException();
+            if (!File.Exists (fileName))
+            {
+                throw new FileNotFoundException (fileName);
+            }
+
+            return new FileStream (fileName, FileMode.Open);
         }
 
         /**
