@@ -62,21 +62,21 @@ namespace EngineDemo
             this.Configuration.BackgroundColour = Rgba32.DarkSlateGrey;
             //var goBoardMesh = new CubePrimitive (this.Cor.Graphics).Mesh;
 
-            MeshAsset mushMeshAsset0 = this.Blimey.Assets.Load<MeshAsset> ("big_mushroom.bba");
+            MeshAsset mushMeshAsset0 = this.Blimey.Assets.Load<MeshAsset> ("assets/big_mushroom.bba");
             vb0 = Cor.Graphics.CreateVertexBuffer (mushMeshAsset0.VertexDeclaration, mushMeshAsset0.VertexData.Length);
             ib0 = Cor.Graphics.CreateIndexBuffer (mushMeshAsset0.IndexData.Length);
             vb0.SetDataEx (mushMeshAsset0.VertexData);
             ib0.SetData (mushMeshAsset0.IndexData);
             var mushMesh0 = new Mesh (vb0, ib0);
 
-            MeshAsset mushMeshAsset1 = this.Blimey.Assets.Load<MeshAsset> ("small_mushroom_1.bba");
+            MeshAsset mushMeshAsset1 = this.Blimey.Assets.Load<MeshAsset> ("assets/small_mushroom_1.bba");
             vb1 = Cor.Graphics.CreateVertexBuffer (mushMeshAsset1.VertexDeclaration, mushMeshAsset1.VertexData.Length);
             ib1 = Cor.Graphics.CreateIndexBuffer (mushMeshAsset1.IndexData.Length);
             vb1.SetDataEx (mushMeshAsset1.VertexData);
             ib1.SetData (mushMeshAsset1.IndexData);
             var mushMesh1 = new Mesh (vb1, ib1);
 
-            MeshAsset mushMeshAsset2 = this.Blimey.Assets.Load<MeshAsset> ("small_mushroom_2.bba");
+            MeshAsset mushMeshAsset2 = this.Blimey.Assets.Load<MeshAsset> ("assets/small_mushroom_2.bba");
             vb2 = Cor.Graphics.CreateVertexBuffer (mushMeshAsset2.VertexDeclaration, mushMeshAsset2.VertexData.Length);
             ib2 = Cor.Graphics.CreateIndexBuffer (mushMeshAsset2.IndexData.Length);
             vb2.SetDataEx (mushMeshAsset2.VertexData);
@@ -84,9 +84,9 @@ namespace EngineDemo
             var mushMesh2 = new Mesh (vb2, ib2);
 
             // set up the debug renderer
-            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("pixel_lit.bba");
+            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("assets/pixel_lit.bba");
             shader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
-            TextureAsset woodTexAsset = this.Blimey.Assets.Load <TextureAsset> ("toadstool_diffuse.bba");
+            TextureAsset woodTexAsset = this.Blimey.Assets.Load <TextureAsset> ("assets/toadstool_diffuse.bba");
             woodTex = this.Cor.Graphics.CreateTexture (woodTexAsset);
 
             mush0 = SceneGraph.CreateSceneObject ("mush0");

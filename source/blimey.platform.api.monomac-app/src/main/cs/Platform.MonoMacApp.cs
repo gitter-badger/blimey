@@ -176,11 +176,10 @@ namespace Blimey
 
         public Stream res_GetFileStream (String filePath)
         {
-            String platformPath = Path.Combine ("assets/monomac", filePath);
-            String rtype = Path.GetExtension (platformPath);
+            String rtype = Path.GetExtension (filePath);
             String rname = Path.Combine (
-                Path.GetDirectoryName (platformPath),
-                Path.GetFileNameWithoutExtension (platformPath));
+                Path.GetDirectoryName (filePath),
+                Path.GetFileNameWithoutExtension (filePath));
             var correctPath = global::MonoMac.Foundation.NSBundle.MainBundle.PathForResource (rname, rtype);
 
             if (!File.Exists (correctPath))

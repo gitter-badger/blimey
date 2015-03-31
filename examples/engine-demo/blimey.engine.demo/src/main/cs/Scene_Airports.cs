@@ -101,7 +101,7 @@ namespace EngineDemo
 		{
             CommonDemoResources.Create (Cor, Blimey);
 
-            var lines = Blimey.Assets.Load <TextAsset> ("airports.bba")
+            var lines = Blimey.Assets.Load <TextAsset> ("assets/airports.bba")
                 .Text
                 .Split ('\n')
                 .ToList ();

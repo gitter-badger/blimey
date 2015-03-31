@@ -60,9 +60,9 @@ namespace EngineDemo
             //vb.SetData <REFLECTION> ()
 
 
-            var ta = Blimey.Assets.Load <TextureAsset> ("cvan01.bba");
+            var ta = Blimey.Assets.Load <TextureAsset> ("assets/cvan01.bba");
             tex1 = Cor.Graphics.CreateTexture (ta);
-            var tb = Blimey.Assets.Load <TextureAsset> ("bg2.bba");
+            var tb = Blimey.Assets.Load <TextureAsset> ("assets/bg2.bba");
             tex2 = Cor.Graphics.CreateTexture (tb);
 
 

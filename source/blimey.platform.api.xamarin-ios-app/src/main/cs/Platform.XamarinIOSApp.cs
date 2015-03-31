@@ -199,9 +199,7 @@ namespace Blimey
         {
             string ext = Path.GetExtension (filename);
 
-            string filenameNoExt = filename.Substring (0, filename.Length - ext.Length);
-
-            string path = Path.Combine ("assets/xios", filenameNoExt);
+            string path = filename.Substring (0, filename.Length - ext.Length);
 
             var resourcePathname = NSBundle.MainBundle.PathForResource (path, ext.Substring (1, ext.Length - 1));
 

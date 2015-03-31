@@ -133,12 +133,12 @@ namespace EngineDemo
 			this.Configuration.BackgroundColour = Rgba32.DarkSlateGrey;
 
 			// set up the debug renderer
-            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
+            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("assets/unlit.bba");
 
 			SpriteTrait.SpriteShader = this.Cor.Graphics.CreateShader(unlitShaderAsset);
 
-            TextAsset fntUvAsset = this.Blimey.Assets.Load <TextAsset> ("blimey_fnt_uv.bba");
-            TextureAsset fntTexAsset = this.Blimey.Assets.Load <TextureAsset> ("blimey_fnt_tex.bba");
+            TextAsset fntUvAsset = this.Blimey.Assets.Load <TextAsset> ("assets/blimey_fnt_uv.bba");
+            TextureAsset fntTexAsset = this.Blimey.Assets.Load <TextureAsset> ("assets/blimey_fnt_tex.bba");
 
             fntTex = this.Cor.Graphics.CreateTexture (fntTexAsset);
 

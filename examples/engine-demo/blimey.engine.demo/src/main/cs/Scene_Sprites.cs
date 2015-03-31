@@ -187,17 +187,17 @@ namespace EngineDemo
 
         public override void Start ()
         {
-            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("unlit.bba");
+            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("assets/unlit.bba");
             SpriteTrait.SpriteShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
 
 			AppWidth = this.Cor.Status.Width;
 			AppHeight = this.Cor.Status.Height;
 
-            var ta_za = this.Blimey.Assets.Load<TextureAsset> ("zazaka.bba");
+            var ta_za = this.Blimey.Assets.Load<TextureAsset> ("assets/zazaka.bba");
             texZa = this.Cor.Graphics.CreateTexture (ta_za);
 
             // Create the background.
-            var ta_bg = this.Blimey.Assets.Load<TextureAsset> ("bg2.bba");
+            var ta_bg = this.Blimey.Assets.Load<TextureAsset> ("assets/bg2.bba");
             texBg = this.Cor.Graphics.CreateTexture (ta_bg);
             /*
             var soBG = this.SceneGraph.CreateSceneObject ("bg");

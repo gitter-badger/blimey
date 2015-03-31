@@ -91,62 +91,59 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="assets\" />
-  </ItemGroup>
-  <ItemGroup>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\airports.bba">
-      <Link>assets\monomac\airports.bba</Link>
+      <Link>assets\airports.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\bg1.bba">
-      <Link>assets\monomac\bg1.bba</Link>
+      <Link>assets\bg1.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\bg2.bba">
-      <Link>assets\monomac\bg2.bba</Link>
+      <Link>assets\bg2.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\bg3.bba">
-      <Link>assets\monomac\bg3.bba</Link>
+      <Link>assets\bg3.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\cvan01.bba">
-      <Link>assets\monomac\cvan01.bba</Link>
+      <Link>assets\cvan01.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\cvan02.bba">
-      <Link>assets\monomac\cvan02.bba</Link>
+      <Link>assets\cvan02.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\pixel_lit.bba">
-      <Link>assets\monomac\pixel_lit.bba</Link>
+      <Link>assets\pixel_lit.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\unlit.bba">
-      <Link>assets\monomac\unlit.bba</Link>
+      <Link>assets\unlit.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\vertex_lit.bba">
-      <Link>assets\monomac\vertex_lit.bba</Link>
+      <Link>assets\vertex_lit.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\blimey_fnt_tex.bba">
-      <Link>assets\monomac\blimey_fnt_tex.bba</Link>
+      <Link>assets\blimey_fnt_tex.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\blimey_fnt_uv.bba">
-      <Link>assets\monomac\blimey_fnt_uv.bba</Link>
+      <Link>assets\blimey_fnt_uv.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\zazaka.bba">
-      <Link>assets\monomac\zazaka.bba</Link>
+      <Link>assets\zazaka.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\particles.bba">
-      <Link>assets\monomac\particles.bba</Link>
+      <Link>assets\particles.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\wood.bba">
-      <Link>assets\monomac\wood.bba</Link>
+      <Link>assets\wood.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\big_mushroom.bba">
-      <Link>assets\monomac\big_mushroom.bba</Link>
+      <Link>assets\big_mushroom.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\small_mushroom_1.bba">
-      <Link>assets\monomac\small_mushroom_1.bba</Link>
+      <Link>assets\small_mushroom_1.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\small_mushroom_2.bba">
-      <Link>assets\monomac\small_mushroom_2.bba</Link>
+      <Link>assets\small_mushroom_2.bba</Link>
     </BundleResource>
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\toadstool_diffuse.bba">
-      <Link>assets\monomac\toadstool_diffuse.bba</Link>
+      <Link>assets\toadstool_diffuse.bba</Link>
     </BundleResource>
   </ItemGroup>
   <ItemGroup>

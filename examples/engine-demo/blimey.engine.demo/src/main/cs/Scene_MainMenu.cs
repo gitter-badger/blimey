@@ -67,7 +67,7 @@ namespace EngineDemo
         Texture tex = null;
         public override void Start ()
         {
-            var ta = Blimey.Assets.Load <TextureAsset> ("bg1.bba");
+            var ta = Blimey.Assets.Load <TextureAsset> ("assets/bg1.bba");
             tex = Cor.Graphics.CreateTexture (ta);
             q = new PrimitiveRenderer.Triple ();
             q.blend = BlendMode.Default;
