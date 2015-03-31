@@ -129,9 +129,9 @@ namespace EngineDemo
 
         public static void Create (Engine cor, Blimey blimey)
         {
-            var unlitShaderAsset = blimey.Assets.Load<ShaderAsset>("unlit.bba");
-            var vertexLitShaderAsset = blimey.Assets.Load<ShaderAsset>("vertex_lit.bba");
-            var pixelLitShaderAsset = blimey.Assets.Load<ShaderAsset>("pixel_lit.bba");
+            var unlitShaderAsset = blimey.Assets.Load<ShaderAsset>("assets/unlit.bba");
+            var vertexLitShaderAsset = blimey.Assets.Load<ShaderAsset>("assets/vertex_lit.bba");
+            var pixelLitShaderAsset = blimey.Assets.Load<ShaderAsset>("assets/pixel_lit.bba");
 
             UnlitShader = cor.Graphics.CreateShader (unlitShaderAsset);
             VertexLitShader = cor.Graphics.CreateShader (vertexLitShaderAsset);
