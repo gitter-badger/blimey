@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -36,44 +36,50 @@ namespace Blimey
 {
     using System;
     using System.Runtime.InteropServices;
+    using System.Globalization;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
+
     using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
+
+    using System.Linq;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    internal abstract class PotentialGesture
     {
-        internal Blimey (Engine engine)
-        {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
 
+        // in meters
+        const float DISPLACEMENT_REQUIRED_FOR_DRAGS = 0.01f;
+        const float MAX_DISPLACEMENT_FOR_TAPS = 0.005f;
+
+        protected InputEventSystem inputEventSystem;
+
+        static int PotentialGestureIDAssigner = 0;
+
+        internal PotentialGesture(
+            InputEventSystem inputEventSystem,
+            GestureType type, String[] touchIDs)
+        {
+            this.id = PotentialGestureIDAssigner;
+            this.inputEventSystem = inputEventSystem;
+            PotentialGestureIDAssigner++;
+
+            this.type = type;
+            this.touchIDs = touchIDs;
         }
 
-        public Assets Assets { get; private set; }
+        internal abstract Gesture Update(Single dt, List<TouchTracker> touchTrackers);
 
-        public InputEventSystem InputEventSystem { get; private set; }
+        internal bool Finished { get { return failedGesture || completedGesture; } }
 
-        public DebugRenderer DebugRenderer { get; private set; }
+        protected bool failedGesture = false;
+        protected bool completedGesture = false;
 
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
-
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
-        }
+        protected Int32 id;
+        protected GestureType type;
+        protected String[] touchIDs;
     }
 }

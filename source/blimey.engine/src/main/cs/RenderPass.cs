@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -46,34 +46,37 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public sealed class RenderPass
     {
-        internal Blimey (Engine engine)
+        public struct RenderPassConfiguration
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+            public static RenderPassConfiguration Default
+            {
+                get
+                {
+                    var rpc = new RenderPassConfiguration ();
+                    rpc.ClearDepthBuffer = false;
+                    rpc.FogEnabled = false;
+                    rpc.FogColour = Rgba32.CornflowerBlue;
+                    rpc.FogStart = 300.0f;
+                    rpc.FogEnd = 550.0f;
+                    rpc.EnableDefaultLighting = true;
+                    rpc.CameraProjectionType = CameraProjectionType.Perspective;
+                    return rpc;
+                }
+            }
 
+            public Boolean ClearDepthBuffer;
+            public Boolean FogEnabled;
+            public Rgba32 FogColour;
+            public Single FogStart;
+            public Single FogEnd;
+            public Boolean EnableDefaultLighting;
+            public CameraProjectionType CameraProjectionType;
         }
 
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
-
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
-        }
+        internal RenderPass () {}
+        public String Name { get; set; }
+        public RenderPassConfiguration Configuration { get; set; }
     }
 }

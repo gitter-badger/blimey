@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -46,34 +46,21 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public sealed class Mesh
     {
-        internal Blimey (Engine engine)
-        {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+        readonly VertexBuffer vertexBuffer;
+        readonly IndexBuffer indexBuffer;
 
+        public Mesh (VertexBuffer vertexBuffer, IndexBuffer indexBuffer)
+        {
+            this.vertexBuffer = vertexBuffer;
+            this.indexBuffer = indexBuffer;
         }
 
-        public Assets Assets { get; private set; }
+        public Int32 TriangleCount { get { return indexBuffer.IndexCount / 3; } }
 
-        public InputEventSystem InputEventSystem { get; private set; }
 
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
-
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
-        }
+        public VertexBuffer VertexBuffer { get { return vertexBuffer; } }
+        public IndexBuffer IndexBuffer { get { return indexBuffer; } }
     }
 }

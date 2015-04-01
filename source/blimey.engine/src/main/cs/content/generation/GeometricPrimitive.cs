@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,64 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public abstract class GeometricPrimitive
     {
-        internal Blimey (Engine engine)
-        {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+        public Mesh Mesh { get; private set; }
 
+        // Once all the geometry has been specified by calling AddVertex and AddIndex,
+        // this method copies the vertex and index data into GPU format buffers, ready
+        // for efficient rendering.
+        protected void InitializePrimitive(Graphics gfx)
+        {
+            var vertexBuffer = gfx.CreateVertexBuffer (VertexPositionNormal.Default.VertexDeclaration, vertices.Count);
+            var indexBuffer = gfx.CreateIndexBuffer (indices.Count);
+
+            vertexBuffer.SetData (vertices.ToArray());
+            indexBuffer.SetData (indices.ToArray());
+
+            Mesh = new Mesh (vertexBuffer, indexBuffer);
         }
 
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        /// <summary>
+        /// Queries the index of the current vertex. This starts at
+        /// zero, and increments every time AddVertex is called.
+        /// </summary>
+        protected Int32 CurrentVertex
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
+            get { return vertices.Count; }
         }
 
-        internal void PostUpdate(AppTime time)
+        /// <summary>
+        /// Adds a new vertex to the primitive model. This should only be called
+        /// during the initialization process, before InitializePrimitive.
+        /// </summary>
+        protected void AddVertex(Vector3 position, Vector3 normal)
         {
-            this.PrimitiveRenderer.PostUpdate (time);
+            var vertElement = new VertexPositionNormal(position, normal);
+            vertices.Add(vertElement);
         }
+
+        /// <summary>
+        /// Adds a new index to the primitive model. This should only be called
+        /// during the initialization process, before InitializePrimitive.
+        /// </summary>
+        protected void AddIndex(Int32 index)
+        {
+            if (index > UInt16.MaxValue)
+                throw new ArgumentOutOfRangeException("index");
+
+            indices.Add((UInt16)index);
+        }
+
+        // During the process of constructing a primitive model, vertex
+        // and index data is stored on the CPU in these managed lists.
+        List<VertexPositionNormal> vertices = new List<VertexPositionNormal>();
+        List<Int32> indices = new List<Int32>();
     }
 }

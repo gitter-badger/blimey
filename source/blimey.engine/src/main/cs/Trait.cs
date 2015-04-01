@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -45,35 +45,42 @@ namespace Blimey
     using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public class Blimey
+    
+    //
+    // TRAIT
+    //
+    // A game object can exhibit a number of behaviours.  The behaviours are defined as children of
+    // this abstract class.
+    //
+    public abstract class Trait
     {
-        internal Blimey (Engine engine)
-        {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+        protected Engine Cor { get; set; }
+        protected Blimey Blimey { get; set; }
 
+        public Entity Parent { get; set; }
+
+        public Boolean Active { get; set; }
+
+        // INTERNAL METHODS
+        // called after constructor and before awake
+            internal void Initilise (Engine cor, Blimey blimeyServices, Entity parent)
+        {
+            Cor = cor;
+            Blimey = blimeyServices;
+            Parent = parent;
+
+            Active = true;
         }
 
-        public Assets Assets { get; private set; }
+        // PUBLIC CALLBACKS
+        public virtual void OnAwake () {}
 
-        public InputEventSystem InputEventSystem { get; private set; }
+        public virtual void OnUpdate (AppTime time) {}
 
-        public DebugRenderer DebugRenderer { get; private set; }
+        // Called when the Enabled state of the parent gameobject changes
+        public virtual void OnEnable() {}
+        public virtual void OnDisable() {}
 
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
-
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
-        }
+        public virtual void OnDestroy () {}
     }
 }

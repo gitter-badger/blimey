@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,99 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public class SpherePrimitive
+        : GeometricPrimitive
     {
-        internal Blimey (Engine engine)
+        const float diameter = 1f;
+        const int tessellation = 16;
+
+        /// <summary>
+        /// Constructs a new cube primitive, with the specified size.
+        /// </summary>
+        public SpherePrimitive(Graphics graphicsDevice)
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+            Debug.Assert(tessellation >= 3);
 
-        }
 
-        public Assets Assets { get; private set; }
+            int verticalSegments = tessellation;
+            int horizontalSegments = tessellation * 2;
 
-        public InputEventSystem InputEventSystem { get; private set; }
+            float radius = diameter / 2;
 
-        public DebugRenderer DebugRenderer { get; private set; }
+            // Start with a single vertex at the bottom of the sphere.
+            AddVertex(Vector3.Down * radius, Vector3.Down);
 
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
+            float pi; Maths.Pi(out pi);
+            float piOver2 = pi / 2;
+            // Create rings of vertices at progressively higher latitudes.
+            for (int i = 0; i < verticalSegments - 1; i++)
+            {
+                float latitude = ((i + 1) * pi /
+                                            verticalSegments) - piOver2;
 
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
+                float dy = (float)Math.Sin(latitude);
+                float dxz = (float)Math.Cos(latitude);
 
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
+                float tau; Maths.Tau(out tau);
+
+                // Create a single ring of vertices at this latitude.
+                for (int j = 0; j < horizontalSegments; j++)
+                {
+                    float longitude = j * tau / horizontalSegments;
+
+                    float dx = (float)Math.Cos(longitude) * dxz;
+                    float dz = (float)Math.Sin(longitude) * dxz;
+
+                    Vector3 normal = new Vector3(dx, dy, dz);
+
+                    AddVertex(normal * radius, normal);
+                }
+            }
+
+            // Finish with a single vertex at the top of the sphere.
+            AddVertex(Vector3.Up * radius, Vector3.Up);
+
+            // Create a fan connecting the bottom vertex to the bottom latitude ring.
+            for (int i = 0; i < horizontalSegments; i++)
+            {
+                AddIndex(0);
+                AddIndex(1 + (i + 1) % horizontalSegments);
+                AddIndex(1 + i);
+            }
+
+            // Fill the sphere body with triangles joining each pair of latitude rings.
+            for (int i = 0; i < verticalSegments - 2; i++)
+            {
+                for (int j = 0; j < horizontalSegments; j++)
+                {
+                    int nextI = i + 1;
+                    int nextJ = (j + 1) % horizontalSegments;
+
+                    AddIndex(1 + i * horizontalSegments + j);
+                    AddIndex(1 + i * horizontalSegments + nextJ);
+                    AddIndex(1 + nextI * horizontalSegments + j);
+
+                    AddIndex(1 + i * horizontalSegments + nextJ);
+                    AddIndex(1 + nextI * horizontalSegments + nextJ);
+                    AddIndex(1 + nextI * horizontalSegments + j);
+                }
+            }
+
+            // Create a fan connecting the top vertex to the top latitude ring.
+            for (int i = 0; i < horizontalSegments; i++)
+            {
+                AddIndex(CurrentVertex - 1);
+                AddIndex(CurrentVertex - 2 - (i + 1) % horizontalSegments);
+                AddIndex(CurrentVertex - 2 - i);
+            }
+
+            InitializePrimitive(graphicsDevice);
         }
     }
 }

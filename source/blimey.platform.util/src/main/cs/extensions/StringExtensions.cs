@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,16 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using Fudge;
-    using Abacus.SinglePrecision;
-    using Oats;
 
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public static class StringExtensions
     {
-        internal Blimey (Engine engine)
+        // http://msdn.microsoft.com/en-us/library/system.object.gethashcode(v=vs.110).aspx
+        public static String[] Split (this String value, String splitter)
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
-
-        }
-
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
-
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
+            return value.Split (new String[] { splitter }, StringSplitOptions.None);
         }
     }
 }

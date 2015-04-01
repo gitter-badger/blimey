@@ -172,13 +172,13 @@ namespace EngineDemo
         void IncreaseSelected()
         {
             _selectedIndex++;
-            _selectedIndex = BlimeyMathsHelper.Clamp(_selectedIndex, 0, _menuSceneObjects.Count - 1);
+            _selectedIndex = MathsUtils.Clamp(_selectedIndex, 0, _menuSceneObjects.Count - 1);
         }
 
         void DecreaseSelected()
         {
             _selectedIndex--;
-            _selectedIndex = BlimeyMathsHelper.Clamp(_selectedIndex, 0, _menuSceneObjects.Count - 1);
+            _selectedIndex = MathsUtils.Clamp(_selectedIndex, 0, _menuSceneObjects.Count - 1);
         }
 
         Scene CheckForMenuInput()

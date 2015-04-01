@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,20 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
+    using Fudge;
 
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public static class Vector4Extensions
     {
-        internal Blimey (Engine engine)
+        public static Rgba32 ToRgba32 (this Vector4 value)
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
-
-        }
-
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
-
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
+            return new Rgba32 (
+                (Byte) (value.X * 255f),
+                (Byte) (value.Y * 255f),
+                (Byte) (value.Z * 255f),
+                (Byte) (value.W * 255f));
         }
     }
 }

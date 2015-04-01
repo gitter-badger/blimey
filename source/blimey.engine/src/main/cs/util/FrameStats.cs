@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -36,44 +36,65 @@ namespace Blimey
 {
     using System;
     using System.Runtime.InteropServices;
+    using System.Globalization;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
     using System.Linq;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    internal static class FrameStats
     {
-        internal Blimey (Engine engine)
-        {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+        static readonly Dictionary <String, Double> timers = new Dictionary <String, Double> ();
 
+        static FrameStats ()
+        {
+            Reset ();
         }
 
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        public static void Add (String key, Double delta)
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
+            if (!timers.ContainsKey (key))
+                timers [key] = 0;
+            timers [key] += delta;
         }
 
-        internal void PostUpdate(AppTime time)
+        public static void Reset ()
         {
-            this.PrimitiveRenderer.PostUpdate (time);
+            timers.Clear ();
+        }
+
+        static Int32 counter = 0;
+        public static void SlowLog ()
+        {
+            if (counter++ % 30 != 0)
+                return;
+            // Right now we are targeting 30 FPS
+            // and have allocated 10ms to update
+            // and 10ms to render per frame which
+            // gives us plenty of headroom.
+
+            foreach (var key in timers.Keys)
+            {
+                if (key == "DrawUserPrimitivesCount" || key == "DrawIndexedPrimitivesCount")
+                {
+                    if (timers [key] > 50)
+                        Console.WriteLine (String.Format ("{0} -> {1}", key, timers [key]));
+                }
+                else if (key == "RenderTime" || key == "UpdateTime")
+                {
+                    if (timers [key] > 10)
+                        Console.WriteLine (String.Format ("{0} -> {1:0.##}ms", key, timers [key]));
+                }
+                else
+                {
+                    if (timers [key] > 0.5)
+                        Console.WriteLine (String.Format ("{0} -> {1:0.##}ms", key, timers [key]));
+                }
+            }
         }
     }
 }

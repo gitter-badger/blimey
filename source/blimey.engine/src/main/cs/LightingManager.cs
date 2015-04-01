@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -46,34 +46,61 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    // todo: this should be owned by the scene
+    public static class LightingManager
     {
-        internal Blimey (Engine engine)
+        public static Rgba32 ambientLightColour;
+        public static Rgba32 emissiveColour;
+        public static Rgba32 specularColour;
+        public static Single specularPower;
+
+
+        public static Boolean fogEnabled;
+        public static Single fogStart;
+        public static Single fogEnd;
+        public static Rgba32 fogColour;
+
+
+        public static Vector3 dirLight0Direction;
+        public static Rgba32 dirLight0DiffuseColour;
+        public static Rgba32 dirLight0SpecularColour;
+
+        public static Vector3 dirLight1Direction;
+        public static Rgba32 dirLight1DiffuseColour;
+        public static Rgba32 dirLight1SpecularColour;
+
+        public static Vector3 dirLight2Direction;
+        public static Rgba32 dirLight2DiffuseColour;
+        public static Rgba32 dirLight2SpecularColour;
+
+        static LightingManager()
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+            ambientLightColour = Rgba32.Black;
+            emissiveColour = Rgba32.DarkSlateGrey;
+            specularColour = Rgba32.DarkGrey;
+            specularPower = 2f;
 
-        }
+            fogEnabled = true;
+            fogStart = 100f;
+            fogEnd = 1000f;
+            fogColour = Rgba32.BlueViolet;
 
-        public Assets Assets { get; private set; }
 
-        public InputEventSystem InputEventSystem { get; private set; }
+            dirLight0Direction = new Vector3(-0.3f, -0.9f, +0.3f);
+            Vector3.Normalise(ref dirLight0Direction, out dirLight0Direction);
+            dirLight0DiffuseColour = Rgba32.DimGrey;
+            dirLight0SpecularColour = Rgba32.DarkGreen;
 
-        public DebugRenderer DebugRenderer { get; private set; }
+            dirLight1Direction = new Vector3(0.3f, 0.1f, -0.3f);
+            Vector3.Normalise(ref dirLight1Direction, out dirLight1Direction);
+            dirLight1DiffuseColour = Rgba32.DimGrey;
+            dirLight1SpecularColour = Rgba32.DarkRed;
 
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
+            dirLight2Direction = new Vector3( -0.7f, -0.3f, +0.1f);
+            Vector3.Normalise(ref dirLight2Direction, out dirLight2Direction);
+            dirLight2DiffuseColour = Rgba32.DimGrey;
+            dirLight2SpecularColour = Rgba32.DarkBlue;
 
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
-
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
         }
     }
 }

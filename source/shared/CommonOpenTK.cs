@@ -1821,7 +1821,7 @@ namespace Blimey
 #if TKVER_VANILLA_GL4
             GL.GetProgram (prog, GetProgramParameterName.InfoLogLength, out logLength);
 #else
-            GL.GetProgram (prog, ProgramParameter.InfoLogLengt, out logLength);
+            GL.GetProgram (prog, ProgramParameter.InfoLogLength, out logLength);
 #endif
             OpenTKHelper.ThrowErrors ();
 

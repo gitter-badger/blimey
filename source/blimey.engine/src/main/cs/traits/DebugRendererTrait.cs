@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,33 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
-
+    
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public sealed class DebugRendererTrait
+        : Trait
     {
-        internal Blimey (Engine engine)
-        {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+        public Rgba32 Colour { get; set; }
+        public String RenderPass { get; set; }
 
+        public DebugRendererTrait ()
+        {
+            this.Colour = Rgba32.Red;
+            this.RenderPass = "Debug";
         }
 
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        public override void OnUpdate (AppTime time)
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
+            BoundingBox b;
 
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
+            //fuck
+            //this.Parent.Transform.Position
+            b.Min = this.Parent.Transform.Location.Translation - (this.Parent.Transform.Scale / 2f);
+            b.Max = this.Parent.Transform.Location.Translation + (this.Parent.Transform.Scale / 2f);
+
+            this.Parent.Owner.Blimey.DebugRenderer.AddBoundingBox (RenderPass, b, Colour);
         }
     }
 }

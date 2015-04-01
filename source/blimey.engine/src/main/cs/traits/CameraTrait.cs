@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,88 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
-
+    
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public sealed class CameraTrait
+        : Trait
     {
-        internal Blimey (Engine engine)
+        public CameraProjectionType Projection = CameraProjectionType.Perspective;
+
+        // perspective settings
+        public Single FieldOfView = Maths.ToRadians(45.0f);
+
+        // orthographic settings
+        public Single ortho_depth = 100f;
+        public Single ortho_width = 1f;
+        public Single ortho_height = 1f;
+        public Single ortho_zoom = 1f;
+
+        // clipping planes
+        public Single NearPlaneDistance = 1.0f;
+        public Single FarPlaneDistance = 10000.0f;
+
+        public Matrix44 ViewMatrix44 { get { return _view; } }
+
+        public Matrix44 ProjectionMatrix44 { get { return _projection; } }
+
+        Matrix44 _projection;
+        Matrix44 _view;
+
+        // return this cameras bounding frustum
+        //public BoundingFrustum BoundingFrustum { get { return new BoundingFrustum (ViewMatrix44 * ProjectionMatrix44); } }
+
+        public bool TempWORKOUTANICERWAY = false;
+
+        // Allows the game component to update itself.
+        public override void OnUpdate (AppTime time)
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+            var camUp = this.Parent.Transform.Up;
 
-        }
+            var camLook = this.Parent.Transform.Forward;
 
-        public Assets Assets { get; private set; }
+            Vector3 pos = this.Parent.Transform.Position;
+            Vector3 target = pos + (camLook * FarPlaneDistance);
 
-        public InputEventSystem InputEventSystem { get; private set; }
+            Matrix44.CreateLookAt(
+                ref pos,
+                ref target,
+                ref camUp,
+                out _view);
 
-        public DebugRenderer DebugRenderer { get; private set; }
+            Single width = (Single) this.Cor.Status.Width;
+            Single height = (Single)this.Cor.Status.Height;
 
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
-
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
+            if (Projection == CameraProjectionType.Orthographic)
+            {
+                if(TempWORKOUTANICERWAY)
+                {
+                    _projection =
+                        Matrix44.CreateOrthographic(
+                            width / SpriteTrait.SpriteConfiguration.Default.SpriteSpaceScale,
+                            height / SpriteTrait.SpriteConfiguration.Default.SpriteSpaceScale,
+                            1, -1);
+                }
+                else
+                {
+                    _projection =
+                        Matrix44.CreateOrthographicOffCenter(
+              -0.5f * ortho_width * ortho_zoom,  +0.5f * ortho_width * ortho_zoom,
+              -0.5f * ortho_height * ortho_zoom, +0.5f * ortho_height * ortho_zoom,
+              +0.5f * ortho_depth,  -0.5f * ortho_depth);
+                }
+            }
+            else
+            {
+                _projection =
+                    Matrix44.CreatePerspectiveFieldOfView (
+                        FieldOfView,
+                        width / height, // aspect ratio
+                        NearPlaneDistance,
+                        FarPlaneDistance);
+            }
         }
     }
 }

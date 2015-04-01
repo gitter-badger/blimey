@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,41 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
-
+    
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public class Blimey
+    //
+    // ORBIT AROUND SUBJECT
+    //
+    // This behaviour takes a Subject Transform and a Speed and uses to oribit it's parent SceneObject
+    // around the Subject.  This radius of the orbit is the distance from the parent SceneObject
+    // to the Subject.  If this distance changes at runtime the orbit radius will also change.
+    //
+    public sealed class OrbitAroundSubjectTrait
+        : Trait
     {
-        internal Blimey (Engine engine)
+        #region SETTINGS (These are values that can be set per instance of this behaviour)
+        public Transform CameraSubject = null;
+        public float Speed = 0.1f;
+        #endregion
+
+        // UPDATE
+        // Override update so that every frame we move the parent SceneObjects transform a little.
+        public override void OnUpdate(AppTime time)
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+            Vector3 offset = this.Parent.Transform.LocalPosition - CameraSubject.Position;
 
-        }
+            Matrix44 rotation =
+                Matrix44.CreateRotationY(Speed * time.Delta);
 
-        public Assets Assets { get; private set; }
+            Vector3 offsetIn = offset;
 
-        public InputEventSystem InputEventSystem { get; private set; }
+            Vector3.Transform(ref offsetIn, ref rotation, out offset);
 
-        public DebugRenderer DebugRenderer { get; private set; }
+            this.Parent.Transform.LocalPosition = offset + CameraSubject.Position;
 
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
-
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
         }
     }
+
 }

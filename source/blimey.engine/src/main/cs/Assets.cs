@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -46,34 +46,48 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public sealed class Assets
     {
-        internal Blimey (Engine engine)
-        {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+        readonly Engine engine;
 
+        internal Assets (Engine engine)
+        {
+            this.engine = engine;
         }
 
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        public T Load<T> (String assetId)
+            where T
+            : class, IAsset
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
+            using (Stream stream = engine.Resources.GetFileStream (assetId))
+            {
+                using (var channel = new SerialisationChannel<BinaryStreamSerialiser> (stream, ChannelMode.Read))
+                {
+                    ProcessFileHeader (channel);
+                    T asset = channel.Read <T> ();
+                    return asset;
+                }
+            }
         }
 
-        internal void PostUpdate(AppTime time)
+        void ProcessFileHeader (ISerialisationChannel sc)
         {
-            this.PrimitiveRenderer.PostUpdate (time);
+            // file type
+            Byte f0 = sc.Read <Byte> ();
+            Byte f1 = sc.Read <Byte> ();
+            Byte f2 = sc.Read <Byte> ();
+
+            if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'A')
+                throw new Exception ("Asset file doesn't have the correct header.");
+
+            // file version
+            Byte fileVersion = sc.Read <Byte> ();
+
+            if (fileVersion != 0)
+                throw new Exception ("Only file format version 0 is supported.");
+
+            // platform index
+            Byte platformIndex = sc.Read <Byte> ();
         }
     }
 }

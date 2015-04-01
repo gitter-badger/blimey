@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -36,44 +36,67 @@ namespace Blimey
 {
     using System;
     using System.Runtime.InteropServices;
+    using System.Globalization;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
+
     using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
+
+    using System.Linq;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    internal class PotentialTapGesture
+        : PotentialGesture
     {
-        internal Blimey (Engine engine)
+        const Single MaxHoldTimeForTap = 0.6f;
+        const Single MaxDisplacementForTap = 0.005f;
+
+        Single timer = 0f;
+
+        internal PotentialTapGesture(InputEventSystem inputEventSystem, String[] touchIDs)
+            : base(inputEventSystem, GestureType.Tap, touchIDs)
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
 
         }
 
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        internal override Gesture Update(float dt, List<TouchTracker> touchTrackers)
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
+            if( failedGesture )
+                throw new Exception("wrong!");
 
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
+            this.timer += dt;
+
+            if( this.timer > MaxHoldTimeForTap)
+                failedGesture = true;
+
+            var touchTracker = inputEventSystem.GetTouchTracker(touchIDs[0]);
+
+            if (touchTracker == null)
+            {
+                failedGesture = true;
+                return null;
+            }
+
+
+            if( touchTracker.Phase == TouchPhase.JustReleased )
+            {
+                float distanceTravelled = touchTracker.GetDistanceTraveled(TouchPositionSpace.RealWorld);
+                if (distanceTravelled <= MaxDisplacementForTap)
+                {
+                    completedGesture = true;
+                    return new Gesture(this.inputEventSystem, this.type, this.touchIDs);
+                }
+                else
+                {
+                    failedGesture = true;
+                }
+
+            }
+
+            return null;
         }
     }
 }

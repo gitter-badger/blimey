@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,29 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using Fudge;
-    using Abacus.SinglePrecision;
-    using Oats;
+    using System.Text;
 
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public static class ListExtensions
     {
-        internal Blimey (Engine engine)
+        public static TP AddEx<TC, TP> (this List <TC> me, TP item) where TP : TC
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
-
+            me.Add (item);
+            return item;
         }
 
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        public static String Join<T> (this IEnumerable<T> me, String seperator)
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
-
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
+            var sb = new StringBuilder ();
+            foreach (var value in me)
+            {
+                if (sb.Length > 0)
+                    sb.Append (seperator);
+                sb.Append (value);
+            }
+            return sb.ToString ();
         }
     }
 }

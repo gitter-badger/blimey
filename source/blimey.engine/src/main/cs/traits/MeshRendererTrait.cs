@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,30 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
-
+    
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public class Blimey
+    //
+    // MESH RENDERER
+    //
+    // This behaviour takes a Blimey.Model and a Material, it then renders the models
+    // at location, scale and orientaion of the parent SceneObject's Transform.
+    //
+    public sealed class MeshRendererTrait
+        : Trait
     {
-        internal Blimey (Engine engine)
+
+        public Mesh Mesh { get; set; }
+        public Material Material { get; set; }
+        public CullMode CullMode { get; set; }
+
+        public MeshRendererTrait()
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
-
-        }
-
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
-
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
+            this.Mesh = null;
+            this.Material = null;
+            this.CullMode = CullMode.None;
         }
     }
+
 }

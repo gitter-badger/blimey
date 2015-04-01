@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -36,44 +36,63 @@ namespace Blimey
 {
     using System;
     using System.Runtime.InteropServices;
+    using System.Globalization;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
+
     using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
+
+    using System.Linq;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    internal class PotentialFlickGesture
+        : PotentialGesture
     {
-        internal Blimey (Engine engine)
+        const float velocityRequired = 0.05f;
+        const float displacementRequired = 0.01f;
+
+        internal PotentialFlickGesture(
+            InputEventSystem inputEventSystem,
+            String[] touchIDs)
+            : base(inputEventSystem, GestureType.Flick, touchIDs)
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
 
         }
 
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        internal override Gesture Update(
+            float dt,
+            List<TouchTracker> touchTrackers)
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
+            var touchTracker = inputEventSystem.GetTouchTracker(touchIDs[0]);
 
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
+            if (touchTracker == null)
+            {
+                failedGesture = true;
+                return null;
+            }
+
+            var velocity = touchTracker.GetVelocity(TouchPositionSpace.RealWorld).Length();
+
+
+            float distanceTravelled = touchTracker.GetDistanceTraveled(TouchPositionSpace.RealWorld);
+
+            if (velocity >= velocityRequired &&
+                distanceTravelled >= displacementRequired &&
+                touchTracker.Phase == TouchPhase.JustReleased )
+            {
+                completedGesture = true;
+                return new Gesture(this.inputEventSystem, this.type, this.touchIDs);
+            }
+
+            if( touchTracker.Phase == TouchPhase.JustReleased )
+            {
+                failedGesture = true;
+            }
+
+            return null;
         }
     }
 }

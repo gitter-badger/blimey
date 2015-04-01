@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,34 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+      public class BillboardPrimitive
+        : GeometricPrimitive
     {
-        internal Blimey (Engine engine)
+        public BillboardPrimitive (Graphics graphicsDevice)
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+            // Six indices (two triangles) per face.
+            AddIndex (0);
+            AddIndex (1);
+            AddIndex (2);
 
-        }
+            AddIndex (0);
+            AddIndex (2);
+            AddIndex (3);
 
-        public Assets Assets { get; private set; }
 
-        public InputEventSystem InputEventSystem { get; private set; }
+            // Four vertices per face.
+            AddVertex ((-Vector3.Right - Vector3.Forward) / 2, Vector3.Up);
+            AddVertex ((-Vector3.Right + Vector3.Forward) / 2, Vector3.Up);
+            AddVertex ((Vector3.Right + Vector3.Forward) / 2, Vector3.Up);
+            AddVertex ((Vector3.Right - Vector3.Forward) / 2, Vector3.Up);
 
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
-
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
+            InitializePrimitive (graphicsDevice);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,93 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public class CylinderPrimitive
+        : GeometricPrimitive
     {
-        internal Blimey (Engine engine)
-        {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+        const int _tessellation = 32;
+        const float _height = 0.5f;
+        const float _radius = 0.5f;
 
+        public CylinderPrimitive (Graphics graphicsDevice)
+        {
+            Debug.Assert (_tessellation >= 3);
+
+            // Create a ring of triangles around the outside of the cylinder.
+            for (int i = 0; i <= _tessellation; i++) {
+                Vector3 normal = GetCircleVector (i, _tessellation);
+
+                Vector3 topPos = normal * _radius + Vector3.Up * _height;
+                Vector3 botPos = normal * _radius + Vector3.Down * _height;
+
+                AddVertex (topPos, normal);
+                AddVertex (botPos, normal);
+            }
+
+            for (int i = 0; i < _tessellation; i++) {
+                AddIndex (i * 2);
+                AddIndex (i * 2 + 1);
+                AddIndex ((i * 2 + 2));
+
+                AddIndex (i * 2 + 1);
+                AddIndex (i * 2 + 3);
+                AddIndex (i * 2 + 2);
+            }
+
+
+            // Create flat triangle fan caps to seal the top and bottom.
+            CreateCap (_tessellation, _height, _radius, Vector3.Up);
+            CreateCap (_tessellation, _height, _radius, Vector3.Down);
+
+            InitializePrimitive (graphicsDevice);
         }
 
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        /// <summary>
+        /// Helper method creates a triangle fan to close the ends of the cylinder.
+        /// </summary>
+        void CreateCap (int tessellation, float height, float radius, Vector3 normal)
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
+            // Create cap indices.
+            for (int i = 0; i < tessellation - 2; i++) {
+                if (normal.Y > 0) {
+                    AddIndex (CurrentVertex);
+                    AddIndex (CurrentVertex + (i + 1) % tessellation);
+                    AddIndex (CurrentVertex + (i + 2) % tessellation);
+                } else {
+                    AddIndex (CurrentVertex);
+                    AddIndex (CurrentVertex + (i + 2) % tessellation);
+                    AddIndex (CurrentVertex + (i + 1) % tessellation);
+                }
+            }
+
+            // Create cap vertices.
+            for (int i = 0; i < tessellation; i++) {
+                Vector3 circleVec = GetCircleVector (i, tessellation);
+                Vector3 position = circleVec * radius +
+                                   normal * height;
+
+                AddVertex (position, normal);
+            }
         }
 
-        internal void PostUpdate(AppTime time)
+
+        /// <summary>
+        /// Helper method computes a point on a circle.
+        /// </summary>
+        static Vector3 GetCircleVector (int i, int tessellation)
         {
-            this.PrimitiveRenderer.PostUpdate (time);
+            float tau; Maths.Tau(out tau);
+            float angle = i * tau / tessellation;
+
+            float dx = (float)Math.Cos (angle);
+            float dz = (float)Math.Sin (angle);
+
+            return new Vector3 (dx, 0, dz);
         }
     }
 }

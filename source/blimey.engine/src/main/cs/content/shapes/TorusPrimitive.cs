@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,75 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public class TorusPrimitive
+        : GeometricPrimitive
     {
-        internal Blimey (Engine engine)
+        const float diameter = 1f;
+        const float thickness = 0.333f;
+        const int tessellation = 32;
+
+        /// <summary>
+        /// Constructs a new cube primitive, with the specified size.
+        /// </summary>
+        public TorusPrimitive(Graphics graphicsDevice)
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+            Debug.Assert(tessellation >= 3);
 
-        }
+            // First we loop around the main ring of the torus.
+            for (int i = 0; i < tessellation; i++)
+            {
+                float tau; Maths.Tau(out tau);
+                float outerAngle = i * tau / tessellation;
 
-        public Assets Assets { get; private set; }
+                // Create a transform matrix that will align geometry to
+                // slice perpendicularly though the current ring position.
+                Matrix44 translation = Matrix44.CreateTranslation(diameter / 2, 0, 0);
 
-        public InputEventSystem InputEventSystem { get; private set; }
+                Matrix44 rotationY = Matrix44.CreateRotationY(outerAngle);
 
-        public DebugRenderer DebugRenderer { get; private set; }
+                Matrix44 transform = translation * rotationY;
 
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
+                // Now we loop along the other axis, around the side of the tube.
+                for (int j = 0; j < tessellation; j++)
+                {
+                    float innerAngle = j * tau / tessellation;
 
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
+                    float dx = (float)Math.Cos(innerAngle);
+                    float dy = (float)Math.Sin(innerAngle);
 
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
+                    // Create a vertex.
+                    Vector3 normalIn = new Vector3(dx, dy, 0);
+                    Vector3 positionIn = normalIn * thickness / 2;
+
+                    Vector3 position;
+                    Vector3.Transform(ref positionIn, ref transform, out position);
+
+                    Vector3 normal;
+                    Vector3.TransformNormal(ref normalIn, ref transform, out normal);
+
+                    AddVertex(position, normal);
+
+                    // And create indices for two triangles.
+                    int nextI = (i + 1) % tessellation;
+                    int nextJ = (j + 1) % tessellation;
+
+                    AddIndex(i * tessellation + j);
+                    AddIndex(i * tessellation + nextJ);
+                    AddIndex(nextI * tessellation + j);
+
+                    AddIndex(i * tessellation + nextJ);
+                    AddIndex(nextI * tessellation + nextJ);
+                    AddIndex(nextI * tessellation + j);
+                }
+            }
+
+            InitializePrimitive(graphicsDevice);
         }
     }
 }

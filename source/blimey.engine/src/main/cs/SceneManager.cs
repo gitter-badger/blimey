@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -46,34 +46,67 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    internal class SceneManager
     {
-        internal Blimey (Engine engine)
+        Engine cor;
+        Blimey blimey;
+
+        readonly SceneRenderer sceneRenderer;
+        Scene activeScene = null;
+        Scene nextScene = null;
+
+        public Scene ActiveState { get { return activeScene; } }
+
+        public SceneManager (Engine cor, Blimey blimey, Scene startScene)
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+            this.cor = cor;
+            this.blimey = blimey;
+            nextScene = startScene;
+            sceneRenderer = new SceneRenderer(cor);
 
         }
 
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        public Boolean Update(AppTime time)
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
+            // If the active state returns a game state other than itself then we need to shut
+            // it down and start the returned state.  If a game state returns null then we need to
+            // shut the engine down.
+
+            //quitting the game
+            if (nextScene == null)
+            {
+                activeScene.Uninitilise ();
+                activeScene = null;
+                return true;
+            }
+
+            if (nextScene != activeScene && activeScene != null)
+            {
+                activeScene.Uninitilise ();
+                activeScene = null;
+                GC.Collect ();
+                return false;
+            }
+
+            if (nextScene != activeScene)
+            {
+                activeScene = nextScene;
+                activeScene.Initialize (cor, blimey);
+            }
+
+            nextScene = activeScene.RunUpdate (time);
+
+            return false;
         }
 
-        internal void PostUpdate(AppTime time)
+        public void Render()
         {
-            this.PrimitiveRenderer.PostUpdate (time);
+            this.cor.Graphics.Reset ();
+
+            if (activeScene != null && activeScene.Active)
+            {
+                sceneRenderer.Render (activeScene);
+            }
         }
     }
 }

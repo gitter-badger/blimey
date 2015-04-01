@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -36,44 +36,43 @@ namespace Blimey
 {
     using System;
     using System.Runtime.InteropServices;
+    using System.Globalization;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
     using System.Linq;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
-    {
-        internal Blimey (Engine engine)
-        {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+	public static class GraphicsExtensions
+	{
+		static BlendMode lastSet = BlendMode.Default;
+        static Boolean neverSet = true;
 
+        public static void SetBlendEquation (this Graphics graphics, BlendMode blendMode)
+        {
+            if (neverSet || lastSet != blendMode)
+            {
+                graphics.SetBlendEquation (
+                    blendMode.RgbBlendFunction, blendMode.SourceRgb, blendMode.DestinationRgb,
+                    blendMode.AlphaBlendFunction, blendMode.SourceAlpha, blendMode.DestinationAlpha
+                    );
+
+                neverSet = false;
+                lastSet = blendMode;
+            }
         }
 
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        public static Shader CreateShader (this Graphics graphics, ShaderAsset shaderAsset)
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
+            return graphics.CreateShader (shaderAsset.Declaration, shaderAsset.Format, shaderAsset.Source);
         }
 
-        internal void PostUpdate(AppTime time)
+        public static Texture CreateTexture (this Graphics graphics, TextureAsset textureAsset)
         {
-            this.PrimitiveRenderer.PostUpdate (time);
+            return graphics.CreateTexture (textureAsset.TextureFormat, textureAsset.Width, textureAsset.Height, textureAsset.Data);
         }
-    }
+	}
 }

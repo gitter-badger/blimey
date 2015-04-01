@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,40 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
-
+    
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public class Blimey
+    //
+    // LOOK AT SUBJECT
+    //
+    // This behaviour has many applications, it is very simple.  You must set the Subject
+    // member variable and it will change its SceneObject's orientation to look at the subject.
+    // Optionally you can set the LockToY member variable which will keep the SceneObjects
+    // Up Vector as (0,1,0).  This is good for billboard sprites.
+    //
+    public sealed class LookAtSubjectTrait
+        : Trait
     {
-        internal Blimey (Engine engine)
+        #region SETTINGS (These are values that can be set per instance of this behaviour)
+
+        // The target that this behaviour will look at.
+        public Transform Subject = null;
+
+        #endregion
+
+
+        // UPDATE
+        // Override update so that every frame we can alter our parent SceneObject's orientation.
+        public override void OnUpdate(AppTime time)
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+            // If the Subject has not been set then this behviour will just early
+            // out without making any changes to the
+            if (Subject == null)
+                return;
 
-        }
-
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
-
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
+            this.Parent.Transform.LookAt(Subject);
         }
     }
+
 }

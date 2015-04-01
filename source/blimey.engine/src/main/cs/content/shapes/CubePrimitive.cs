@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,59 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public class CubePrimitive
+        : GeometricPrimitive
     {
-        internal Blimey (Engine engine)
+        /// <summary>
+        /// Constructs a new cube primitive, with the specified size.
+        /// </summary>
+        public CubePrimitive (Graphics graphicsDevice)
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+            // A cube has six faces, each one pointing in a different direction.
+            Vector3[] normals =
+            {
+                new Vector3 (0, 0, 1),
+                new Vector3 (0, 0, -1),
+                new Vector3 (1, 0, 0),
+                new Vector3 (-1, 0, 0),
+                new Vector3 (0, 1, 0),
+                new Vector3 (0, -1, 0),
+            };
 
-        }
+            // Create each face in turn.
+            for (int i = 0; i < normals.Length; ++i )
+            {
+                Vector3 n = normals[i];
 
-        public Assets Assets { get; private set; }
+                // Get two vectors perpendicular to the face normal and to each other.
+                Vector3 side1 = new Vector3(n.Y, n.Z, n.X);
+                Vector3 side2;
 
-        public InputEventSystem InputEventSystem { get; private set; }
+                Vector3.Cross(ref n, ref side1, out side2);
 
-        public DebugRenderer DebugRenderer { get; private set; }
+                // Six indices (two triangles) per face.
+                AddIndex(CurrentVertex + 0);
+                AddIndex(CurrentVertex + 1);
+                AddIndex(CurrentVertex + 2);
 
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
+                AddIndex(CurrentVertex + 0);
+                AddIndex(CurrentVertex + 2);
+                AddIndex(CurrentVertex + 3);
 
-        internal void PreUpdate (AppTime time)
-        {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
-        }
+                // Four vertices per face.
+                AddVertex((n - side1 - side2) / 2, n);
+                AddVertex((n - side1 + side2) / 2, n);
+                AddVertex((n + side1 + side2) / 2, n);
+                AddVertex((n + side1 - side2) / 2, n);
+            }
 
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
+            InitializePrimitive (graphicsDevice);
         }
     }
 }

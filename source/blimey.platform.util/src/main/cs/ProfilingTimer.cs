@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,39 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
     using System.Collections.Generic;
+    using System.Text;
     using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using Fudge;
-    using Abacus.SinglePrecision;
-    using Oats;
 
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // ────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    /// <summary>
+    /// A simple timer for collecting profiler data.  Usage:
+    ///
+    ///     using(new ProfilingTimer(time => myTime = time))
+    ///     {
+    ///         // stuff
+    ///     }
+    ///
+    /// </summary>
+    public struct ProfilingTimer
+        : IDisposable
     {
-        internal Blimey (Engine engine)
-        {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+        public delegate void ResultHandler (double timeInMilliSeconds);
 
+        public ProfilingTimer (ResultHandler resultHandler)
+        {
+            _stopWatch = Stopwatch.StartNew();
+            _resultHandler = resultHandler;
         }
 
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        public void Dispose ()
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
+            double elapsedTime = (double) _stopWatch.ElapsedTicks / (double) Stopwatch.Frequency;
+            _resultHandler(elapsedTime * 1000.0);
         }
 
-        internal void PostUpdate(AppTime time)
-        {
-            this.PrimitiveRenderer.PostUpdate (time);
-        }
+        private Stopwatch _stopWatch;
+        private ResultHandler _resultHandler;
     }
 }

@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -35,45 +35,105 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
-
+    
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public class ChaseSubjectTrait
+        : Trait
     {
-        internal Blimey (Engine engine)
-        {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+        Transform subject;
+        Boolean dirty;
+        Vector3 desiredPositionOffset;
+        Vector3 velocity;
 
+        // The target that this behaviour will chase.
+        public Transform Subject
+        {
+            get { return subject; }
+            set
+            {
+                subject = value;
+
+                // When we set the subject we work out the current vector between us
+                // and the target, so that we always try to keep this seperation
+                // even if the subject moves.
+                // This vector is in world space.
+                desiredPositionOffset =
+                    this.Parent.Transform.Position -
+                    subject.Position;
+
+                //Console.WriteLine(Parent.Name + ": ChaseSubject desiredPositionOffset=" + desiredPositionOffset);
+            }
         }
 
-        public Assets Assets { get; private set; }
+        public float Mass { get; set; }
+        public float Damping { get; set; }
+        public float Stiffness { get; set; }
+        public Boolean SpringEnabled { get; set; }
 
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        public override void OnEnable()
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
+            this.ApplyDefaultSettings();
         }
 
-        internal void PostUpdate(AppTime time)
+        public void ApplyDefaultSettings()
         {
-            this.PrimitiveRenderer.PostUpdate (time);
+            this.ResetSpring();
+
+            // Mass of the camera body.
+            // Heaver objects require stiffer springs with less
+            // damping to move at the same rate as lighter objects.
+            this.Mass = 20.0f;
+            this.Damping = 40.0f;
+            this.Stiffness = 2000.0f;
+            this.SpringEnabled = false;
+
+            this.velocity = Vector3.Zero;
+        }
+
+        /// Forces camera to be at desired position and to stop moving. The is useful
+        /// when the chased object is first created or after it has been teleported.
+        /// Failing to call this after a large change to the chased object's position
+        /// will result in the camera quickly flying across the world.
+        public void ResetSpring()
+        {
+            this.dirty = true;
+        }
+
+        public override void OnUpdate(AppTime time)
+        {
+            Vector3 previousPosition = this.Parent.Transform.Position;
+
+            Vector3 desiredPosition = Subject.Position + desiredPositionOffset;
+
+            Vector3 stretch = previousPosition - desiredPosition;
+            //Console.WriteLine(Parent.Name + ": ChaseSubject stretch=" + stretch + " - (" + previousPosition + " - " + desiredPosition + ")");
+
+            if (this.dirty || ! SpringEnabled)
+            {
+                this.dirty = false;
+
+                // Stop motion
+                this.velocity = Vector3.Zero;
+
+                // Force desired position
+                this.Parent.Transform.Position = desiredPosition;
+            }
+            else
+            {
+                // Calculate spring force
+                Vector3 force = -this.Stiffness * stretch - this.Damping * this.velocity;
+
+                // Apply acceleration
+                Vector3 acceleration = force / this.Mass;
+                this.velocity += acceleration * time.Delta;
+
+                // Apply velocity
+                Vector3 deltaPosition = this.velocity * time.Delta;
+                this.Parent.Transform.Position += deltaPosition;
+            }
         }
     }
 }

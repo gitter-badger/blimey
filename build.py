@@ -124,6 +124,7 @@ ndoptions.additional_references = ['System.Runtime.Serialization', 'System.Data'
 ndoptions.additional_search_paths = []
 ndoptions.additional_sources = []
 
+
 # Platform Core
 ################################################################################
 
@@ -147,12 +148,22 @@ blimey_platform_packed.additional_references = []
 blimey_platform_packed.additional_search_paths = []
 blimey_platform_packed.additional_sources = []
 
+blimey_platform_util = Project ()
+blimey_platform_util.out = 'blimey.platform.util'
+blimey_platform_util.target = 'library'
+blimey_platform_util.path = 'source/blimey.platform.util/src/main/cs/'
+blimey_platform_util.defines = []
+blimey_platform_util.references = [blimey_platform_packed, abacus]
+blimey_platform_util.additional_references = []
+blimey_platform_util.additional_search_paths = []
+blimey_platform_util.additional_sources = []
+
 blimey_platform_model = Project ()
 blimey_platform_model.out = 'blimey.platform.model'
 blimey_platform_model.target = 'library'
 blimey_platform_model.path = 'source/blimey.platform.model/src/main/cs/'
 blimey_platform_model.defines = []
-blimey_platform_model.references = [abacus, blimey_platform_packed]
+blimey_platform_model.references = [abacus, blimey_platform_packed, blimey_platform_util]
 blimey_platform_model.additional_references = []
 blimey_platform_model.additional_search_paths = []
 blimey_platform_model.additional_sources = []
@@ -167,15 +178,15 @@ blimey_platform_api.additional_references = []
 blimey_platform_api.additional_search_paths = []
 blimey_platform_api.additional_sources = []
 
-blimey_platform_wrapper = Project ()
-blimey_platform_wrapper.out = 'blimey.platform.wrapper'
-blimey_platform_wrapper.target = 'library'
-blimey_platform_wrapper.path = 'source/blimey.platform.wrapper/src/main/cs/'
-blimey_platform_wrapper.defines = []
-blimey_platform_wrapper.references = [abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model, blimey_platform_api]
-blimey_platform_wrapper.additional_references = []
-blimey_platform_wrapper.additional_search_paths = []
-blimey_platform_wrapper.additional_sources = []
+blimey_platform = Project ()
+blimey_platform.out = 'blimey.platform'
+blimey_platform.target = 'library'
+blimey_platform.path = 'source/blimey.platform/src/main/cs/'
+blimey_platform.defines = []
+blimey_platform.references = [abacus, blimey_platform_packed, blimey_platform_util, blimey_platform_foundation, blimey_platform_model, blimey_platform_api]
+blimey_platform.additional_references = []
+blimey_platform.additional_search_paths = []
+blimey_platform.additional_sources = []
 
 
 # Platforms
@@ -284,7 +295,7 @@ blimey_engine.path = 'source/blimey.engine/src/main/cs/'
 blimey_engine.defines = []
 blimey_engine.references = [
   abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model,
-  blimey_platform_wrapper, blimey_asset_model, blimey_engine_model, oats]
+  blimey_platform, blimey_asset_model, blimey_engine_model, oats, blimey_platform_util]
 blimey_engine.additional_references = []
 blimey_engine.additional_search_paths = []
 blimey_engine.additional_sources = []
@@ -303,7 +314,7 @@ blimey_platform_demo.path = 'examples/platform-demo/blimey.platform.demo/src/mai
 blimey_platform_demo.defines = []
 blimey_platform_demo.references = [
   abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model,
-  blimey_platform_wrapper]
+  blimey_platform]
 blimey_platform_demo.additional_references = []
 blimey_platform_demo.additional_search_paths = []
 blimey_platform_demo.additional_sources = []
@@ -315,7 +326,7 @@ blimey_engine_demo.path = 'examples/engine-demo/blimey.engine.demo/src/main/cs/'
 blimey_engine_demo.defines = []
 blimey_engine_demo.references = [
   abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model,
-  blimey_platform_wrapper, blimey_asset_model, blimey_engine_model, oats, blimey_engine]
+  blimey_platform, blimey_asset_model, blimey_engine_model, oats, blimey_engine]
 blimey_engine_demo.additional_references = []
 blimey_engine_demo.additional_search_paths = []
 blimey_engine_demo.additional_sources = []
@@ -353,9 +364,10 @@ projects = [
   # The plaform layer doesn't know about the blimey asset system.
   blimey_platform_foundation,
   blimey_platform_packed,
+  blimey_platform_util,
   blimey_platform_model,
   blimey_platform_api,
-  blimey_platform_wrapper,
+  blimey_platform,
 
 
   # The Blimey engine, depends on everything.

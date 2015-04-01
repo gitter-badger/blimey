@@ -39,11 +39,14 @@
     <Reference Include="blimey.platform.model">
       <HintPath>..\..\..\..\bin\blimey.platform.model.dll</HintPath>
     </Reference>
-    <Reference Include="blimey.platform.wrapper">
-      <HintPath>..\..\..\..\bin\blimey.platform.wrapper.dll</HintPath>
+    <Reference Include="blimey.engine.base">
+      <HintPath>..\..\..\..\bin\blimey.engine.base.dll</HintPath>
     </Reference>
     <Reference Include="blimey.platform.packed">
       <HintPath>..\..\..\..\bin\blimey.platform.packed.dll</HintPath>
+    </Reference>
+    <Reference Include="blimey.platform.util">
+      <HintPath>..\..\..\..\bin\blimey.platform.util.dll</HintPath>
     </Reference>
     <Reference Include="blimey.platform.foundation">
       <HintPath>..\..\..\..\bin\blimey.platform.foundation.dll</HintPath>

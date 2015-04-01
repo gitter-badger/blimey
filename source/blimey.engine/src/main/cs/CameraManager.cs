@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -46,34 +46,62 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public class CameraManager
     {
-        internal Blimey (Engine engine)
+            public Entity GetRenderPassCamera (String renderPass)
+            {
+                return GetActiveCamera(renderPass).Parent;
+            }
+            internal CameraTrait GetActiveCamera(String RenderPass)
         {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
-
+            return _activeCameras[RenderPass].GetTrait<CameraTrait> ();
         }
 
-        public Assets Assets { get; private set; }
+        readonly Dictionary<String, Entity> _defaultCameras = new Dictionary<String,Entity>();
+        readonly Dictionary<String, Entity> _activeCameras = new Dictionary<String,Entity>();
 
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        internal void SetDefaultCamera(String RenderPass)
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
+            _activeCameras[RenderPass] = _defaultCameras[RenderPass];
         }
 
-        internal void PostUpdate(AppTime time)
+        internal void SetMainCamera (String RenderPass, Entity go)
         {
-            this.PrimitiveRenderer.PostUpdate (time);
+            _activeCameras[RenderPass] = go;
+        }
+
+        internal CameraManager (Scene scene)
+        {
+                  var settings = scene.Configuration;
+
+                  foreach (var renderPass in settings.RenderPasses)
+            {
+                         var go = scene.SceneGraph.CreateSceneObject("RenderPass(" + renderPass + ") Provided Camera");
+
+                var cam = go.AddTrait<CameraTrait>();
+
+                if (renderPass.Configuration.CameraProjectionType == CameraProjectionType.Perspective)
+                {
+                    go.Transform.Position = new Vector3(2, 1, 5);
+
+                    var orbit = go.AddTrait<OrbitAroundSubjectTrait>();
+                    orbit.CameraSubject = Transform.Origin;
+
+                    var lookAtSub = go.AddTrait<LookAtSubjectTrait>();
+                    lookAtSub.Subject = Transform.Origin;
+                }
+                else
+                {
+                    cam.Projection = CameraProjectionType.Orthographic;
+
+                    go.Transform.Position = new Vector3(0, 0, 0.5f);
+                    go.Transform.LookAt(Vector3.Zero);
+                }
+
+
+                        _defaultCameras.Add(renderPass.Name, go);
+                _activeCameras.Add(renderPass.Name, go);
+            }
         }
     }
 }
