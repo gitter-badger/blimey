@@ -39,8 +39,8 @@
     <Reference Include="blimey.platform.model">
       <HintPath>..\..\..\..\bin\blimey.platform.model.dll</HintPath>
     </Reference>
-    <Reference Include="blimey.engine.base">
-      <HintPath>..\..\..\..\bin\blimey.engine.base.dll</HintPath>
+    <Reference Include="blimey.platform">
+      <HintPath>..\..\..\..\bin\blimey.platform.dll</HintPath>
     </Reference>
     <Reference Include="blimey.platform.packed">
       <HintPath>..\..\..\..\bin\blimey.platform.packed.dll</HintPath>

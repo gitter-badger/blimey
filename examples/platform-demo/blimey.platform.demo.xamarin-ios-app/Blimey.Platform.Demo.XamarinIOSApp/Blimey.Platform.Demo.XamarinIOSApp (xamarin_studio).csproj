@@ -112,8 +112,8 @@
     <Reference Include="blimey.platform.packed">
       <HintPath>..\..\..\..\bin\blimey.platform.packed.dll</HintPath>
     </Reference>
-    <Reference Include="blimey.engine.base">
-      <HintPath>..\..\..\..\bin\blimey.engine.base.dll</HintPath>
+    <Reference Include="blimey.platform">
+      <HintPath>..\..\..\..\bin\blimey.platform.dll</HintPath>
     </Reference>
     <Reference Include="blimey.platform.api.xamarin-ios-app">
       <HintPath>..\..\..\..\bin\blimey.platform.api.xamarin-ios-app.dll</HintPath>

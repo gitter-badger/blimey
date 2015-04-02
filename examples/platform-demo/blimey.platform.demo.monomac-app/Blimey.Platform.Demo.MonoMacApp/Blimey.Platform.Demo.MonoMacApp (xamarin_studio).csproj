@@ -54,9 +54,6 @@
     <Reference Include="blimey.platform.model">
       <HintPath>..\..\..\..\bin\blimey.platform.model.dll</HintPath>
     </Reference>
-    <Reference Include="blimey.engine.base">
-      <HintPath>..\..\..\..\bin\blimey.engine.engine.dll</HintPath>
-    </Reference>
     <Reference Include="blimey.platform.packed">
       <HintPath>..\..\..\..\bin\blimey.platform.packed.dll</HintPath>
     </Reference>
@@ -74,6 +71,9 @@
     </Reference>
     <Reference Include="blimey.platform.demo">
       <HintPath>..\..\..\..\bin\blimey.platform.demo.dll</HintPath>
+    </Reference>
+    <Reference Include="blimey.platform">
+      <HintPath>..\..\..\..\bin\blimey.platform.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
