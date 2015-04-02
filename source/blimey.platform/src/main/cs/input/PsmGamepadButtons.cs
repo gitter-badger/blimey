@@ -49,132 +49,63 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// The Cor App Framework provides a user's app access to Cor features via this interface.
+    /// Represents the state of the buttons on a PlayStation Mobile Gamepad.
     /// </summary>
-    public sealed class Engine
-        : IDisposable
+    public sealed class PsmGamepadButtons
+        : HumanInputDeviceComponent
     {
-        readonly Audio audio;
-        readonly Graphics graphics;
-        readonly Resources resources;
-        readonly Status status;
-        readonly Input input;
-        readonly Host host;
+        internal PsmGamepadButtons () {}
 
-        readonly IPlatform platform;
-
-        Single elapsedTime;
-        Int64 frameCounter = -1;
-        TimeSpan previousTimeSpan;
-
-        readonly IApp userApp;
-
-        readonly Stopwatch timer = new Stopwatch ();
-        Boolean firstUpdate = true;
-
-        public Engine (IPlatform platform, AppSettings appSettings, IApp userApp)
+        internal override void Poll (AppTime appTime, Input.InputFrame inputFrame)
         {
-            this.platform = platform;
-            this.userApp = userApp;
-
-            this.platform.Program.Start (this.platform.Api, this.Update, this.Render);
-
-            this.audio = new Audio (this.platform.Api);
-            this.graphics = new Graphics (this.platform.Api);
-            this.resources = new Resources (this.platform.Api);
-            this.status = new Status (this.platform.Api);
-            this.input = new Input (this.platform.Api, appSettings.MouseGeneratesTouches);
-            this.host = new Host (this.platform.Api);
-
-            this.Settings = appSettings;
+            Triangle = GetButtonState (inputFrame, BinaryControlIdentifier.PlayStationMobile_Triangle);
+            Square = GetButtonState (inputFrame, BinaryControlIdentifier.PlayStationMobile_Square);
+            Circle = GetButtonState (inputFrame, BinaryControlIdentifier.PlayStationMobile_Circle);
+            Cross = GetButtonState (inputFrame, BinaryControlIdentifier.PlayStationMobile_Cross);
+            Start = GetButtonState (inputFrame, BinaryControlIdentifier.PlayStationMobile_Start);
+            Select = GetButtonState (inputFrame, BinaryControlIdentifier.PlayStationMobile_Select);
+            LeftShoulder = GetButtonState (inputFrame, BinaryControlIdentifier.PlayStationMobile_LeftSholder);
+            RightShoulder = GetButtonState (inputFrame, BinaryControlIdentifier.PlayStationMobile_RightSholder);
         }
 
         /// <summary>
-        /// Provides access to Cor's audio manager.
+        /// Represents the state of the triangle button.
         /// </summary>
-        public Audio Audio { get { return audio; } }
+        public ButtonState Triangle { get; private set; }
 
         /// <summary>
-        /// Provides access to Cor's graphics manager, which  provides an interface to working with the GPU.
+        /// Represents the state of the square button.
         /// </summary>
-        public Graphics Graphics { get { return graphics; } }
-
-        public Resources Resources { get { return resources; } }
+        public ButtonState Square { get; private set; }
 
         /// <summary>
-        /// Provides information about the current state of the App.
+        /// Represents the state of the circle button.
         /// </summary>
-        public Status Status { get { return status; } }
+        public ButtonState Circle { get; private set; }
 
         /// <summary>
-        /// Provides access to Cor's input manager.
+        /// Represents the state of the cross button.
         /// </summary>
-        public Input Input { get { return input; } }
+        public ButtonState Cross { get; private set; }
 
         /// <summary>
-        /// Provides information about the hardware and environment.
+        /// Represents the state of the start button.
         /// </summary>
-        public Host Host { get { return host; } }
+        public ButtonState Start { get; private set; }
 
         /// <summary>
-        /// Provides access to Cor's logging system.
+        /// Represents the state of the select button.
         /// </summary>
-        public LogManager Log { get; private set; }
+        public ButtonState Select { get; private set; }
 
         /// <summary>
-        /// Gets the settings used to initilise the app.
+        /// Represents the state of the left shoulder button.
         /// </summary>
-        public AppSettings Settings { get; private set; }
+        public ButtonState LeftShoulder { get; private set; }
 
-        void Update ()
-        {
-            if (firstUpdate)
-            {
-                firstUpdate = false;
-
-                this.Graphics.Reset ();
-
-                this.timer.Start ();
-
-                this.userApp.Start (this);
-            }
-
-            var dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
-            previousTimeSpan = timer.Elapsed;
-
-            if (dt > 0.5f)
-            {
-                dt = 0.0f;
-            }
-
-            elapsedTime += dt;
-
-            var appTime = new AppTime (dt, elapsedTime, ++frameCounter);
-
-            this.input.Update (appTime);
-
-            Boolean userAppToDie = this.userApp.Update (this, appTime);
-
-            if (userAppToDie)
-            {
-                timer.Stop ();
-                this.userApp.Stop (this);
-                this.platform.Program.Stop ();
-            }
-
-            VertexBuffer.CollectGpuGarbage (this.platform.Api);
-            IndexBuffer.CollectGpuGarbage (this.platform.Api);
-            Texture.CollectGpuGarbage (this.platform.Api);
-            Shader.CollectGpuGarbage (this.platform.Api);
-        }
-
-        void Render ()
-        {
-            this.userApp.Render (this);
-        }
-
-        public void Dispose ()
-        {
-        }
+        /// <summary>
+        /// Represents the state of the right shoulder button.
+        /// </summary>
+        public ButtonState RightShoulder { get; private set; }
     }
 }

@@ -48,133 +48,76 @@ namespace Blimey
     
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    /// <summary>
-    /// The Cor App Framework provides a user's app access to Cor features via this interface.
-    /// </summary>
-    public sealed class Engine
-        : IDisposable
+    public class LogManagerSettings
     {
-        readonly Audio audio;
-        readonly Graphics graphics;
-        readonly Resources resources;
-        readonly Status status;
-        readonly Input input;
-        readonly Host host;
+        readonly HashSet<String> enabledLogChannels;
+        readonly List<LogManager.WriteLogDelegate> logWriters;
+        Boolean useLogChannels = false;
+        readonly String tag;
 
-        readonly IPlatform platform;
-
-        Single elapsedTime;
-        Int64 frameCounter = -1;
-        TimeSpan previousTimeSpan;
-
-        readonly IApp userApp;
-
-        readonly Stopwatch timer = new Stopwatch ();
-        Boolean firstUpdate = true;
-
-        public Engine (IPlatform platform, AppSettings appSettings, IApp userApp)
+        internal LogManagerSettings (String tag)
         {
-            this.platform = platform;
-            this.userApp = userApp;
+            this.tag = tag;
 
-            this.platform.Program.Start (this.platform.Api, this.Update, this.Render);
+            this.enabledLogChannels = new HashSet<String>();
+            this.enabledLogChannels.Add ("Default");
+            this.enabledLogChannels.Add ("GFX");
 
-            this.audio = new Audio (this.platform.Api);
-            this.graphics = new Graphics (this.platform.Api);
-            this.resources = new Resources (this.platform.Api);
-            this.status = new Status (this.platform.Api);
-            this.input = new Input (this.platform.Api, appSettings.MouseGeneratesTouches);
-            this.host = new Host (this.platform.Api);
-
-            this.Settings = appSettings;
+            this.logWriters = new List<LogManager.WriteLogDelegate>()
+            {
+                this.DefaultWriteLogFunction
+            };
         }
 
-        /// <summary>
-        /// Provides access to Cor's audio manager.
-        /// </summary>
-        public Audio Audio { get { return audio; } }
-
-        /// <summary>
-        /// Provides access to Cor's graphics manager, which  provides an interface to working with the GPU.
-        /// </summary>
-        public Graphics Graphics { get { return graphics; } }
-
-        public Resources Resources { get { return resources; } }
-
-        /// <summary>
-        /// Provides information about the current state of the App.
-        /// </summary>
-        public Status Status { get { return status; } }
-
-        /// <summary>
-        /// Provides access to Cor's input manager.
-        /// </summary>
-        public Input Input { get { return input; } }
-
-        /// <summary>
-        /// Provides information about the hardware and environment.
-        /// </summary>
-        public Host Host { get { return host; } }
-
-        /// <summary>
-        /// Provides access to Cor's logging system.
-        /// </summary>
-        public LogManager Log { get; private set; }
-
-        /// <summary>
-        /// Gets the settings used to initilise the app.
-        /// </summary>
-        public AppSettings Settings { get; private set; }
-
-        void Update ()
+        void DefaultWriteLogFunction (
+            String assembly,
+            String tag,
+            String channel,
+            String type,
+            String time,
+            String[] lines)
         {
-            if (firstUpdate)
-            {
-                firstUpdate = false;
+            if (!this.enabledLogChannels.Contains (channel)) return;
 
-                this.Graphics.Reset ();
+            String startString = String.Format (
+                "[{3}][{1}][{0}][{2}] ",
+                time,
+                type,
+                channel,
+                tag);
 
-                this.timer.Start ();
+            if (!String.IsNullOrWhiteSpace (assembly))
+                startString = String.Format ("[{0}]{1}", assembly, startString);
 
-                this.userApp.Start (this);
-            }
+            String customNewLine = Environment.NewLine + new String (' ', startString.Length);
 
-            var dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
-            previousTimeSpan = timer.Elapsed;
+            String formatedLine = lines
+                .Join (customNewLine);
 
-            if (dt > 0.5f)
-            {
-                dt = 0.0f;
-            }
+            String log = startString + formatedLine;
 
-            elapsedTime += dt;
-
-            var appTime = new AppTime (dt, elapsedTime, ++frameCounter);
-
-            this.input.Update (appTime);
-
-            Boolean userAppToDie = this.userApp.Update (this, appTime);
-
-            if (userAppToDie)
-            {
-                timer.Stop ();
-                this.userApp.Stop (this);
-                this.platform.Program.Stop ();
-            }
-
-            VertexBuffer.CollectGpuGarbage (this.platform.Api);
-            IndexBuffer.CollectGpuGarbage (this.platform.Api);
-            Texture.CollectGpuGarbage (this.platform.Api);
-            Shader.CollectGpuGarbage (this.platform.Api);
+            Console.WriteLine (log);
         }
 
-        void Render ()
+        public String Tag
         {
-            this.userApp.Render (this);
+            get { return tag; }
         }
 
-        public void Dispose ()
+        public Boolean UseLogChannels
         {
+            get { return useLogChannels; }
+            set { useLogChannels = value; }
+        }
+
+        public HashSet<String> EnabledLogChannels
+        {
+            get { return enabledLogChannels; }
+        }
+
+        public List<LogManager.WriteLogDelegate> LogWriters
+        {
+            get { return logWriters; }
         }
     }
 }

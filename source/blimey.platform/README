@@ -1,4 +1,1 @@
-cor
-===
-
-Low level 3D game engine targeting the CLI
+A low level engine for building graphical apps, Platform is pretty much an object oriented wrapper around the Platform API with some additional features for making things easier.                                           

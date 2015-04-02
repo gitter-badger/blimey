@@ -49,132 +49,71 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// The Cor App Framework provides a user's app access to Cor features via this interface.
+    /// Represents the state of a pair of triggers on a gamepad.
     /// </summary>
-    public sealed class Engine
-        : IDisposable
+    public sealed class GamepadTriggerPair
+        : HumanInputDeviceComponent
     {
-        readonly Audio audio;
-        readonly Graphics graphics;
-        readonly Resources resources;
-        readonly Status status;
-        readonly Input input;
-        readonly Host host;
+        readonly Gamepad gamepad;
+        readonly PlayerIndex? playerIndex;
 
-        readonly IPlatform platform;
-
-        Single elapsedTime;
-        Int64 frameCounter = -1;
-        TimeSpan previousTimeSpan;
-
-        readonly IApp userApp;
-
-        readonly Stopwatch timer = new Stopwatch ();
-        Boolean firstUpdate = true;
-
-        public Engine (IPlatform platform, AppSettings appSettings, IApp userApp)
+        internal GamepadTriggerPair (Gamepad gamepad, PlayerIndex? playerIndex = null)
         {
-            this.platform = platform;
-            this.userApp = userApp;
-
-            this.platform.Program.Start (this.platform.Api, this.Update, this.Render);
-
-            this.audio = new Audio (this.platform.Api);
-            this.graphics = new Graphics (this.platform.Api);
-            this.resources = new Resources (this.platform.Api);
-            this.status = new Status (this.platform.Api);
-            this.input = new Input (this.platform.Api, appSettings.MouseGeneratesTouches);
-            this.host = new Host (this.platform.Api);
-
-            this.Settings = appSettings;
+            this.gamepad = gamepad;
+            this.playerIndex = playerIndex;
         }
 
-        /// <summary>
-        /// Provides access to Cor's audio manager.
-        /// </summary>
-        public Audio Audio { get { return audio; } }
-
-        /// <summary>
-        /// Provides access to Cor's graphics manager, which  provides an interface to working with the GPU.
-        /// </summary>
-        public Graphics Graphics { get { return graphics; } }
-
-        public Resources Resources { get { return resources; } }
-
-        /// <summary>
-        /// Provides information about the current state of the App.
-        /// </summary>
-        public Status Status { get { return status; } }
-
-        /// <summary>
-        /// Provides access to Cor's input manager.
-        /// </summary>
-        public Input Input { get { return input; } }
-
-        /// <summary>
-        /// Provides information about the hardware and environment.
-        /// </summary>
-        public Host Host { get { return host; } }
-
-        /// <summary>
-        /// Provides access to Cor's logging system.
-        /// </summary>
-        public LogManager Log { get; private set; }
-
-        /// <summary>
-        /// Gets the settings used to initilise the app.
-        /// </summary>
-        public AppSettings Settings { get; private set; }
-
-        void Update ()
+        internal override void Poll (AppTime appTime, Input.InputFrame inputFrame)
         {
-            if (firstUpdate)
+            switch (gamepad)
             {
-                firstUpdate = false;
+                case Gamepad.Xbox360:
+                    {
+                        switch (playerIndex.Value)
+                        {
+                            case PlayerIndex.One:
+                                {
+                                    Left = GetAnalogState (inputFrame, AnalogControlIdentifier.Xbox360_0_LeftTrigger);
+                                    Right = GetAnalogState (inputFrame, AnalogControlIdentifier.Xbox360_0_RightTrigger);
+                                }
+                                break;
 
-                this.Graphics.Reset ();
+                            case PlayerIndex.Two:
+                                {
+                                    Left = GetAnalogState (inputFrame, AnalogControlIdentifier.Xbox360_1_LeftTrigger);
+                                    Right = GetAnalogState (inputFrame, AnalogControlIdentifier.Xbox360_1_RightTrigger);
+                                }
+                                break;
 
-                this.timer.Start ();
+                            case PlayerIndex.Three:
+                                {
+                                    Left = GetAnalogState (inputFrame, AnalogControlIdentifier.Xbox360_2_LeftTrigger);
+                                    Right = GetAnalogState (inputFrame, AnalogControlIdentifier.Xbox360_2_RightTrigger);
+                                }
+                                break;
 
-                this.userApp.Start (this);
+                            case PlayerIndex.Four:
+                                {
+                                    Left = GetAnalogState (inputFrame, AnalogControlIdentifier.Xbox360_3_LeftTrigger);
+                                    Right = GetAnalogState (inputFrame, AnalogControlIdentifier.Xbox360_3_RightTrigger);
+                                }
+                                break;
+                        }
+                    }
+                    break;
+
+                default: throw new NotSupportedException ();
             }
-
-            var dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
-            previousTimeSpan = timer.Elapsed;
-
-            if (dt > 0.5f)
-            {
-                dt = 0.0f;
-            }
-
-            elapsedTime += dt;
-
-            var appTime = new AppTime (dt, elapsedTime, ++frameCounter);
-
-            this.input.Update (appTime);
-
-            Boolean userAppToDie = this.userApp.Update (this, appTime);
-
-            if (userAppToDie)
-            {
-                timer.Stop ();
-                this.userApp.Stop (this);
-                this.platform.Program.Stop ();
-            }
-
-            VertexBuffer.CollectGpuGarbage (this.platform.Api);
-            IndexBuffer.CollectGpuGarbage (this.platform.Api);
-            Texture.CollectGpuGarbage (this.platform.Api);
-            Shader.CollectGpuGarbage (this.platform.Api);
         }
 
-        void Render ()
-        {
-            this.userApp.Render (this);
-        }
+        /// <summary>
+        ///
+        /// </summary>
+        public Single Left { get; private set; }
 
-        public void Dispose ()
-        {
-        }
+        /// <summary>
+        ///
+        /// </summary>
+        public Single Right { get; private set; }
     }
 }

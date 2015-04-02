@@ -49,132 +49,52 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// The Cor App Framework provides a user's app access to Cor features via this interface.
+    /// Provides information about the hardware and environment that the Cor App Framework is running against.
     /// </summary>
-    public sealed class Engine
-        : IDisposable
+    public sealed class Host
     {
-        readonly Audio audio;
-        readonly Graphics graphics;
-        readonly Resources resources;
-        readonly Status status;
-        readonly Input input;
-        readonly Host host;
+        readonly IApi platform;
+        readonly ScreenSpecification screenSpecification;
+        readonly PanelSpecification panelSpecification;
 
-        readonly IPlatform platform;
-
-        Single elapsedTime;
-        Int64 frameCounter = -1;
-        TimeSpan previousTimeSpan;
-
-        readonly IApp userApp;
-
-        readonly Stopwatch timer = new Stopwatch ();
-        Boolean firstUpdate = true;
-
-        public Engine (IPlatform platform, AppSettings appSettings, IApp userApp)
+        internal Host (IApi platform)
         {
             this.platform = platform;
-            this.userApp = userApp;
-
-            this.platform.Program.Start (this.platform.Api, this.Update, this.Render);
-
-            this.audio = new Audio (this.platform.Api);
-            this.graphics = new Graphics (this.platform.Api);
-            this.resources = new Resources (this.platform.Api);
-            this.status = new Status (this.platform.Api);
-            this.input = new Input (this.platform.Api, appSettings.MouseGeneratesTouches);
-            this.host = new Host (this.platform.Api);
-
-            this.Settings = appSettings;
+            this.screenSpecification = new ScreenSpecification (platform);
+            this.panelSpecification = new PanelSpecification (platform);
         }
 
         /// <summary>
-        /// Provides access to Cor's audio manager.
+        /// Identifies the Machine that Cor's host Virtual Machine is running on.
+        /// Ex: PC, Macintosh, iPad2, Samsung Galaxy S4
         /// </summary>
-        public Audio Audio { get { return audio; } }
+        public String Machine { get { return platform.sys_GetMachineIdentifier (); } }
 
         /// <summary>
-        /// Provides access to Cor's graphics manager, which  provides an interface to working with the GPU.
+        /// Identifies the Operating System that Cor's host Virtual Machine is running on.
+        /// Ex: Ubuntu, Windows NT, OSX, iOS 7.0, Android Jelly Bean
         /// </summary>
-        public Graphics Graphics { get { return graphics; } }
-
-        public Resources Resources { get { return resources; } }
+        public String OperatingSystem { get { return platform.sys_GetOperatingSystemIdentifier (); } }
 
         /// <summary>
-        /// Provides information about the current state of the App.
+        /// Identifies the Virtual Machine that Cor is running in.
+        /// Ex: .NET 4.0, MONO 2.10
         /// </summary>
-        public Status Status { get { return status; } }
+        public String VirtualMachine { get { return platform.sys_GetVirtualMachineIdentifier (); } }
 
         /// <summary>
-        /// Provides access to Cor's input manager.
+        /// The current orientation of the machine.
         /// </summary>
-        public Input Input { get { return input; } }
+        public DeviceOrientation? CurrentOrientation { get { return platform.hid_GetCurrentOrientation (); } }
 
         /// <summary>
-        /// Provides information about the hardware and environment.
+        /// The screen specification of the machine.
         /// </summary>
-        public Host Host { get { return host; } }
+        public ScreenSpecification ScreenSpecification { get { return screenSpecification; } }
 
         /// <summary>
-        /// Provides access to Cor's logging system.
+        ///
         /// </summary>
-        public LogManager Log { get; private set; }
-
-        /// <summary>
-        /// Gets the settings used to initilise the app.
-        /// </summary>
-        public AppSettings Settings { get; private set; }
-
-        void Update ()
-        {
-            if (firstUpdate)
-            {
-                firstUpdate = false;
-
-                this.Graphics.Reset ();
-
-                this.timer.Start ();
-
-                this.userApp.Start (this);
-            }
-
-            var dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
-            previousTimeSpan = timer.Elapsed;
-
-            if (dt > 0.5f)
-            {
-                dt = 0.0f;
-            }
-
-            elapsedTime += dt;
-
-            var appTime = new AppTime (dt, elapsedTime, ++frameCounter);
-
-            this.input.Update (appTime);
-
-            Boolean userAppToDie = this.userApp.Update (this, appTime);
-
-            if (userAppToDie)
-            {
-                timer.Stop ();
-                this.userApp.Stop (this);
-                this.platform.Program.Stop ();
-            }
-
-            VertexBuffer.CollectGpuGarbage (this.platform.Api);
-            IndexBuffer.CollectGpuGarbage (this.platform.Api);
-            Texture.CollectGpuGarbage (this.platform.Api);
-            Shader.CollectGpuGarbage (this.platform.Api);
-        }
-
-        void Render ()
-        {
-            this.userApp.Render (this);
-        }
-
-        public void Dispose ()
-        {
-        }
+        public PanelSpecification PanelSpecification { get { return panelSpecification; } }
     }
 }

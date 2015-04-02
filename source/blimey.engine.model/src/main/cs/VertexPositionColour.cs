@@ -45,76 +45,121 @@ namespace Blimey
 
     using Abacus.SinglePrecision;
     using Fudge;
+    using Oats;
 
-
-    // Runtime asset object, loaded into RAM, not GRAM.
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class ColourmapAsset
-        : Asset
+    /// <summary>
+    ///
+    /// </summary>
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertexPositionColour
+        : IVertexType
     {
-        public Rgba32[,] Data { get; set; }
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Position;
 
-        public Int32 Width { get { return Data.GetLength (0); } }
+        /// <summary>
+        ///
+        /// </summary>
+        public Rgba32 Colour;
 
-        public Int32 Height { get { return Data.GetLength (1); } }
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexPositionColour (
+            Vector3 position,
+            Rgba32 color)
+        {
+            this.Position = position;
+            this.Colour = color;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        static VertexPositionColour ()
+        {
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0),
+                new VertexElement (
+                    12,
+                    VertexElementFormat.Colour,
+                    VertexElementUsage.Colour,
+                    0)
+            );
+
+            _default = new VertexPositionColour (
+                Vector3.Zero,
+                Rgba32.Magenta);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexPositionColour _default;
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexDeclaration _vertexDeclaration;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public static IVertexType Default
+        {
+            get
+            {
+                return _default;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
+        {
+            get
+            {
+                return _vertexDeclaration;
+            }
+        }
     }
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class ShaderAsset
-        : Asset
+    /// <summary>
+    /// An explict Oats.Serialiser for the Blimey.VertexPositionColour type.
+    /// </summary>
+    public class VertexPositionColourSerialiser
+        : Serialiser<VertexPositionColour>
     {
-        // Platform agnostic definition
-        public ShaderDeclaration Declaration { get; set; }
+        /// <summary>
+        /// Returns a Blimey.VertexPositionColour object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override VertexPositionColour Read (ISerialisationChannel ss)
+        {
+            Vector3 pos = ss.Read <Vector3> ();
+            Rgba32 col = ss.Read <Rgba32> ();
 
-        public ShaderFormat Format { get; set; }
+            return new VertexPositionColour (pos, col);
+        }
 
-        // Platform specific binary content.
-        // This contains compiled shaders.
-        public Byte[] Source { get; set; }
+        /// <summary>
+        /// Writes a Blimey.VertexPositionColour object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, VertexPositionColour obj)
+        {
+            ss.Write <Vector3> (obj.Position);
+            ss.Write <Rgba32> (obj.Colour);
+        }
     }
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public sealed class TextAsset
-        : Asset
-    {
-        public String Text { get; set; }
-    }
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public sealed class TextureAsset
-        : Asset
-    {
-        public TextureFormat TextureFormat { get; set; }
-
-        public Int32 Width { get; set; }
-        public Int32 Height { get; set; }
-
-        // Data allocated in standard system RAM
-        public Byte[] Data { get; set; }
-
-        // Data allocated in standard system RAM
-        // public Byte[,] Mipmaps { get; set; }
-
-        // public Int32 MipmapCount { get { return Data.GetLength (0); } }
-    }
-
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public sealed class MeshAsset
-        : Asset
-    {
-        public VertexDeclaration VertexDeclaration { get; set; }
-
-        public IVertexType[] VertexData { get; set; }
-        public Int32[] IndexData { get; set; }
-    }
-
 }

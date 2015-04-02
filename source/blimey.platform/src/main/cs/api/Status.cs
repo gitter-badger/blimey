@@ -49,132 +49,40 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// The Cor App Framework provides a user's app access to Cor features via this interface.
+    /// Provides frame by frame information about the external state of the App.
     /// </summary>
-    public sealed class Engine
-        : IDisposable
+    public sealed class Status
     {
-        readonly Audio audio;
-        readonly Graphics graphics;
-        readonly Resources resources;
-        readonly Status status;
-        readonly Input input;
-        readonly Host host;
+        readonly IApi platform;
 
-        readonly IPlatform platform;
-
-        Single elapsedTime;
-        Int64 frameCounter = -1;
-        TimeSpan previousTimeSpan;
-
-        readonly IApp userApp;
-
-        readonly Stopwatch timer = new Stopwatch ();
-        Boolean firstUpdate = true;
-
-        public Engine (IPlatform platform, AppSettings appSettings, IApp userApp)
+        internal Status (IApi platform)
         {
             this.platform = platform;
-            this.userApp = userApp;
-
-            this.platform.Program.Start (this.platform.Api, this.Update, this.Render);
-
-            this.audio = new Audio (this.platform.Api);
-            this.graphics = new Graphics (this.platform.Api);
-            this.resources = new Resources (this.platform.Api);
-            this.status = new Status (this.platform.Api);
-            this.input = new Input (this.platform.Api, appSettings.MouseGeneratesTouches);
-            this.host = new Host (this.platform.Api);
-
-            this.Settings = appSettings;
         }
 
         /// <summary>
-        /// Provides access to Cor's audio manager.
+        /// Is the device running in fullscreen mode?  For things that don't support fullscreen mode this will be null.
         /// </summary>
-        public Audio Audio { get { return audio; } }
+        public Boolean? Fullscreen { get { return this.platform.app_IsFullscreen (); } }
 
         /// <summary>
-        /// Provides access to Cor's graphics manager, which  provides an interface to working with the GPU.
+        /// Returns the current width in pixels of the window the App is running in.  On most devices this will be the
+        /// same as the however on desktops the app could be running in windowed mode and not take up all of the screen.
+        /// This does not represent the size of the frame buffer or any other render targets.  With default settings the
+        /// frame buffer for most platforms is instantiated with this width.  This value is from the context of the
+        /// current orientation, for example of their is a 640x480 window on a desktop monitor that is orientated
+        /// at 90deg this width will be 640.
         /// </summary>
-        public Graphics Graphics { get { return graphics; } }
-
-        public Resources Resources { get { return resources; } }
+        public Int32 Width { get { return this.platform.app_GetWidth(); } }
 
         /// <summary>
-        /// Provides information about the current state of the App.
+        /// Returns the current height in pixels of the window the App is running in.  On most devices this will be the
+        /// same as the however on desktops the app could be running in windowed mode and not take up all of the screen.
+        /// This does not represent the size of the frame buffer or any other render targets.  With default settings the
+        /// frame buffer for most platforms is instantiated with this height.  This value is from the context of the
+        /// current orientation, for example of their is a 640x480 window on a desktop monitor that is orientated
+        /// at 90deg this height will be 480.
         /// </summary>
-        public Status Status { get { return status; } }
-
-        /// <summary>
-        /// Provides access to Cor's input manager.
-        /// </summary>
-        public Input Input { get { return input; } }
-
-        /// <summary>
-        /// Provides information about the hardware and environment.
-        /// </summary>
-        public Host Host { get { return host; } }
-
-        /// <summary>
-        /// Provides access to Cor's logging system.
-        /// </summary>
-        public LogManager Log { get; private set; }
-
-        /// <summary>
-        /// Gets the settings used to initilise the app.
-        /// </summary>
-        public AppSettings Settings { get; private set; }
-
-        void Update ()
-        {
-            if (firstUpdate)
-            {
-                firstUpdate = false;
-
-                this.Graphics.Reset ();
-
-                this.timer.Start ();
-
-                this.userApp.Start (this);
-            }
-
-            var dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
-            previousTimeSpan = timer.Elapsed;
-
-            if (dt > 0.5f)
-            {
-                dt = 0.0f;
-            }
-
-            elapsedTime += dt;
-
-            var appTime = new AppTime (dt, elapsedTime, ++frameCounter);
-
-            this.input.Update (appTime);
-
-            Boolean userAppToDie = this.userApp.Update (this, appTime);
-
-            if (userAppToDie)
-            {
-                timer.Stop ();
-                this.userApp.Stop (this);
-                this.platform.Program.Stop ();
-            }
-
-            VertexBuffer.CollectGpuGarbage (this.platform.Api);
-            IndexBuffer.CollectGpuGarbage (this.platform.Api);
-            Texture.CollectGpuGarbage (this.platform.Api);
-            Shader.CollectGpuGarbage (this.platform.Api);
-        }
-
-        void Render ()
-        {
-            this.userApp.Render (this);
-        }
-
-        public void Dispose ()
-        {
-        }
+        public Int32 Height { get { return this.platform.app_GetHeight(); } }
     }
 }

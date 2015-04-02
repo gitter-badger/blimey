@@ -49,132 +49,117 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// The Cor App Framework provides a user's app access to Cor features via this interface.
+    /// A touch in a single frame definition of a finger on the primary panel.
     /// </summary>
-    public sealed class Engine
-        : IDisposable
+    public struct Touch
     {
-        readonly Audio audio;
-        readonly Graphics graphics;
-        readonly Resources resources;
-        readonly Status status;
-        readonly Input input;
-        readonly Host host;
+        /// <summary>
+        ///
+        /// </summary>
+        String id;
 
-        readonly IPlatform platform;
+        /// <summary>
+        /// The position of a touch ranges between -0.5 and 0.5 in both X and Y
+        /// </summary>
+        Vector2 normalisedEngineSpacePosition;
 
-        Single elapsedTime;
-        Int64 frameCounter = -1;
-        TimeSpan previousTimeSpan;
+        /// <summary>
+        ///
+        /// </summary>
+        TouchPhase phase;
 
-        readonly IApp userApp;
+        /// <summary>
+        ///
+        /// </summary>
+        Int64 frameNumber;
 
-        readonly Stopwatch timer = new Stopwatch ();
-        Boolean firstUpdate = true;
+        /// <summary>
+        ///
+        /// </summary>
+        Single timestamp;
 
-        public Engine (IPlatform platform, AppSettings appSettings, IApp userApp)
+        /// <summary>
+        ///
+        /// </summary>
+        static Touch invalidTouch;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public String ID { get { return id; } }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector2 Position
         {
-            this.platform = platform;
-            this.userApp = userApp;
-
-            this.platform.Program.Start (this.platform.Api, this.Update, this.Render);
-
-            this.audio = new Audio (this.platform.Api);
-            this.graphics = new Graphics (this.platform.Api);
-            this.resources = new Resources (this.platform.Api);
-            this.status = new Status (this.platform.Api);
-            this.input = new Input (this.platform.Api, appSettings.MouseGeneratesTouches);
-            this.host = new Host (this.platform.Api);
-
-            this.Settings = appSettings;
+            get { return normalisedEngineSpacePosition; }
         }
 
         /// <summary>
-        /// Provides access to Cor's audio manager.
+        ///
         /// </summary>
-        public Audio Audio { get { return audio; } }
+        public TouchPhase Phase { get { return phase; } }
 
         /// <summary>
-        /// Provides access to Cor's graphics manager, which  provides an interface to working with the GPU.
+        ///
         /// </summary>
-        public Graphics Graphics { get { return graphics; } }
-
-        public Resources Resources { get { return resources; } }
+        public Int64 FrameNumber { get { return frameNumber; } }
 
         /// <summary>
-        /// Provides information about the current state of the App.
+        ///
         /// </summary>
-        public Status Status { get { return status; } }
+        public Single Timestamp { get { return timestamp; } }
 
         /// <summary>
-        /// Provides access to Cor's input manager.
+        ///
         /// </summary>
-        public Input Input { get { return input; } }
-
-        /// <summary>
-        /// Provides information about the hardware and environment.
-        /// </summary>
-        public Host Host { get { return host; } }
-
-        /// <summary>
-        /// Provides access to Cor's logging system.
-        /// </summary>
-        public LogManager Log { get; private set; }
-
-        /// <summary>
-        /// Gets the settings used to initilise the app.
-        /// </summary>
-        public AppSettings Settings { get; private set; }
-
-        void Update ()
+        public Touch (
+            String id,
+            Vector2 normalisedEngineSpacePosition,
+            TouchPhase phase,
+            Int64 frame,
+            Single timestamp)
         {
-            if (firstUpdate)
+            if (normalisedEngineSpacePosition.X > 0.5f ||
+                normalisedEngineSpacePosition.X < -0.5f)
             {
-                firstUpdate = false;
-
-                this.Graphics.Reset ();
-
-                this.timer.Start ();
-
-                this.userApp.Start (this);
+                throw new Exception (
+                    "Touch has a bad X coordinate: " +
+                    normalisedEngineSpacePosition.X);
             }
 
-            var dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
-            previousTimeSpan = timer.Elapsed;
-
-            if (dt > 0.5f)
+            if (normalisedEngineSpacePosition.Y > 0.5f ||
+                normalisedEngineSpacePosition.X < -0.5f)
             {
-                dt = 0.0f;
+                throw new Exception (
+                    "Touch has a bad Y coordinate: " +
+                    normalisedEngineSpacePosition.Y);
             }
 
-            elapsedTime += dt;
-
-            var appTime = new AppTime (dt, elapsedTime, ++frameCounter);
-
-            this.input.Update (appTime);
-
-            Boolean userAppToDie = this.userApp.Update (this, appTime);
-
-            if (userAppToDie)
-            {
-                timer.Stop ();
-                this.userApp.Stop (this);
-                this.platform.Program.Stop ();
-            }
-
-            VertexBuffer.CollectGpuGarbage (this.platform.Api);
-            IndexBuffer.CollectGpuGarbage (this.platform.Api);
-            Texture.CollectGpuGarbage (this.platform.Api);
-            Shader.CollectGpuGarbage (this.platform.Api);
+            this.id = id;
+            this.normalisedEngineSpacePosition = normalisedEngineSpacePosition;
+            this.phase = phase;
+            this.frameNumber = frame;
+            this.timestamp = timestamp;
         }
 
-        void Render ()
+        /// <summary>
+        ///
+        /// </summary>
+        static Touch ()
         {
-            this.userApp.Render (this);
+            invalidTouch = new Touch (
+                null,
+                Vector2.Zero,
+                TouchPhase.Invalid,
+                -1,
+                0f);
         }
 
-        public void Dispose ()
-        {
-        }
+        /// <summary>
+        ///
+        /// </summary>
+        public static Touch Invalid { get { return invalidTouch; } }
     }
 }

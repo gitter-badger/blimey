@@ -49,132 +49,39 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// The Cor App Framework provides a user's app access to Cor features via this interface.
+    /// A screen specification provides data about the attributes of a specific screen.  Every screen is associated with
+    /// a panel that supports a screen.  The screen specification provides information about the OS configuration of the
+    ///  hardware, not the specfic context or settings that the Cor App Framework is using, for example: if you had a
+    /// desktop monitor with that supported a resolution of 1680x1050, but in the OS you chose to run it at
+    /// a resolution of 1024x768 and the Cor App Framework is running a window with size 640x360 the screen
+    /// specification would always return 1024x768.
     /// </summary>
-    public sealed class Engine
-        : IDisposable
+    public sealed class ScreenSpecification
     {
-        readonly Audio audio;
-        readonly Graphics graphics;
-        readonly Resources resources;
-        readonly Status status;
-        readonly Input input;
-        readonly Host host;
+        readonly IApi platform;
 
-        readonly IPlatform platform;
-
-        Single elapsedTime;
-        Int64 frameCounter = -1;
-        TimeSpan previousTimeSpan;
-
-        readonly IApp userApp;
-
-        readonly Stopwatch timer = new Stopwatch ();
-        Boolean firstUpdate = true;
-
-        public Engine (IPlatform platform, AppSettings appSettings, IApp userApp)
+        internal ScreenSpecification (IApi platform)
         {
             this.platform = platform;
-            this.userApp = userApp;
-
-            this.platform.Program.Start (this.platform.Api, this.Update, this.Render);
-
-            this.audio = new Audio (this.platform.Api);
-            this.graphics = new Graphics (this.platform.Api);
-            this.resources = new Resources (this.platform.Api);
-            this.status = new Status (this.platform.Api);
-            this.input = new Input (this.platform.Api, appSettings.MouseGeneratesTouches);
-            this.host = new Host (this.platform.Api);
-
-            this.Settings = appSettings;
         }
 
         /// <summary>
-        /// Provides access to Cor's audio manager.
+        /// Defines the total width of the screen in question in pixels when the device is in it's default
+        /// orientation.
         /// </summary>
-        public Audio Audio { get { return audio; } }
+        public Int32 ScreenResolutionWidth { get { return this.platform.sys_GetPrimaryScreenResolutionWidth (); } }
 
         /// <summary>
-        /// Provides access to Cor's graphics manager, which  provides an interface to working with the GPU.
+        /// Defines the total height of the screen in question in pixels when the device is in it's default
+        /// orientation.
         /// </summary>
-        public Graphics Graphics { get { return graphics; } }
-
-        public Resources Resources { get { return resources; } }
+        public Int32 ScreenResolutionHeight { get { return this.platform.sys_GetPrimaryScreenResolutionHeight (); } }
 
         /// <summary>
-        /// Provides information about the current state of the App.
+        /// This is just the ratio of the ScreenResolutionWidth to ScreenResolutionHeight (w/h) (in it's default
+        /// orientation).
         /// </summary>
-        public Status Status { get { return status; } }
-
-        /// <summary>
-        /// Provides access to Cor's input manager.
-        /// </summary>
-        public Input Input { get { return input; } }
-
-        /// <summary>
-        /// Provides information about the hardware and environment.
-        /// </summary>
-        public Host Host { get { return host; } }
-
-        /// <summary>
-        /// Provides access to Cor's logging system.
-        /// </summary>
-        public LogManager Log { get; private set; }
-
-        /// <summary>
-        /// Gets the settings used to initilise the app.
-        /// </summary>
-        public AppSettings Settings { get; private set; }
-
-        void Update ()
-        {
-            if (firstUpdate)
-            {
-                firstUpdate = false;
-
-                this.Graphics.Reset ();
-
-                this.timer.Start ();
-
-                this.userApp.Start (this);
-            }
-
-            var dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
-            previousTimeSpan = timer.Elapsed;
-
-            if (dt > 0.5f)
-            {
-                dt = 0.0f;
-            }
-
-            elapsedTime += dt;
-
-            var appTime = new AppTime (dt, elapsedTime, ++frameCounter);
-
-            this.input.Update (appTime);
-
-            Boolean userAppToDie = this.userApp.Update (this, appTime);
-
-            if (userAppToDie)
-            {
-                timer.Stop ();
-                this.userApp.Stop (this);
-                this.platform.Program.Stop ();
-            }
-
-            VertexBuffer.CollectGpuGarbage (this.platform.Api);
-            IndexBuffer.CollectGpuGarbage (this.platform.Api);
-            Texture.CollectGpuGarbage (this.platform.Api);
-            Shader.CollectGpuGarbage (this.platform.Api);
-        }
-
-        void Render ()
-        {
-            this.userApp.Render (this);
-        }
-
-        public void Dispose ()
-        {
-        }
+        public Single ScreenResolutionAspectRatio { get { return (Single) ScreenResolutionWidth / (Single) ScreenResolutionHeight; } }
     }
+
 }

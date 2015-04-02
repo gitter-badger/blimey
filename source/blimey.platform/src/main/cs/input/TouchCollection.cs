@@ -49,132 +49,122 @@ namespace Blimey
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// The Cor App Framework provides a user's app access to Cor features via this interface.
+    ///
     /// </summary>
-    public sealed class Engine
-        : IDisposable
+    public sealed class TouchCollection
+        : IEnumerable<Touch>
     {
-        readonly Audio audio;
-        readonly Graphics graphics;
-        readonly Resources resources;
-        readonly Status status;
-        readonly Input input;
-        readonly Host host;
+        /// <summary>
+        ///
+        /// </summary>
+        List<Touch> touchBuffer = new List<Touch>();
 
-        readonly IPlatform platform;
-
-        Single elapsedTime;
-        Int64 frameCounter = -1;
-        TimeSpan previousTimeSpan;
-
-        readonly IApp userApp;
-
-        readonly Stopwatch timer = new Stopwatch ();
-        Boolean firstUpdate = true;
-
-        public Engine (IPlatform platform, AppSettings appSettings, IApp userApp)
+        /// <summary>
+        ///
+        /// </summary>
+        IEnumerator IEnumerable.GetEnumerator ()
         {
-            this.platform = platform;
-            this.userApp = userApp;
-
-            this.platform.Program.Start (this.platform.Api, this.Update, this.Render);
-
-            this.audio = new Audio (this.platform.Api);
-            this.graphics = new Graphics (this.platform.Api);
-            this.resources = new Resources (this.platform.Api);
-            this.status = new Status (this.platform.Api);
-            this.input = new Input (this.platform.Api, appSettings.MouseGeneratesTouches);
-            this.host = new Host (this.platform.Api);
-
-            this.Settings = appSettings;
+            return GetEnumerator ();
         }
 
         /// <summary>
-        /// Provides access to Cor's audio manager.
+        ///
         /// </summary>
-        public Audio Audio { get { return audio; } }
-
-        /// <summary>
-        /// Provides access to Cor's graphics manager, which  provides an interface to working with the GPU.
-        /// </summary>
-        public Graphics Graphics { get { return graphics; } }
-
-        public Resources Resources { get { return resources; } }
-
-        /// <summary>
-        /// Provides information about the current state of the App.
-        /// </summary>
-        public Status Status { get { return status; } }
-
-        /// <summary>
-        /// Provides access to Cor's input manager.
-        /// </summary>
-        public Input Input { get { return input; } }
-
-        /// <summary>
-        /// Provides information about the hardware and environment.
-        /// </summary>
-        public Host Host { get { return host; } }
-
-        /// <summary>
-        /// Provides access to Cor's logging system.
-        /// </summary>
-        public LogManager Log { get; private set; }
-
-        /// <summary>
-        /// Gets the settings used to initilise the app.
-        /// </summary>
-        public AppSettings Settings { get; private set; }
-
-        void Update ()
+        IEnumerator<Touch> IEnumerable<Touch>.GetEnumerator ()
         {
-            if (firstUpdate)
-            {
-                firstUpdate = false;
-
-                this.Graphics.Reset ();
-
-                this.timer.Start ();
-
-                this.userApp.Start (this);
-            }
-
-            var dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
-            previousTimeSpan = timer.Elapsed;
-
-            if (dt > 0.5f)
-            {
-                dt = 0.0f;
-            }
-
-            elapsedTime += dt;
-
-            var appTime = new AppTime (dt, elapsedTime, ++frameCounter);
-
-            this.input.Update (appTime);
-
-            Boolean userAppToDie = this.userApp.Update (this, appTime);
-
-            if (userAppToDie)
-            {
-                timer.Stop ();
-                this.userApp.Stop (this);
-                this.platform.Program.Stop ();
-            }
-
-            VertexBuffer.CollectGpuGarbage (this.platform.Api);
-            IndexBuffer.CollectGpuGarbage (this.platform.Api);
-            Texture.CollectGpuGarbage (this.platform.Api);
-            Shader.CollectGpuGarbage (this.platform.Api);
+            return GetEnumerator ();
         }
 
-        void Render ()
+        /// <summary>
+        ///
+        /// </summary>
+        internal void ClearBuffer ()
         {
-            this.userApp.Render (this);
+            this.touchBuffer.Clear ();
         }
 
-        public void Dispose ()
+        /// <summary>
+        ///
+        /// </summary>
+        internal void RegisterTouch (
+            String id,
+            Vector2 normalisedEngineSpacePosition,
+            TouchPhase phase,
+            Int64 frameNum,
+            Single timestamp)
         {
+            Boolean die = false;
+
+            if (normalisedEngineSpacePosition.X > 0.5f ||
+                normalisedEngineSpacePosition.X < -0.5f)
+            {
+                InternalUtils.Log.Info (
+                    "Touch has a bad X coordinate: " +
+                    normalisedEngineSpacePosition.X);
+
+                die = true;
+            }
+
+            if (normalisedEngineSpacePosition.Y > 0.5f ||
+                normalisedEngineSpacePosition.X < -0.5f)
+            {
+                InternalUtils.Log.Info (
+                    "Touch has a bad Y coordinate: " +
+                    normalisedEngineSpacePosition.Y);
+
+                die = true;
+            }
+
+            if (die)
+            {
+                InternalUtils.Log.Info ("Discarding Bad Touch");
+                return;
+            }
+
+            var touch = new Touch (
+                id,
+                normalisedEngineSpacePosition,
+                phase,
+                frameNum,
+                timestamp);
+
+            this.touchBuffer.Add (touch);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public IEnumerator<Touch> GetEnumerator ()
+        {
+            return new TouchCollectionEnumerator (this.touchBuffer);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public int TouchCount
+        {
+            get
+            {
+                return touchBuffer.Count;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Touch GetTouchFromTouchID (String zTouchID)
+        {
+            foreach (var touch in touchBuffer)
+            {
+                if (touch.ID == zTouchID)
+                    return touch;
+            }
+
+            //System.Diagnostics.Debug.WriteLine (
+            //    "The touch requested no longer exists.");
+
+            return Touch.Invalid;
         }
     }
 }

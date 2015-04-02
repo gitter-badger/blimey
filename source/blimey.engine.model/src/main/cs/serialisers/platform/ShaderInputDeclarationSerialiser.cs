@@ -45,136 +45,79 @@ namespace Blimey
 
     using Abacus.SinglePrecision;
     using Fudge;
-    
+    using Oats;
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// The Cor App Framework provides a user's app access to Cor features via this interface.
+    /// An explict Oats.Serialiser for the Cor.ShaderInputDefinition type.
     /// </summary>
-    public sealed class Engine
-        : IDisposable
+    public class ShaderInputDeclarationSerialiser
+        : Serialiser<ShaderInputDeclaration>
     {
-        readonly Audio audio;
-        readonly Graphics graphics;
-        readonly Resources resources;
-        readonly Status status;
-        readonly Input input;
-        readonly Host host;
-
-        readonly IPlatform platform;
-
-        Single elapsedTime;
-        Int64 frameCounter = -1;
-        TimeSpan previousTimeSpan;
-
-        readonly IApp userApp;
-
-        readonly Stopwatch timer = new Stopwatch ();
-        Boolean firstUpdate = true;
-
-        public Engine (IPlatform platform, AppSettings appSettings, IApp userApp)
+        /// <summary>
+        /// Returns a Cor.ShaderInputDefinition object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override ShaderInputDeclaration Read (ISerialisationChannel ss)
         {
-            this.platform = platform;
-            this.userApp = userApp;
+            var sid = new ShaderInputDeclaration ();
 
-            this.platform.Program.Start (this.platform.Api, this.Update, this.Render);
+            // Name
+            sid.Name = ss.Read <String> ();
 
-            this.audio = new Audio (this.platform.Api);
-            this.graphics = new Graphics (this.platform.Api);
-            this.resources = new Resources (this.platform.Api);
-            this.status = new Status (this.platform.Api);
-            this.input = new Input (this.platform.Api, appSettings.MouseGeneratesTouches);
-            this.host = new Host (this.platform.Api);
+            // Nice Name
+            sid.NiceName = ss.Read <String> ();
 
-            this.Settings = appSettings;
+            // Optional
+            sid.Optional = ss.Read <Boolean> ();
+
+            // Usage
+            sid.Usage = ss.Read <VertexElementUsage> ();
+
+            // Null
+            if (ss.Read <Boolean> ())
+            {
+                // Default Value
+                Byte typeIndex = ss.Read <Byte> ();
+                Type defaultValueType = ShaderInputDeclaration.SupportedTypes [typeIndex];
+                sid.DefaultValue = ss.ReadReflective (defaultValueType);
+            }
+
+            return sid;
         }
 
         /// <summary>
-        /// Provides access to Cor's audio manager.
+        /// Writes a Cor.ShaderInputDefinition object to an Oats.ISerialisationChannel.
         /// </summary>
-        public Audio Audio { get { return audio; } }
-
-        /// <summary>
-        /// Provides access to Cor's graphics manager, which  provides an interface to working with the GPU.
-        /// </summary>
-        public Graphics Graphics { get { return graphics; } }
-
-        public Resources Resources { get { return resources; } }
-
-        /// <summary>
-        /// Provides information about the current state of the App.
-        /// </summary>
-        public Status Status { get { return status; } }
-
-        /// <summary>
-        /// Provides access to Cor's input manager.
-        /// </summary>
-        public Input Input { get { return input; } }
-
-        /// <summary>
-        /// Provides information about the hardware and environment.
-        /// </summary>
-        public Host Host { get { return host; } }
-
-        /// <summary>
-        /// Provides access to Cor's logging system.
-        /// </summary>
-        public LogManager Log { get; private set; }
-
-        /// <summary>
-        /// Gets the settings used to initilise the app.
-        /// </summary>
-        public AppSettings Settings { get; private set; }
-
-        void Update ()
+        public override void Write (ISerialisationChannel ss, ShaderInputDeclaration sid)
         {
-            if (firstUpdate)
+            // Name
+            ss.Write <String> (sid.Name);
+
+            // Nice Name
+            ss.Write <String> (sid.NiceName);
+
+            // Optional
+            ss.Write <Boolean> (sid.Optional);
+
+            // Usage
+            ss.Write <VertexElementUsage> (sid.Usage);
+
+            // Null
+            ss.Write <Boolean> (sid.DefaultValue != null);
+
+            // Default Value
+            if (sid.DefaultValue != null)
             {
-                firstUpdate = false;
+                Type defaultValueType = sid.DefaultValue.GetType ();
+                Byte typeIndex = (Byte)
+                    ShaderInputDeclaration.SupportedTypes
+                    .ToList ()
+                    .IndexOf (defaultValueType);
 
-                this.Graphics.Reset ();
-
-                this.timer.Start ();
-
-                this.userApp.Start (this);
+                ss.Write<Byte> (typeIndex);
+                ss.WriteReflective (defaultValueType, sid.DefaultValue);
             }
-
-            var dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
-            previousTimeSpan = timer.Elapsed;
-
-            if (dt > 0.5f)
-            {
-                dt = 0.0f;
-            }
-
-            elapsedTime += dt;
-
-            var appTime = new AppTime (dt, elapsedTime, ++frameCounter);
-
-            this.input.Update (appTime);
-
-            Boolean userAppToDie = this.userApp.Update (this, appTime);
-
-            if (userAppToDie)
-            {
-                timer.Stop ();
-                this.userApp.Stop (this);
-                this.platform.Program.Stop ();
-            }
-
-            VertexBuffer.CollectGpuGarbage (this.platform.Api);
-            IndexBuffer.CollectGpuGarbage (this.platform.Api);
-            Texture.CollectGpuGarbage (this.platform.Api);
-            Shader.CollectGpuGarbage (this.platform.Api);
-        }
-
-        void Render ()
-        {
-            this.userApp.Render (this);
-        }
-
-        public void Dispose ()
-        {
         }
     }
 }

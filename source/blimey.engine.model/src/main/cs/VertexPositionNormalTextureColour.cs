@@ -45,136 +45,151 @@ namespace Blimey
 
     using Abacus.SinglePrecision;
     using Fudge;
-    
+    using Oats;
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// The Cor App Framework provides a user's app access to Cor features via this interface.
+    ///
     /// </summary>
-    public sealed class Engine
-        : IDisposable
+    [StructLayout (LayoutKind.Sequential)]
+    public struct VertexPositionNormalTextureColour
+        : IVertexType
     {
-        readonly Audio audio;
-        readonly Graphics graphics;
-        readonly Resources resources;
-        readonly Status status;
-        readonly Input input;
-        readonly Host host;
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Position;
 
-        readonly IPlatform platform;
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector3 Normal;
 
-        Single elapsedTime;
-        Int64 frameCounter = -1;
-        TimeSpan previousTimeSpan;
+        /// <summary>
+        ///
+        /// </summary>
+        public Vector2 UV;
 
-        readonly IApp userApp;
+        /// <summary>
+        ///
+        /// </summary>
+        public Rgba32 Colour;
 
-        readonly Stopwatch timer = new Stopwatch ();
-        Boolean firstUpdate = true;
-
-        public Engine (IPlatform platform, AppSettings appSettings, IApp userApp)
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexPositionNormalTextureColour (
+            Vector3 position,
+            Vector3 normal,
+            Vector2 uv,
+            Rgba32 color)
         {
-            this.platform = platform;
-            this.userApp = userApp;
-
-            this.platform.Program.Start (this.platform.Api, this.Update, this.Render);
-
-            this.audio = new Audio (this.platform.Api);
-            this.graphics = new Graphics (this.platform.Api);
-            this.resources = new Resources (this.platform.Api);
-            this.status = new Status (this.platform.Api);
-            this.input = new Input (this.platform.Api, appSettings.MouseGeneratesTouches);
-            this.host = new Host (this.platform.Api);
-
-            this.Settings = appSettings;
+            this.Position = position;
+            this.Normal = normal;
+            this.UV = uv;
+            this.Colour = color;
         }
 
         /// <summary>
-        /// Provides access to Cor's audio manager.
+        ///
         /// </summary>
-        public Audio Audio { get { return audio; } }
-
-        /// <summary>
-        /// Provides access to Cor's graphics manager, which  provides an interface to working with the GPU.
-        /// </summary>
-        public Graphics Graphics { get { return graphics; } }
-
-        public Resources Resources { get { return resources; } }
-
-        /// <summary>
-        /// Provides information about the current state of the App.
-        /// </summary>
-        public Status Status { get { return status; } }
-
-        /// <summary>
-        /// Provides access to Cor's input manager.
-        /// </summary>
-        public Input Input { get { return input; } }
-
-        /// <summary>
-        /// Provides information about the hardware and environment.
-        /// </summary>
-        public Host Host { get { return host; } }
-
-        /// <summary>
-        /// Provides access to Cor's logging system.
-        /// </summary>
-        public LogManager Log { get; private set; }
-
-        /// <summary>
-        /// Gets the settings used to initilise the app.
-        /// </summary>
-        public AppSettings Settings { get; private set; }
-
-        void Update ()
+        static VertexPositionNormalTextureColour ()
         {
-            if (firstUpdate)
-            {
-                firstUpdate = false;
+            _vertexDeclaration = new VertexDeclaration (
+                new VertexElement (
+                    0,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Position,
+                    0),
+                new VertexElement (
+                    12,
+                    VertexElementFormat.Vector3,
+                    VertexElementUsage.Normal,
+                    0),
+                new VertexElement (
+                    24,
+                    VertexElementFormat.Vector2,
+                    VertexElementUsage.TextureCoordinate,
+                    0),
+                new VertexElement (
+                    32,
+                    VertexElementFormat.Colour,
+                    VertexElementUsage.Colour,
+                    0)
+            );
 
-                this.Graphics.Reset ();
-
-                this.timer.Start ();
-
-                this.userApp.Start (this);
-            }
-
-            var dt = (Single)(timer.Elapsed.TotalSeconds - previousTimeSpan.TotalSeconds);
-            previousTimeSpan = timer.Elapsed;
-
-            if (dt > 0.5f)
-            {
-                dt = 0.0f;
-            }
-
-            elapsedTime += dt;
-
-            var appTime = new AppTime (dt, elapsedTime, ++frameCounter);
-
-            this.input.Update (appTime);
-
-            Boolean userAppToDie = this.userApp.Update (this, appTime);
-
-            if (userAppToDie)
-            {
-                timer.Stop ();
-                this.userApp.Stop (this);
-                this.platform.Program.Stop ();
-            }
-
-            VertexBuffer.CollectGpuGarbage (this.platform.Api);
-            IndexBuffer.CollectGpuGarbage (this.platform.Api);
-            Texture.CollectGpuGarbage (this.platform.Api);
-            Shader.CollectGpuGarbage (this.platform.Api);
+            _default = new VertexPositionNormalTextureColour (
+                Vector3.Zero,
+                Vector3.Zero,
+                Vector2.Zero,
+                Rgba32.White);
         }
 
-        void Render ()
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexPositionNormalTextureColour _default;
+
+        /// <summary>
+        ///
+        /// </summary>
+        readonly static VertexDeclaration _vertexDeclaration;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public static IVertexType Default
         {
-            this.userApp.Render (this);
+            get
+            {
+                return _default;
+            }
         }
 
-        public void Dispose ()
+        /// <summary>
+        ///
+        /// </summary>
+        public VertexDeclaration VertexDeclaration
         {
+            get
+            {
+                return _vertexDeclaration;
+            }
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    /// <summary>
+    /// An explict Oats.Serialiser for the Blimey.VertexPositionNormalTextureColour type.
+    /// </summary>
+    public class VertexPositionNormalTextureColourSerialiser
+        : Serialiser<VertexPositionNormalTextureColour>
+    {
+        /// <summary>
+        /// Returns a Blimey.VertexPositionNormalTextureColour object read from an Oats.ISerialisationChannel.
+        /// </summary>
+        public override VertexPositionNormalTextureColour Read (ISerialisationChannel ss)
+        {
+            Vector3 pos = ss.Read <Vector3> ();
+            Vector3 norm = ss.Read <Vector3> ();
+            Vector2 tex = ss.Read <Vector2> ();
+            Rgba32 col = ss.Read <Rgba32> ();
+
+            return new VertexPositionNormalTextureColour (pos, norm, tex, col);
+        }
+
+        /// <summary>
+        /// Writes a Blimey.VertexPositionNormalTextureColour object to an Oats.ISerialisationChannel.
+        /// </summary>
+        public override void Write (ISerialisationChannel ss, VertexPositionNormalTextureColour obj)
+        {
+            ss.Write <Vector3> (obj.Position);
+            ss.Write <Vector3> (obj.Normal);
+            ss.Write <Vector2> (obj.UV);
+            ss.Write <Rgba32> (obj.Colour);
         }
     }
 }
