@@ -417,6 +417,8 @@ except:
 
 os.mkdir ('bin')
 
+fail_count = 0
+
 for project in projects:
   print ''
 
@@ -467,6 +469,15 @@ for project in projects:
     print bcolors.OKGREEN + 'SUCCESS' + bcolors.ENDC
   else:
     print bcolors.FAIL + 'FAILURE' + bcolors.ENDC
+    fail_count = fail_count + 1
 
+print ''
+print '--------------------------------------'
+print ''
 
+if fail_count == 0:
+  print bcolors.OKGREEN + 'BUILD SUCCEEDED' + bcolors.ENDC
+else:
+  print bcolors.FAIL + 'BUILD FAILED: ' + fail_count + '/' + len(projects) + bcolors.ENDC
 
+sys.exit (fail_count)
