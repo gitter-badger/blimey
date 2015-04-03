@@ -478,6 +478,6 @@ print ''
 if fail_count == 0:
   print bcolors.OKGREEN + 'BUILD SUCCEEDED' + bcolors.ENDC
 else:
-  print bcolors.FAIL + 'BUILD FAILED: ' + fail_count + '/' + len(projects) + bcolors.ENDC
+  print bcolors.FAIL + 'BUILD FAILED: ' + str(fail_count) + '/' + len(projects) + bcolors.ENDC
 
 sys.exit (fail_count)
