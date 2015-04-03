@@ -36,72 +36,98 @@ namespace Blimey
 {
     using System;
     using System.Runtime.InteropServices;
+    using System.Globalization;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
+
     using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
+
+    using System.Linq;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class CameraManager
+    public class BoundingRectangle
     {
-            public Entity GetRenderPassCamera (String renderPass)
+
+        public float    x1, y1, x2, y2;
+        bool    bClean;
+
+        public BoundingRectangle(float _x1, float _y1, float _x2, float _y2)
+        {
+            x1=_x1;
+            y1=_y1;
+            x2=_x2;
+            y2=_y2;
+            bClean=false;
+        }
+
+        public BoundingRectangle()
+        {
+            bClean=true;
+        }
+
+        public void Clear()
+        {
+            bClean=true;
+        }
+
+        public bool IsClean()
+        {
+            return bClean;
+        }
+
+        public void Set(float _x1, float _y1, float _x2, float _y2)
+        {
+            x1=_x1;
+            x2=_x2;
+            y1=_y1;
+            y2=_y2;
+            bClean=false;
+        }
+
+        public void SetRadius(float x, float y, float r)
+        {
+            x1=x-r;
+            x2=x+r;
+            y1=y-r;
+            y2=y+r;
+            bClean=false;
+        }
+
+        public void Encapsulate(float x, float y)
+        {
+            if(bClean)
             {
-                return GetActiveCamera(renderPass).Parent;
+                x1=x2=x;
+                y1=y2=y;
+                bClean=false;
             }
-            internal CameraTrait GetActiveCamera(String RenderPass)
-        {
-            return _activeCameras[RenderPass].GetTrait<CameraTrait> ();
-        }
-
-        readonly Dictionary<String, Entity> _defaultCameras = new Dictionary<String,Entity>();
-        readonly Dictionary<String, Entity> _activeCameras = new Dictionary<String,Entity>();
-
-        internal void SetDefaultCamera(String RenderPass)
-        {
-            _activeCameras[RenderPass] = _defaultCameras[RenderPass];
-        }
-
-        internal void SetMainCamera (String RenderPass, Entity go)
-        {
-            _activeCameras[RenderPass] = go;
-        }
-
-        internal CameraManager (Scene scene)
-        {
-                  var settings = scene.Configuration;
-
-                  foreach (var renderPass in settings.RenderPasses)
+            else
             {
-                         var go = scene.SceneGraph.CreateSceneObject("RenderPass(" + renderPass + ") Provided Camera");
-
-                var cam = go.AddTrait<CameraTrait>();
-
-                if (renderPass.Configuration.CameraProjectionType == CameraProjectionType.Perspective)
-                {
-                    go.Transform.Position = new Vector3(2, 1, 5);
-
-                    var orbit = go.AddTrait<OrbitAroundSubjectTrait>();
-                    orbit.CameraSubject = Transform.Origin;
-
-                    var lookAtSub = go.AddTrait<LookAtSubjectTrait>();
-                    lookAtSub.Subject = Transform.Origin;
-                }
-                else
-                {
-                    cam.Projection = CameraProjectionType.Orthographic;
-
-                    go.Transform.Position = new Vector3(0, 0, 0.5f);
-                    go.Transform.LookAt(Vector3.Zero);
-                }
-
-
-                        _defaultCameras.Add(renderPass.Name, go);
-                _activeCameras.Add(renderPass.Name, go);
+                if(x<x1) x1=x;
+                if(x>x2) x2=x;
+                if(y<y1) y1=y;
+                if(y>y2) y2=y;
             }
         }
+        public bool TestPoint(float x, float y)
+        {
+            if(x>=x1 && x<x2 && y>=y1 && y<y2)
+                return true;
+
+            return false;
+        }
+
+        public bool Intersect(BoundingRectangle rect)
+        {
+            if(Math.Abs(x1 + x2 - rect.x1 - rect.x2) < (x2 - x1 + rect.x2 - rect.x1))
+            if (Math.Abs(y1 + y2 - rect.y1 - rect.y2) < (y2 - y1 + rect.y2 - rect.y1))
+                return true;
+
+            return false;
+        }
+
     }
 }

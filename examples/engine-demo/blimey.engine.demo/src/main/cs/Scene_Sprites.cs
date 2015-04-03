@@ -180,7 +180,7 @@ namespace EngineDemo
         public static Texture texZa;
         public static Texture texBg;
 
-        PrimitiveRenderer.Sprite bgSprite;
+        SpritePrimitive bgSprite;
 
         public Scene_Sprites ()
         {
@@ -213,7 +213,7 @@ namespace EngineDemo
 
             */
 
-            bgSprite = new PrimitiveRenderer.Sprite (
+            bgSprite = new SpritePrimitive (
                 this.Blimey.PrimitiveRenderer, texBg,
                 64, 64,
                 this.Cor.Host.ScreenSpecification.ScreenResolutionWidth,

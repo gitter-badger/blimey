@@ -55,7 +55,7 @@ namespace Blimey
         Boolean useLogChannels = false;
         readonly String tag;
 
-        internal LogManagerSettings (String tag)
+        public LogManagerSettings (String tag)
         {
             this.tag = tag;
 

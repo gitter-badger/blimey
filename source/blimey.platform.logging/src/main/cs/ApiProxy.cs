@@ -37,7 +37,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Cor
+namespace Blimey
 {
     using System;
     using System.Collections;
@@ -50,7 +50,6 @@ namespace Cor
     using System.Threading;
 
     using Abacus.SinglePrecision;
-
     using Fudge;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -153,6 +152,15 @@ namespace Cor
         /*
          * Graphics
          */
+
+        public ShaderFormat gfx_GetRuntimeShaderFormat ()
+        {
+            StartLog ("gfx_GetRuntimeShaderFormat ()");
+            ShaderFormat shaderFormat = api.gfx_GetRuntimeShaderFormat ();
+            EndLog (shaderFormat);
+            return shaderFormat;
+        }
+
         public void gfx_ClearColourBuffer (Rgba32 colour)
         {
             StartLog ("gfx_ClearColourBuffer ({0})", colour);

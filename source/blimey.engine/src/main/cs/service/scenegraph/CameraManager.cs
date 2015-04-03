@@ -32,111 +32,77 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace EngineDemo
+namespace Blimey
 {
     using System;
+    using System.Runtime.InteropServices;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Blimey;
-    using System.Collections.Generic;
+    using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Scene_Particles
-        : Scene
+    public class CameraManager
     {
-        Scene returnScene = null;
-
-        Triple q;
-        SpritePrimitive s;
-        PrimitiveParticleSystem ps;
-
-        Texture tex1 = null;
-        Texture tex2 = null;
-
-        public override void Start ()
+        public Entity GetRenderPassCamera (String renderPass)
         {
-            //var meshAsset = Blimey.Assets.Load <MeshAsset> ();
-
-            //var vb = Cor.Graphics.CreateVertexBuffer (meshAsset.VertexDeclaration, meshAsset.VertexCount);
-            //vb.SetData <REFLECTION> ()
-
-
-            var ta = Blimey.Assets.Load <TextureAsset> ("assets/cvan01.bba");
-            tex1 = Cor.Graphics.CreateTexture (ta);
-            var tb = Blimey.Assets.Load <TextureAsset> ("assets/bg2.bba");
-            tex2 = Cor.Graphics.CreateTexture (tb);
-
-
-            q = new Triple ();
-            q.blend = BlendMode.Default;
-            q.tex = tex1;
-            q.v [0].Colour = Rgba32.Blue;
-            q.v [0].Position.X = 0.0f;
-            q.v [0].Position.Y = 0.0f;
-            q.v [0].UV = new Vector2 (0, 0);
-            q.v [1].Colour = Rgba32.Green;
-            q.v [1].Position.X = 0.5f;
-            q.v [1].Position.Y = 0.5f;
-            q.v [1].UV = new Vector2 (1f, 1f);
-            q.v [2].Colour = Rgba32.Red;
-            q.v [2].Position.X = 0f;
-            q.v [2].Position.Y = 0.5f;
-            q.v [2].UV = new Vector2 (0, 1f);
-            returnScene = this;
-
-            s = new SpritePrimitive (this.Blimey.PrimitiveRenderer, tex2, 64, 64, 256, 256);
-            s.SetBlendMode (BlendMode.Default);
-
-
-
-            var psi = new PrimitiveParticleSystemInfo ();
-            psi.sprite = s;
-            psi.fLifetime = 3f;
-            psi.colColourStart = Rgba32.Red;
-            psi.colColourEnd = Rgba32.Yellow;
-            psi.nEmission = 10;
-            psi.fSpinStart = 0.3f;
-            psi.fRadialAccel = 0.1f;
-            psi.fSpeed = 3f;
-            psi.fSizeVar = 0.1f;
-
-
-            ps = new PrimitiveParticleSystem (psi);
-
+            return GetActiveCamera(renderPass).Parent;
+        }
+        
+        internal CameraTrait GetActiveCamera(String RenderPass)
+        {
+            return _activeCameras[RenderPass].GetTrait<CameraTrait> ();
         }
 
-        public override void Shutdown()
+        readonly Dictionary<String, Entity> _defaultCameras = new Dictionary<String,Entity>();
+        readonly Dictionary<String, Entity> _activeCameras = new Dictionary<String,Entity>();
+
+        internal void SetDefaultCamera(String RenderPass)
         {
-            tex1.Dispose ();
-            tex2.Dispose ();
+            _activeCameras[RenderPass] = _defaultCameras[RenderPass];
         }
 
-        public override Scene Update(AppTime time)
+        internal void SetMainCamera (String RenderPass, Entity go)
         {
-            //this.Blimey.PrimitiveRenderer.AddTriple ("Debug", q);
-            //this.Blimey.PrimitiveRenderer.AddTriple ("Gui", q);
-            //s.Draw4V ("Gui",
-            //    0.0f, 0.0f,
-            //    0.5f, 0.0f,
-            //    0.0f, 0.5f,
-            //    0.5f, 0.5f);
+            _activeCameras[RenderPass] = go;
+        }
 
-            s.DrawEx ("Gui", 0f, 0f, 0.5f, 1f / 256f / 4f, 1f / 256f / 4f);
+        internal CameraManager (Scene scene)
+        {
+                  var settings = scene.Configuration;
 
-            //s.Draw ("Gui", 0f, 0f);
-            ps.Fire ();
-            ps.Draw ("Default");
-
-            this.Blimey.DebugRenderer.AddGrid ("Debug");
-            if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
-                Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
-                Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
+                  foreach (var renderPass in settings.RenderPasses)
             {
-                returnScene = new Scene_MainMenu();
-            }
+                         var go = scene.SceneGraph.CreateSceneObject("RenderPass(" + renderPass + ") Provided Camera");
 
-            return returnScene;
+                var cam = go.AddTrait<CameraTrait>();
+
+                if (renderPass.Configuration.CameraProjectionType == CameraProjectionType.Perspective)
+                {
+                    go.Transform.Position = new Vector3(2, 1, 5);
+
+                    var orbit = go.AddTrait<OrbitAroundSubjectTrait>();
+                    orbit.CameraSubject = Transform.Origin;
+
+                    var lookAtSub = go.AddTrait<LookAtSubjectTrait>();
+                    lookAtSub.Subject = Transform.Origin;
+                }
+                else
+                {
+                    cam.Projection = CameraProjectionType.Orthographic;
+
+                    go.Transform.Position = new Vector3(0, 0, 0.5f);
+                    go.Transform.LookAt(Vector3.Zero);
+                }
+
+
+                        _defaultCameras.Add(renderPass.Name, go);
+                _activeCameras.Add(renderPass.Name, go);
+            }
         }
     }
 }

@@ -1,0 +1,1 @@
+Blimey provides a few services that can be used to manage, update and render elements of an App.

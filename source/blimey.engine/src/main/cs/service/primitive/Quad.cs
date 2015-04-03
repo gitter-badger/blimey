@@ -35,32 +35,53 @@
 namespace Blimey
 {
     using System;
-    using System.Runtime.InteropServices;
-    using System.Globalization;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
-    using System.IO;
-
     using Abacus.SinglePrecision;
     using Fudge;
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    internal static class InternalUtils
+    public sealed class Quad
     {
-        static readonly LogManager log;
+        public VertexPositionTextureColour[] v;
+        public Texture tex;
+        public BlendMode blend = BlendMode.Default;
 
-        static InternalUtils ()
+        public Quad()
         {
-            var settings = new LogManagerSettings ("INTERNAL");
-            log = new LogManager (settings);
+            v = new VertexPositionTextureColour[4];
+            v[0].Position.Z = 0.5f;
+            v[1].Position.Z = 0.5f;
+            v[2].Position.Z = 0.5f;
+            v[3].Position.Z = 0.5f;
         }
 
-        public static LogManager Log
+        public Quad(Quad from)
         {
-            get { return log; }
+            v = new VertexPositionTextureColour[4];
+
+            for (int i = 0; i < 4; ++i)
+            {
+                v[i] = from.v[i];
+            }
+            tex = from.tex;
+            blend = from.blend;
+        }
+
+        public static Quad Create (Vector3 a, Vector3 b, Vector3 c, Vector3 d, Rgba32 colour)
+        {
+            var q = new Quad ();
+            q.v = new [] {
+                new VertexPositionTextureColour (a, new Vector2 (0, 0), colour),
+                new VertexPositionTextureColour (b, new Vector2 (0, 1), colour),
+                new VertexPositionTextureColour (c, new Vector2 (1, 1), colour),
+                new VertexPositionTextureColour (d, new Vector2 (1, 0), colour),
+            };
+            q.blend = BlendMode.Default;
+            q.tex = null;
+
+            return q;
         }
     }
 }

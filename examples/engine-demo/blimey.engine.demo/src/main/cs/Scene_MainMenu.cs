@@ -64,14 +64,14 @@ namespace EngineDemo
 
         Scene _returnScene;
 
-        PrimitiveRenderer.Triple q;
+        Triple q;
 
         Texture tex = null;
         public override void Start ()
         {
             var ta = Blimey.Assets.Load <TextureAsset> ("assets/bg1.bba");
             tex = Cor.Graphics.CreateTexture (ta);
-            q = new PrimitiveRenderer.Triple ();
+            q = new Triple ();
             q.blend = BlendMode.Default;
             q.tex = tex;
             q.v [0].Colour = Rgba32.Blue;

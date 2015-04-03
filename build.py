@@ -178,12 +178,23 @@ blimey_platform_api.additional_references = []
 blimey_platform_api.additional_search_paths = []
 blimey_platform_api.additional_sources = []
 
+
+blimey_platform_logging = Project ()
+blimey_platform_logging.out = 'blimey.platform.logging'
+blimey_platform_logging.target = 'library'
+blimey_platform_logging.path = 'source/blimey.platform.logging/src/main/cs/'
+blimey_platform_logging.defines = []
+blimey_platform_logging.references = [abacus, blimey_platform_packed, blimey_platform_util, blimey_platform_foundation, blimey_platform_model, blimey_platform_api]
+blimey_platform_logging.additional_references = []
+blimey_platform_logging.additional_search_paths = []
+blimey_platform_logging.additional_sources = []
+
 blimey_platform = Project ()
 blimey_platform.out = 'blimey.platform'
 blimey_platform.target = 'library'
 blimey_platform.path = 'source/blimey.platform/src/main/cs/'
 blimey_platform.defines = []
-blimey_platform.references = [abacus, blimey_platform_packed, blimey_platform_util, blimey_platform_foundation, blimey_platform_model, blimey_platform_api]
+blimey_platform.references = [abacus, blimey_platform_packed, blimey_platform_util, blimey_platform_foundation, blimey_platform_model, blimey_platform_api, blimey_platform_logging]
 blimey_platform.additional_references = []
 blimey_platform.additional_search_paths = []
 blimey_platform.additional_sources = []
@@ -199,7 +210,7 @@ if v_build_platform_api_monomac_app:
   blimey_platform_api_monomac_app.target = 'library'
   blimey_platform_api_monomac_app.path = 'source/blimey.platform.api.monomac-app/src/main/cs/'
   blimey_platform_api_monomac_app.defines = ['PLATFORM_API_MONOMAC_APP']
-  blimey_platform_api_monomac_app.references = [abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model, blimey_platform_api]
+  blimey_platform_api_monomac_app.references = [abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model, blimey_platform_api, blimey_platform_logging]
   blimey_platform_api_monomac_app.additional_references = ['System.Drawing', 'MonoMac']
   blimey_platform_api_monomac_app.additional_search_paths = [c_osx_xamarin_monomac_path]
   blimey_platform_api_monomac_app.additional_sources = ['source/shared/CommonOpenTK.cs']
@@ -210,7 +221,7 @@ if v_build_platform_api_xamarin_ios_app:
   blimey_platform_api_xamarin_ios_app.target = 'library'
   blimey_platform_api_xamarin_ios_app.path = 'source/blimey.platform.api.xamarin-ios-app/src/main/cs/'
   blimey_platform_api_xamarin_ios_app.defines = ['PLATFORM_API_XAMARIN_IOS_APP']
-  blimey_platform_api_xamarin_ios_app.references = [abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model, blimey_platform_api]
+  blimey_platform_api_xamarin_ios_app.references = [abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model, blimey_platform_api, blimey_platform_logging]
   blimey_platform_api_xamarin_ios_app.additional_references = ['OpenTK-1.0', 'monotouch']
   blimey_platform_api_xamarin_ios_app.additional_search_paths = [c_osx_xamarin_ios_path]
   blimey_platform_api_xamarin_ios_app.additional_sources = ['source/shared/CommonOpenTK.cs']
@@ -221,7 +232,7 @@ if v_build_platform_api_opentk_game:
   blimey_platform_api_opentk_game.target = 'library'
   blimey_platform_api_opentk_game.path = 'source/blimey.platform.api.opentk-game/src/main/cs/'
   blimey_platform_api_opentk_game.defines = ['PLATFORM_API_OPENTK_GAME']
-  blimey_platform_api_opentk_game.references = [abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model, blimey_platform_api]
+  blimey_platform_api_opentk_game.references = [abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model, blimey_platform_api, blimey_platform_logging]
   blimey_platform_api_opentk_game.additional_references = ['System.Drawing', 'OpenTK']
   blimey_platform_api_opentk_game.additional_search_paths = ['packages/']
   blimey_platform_api_opentk_game.additional_sources = ['source/shared/CommonOpenTK.cs']
@@ -295,7 +306,7 @@ blimey_engine.path = 'source/blimey.engine/src/main/cs/'
 blimey_engine.defines = []
 blimey_engine.references = [
   abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model,
-  blimey_platform, blimey_asset_model, blimey_engine_model, oats, blimey_platform_util]
+  blimey_platform, blimey_asset_model, blimey_engine_model, oats, blimey_platform_util, blimey_platform_logging]
 blimey_engine.additional_references = []
 blimey_engine.additional_search_paths = []
 blimey_engine.additional_sources = []
@@ -367,6 +378,7 @@ projects = [
   blimey_platform_util,
   blimey_platform_model,
   blimey_platform_api,
+  blimey_platform_logging,
   blimey_platform,
 
 

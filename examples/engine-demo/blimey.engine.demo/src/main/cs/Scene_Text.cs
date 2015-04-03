@@ -88,7 +88,7 @@ namespace EngineDemo
     {
         readonly Texture fntTex = null;
         readonly String fntUvData = null;
-        PrimitiveRenderer.Sprite s;
+        SpritePrimitive s;
 
         public SpriteFont (Engine engine, Blimey blimey, TextAsset fntUvAsset, TextureAsset fntTexAsset)
         {
@@ -108,7 +108,7 @@ namespace EngineDemo
         {
             Console.WriteLine (fntUvData);
 
-            s = new PrimitiveRenderer.Sprite (blimey.PrimitiveRenderer, fntTex);
+            s = new SpritePrimitive (blimey.PrimitiveRenderer, fntTex);
             s.SetBlendMode (BlendMode.Default);
             s.SetColour (Rgba32.Red);
             s.SetTextureRect (0.0052f, 0.0063f, 0.1354f, 0.1625f);

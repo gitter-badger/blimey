@@ -32,111 +32,61 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace EngineDemo
+namespace Blimey
 {
     using System;
-    using Fudge;
-    using Abacus.SinglePrecision;
-    using Blimey;
     using System.Collections.Generic;
+    using System.Linq;
+    using Abacus.SinglePrecision;
+    using Fudge;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Scene_Particles
-        : Scene
+    public class ParticlePrimitive
     {
-        Scene returnScene = null;
+        public Vector2 vecLocation;
+        public Vector2 vecVelocity;
 
-        Triple q;
-        SpritePrimitive s;
-        PrimitiveParticleSystem ps;
+        public float fGravity;
+        public float fRadialAccel;
+        public float fTangentialAccel;
 
-        Texture tex1 = null;
-        Texture tex2 = null;
+        public float fSpin;
+        public float fSpinDelta;
 
-        public override void Start ()
+        public float fSize;
+        public float fSizeDelta;
+
+        public Rgba32 colColour;      // + alpha
+        public Rgba32 colColourStart;
+        public Rgba32 colColourEnd;
+
+        public float fAge;
+        public float fTerminalAge;
+
+        public ParticlePrimitive(){}
+
+
+        public ParticlePrimitive (ParticlePrimitive o)
         {
-            //var meshAsset = Blimey.Assets.Load <MeshAsset> ();
+            this.vecLocation = o.vecLocation;
+            this.vecVelocity = o.vecVelocity;
 
-            //var vb = Cor.Graphics.CreateVertexBuffer (meshAsset.VertexDeclaration, meshAsset.VertexCount);
-            //vb.SetData <REFLECTION> ()
+            this.fGravity = o.fGravity;
+            this.fRadialAccel = o.fRadialAccel;
+            this.fTangentialAccel = o.fTangentialAccel;
+            this.fSpin = o.fSpin;
+            this.fSpinDelta = o.fSpinDelta;
 
+            this.fSize = o.fSize;
+            this.fSizeDelta = o.fSizeDelta;
 
-            var ta = Blimey.Assets.Load <TextureAsset> ("assets/cvan01.bba");
-            tex1 = Cor.Graphics.CreateTexture (ta);
-            var tb = Blimey.Assets.Load <TextureAsset> ("assets/bg2.bba");
-            tex2 = Cor.Graphics.CreateTexture (tb);
+            this.colColour = o.colColour;     // + alpha
+            this.colColourStart = o.colColourStart;
+            this.colColourEnd = o.colColourEnd;
 
-
-            q = new Triple ();
-            q.blend = BlendMode.Default;
-            q.tex = tex1;
-            q.v [0].Colour = Rgba32.Blue;
-            q.v [0].Position.X = 0.0f;
-            q.v [0].Position.Y = 0.0f;
-            q.v [0].UV = new Vector2 (0, 0);
-            q.v [1].Colour = Rgba32.Green;
-            q.v [1].Position.X = 0.5f;
-            q.v [1].Position.Y = 0.5f;
-            q.v [1].UV = new Vector2 (1f, 1f);
-            q.v [2].Colour = Rgba32.Red;
-            q.v [2].Position.X = 0f;
-            q.v [2].Position.Y = 0.5f;
-            q.v [2].UV = new Vector2 (0, 1f);
-            returnScene = this;
-
-            s = new SpritePrimitive (this.Blimey.PrimitiveRenderer, tex2, 64, 64, 256, 256);
-            s.SetBlendMode (BlendMode.Default);
-
-
-
-            var psi = new PrimitiveParticleSystemInfo ();
-            psi.sprite = s;
-            psi.fLifetime = 3f;
-            psi.colColourStart = Rgba32.Red;
-            psi.colColourEnd = Rgba32.Yellow;
-            psi.nEmission = 10;
-            psi.fSpinStart = 0.3f;
-            psi.fRadialAccel = 0.1f;
-            psi.fSpeed = 3f;
-            psi.fSizeVar = 0.1f;
-
-
-            ps = new PrimitiveParticleSystem (psi);
-
-        }
-
-        public override void Shutdown()
-        {
-            tex1.Dispose ();
-            tex2.Dispose ();
-        }
-
-        public override Scene Update(AppTime time)
-        {
-            //this.Blimey.PrimitiveRenderer.AddTriple ("Debug", q);
-            //this.Blimey.PrimitiveRenderer.AddTriple ("Gui", q);
-            //s.Draw4V ("Gui",
-            //    0.0f, 0.0f,
-            //    0.5f, 0.0f,
-            //    0.0f, 0.5f,
-            //    0.5f, 0.5f);
-
-            s.DrawEx ("Gui", 0f, 0f, 0.5f, 1f / 256f / 4f, 1f / 256f / 4f);
-
-            //s.Draw ("Gui", 0f, 0f);
-            ps.Fire ();
-            ps.Draw ("Default");
-
-            this.Blimey.DebugRenderer.AddGrid ("Debug");
-            if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
-                Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
-                Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
-            {
-                returnScene = new Scene_MainMenu();
-            }
-
-            return returnScene;
+            this.fAge = o.fAge;
+            this.fTerminalAge = o.fTerminalAge;
         }
     }
 }
