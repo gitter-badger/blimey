@@ -42,6 +42,9 @@
     <Reference Include="blimey.platform">
       <HintPath>..\..\..\..\bin\blimey.platform.dll</HintPath>
     </Reference>
+    <Reference Include="blimey.platform.logging">
+      <HintPath>..\..\..\..\bin\blimey.platform.logging.dll</HintPath>
+    </Reference>
     <Reference Include="blimey.platform.packed">
       <HintPath>..\..\..\..\bin\blimey.platform.packed.dll</HintPath>
     </Reference>
