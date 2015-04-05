@@ -97,9 +97,6 @@
     <Reference Include="blimey.platform.api">
       <HintPath>..\..\..\..\bin\blimey.platform.api.dll</HintPath>
     </Reference>
-    <Reference Include="blimey.platform.demo">
-      <HintPath>..\..\..\..\bin\blimey.platform.demo.dll</HintPath>
-    </Reference>
     <Reference Include="blimey.platform.logging">
       <HintPath>..\..\..\..\bin\blimey.platform.logging.dll</HintPath>
     </Reference>
@@ -117,6 +114,21 @@
     </Reference>
     <Reference Include="blimey.platform.api.xamarin-ios-app">
       <HintPath>..\..\..\..\bin\blimey.platform.api.xamarin-ios-app.dll</HintPath>
+    </Reference>
+    <Reference Include="blimey.engine.demo">
+      <HintPath>..\..\..\..\bin\blimey.engine.demo.dll</HintPath>
+    </Reference>
+    <Reference Include="blimey.asset.model">
+      <HintPath>..\..\..\..\bin\blimey.asset.model.dll</HintPath>
+    </Reference>
+    <Reference Include="blimey.engine">
+      <HintPath>..\..\..\..\bin\blimey.engine.dll</HintPath>
+    </Reference>
+    <Reference Include="blimey.engine.model">
+      <HintPath>..\..\..\..\bin\blimey.engine.model.dll</HintPath>
+    </Reference>
+    <Reference Include="oats">
+      <HintPath>..\..\..\..\bin\oats.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

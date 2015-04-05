@@ -15,6 +15,22 @@ Global
 		AppStore|iPhone = AppStore|iPhone
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.Debug|iPhone.Build.0 = Debug|iPhone
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.Debug|x86.ActiveCfg = Debug|iPhoneSimulator
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.Debug|x86.Build.0 = Debug|iPhoneSimulator
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.Release|iPhone.ActiveCfg = Release|iPhone
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.Release|iPhone.Build.0 = Release|iPhone
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.Release|x86.ActiveCfg = Debug|iPhoneSimulator
+		{0106BAF3-FE99-429D-9B02-70E79B48354C}.Release|x86.Build.0 = Debug|iPhoneSimulator
 		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
 		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
 		{AD0C3CE1-0B33-409F-872A-E4D2A1322CB6}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
