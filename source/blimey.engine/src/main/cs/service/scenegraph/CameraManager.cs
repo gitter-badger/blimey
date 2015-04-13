@@ -97,7 +97,7 @@ namespace Blimey.Engine
                 {
                     cam.Projection = CameraProjectionType.Orthographic;
 
-                    go.Transform.Position = new Vector3(0, 0, -1f);
+                    go.Transform.Position = new Vector3(0, 0, 1f);
                     go.Transform.LookAt(Vector3.Zero);
                 }
 
