@@ -9,6 +9,7 @@ chmod +x /usr/local/bin/bab
 
 cp bin/blimey.asset.builder.exe /usr/local/bin/bab_app/blimey.asset.builder.exe
 cp bin/*.dll /usr/local/bin/bab_app/
+cp bin/*.mdb /usr/local/bin/bab_app/
 
 TIME="$(date +%s)"
 

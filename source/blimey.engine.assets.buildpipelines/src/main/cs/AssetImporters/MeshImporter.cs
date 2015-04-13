@@ -40,6 +40,7 @@ using System.IO;
 using System.Collections.Generic;
 using Abacus.SinglePrecision;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Blimey.Engine
 {
@@ -100,7 +101,7 @@ namespace Blimey.Engine
             public static Face Parse (String s, Int32 vCount, Int32 nCount, Int32 tCount)
             {
                 var f = new Face ();
-                var verts = s.Split (' ');
+                var verts = s.Split (' ').Select (x => x.Trim ()).ToArray ();;
 
                 if (verts.Length == 3)
                 {
@@ -120,7 +121,6 @@ namespace Blimey.Engine
                     tb.A = Vert.Parse (verts [0], vCount, nCount, tCount);
                     tb.B = Vert.Parse (verts [1], vCount, nCount, tCount);
                     tb.C = Vert.Parse (verts [2], vCount, nCount, tCount);
-
 
                     f.Tris.Add (ta);
                     f.Tris.Add (tb);
@@ -154,30 +154,41 @@ namespace Blimey.Engine
             var textureCoordinates = new List<Vector2> ();
             var faces = new List<Face> ();
 
+            Int32 lineNumber = 0;
             foreach (var line in objFile)
             {
-                if (line.IndexOf ("v ") == 0)
+                lineNumber++;
+
+                try
                 {
-                    var strs = line.Substring (2, line.Length - 2).Split (' ');
-                    var val = new Vector3 (Single.Parse (strs [0]), Single.Parse (strs [1]), Single.Parse (strs [2]));
-                    verts.Add (val);
+                    if (line.IndexOf ("v ") == 0)
+                    {
+                        var strs = line.Substring (2, line.Length - 2).Trim ().Split (' ').Select (x => x.Trim ()).ToArray ();
+                        var val = new Vector3 (Single.Parse (strs [0]), Single.Parse (strs [1]), Single.Parse (strs [2]));
+                        verts.Add (val);
+                    }
+                    else if (line.IndexOf ("vn ") == 0)
+                    {
+                        var strs = line.Substring (3, line.Length - 3).Trim ().Split (' ').Select (x => x.Trim ()).ToArray ();
+                        var val = new Vector3 (Single.Parse (strs [0]), Single.Parse (strs [1]), Single.Parse (strs [2]));
+                        normals.Add (val);
+                    }
+                    else if (line.IndexOf ("vt ") == 0)
+                    {
+                        var strs = line.Substring (3, line.Length - 3).Trim ().Split (' ').Select (x => x.Trim ()).ToArray ();
+                        var val = new Vector2 (Single.Parse (strs [0]), 1f - Single.Parse (strs [1]));
+                        textureCoordinates.Add (val);
+                    }
+                    else if (line.IndexOf ("f ") == 0)
+                    {
+                        var str = line.Substring (2, line.Length - 2).Trim ();
+                        faces.Add (Face.Parse (str, verts.Count, normals.Count, textureCoordinates.Count));
+                    }
                 }
-                else if (line.IndexOf ("vn ") == 0)
+                catch (Exception ex)
                 {
-                    var strs = line.Substring (3, line.Length - 3).Split (' ');
-                    var val = new Vector3 (Single.Parse (strs [0]), Single.Parse (strs [1]), Single.Parse (strs [2]));
-                    normals.Add (val);
-                }
-                else if (line.IndexOf ("vt ") == 0)
-                {
-                    var strs = line.Substring (3, line.Length - 3).Split (' ');
-                    var val = new Vector2 (Single.Parse (strs [0]), 1f - Single.Parse (strs [1]));
-                    textureCoordinates.Add (val);
-                }
-                else if (line.IndexOf ("f ") == 0)
-                {
-                    var str = line.Substring (2, line.Length - 2);
-                    faces.Add (Face.Parse (str, verts.Count, normals.Count, textureCoordinates.Count));
+                    Console.WriteLine ("!! Problem processing line #" + lineNumber);
+                    Console.WriteLine (line);
                 }
             }
 

@@ -1,0 +1,18 @@
+{
+    "AssetId" : "darius",
+    "AssetType" : "Blimey.Engine.MeshAsset, blimey.engine.model",
+    "SourceSets" :
+    [
+        {
+            "Platforms" : [ "xios", "monomac", "opentk" ],
+            "Importer" :
+            {
+                "Files" : [ "Darius.obj" ],
+                "AssetImporterType" : "Blimey.Engine.MeshImporter, blimey.engine.assets.buildpipelines",
+                "AssetImporterSettings" : {}
+            },
+            "Processors" : []
+        }
+    ]
+}
+

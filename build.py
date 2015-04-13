@@ -124,6 +124,16 @@ ndoptions.additional_references = ['System.Runtime.Serialization', 'System.Data'
 ndoptions.additional_search_paths = []
 ndoptions.additional_sources = []
 
+imageformats = Project ()
+imageformats.out = 'imageformats'
+imageformats.target = 'library'
+imageformats.path = 'source/contrib/imageformats/src/main/cs/'
+imageformats.defines = []
+imageformats.references = []
+imageformats.additional_references = []
+imageformats.additional_search_paths = []
+imageformats.additional_sources = []
+
 
 # Platform Core
 ################################################################################
@@ -294,7 +304,7 @@ blimey_engine_assets_buildpipelines.defines = []
 blimey_engine_assets_buildpipelines.references = [
   abacus, blimey_platform_packed, blimey_platform_model, blimey_asset_model,
   blimey_engine_model, oats, zlib, pngcs,
-  blimey_asset_buildpipeline, sstext]
+  blimey_asset_buildpipeline, sstext, imageformats]
 blimey_engine_assets_buildpipelines.additional_references = []
 blimey_engine_assets_buildpipelines.additional_search_paths = []
 blimey_engine_assets_buildpipelines.additional_sources = []
@@ -355,6 +365,7 @@ projects = [
   fastjson,
   sstext,
   ndoptions,
+  imageformats,
 
   # The blimey asset system libaries, no depencies on anything other than contrib projects.
   blimey_asset_model,
@@ -451,7 +462,7 @@ for project in projects:
     _cmd = ['mcs']
 
   _cmd.append('-unsafe')
-  #_cmd.append('-debug')
+  _cmd.append('-debug')
   _cmd.append('-define:DEBUG')
   _cmd.append(_out)
   _cmd.append(_target)

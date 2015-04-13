@@ -151,6 +151,9 @@
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\toadstool_diffuse.bba">
       <Link>assets\toadstool_diffuse.bba</Link>
     </BundleResource>
+    <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\darius.bba">
+      <Link>assets\darius.bba</Link>
+    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />

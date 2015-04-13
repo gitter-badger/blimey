@@ -1,0 +1,27 @@
+{
+    "AssetId" : "darius_tex",
+    "AssetType" : "Blimey.Engine.ColourmapAsset, blimey.engine.model",
+    "SourceSets" :
+    [
+        {
+            "Platforms" : [ "xios", "monomac", "opentk" ],
+            "Importer" :
+            {
+                "Files" : [ "Darius_color.tga" ],
+                "AssetImporterType" : "Blimey.Engine.ImageFileImporter, blimey.engine.assets.buildpipelines",
+                "AssetImporterSettings" : {}
+            },
+            "Processors" :
+            [
+                {
+                    "AssetProcessorType" : "Blimey.Engine.TextureAssetProcessor, blimey.engine.assets.buildpipelines",
+                    "AssetProcessorSettings" :
+                    {
+                        "SurfaceFormat" : "Rgba32"
+                    }
+                }
+            ]
+        }
+    ]
+}
+

@@ -45,7 +45,7 @@ namespace EngineDemo
 
 	public class Demo : App
 	{
-        public Demo() : base (new Scene_MainMenu ()) {}
+        public Demo() : base (new Scene_Darius ()) {}
 	}
 
 

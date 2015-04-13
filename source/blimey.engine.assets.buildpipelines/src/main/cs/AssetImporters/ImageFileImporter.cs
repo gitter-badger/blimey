@@ -47,24 +47,11 @@ namespace Blimey.Engine
     {
         public override String [] SupportedSourceFileExtensions
         {
-            get { return new [] { "png" }; }
+            get { return new [] { "png", "tga" }; }
         }
 
-		public override AssetImporterOutput <ColourmapAsset> Import (
-			AssetImporterInput input, String platformId)
+        static Rgba32[,] ReadPNG (String filename)
         {
-            var output = new AssetImporterOutput <ColourmapAsset> ();
-            var outputResource = new ColourmapAsset ();
-            output.OutputAsset = outputResource;
-
-            if (input.Files.Count != 1)
-                throw new Exception ("ImageFileImporter only supports one input file.");
-
-            if (!File.Exists (input.Files[0]))
-                throw new Exception ("ImageFileImporter cannot find input file.");
-
-            string filename = input.Files[0];
-
             PngReader pngr = FileHelper.CreatePngReader(filename);
             Console.WriteLine(pngr.ToString()); // just information
             var pixmap = new Rgba32[pngr.ImgInfo.Cols, pngr.ImgInfo.Rows];
@@ -94,7 +81,31 @@ namespace Blimey.Engine
 
             pngr.End ();
 
-            outputResource.Data = pixmap;
+            return pixmap;
+        }
+
+        static Rgba32[,] ReadTGA (String filename)
+        {
+            throw new NotImplementedException ();
+        }
+
+		public override AssetImporterOutput <ColourmapAsset> Import (
+			AssetImporterInput input, String platformId)
+        {
+            var output = new AssetImporterOutput <ColourmapAsset> ();
+            var outputResource = new ColourmapAsset ();
+            output.OutputAsset = outputResource;
+
+            if (input.Files.Count != 1)
+                throw new Exception ("ImageFileImporter only supports one input file.");
+
+            if (!File.Exists (input.Files[0]))
+                throw new Exception ("ImageFileImporter cannot find input file.");
+
+            string filename = input.Files[0];
+
+            if (Path.GetExtension (filename).ToLower () == ".png") outputResource.Data = ReadPNG (filename);
+            if (Path.GetExtension (filename).ToLower () == ".tga") outputResource.Data = ReadTGA (filename);
 
             //Debug.DumpToPPM (output.Resource, input.Files[0] + "test.ppm");
 
