@@ -69,7 +69,7 @@ namespace EngineDemo
             // set up the debug renderer
             ShaderAsset unlitShaderAsset = this.Engine.Assets.Load<ShaderAsset> ("assets/vertex_lit.bba");
             shader = this.Platform.Graphics.CreateShader (unlitShaderAsset);
-            TextureAsset texAsset = this.Engine.Assets.Load <TextureAsset> ("assets/bg1.bba");
+            TextureAsset texAsset = this.Engine.Assets.Load <TextureAsset> ("assets/darius_tex.bba");
             tex = this.Platform.Graphics.CreateTexture (texAsset);
 
             entity = SceneGraph.CreateSceneObject ("entity");
@@ -87,7 +87,7 @@ namespace EngineDemo
             returnScene = this;
 
             var t = SceneGraph.CreateSceneObject ("T");
-            t.Transform.LocalPosition = new Vector3 (0, 2f, 0);
+            t.Transform.LocalPosition = new Vector3 (0, 2.3f, 0);
             Entity camSo = SceneGraph.CreateSceneObject ("Scene X Camera");
             camSo.AddTrait<CameraTrait> ();
             var lookatTrait = camSo.AddTrait<LookAtSubjectTrait> ();
@@ -95,7 +95,7 @@ namespace EngineDemo
             var orbitTrait = camSo.AddTrait<OrbitAroundSubjectTrait> ();
             orbitTrait.CameraSubject = Transform.Origin;
 
-            camSo.Transform.LocalPosition = new Vector3 (6f,3f,6f);
+            camSo.Transform.LocalPosition = new Vector3 (-7f,3f,1f);
 
             this.RuntimeConfiguration.SetRenderPassCameraTo("Debug", camSo);
             this.RuntimeConfiguration.SetRenderPassCameraTo("Default", camSo);

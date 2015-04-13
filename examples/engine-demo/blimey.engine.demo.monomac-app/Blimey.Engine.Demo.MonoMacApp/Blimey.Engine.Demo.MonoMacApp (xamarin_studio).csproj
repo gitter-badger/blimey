@@ -154,6 +154,9 @@
     <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\darius.bba">
       <Link>assets\darius.bba</Link>
     </BundleResource>
+    <BundleResource Include="..\..\blimey.engine.demo\assets\monomac\darius_tex.bba">
+      <Link>assets\darius_tex.bba</Link>
+    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />

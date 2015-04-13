@@ -216,7 +216,7 @@ namespace EngineDemo
         Scene GetSceneForCurrentSelection()
         {
             if (_selectedIndex == 0)
-                return new Scene_Shapes ();
+                return new Scene_Darius ();
 
             if (_selectedIndex == 1)
                 return new Scene_Airports ();

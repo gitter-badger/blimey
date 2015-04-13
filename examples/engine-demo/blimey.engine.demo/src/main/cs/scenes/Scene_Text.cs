@@ -118,13 +118,22 @@ namespace EngineDemo
 
         public void Draw (Single x, Single y, String text)
         {
-            s.SetColour (Rgba32.Red);
-            s.SetTextureRect (0.2396f * fntTex.Width, 0.9500f * fntTex.Height, 0.0312f * fntTex.Width, 0.0312f * fntTex.Height, false);
-            s.DrawEx ("Gui", 0f, 0f, 0f, 1f / 4f / 256f , 1f / 4f / 256f);
 
+            //#charId=64 #uvStart=(0.0052, 0.0063) #uvEnd=(0.1354, 0.1625) #size=(50.0, 50.0) #xOffset=3 #yOffset=8 #xAdvance=51
             s.SetColour (Rgba32.Yellow);
-            s.SetTextureRect (0.0052f * fntTex.Width, 0.0063f * fntTex.Height, 0.1354f * fntTex.Width, 0.1625f * fntTex.Height, false);
-            s.DrawEx ("Gui", 0.2f, 0f, 0f, 1f / 4f / 256f , 1f / 4f / 256f);
+            s.SetTextureRect (
+                0.0052f * fntTex.Width, 0.0063f * fntTex.Height,
+                (0.1354f-0.0052f) * fntTex.Width, (0.1625f-0.0063f) * fntTex.Height, false);
+            s.DrawEx ("Gui", 0.0f, 0f, 0f, 1f / 8f / 256f , 1f / 8f / 256f);
+
+            //#charId=65 #uvStart=(0.1406, 0.3812) #uvEnd=(0.2344, 0.5000) #size=(36.0, 38.0) #xOffset=0 #yOffset=10 #xAdvance=34
+            //#charId=65 #uvStart=(0.1406, 0.3812) #uvEnd=(0.2344, 0.5000) #size=(36.0, 38.0) #xOffset=0 #yOffset=10 #xAdvance=34
+            s.SetColour (Rgba32.Red);
+            s.SetTextureRect (
+                0.1406f * fntTex.Width, 0.3812f * fntTex.Height,
+                (0.2344f-0.1406f) * fntTex.Width, (0.5000f-0.3812f) * fntTex.Height, false);
+            s.DrawEx ("Gui", 0.3f, 0f, 0f, 1f / 8f / 256f , 1f / 8f / 256f);
+
         }
     }
 
@@ -183,7 +192,7 @@ namespace EngineDemo
 
 		public override Scene Update(AppTime time)
         {
-            this.Engine.DebugRenderer.AddGrid ("Gui", 1f, 10);
+            this.Engine.DebugRenderer.AddAxis ("Gui");
 
             sprFnt.Draw (0, 0, "Hello");
 

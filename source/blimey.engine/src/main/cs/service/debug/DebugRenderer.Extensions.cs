@@ -46,9 +46,55 @@ namespace Blimey.Engine
 
     public static class DebugRendererExtensions
     {
+        public static void AddAxis (
+            this DebugRenderer debugRenderer,
+            string renderPass, float size = 50f)
+        {
+            Rgba32 AxisColourX = Rgba32.Red;
+            Rgba32 AxisColourY = Rgba32.Green;
+            Rgba32 AxisColourZ = Rgba32.Blue;
+
+            debugRenderer.AddLine(
+                renderPass,
+                new Vector3(-size, 0, 0),
+                new Vector3(0, 0, 0),
+                Rgba32.White);
+
+            debugRenderer.AddLine(
+                renderPass,
+                new Vector3(0, -size, 0),
+                new Vector3(0, 0, 0),
+                Rgba32.White);
+
+            debugRenderer.AddLine(
+                renderPass,
+                new Vector3(0, 0, -size),
+                new Vector3(0, 0, 0),
+                Rgba32.White);
+
+
+            debugRenderer.AddLine(
+                renderPass,
+                new Vector3(0, 0, 0),
+                new Vector3(size, 0, 0),
+                AxisColourX);
+
+            debugRenderer.AddLine(
+                renderPass,
+                new Vector3(0, 0, 0),
+                new Vector3(0, size, 0),
+                AxisColourY);
+
+            debugRenderer.AddLine(
+                renderPass,
+                new Vector3(0, 0, 0),
+                new Vector3(0, 0, size),
+                AxisColourZ);
+        }
+
         public static void AddGrid(
             this DebugRenderer debugRenderer,
-            string renderPass, float gridSquareSize = 0.50f, int numberOfGridSquares = 10, float life = 0f,
+            string renderPass, float gridSquareSize = 0.50f, int numberOfGridSquares = 10,
             bool ShowXZPlane = true, bool ShowXYPlane = false, bool ShowYZPlane = false)
         {
             Rgba32 AxisColourX = Rgba32.Red;
@@ -144,42 +190,7 @@ namespace Blimey.Engine
                 }
             }
 
-            debugRenderer.AddLine(
-                renderPass,
-                new Vector3(-numberOfGridSquares * gridSquareSize, 0, 0),
-                new Vector3(0, 0, 0),
-                Rgba32.White);
-
-            debugRenderer.AddLine(
-                renderPass,
-                new Vector3(0, -numberOfGridSquares * gridSquareSize, 0),
-                new Vector3(0, 0, 0),
-                Rgba32.White);
-
-            debugRenderer.AddLine(
-                renderPass,
-                new Vector3(0, 0, -numberOfGridSquares * gridSquareSize),
-                new Vector3(0, 0, 0),
-                Rgba32.White);
-
-
-            debugRenderer.AddLine(
-                renderPass,
-                new Vector3(0, 0, 0),
-                new Vector3(numberOfGridSquares * gridSquareSize, 0, 0),
-                AxisColourX);
-
-            debugRenderer.AddLine(
-                renderPass,
-                new Vector3(0, 0, 0),
-                new Vector3(0, numberOfGridSquares * gridSquareSize, 0),
-                AxisColourY);
-
-            debugRenderer.AddLine(
-                renderPass,
-                new Vector3(0, 0, 0),
-                new Vector3(0, 0, numberOfGridSquares * gridSquareSize),
-                AxisColourZ);
+            AddAxis (debugRenderer, renderPass, numberOfGridSquares * gridSquareSize);
         }
     }
 }

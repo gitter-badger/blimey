@@ -7,7 +7,7 @@
             "Platforms" : [ "xios", "monomac", "opentk" ],
             "Importer" :
             {
-                "Files" : [ "Darius_color.tga" ],
+                "Files" : [ "Darius_color.png" ],
                 "AssetImporterType" : "Blimey.Engine.ImageFileImporter, blimey.engine.assets.buildpipelines",
                 "AssetImporterSettings" : {}
             },
