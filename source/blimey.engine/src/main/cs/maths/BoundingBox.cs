@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Runtime.InteropServices;
@@ -42,6 +42,8 @@ namespace Blimey
     using System.Diagnostics;
 
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
 
     using System.Linq;
@@ -52,11 +54,11 @@ namespace Blimey
     public struct BoundingBox
         : IEquatable<BoundingBox>
     {
-        public const int CornerCount = 8;
+        public const int PlatformnerCount = 8;
         public Vector3 Min;
         public Vector3 Max;
 
-        public Vector3[] GetCorners ()
+        public Vector3[] GetPlatformners ()
         {
             return new Vector3[] { new Vector3 (this.Min.X, this.Max.Y, this.Max.Z), new Vector3 (this.Max.X, this.Max.Y, this.Max.Z), new Vector3 (this.Max.X, this.Min.Y, this.Max.Z), new Vector3 (this.Min.X, this.Min.Y, this.Max.Z), new Vector3 (this.Min.X, this.Max.Y, this.Min.Z), new Vector3 (this.Max.X, this.Max.Y, this.Min.Z), new Vector3 (this.Max.X, this.Min.Y, this.Min.Z), new Vector3 (this.Min.X, this.Min.Y, this.Min.Z) };
         }
@@ -279,8 +281,8 @@ namespace Blimey
                 return ContainmentType.Disjoint;
             }
 
-            for (Int32 i = 0; i < frustum.cornerArray.Length; ++i) {
-                Vector3 vector = frustum.cornerArray[i];
+            for (Int32 i = 0; i < frustum.platformnerArray.Length; ++i) {
+                Vector3 vector = frustum.platformnerArray[i];
                 if (this.Contains (ref vector) == ContainmentType.Disjoint) {
                     return ContainmentType.Intersects;
                 }

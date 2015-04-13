@@ -10,17 +10,17 @@
 // │ Copyright © 2012 - 2015 ~ Blimey Engine (http://www.blimey.io)         │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Authors:                                                               │ \\
-// │ ~ Ash Pook (http://www.ajpook.com)                                     │ \\
+// │ ~ AzSprH Pook (http://www.ajpook.com)                                     │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Permission is hereby granted, free of charge, to any person obtaining  │ \\
 // │ a copy of this software and associated documentation files (the        │ \\
 // │ "Software"), to deal in the Software without restriction, including    │ \\
-// │ without limitation the rights to use, copy, modify, merge, publish,    │ \\
+// │ without limitation the rights to use, copy, modify, merge, publizSprH,    │ \\
 // │ distribute, sublicense, and/or sellcopies of the Software, and to      │ \\
-// │ permit persons to whom the Software is furnished to do so, subject to  │ \\
+// │ permit persons to whom the Software is furnizSprHed to do so, subject to  │ \\
 // │ the following conditions:                                              │ \\
 // │                                                                        │ \\
-// │ The above copyright notice and this permission notice shall be         │ \\
+// │ The above copyright notice and this permission notice zSprHall be         │ \\
 // │ included in all copies or substantial portions of the Software.        │ \\
 // │                                                                        │ \\
 // │ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,        │ \\
@@ -32,76 +32,121 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Abacus.SinglePrecision;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
 
+    // TODO
+    // + Change usage of Single, Single to Vector2.
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public class SpritePrimitive
     {
-        protected Quad quad;
-        protected float tx, ty, width, height;
-        protected float tex_width, tex_height;
-        protected float hotX, hotY;
-        protected bool bXFlip, bYFlip, bHSFlip;
+        // The primitive used to render this sprite.
+        protected readonly Quad quad;
 
+        // This is the UV start point for the current sprite, measured in texels, not UV space.
+        protected Single texX, texY;
+
+        // The width and height of the sprite in texels.  So this combined with texX & texY
+        // above allows us to work out what portion of the texture the sprite is using.
+        protected Single sprWidth, sprHeight;
+
+        // The actual width and height of the underlying texture in texels.
+        protected Single textureWidth, textureHeight;
+
+        // The rendering hotspot in texels.
+        protected Single hotX, hotY;
+
+        // Flags.
+        protected Boolean bXFlip, bYFlip, bHSFlip;
+
+        // Reference to the primitive renderer.
         readonly PrimitiveRenderer primitiveRenderer;
 
+        /// <summary>
+        /// Creates a new sprite object from a given texture.
+        /// </summary>
+        public SpritePrimitive (PrimitiveRenderer zPrimitiveRenderer, Texture zTexture)
+        {
+            primitiveRenderer = zPrimitiveRenderer;
+
+            // Units: Texels
+            Single sprW = (Single) zTexture.Width;
+            Single sprH = (Single) zTexture.Height;
+
+            quad = new Quad();
+
+            Init (zTexture, 0, 0, sprW, sprH );
+            SetHotSpot (sprW / 2f, sprH / 2f);
+        }
+
+        /// <summary>
+        /// Creates a new sprite object by cloning an existing sprite object.
+        /// </summary>
         public SpritePrimitive (PrimitiveRenderer zPrimitiveRenderer, SpritePrimitive zFrom)
         {
             primitiveRenderer = zPrimitiveRenderer;
+
             quad = new Quad(quad);
-            tx = zFrom.tx;
-            ty = zFrom.ty;
-            width = zFrom.width;
-            height = zFrom.height;
-            tex_width = zFrom.tex_width;
-            tex_height = zFrom.tex_height;
+
+            texX = zFrom.texX;
+            texY = zFrom.texY;
+
+            sprWidth = zFrom.sprWidth;
+            sprHeight = zFrom.sprHeight;
+
+            textureWidth = zFrom.textureWidth;
+            textureHeight = zFrom.textureHeight;
+
             hotX = zFrom.hotX;
             hotY = zFrom.hotY;
+
             bXFlip = zFrom.bXFlip;
             bYFlip = zFrom.bYFlip;
             bHSFlip = zFrom.bHSFlip;
         }
 
-        public SpritePrimitive (PrimitiveRenderer zPrimitiveRenderer, Texture zTexture)
+
+        /// <summary>
+        /// Creates a new sprite object from part of a given texture.
+        /// - zTexX & zTexY represent the an offset in texels that map to the start of the UVs used for the sprite.
+        /// - zSprW & zSprH also measured in texels, indicate how much of the texture will be used.
+        /// </summary>
+        public SpritePrimitive (PrimitiveRenderer zPrimitiveRenderer, Texture zTexture, Single zTexX, Single zTexY, Single zSprW, Single zSprH)
         {
             primitiveRenderer = zPrimitiveRenderer;
-            float w = (float) zTexture.Width;
-            float h = (float) zTexture.Height;
-            Init(zTexture, 0, 0, w, h );
-            SetHotSpot(w/2.0f, h/2.0f);
+
+            quad = new Quad ();
+
+            Init (zTexture, zTexX, zTexY, zSprW, zSprH);
+            SetHotSpot (zSprW / 2f, zSprH / 2f);
         }
 
-        public SpritePrimitive(PrimitiveRenderer zPrimitiveRenderer, Texture texture, float texx, float texy, float w, float h)
+        void Init (Texture zTexture, Single zTexX, Single zTexY, Single zSprW, Single zSprH)
         {
-            primitiveRenderer = zPrimitiveRenderer;
-            Init(texture, texx, texy, w, h);
-            SetHotSpot(w/2.0f, h/2.0f);
-        }
+            texX = zTexX;
+            texY = zTexY;
 
-        void Init (Texture texture, float texx, float texy, float w, float h)
-        {
-            quad = new Quad();
-            float texx1, texy1, texx2, texy2;
+            sprWidth = zSprW;
+            sprHeight = zSprH;
 
-            tx = texx; ty = texy;
-            width = w; height = h;
-
-            if (texture != null)
+            if (zTexture != null)
             {
-                tex_width = (float)texture.Width;
-                tex_height = (float)texture.Height;
+                textureWidth = (Single) zTexture.Width;
+                textureHeight = (Single) zTexture.Height;
             }
             else
             {
-                tex_width = 1.0f;
-                tex_height = 1.0f;
+                // If the texture is NULL, then we say the texture is 1 texel by 1 texel.
+                textureWidth = 1f;
+                textureHeight = 1f;
             }
 
             hotX = 0;
@@ -109,275 +154,221 @@ namespace Blimey
             bXFlip = false;
             bYFlip = false;
             bHSFlip = false;
-            quad.tex = texture;
+            quad.tex = zTexture;
 
-            texx1 = texx / tex_width;
-            texy1 = texy / tex_height;
-            texx2 = (texx + w) / tex_width;
-            texy2 = (texy + h) / tex_height;
+            Single uStart = zTexX / textureWidth;
+            Single vStart = zTexY / textureHeight;
+            Single uEnd = (zTexX + zSprW) / textureWidth;
+            Single vEnd = (zTexY + zSprH) / textureHeight;
 
-            quad.v[2].UV.X = texx1; quad.v[2].UV.Y = texy1;
-            quad.v[3].UV.X = texx2; quad.v[3].UV.Y = texy1;
-            quad.v[0].UV.X = texx2; quad.v[0].UV.Y = texy2;
-            quad.v[1].UV.X = texx1; quad.v[1].UV.Y = texy2;
+            quad.v[0].UV.X = uStart; quad.v[0].UV.Y = vStart;
+            quad.v[1].UV.X = uEnd;   quad.v[1].UV.Y = vStart;
+            quad.v[2].UV.X = uEnd;   quad.v[2].UV.Y = vEnd;
+            quad.v[3].UV.X = uStart; quad.v[3].UV.Y = vEnd;
 
-            quad.v[0].Position.Z = quad.v[1].Position.Z = quad.v[2].Position.Z = quad.v[3].Position.Z = 0.5f;
-            quad.v[0].Colour = quad.v[1].Colour = quad.v[2].Colour = quad.v[3].Colour = Rgba32.White;
+            quad.v[0].Position.Z =
+            quad.v[1].Position.Z =
+            quad.v[2].Position.Z =
+            quad.v[3].Position.Z = 0.5f;
+
+            quad.v[0].Colour =
+            quad.v[1].Colour =
+            quad.v[2].Colour =
+            quad.v[3].Colour = Rgba32.White;
 
             quad.blend = BlendMode.Default;
         }
 
-        public void SetColour(Rgba32 _col)
+
+        // GETTERS
+        // ────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+
+        // In pixels
+        public Single GetWidth ()
         {
-            quad.v[0].Colour = quad.v[1].Colour = quad.v[2].Colour = quad.v[3].Colour = _col;
+            return sprWidth;
         }
 
-        public void SetColour(Rgba32 _col, uint i )
+        // In pixels
+        public Single GetHeight ()
         {
-            System.Diagnostics.Debug.Assert(i < 4);
-
-            quad.v[i].Colour = _col;
+            return sprHeight;
         }
 
-        public Rgba32 GetColour()
+        public Rgba32 GetColour ()
         {
             return quad.v[0].Colour;
         }
 
-        public Rgba32 GetColour( uint i )
+        public Rgba32 GetColour (Int32 zI)
         {
-            System.Diagnostics.Debug.Assert(i < 4);
-
-            return quad.v[i].Colour;
-
-
+            System.Diagnostics.Debug.Assert (zI < 4 && zI >= 0);
+            return quad.v[zI].Colour;
         }
 
-        public void SetHotSpot(float _x, float _y)
+        public Vector2 GetHotSpot ()
         {
-            hotX = _x;
-            hotY = _y;
+            return new Vector2 (hotX, hotY);
         }
 
-        public void CenterHotSpot()
-        {
-            hotX = width / 2;
-            hotY = height / 2;
-        }
-
-        public Vector2 GetHotSpot()
-        {
-            return new Vector2( hotX, hotY );
-        }
-
-        public void GetHotSpot( ref float x, ref float y )
+        public void GetHotSpot (ref Single x, ref Single y)
         {
             x = hotX;
             y = hotY;
         }
 
-        public void SetZ(float _z)
-        {
-            quad.v[0].Position.Z = quad.v[1].Position.Z = quad.v[2].Position.Z = quad.v[3].Position.Z = _z;
-        }
-
-        public float GetZ()
+        public Single GetZ()
         {
             return quad.v[0].Position.Z;
         }
 
-        public void SetZ(float _z, uint i)
+        public Single GetZ (Int32 zI)
         {
-            System.Diagnostics.Debug.Assert(i < 4);
-
-            quad.v[i].Position.Z = _z;
+            System.Diagnostics.Debug.Assert (zI < 4 && zI >= 0);
+            return quad.v[zI].Position.Z;
         }
 
-        public float GetZ( uint i )
+        public Texture GetTexture ()
         {
-            System.Diagnostics.Debug.Assert(i < 4);
-            return quad.v[i].Position.Z;
-
+            return quad.tex;
         }
 
-        public void SetFlip(bool _horizontal, bool _vertical)
+        public void GetTextureRect (ref Single x, ref Single y, ref Single zSprW, ref Single zSprH)
         {
-            SetFlip(_horizontal, _vertical, false);
+            x = texX;
+            y = texY;
+            zSprW = sprWidth;
+            zSprH = sprHeight;
         }
 
-        public void SetFlip(bool _horizontal, bool _vertical, bool _bHotSpot)
+        public BlendMode GetBlendMode ()
         {
-            float tx, ty;
+            return quad.blend;
+        }
 
-            if (bHSFlip && bXFlip) hotX = width - hotX;
-            if (bHSFlip && bYFlip) hotY = height - hotY;
 
-            bHSFlip = _bHotSpot;
+        // SETTERS
+        // ────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-            if (bHSFlip && bXFlip) hotX = width - hotX;
-            if (bHSFlip && bYFlip) hotY = height - hotY;
+        public void SetColour (Rgba32 zColour)
+        {
+            quad.v[0].Colour =
+            quad.v[1].Colour =
+            quad.v[2].Colour =
+            quad.v[3].Colour = zColour;
+        }
 
-            if (_horizontal != bXFlip)
+        /// <summary>
+        /// Sets the colour of an individual Quad vertex.
+        /// </summary>
+        public void SetColour (Rgba32 zColour, Int32 zI)
+        {
+            System.Diagnostics.Debug.Assert (zI < 4 && zI >= 0);
+            quad.v[zI].Colour = zColour;
+        }
+
+        public void SetHotSpot (Single zX, Single zY)
+        {
+            hotX = zX;
+            hotY = zY;
+        }
+
+        public void CenterHotSpot ()
+        {
+            hotX = sprWidth / 2f;
+            hotY = sprHeight / 2f;
+        }
+
+        public void SetZ (Single zZ)
+        {
+            quad.v[0].Position.Z =
+            quad.v[1].Position.Z =
+            quad.v[2].Position.Z =
+            quad.v[3].Position.Z = zZ;
+        }
+
+        public void SetZ (Single zZ, Int32 zI)
+        {
+            System.Diagnostics.Debug.Assert (zI < 4 && zI >= 0);
+            quad.v[zI].Position.Z = zZ;
+        }
+
+        public void SetFlip (Boolean zHorizontal, Boolean zVertical)
+        {
+            SetFlip (zHorizontal, zVertical, false);
+        }
+
+        public void SetFlip (Boolean zHorizontal, Boolean zVertical, Boolean zHotSpot)
+        {
+            Single texX, texY;
+
+            if (bHSFlip && bXFlip) hotX = sprWidth - hotX;
+            if (bHSFlip && bYFlip) hotY = sprHeight - hotY;
+
+            bHSFlip = zHotSpot;
+
+            if (bHSFlip && bXFlip) hotX = sprWidth - hotX;
+            if (bHSFlip && bYFlip) hotY = sprHeight - hotY;
+
+            if (zHorizontal != bXFlip)
             {
-                tx = quad.v[0].UV.X;
+                texX = quad.v[0].UV.X;
                 quad.v[0].UV.X = quad.v[1].UV.X;
-                quad.v[1].UV.X = tx;
-                ty = quad.v[0].UV.Y;
+                quad.v[1].UV.X = texX;
+
+                texY = quad.v[0].UV.Y;
                 quad.v[0].UV.Y = quad.v[1].UV.Y;
-                quad.v[1].UV.Y = ty;
-                tx = quad.v[3].UV.X;
+                quad.v[1].UV.Y = texY;
+
+                texX = quad.v[3].UV.X;
                 quad.v[3].UV.X = quad.v[2].UV.X;
-                quad.v[2].UV.X = tx;
-                ty = quad.v[3].UV.Y;
+                quad.v[2].UV.X = texX;
+
+                texY = quad.v[3].UV.Y;
                 quad.v[3].UV.Y = quad.v[2].UV.Y;
-                quad.v[2].UV.Y = ty;
+                quad.v[2].UV.Y = texY;
 
                 bXFlip = !bXFlip;
             }
 
-            if (_vertical != bYFlip)
+            if (zVertical != bYFlip)
             {
-                tx = quad.v[0].UV.X;
+                texX = quad.v[0].UV.X;
                 quad.v[0].UV.X = quad.v[3].UV.X;
-                quad.v[3].UV.X = tx;
-                ty = quad.v[0].UV.Y;
+                quad.v[3].UV.X = texX;
+
+                texY = quad.v[0].UV.Y;
                 quad.v[0].UV.Y = quad.v[3].UV.Y;
-                quad.v[3].UV.Y = ty;
-                tx = quad.v[1].UV.X;
+                quad.v[3].UV.Y = texY;
+
+                texX = quad.v[1].UV.X;
                 quad.v[1].UV.X = quad.v[2].UV.X;
-                quad.v[2].UV.X = tx;
-                ty = quad.v[1].UV.Y;
+                quad.v[2].UV.X = texX;
+
+                texY = quad.v[1].UV.Y;
                 quad.v[1].UV.Y = quad.v[2].UV.Y;
-                quad.v[2].UV.Y = ty;
+                quad.v[2].UV.Y = texY;
 
                 bYFlip = !bYFlip;
             }
         }
 
-        public void Draw(String renderPass, float _x, float _y)
+        public void SetBlendMode (BlendMode zBlend)
         {
-            float tempx1, tempy1, tempx2, tempy2;
-
-            tempx1 = _x - hotX;
-            tempy1 = _y - hotY;
-            tempx2 = _x + width - hotX;
-            tempy2 = _y + height - hotY;
-
-            quad.v[0].Position.X = tempx1; quad.v[0].Position.Y = tempy1;
-            quad.v[1].Position.X = tempx2; quad.v[1].Position.Y = tempy1;
-            quad.v[2].Position.X = tempx2; quad.v[2].Position.Y = tempy2;
-            quad.v[3].Position.X = tempx1; quad.v[3].Position.Y = tempy2;
-
-            primitiveRenderer.AddQuad(renderPass, quad);
+            quad.blend = zBlend;
         }
 
-        public void DrawEx(String renderPass, float _x, float _y, float _rot, float _hscale, float _vscale)
+        public void SetTexture (Texture zTexture)
         {
+            Single tw, th;
 
-            float tx1, ty1, tx2, ty2;
-            float sint, cost;
+            quad.tex = zTexture;
 
-            if (_vscale == 0) _vscale = _hscale;
-
-            tx1 = -hotX * _hscale;
-            ty1 = -hotY * _vscale;
-            tx2 = (width - hotX) * _hscale;
-            ty2 = (height - hotY) * _vscale;
-
-            if (_rot != 0.0f)
+            if (zTexture != null )
             {
-                cost = (float) Math.Cos((double) _rot);
-                sint = (float) Math.Sin((double)_rot);
-
-                quad.v[0].Position.X = tx1 * cost - ty1 * sint + _x;
-                quad.v[0].Position.Y = tx1 * sint + ty1 * cost + _y;
-
-                quad.v[1].Position.X = tx2 * cost - ty1 * sint + _x;
-                quad.v[1].Position.Y = tx2 * sint + ty1 * cost + _y;
-
-                quad.v[2].Position.X = tx2 * cost - ty2 * sint + _x;
-                quad.v[2].Position.Y = tx2 * sint + ty2 * cost + _y;
-
-                quad.v[3].Position.X = tx1 * cost - ty2 * sint + _x;
-                quad.v[3].Position.Y = tx1 * sint + ty2 * cost + _y;
-            }
-            else
-            {
-                quad.v[0].Position.X = tx1 + _x;
-                quad.v[0].Position.Y = ty1 + _y;
-                quad.v[1].Position.X = tx2 + _x;
-                quad.v[1].Position.Y = ty1 + _y;
-                quad.v[2].Position.X = tx2 + _x;
-                quad.v[2].Position.Y = ty2 + _y;
-                quad.v[3].Position.X = tx1 + _x;
-                quad.v[3].Position.Y = ty2 + _y;
-            }
-
-            primitiveRenderer.AddQuad(renderPass, quad);
-
-        }
-
-        public void DrawEx(String renderPass, float _x, float _y, float _rot, float _hscale)
-        {
-            DrawEx(renderPass, _x, _y, _rot, _hscale, _hscale);
-        }
-
-        public void DrawStretch(String renderPass, float _x1, float _y1, float _x2, float _y2)
-        {
-            quad.v[0].Position.X = _x1; quad.v[0].Position.Y = _y1;
-            quad.v[1].Position.X = _x2; quad.v[1].Position.Y = _y1;
-            quad.v[2].Position.X = _x2; quad.v[2].Position.Y = _y2;
-            quad.v[3].Position.X = _x1; quad.v[3].Position.Y = _y2;
-
-            primitiveRenderer.AddQuad(renderPass, quad);
-
-        }
-
-        public void Draw4V(String renderPass, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3)
-        {
-            quad.v[0].Position.X = x0; quad.v[0].Position.Y = y0;
-            quad.v[1].Position.X = x1; quad.v[1].Position.Y = y1;
-            quad.v[2].Position.X = x2; quad.v[2].Position.Y = y2;
-            quad.v[3].Position.X = x3; quad.v[3].Position.Y = y3;
-
-
-            primitiveRenderer.AddQuad(renderPass, quad);
-        }
-
-        public Texture GetTexture()
-        {
-            return quad.tex;
-        }
-
-        public void GetTextureRect(ref float x, ref float y, ref float w, ref float h)
-        {
-            x=tx;
-            y=ty;
-            w=width;
-            h=height;
-        }
-
-        public BlendMode GetBlendMode()
-        {
-            return quad.blend;
-        }
-
-        public void SetBlendMode(BlendMode _blend)
-        {
-            quad.blend = _blend;
-        }
-
-        public void SetTexture(Texture tex)
-        {
-            float tx1, ty1, tx2, ty2;
-            float tw, th;
-
-            quad.tex = tex;
-
-            if (tex != null )
-            {
-                tw = (float) tex.Width;
-                th = (float) tex.Height;
+                tw = (Single) zTexture.Width;
+                th = (Single) zTexture.Height;
             }
             else
             {
@@ -386,80 +377,144 @@ namespace Blimey
             }
 
             //if the size of the texture has changed
-            if (tw != tex_width || th != tex_height)
+            if (tw != textureWidth || th != textureHeight)
             {
-                tx1 = quad.v[0].UV.X * tex_width;
-                ty1 = quad.v[0].UV.Y * tex_height;
-                tx2 = quad.v[2].UV.X * tex_width;
-                ty2 = quad.v[2].UV.Y * tex_height;
+                Single uStart = quad.v[0].UV.X * textureWidth;
+                Single vStart = quad.v[0].UV.Y * textureHeight;
+                Single uEnd =   quad.v[2].UV.X * textureWidth;
+                Single vEnd =   quad.v[2].UV.Y * textureHeight;
 
-                tex_width = tw;
-                tex_height = th;
+                textureWidth = tw;
+                textureHeight = th;
 
-                tx1 /= tw; ty1 /= th;
-                tx2 /= tw; ty2 /= th;
+                uStart /= tw; vStart /= th;
+                uEnd /= tw; vEnd /= th;
 
-                quad.v[0].UV.X = tx1;
-                quad.v[0].UV.Y = ty1;
-                quad.v[1].UV.X = tx2;
-                quad.v[1].UV.Y = ty1;
-                quad.v[2].UV.X = tx2;
-                quad.v[2].UV.Y = ty2;
-                quad.v[3].UV.X = tx1;
-                quad.v[3].UV.Y = ty2;
+                quad.v[0].UV.X = uStart; quad.v[0].UV.Y = vStart;
+                quad.v[1].UV.X = uEnd;   quad.v[1].UV.Y = vStart;
+                quad.v[2].UV.X = uEnd;   quad.v[2].UV.Y = vEnd;
+                quad.v[3].UV.X = uStart; quad.v[3].UV.Y = vEnd;
             }
         }
 
-        public void SetTextureRect(float x, float y, float w, float h)
+        // In texel space, not UV space
+        public void SetTextureRect (Single zStartX, Single zStartY, Single zWidth, Single zHeight)
         {
-            SetTextureRect( x, y, w, h, true);
+            SetTextureRect (zStartX, zStartY, zWidth, zHeight, true);
         }
 
-        public void SetTextureRect(float x, float y, float w, float h, bool adjSize)
+        // In texel space, not UV space
+        public void SetTextureRect (Single zStartX, Single zStartY, Single zWidth, Single zHeight, Boolean zAdjustSize)
         {
-            float tx1, ty1, tx2, ty2;
-            bool bX, bY, bHS;
+            texX = zStartX;
+            texY = zStartY;
 
-            tx = x;
-            ty = y;
-
-            if (adjSize)
+            if (zAdjustSize)
             {
-                width = w;
-                height = h;
+                sprWidth = zWidth;
+                sprHeight = zHeight;
             }
 
-            tx1 = tx / tex_width;
-            ty1 = ty / tex_height;
-            tx2 = (tx + w) / tex_width;
-            ty2 = (ty + h) / tex_height;
+            Single uStart = texX / textureWidth;
+            Single vStart = texY / textureHeight;
+            Single uEnd = (texX + zWidth) / textureWidth;
+            Single vEnd = (texY + zHeight) / textureHeight;
 
-            quad.v[0].UV.X = tx1;
-            quad.v[0].UV.Y = ty1;
-            quad.v[1].UV.X = tx2;
-            quad.v[1].UV.Y = ty1;
-            quad.v[2].UV.X = tx2;
-            quad.v[2].UV.Y = ty2;
-            quad.v[3].UV.X = tx1;
-            quad.v[3].UV.Y = ty2;
+            quad.v[0].UV.X = uStart; quad.v[0].UV.Y = vStart;
+            quad.v[1].UV.X = uEnd;   quad.v[1].UV.Y = vStart;
+            quad.v[2].UV.X = uEnd;   quad.v[2].UV.Y = vEnd;
+            quad.v[3].UV.X = uStart; quad.v[3].UV.Y = vEnd;
 
-            bX = bXFlip;
-            bY = bYFlip;
-            bHS = bHSFlip;
+            Boolean bX = bXFlip;
+            Boolean bY = bYFlip;
+            Boolean bHS = bHSFlip;
             bXFlip = false;
             bYFlip = false;
+
             SetFlip(bX, bY, bHS);
         }
 
-        public float GetWidth()
+
+        // RENDERING
+        // ────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+        public void Draw (String zRenderPass, Single zX, Single zY)
         {
-            return width;
+            Single posx1 = zX - hotX;
+            Single posy1 = zY - hotY;
+            Single posx2 = zX + sprWidth - hotX;
+            Single posy2 = zY + sprHeight - hotY;
+
+            quad.v[0].Position.X = posx1; quad.v[0].Position.Y = posy1;
+            quad.v[1].Position.X = posx2; quad.v[1].Position.Y = posy1;
+            quad.v[2].Position.X = posx2; quad.v[2].Position.Y = posy2;
+            quad.v[3].Position.X = posx1; quad.v[3].Position.Y = posy2;
+
+            primitiveRenderer.AddQuad (zRenderPass, quad);
         }
 
-        public float GetHeight()
+        public void DrawEx (String zRenderPass, Single zX, Single zY, Single zRotation, Single zHorizontalScale, Single zVerticalScale)
         {
-            return height;
+            if (zVerticalScale == 0) zVerticalScale = zHorizontalScale;
+
+            Single aX = -hotX * zHorizontalScale;
+            Single aY = -hotY * zVerticalScale;
+            Single bX = (sprWidth - hotX) * zHorizontalScale;
+            Single bY = (sprHeight - hotY) * zVerticalScale;
+
+            if (zRotation != 0.0f)
+            {
+                Single cost = (Single) Math.Cos((double) zRotation);
+                Single sint = (Single) Math.Sin((double)zRotation);
+
+                quad.v[0].Position.X = aX * cost - aY * sint + zX;
+                quad.v[0].Position.Y = aX * sint + aY * cost + zY;
+
+                quad.v[1].Position.X = bX * cost - aY * sint + zX;
+                quad.v[1].Position.Y = bX * sint + aY * cost + zY;
+
+                quad.v[2].Position.X = bX * cost - bY * sint + zX;
+                quad.v[2].Position.Y = bX * sint + bY * cost + zY;
+
+                quad.v[3].Position.X = aX * cost - bY * sint + zX;
+                quad.v[3].Position.Y = aX * sint + bY * cost + zY;
+            }
+            else
+            {
+                quad.v[3].Position.X = aX + zX; quad.v[3].Position.Y = aY + zY;
+                quad.v[2].Position.X = bX + zX; quad.v[2].Position.Y = aY + zY;
+                quad.v[1].Position.X = bX + zX; quad.v[1].Position.Y = bY + zY;
+                quad.v[0].Position.X = aX + zX; quad.v[0].Position.Y = bY + zY;
+            }
+
+            primitiveRenderer.AddQuad (zRenderPass, quad);
+
         }
 
+        public void DrawEx (String zRenderPass, Single zX, Single zY, Single zRotation, Single zScale)
+        {
+            DrawEx (zRenderPass, zX, zY, zRotation, zScale, zScale);
+        }
+
+        public void DrawStretch (String zRenderPass, Single zX1, Single zY1, Single zX2, Single zY2)
+        {
+            quad.v[0].Position.X = zX1; quad.v[0].Position.Y = zY1;
+            quad.v[1].Position.X = zX2; quad.v[1].Position.Y = zY1;
+            quad.v[2].Position.X = zX2; quad.v[2].Position.Y = zY2;
+            quad.v[3].Position.X = zX1; quad.v[3].Position.Y = zY2;
+
+            primitiveRenderer.AddQuad (zRenderPass, quad);
+
+        }
+
+        public void Draw4V (String zRenderPass, Single zX0, Single zY0, Single zX1, Single zY1, Single zX2, Single zY2, Single zX3, Single zY3)
+        {
+            quad.v[0].Position.X = zX0; quad.v[0].Position.Y = zY0;
+            quad.v[1].Position.X = zX1; quad.v[1].Position.Y = zY1;
+            quad.v[2].Position.X = zX2; quad.v[2].Position.Y = zY2;
+            quad.v[3].Position.X = zX3; quad.v[3].Position.Y = zY3;
+
+            primitiveRenderer.AddQuad (zRenderPass, quad);
+        }
     }
 }

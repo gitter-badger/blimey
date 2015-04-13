@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -32,48 +32,118 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace EngineDemo
 {
     using System;
-    using System.Runtime.InteropServices;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Oats;
+    using Blimey.Platform;
+    using Blimey.Asset;
+    using Blimey.Engine;
+    using System.Collections.Generic;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Blimey
+    public class Scene_Shapes3
+        : Scene
     {
-        internal Blimey (Engine engine)
-        {
-            this.Assets = new Assets (engine);
-            this.InputEventSystem = new InputEventSystem (engine);
-            this.DebugRenderer = new DebugRenderer (engine);
-            this.PrimitiveRenderer = new PrimitiveRenderer (engine);
+        Scene _returnScene;
 
+        Mesh teapotGPUMesh;
+        Int32 teapotCounter;
+
+        // GPU Resources.
+        Shader shader = null;
+
+        public override void Start()
+        {
+            this.Configuration.BackgroundColour = Rgba32.Black;
+
+            CommonDemoResources.Create (Platform, Engine);
+
+            Entity camSo = SceneGraph.CreateSceneObject ("Scene 3 Camera");
+            camSo.AddTrait <CameraTrait> ();
+            var lookatTrait = camSo.AddTrait<LookAtSubjectTrait>();
+            lookatTrait.Subject = Transform.Origin;
+            var orbitTrait = camSo.AddTrait<OrbitAroundSubjectTrait>();
+            orbitTrait.CameraSubject = Transform.Origin;
+
+            camSo.Transform.LocalPosition = new Vector3(1f,0.5f,5f);
+
+            this.RuntimeConfiguration.SetRenderPassCameraTo("Debug", camSo);
+            this.RuntimeConfiguration.SetRenderPassCameraTo("Default", camSo);
+
+            _returnScene = this;
+            this.Engine.InputEventSystem.Tap += this.OnTap;
+
+            teapotGPUMesh = new TeapotPrimitive(Platform.Graphics).Mesh;
+
+            AddTeapot(0);
+            AddTeapot(-1.5f);
+            AddTeapot(1.5f);
         }
 
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        void AddTeapot(Single z)
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
+            // create a game object
+            Entity testGO = SceneGraph.CreateSceneObject ("teapot #" + ++teapotCounter);
+
+            Single scale = 1f;
+
+
+            // size it
+            testGO.Transform.LocalPosition = new Vector3(
+                0,
+                0,
+                z);
+
+            testGO.Transform.LocalScale = new Vector3(scale, scale, scale);
+
+            var mat = new Material("Default", CommonDemoResources.PixelLitShader);
+
+            //mat.SetTexture("_texture", null);
+            // add a mesh renderer
+            var meshRendererTrait = testGO.AddTrait<MeshRendererTrait> ();
+
+            // set the mesh renderer's material
+            meshRendererTrait.Material = mat;
+
+            meshRendererTrait.Material.SetColour("MaterialColour", RandomGenerator.Default.GetRandomColour());
+
+            // and it's model
+            meshRendererTrait.Mesh = teapotGPUMesh;
         }
 
-        internal void PostUpdate(AppTime time)
+        public override void Shutdown()
         {
-            this.PrimitiveRenderer.PostUpdate (time);
+            this.Engine.InputEventSystem.Tap -= this.OnTap;
+            CommonDemoResources.Destroy ();
+        }
+
+        public override Scene Update(AppTime time)
+        {
+            if (Platform.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
+                Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
+                    Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
+            {
+                _returnScene = new Scene_MainMenu();
+            }
+
+            this.Engine.DebugRenderer.AddGrid ("Debug");
+
+            this.Engine.DebugRenderer.AddLine(
+                "Gui",
+                new Vector3(-0.5f, -0.5f, 0),
+                new Vector3(0.5f, 0.5f, 0),
+                Rgba32.Yellow);
+
+            return _returnScene;
+        }
+
+        void OnTap(Gesture gesture)
+        {
+            _returnScene = new Scene_MainMenu();
         }
     }
 }
+

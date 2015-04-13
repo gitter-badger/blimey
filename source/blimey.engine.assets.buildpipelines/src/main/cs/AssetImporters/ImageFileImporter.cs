@@ -36,10 +36,11 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using Fudge;
-using Blimey.Assets.Pipeline;
+using Blimey.Platform;
+using Blimey.Asset;
 using Hjg.Pngcs;
 
-namespace Blimey.Assets.Builders
+namespace Blimey.Engine
 {
     public class ImageFileImporter
         : AssetImporter <ColourmapAsset>
@@ -61,7 +62,7 @@ namespace Blimey.Assets.Builders
 
             if (!File.Exists (input.Files[0]))
                 throw new Exception ("ImageFileImporter cannot find input file.");
-            
+
             string filename = input.Files[0];
 
             PngReader pngr = FileHelper.CreatePngReader(filename);

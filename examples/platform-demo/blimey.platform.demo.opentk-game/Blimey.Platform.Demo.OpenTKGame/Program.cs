@@ -1,11 +1,11 @@
 ﻿namespace PlatformDemo
 {
     using System;
-    using Blimey;
+    using Blimey.Platform;
 
 	public class Program
 	{
-		public static void Main( string[] args )
+		public static void Main (String[] args)
 		{
 			var appSettings = new AppSettings ("Blimey Platform Demo") {
 				FullScreen = true,
@@ -14,12 +14,16 @@
 
 			var entryPoint = new BasicApp();
 
-			var platform = new Platform ();
+            IApi api = new Api ();
 
-			using( var engine = new Engine(platform, appSettings, entryPoint) )
-			{
-				platform.Run();
-			}
+            using (var platform = new Platform (api))
+            {
+                platform.Start (appSettings, entryPoint);
+
+                (api as Api).Run ();
+
+                platform.Stop ();
+            }
 		}
 	}
 }

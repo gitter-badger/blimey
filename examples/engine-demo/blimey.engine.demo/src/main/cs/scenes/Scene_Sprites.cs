@@ -37,9 +37,14 @@ namespace EngineDemo
     using System;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Blimey;
+    using Blimey.Platform;
+    using Blimey.Asset;
+    using Blimey.Engine;
     using System.Collections.Generic;
 
+    // This example show cases two different approachs to rendering sprites
+    // #1 - Using Blimey's Primitive system (Not yet implemented).
+    // #2 - Using Blimey's Scene graph system
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public class Scene_Sprites
@@ -189,18 +194,18 @@ namespace EngineDemo
 
         public override void Start ()
         {
-            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("assets/unlit.bba");
-            SpriteTrait.SpriteShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
+            ShaderAsset unlitShaderAsset = this.Engine.Assets.Load<ShaderAsset> ("assets/unlit.bba");
+            SpriteTrait.SpriteShader = this.Platform.Graphics.CreateShader (unlitShaderAsset);
 
-			AppWidth = this.Cor.Status.Width;
-			AppHeight = this.Cor.Status.Height;
+			AppWidth = this.Platform.Status.Width;
+			AppHeight = this.Platform.Status.Height;
 
-            var ta_za = this.Blimey.Assets.Load<TextureAsset> ("assets/zazaka.bba");
-            texZa = this.Cor.Graphics.CreateTexture (ta_za);
+            var ta_za = this.Engine.Assets.Load<TextureAsset> ("assets/zazaka.bba");
+            texZa = this.Platform.Graphics.CreateTexture (ta_za);
 
             // Create the background.
-            var ta_bg = this.Blimey.Assets.Load<TextureAsset> ("assets/bg2.bba");
-            texBg = this.Cor.Graphics.CreateTexture (ta_bg);
+            var ta_bg = this.Engine.Assets.Load<TextureAsset> ("assets/bg2.bba");
+            texBg = this.Platform.Graphics.CreateTexture (ta_bg);
             /*
             var soBG = this.SceneGraph.CreateSceneObject ("bg");
             var spr = soBG.AddTrait <SpriteTrait> ();
@@ -214,10 +219,10 @@ namespace EngineDemo
             */
 
             bgSprite = new SpritePrimitive (
-                this.Blimey.PrimitiveRenderer, texBg,
+                this.Engine.PrimitiveRenderer, texBg,
                 64, 64,
-                this.Cor.Host.ScreenSpecification.ScreenResolutionWidth,
-                this.Cor.Host.ScreenSpecification.ScreenResolutionHeight);
+                this.Platform.Host.ScreenSpecification.ScreenResolutionWidth,
+                this.Platform.Host.ScreenSpecification.ScreenResolutionHeight);
 
 
             Single pi = 0;
@@ -250,7 +255,7 @@ namespace EngineDemo
                 hareTrait.Parent.Enabled = (i < currentNumHares);
             }
 
-            this.Blimey.InputEventSystem.Tap += this.HandleTap;
+            this.Engine.InputEventSystem.Tap += this.HandleTap;
 
         }
 
@@ -277,12 +282,12 @@ namespace EngineDemo
 
         public override void Shutdown ()
         {
-            this.Blimey.InputEventSystem.Tap -= this.HandleTap;
+            this.Engine.InputEventSystem.Tap -= this.HandleTap;
 
 			// Clean up the things we allocated on the GPU.
-			this.Cor.Graphics.DestroyShader (SpriteTrait.SpriteShader);
-            this.Cor.Graphics.DestroyTexture (texZa);
-            this.Cor.Graphics.DestroyTexture (texBg);
+			this.Platform.Graphics.DestroyShader (SpriteTrait.SpriteShader);
+            this.Platform.Graphics.DestroyTexture (texZa);
+            this.Platform.Graphics.DestroyTexture (texBg);
 			SpriteTrait.SpriteShader = null;
             texZa = null;
 			texBg = null;
@@ -290,8 +295,8 @@ namespace EngineDemo
 
         public override Scene Update (AppTime time)
         {
-            AppWidth = this.Cor.Status.Width;
-            AppHeight = this.Cor.Status.Height;
+            AppWidth = this.Platform.Status.Width;
+            AppHeight = this.Platform.Status.Height;
 
             bgSprite.DrawEx ("Debug", 0f, 0f, 0.0f, 1f / 100f, 1f / 100f);
 
@@ -302,28 +307,28 @@ namespace EngineDemo
 
             if (timer <= 0f)
             {
-				if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
-					Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape) ||
-					Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Backspace))
+				if (Platform.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
+					Platform.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape) ||
+					Platform.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Backspace))
                 {
                     returnScene = new Scene_MainMenu ();
                 }
 
-				if (Cor.Input.GenericGamepad.Buttons.North == ButtonState.Pressed ||
-                    Cor.Input.Keyboard.IsCharacterKeyDown ('d'))
+				if (Platform.Input.GenericGamepad.Buttons.North == ButtonState.Pressed ||
+                    Platform.Input.Keyboard.IsCharacterKeyDown ('d'))
                 {
                     debugLinesOn = !debugLinesOn;
                     hares.ForEach (x => x.EnabledDebugRenderer (debugLinesOn));
                 }
 
-				if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
-                    Cor.Input.Keyboard.IsCharacterKeyDown ('b'))
+				if (Platform.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
+                    Platform.Input.Keyboard.IsCharacterKeyDown ('b'))
                 {
 					hares.ForEach (x => x.NextBlendMode ());
                 }
 
-                if (Cor.Input.GenericGamepad.Buttons.South == ButtonState.Pressed ||
-                    Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Spacebar))
+                if (Platform.Input.GenericGamepad.Buttons.South == ButtonState.Pressed ||
+                    Platform.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Spacebar))
                 {
                     ChangeNumHares ();
                 }
@@ -332,7 +337,7 @@ namespace EngineDemo
             }
 
             if (debugLinesOn)
-                this.Blimey.DebugRenderer.AddGrid ("Debug");
+                this.Engine.DebugRenderer.AddGrid ("Debug");
 
             if (debugLinesOn)
             {
@@ -341,7 +346,7 @@ namespace EngineDemo
                 Single top = (Single)(AppHeight / 2) * Settings.PixelToWorldSpace;
                 Single bottom = -(Single)(AppHeight / 2) * Settings.PixelToWorldSpace;
 
-                this.Blimey.DebugRenderer.AddQuad (
+                this.Engine.DebugRenderer.AddQuad (
                     "Default",
                     new Vector3 (left, bottom, 0),
                     new Vector3 (right, bottom, 0),

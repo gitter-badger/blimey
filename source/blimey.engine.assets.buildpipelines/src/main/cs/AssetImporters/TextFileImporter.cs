@@ -36,9 +36,10 @@ using System;
 using System.Runtime.InteropServices;
 using Fudge;
 using System.IO;
-using Blimey.Assets.Pipeline;
+using Blimey.Platform;
+using Blimey.Asset;
 
-namespace Blimey.Assets.Builders
+namespace Blimey.Engine
 {
     public class TextFileImporter
         : AssetImporter <TextAsset>
@@ -62,7 +63,7 @@ namespace Blimey.Assets.Builders
                 throw new Exception ("TextAssetImporter cannot find input file.");
 
             outputAsset.Text = File.ReadAllText (input.Files[0]);
-          
+
             return output;
         }
 

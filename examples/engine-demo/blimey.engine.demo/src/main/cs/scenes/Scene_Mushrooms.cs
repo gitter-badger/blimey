@@ -37,14 +37,16 @@ namespace EngineDemo
     using System;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Blimey;
+    using Blimey.Platform;
+    using Blimey.Asset;
+    using Blimey.Engine;
     using System.Collections.Generic;
     using System.Reflection;
     using System.Linq;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Scene_Go : Scene
+    public class Scene_Mushrooms : Scene
     {
         Scene returnScene;
         Shader shader = null;
@@ -62,34 +64,34 @@ namespace EngineDemo
         public override void Start ()
         {
             this.Configuration.BackgroundColour = Rgba32.DarkSlateGrey;
-            //var goBoardMesh = new CubePrimitive (this.Cor.Graphics).Mesh;
+            //var goBoardMesh = new CubePrimitive (this.Platform.Graphics).Mesh;
 
-            MeshAsset mushMeshAsset0 = this.Blimey.Assets.Load<MeshAsset> ("assets/big_mushroom.bba");
-            vb0 = Cor.Graphics.CreateVertexBuffer (mushMeshAsset0.VertexDeclaration, mushMeshAsset0.VertexData.Length);
-            ib0 = Cor.Graphics.CreateIndexBuffer (mushMeshAsset0.IndexData.Length);
+            MeshAsset mushMeshAsset0 = this.Engine.Assets.Load<MeshAsset> ("assets/big_mushroom.bba");
+            vb0 = Platform.Graphics.CreateVertexBuffer (mushMeshAsset0.VertexDeclaration, mushMeshAsset0.VertexData.Length);
+            ib0 = Platform.Graphics.CreateIndexBuffer (mushMeshAsset0.IndexData.Length);
             vb0.SetDataEx (mushMeshAsset0.VertexData);
             ib0.SetData (mushMeshAsset0.IndexData);
             var mushMesh0 = new Mesh (vb0, ib0);
 
-            MeshAsset mushMeshAsset1 = this.Blimey.Assets.Load<MeshAsset> ("assets/small_mushroom_1.bba");
-            vb1 = Cor.Graphics.CreateVertexBuffer (mushMeshAsset1.VertexDeclaration, mushMeshAsset1.VertexData.Length);
-            ib1 = Cor.Graphics.CreateIndexBuffer (mushMeshAsset1.IndexData.Length);
+            MeshAsset mushMeshAsset1 = this.Engine.Assets.Load<MeshAsset> ("assets/small_mushroom_1.bba");
+            vb1 = Platform.Graphics.CreateVertexBuffer (mushMeshAsset1.VertexDeclaration, mushMeshAsset1.VertexData.Length);
+            ib1 = Platform.Graphics.CreateIndexBuffer (mushMeshAsset1.IndexData.Length);
             vb1.SetDataEx (mushMeshAsset1.VertexData);
             ib1.SetData (mushMeshAsset1.IndexData);
             var mushMesh1 = new Mesh (vb1, ib1);
 
-            MeshAsset mushMeshAsset2 = this.Blimey.Assets.Load<MeshAsset> ("assets/small_mushroom_2.bba");
-            vb2 = Cor.Graphics.CreateVertexBuffer (mushMeshAsset2.VertexDeclaration, mushMeshAsset2.VertexData.Length);
-            ib2 = Cor.Graphics.CreateIndexBuffer (mushMeshAsset2.IndexData.Length);
+            MeshAsset mushMeshAsset2 = this.Engine.Assets.Load<MeshAsset> ("assets/small_mushroom_2.bba");
+            vb2 = Platform.Graphics.CreateVertexBuffer (mushMeshAsset2.VertexDeclaration, mushMeshAsset2.VertexData.Length);
+            ib2 = Platform.Graphics.CreateIndexBuffer (mushMeshAsset2.IndexData.Length);
             vb2.SetDataEx (mushMeshAsset2.VertexData);
             ib2.SetData (mushMeshAsset2.IndexData);
             var mushMesh2 = new Mesh (vb2, ib2);
 
             // set up the debug renderer
-            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("assets/pixel_lit.bba");
-            shader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
-            TextureAsset woodTexAsset = this.Blimey.Assets.Load <TextureAsset> ("assets/toadstool_diffuse.bba");
-            woodTex = this.Cor.Graphics.CreateTexture (woodTexAsset);
+            ShaderAsset unlitShaderAsset = this.Engine.Assets.Load<ShaderAsset> ("assets/pixel_lit.bba");
+            shader = this.Platform.Graphics.CreateShader (unlitShaderAsset);
+            TextureAsset woodTexAsset = this.Engine.Assets.Load <TextureAsset> ("assets/toadstool_diffuse.bba");
+            woodTex = this.Platform.Graphics.CreateTexture (woodTexAsset);
 
             mush0 = SceneGraph.CreateSceneObject ("mush0");
             mush0.Transform.LocalPosition = new Vector3 (0f, 0f, 0f);
@@ -137,21 +139,21 @@ namespace EngineDemo
             this.RuntimeConfiguration.SetRenderPassCameraTo("Debug", camSo);
             this.RuntimeConfiguration.SetRenderPassCameraTo("Default", camSo);
 
-            this.Blimey.InputEventSystem.Tap += this.OnTap;
+            this.Engine.InputEventSystem.Tap += this.OnTap;
         }
 
         public override void Shutdown ()
         {
-            this.Blimey.InputEventSystem.Tap -= this.OnTap;
+            this.Engine.InputEventSystem.Tap -= this.OnTap;
         }
 
         public override Scene Update (AppTime time)
         {
-            this.Blimey.DebugRenderer.AddGrid ("Debug", 1f, 10);
+            this.Engine.DebugRenderer.AddGrid ("Debug", 1f, 10);
 
-            if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
-            Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape) ||
-            Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Backspace))
+            if (Platform.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
+            Platform.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape) ||
+            Platform.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Backspace))
             {
                 returnScene = new Scene_MainMenu ();
             }
@@ -165,7 +167,7 @@ namespace EngineDemo
 
             woodTex.Dispose ();
             // Clean up the things we allocated on the GPU.
-            this.Cor.Graphics.DestroyShader (shader);
+            this.Platform.Graphics.DestroyShader (shader);
             shader = null;
         }
     }

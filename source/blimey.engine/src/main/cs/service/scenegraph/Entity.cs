@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Runtime.InteropServices;
@@ -41,6 +41,8 @@ namespace Blimey
     using System.IO;
     using System.Linq;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
     using Oats;
 
@@ -56,7 +58,7 @@ namespace Blimey
 
         public Scene Owner { get { return containedBy; } }
 
-        // Used to define where in the game engine's hierarchy this
+        // Used to define where in the game platform's hierarchy this
         // game object exists.
         public Transform Transform { get { return location; } }
 
@@ -118,7 +120,7 @@ namespace Blimey
 
             T behaviour = new T ();
             behaviours.Add (behaviour);
-            behaviour.Initilise(containedBy.Cor, containedBy.Blimey, this);
+            behaviour.Initilise(containedBy.Platform, containedBy.Engine, this);
 
             behaviour.OnAwake();
 

@@ -37,7 +37,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Platform
 {
     using System;
     using System.Collections;
@@ -54,63 +54,14 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class LoggedProxyPlatform
-        : IPlatform
-    {
-        public LoggedProxyPlatform (IPlatform platform, StreamWriter stream)
-        {
-            this.Program = new LoggedProxyProgram (platform.Program, stream);
-            this.Api = new LoggedProxyApi (platform.Api, stream);
-        }
-
-        public IProgram Program { get; private set; }
-        public IApi Api { get; private set; }
-    }
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public class LoggedProxyProgram
-        : IProgram
-    {
-        readonly IProgram program;
-        readonly StreamWriter stream;
-
-        Int32 updateCount = 0;
-        Int32 renderCount = 0;
-
-        internal  LoggedProxyProgram (IProgram program, StreamWriter stream)
-        {
-            this.program = program;
-            this.stream = stream;
-        }
-
-        public void Start (IApi platformImplementation, Action update, Action render)
-        {
-            program.Start (
-                platformImplementation,
-                () => {
-                    stream.WriteLine (Environment.NewLine + "UPDATE #" + updateCount++);
-                    update ();
-                    },
-                () => {
-                    stream.WriteLine ("RENDER #" + renderCount++);
-                    render ();}
-                );
-        }
-
-        public void Stop ()
-        {
-            program.Stop ();
-        }
-    }
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
     public sealed class LoggedProxyApi
         : IApi
     {
         readonly IApi api;
         readonly StreamWriter stream;
+
+        Int32 updateCount = 0;
+        Int32 renderCount = 0;
 
         internal LoggedProxyApi (IApi originalApi, StreamWriter stream)
         {
@@ -533,6 +484,24 @@ namespace Blimey
         /*
          * Application
          */
+        public void app_Start (Action update, Action render)
+        {
+            api.app_Start (
+                () => {
+                    stream.WriteLine (Environment.NewLine + "UPDATE #" + updateCount++);
+                    update ();
+                    },
+                () => {
+                    stream.WriteLine ("RENDER #" + renderCount++);
+                    render ();}
+                );
+        }
+
+        public void app_Stop ()
+        {
+            api.app_Stop ();
+        }
+
         public Boolean? app_IsFullscreen ()
         {
             StartLog ("app_IsFullscreen ()");

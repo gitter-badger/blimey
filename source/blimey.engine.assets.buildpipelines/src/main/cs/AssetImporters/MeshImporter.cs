@@ -34,14 +34,14 @@
 
 using System;
 
-using Blimey.Assets.Pipeline;
+using Blimey.Platform;
+using Blimey.Asset;
 using System.IO;
 using System.Collections.Generic;
-
 using Abacus.SinglePrecision;
 using System.Text.RegularExpressions;
 
-namespace Blimey.Assets.Builders
+namespace Blimey.Engine
 {
     public class MeshImporter
         : AssetImporter <MeshAsset>

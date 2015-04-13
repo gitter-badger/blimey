@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Platform
 {
     using System;
     using System.Runtime.InteropServices;
@@ -45,7 +45,7 @@ namespace Blimey
 
     using Abacus.SinglePrecision;
     using Fudge;
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
@@ -59,23 +59,23 @@ namespace Blimey
         /// Gets called once by the engine when an app is run.  It is where a user's app should load resources from
         /// the asset system and upload their geometry, textures and shaders to the GPU.
         /// </summary>
-        void Start (Engine cor);
+        void Start (Platform platform);
 
         /// <summary>
         /// Called once per frame by the engine.  Returning true is the signal for the engine to stop running the app
         /// and trigger the shutdown process.  This is where the user should user Cor.ICor to perform their processing.
         /// </summary>
-        Boolean Update (Engine cor, AppTime time);
+        Boolean Update (Platform platform, AppTime time);
 
         /// <summary>
         /// Called once per frame by the engine.  This is where the user should use Cor.ICor to perform their rendering.
         /// </summary>
-        void Render (Engine cor);
+        void Render (Platform platform);
 
         /// <summary>
         /// Gets called once by the engine after the user's app completes it's final Update/Render loop.  It is where
         /// the user's app should unload their geometry, textures and shaders from the GPU.
         /// </summary>
-        void Stop (Engine cor);
+        void Stop (Platform platform);
     }
 }

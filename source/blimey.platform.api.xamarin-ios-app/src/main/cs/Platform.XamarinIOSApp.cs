@@ -1,15 +1,10 @@
 ﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
-// │ __________.__          __    _____                                     │ \\
-// │ \______   \  | _____ _/  |__/ ____\___________  _____                  │ \\
-// │  |     ___/  | \__  \\   __\   __\/  _ \_  __ \/     \                 │ \\
-// │  |    |   |  |__/ __ \|  |  |  | (  <_> )  | \/  Y Y  \                │ \\
-// │  |____|   |____(____  /__|  |__|  \____/|__|  |__|_|  /                │ \\
-// │                     \/                              \/                 │ \\
-// │                                                                        │ \\
-// │ A partial implementation of the Blimey Plaform API targeting Xamarin's │ \\
-// │ iOS framework.  This partial implementation does not implement any     │ \\
-// │ of the Blimey Plaform API's `gfx` calls and is intended to be compiled │ \\
-// │ alongside the OpenTK partial file with PLATFORM_XIOS defined.          │ \\
+// │ __________.__  .__                                                     │ \\
+// │ \______   \  | |__| _____   ____ ___.__.                               │ \\
+// │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
+// │  |    |   \  |_|  |  Y Y  \  ___/\___  |                               │ \\
+// │  |______  /____/__|__|_|  /\___  > ____|                               │ \\
+// │         \/              \/     \/\/                                    │ \\
 // │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Copyright © 2012 - 2015 ~ Blimey Engine (http://www.blimey.io)         │ \\
@@ -37,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Platform
 {
     using global::System;
     using global::System.Globalization;
@@ -61,60 +56,11 @@ namespace Blimey
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class Platform
-        : IPlatform
-    {
-        public Platform ()
-        {
-            var program = new Program ();
-            var api = new Api ();
-
-            api.InitialiseDependencies (program);
-            program.InitialiseDependencies (api);
-
-            Api = api;
-            Program = program;
-        }
-
-        public IProgram Program { get; private set; }
-        public IApi Api { get; private set; }
-    }
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public sealed class Program
-        : IProgram
+    public partial class Api
+        : IApi
     {
         OpenGLViewController viewController;
         UIWindow window;
-
-        Api Api { get; set; }
-
-        public OpenGLViewController OpenGLViewController { get { return viewController; } }
-
-        internal void InitialiseDependencies (Api api) { Api = api; }
-
-        public void Start (IApi platformImplementation, Action update, Action render)
-        {
-            RegisterLoggingListeners ();
-            UIApplication.SharedApplication.StatusBarHidden = true;
-            UIApplication.SharedApplication.SetStatusBarHidden (true, UIStatusBarAnimation.None);
-
-            // create a new window instance based on the screen size
-            window = new UIWindow (UIScreen.MainScreen.Bounds);
-
-            viewController = new OpenGLViewController (Api, update, render);
-
-            window.RootViewController = viewController;
-
-            // make the window visible
-            window.MakeKeyAndVisible ();
-        }
-
-        public void Stop ()
-        {
-            throw new NotImplementedException ();
-        }
 
         void RegisterLoggingListeners ()
         {
@@ -137,40 +83,27 @@ namespace Blimey
 
         void DidReceiveMemoryWarning (NSNotification ntf)
         {
-            Console.WriteLine ("[Cor.System] DidReceiveMemoryWarning");
+            Console.WriteLine ("DidReceiveMemoryWarning");
         }
 
         void DidBecomeActive (NSNotification ntf)
         {
-            Console.WriteLine ("[Cor.System] DidBecomeActive");
+            Console.WriteLine ("DidBecomeActive");
         }
 
         void DidEnterBackground (NSNotification ntf)
         {
-            Console.WriteLine ("[Cor.System] DidEnterBackground");
+            Console.WriteLine ("DidEnterBackground");
         }
 
         void DidFinishLaunching (NSNotification ntf)
         {
-            Console.WriteLine ("[Cor.System] DidFinishLaunching");
+            Console.WriteLine ("DidFinishLaunching");
         }
 
         void OrientationDidChange (NSNotification ntf)
         {
-            Console.WriteLine ("[Cor.System] OrientationDidChange");
-        }
-    }
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public partial class Api
-        : IApi
-    {
-        Program Program { get; set; }
-
-        internal void InitialiseDependencies (Program program)
-        {
-            Program = program;
+            Console.WriteLine ("OrientationDidChange");
         }
 
         /**
@@ -258,6 +191,29 @@ namespace Blimey
         /**
          * Application
          */
+
+        public void app_Start (Action update, Action render)
+        {
+            RegisterLoggingListeners ();
+            UIApplication.SharedApplication.StatusBarHidden = true;
+            UIApplication.SharedApplication.SetStatusBarHidden (true, UIStatusBarAnimation.None);
+
+            // create a new window instance based on the screen size
+            window = new UIWindow (UIScreen.MainScreen.Bounds);
+
+            viewController = new OpenGLViewController (this, update, render);
+
+            window.RootViewController = viewController;
+
+            // make the window visible
+            window.MakeKeyAndVisible ();
+        }
+
+        public void app_Stop ()
+        {
+            throw new NotImplementedException ();
+        }
+
         public Boolean? app_IsFullscreen ()
         {
             return true;
@@ -305,7 +261,7 @@ namespace Blimey
 
         public HashSet <RawTouch> hid_GetActiveTouches ()
         {
-            EAGLView view = Program.OpenGLViewController.View as EAGLView;
+            EAGLView view = viewController.View as EAGLView;
             return view.GetRawTouches ();
         }
 

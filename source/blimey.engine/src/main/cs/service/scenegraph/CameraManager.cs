@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Runtime.InteropServices;
@@ -41,6 +41,8 @@ namespace Blimey
     using System.IO;
     using System.Linq;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
     using Oats;
 
@@ -52,7 +54,7 @@ namespace Blimey
         {
             return GetActiveCamera(renderPass).Parent;
         }
-        
+
         internal CameraTrait GetActiveCamera(String RenderPass)
         {
             return _activeCameras[RenderPass].GetTrait<CameraTrait> ();
@@ -73,11 +75,11 @@ namespace Blimey
 
         internal CameraManager (Scene scene)
         {
-                  var settings = scene.Configuration;
+            var settings = scene.Configuration;
 
-                  foreach (var renderPass in settings.RenderPasses)
+            foreach (var renderPass in settings.RenderPasses)
             {
-                         var go = scene.SceneGraph.CreateSceneObject("RenderPass(" + renderPass + ") Provided Camera");
+                var go = scene.SceneGraph.CreateSceneObject("RenderPass(" + renderPass + ") Provided Camera");
 
                 var cam = go.AddTrait<CameraTrait>();
 
@@ -95,12 +97,12 @@ namespace Blimey
                 {
                     cam.Projection = CameraProjectionType.Orthographic;
 
-                    go.Transform.Position = new Vector3(0, 0, 0.5f);
+                    go.Transform.Position = new Vector3(0, 0, -1f);
                     go.Transform.LookAt(Vector3.Zero);
                 }
 
 
-                        _defaultCameras.Add(renderPass.Name, go);
+                _defaultCameras.Add(renderPass.Name, go);
                 _activeCameras.Add(renderPass.Name, go);
             }
         }

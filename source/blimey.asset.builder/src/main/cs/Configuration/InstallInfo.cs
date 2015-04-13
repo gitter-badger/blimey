@@ -32,16 +32,16 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey.AssetBuilder.Configuration
+namespace Blimey.Asset
 {
 	using System;
 
     public class InstallInfo
     {
         public Int32 InstallTime { get; set; }
-        
+
         public DateTime InstallDateTime
-        { 
+        {
             get { return DateTimeHelper.FromUnixTime(InstallTime); }
         }
     }

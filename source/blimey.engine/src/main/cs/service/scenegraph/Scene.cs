@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Runtime.InteropServices;
@@ -41,19 +41,21 @@ namespace Blimey
     using System.IO;
     using System.Linq;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
     using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// Scenes are a blimey feature that provide a simple scene graph and higher
+    /// Scenes are a engine feature that provide a simple scene graph and higher
     /// level abstraction of the renderering pipeline.
     /// </summary>
     public abstract class Scene
     {
         /// <summary>
-        /// Game scene settings are used by the engine to detemine how
+        /// Game scene settings are used by the platform to detemine how
         /// to manage an associated scene.  For example the game scene
         /// settings are used to define the render pass for the scene.
         /// </summary>
@@ -208,8 +210,8 @@ namespace Blimey
         // Scene Data //
         // ========== //
 
-        Engine cor = null;
-        Blimey blimey = null;
+        Platform platform = null;
+        Engine engine = null;
         readonly SceneConfiguration configuration = null;
         readonly SceneRuntimeConfiguration runtimeConfiguration = null;
         CameraManager cameraManager = null;
@@ -221,8 +223,8 @@ namespace Blimey
         // ======================= //
         // Functions for consumers //
         // ======================= //
-    public Engine Cor { get { return cor; } }
-        public Blimey Blimey { get { return blimey; } }
+        public Platform Platform { get { return platform; } }
+        public Engine Engine { get { return engine; } }
 
         public Boolean Active { get { return isRunning;} }
         public SceneConfiguration Configuration { get { return configuration; } }
@@ -244,10 +246,10 @@ namespace Blimey
         // Blimey internal calls //
         // ===================== //
 
-        internal void Initialize (Engine cor, Blimey blimey)
+        internal void Initialize (Platform platform, Engine engine)
         {
-            this.cor = cor;
-            this.blimey = blimey;
+            this.platform = platform;
+            this.engine = engine;
             this.sceneGraph = new SceneSceneGraph (this);
             this.cameraManager = new CameraManager(this);
 
@@ -262,14 +264,14 @@ namespace Blimey
                 isRunning = true;
             }
 
-            this.blimey.PreUpdate (time);
+            this.engine.PreUpdate (time);
 
             foreach (Entity go in sceneGraph.GetAllObjects())
             {
                 go.Update(time);
             }
 
-            this.blimey.PostUpdate (time);
+            this.engine.PostUpdate (time);
 
             var ret =  this.Update(time);
             return ret;

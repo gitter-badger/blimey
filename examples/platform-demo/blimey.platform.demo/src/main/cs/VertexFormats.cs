@@ -39,7 +39,7 @@ namespace PlatformDemo
     using System.IO;
     using Abacus.SinglePrecision;
     using Fudge;
-    using Blimey;
+    using Blimey.Platform;
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
 

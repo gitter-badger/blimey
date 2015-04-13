@@ -32,12 +32,13 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using Abacus.SinglePrecision;
+    using global::Blimey.Platform;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 

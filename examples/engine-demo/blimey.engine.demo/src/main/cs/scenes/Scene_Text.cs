@@ -37,7 +37,9 @@ namespace EngineDemo
     using System;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Blimey;
+    using Blimey.Platform;
+    using Blimey.Asset;
+    using Blimey.Engine;
     using System.Collections.Generic;
 
     class SpriteFontData
@@ -47,9 +49,11 @@ namespace EngineDemo
         public Int32 LineHeight { get; set; }
         public Int32 BaseLine { get; set; }
 
-        readonly Dictionary <Char, SpriteFontCharacterData> characterData = new Dictionary<Char, SpriteFontCharacterData> ();
+        readonly Dictionary <Char, SpriteFontCharacterData> characterData =
+            new Dictionary<Char, SpriteFontCharacterData> ();
 
-        readonly Dictionary <SpriteFontKerningPair, Int32> kerning = new Dictionary<SpriteFontKerningPair, Int32> ();
+        readonly Dictionary <SpriteFontKerningPair, Int32> kerning =
+            new Dictionary<SpriteFontKerningPair, Int32> ();
 
         public SpriteFontData (String bmFontFile)
         {
@@ -90,33 +94,37 @@ namespace EngineDemo
         readonly String fntUvData = null;
         SpritePrimitive s;
 
-        public SpriteFont (Engine engine, Blimey blimey, TextAsset fntUvAsset, TextureAsset fntTexAsset)
+        public SpriteFont (Platform platform, Engine engine, TextAsset fntUvAsset, TextureAsset fntTexAsset)
         {
             fntUvData = fntUvAsset.Text;
-            fntTex = engine.Graphics.CreateTexture (fntTexAsset);
-            Init (engine ,blimey);
+            fntTex = platform.Graphics.CreateTexture (fntTexAsset);
+            Init (platform, engine);
         }
 
-        public SpriteFont (Engine engine, Blimey blimey, String fntUvData, Texture fntTex)
+        public SpriteFont (Platform platform, Engine engine, String fntUvData, Texture fntTex)
         {
             this.fntUvData = fntUvData;
             this.fntTex = fntTex;
-            Init (engine, blimey);
+            Init (platform, engine);
         }
 
-        void Init (Engine engine, Blimey blimey)
+        void Init (Platform platform, Engine engine)
         {
             Console.WriteLine (fntUvData);
 
-            s = new SpritePrimitive (blimey.PrimitiveRenderer, fntTex);
+            s = new SpritePrimitive (engine.PrimitiveRenderer, fntTex);
             s.SetBlendMode (BlendMode.Default);
-            s.SetColour (Rgba32.Red);
-            s.SetTextureRect (0.0052f, 0.0063f, 0.1354f, 0.1625f);
         }
 
         public void Draw (Single x, Single y, String text)
         {
-            s.DrawEx ("Gui", 0f, 0f, 0f, 1f / 256f / 4f, 1f / 256f / 4f);
+            s.SetColour (Rgba32.Red);
+            s.SetTextureRect (0.2396f * fntTex.Width, 0.9500f * fntTex.Height, 0.0312f * fntTex.Width, 0.0312f * fntTex.Height, false);
+            s.DrawEx ("Gui", 0f, 0f, 0f, 1f / 4f / 256f , 1f / 4f / 256f);
+
+            s.SetColour (Rgba32.Yellow);
+            s.SetTextureRect (0.0052f * fntTex.Width, 0.0063f * fntTex.Height, 0.1354f * fntTex.Width, 0.1625f * fntTex.Height, false);
+            s.DrawEx ("Gui", 0.2f, 0f, 0f, 1f / 4f / 256f , 1f / 4f / 256f);
         }
     }
 
@@ -126,7 +134,6 @@ namespace EngineDemo
 		: Scene
 	{
 		Scene returnScene;
-        Shader unlitShader = null;
         Texture fntTex = null;
         SpriteFont sprFnt = null;
 
@@ -134,53 +141,55 @@ namespace EngineDemo
 		{
 			this.Configuration.BackgroundColour = Rgba32.DarkSlateGrey;
 
-			// set up the debug renderer
-            ShaderAsset unlitShaderAsset = this.Blimey.Assets.Load<ShaderAsset> ("assets/unlit.bba");
+            TextAsset fntUvAsset = this.Engine.Assets.Load <TextAsset> ("assets/blimey_fnt_uv.bba");
+            TextureAsset fntTexAsset = this.Engine.Assets.Load <TextureAsset> ("assets/blimey_fnt_tex.bba");
 
-			SpriteTrait.SpriteShader = this.Cor.Graphics.CreateShader(unlitShaderAsset);
-
-            TextAsset fntUvAsset = this.Blimey.Assets.Load <TextAsset> ("assets/blimey_fnt_uv.bba");
-            TextureAsset fntTexAsset = this.Blimey.Assets.Load <TextureAsset> ("assets/blimey_fnt_tex.bba");
-
-            fntTex = this.Cor.Graphics.CreateTexture (fntTexAsset);
-
-            sprFnt = new SpriteFont (this.Cor, this.Blimey, fntUvAsset.Text, fntTex);
+            fntTex = this.Platform.Graphics.CreateTexture (fntTexAsset);
+            sprFnt = new SpriteFont (this.Platform, this.Engine, fntUvAsset, fntTexAsset);
 
 			returnScene = this;
 
-			var cam = this.CameraManager.GetRenderPassCamera ("Default");
-			cam.GetTrait <OrbitAroundSubjectTrait> ().Active = false;
-
-			// create a sprite
-			var so = this.SceneGraph.CreateSceneObject ("fnt_spr");
-
-			var spr = so.AddTrait <SpriteTrait> ();
-			spr.Width = 256f;
-			spr.Height = 256f;
-			spr.Texture = fntTex;
-			//spr.Material.Offset = new Vector2 (0.5f, 0.5f);
-			spr.Material.SetColour ("MaterialColour", Rgba32.Yellow);
-
-			unlitShader = this.Cor.Graphics.CreateShader (unlitShaderAsset);
+			this.CameraManager.GetRenderPassCamera ("Debug").GetTrait<CameraTrait> ().Projection = CameraProjectionType.Orthographic;
+            this.CameraManager.GetRenderPassCamera ("Default").GetTrait<CameraTrait> ().Projection = CameraProjectionType.Orthographic;
+            this.CameraManager.GetRenderPassCamera ("Gui").GetTrait<CameraTrait> ().Projection = CameraProjectionType.Orthographic;
 
 
-			this.Blimey.InputEventSystem.Tap += this.OnTap;
+            /*
+
+            var newCamSo = this.SceneGraph.CreateSceneObject("ortho");
+            newCamSo.Transform.LocalPosition = new Vector3(0, 0, 1);
+
+            var orthoCam = newCamSo.AddTrait<CameraTrait>();
+            orthoCam.NearPlaneDistance = 0;
+            orthoCam.FarPlaneDistance = 2;
+            orthoCam.Projection = CameraProjectionType.Orthographic;
+            orthoCam.ortho_width = this.Platform.Status.Width;
+            orthoCam.ortho_height = this.Platform.Status.Height;
+            orthoCam.ortho_zoom = 8f;
+
+            this.RuntimeConfiguration.SetRenderPassCameraTo("Default", newCamSo);
+            this.RuntimeConfiguration.SetRenderPassCameraTo("Gui", newCamSo);
+            this.RuntimeConfiguration.SetRenderPassCameraTo("Debug", newCamSo);
+
+            */
+
+			this.Engine.InputEventSystem.Tap += this.OnTap;
 		}
 
 		public override void Shutdown()
 		{
-			this.Blimey.InputEventSystem.Tap -= this.OnTap;
+			this.Engine.InputEventSystem.Tap -= this.OnTap;
 		}
 
 		public override Scene Update(AppTime time)
         {
-            this.Blimey.DebugRenderer.AddGrid ("Debug", 1f, 10);
+            this.Engine.DebugRenderer.AddGrid ("Gui", 1f, 10);
 
-            sprFnt.Draw (0, 0, "");
+            sprFnt.Draw (0, 0, "Hello");
 
-			if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
-				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
-				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
+			if (Platform.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
+				Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
+				Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
 			{
 				returnScene = new Scene_MainMenu();
 			}
@@ -191,10 +200,6 @@ namespace EngineDemo
 		void OnTap(Gesture gesture)
 		{
 			returnScene = new Scene_MainMenu();
-
-			// Clean up the things we allocated on the GPU.
-			this.Cor.Graphics.DestroyShader (unlitShader);
-			unlitShader = null;
 		}
 	}
 }

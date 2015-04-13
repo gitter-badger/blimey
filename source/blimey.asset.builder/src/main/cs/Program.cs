@@ -33,7 +33,7 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 
-namespace Blimey.AssetBuilder
+namespace Blimey.Asset
 {
     using System;
     using System.IO;
@@ -43,9 +43,7 @@ namespace Blimey.AssetBuilder
     using System.Linq;
     using System.Collections.Generic;
     using System.Reflection;
-    using Blimey.Assets.Pipeline;
     using Oats;
-    using Blimey;
     using NDesk.Options;
 
     public static class DateTimeHelper
@@ -65,7 +63,7 @@ namespace Blimey.AssetBuilder
 
 	public class Program
 	{
-        static Configuration.ProjectDefinition projectDefinition;
+        static ProjectDefinition projectDefinition;
 
         static OptionSet OptionSet;
 
@@ -99,7 +97,7 @@ namespace Blimey.AssetBuilder
         {
             Console.WriteLine ("Blimey Asset Builder v" + Version);
 
-            String homePath = (Environment.OSVersion.Platform == PlatformID.Unix || 
+            String homePath = (Environment.OSVersion.Platform == PlatformID.Unix ||
                    Environment.OSVersion.Platform == PlatformID.MacOSX)
                         ? Environment.GetEnvironmentVariable("HOME")
                         : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
@@ -112,7 +110,7 @@ namespace Blimey.AssetBuilder
 
                 var installedVersion =
                     File.ReadAllText (installPath)
-                        .FromJson<Configuration.InstallInfo> ()
+                        .FromJson<InstallInfo> ()
                         .InstallDateTime;
 
                 Console.WriteLine ("BAB build version: " + installedVersion);
@@ -178,7 +176,7 @@ namespace Blimey.AssetBuilder
 
             projectDefinition =
                 File.ReadAllText (".bab")
-                    .FromJson<Configuration.ProjectDefinition> ();
+                    .FromJson<ProjectDefinition> ();
 
             Console.WriteLine ("\tResources Folder: " + projectDefinition.ResourcesFolder);
             Console.WriteLine ("\tAsset Definitions Folder: " + projectDefinition.AssetDefinitionsFolder);
@@ -191,7 +189,7 @@ namespace Blimey.AssetBuilder
 				.ToArray ();
 
             var assetDefinitions = assetDefinitionFiles
-                .Select (file => file.ReadAllText ().FromJson<Configuration.AssetDefinition> ())
+                .Select (file => file.ReadAllText ().FromJson<AssetDefinition> ())
                 .ToList ();
 
             var platformIds = assetDefinitions
@@ -220,7 +218,7 @@ namespace Blimey.AssetBuilder
 
         static void ProcessAssetsForPlatform (
             String platformId,
-            List<Configuration.AssetDefinition> assetDefinitions)
+            List<AssetDefinition> assetDefinitions)
         {
             Console.WriteLine ("Processing Platform: " + platformId);
             Console.WriteLine ("");

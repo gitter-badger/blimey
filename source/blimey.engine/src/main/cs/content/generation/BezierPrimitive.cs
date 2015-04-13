@@ -32,12 +32,13 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using Abacus.SinglePrecision;
+    using global::Blimey.Platform;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -68,7 +69,7 @@ namespace Blimey
                     };
 
                     // If this patch is mirrored, reverse the
-                    // indices to keep the correct winding order.
+                    // indices to keep the platformrect winding order.
                     if (isMirrored)
                     {
                         Array.Reverse(indices);
@@ -144,7 +145,7 @@ namespace Blimey
                         // either straight up or straight down, depending on whether we
                         // are on the top or bottom of the teapot. This is not a robust
                         // solution for all possible degenerate bezier patches, but hey,
-                        // it's good enough to make the teapot work correctly!
+                        // it's good enough to make the teapot work platformrectly!
 
                         if (position.Y > 0)
                             normal = Vector3.Up;

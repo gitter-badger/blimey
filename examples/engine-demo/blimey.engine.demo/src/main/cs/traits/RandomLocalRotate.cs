@@ -37,106 +37,42 @@ namespace EngineDemo
     using System;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Blimey;
+    using Blimey.Platform;
+    using Blimey.Asset;
+    using Blimey.Engine;
     using System.Collections.Generic;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Scene_Particles
-        : Scene
+    public class RandomLocalRotate
+        : Trait
     {
-        Scene returnScene = null;
+        Single _speed;
+        Single _timer;
+        Vector3 _vec;
 
-        Triple q;
-        SpritePrimitive s;
-        PrimitiveParticleSystem ps;
-
-        Texture tex1 = null;
-        Texture tex2 = null;
-
-        public override void Start ()
+        public RandomLocalRotate()
         {
-            //var meshAsset = Blimey.Assets.Load <MeshAsset> ();
+            _speed = RandomGenerator.Default.GetRandomSingle(-1f, 1.0f);
 
-            //var vb = Cor.Graphics.CreateVertexBuffer (meshAsset.VertexDeclaration, meshAsset.VertexCount);
-            //vb.SetData <REFLECTION> ()
+            _vec = new Vector3(
+                RandomGenerator.Default.GetRandomSingle(0.25f, 2f),
+                RandomGenerator.Default.GetRandomSingle(0.25f, 2f),
+                RandomGenerator.Default.GetRandomSingle(0.25f, 2f)
+                );
 
-
-            var ta = Blimey.Assets.Load <TextureAsset> ("assets/cvan01.bba");
-            tex1 = Cor.Graphics.CreateTexture (ta);
-            var tb = Blimey.Assets.Load <TextureAsset> ("assets/bg2.bba");
-            tex2 = Cor.Graphics.CreateTexture (tb);
-
-
-            q = new Triple ();
-            q.blend = BlendMode.Default;
-            q.tex = tex1;
-            q.v [0].Colour = Rgba32.Blue;
-            q.v [0].Position.X = 0.0f;
-            q.v [0].Position.Y = 0.0f;
-            q.v [0].UV = new Vector2 (0, 0);
-            q.v [1].Colour = Rgba32.Green;
-            q.v [1].Position.X = 0.5f;
-            q.v [1].Position.Y = 0.5f;
-            q.v [1].UV = new Vector2 (1f, 1f);
-            q.v [2].Colour = Rgba32.Red;
-            q.v [2].Position.X = 0f;
-            q.v [2].Position.Y = 0.5f;
-            q.v [2].UV = new Vector2 (0, 1f);
-            returnScene = this;
-
-            s = new SpritePrimitive (this.Blimey.PrimitiveRenderer, tex2, 64, 64, 256, 256);
-            s.SetBlendMode (BlendMode.Default);
-
-
-
-            var psi = new PrimitiveParticleSystemInfo ();
-            psi.sprite = s;
-            psi.fLifetime = 3f;
-            psi.colColourStart = Rgba32.Red;
-            psi.colColourEnd = Rgba32.Yellow;
-            psi.nEmission = 10;
-            psi.fSpinStart = 0.3f;
-            psi.fRadialAccel = 0.1f;
-            psi.fSpeed = 3f;
-            psi.fSizeVar = 0.1f;
-
-
-            ps = new PrimitiveParticleSystem (psi);
-
+            Vector3.Normalise(ref _vec, out _vec);
         }
 
-        public override void Shutdown()
+        public override void OnUpdate(AppTime time)
         {
-            tex1.Dispose ();
-            tex2.Dispose ();
-        }
+            _timer += time.Delta;
 
-        public override Scene Update(AppTime time)
-        {
-            //this.Blimey.PrimitiveRenderer.AddTriple ("Debug", q);
-            //this.Blimey.PrimitiveRenderer.AddTriple ("Gui", q);
-            //s.Draw4V ("Gui",
-            //    0.0f, 0.0f,
-            //    0.5f, 0.0f,
-            //    0.0f, 0.5f,
-            //    0.5f, 0.5f);
+            Single displacement = _speed * _timer;
+            Quaternion rot;
+            Quaternion.CreateFromAxisAngle(ref _vec, ref displacement, out rot);
 
-            s.DrawEx ("Gui", 0f, 0f, 0.5f, 1f / 256f / 4f, 1f / 256f / 4f);
-
-            //s.Draw ("Gui", 0f, 0f);
-            ps.Fire ();
-            ps.Draw ("Default");
-
-            this.Blimey.DebugRenderer.AddGrid ("Debug");
-            if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
-                Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
-                Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
-            {
-                returnScene = new Scene_MainMenu();
-            }
-
-            return returnScene;
+            this.Parent.Transform.LocalRotation = rot;
         }
     }
 }

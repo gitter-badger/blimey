@@ -37,9 +37,11 @@ namespace EngineDemo
     using System;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Blimey;
     using System.Collections.Generic;
 	using System.Linq;
+    using Blimey.Platform;
+    using Blimey.Asset;
+    using Blimey.Engine;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -75,22 +77,6 @@ namespace EngineDemo
 
     }
 
-	public static class ListExtensions
-	{
-		public static void Shuffle<T>(this IList<T> list)
-		{
-			Random rng = new Random();
-			int n = list.Count;
-			while (n > 1) {
-				n--;
-				int k = rng.Next(n + 1);
-				T value = list[k];
-				list[k] = list[n];
-				list[n] = value;
-			}
-		}
-	}
-
 	public class Scene_Airports
 		: Scene
 	{
@@ -101,9 +87,9 @@ namespace EngineDemo
 
 		public override void Start()
 		{
-            CommonDemoResources.Create (Cor, Blimey);
+            CommonDemoResources.Create (Platform, Engine);
 
-            var lines = Blimey.Assets.Load <TextAsset> ("assets/airports.bba")
+            var lines = Engine.Assets.Load <TextAsset> ("assets/airports.bba")
                 .Text
                 .Split ('\n')
                 .ToList ();
@@ -130,7 +116,7 @@ namespace EngineDemo
 
 			float radius = 1.5f;
 			// create a sprite
-			var sphereMesh = new SpherePrimitive(this.Cor.Graphics);
+			var sphereMesh = new SpherePrimitive(this.Platform.Graphics);
 
 
             var mat = new Material("Default",CommonDemoResources.VertexLitShader);
@@ -189,22 +175,22 @@ namespace EngineDemo
 
 			}
 
-			this.Blimey.InputEventSystem.Tap += this.OnTap;
+			this.Engine.InputEventSystem.Tap += this.OnTap;
 		}
 
 		public override void Shutdown()
 		{
-			this.Blimey.InputEventSystem.Tap -= this.OnTap;
+			this.Engine.InputEventSystem.Tap -= this.OnTap;
             CommonDemoResources.Destroy ();
 		}
 
 		public override Scene Update(AppTime time)
 		{
-            this.Blimey.DebugRenderer.AddGrid ("Debug");
+            this.Engine.DebugRenderer.AddGrid ("Debug");
 
-			if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
-				Cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape) ||
-				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
+			if (Platform.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
+				Platform.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape) ||
+				Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
 			{
 				returnScene = new Scene_MainMenu ();
 			}

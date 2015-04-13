@@ -1,4 +1,4 @@
-﻿// ┌────────────────────────────────────────────────────────────────────────┐ \\
+// ┌────────────────────────────────────────────────────────────────────────┐ \\
 // │ __________.__  .__                                                     │ \\
 // │ \______   \  | |__| _____   ____ ___.__.                               │ \\
 // │  |    |  _/  | |  |/     \_/ __ <   |  |                               │ \\
@@ -32,41 +32,39 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-using System;
-using System.IO;
-
-namespace Blimey.Assets.Builders
+namespace EngineDemo
 {
-    internal static class Debug
+    using System;
+    using Fudge;
+    using Abacus.SinglePrecision;
+    using Blimey.Platform;
+    using Blimey.Asset;
+    using Blimey.Engine;
+    using System.Collections.Generic;
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+    public class Scene_Parallax
+        : Scene
     {
-        internal static void DumpToPPM (ColourmapAsset cmap, string file)
+        public override void Start()
         {
-            using (var writer = new StreamWriter (file))
-            {
-                int w = cmap.Data.GetLength (0);
-                int h = cmap.Data.GetLength (1);
-                writer.WriteLine ("P3");
-                writer.WriteLine (w + " " + h);
-                writer.WriteLine ("255");
-                
-                for (int y = 0; y < h; ++y)
-                {
-                    for (int x = 0; x < w; ++x)
-                    {
-                        writer.Write (cmap.Data [x, y].R);
-                        writer.Write (" ");
-                        writer.Write (cmap.Data [x, y].G);
-                        writer.Write (" ");
-                        writer.Write (cmap.Data [x, y].B);
-                        
-                        if (x == w - 1)
-                            writer.Write ("\n");
-                        else
-                            writer.Write ("  ");
-                    }
-                }
-            }
+        }
+
+        public override void Shutdown()
+        {
+        }
+
+        public override Scene Update(AppTime time)
+        {
+			if (Platform.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
+				Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
+				Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
+			{
+				return new Scene_MainMenu();
+			}
+
+			return this;
         }
     }
 }
-

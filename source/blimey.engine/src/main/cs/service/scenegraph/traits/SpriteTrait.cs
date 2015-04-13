@@ -32,12 +32,14 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public class SpriteTrait
@@ -238,7 +240,7 @@ namespace Blimey
 
             if( spriteMesh == null )
             {
-                spriteMesh = SpriteMesh.Create(this.Cor.Graphics);
+                spriteMesh = SpriteMesh.Create(this.Platform.Graphics);
             }
 
             if (spriteShader == null)
@@ -285,7 +287,7 @@ namespace Blimey
                 c = this.Parent.Transform.LocalPosition + c;
                 d = this.Parent.Transform.LocalPosition + d;
 
-                this.Blimey.DebugRenderer.AddQuad(
+                this.Engine.DebugRenderer.AddQuad(
                     this.DebugRender,
                     a,
                     b,
@@ -390,7 +392,7 @@ namespace Blimey
                 // then we need to tell the shader which slot to look at
                 meshRendererTrait.Material.SetTexture("TextureSampler", desiredTexture);
 
-                // todo: this is all a bit hard coded, it would be good if Cor! had a way of requesting that
+                // todo: this is all a bit hard coded, it would be good if Platform! had a way of requesting that
                 // a texture gets about to an unused slot, then reporting the slot number so we can use it.
             }
 

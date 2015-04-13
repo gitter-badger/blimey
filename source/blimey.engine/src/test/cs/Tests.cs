@@ -40,8 +40,10 @@ using Oats;
 using System.Collections.Generic;
 using Abacus.SinglePrecision;
 using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
 
-namespace Blimey.Tests
+namespace Blimey.Engine.Tests
 {
     [TestFixture ()]
     public class Test

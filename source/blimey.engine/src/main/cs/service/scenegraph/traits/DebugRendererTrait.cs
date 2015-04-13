@@ -32,12 +32,14 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class DebugRendererTrait
@@ -61,7 +63,7 @@ namespace Blimey
             b.Min = this.Parent.Transform.Location.Translation - (this.Parent.Transform.Scale / 2f);
             b.Max = this.Parent.Transform.Location.Translation + (this.Parent.Transform.Scale / 2f);
 
-            this.Parent.Owner.Blimey.DebugRenderer.AddBoundingBox (RenderPass, b, Colour);
+            this.Parent.Owner.Engine.DebugRenderer.AddBoundingBox (RenderPass, b, Colour);
         }
     }
 }

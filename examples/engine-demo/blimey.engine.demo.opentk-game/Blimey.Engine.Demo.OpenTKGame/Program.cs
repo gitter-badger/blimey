@@ -1,7 +1,8 @@
 ﻿namespace EngineDemo
 {
     using System;
-    using Blimey;
+    using Blimey.Platform;
+    using Blimey.Engine;
 
 	public class Program
 	{
@@ -14,12 +15,16 @@
 
 			var entryPoint = new Demo();
 
-			var platform = new Platform ();
+			IApi api = new Api ();
 
-			using( var engine = new Engine(platform, appSettings, entryPoint) )
-			{
-				platform.Run();
-			}
+            using (var platform = new Platform (api))
+            {
+                platform.Start (appSettings, entryPoint);
+
+                (api as Api).Run ();
+
+                platform.Stop ();
+            }
 		}
 	}
 }

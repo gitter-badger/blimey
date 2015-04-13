@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Platform
 {
     using System;
     using System.Collections.Generic;
@@ -42,7 +42,7 @@ namespace Blimey
 
     public static class ListExtensions
     {
-        public static TP AddEx<TC, TP> (this List <TC> me, TP item) where TP : TC
+        public static TP AddEx<TC, TP> (this IList <TC> me, TP item) where TP : TC
         {
             me.Add (item);
             return item;
@@ -58,6 +58,20 @@ namespace Blimey
                 sb.Append (value);
             }
             return sb.ToString ();
+        }
+
+        public static void Shuffle<T>(this IList<T> list)
+        {
+            Random rng = new Random ();
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
         }
     }
 }

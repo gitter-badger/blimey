@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Platform
 {
     using System;
     using System.Runtime.InteropServices;
@@ -45,7 +45,7 @@ namespace Blimey
 
     using Abacus.SinglePrecision;
     using Fudge;
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
@@ -56,7 +56,7 @@ namespace Blimey
     /// </summary>
     public sealed class IndexBuffer
         : IDisposable
-        , ICorResource
+        , IResource
         , IEquatable <IndexBuffer>
     {
         readonly IApi platform;

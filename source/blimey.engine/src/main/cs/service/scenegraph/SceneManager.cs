@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Runtime.InteropServices;
@@ -41,6 +41,8 @@ namespace Blimey
     using System.IO;
     using System.Linq;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
     using Oats;
 
@@ -48,8 +50,8 @@ namespace Blimey
 
     internal class SceneManager
     {
-        Engine cor;
-        Blimey blimey;
+        Platform platform;
+        Engine engine;
 
         readonly SceneRenderer sceneRenderer;
         Scene activeScene = null;
@@ -57,12 +59,12 @@ namespace Blimey
 
         public Scene ActiveState { get { return activeScene; } }
 
-        public SceneManager (Engine cor, Blimey blimey, Scene startScene)
+        public SceneManager (Platform platform, Engine engine, Scene startScene)
         {
-            this.cor = cor;
-            this.blimey = blimey;
+            this.platform = platform;
+            this.engine = engine;
             nextScene = startScene;
-            sceneRenderer = new SceneRenderer(cor);
+            sceneRenderer = new SceneRenderer(platform);
 
         }
 
@@ -70,7 +72,7 @@ namespace Blimey
         {
             // If the active state returns a game state other than itself then we need to shut
             // it down and start the returned state.  If a game state returns null then we need to
-            // shut the engine down.
+            // shut the platform down.
 
             //quitting the game
             if (nextScene == null)
@@ -91,7 +93,7 @@ namespace Blimey
             if (nextScene != activeScene)
             {
                 activeScene = nextScene;
-                activeScene.Initialize (cor, blimey);
+                activeScene.Initialize (platform, engine);
             }
 
             nextScene = activeScene.RunUpdate (time);
@@ -101,7 +103,7 @@ namespace Blimey
 
         public void Render()
         {
-            this.cor.Graphics.Reset ();
+            this.platform.Graphics.Reset ();
 
             if (activeScene != null && activeScene.Active)
             {

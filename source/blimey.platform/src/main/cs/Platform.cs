@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Platform
 {
     using System;
     using System.Runtime.InteropServices;
@@ -45,13 +45,13 @@ namespace Blimey
 
     using Abacus.SinglePrecision;
     using Fudge;
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
     /// The Cor App Framework provides a user's app access to Cor features via this interface.
     /// </summary>
-    public sealed class Engine
+    public sealed class Platform
         : IDisposable
     {
         readonly Audio audio;
@@ -61,32 +61,56 @@ namespace Blimey
         readonly Input input;
         readonly Host host;
 
-        readonly IPlatform platform;
+        readonly IApi api;
+        IApp userApp;
+        AppSettings userAppSettings;
 
+        readonly Stopwatch timer = new Stopwatch ();
+
+        Boolean running = false;
         Single elapsedTime;
         Int64 frameCounter = -1;
         TimeSpan previousTimeSpan;
-
-        readonly IApp userApp;
-
-        readonly Stopwatch timer = new Stopwatch ();
         Boolean firstUpdate = true;
+        Boolean firstRender = true;
 
-        public Engine (IPlatform platform, AppSettings appSettings, IApp userApp)
+        public Platform (IApi api)
         {
-            this.platform = platform;
+            this.api = api;
+
+            this.audio = new Audio (api);
+            this.graphics = new Graphics (api);
+            this.resources = new Resources (api);
+            this.status = new Status (api);
+            this.input = new Input (api);
+            this.host = new Host (api);
+
+        }
+
+        public void Start (AppSettings userAppSettings, IApp userApp)
+        {
+            if (running) throw new Exception ("Already running!");
+
+            this.userAppSettings = userAppSettings;
             this.userApp = userApp;
 
-            this.platform.Program.Start (this.platform.Api, this.Update, this.Render);
+            // apply settings
+            input.UpdateSettings (userAppSettings.MouseGeneratesTouches);
 
-            this.audio = new Audio (this.platform.Api);
-            this.graphics = new Graphics (this.platform.Api);
-            this.resources = new Resources (this.platform.Api);
-            this.status = new Status (this.platform.Api);
-            this.input = new Input (this.platform.Api, appSettings.MouseGeneratesTouches);
-            this.host = new Host (this.platform.Api);
+            // start the app
+            api.app_Start (Update, Render);
+            this.running = true;
+        }
 
-            this.Settings = appSettings;
+        public void Stop ()
+        {
+            if (!running) throw new Exception ("Already stopped!");
+
+            api.app_Stop ();
+
+            this.userAppSettings = null;
+            this.userApp = null;
+            this.running = false;
         }
 
         /// <summary>
@@ -119,20 +143,20 @@ namespace Blimey
         /// <summary>
         /// Provides access to Cor's logging system.
         /// </summary>
-        public LogManager Log { get; private set; }
+        public LogManager Log { get { throw new NotImplementedException (); } }
 
         /// <summary>
         /// Gets the settings used to initilise the app.
         /// </summary>
-        public AppSettings Settings { get; private set; }
+        public AppSettings Settings { get { return userAppSettings; } }
+
+        public Boolean IsRunning { get { return running; } }
 
         void Update ()
         {
             if (firstUpdate)
             {
                 firstUpdate = false;
-
-                this.Graphics.Reset ();
 
                 this.timer.Start ();
 
@@ -158,23 +182,31 @@ namespace Blimey
             if (userAppToDie)
             {
                 timer.Stop ();
-                this.userApp.Stop (this);
-                this.platform.Program.Stop ();
+                userApp.Stop (this);
+                api.app_Stop ();
             }
 
-            VertexBuffer.CollectGpuGarbage (this.platform.Api);
-            IndexBuffer.CollectGpuGarbage (this.platform.Api);
-            Texture.CollectGpuGarbage (this.platform.Api);
-            Shader.CollectGpuGarbage (this.platform.Api);
+            VertexBuffer.CollectGpuGarbage (api);
+            IndexBuffer.CollectGpuGarbage (api);
+            Texture.CollectGpuGarbage (api);
+            Shader.CollectGpuGarbage (api);
         }
 
         void Render ()
         {
+            if (firstRender)
+            {
+                firstRender = false;
+
+                this.Graphics.Reset ();
+            }
+
             this.userApp.Render (this);
         }
 
         public void Dispose ()
         {
+            // todo
         }
     }
 }

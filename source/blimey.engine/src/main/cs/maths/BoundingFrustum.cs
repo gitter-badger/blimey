@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Runtime.InteropServices;
@@ -42,6 +42,8 @@ namespace Blimey
     using System.Diagnostics;
 
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
 
     using System.Linq;
@@ -53,9 +55,9 @@ namespace Blimey
     {
         const int BottomPlaneIndex = 5;
 
-        internal Vector3[] cornerArray;
+        internal Vector3[] platformnerArray;
 
-        public const int CornerCount = 8;
+        public const int PlatformnerCount = 8;
 
         const int FarPlaneIndex = 1;
 
@@ -78,13 +80,13 @@ namespace Blimey
         BoundingFrustum ()
         {
             this.planes = new Plane[6];
-            this.cornerArray = new Vector3[8];
+            this.platformnerArray = new Vector3[8];
         }
 
         public BoundingFrustum (Matrix44 value)
         {
             this.planes = new Plane[6];
-            this.cornerArray = new Vector3[8];
+            this.platformnerArray = new Vector3[8];
             this.SetMatrix (ref value);
         }
 
@@ -149,8 +151,8 @@ namespace Blimey
             ContainmentType disjoint = ContainmentType.Disjoint;
             if (this.Intersects (ref frustum)) {
                 disjoint = ContainmentType.Contains;
-                for (int i = 0; i < this.cornerArray.Length; i++) {
-                    if (this.Contains (ref frustum.cornerArray [i]) == ContainmentType.Disjoint) {
+                for (int i = 0; i < this.platformnerArray.Length; i++) {
+                    if (this.Contains (ref frustum.platformnerArray [i]) == ContainmentType.Disjoint) {
                         return ContainmentType.Intersects;
                     }
                 }
@@ -210,9 +212,9 @@ namespace Blimey
             return flag;
         }
 
-        public Vector3[] GetCorners ()
+        public Vector3[] GetPlatformners ()
         {
-            return (Vector3[])this.cornerArray.Clone ();
+            return (Vector3[])this.platformnerArray.Clone ();
         }
 
         public override Int32 GetHashCode ()
@@ -242,9 +244,9 @@ namespace Blimey
                 this.gjk = new GJKDistance ();
             }
             this.gjk.Reset ();
-            Vector3.Subtract (ref this.cornerArray [0], ref box.Min, out closestPoint);
+            Vector3.Subtract (ref this.platformnerArray [0], ref box.Min, out closestPoint);
             if (closestPoint.LengthSquared () < epsilon) {
-                Vector3.Subtract (ref this.cornerArray [0], ref box.Max, out closestPoint);
+                Vector3.Subtract (ref this.platformnerArray [0], ref box.Max, out closestPoint);
             }
             Single maxValue = Single.MaxValue;
             Single num3 = zero;
@@ -286,9 +288,9 @@ namespace Blimey
                 this.gjk = new GJKDistance ();
             }
             this.gjk.Reset ();
-            Vector3.Subtract (ref this.cornerArray [0], ref frustum.cornerArray [0], out closestPoint);
+            Vector3.Subtract (ref this.platformnerArray [0], ref frustum.platformnerArray [0], out closestPoint);
             if (closestPoint.LengthSquared () < epsilon) {
-                Vector3.Subtract (ref this.cornerArray [0], ref frustum.cornerArray [1], out closestPoint);
+                Vector3.Subtract (ref this.platformnerArray [0], ref frustum.platformnerArray [1], out closestPoint);
             }
             Single maxValue = Single.MaxValue;
             Single num3 = zero;
@@ -341,7 +343,7 @@ namespace Blimey
                 this.gjk = new GJKDistance ();
             }
             this.gjk.Reset ();
-            Vector3.Subtract (ref this.cornerArray [0], ref sphere.Center, out unitX);
+            Vector3.Subtract (ref this.platformnerArray [0], ref sphere.Center, out unitX);
             if (unitX.LengthSquared () < epsilon) {
                 unitX = Vector3.UnitX;
             }
@@ -378,7 +380,7 @@ namespace Blimey
             int num = 0;
             for (int i = 0; i < 8; i++) {
                 Single num3;
-                Vector3.Dot (ref this.cornerArray [i], ref plane.Normal, out num3);
+                Vector3.Dot (ref this.platformnerArray [i], ref plane.Normal, out num3);
                 if ((num3 + plane.D) > zero) {
                     num |= 1;
                 } else {
@@ -502,23 +504,23 @@ namespace Blimey
 
             Ray ray = ComputeIntersectionLine (ref this.planes [0], ref this.planes [2]);
 
-            this.cornerArray [0] = ComputeIntersection (ref this.planes [4], ref ray);
-            this.cornerArray [3] = ComputeIntersection (ref this.planes [5], ref ray);
+            this.platformnerArray [0] = ComputeIntersection (ref this.planes [4], ref ray);
+            this.platformnerArray [3] = ComputeIntersection (ref this.planes [5], ref ray);
 
             ray = ComputeIntersectionLine (ref this.planes [3], ref this.planes [0]);
 
-            this.cornerArray [1] = ComputeIntersection (ref this.planes [4], ref ray);
-            this.cornerArray [2] = ComputeIntersection (ref this.planes [5], ref ray);
+            this.platformnerArray [1] = ComputeIntersection (ref this.planes [4], ref ray);
+            this.platformnerArray [2] = ComputeIntersection (ref this.planes [5], ref ray);
 
             ray = ComputeIntersectionLine (ref this.planes [2], ref this.planes [1]);
 
-            this.cornerArray [4] = ComputeIntersection (ref this.planes [4], ref ray);
-            this.cornerArray [7] = ComputeIntersection (ref this.planes [5], ref ray);
+            this.platformnerArray [4] = ComputeIntersection (ref this.planes [4], ref ray);
+            this.platformnerArray [7] = ComputeIntersection (ref this.planes [5], ref ray);
 
             ray = ComputeIntersectionLine (ref this.planes [1], ref this.planes [3]);
 
-            this.cornerArray [5] = ComputeIntersection (ref this.planes [4], ref ray);
-            this.cornerArray [6] = ComputeIntersection (ref this.planes [5], ref ray);
+            this.platformnerArray [5] = ComputeIntersection (ref this.planes [4], ref ray);
+            this.platformnerArray [6] = ComputeIntersection (ref this.planes [5], ref ray);
         }
 
         internal void SupportMapping (ref Vector3 v, out Vector3 result)
@@ -527,13 +529,13 @@ namespace Blimey
 
             int index = 0;
 
-            Vector3.Dot (ref this.cornerArray [0], ref v, out num3);
+            Vector3.Dot (ref this.platformnerArray [0], ref v, out num3);
 
-            for (int i = 1; i < this.cornerArray.Length; i++)
+            for (int i = 1; i < this.platformnerArray.Length; i++)
             {
                 Single num2;
 
-                Vector3.Dot (ref this.cornerArray [i], ref v, out num2);
+                Vector3.Dot (ref this.platformnerArray [i], ref v, out num2);
 
                 if (num2 > num3)
                 {
@@ -542,7 +544,7 @@ namespace Blimey
                 }
             }
 
-            result = this.cornerArray [index];
+            result = this.platformnerArray [index];
         }
 
         public override String ToString ()

@@ -33,9 +33,10 @@
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
 using System;
-using Blimey.Assets.Pipeline;
+using Blimey.Platform;
+using Blimey.Asset;
 
-namespace Blimey.Assets.Builders
+namespace Blimey.Engine
 {
 	public class XnaShaderImporter
 		: AssetImporter <ShaderAsset>

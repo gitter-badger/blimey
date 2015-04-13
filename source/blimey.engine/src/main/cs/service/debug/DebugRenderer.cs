@@ -32,13 +32,15 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Abacus.SinglePrecision;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
     /// <summary>
@@ -93,18 +95,18 @@ namespace Blimey
         // Allocate an array to hold our vertices; this will grow as needed by our renderer
         VertexPositionColour[] verts = new VertexPositionColour[64];
 
-        // An array we use to get corners from frustums and bounding boxes
-        Vector3[] corners = new Vector3[8];
+        // An array we use to get platformners from frustums and bounding boxes
+        Vector3[] platformners = new Vector3[8];
 
         // This holds the vertices for our unit sphere that we will use when drawing bounding spheres
         const int sphereResolution = 30;
         const int sphereLineCount = (sphereResolution + 1) * 3;
         Vector3[] unitSphere;
 
-        internal DebugRenderer (Engine engine)
+        internal DebugRenderer (Platform platform)
         {
             InitializeSphere();
-            debugShader = CreateShader (engine);
+            debugShader = CreateShader (platform);
         }
 
         internal void Update(AppTime time)
@@ -208,7 +210,7 @@ namespace Blimey
             }
         }
 
-        static Shader CreateShader (Engine engine)
+        static Shader CreateShader (Platform platform)
         {
             var shaderDecl =
                 new ShaderDeclaration {
@@ -245,7 +247,7 @@ namespace Blimey
             };
 
 
-            var runtimeShaderFormat = engine.Graphics.GetRuntimeShaderFormat ();
+            var runtimeShaderFormat = platform.Graphics.GetRuntimeShaderFormat ();
 
             String source = "";
 
@@ -313,7 +315,7 @@ void main()
                     bin.Write (shaderUTF8);
                 }
 
-                return engine.Graphics.CreateShader (
+                return platform.Graphics.CreateShader (
                     shaderDecl,
                     runtimeShaderFormat,
                     mem.GetBuffer ());
@@ -386,38 +388,38 @@ void main()
             // Get a DebugShape we can use to draw the box
             DebugShape shape = GetShapeForLines(renderPass, 12, life);
 
-            // Get the corners of the box
-            corners = box.GetCorners();
+            // Get the platformners of the box
+            platformners = box.GetPlatformners();
 
             // Fill in the vertices for the bottom of the box
-            shape.Vertices[0] = new VertexPositionColour(corners[0], col);
-            shape.Vertices[1] = new VertexPositionColour(corners[1], col);
-            shape.Vertices[2] = new VertexPositionColour(corners[1], col);
-            shape.Vertices[3] = new VertexPositionColour(corners[2], col);
-            shape.Vertices[4] = new VertexPositionColour(corners[2], col);
-            shape.Vertices[5] = new VertexPositionColour(corners[3], col);
-            shape.Vertices[6] = new VertexPositionColour(corners[3], col);
-            shape.Vertices[7] = new VertexPositionColour(corners[0], col);
+            shape.Vertices[0] = new VertexPositionColour(platformners[0], col);
+            shape.Vertices[1] = new VertexPositionColour(platformners[1], col);
+            shape.Vertices[2] = new VertexPositionColour(platformners[1], col);
+            shape.Vertices[3] = new VertexPositionColour(platformners[2], col);
+            shape.Vertices[4] = new VertexPositionColour(platformners[2], col);
+            shape.Vertices[5] = new VertexPositionColour(platformners[3], col);
+            shape.Vertices[6] = new VertexPositionColour(platformners[3], col);
+            shape.Vertices[7] = new VertexPositionColour(platformners[0], col);
 
             // Fill in the vertices for the top of the box
-            shape.Vertices[8] = new VertexPositionColour(corners[4], col);
-            shape.Vertices[9] = new VertexPositionColour(corners[5], col);
-            shape.Vertices[10] = new VertexPositionColour(corners[5], col);
-            shape.Vertices[11] = new VertexPositionColour(corners[6], col);
-            shape.Vertices[12] = new VertexPositionColour(corners[6], col);
-            shape.Vertices[13] = new VertexPositionColour(corners[7], col);
-            shape.Vertices[14] = new VertexPositionColour(corners[7], col);
-            shape.Vertices[15] = new VertexPositionColour(corners[4], col);
+            shape.Vertices[8] = new VertexPositionColour(platformners[4], col);
+            shape.Vertices[9] = new VertexPositionColour(platformners[5], col);
+            shape.Vertices[10] = new VertexPositionColour(platformners[5], col);
+            shape.Vertices[11] = new VertexPositionColour(platformners[6], col);
+            shape.Vertices[12] = new VertexPositionColour(platformners[6], col);
+            shape.Vertices[13] = new VertexPositionColour(platformners[7], col);
+            shape.Vertices[14] = new VertexPositionColour(platformners[7], col);
+            shape.Vertices[15] = new VertexPositionColour(platformners[4], col);
 
             // Fill in the vertices for the vertical sides of the box
-            shape.Vertices[16] = new VertexPositionColour(corners[0], col);
-            shape.Vertices[17] = new VertexPositionColour(corners[4], col);
-            shape.Vertices[18] = new VertexPositionColour(corners[1], col);
-            shape.Vertices[19] = new VertexPositionColour(corners[5], col);
-            shape.Vertices[20] = new VertexPositionColour(corners[2], col);
-            shape.Vertices[21] = new VertexPositionColour(corners[6], col);
-            shape.Vertices[22] = new VertexPositionColour(corners[3], col);
-            shape.Vertices[23] = new VertexPositionColour(corners[7], col);
+            shape.Vertices[16] = new VertexPositionColour(platformners[0], col);
+            shape.Vertices[17] = new VertexPositionColour(platformners[4], col);
+            shape.Vertices[18] = new VertexPositionColour(platformners[1], col);
+            shape.Vertices[19] = new VertexPositionColour(platformners[5], col);
+            shape.Vertices[20] = new VertexPositionColour(platformners[2], col);
+            shape.Vertices[21] = new VertexPositionColour(platformners[6], col);
+            shape.Vertices[22] = new VertexPositionColour(platformners[3], col);
+            shape.Vertices[23] = new VertexPositionColour(platformners[7], col);
                  }
 
         #endregion

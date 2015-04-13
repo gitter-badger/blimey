@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Runtime.InteropServices;
@@ -42,6 +42,8 @@ namespace Blimey
     using System.Diagnostics;
 
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
 
     using System.Linq;
@@ -208,7 +210,7 @@ namespace Blimey
                 throw new ArgumentNullException ("frustum");
             }
 
-            CreateFromPoints (frustum.cornerArray, out sphere);
+            CreateFromPoints (frustum.platformnerArray, out sphere);
         }
 
         public Boolean Intersects (ref BoundingBox box)
@@ -319,7 +321,7 @@ namespace Blimey
                 return ContainmentType.Disjoint;
             }
             Single num2 = this.Radius * this.Radius;
-            foreach (Vector3 vector2 in frustum.cornerArray) {
+            foreach (Vector3 vector2 in frustum.platformnerArray) {
                 Vector3 vector;
                 vector.X = vector2.X - this.Center.X;
                 vector.Y = vector2.Y - this.Center.Y;

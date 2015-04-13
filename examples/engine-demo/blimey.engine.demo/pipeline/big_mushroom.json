@@ -1,6 +1,6 @@
 {
     "AssetId" : "big_mushroom",
-    "AssetType" : "Blimey.MeshAsset, blimey.engine.model",
+    "AssetType" : "Blimey.Engine.MeshAsset, blimey.engine.model",
     "SourceSets" :
     [
         {
@@ -8,7 +8,7 @@
             "Importer" :
             {
                 "Files" : [ "big_mushroom.obj" ],
-                "AssetImporterType" : "Blimey.Assets.Builders.MeshImporter, blimey.engine.assets.buildpipelines",
+                "AssetImporterType" : "Blimey.Engine.MeshImporter, blimey.engine.assets.buildpipelines",
                 "AssetImporterSettings" : {}
             },
             "Processors" : []

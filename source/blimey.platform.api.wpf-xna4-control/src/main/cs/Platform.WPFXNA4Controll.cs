@@ -6,13 +6,6 @@
 // │  |______  /____/__|__|_|  /\___  > ____|                               │ \\
 // │         \/              \/     \/\/                                    │ \\
 // │                                                                        │ \\
-// │ A partial implementation of the Blimey Plaform API targeting           │ \\
-// │ Microsoft's WPF framework.  This partial implementation does not       │ \\
-// │ implement any of the Blimey Plaform API's `gfx` calls and is intended  │ \\
-// │ to be compiled alongside either:                                       │ \\
-// │ - the OpenTK partial file with PLATFORM_WPF defined.                   │ \\
-// │ - the Xna4 partial file with PLATFORM_XNA4_X86 defined.                │ \\
-// │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Copyright © 2012 - 2015 ~ Blimey Engine (http://www.blimey.io)         │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\

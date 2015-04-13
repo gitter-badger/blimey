@@ -37,32 +37,141 @@ namespace EngineDemo
     using System;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Blimey;
+    using Blimey.Platform;
+    using Blimey.Asset;
+    using Blimey.Engine;
     using System.Collections.Generic;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Scene_Parallax
+    public class Scene_Shapes2
         : Scene
     {
+        Scene returnScene;
+        Entity billboardGo;
+
+        LookAtSubjectTrait las;
+
+        Entity cam;
+
+        Transform target;
+
+
+        float timer = timeWindow;
+        const float timeWindow = 5f;
+        bool x = true;
+        bool goOut = true;
+
+        Entity markerGo;
+
+
         public override void Start()
         {
+            this.Configuration.BackgroundColour = Rgba32.LightSlateGrey;
+
+            CommonDemoResources.Create (Platform, Engine);
+
+            returnScene = this;
+
+            // create a sprite
+            var billboard = new BillboardPrimitive(this.Platform.Graphics);
+
+
+            billboardGo = this.SceneGraph.CreateSceneObject("billboard");
+
+            var mr = billboardGo.AddTrait<MeshRendererTrait>();
+            mr.Mesh = billboard.Mesh;
+            mr.Material = new Material("Default", CommonDemoResources.UnlitShader);
+            mr.Material.SetColour("MaterialColour", RandomGenerator.Default.GetRandomColour());
+
+            target = billboardGo.Transform;
+
+            markerGo = this.SceneGraph.CreateSceneObject ("marker");
+
+            markerGo.Transform.LocalScale = new Vector3 (0.05f, 0.05f, 0.05f);
+
+            var markerMR = markerGo.AddTrait<MeshRendererTrait> ();
+            markerMR.Mesh = new CubePrimitive(this.Platform.Graphics).Mesh;
+            markerMR.Material = new Material("Default", CommonDemoResources.UnlitShader);
+            markerMR.Material.SetColour("MaterialColour", Rgba32.Red);
+
+            cam = this.CameraManager.GetRenderPassCamera ("Default");
+
+            this.SceneGraph.DestroySceneObject(this.CameraManager.GetRenderPassCamera ("Debug"));
+            this.SceneGraph.DestroySceneObject(this.CameraManager.GetRenderPassCamera ("Gui"));
+
+            this.RuntimeConfiguration.SetRenderPassCameraTo ("Debug", cam);
+            cam.Transform.Position = new Vector3(2, 1, 5);
+            cam.RemoveTrait<OrbitAroundSubjectTrait> ();
+
+            las = cam.GetTrait<LookAtSubjectTrait> ();
+            las.Subject = billboardGo.Transform;
+
+            this.Engine.InputEventSystem.Tap += this.OnTap;
         }
 
         public override void Shutdown()
         {
+            this.Engine.InputEventSystem.Tap -= this.OnTap;
+            CommonDemoResources.Destroy ();
         }
 
         public override Scene Update(AppTime time)
         {
-			if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
-				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
-				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
-			{
-				return new Scene_MainMenu();
-			}
+            this.Engine.DebugRenderer.AddGrid ("Debug", 1f, 10);
 
-			return this;
+            timer -= time.Delta;
+
+            if (timer < 0f)
+            {
+                timer = timeWindow;
+
+                goOut = !goOut;
+
+                if (goOut)
+                    x = !x;
+            }
+
+            float f = timer / timeWindow;
+
+            if (goOut)
+                f = 1f - f;
+
+            f = f * 2f;
+
+            target.Position = new Vector3 (
+                x ? f : 0f,
+                0,
+                x ? 0f : f);
+
+            this.Engine.DebugRenderer.AddLine (
+                "Default",
+                target.Position,
+                target.Position + new Vector3 (0f, 10f, 0f),
+                Rgba32.Orange);
+
+            this.Engine.DebugRenderer.AddLine (
+                "Default",
+                las.Subject.Position,
+                new Vector3(cam.Transform.Position.X, 0f, cam.Transform.Position.Z),
+                Rgba32.Lime);
+
+            markerGo.Transform.Position = target.Position + new Vector3 (0f, 0.2f, 0f);
+
+            if (Platform.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
+                Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
+                    Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
+            {
+                returnScene = new Scene_Shapes3();
+            }
+
+            return returnScene;
+        }
+
+        void OnTap(Gesture gesture)
+        {
+            returnScene = new Scene_Shapes3();
         }
     }
 }
+

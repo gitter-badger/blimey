@@ -34,7 +34,7 @@
 
 using System;
 
-namespace Blimey.Assets.Pipeline
+namespace Blimey.Asset
 {
     public abstract class AssetProcessorOutput
     {

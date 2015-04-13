@@ -42,12 +42,10 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
 
-
-
 using Fudge;
 using Abacus.SinglePrecision;
 
-namespace Cor.Platform.Xna4
+namespace Blimey.Platform
 {
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 

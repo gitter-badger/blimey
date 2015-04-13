@@ -1,13 +1,13 @@
 {
     "AssetId" : "pixel_lit",
-    "AssetType" : "Blimey.ShaderAsset, blimey.engine.model",
+    "AssetType" : "Blimey.Engine.ShaderAsset, blimey.engine.model",
     "SourceSets" :
     [
         {
             "Platforms" : [ "monomac", "opentk" ],
             "Importer" :
             {
-                "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, blimey.engine.assets.buildpipelines",
+                "AssetImporterType" : "Blimey.Engine.OpenTKShaderImporter, blimey.engine.assets.buildpipelines",
                 "AssetImporterSettings" :
                 {
                     "Format" : "OpenGL 4"
@@ -24,7 +24,7 @@
             "Platforms" : [ "xios" ],
             "Importer" :
             {
-                "AssetImporterType" : "Blimey.Assets.Builders.OpenTKShaderImporter, blimey.engine.assets.buildpipelines",
+                "AssetImporterType" : "Blimey.Engine.OpenTKShaderImporter, blimey.engine.assets.buildpipelines",
                 "AssetImporterSettings" :
                 {
                     "Format" : "OpenGL ES 2"

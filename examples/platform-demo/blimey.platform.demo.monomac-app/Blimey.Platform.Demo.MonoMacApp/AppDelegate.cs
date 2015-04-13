@@ -3,24 +3,25 @@ namespace PlatformDemo
     using System;
     using MonoMac.Foundation;
     using MonoMac.AppKit;
-    using Blimey;
+    using Blimey.Platform;
 
 	class AppDelegate: NSApplicationDelegate, IDisposable
 	{
-        Engine engine;
+        Platform platform;
 
 		public override void FinishedLaunching (NSObject notification)
 		{
-            var appSettings = new AppSettings ("Cor") {
+            var appSettings = new AppSettings ("Blimey Platform Demo") {
                 FullScreen = true,
                 MouseGeneratesTouches = true
             };
 
-            var entryPoint = new BasicApp();
+            var entryPoint = new BasicApp ();
 
-            var platform = new Platform ();
+            IApi api = new Api ();
 
-            engine = new Engine (platform, appSettings, entryPoint);
+            platform = new Platform (api);
+            platform.Start (appSettings, entryPoint);
 		}
 
 		public override bool ApplicationShouldTerminateAfterLastWindowClosed (NSApplication sender)
@@ -30,7 +31,8 @@ namespace PlatformDemo
 
         public new void Dispose ()
         {
-            engine.Dispose ();
+            platform.Stop ();
+            platform.Dispose ();
             base.Dispose ();
         }
 	}

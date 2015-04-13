@@ -39,7 +39,7 @@ namespace PlatformDemo
     using System.IO;
     using Abacus.SinglePrecision;
     using Fudge;
-    using Blimey;
+    using Blimey.Platform;
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
 
@@ -401,15 +401,15 @@ void main()
 
         }
 
-        public static Shader CreateUnlit (Engine engine)
+        public static Shader CreateUnlit (Platform platform)
         {
-            var shaderFormat = engine.Graphics.GetRuntimeShaderFormat ();
+            var shaderFormat = platform.Graphics.GetRuntimeShaderFormat ();
             var shaderDecl = GetUnlitShaderDeclaration ();
             var shaderSource = GetUnlitShaderSource (shaderFormat);
 
             if (shaderSource == null) throw new Exception ("Not Expected!");
 
-            return engine.Graphics.CreateShader (shaderDecl, shaderFormat, shaderSource);
+            return platform.Graphics.CreateShader (shaderDecl, shaderFormat, shaderSource);
         }
     }
 }

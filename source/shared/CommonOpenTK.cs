@@ -65,7 +65,7 @@
 #endif
 
 
-namespace Blimey
+namespace Blimey.Platform
 {
     using System;
     using System.Text;
@@ -689,33 +689,6 @@ namespace Blimey
             }
 
             gfx_DrawUserPrimitives <T> (primitiveType, v, 0, primitiveCount);
-
-            /*
-            var vd = vertexData [0].VertexDeclaration;
-
-            Handle vb = gfx_CreateVertexBuffer (vd, numVertices);
-            gfx_vbff_SetData (vb, vertexData, vertexOffset, numVertices);
-
-            Int32 numIndicesNeeded = primitiveCount * nVertsInPrim;
-            Int32[] c = new Int32 [numIndicesNeeded];
-            Array.Copy (indexData, indexOffset, c, 0, c.Length);
-
-            Handle ib = gfx_CreateIndexBuffer (c.Length);
-
-            gfx_ibff_SetData (ib, c, 0, c.Length);
-
-            gfx_vbff_Activate (vb);
-            gfx_ibff_Activate (ib);
-
-            gfx_DrawIndexedPrimitives (primitiveType, 0, 0, numVertices, 0, primitiveCount);
-
-            gfx_vbff_Activate (null);
-            gfx_ibff_Activate (null);
-
-            gfx_DestroyIndexBuffer (ib);
-            gfx_DestroyVertexBuffer (vb);
-            */
-
         }
 
         public Byte[] gfx_CompileShader (String source)

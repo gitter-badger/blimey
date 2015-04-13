@@ -34,14 +34,14 @@
 
 using System;
 
-namespace Blimey.Assets.Pipeline
+namespace Blimey.Asset
 {
     public abstract class AssetImporterOutput
     {
         public IAsset OutputAsset { get; set; }
         public AssetImporterSettings AssetImporterSettings { get; set; }
     }
-    
+
     public class AssetImporterOutput <TAsset>
         : AssetImporterOutput
     where TAsset

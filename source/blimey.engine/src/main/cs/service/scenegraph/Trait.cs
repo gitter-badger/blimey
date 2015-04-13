@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Runtime.InteropServices;
@@ -41,11 +41,13 @@ namespace Blimey
     using System.IO;
     using System.Linq;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
     using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
+
     //
     // TRAIT
     //
@@ -54,8 +56,8 @@ namespace Blimey
     //
     public abstract class Trait
     {
-        protected Engine Cor { get; set; }
-        protected Blimey Blimey { get; set; }
+        protected Platform Platform { get; set; }
+        protected Engine Engine { get; set; }
 
         public Entity Parent { get; set; }
 
@@ -63,10 +65,10 @@ namespace Blimey
 
         // INTERNAL METHODS
         // called after constructor and before awake
-            internal void Initilise (Engine cor, Blimey blimeyServices, Entity parent)
+        internal void Initilise (Platform platform, Engine engine, Entity parent)
         {
-            Cor = cor;
-            Blimey = blimeyServices;
+            Platform = platform;
+            Engine = engine;
             Parent = parent;
 
             Active = true;

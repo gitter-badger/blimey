@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Platform
 {
     using global::System;
     using global::System.Text;
@@ -56,99 +56,16 @@ namespace Blimey
     using Fudge;
     using Abacus.SinglePrecision;
 
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public sealed class Platform
-        : IPlatform
-    {
-        public Platform ()
-        {
-            var program = new Program ();
-            var api = new Api ();
-
-            api.InitialiseDependencies (program);
-            program.InitialiseDependencies (api);
-
-            Api = api;
-            Program = program;
-        }
-
-        public IProgram Program { get; private set; }
-        public IApi Api { get; private set; }
-    }
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public sealed class Program
-        : IProgram
-    {
-        Api Api { get; set; }
-
-        internal void InitialiseDependencies (Api api) { Api = api; }
-
-        MacGameNSWindow mainWindow;
-        OpenGLView openGLView;
-
-        internal OpenGLView OpenGLView { get { return openGLView; } }
-
-        Single GetTitleBarHeight ()
-        {
-            System.Drawing.RectangleF contentRect = NSWindow.ContentRectFor (mainWindow.Frame, mainWindow.StyleMask);
-            return mainWindow.Frame.Height - contentRect.Height;
-        }
-
-        internal Program () {}
-
-        public void Start (IApi platformImplementation, Action update, Action render)
-        {
-            var initialAppSize = new System.Drawing.RectangleF (0, 0, 800, 600);
-
-            mainWindow = new MacGameNSWindow (
-                initialAppSize,
-                NSWindowStyle.Titled |
-                NSWindowStyle.Closable |
-                NSWindowStyle.Miniaturizable |
-                NSWindowStyle.Resizable,
-                NSBackingStore.Buffered,
-                true);
-
-            mainWindow.Title = "Cor";
-            mainWindow.WindowController = new NSWindowController (mainWindow);
-            mainWindow.Delegate = new MainWindowDelegate (this);
-            mainWindow.IsOpaque = true;
-            mainWindow.EnableCursorRects ();
-            mainWindow.AcceptsMouseMovedEvents = false;
-            mainWindow.Center ();
-            openGLView = new OpenGLView (update, render, initialAppSize);
-            mainWindow.ContentView.AddSubview (openGLView);
-            mainWindow.MakeKeyAndOrderFront (mainWindow);
-            openGLView.StartRunLoop (60f);
-        }
-
-        public void Stop ()
-        {
-            openGLView.Stop ();
-            openGLView.Close ();
-            openGLView.Dispose ();
-        }
-    }
-
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public partial class Api
         : IApi
     {
-        Program Program { get; set; }
-
-        internal void InitialiseDependencies (Program program)
-        {
-            Program = program;
-        }
-
         Single volume = 1f;
+        MacGameNSWindow mainWindow;
+        OpenGLView openGLView;
 
-        internal Api ()
+        public Api ()
         {
             this.volume = 1f;
         }
@@ -235,6 +152,45 @@ namespace Blimey
 
         #region app
 
+        Single GetTitleBarHeight ()
+        {
+            System.Drawing.RectangleF contentRect = NSWindow.ContentRectFor (mainWindow.Frame, mainWindow.StyleMask);
+            return mainWindow.Frame.Height - contentRect.Height;
+        }
+
+        public void app_Start (Action update, Action render)
+        {
+            var initialAppSize = new System.Drawing.RectangleF (0, 0, 800, 600);
+
+            mainWindow = new MacGameNSWindow (
+                initialAppSize,
+                NSWindowStyle.Titled |
+                NSWindowStyle.Closable |
+                NSWindowStyle.Miniaturizable |
+                NSWindowStyle.Resizable,
+                NSBackingStore.Buffered,
+                true);
+
+            mainWindow.Title = "Cor";
+            mainWindow.WindowController = new NSWindowController (mainWindow);
+            mainWindow.Delegate = new MainWindowDelegate (this);
+            mainWindow.IsOpaque = true;
+            mainWindow.EnableCursorRects ();
+            mainWindow.AcceptsMouseMovedEvents = false;
+            mainWindow.Center ();
+            openGLView = new OpenGLView (update, render, initialAppSize);
+            mainWindow.ContentView.AddSubview (openGLView);
+            mainWindow.MakeKeyAndOrderFront (mainWindow);
+            openGLView.StartRunLoop (60f);
+        }
+
+        public void app_Stop ()
+        {
+            openGLView.Stop ();
+            openGLView.Close ();
+            openGLView.Dispose ();
+        }
+
         public Boolean? app_IsFullscreen ()
         {
             return false;
@@ -242,12 +198,12 @@ namespace Blimey
 
         public Int32 app_GetWidth ()
         {
-            return (Int32) Program.OpenGLView.Window.Frame.Width;
+            return (Int32) openGLView.Window.Frame.Width;
         }
 
         public Int32 app_GetHeight ()
         {
-            return (Int32) Program.OpenGLView.Window.Frame.Height;
+            return (Int32) openGLView.Window.Frame.Height;
         }
 
         #endregion
@@ -263,22 +219,22 @@ namespace Blimey
 
         public Dictionary<DigitalControlIdentifier, int> hid_GetDigitalControlStates ()
         {
-            return Program.OpenGLView.DigitalControlStates;
+            return openGLView.DigitalControlStates;
         }
 
         public Dictionary<AnalogControlIdentifier, float> hid_GetAnalogControlStates ()
         {
-            return Program.OpenGLView.AnalogControlStates;
+            return openGLView.AnalogControlStates;
         }
 
         public HashSet<BinaryControlIdentifier> hid_GetBinaryControlStates ()
         {
-            return Program.OpenGLView.FunctionalKeysThatAreDown;
+            return openGLView.FunctionalKeysThatAreDown;
         }
 
         public HashSet<Char> hid_GetPressedCharacters ()
         {
-            return Program.OpenGLView.CharacterKeysThatAreDown;
+            return openGLView.CharacterKeysThatAreDown;
         }
 
         public HashSet<RawTouch> hid_GetActiveTouches ()
@@ -640,9 +596,9 @@ namespace Blimey
     sealed class MainWindowDelegate
         : NSWindowDelegate
     {
-        readonly Program owner;
+        readonly Api owner;
 
-        public MainWindowDelegate (Program owner)
+        public MainWindowDelegate (Api owner)
         {
             if (owner == null) throw new ArgumentNullException ("owner");
             this.owner = owner;
@@ -655,7 +611,7 @@ namespace Blimey
 
         public override void WillClose (NSNotification notification)
         {
-            owner.Stop ();
+            owner.app_Stop ();
         }
     }
 

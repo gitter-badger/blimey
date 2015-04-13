@@ -32,13 +32,15 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Abacus.SinglePrecision;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
     //
@@ -85,7 +87,7 @@ namespace Blimey
         // SETUP GRAPHICS
         // Sets up the transforms for the 2d render and setup the basic effect
         //
-        public PrimitiveRenderer (Engine engine)
+        public PrimitiveRenderer (Platform platform)
         {
             var shaderDecl =
                 new ShaderDeclaration {
@@ -136,7 +138,7 @@ namespace Blimey
 
                 String source = "";
 
-                var runtimeShaderFormat = engine.Graphics.GetRuntimeShaderFormat ();
+                var runtimeShaderFormat = platform.Graphics.GetRuntimeShaderFormat ();
 
                 if (runtimeShaderFormat == ShaderFormat.HLSL)
                 {
@@ -213,7 +215,7 @@ void main()
                     bin.Write (shaderUTF8);
                 }
 
-                shader = engine.Graphics.CreateShader (
+                shader = platform.Graphics.CreateShader (
                     shaderDecl,
                     runtimeShaderFormat,
                     mem.GetBuffer ());
@@ -221,19 +223,12 @@ void main()
 
             // Set the index buffer for each vertex, using
             // clockwise winding
-            quadIndices[0] = 1;
-            quadIndices[1] = 3;
-            quadIndices[2] = 0;
-            quadIndices[3] = 2;
-            quadIndices[4] = 3;
-            quadIndices[5] = 1;
-
             for (int i = 0, vertex = 0; i < quadIndices.Length; i += 6, vertex += 4)
             {
-                quadIndices[i] = vertex;
+                quadIndices[i + 0] = vertex + 0;
                 quadIndices[i + 1] = vertex + 1;
                 quadIndices[i + 2] = vertex + 2;
-                quadIndices[i + 3] = vertex;
+                quadIndices[i + 3] = vertex + 0;
                 quadIndices[i + 4] = vertex + 2;
                 quadIndices[i + 5] = vertex + 3;
             }

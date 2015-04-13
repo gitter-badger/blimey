@@ -6,9 +6,6 @@
 // │  |______  /____/__|__|_|  /\___  > ____|                               │ \\
 // │         \/              \/     \/\/                                    │ \\
 // │                                                                        │ \\
-// │ An implementation of the Blimey Plaform API targeting Sony's           │ \\
-// │ PlayStation Mobile framework.                                          │ \\
-// │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Copyright © 2012 - 2015 ~ Blimey Engine (http://www.blimey.io)         │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
@@ -124,7 +121,7 @@ namespace Platform.Psm
         {
             throw new NotImplementedException ();
         }
-        
+
         public void gfx_ClearDepthBuffer (Single depth)
         {
             throw new NotImplementedException ();
@@ -452,7 +449,7 @@ namespace Platform.Psm
             return new Vector2(vec.X, vec.Y);
         }
     }
-    
+
     public static class Vector3Converter
     {
         // VECTOR 3
@@ -466,7 +463,7 @@ namespace Platform.Psm
             return new Vector3(vec.X, vec.Y, vec.Z);
         }
     }
-    
+
     public static class Vector4Converter
     {
         // VECTOR 3
@@ -483,24 +480,24 @@ namespace Platform.Psm
 
     // http://gamedev.stackexchange.com/questions/16011/direct3d-and-opengl-matrix-representation
     //
-    // Such things as right-handed or left-handed matrices don't exist. 
-    // Be it a right- or left- handed coordinate system, math and the matrix stays the same, 
-    // matrix operations give the same result for both of these systems. 
+    // Such things as right-handed or left-handed matrices don't exist.
+    // Be it a right- or left- handed coordinate system, math and the matrix stays the same,
+    // matrix operations give the same result for both of these systems.
     // How we will interpret the data later, thats the difference.
     //
-    // In OpenGL, matrix operations are pre-concatenated, which means concatenated 
-    // transformations are applied from right to left. Direct3D, however, applies 
+    // In OpenGL, matrix operations are pre-concatenated, which means concatenated
+    // transformations are applied from right to left. Direct3D, however, applies
     // concatenated transformations from left to right.
     //
-    // So what you need to do is to match the order of operation in OpenGL to 
-    // the order of Direct3D. When writing OpenGL code, you apply the transform that you 
-    // want to occur first last; when writing DirectX you're doing the opposite. Let's say 
-    // you just transformed vector v in OpenGL by matrices A and B: v' = ABv In Direct3D 
+    // So what you need to do is to match the order of operation in OpenGL to
+    // the order of Direct3D. When writing OpenGL code, you apply the transform that you
+    // want to occur first last; when writing DirectX you're doing the opposite. Let's say
+    // you just transformed vector v in OpenGL by matrices A and B: v' = ABv In Direct3D
     // the same transformation would be v' = vBA.
     public static class MatrixConverter
     {
         static bool flip = false;
-        
+
         // MATRIX
         public static Sce.Pss.Core.Matrix4 ToPSS(this Matrix mat)
         {
@@ -548,7 +545,7 @@ namespace Platform.Psm
         }
 
     }
-    
+
 
     public static class EnumConverter
     {
@@ -565,7 +562,7 @@ namespace Platform.Psm
                 default: throw new Exception("problem");
             }
         }
-        
+
         // PRIMITIVE TYPE
         public static Sce.Pss.Core.Graphics.DrawMode ToPSS(PrimitiveType blimey)
         {
@@ -575,7 +572,7 @@ namespace Platform.Psm
                 case PrimitiveType.LineStrip: return    Sce.Pss.Core.Graphics.DrawMode.LineStrip;
                 case PrimitiveType.TriangleList: return Sce.Pss.Core.Graphics.DrawMode.Triangles;
                 case PrimitiveType.TriangleStrip: return    Sce.Pss.Core.Graphics.DrawMode.TriangleStrip;
-                    
+
                 default: throw new Exception("problem");
             }
         }
@@ -590,7 +587,7 @@ namespace Platform.Psm
                 case Sce.Pss.Core.Graphics.DrawMode.TriangleFan:  throw new Exception("Not supported by Blimey");
                 case Sce.Pss.Core.Graphics.DrawMode.Triangles: return   PrimitiveType.TriangleList;
                 case Sce.Pss.Core.Graphics.DrawMode.TriangleStrip: return   PrimitiveType.TriangleStrip;
-                
+
                 default: throw new Exception("problem");
 
             }
@@ -613,7 +610,7 @@ namespace Platform.Psm
                 case VertexElementFormat.Vector2: return Sce.Pss.Core.Graphics.VertexFormat.Float2;
                 case VertexElementFormat.Vector3: return Sce.Pss.Core.Graphics.VertexFormat.Float3;
                 case VertexElementFormat.Vector4: return Sce.Pss.Core.Graphics.VertexFormat.Float4;
-                
+
                 default: throw new Exception("problem");
             }
         }
@@ -652,21 +649,21 @@ namespace Platform.Psm
                 case Sce.Pss.Core.Graphics.VertexFormat.Short3N: throw new Exception("Not supported by Blimey");
                 case Sce.Pss.Core.Graphics.VertexFormat.Short4N: return VertexElementFormat.NormalizedShort4;
                 case Sce.Pss.Core.Graphics.VertexFormat.UShortN: throw new Exception("Not supported by Blimey");
-                case Sce.Pss.Core.Graphics.VertexFormat.UShort2N: throw new Exception("Not supported by Blimey");   
-                case Sce.Pss.Core.Graphics.VertexFormat.UShort3N: throw new Exception("Not supported by Blimey");   
-                case Sce.Pss.Core.Graphics.VertexFormat.UShort4N: throw new Exception("Not supported by Blimey");   
+                case Sce.Pss.Core.Graphics.VertexFormat.UShort2N: throw new Exception("Not supported by Blimey");
+                case Sce.Pss.Core.Graphics.VertexFormat.UShort3N: throw new Exception("Not supported by Blimey");
+                case Sce.Pss.Core.Graphics.VertexFormat.UShort4N: throw new Exception("Not supported by Blimey");
                 case Sce.Pss.Core.Graphics.VertexFormat.ByteN: throw new Exception("Not supported by Blimey");
                 case Sce.Pss.Core.Graphics.VertexFormat.Byte2N: throw new Exception("Not supported by Blimey");
-                case Sce.Pss.Core.Graphics.VertexFormat.Byte3N: throw new Exception("Not supported by Blimey"); 
+                case Sce.Pss.Core.Graphics.VertexFormat.Byte3N: throw new Exception("Not supported by Blimey");
                 case Sce.Pss.Core.Graphics.VertexFormat.Byte4N: throw new Exception("Not supported by Blimey");
-                case Sce.Pss.Core.Graphics.VertexFormat.UByteN: throw new Exception("Not supported by Blimey");     
-                case Sce.Pss.Core.Graphics.VertexFormat.UByte2N: throw new Exception("Not supported by Blimey");    
-                case Sce.Pss.Core.Graphics.VertexFormat.UByte3N: throw new Exception("Not supported by Blimey");    
+                case Sce.Pss.Core.Graphics.VertexFormat.UByteN: throw new Exception("Not supported by Blimey");
+                case Sce.Pss.Core.Graphics.VertexFormat.UByte2N: throw new Exception("Not supported by Blimey");
+                case Sce.Pss.Core.Graphics.VertexFormat.UByte3N: throw new Exception("Not supported by Blimey");
                 case Sce.Pss.Core.Graphics.VertexFormat.UByte4N: throw new Exception("Not supported by Blimey");
-                
+
                 default: throw new Exception("problem");
             }
-        }        
+        }
     }
 
 
@@ -690,7 +687,7 @@ namespace Platform.Psm
             return pssElements;
         }
     }
-    
+
 
     public static class VertexElementConverter
     {
@@ -701,7 +698,7 @@ namespace Platform.Psm
             var bliElementFormat = blimey.VertexElementFormat;
             var bliElementUsage = blimey.VertexElementUsage;
             Int32 bliUsageIndex = blimey.UsageIndex;
-            
+
             return EnumConverter.ToPSS(bliElementFormat);
         }
     }
@@ -716,93 +713,93 @@ namespace Platform.Psm
 
         Stopwatch _timer = new Stopwatch();
         TimeSpan _previousTimeSpan;
-        
+
         Single _elapsed;
-        
+
         Int64 _frameCount;
-        
+
         bool _running;
-        
+
         EngineSettings settings;
-        
+
         TouchScreen touchScreen;
-        
+
         public EngineSettings Settings { get { return settings; } }
-        
+
         public void Run()
         {
             _running = true;
             _timer.Start();
-            
+
             while (_running) {
                 Sce.Pss.Core.Environment.SystemEvents.CheckEvents ();
                 this.Update ();
                 this.Render ();
             }
-            
+
             _timer.Stop();
         }
 
         public Engine(GameScene startScene, EngineSettings settings)
-        {   
+        {
             this.settings = settings;
-            
+
             // create new gfx device
             _graphicsContext = new Sce.Pss.Core.Graphics.GraphicsContext ();
             _graphicsContext.Enable(Sce.Pss.Core.Graphics.EnableMode.Blend);
             _graphicsContext.Enable(Sce.Pss.Core.Graphics.EnableMode.DepthTest);
             _graphicsContext.Enable(Sce.Pss.Core.Graphics.EnableMode.CullFace);
-            
+
             _graphicsManager = new GraphicsManager(_graphicsContext);
             _resourceManager = new ResourceManager(_graphicsContext);
             touchScreen = new TouchScreen(this, _graphicsContext);
             _inputManager = new InputManager(this, touchScreen);
             _sceneManager = new SceneManager(this, startScene);
-            
-            
+
+
             _systemManager = new SystemManager(this, _graphicsContext, touchScreen);
         }
-        
+
 
         void Update()
         {
             float dt = (float)(_timer.Elapsed.TotalSeconds - _previousTimeSpan.TotalSeconds);
             _previousTimeSpan = _timer.Elapsed;
-            
+
             _elapsed += dt;
-            
+
             var gt = new GameTime(dt, _elapsed, ++_frameCount);
 
             Boolean exit = Update(gt);
-            
+
             if( exit )
             {
                 _running = false;
             }
         }
-        
+
         public override bool Update(GameTime time)
         {
             var gamePadData = Sce.Pss.Core.Input.GamePad.GetData (0);
-            
+
             return base.Update(time);
         }
 
         public override void Render()
         {
             _graphicsContext.SetViewport(
-                0, 
-                0, 
-                _graphicsContext.Screen.Width, 
+                0,
+                0,
+                _graphicsContext.Screen.Width,
                 _graphicsContext.Screen.Height);
-            
+
             base.Render();
-            
+
             // Present the screen
             _graphicsContext.SwapBuffers ();
 
         }
-        
+
         public void Dispose()
         {
             _graphicsContext.Dispose();
@@ -813,61 +810,61 @@ namespace Platform.Psm
         : IGeometryBuffer
     {
         Sce.Pss.Core.Graphics.VertexBuffer _pssVertexBuf;
-        
+
         IndexBuffer _iBuf;
         VertexBuffer _vBuf;
-        
+
         public GeometryBuffer (VertexDeclaration vertexDeclaration, Int32 vertexCount, Int32 indexCount)
         {
             var pssDecl = vertexDeclaration.ToPSS();
             _pssVertexBuf = new Sce.Pss.Core.Graphics.VertexBuffer(vertexCount, indexCount, pssDecl);
-            
+
             _iBuf = new IndexBuffer(_pssVertexBuf);
             _vBuf = new VertexBuffer(_pssVertexBuf, vertexDeclaration);
         }
-        
+
         public IVertexBuffer VertexBuffer { get { return _vBuf; } }
         public IIndexBuffer IndexBuffer { get { return _iBuf; } }
-        
+
         public Sce.Pss.Core.Graphics.VertexBuffer PSSVertexBuffer { get { return _pssVertexBuf; } }
-        
+
     }
 
     public class GpuUtils
         : IGpuUtils
-    {       
+    {
         public Int32 BeginEvent(Colour colour, String eventName) { return 0; }
         public Int32 EndEvent() { return 0; }
 
         public void SetMarker (Colour colour, String eventName){ }
         public void SetRegion (Colour colour, String eventName){ }
     }
-    
+
     public class GraphicsManager
         : IGraphicsManager
     {
         Sce.Pss.Core.Graphics.GraphicsContext _graphicsContext;
-        
+
         IGeometryBuffer _currentGeomBuffer;
         GpuUtils _gpuUtils;
-        
-        
+
+
         Int32 _drawCallCount = 0;
-        
+
         public Int32 DrawCallCount { get { return _drawCallCount; } }
-        
+
         public void MarkNewFrame(){ _drawCallCount = 0; }
-        
+
         public GraphicsManager(Sce.Pss.Core.Graphics.GraphicsContext graphicsContext)
         {
 
             _graphicsContext = graphicsContext;
             _gpuUtils = new GpuUtils();
-            
+
             _graphicsContext.Enable( Sce.Pss.Core.Graphics.EnableMode.CullFace, false );
             _graphicsContext.Enable( Sce.Pss.Core.Graphics.EnableMode.Blend, true );
             _graphicsContext.Enable( Sce.Pss.Core.Graphics.EnableMode.DepthTest, true );
-        
+
         }
 
         public void Clear(Colour col)
@@ -875,7 +872,7 @@ namespace Platform.Psm
             _graphicsContext.SetClearColor (col.R, col.G, col.B, col.A);
             _graphicsContext.Clear ();
         }
-        
+
         public void ClearDepthBuffer()
         {
             _graphicsContext.SetClearDepth(1f);
@@ -887,7 +884,7 @@ namespace Platform.Psm
         {
             return new GeometryBuffer(vertexDeclaration, vertexCount, indexCount);
         }
-        
+
         public IGpuUtils GpuUtils
         {
             get
@@ -895,49 +892,49 @@ namespace Platform.Psm
                 return _gpuUtils;
             }
         }
-        
+
         public void SetGeometryBuffer(IGeometryBuffer buffer)
         {
             var pssGeomBuff = buffer as GeometryBuffer;
-            
+
             _graphicsContext.SetVertexBuffer(0, pssGeomBuff.PSSVertexBuffer);
-            
+
             _currentGeomBuffer = buffer;
         }
 
         public void DrawIndexedPrimitives(
-            PrimitiveType primitiveType, 
-            int baseVertex, 
-            int minVertexIndex, 
-            int numVertices, 
-            int startIndex, 
+            PrimitiveType primitiveType,
+            int baseVertex,
+            int minVertexIndex,
+            int numVertices,
+            int startIndex,
             int primitiveCount)
         {
             var pssPrimType = EnumConverter.ToPSS(primitiveType);
-            
+
             int numVertsInPrim = numVertices / primitiveCount;
-            
+
             _graphicsContext.DrawArrays(pssPrimType, 0, primitiveCount * PrimitiveHelper.NumVertsIn(primitiveType));
         }
 
         public void DrawUserPrimitives<T>(
-            PrimitiveType primitiveType, 
-            T[] vertexData, 
-            int vertexOffset, 
-            int primitiveCount, 
-            VertexDeclaration vertexDeclaration) 
+            PrimitiveType primitiveType,
+            T[] vertexData,
+            int vertexOffset,
+            int primitiveCount,
+            VertexDeclaration vertexDeclaration)
             where T : struct, IVertexType
         {
             var pssDrawMode = EnumConverter.ToPSS(primitiveType);
-            
+
             var geomBuff = this.CreateGeometryBuffer(vertexDeclaration, vertexData.Length, 0) as GeometryBuffer;
-            
+
             geomBuff.VertexBuffer.SetData(vertexData);
-            
+
             this.SetGeometryBuffer(geomBuff);
-            
+
             _graphicsContext.DrawArrays(pssDrawMode, 0, primitiveCount * PrimitiveHelper.NumVertsIn(primitiveType));
-            
+
             geomBuff.PSSVertexBuffer.Dispose();
         }
     }
@@ -949,7 +946,7 @@ namespace Platform.Psm
         : IIndexBuffer
     {
         Sce.Pss.Core.Graphics.VertexBuffer _pssBuffer;
-        
+
         public IndexBuffer(Sce.Pss.Core.Graphics.VertexBuffer buffer)
         {
             _pssBuffer = buffer;
@@ -985,8 +982,8 @@ namespace Platform.Psm
             throw new System.NotImplementedException();
         }
 
-        public int IndexCount 
-        { 
+        public int IndexCount
+        {
             get
             {
                 return _pssBuffer.IndexCount;
@@ -1001,19 +998,19 @@ namespace Platform.Psm
         public MultiTouchController GetTouchScreen() { return _vitaTouchScreen; }
         public VitaController GetVitaController() { return _controls; }
         public GenericGamepad GetGenericGamepad() { return _genericPad; }
-        
-        
+
+
         TouchScreen _vitaTouchScreen;
         VitaControllerImplementation _controls;
         GenericGamepad _genericPad;
-        
+
         public InputManager(IEngine engine, TouchScreen screen)
         {
             _controls = new VitaControllerImplementation();
             _genericPad = new GenericGamepad(this);
             _vitaTouchScreen = screen;
         }
-    
+
         public void Update(GameTime time)
         {
             _vitaTouchScreen.Update(time);
@@ -1027,39 +1024,39 @@ namespace Platform.Psm
     {
         Sce.Pss.Core.Graphics.ShaderProgram _program;
         Sce.Pss.Core.Graphics.GraphicsContext _gfxContext;
-        
+
         public Phong_PositionNormal_ShaderEffectPass(Sce.Pss.Core.Graphics.GraphicsContext gfxContext, Sce.Pss.Core.Graphics.ShaderProgram program)
         {
             _gfxContext = gfxContext;
             _program = program;
         }
-        
+
         public void Apply()
         {
             _gfxContext.SetShaderProgram( _program );
         }
     }
-    
+
     public class Phong_PositionNormal
         : IShader
     {
         Sce.Pss.Core.Graphics.ShaderProgram _program;
         Sce.Pss.Core.Graphics.GraphicsContext _gfxContext;
-            
+
         Phong_PositionNormal_ShaderEffectPass[] _pass;
-        
+
 
         public Phong_PositionNormal(
-            Sce.Pss.Core.Graphics.GraphicsContext gfxContext, 
+            Sce.Pss.Core.Graphics.GraphicsContext gfxContext,
             Sce.Pss.Core.Graphics.ShaderProgram program)
         {
             _gfxContext = gfxContext;
             _program = program;
-            _program.SetUniformBinding(0, "WorldViewProj");     
+            _program.SetUniformBinding(0, "WorldViewProj");
             _program.SetAttributeBinding( 0, "a_Position" ) ;
             _program.SetAttributeBinding( 1, "a_Normal" ) ;
-            
-            _pass = new Phong_PositionNormal_ShaderEffectPass[] { new Phong_PositionNormal_ShaderEffectPass(_gfxContext, _program) }; 
+
+            _pass = new Phong_PositionNormal_ShaderEffectPass[] { new Phong_PositionNormal_ShaderEffectPass(_gfxContext, _program) };
         }
 
         public IEffectPass[] Passes
@@ -1076,7 +1073,7 @@ namespace Platform.Psm
             Matrix view = Matrix.Identity;
             Matrix proj = Matrix.Identity;
             Colour col = Colour.White;
-            
+
             foreach (var param in settings.Keys)
             {
                 if (param == "_world")
@@ -1104,54 +1101,54 @@ namespace Platform.Psm
                     continue;
                 }
             }
-            
-            
+
+
             var worldViewProj = (world * view * proj).ToPSS();
-            
+
             _program.SetUniformValue( _program.FindUniform( "WorldViewProj" ), ref worldViewProj );
-            
+
             Matrix invWorld = Matrix.Invert(world);
-            
-            
+
+
             Sce.Pss.Core.Vector3 lightPos = new Sce.Pss.Core.Vector3( 0.0f, 15.0f, 13.0f );
-            
+
             // model local Light Direction
             Sce.Pss.Core.Matrix4 worldInverse = invWorld.ToPSS();
-            Sce.Pss.Core.Vector4 localLightPos4 = 
+            Sce.Pss.Core.Vector4 localLightPos4 =
                 worldInverse * (new Sce.Pss.Core.Vector4( lightPos, 1.0f ));
 
-            Sce.Pss.Core.Vector3 localLightDir = 
+            Sce.Pss.Core.Vector3 localLightDir =
                 new Sce.Pss.Core.Vector3( -localLightPos4.X, -localLightPos4.Y, -localLightPos4.Z );
-            
+
             localLightDir = localLightDir.Normalize();
-    
+
             _program.SetUniformValue( _program.FindUniform( "LocalLightDirection" ), ref localLightDir );
-                
-            
+
+
             Sce.Pss.Core.Vector3 camPos = proj.Translation.ToPSS();
-            
+
             // model local eye
             Sce.Pss.Core.Vector4 localEye4 = worldInverse * (new Sce.Pss.Core.Vector4( camPos, 1.0f ));
             Sce.Pss.Core.Vector3 localEye = new Sce.Pss.Core.Vector3( localEye4.X, localEye4.Y, localEye4.Z);
-    
+
             _program.SetUniformValue( _program.FindUniform( "EyePosition" ), ref localEye );
-    
+
 
             // light
             Sce.Pss.Core.Vector4 i_a = new Sce.Pss.Core.Vector4( 1.0f, 1.0f, 1.0f, 1.0f );
             _program.SetUniformValue( _program.FindUniform( "IAmbient" ), ref i_a );
-            
-            
+
+
             Sce.Pss.Core.Vector4 i_d = new Sce.Pss.Core.Vector4( 1.0f, 1.0f, 1.0f, 1.0f );
             _program.SetUniformValue( _program.FindUniform( "IDiffuse" ), ref i_d );
-    
+
             // material
             Sce.Pss.Core.Vector4 k_a = new Sce.Pss.Core.Vector4( 0.2f, 0.2f, 0.2f, 1.0f );
             _program.SetUniformValue( _program.FindUniform( "KAmbient" ), ref k_a );
-    
+
             Sce.Pss.Core.Vector4 k_d    = col.ToVector4().ToPSS();
             _program.SetUniformValue( _program.FindUniform( "KDiffuse" ), ref k_d );
-    
+
             Sce.Pss.Core.Vector4 k_s = new Sce.Pss.Core.Vector4( 1.0f, 1.0f, 1.0f, 1.0f );
             _program.SetUniformValue( _program.FindUniform( "KSpecular" ), ref k_s );
             _program.SetUniformValue( _program.FindUniform( "Shininess" ), 5.0f );
@@ -1268,9 +1265,9 @@ namespace Platform.Psm
         : ISystemManager
     {
         TouchScreen touchScreen;
-        
+
         public SystemManager(
-            IEngine engine, 
+            IEngine engine,
             Sce.Pss.Core.Graphics.GraphicsContext gfxContext,
             TouchScreen touchScreen)
         {
@@ -1278,7 +1275,7 @@ namespace Platform.Psm
         }
 
         public string OS
-        { 
+        {
             get
             {
                 return System.Environment.OSVersion.Platform.ToString();
@@ -1326,15 +1323,15 @@ namespace Platform.Psm
         , IPanelSpecification
     {
         Int32 touchIDCounter = -1;
-        
+
         HashSet<Int32> previousActiveFingerIDs = new HashSet<Int32>();
         HashSet<Int32> currentActiveFingerIDs = new HashSet<Int32>();
-        
+
         Dictionary<Int32, Int32> currentFingerIDToTouchID = new Dictionary<Int32, Int32>();
-        
+
         public override IPanelSpecification PanelSpecification { get{ return this; } }
         Sce.Pss.Core.Graphics.GraphicsContext gfx;
-        
+
         internal TouchScreen(IEngine engine, Sce.Pss.Core.Graphics.GraphicsContext gfx)
             : base(engine)
         {
@@ -1344,12 +1341,12 @@ namespace Platform.Psm
         internal override void Update(GameTime time)
         {
             this.touchCollection.ClearBuffer();
-            
+
             previousActiveFingerIDs = currentActiveFingerIDs;
             currentActiveFingerIDs = new HashSet<Int32>();
 
             var data = Sce.Pss.Core.Input.Touch.GetData(0);
-            
+
             var keys = currentFingerIDToTouchID.Keys.ToArray();
             foreach(var fingerId in keys)
             {
@@ -1357,9 +1354,9 @@ namespace Platform.Psm
                 if( selectResult.Count() == 0 )
                     currentFingerIDToTouchID.Remove(fingerId);
             }
-                
-            foreach (var touchData in data) 
-            {       
+
+            foreach (var touchData in data)
+            {
                 var phase = EnumConverter.ToBlimey(touchData.Status);
 
                 if( phase != TouchPhase.Invalid )
@@ -1368,8 +1365,8 @@ namespace Platform.Psm
                     currentActiveFingerIDs.Add(fingerID);
                 }
             }
-            
-            foreach (var touchData in data) 
+
+            foreach (var touchData in data)
             {
                 var phase = EnumConverter.ToBlimey(touchData.Status);
 
@@ -1380,17 +1377,17 @@ namespace Platform.Psm
                     if( !previousActiveFingerIDs.Contains(fingerID) &&
                        currentActiveFingerIDs.Contains(fingerID) )
                     {
-                        currentFingerIDToTouchID.Add(fingerID, ++touchIDCounter);                       
+                        currentFingerIDToTouchID.Add(fingerID, ++touchIDCounter);
                     }
-                    
+
                     if( previousActiveFingerIDs.Contains(fingerID) &&
                        !currentActiveFingerIDs.Contains(fingerID) )
                     {
-                        currentFingerIDToTouchID.Remove(fingerID);                      
+                        currentFingerIDToTouchID.Remove(fingerID);
                     }
                 }
             }
-            
+
             foreach (var touchData in data)
             {
                 var phase = EnumConverter.ToBlimey(touchData.Status);
@@ -1398,50 +1395,50 @@ namespace Platform.Psm
                 if( phase != TouchPhase.Invalid )
                 {
                     Int32 fingerID = touchData.ID;
-                    
+
                     Int32 touchID = currentFingerIDToTouchID[fingerID];
-                    
+
                     Vector2 pos = new Vector2(touchData.X, touchData.Y);
 
                     this.touchCollection.RegisterTouch(touchID, pos, phase, time.FrameNumber, time.Elapsed);
                 }
             }
-            
+
             base.Update(time);
         }
-        
-        
+
+
         public Single ScreenResolutionAspectRatio
-        { 
+        {
             get
             {
                 return ScreenResolutionWidth / ScreenResolutionHeight;
             }
         }
         public Int32 ScreenResolutionWidth
-        { 
+        {
             get
             {
                 return gfx.Screen.Width;
             }
         }
         public Int32 ScreenResolutionHeight
-        { 
+        {
             get
             {
                 return gfx.Screen.Height;
             }
         }
-        
+
         public Vector2 PanelPhysicalSize
-        { 
+        {
             get
             {
                 return new Vector2(0.11f, 0.63f);
             }
         }
         public Single PanelPhysicalAspectRatio
-        { 
+        {
             get
             {
                 return PanelPhysicalSize.X / PanelPhysicalSize.Y;
@@ -1449,7 +1446,7 @@ namespace Platform.Psm
         }
 
         public PanelType PanelType
-        { 
+        {
             get
             {
                 return PanelType.TouchScreen;
@@ -1462,38 +1459,38 @@ namespace Platform.Psm
     {
         Sce.Pss.Core.Graphics.ShaderProgram _program;
         Sce.Pss.Core.Graphics.GraphicsContext _gfxContext;
-        
+
         public Unlit_Position_ShaderEffectPass(Sce.Pss.Core.Graphics.GraphicsContext gfxContext, Sce.Pss.Core.Graphics.ShaderProgram program)
         {
             _gfxContext = gfxContext;
             _program = program;
         }
-        
+
         public void Apply()
         {
             _gfxContext.SetShaderProgram( _program );
         }
     }
-    
+
     public class Unlit_Position
         : IShader
     {
         Sce.Pss.Core.Graphics.ShaderProgram _program;
         Sce.Pss.Core.Graphics.GraphicsContext _gfxContext;
-            
+
         Unlit_Position_ShaderEffectPass[] _pass;
-        
+
 
         public Unlit_Position(
-            Sce.Pss.Core.Graphics.GraphicsContext gfxContext, 
+            Sce.Pss.Core.Graphics.GraphicsContext gfxContext,
             Sce.Pss.Core.Graphics.ShaderProgram program)
         {
             _gfxContext = gfxContext;
             _program = program;
-            _program.SetUniformBinding(0, "WorldViewProj");     
+            _program.SetUniformBinding(0, "WorldViewProj");
             _program.SetAttributeBinding( 0, "a_Position" ) ;
-            
-            _pass = new Unlit_Position_ShaderEffectPass[] { new Unlit_Position_ShaderEffectPass(_gfxContext, _program) }; 
+
+            _pass = new Unlit_Position_ShaderEffectPass[] { new Unlit_Position_ShaderEffectPass(_gfxContext, _program) };
         }
 
         public IEffectPass[] Passes
@@ -1510,7 +1507,7 @@ namespace Platform.Psm
             Matrix view = Matrix.Identity;
             Matrix proj = Matrix.Identity;
             Colour col = Colour.White;
-            
+
             foreach (var param in settings.Keys)
             {
                 if (param == "_world")
@@ -1538,13 +1535,13 @@ namespace Platform.Psm
                     continue;
                 }
             }
-            
-            
+
+
             var worldViewProj = (world * view * proj).ToPSS();
-            
+
             _program.SetUniformValue( 0, ref worldViewProj );
-            
-    
+
+
             Sce.Pss.Core.Vector4 materialColour = col.ToVector4().ToPSS();
             _program.SetUniformValue( _program.FindUniform( "MaterialColor" ), ref materialColour );
 
@@ -1556,39 +1553,39 @@ namespace Platform.Psm
     {
         Sce.Pss.Core.Graphics.ShaderProgram _program;
         Sce.Pss.Core.Graphics.GraphicsContext _gfxContext;
-        
+
         public Unlit_PositionColour_ShaderEffectPass(Sce.Pss.Core.Graphics.GraphicsContext gfxContext, Sce.Pss.Core.Graphics.ShaderProgram program)
         {
             _gfxContext = gfxContext;
             _program = program;
         }
-        
+
         public void Apply()
         {
             _gfxContext.SetShaderProgram( _program );
         }
     }
-    
+
     public class Unlit_PositionColour
         : IShader
     {
         Sce.Pss.Core.Graphics.ShaderProgram _program;
         Sce.Pss.Core.Graphics.GraphicsContext _gfxContext;
-            
+
         Unlit_PositionColour_ShaderEffectPass[] _pass;
-        
+
 
         public Unlit_PositionColour(
-            Sce.Pss.Core.Graphics.GraphicsContext gfxContext, 
+            Sce.Pss.Core.Graphics.GraphicsContext gfxContext,
             Sce.Pss.Core.Graphics.ShaderProgram program)
         {
             _gfxContext = gfxContext;
             _program = program;
-            _program.SetUniformBinding(0, "WorldViewProj");     
+            _program.SetUniformBinding(0, "WorldViewProj");
             _program.SetAttributeBinding( 0, "a_Position" ) ;
             _program.SetAttributeBinding( 1, "a_Color0" ) ;
-            
-            _pass = new Unlit_PositionColour_ShaderEffectPass[] { new Unlit_PositionColour_ShaderEffectPass(_gfxContext, _program) }; 
+
+            _pass = new Unlit_PositionColour_ShaderEffectPass[] { new Unlit_PositionColour_ShaderEffectPass(_gfxContext, _program) };
         }
 
         public IEffectPass[] Passes
@@ -1605,7 +1602,7 @@ namespace Platform.Psm
             Matrix view = Matrix.Identity;
             Matrix proj = Matrix.Identity;
             Colour col = Colour.White;
-            
+
             foreach (var param in settings.Keys)
             {
                 if (param == "_world")
@@ -1633,12 +1630,12 @@ namespace Platform.Psm
                     continue;
                 }
             }
-            
-            
+
+
             var worldViewProj = (world * view * proj).ToPSS();
-            
+
             _program.SetUniformValue( 0, ref worldViewProj );
-            
+
             Sce.Pss.Core.Vector4 materialColour = col.ToVector4().ToPSS();
             _program.SetUniformValue( _program.FindUniform( "MaterialColor" ), ref materialColour );
         }
@@ -1650,40 +1647,40 @@ namespace Platform.Psm
     {
         Sce.Pss.Core.Graphics.ShaderProgram _program;
         Sce.Pss.Core.Graphics.GraphicsContext _gfxContext;
-        
+
         public Unlit_PositionColourTexture_ShaderEffectPass(Sce.Pss.Core.Graphics.GraphicsContext gfxContext, Sce.Pss.Core.Graphics.ShaderProgram program)
         {
             _gfxContext = gfxContext;
             _program = program;
         }
-        
+
         public void Apply()
         {
             _gfxContext.SetShaderProgram( _program );
         }
     }
-    
+
     public class Unlit_PositionColourTexture
         : IShader
     {
         Sce.Pss.Core.Graphics.ShaderProgram _program;
         Sce.Pss.Core.Graphics.GraphicsContext _gfxContext;
-            
+
         Unlit_PositionColourTexture_ShaderEffectPass[] _pass;
-        
+
 
         public Unlit_PositionColourTexture(
-            Sce.Pss.Core.Graphics.GraphicsContext gfxContext, 
+            Sce.Pss.Core.Graphics.GraphicsContext gfxContext,
             Sce.Pss.Core.Graphics.ShaderProgram program)
         {
             _gfxContext = gfxContext;
             _program = program;
-            _program.SetUniformBinding(0, "WorldViewProj");     
+            _program.SetUniformBinding(0, "WorldViewProj");
             _program.SetAttributeBinding( 0, "a_Position" ) ;
             _program.SetAttributeBinding( 1, "a_Color0" ) ;
             _program.SetAttributeBinding( 2, "a_TexCoord" ) ;
-            
-            _pass = new Unlit_PositionColourTexture_ShaderEffectPass[] { new Unlit_PositionColourTexture_ShaderEffectPass(_gfxContext, _program) }; 
+
+            _pass = new Unlit_PositionColourTexture_ShaderEffectPass[] { new Unlit_PositionColourTexture_ShaderEffectPass(_gfxContext, _program) };
         }
 
         public IEffectPass[] Passes
@@ -1700,7 +1697,7 @@ namespace Platform.Psm
             Matrix view = Matrix.Identity;
             Matrix proj = Matrix.Identity;
             Colour col = Colour.White;
-            
+
             foreach (var param in settings.Keys)
             {
                 if (param == "_world")
@@ -1728,12 +1725,12 @@ namespace Platform.Psm
                     continue;
                 }
             }
-            
-            
+
+
             var worldViewProj = (world * view * proj).ToPSS();
-            
+
             _program.SetUniformValue( 0, ref worldViewProj );
-            
+
             Sce.Pss.Core.Vector4 materialColour = col.ToVector4().ToPSS();
             _program.SetUniformValue( _program.FindUniform( "MaterialColor" ), ref materialColour );
         }
@@ -1745,30 +1742,30 @@ namespace Platform.Psm
     {
         Sce.Pss.Core.Graphics.ShaderProgram _program;
         Sce.Pss.Core.Graphics.GraphicsContext _gfxContext;
-        
+
         public Unlit_PositionTexture_ShaderEffectPass(Sce.Pss.Core.Graphics.GraphicsContext gfxContext, Sce.Pss.Core.Graphics.ShaderProgram program)
         {
             _gfxContext = gfxContext;
             _program = program;
         }
-        
+
         public void Apply()
         {
             _gfxContext.SetShaderProgram( _program );
         }
     }
-    
+
     public class Unlit_PositionTexture
         : IShader
     {
         Sce.Pss.Core.Graphics.ShaderProgram _program;
         Sce.Pss.Core.Graphics.GraphicsContext _gfxContext;
-            
+
         Unlit_PositionTexture_ShaderEffectPass[] _pass;
-        
+
 
         public Unlit_PositionTexture(
-            Sce.Pss.Core.Graphics.GraphicsContext gfxContext, 
+            Sce.Pss.Core.Graphics.GraphicsContext gfxContext,
             Sce.Pss.Core.Graphics.ShaderProgram program)
         {
             _gfxContext = gfxContext;
@@ -1776,8 +1773,8 @@ namespace Platform.Psm
             _program.SetUniformBinding(0, "WorldViewProj");
             _program.SetAttributeBinding( 0, "a_Position" ) ;
             _program.SetAttributeBinding( 1, "a_TexCoord" ) ;
-            
-            _pass = new Unlit_PositionTexture_ShaderEffectPass[] { new Unlit_PositionTexture_ShaderEffectPass(_gfxContext, _program) }; 
+
+            _pass = new Unlit_PositionTexture_ShaderEffectPass[] { new Unlit_PositionTexture_ShaderEffectPass(_gfxContext, _program) };
         }
 
         public IEffectPass[] Passes
@@ -1794,7 +1791,7 @@ namespace Platform.Psm
             Matrix view = Matrix.Identity;
             Matrix proj = Matrix.Identity;
             Colour col = Colour.White;
-            
+
             foreach (var param in settings.Keys)
             {
                 if (param == "_world")
@@ -1822,13 +1819,13 @@ namespace Platform.Psm
                     continue;
                 }
             }
-            
-            
+
+
             var worldViewProj = (world * view * proj).ToPSS();
-            
+
             _program.SetUniformValue( 0, ref worldViewProj );
 
-                                                           
+
             Sce.Pss.Core.Vector4 materialColour = col.ToVector4().ToPSS();
             _program.SetUniformValue( _program.FindUniform( "MaterialColor" ), ref materialColour );
         }
@@ -1839,30 +1836,30 @@ namespace Platform.Psm
     {
         Sce.Pss.Core.Graphics.ShaderProgram _program;
         Sce.Pss.Core.Graphics.GraphicsContext _gfxContext;
-        
+
         public Unlit_PositionTexture_ShaderEffectPass(Sce.Pss.Core.Graphics.GraphicsContext gfxContext, Sce.Pss.Core.Graphics.ShaderProgram program)
         {
             _gfxContext = gfxContext;
             _program = program;
         }
-        
+
         public void Apply()
         {
             _gfxContext.SetShaderProgram( _program );
         }
     }
-    
+
     public class Unlit_PositionTexture
         : IShader
     {
         Sce.Pss.Core.Graphics.ShaderProgram _program;
         Sce.Pss.Core.Graphics.GraphicsContext _gfxContext;
-            
+
         Unlit_PositionTexture_ShaderEffectPass[] _pass;
-        
+
 
         public Unlit_PositionTexture(
-            Sce.Pss.Core.Graphics.GraphicsContext gfxContext, 
+            Sce.Pss.Core.Graphics.GraphicsContext gfxContext,
             Sce.Pss.Core.Graphics.ShaderProgram program)
         {
             _gfxContext = gfxContext;
@@ -1870,8 +1867,8 @@ namespace Platform.Psm
             _program.SetUniformBinding(0, "WorldViewProj");
             _program.SetAttributeBinding( 0, "a_Position" ) ;
             _program.SetAttributeBinding( 1, "a_TexCoord" ) ;
-            
-            _pass = new Unlit_PositionTexture_ShaderEffectPass[] { new Unlit_PositionTexture_ShaderEffectPass(_gfxContext, _program) }; 
+
+            _pass = new Unlit_PositionTexture_ShaderEffectPass[] { new Unlit_PositionTexture_ShaderEffectPass(_gfxContext, _program) };
         }
 
         public IEffectPass[] Passes
@@ -1888,7 +1885,7 @@ namespace Platform.Psm
             Matrix view = Matrix.Identity;
             Matrix proj = Matrix.Identity;
             Colour col = Colour.White;
-            
+
             foreach (var param in settings.Keys)
             {
                 if (param == "_world")
@@ -1916,13 +1913,13 @@ namespace Platform.Psm
                     continue;
                 }
             }
-            
-            
+
+
             var worldViewProj = (world * view * proj).ToPSS();
-            
+
             _program.SetUniformValue( 0, ref worldViewProj );
 
-                                                           
+
             Sce.Pss.Core.Vector4 materialColour = col.ToVector4().ToPSS();
             _program.SetUniformValue( _program.FindUniform( "MaterialColor" ), ref materialColour );
         }
@@ -1939,8 +1936,8 @@ namespace Platform.Psm
             _vertexDeclaration = vertexDeclaration;
             _pssBuffer = buffer;
         }
-        public VertexDeclaration VertexDeclaration 
-        { 
+        public VertexDeclaration VertexDeclaration
+        {
             get
             {
                 return _vertexDeclaration;
@@ -1950,28 +1947,28 @@ namespace Platform.Psm
         public void SetData<T>(T[] data) where T : struct, IVertexType
         {
             // TODO: FIX THIS METHOD, IT IS SHIT AND SLOW, SHOULD NOT BE HARDCODED
-            
+
             var vertPosData = data as VertexPosition[];
             if( vertPosData != null ){ this.SetVertPosData( vertPosData ); return; }
-            
+
             var vertPosColData = data as VertexPositionColour[];
             if( vertPosColData != null ){ this.SetVertPosColData( vertPosColData ); return; }
-            
+
             var vertPosNormData = data as VertexPositionNormal[];
             if( vertPosNormData != null ){ this.SetVertPosNormData( vertPosNormData ); return; }
-            
+
             var vertPosNormColData = data as VertexPositionNormalColour[];
             if( vertPosNormColData != null ){ this.SetVertPosNormColData( vertPosNormColData ); return; }
-            
+
             var vertPosNormTexData = data as VertexPositionNormalTexture[];
             if( vertPosNormTexData != null ){ this.SetVertPosNormTexData( vertPosNormTexData ); return; }
-            
+
             var vertPosNormTexColData = data as VertexPositionNormalTextureColour[];
             if( vertPosNormTexColData != null ){ this.SetVertPosNormTexColData( vertPosNormTexColData ); return; }
-            
+
             throw new System.NotImplementedException();
         }
-        
+
         public void GetData<T>(T[] data) where T : struct, IVertexType
         {
             throw new System.NotImplementedException();
@@ -1980,89 +1977,89 @@ namespace Platform.Psm
         void SetVertPosData(VertexPosition[] data)
         {
             var _pos = new List<Sce.Pss.Core.Vector3>();
-            
+
             foreach(var dat in data)
             {
                 _pos.Add(dat.Position.ToPSS());
             }
-            
+
             _pssBuffer.SetVertices(0, _pos.ToArray());
         }
-        
+
         void SetVertPosColData(VertexPositionColour[] data)
         {
             var _pos = new List<Sce.Pss.Core.Vector3>();
             var _colour = new List<Sce.Pss.Core.Vector4>();
-            
+
             foreach(var dat in data)
             {
                 _pos.Add(dat.Position.ToPSS());
                 _colour.Add(dat.Colour.ToVector4().ToPSS());
             }
-            
+
             _pssBuffer.SetVertices(0, _pos.ToArray());
             _pssBuffer.SetVertices(1, _colour.ToArray());
         }
-        
+
         void SetVertPosNormData(VertexPositionNormal[] data)
         {
             var _pos = new List<Sce.Pss.Core.Vector3>();
             var _normal = new List<Sce.Pss.Core.Vector3>();
-            
+
             foreach(var dat in data)
             {
                 _pos.Add(dat.Position.ToPSS());
                 _normal.Add(dat.Normal.ToPSS());
             }
-            
+
             _pssBuffer.SetVertices(0, _pos.ToArray());
             _pssBuffer.SetVertices(1, _normal.ToArray());
         }
-        
+
         void SetVertPosNormColData(VertexPositionNormalColour[] data)
         {
             var _pos = new List<Sce.Pss.Core.Vector3>();
             var _normal = new List<Sce.Pss.Core.Vector3>();
             var _colour = new List<Sce.Pss.Core.Vector4>();
-            
+
             foreach(var dat in data)
             {
                 _pos.Add(dat.Position.ToPSS());
                 _normal.Add(dat.Normal.ToPSS());
                 _colour.Add(dat.Colour.ToVector4().ToPSS());
             }
-            
+
             _pssBuffer.SetVertices(0, _pos.ToArray());
             _pssBuffer.SetVertices(1, _normal.ToArray());
             _pssBuffer.SetVertices(2, _colour.ToArray());
-            
+
         }
-        
+
         void SetVertPosNormTexData(VertexPositionNormalTexture[] data)
         {
             var _pos = new List<Sce.Pss.Core.Vector3>();
             var _normal = new List<Sce.Pss.Core.Vector3>();
             var _texture = new List<Sce.Pss.Core.Vector2>();
-            
+
             foreach(var dat in data)
             {
                 _pos.Add(dat.Position.ToPSS());
                 _normal.Add(dat.Normal.ToPSS());
                 _texture.Add(dat.UV.ToPSS());
             }
-            
+
             _pssBuffer.SetVertices(0, _pos.ToArray());
             _pssBuffer.SetVertices(1, _normal.ToArray());
             _pssBuffer.SetVertices(2, _texture.ToArray());
         }
-        
+
         void SetVertPosNormTexColData(VertexPositionNormalTextureColour[] data)
         {
             var _pos = new List<Sce.Pss.Core.Vector3>();
             var _normal = new List<Sce.Pss.Core.Vector3>();
             var _texture = new List<Sce.Pss.Core.Vector2>();
             var _colour = new List<Sce.Pss.Core.Vector4>();
-            
+
             foreach(var dat in data)
             {
                 _pos.Add(dat.Position.ToPSS());
@@ -2070,13 +2067,13 @@ namespace Platform.Psm
                 _texture.Add(dat.UV.ToPSS());
                 _colour.Add(dat.Colour.ToVector4().ToPSS());
             }
-            
+
             _pssBuffer.SetVertices(0, _pos.ToArray());
             _pssBuffer.SetVertices(1, _normal.ToArray());
             _pssBuffer.SetVertices(2, _texture.ToArray());
             _pssBuffer.SetVertices(3, _colour.ToArray());
         }
-        
+
         public int VertexCount
         {
             get
@@ -2091,39 +2088,39 @@ namespace Platform.Psm
     {
         Sce.Pss.Core.Graphics.ShaderProgram _program;
         Sce.Pss.Core.Graphics.GraphicsContext _gfxContext;
-        
+
         public Gouraud_PositionNormal_EffectPass(Sce.Pss.Core.Graphics.GraphicsContext gfxContext, Sce.Pss.Core.Graphics.ShaderProgram program)
         {
             _gfxContext = gfxContext;
             _program = program;
         }
-        
+
         public void Apply()
         {
             _gfxContext.SetShaderProgram( _program );
         }
     }
-    
+
     public class Gouraud_PositionNormal
         : IShader
     {
         Sce.Pss.Core.Graphics.ShaderProgram _program;
         Sce.Pss.Core.Graphics.GraphicsContext _gfxContext;
-            
+
         Gouraud_PositionNormal_EffectPass[] _pass;
-        
+
 
         public Gouraud_PositionNormal(
-            Sce.Pss.Core.Graphics.GraphicsContext gfxContext, 
+            Sce.Pss.Core.Graphics.GraphicsContext gfxContext,
             Sce.Pss.Core.Graphics.ShaderProgram program)
         {
             _gfxContext = gfxContext;
             _program = program;
-            _program.SetUniformBinding(0, "WorldViewProj");     
+            _program.SetUniformBinding(0, "WorldViewProj");
             _program.SetAttributeBinding( 0, "a_Position" ) ;
             _program.SetAttributeBinding( 1, "a_Normal" ) ;
-            
-            _pass = new Gouraud_PositionNormal_EffectPass[] { new Gouraud_PositionNormal_EffectPass(_gfxContext, _program) }; 
+
+            _pass = new Gouraud_PositionNormal_EffectPass[] { new Gouraud_PositionNormal_EffectPass(_gfxContext, _program) };
         }
 
         public IEffectPass[] Passes
@@ -2140,7 +2137,7 @@ namespace Platform.Psm
             Matrix view = Matrix.Identity;
             Matrix proj = Matrix.Identity;
             Colour col = Colour.White;
-            
+
             foreach (var param in settings.Keys)
             {
                 if (param == "_world")
@@ -2168,51 +2165,51 @@ namespace Platform.Psm
                     continue;
                 }
             }
-            
-            
+
+
             Matrix blimeyWorldViewProj = (world * view * proj);
-            
+
             Sce.Pss.Core.Matrix4 sceWorldViewProj = blimeyWorldViewProj.ToPSS();
-            
+
             _program.SetUniformValue( 0, ref sceWorldViewProj );
-            
+
             Matrix invWorld = Matrix.Invert(world);
-            
-            
+
+
             Sce.Pss.Core.Vector3 lightPos = new Sce.Pss.Core.Vector3( 0.0f, 15.0f, 13.0f );
             // model local Light Direction
             Sce.Pss.Core.Matrix4 worldInverse = invWorld.ToPSS();
-            Sce.Pss.Core.Vector4 localLightPos4 = 
+            Sce.Pss.Core.Vector4 localLightPos4 =
                 worldInverse * (new Sce.Pss.Core.Vector4( lightPos, 1.0f ));
-            Sce.Pss.Core.Vector3 localLightPos = 
+            Sce.Pss.Core.Vector3 localLightPos =
                 new Sce.Pss.Core.Vector3( localLightPos4.X, localLightPos4.Y, localLightPos4.Z );
 
             _program.SetUniformValue( _program.FindUniform( "LocalLightPosition" ), ref localLightPos );
-    
-            
+
+
             Sce.Pss.Core.Vector3 camPos = proj.Translation.ToPSS();
-            
+
             // model local eye
             Sce.Pss.Core.Vector4 localEye4 = worldInverse * (new Sce.Pss.Core.Vector4( camPos, 1.0f ));
             Sce.Pss.Core.Vector3 localEye = new Sce.Pss.Core.Vector3( localEye4.X, localEye4.Y, localEye4.Z);
-    
+
             _program.SetUniformValue( _program.FindUniform( "EyePosition" ), ref localEye );
-    
+
 
             // light
             Sce.Pss.Core.Vector4 i_a = new Sce.Pss.Core.Vector4( 1.0f, 1.0f, 1.0f, 1.0f );
             _program.SetUniformValue( _program.FindUniform( "IAmbient" ), ref i_a );
-            
+
             Sce.Pss.Core.Vector4 i_d = new Sce.Pss.Core.Vector4( 1.0f, 1.0f, 1.0f, 1.0f );
             _program.SetUniformValue( _program.FindUniform( "IDiffuse" ), ref i_d );
-    
+
             // material
             Sce.Pss.Core.Vector4 k_a = new Sce.Pss.Core.Vector4( 0.2f, 0.2f, 0.2f, 1.0f );
             _program.SetUniformValue( _program.FindUniform( "KAmbient" ), ref k_a );
-    
+
             Sce.Pss.Core.Vector4 k_d    = col.ToVector4().ToPSS();
             _program.SetUniformValue( _program.FindUniform( "KDiffuse" ), ref k_d );
-    
+
             Sce.Pss.Core.Vector4 k_s = new Sce.Pss.Core.Vector4( 1.0f, 1.0f, 1.0f, 1.0f );
             _program.SetUniformValue( _program.FindUniform( "KSpecular" ), ref k_s );
             _program.SetUniformValue( _program.FindUniform( "Shininess" ), 5.0f );
@@ -2227,7 +2224,7 @@ namespace Platform.Psm
             base.Reset();
 
             var gamePadData = Sce.Pss.Core.Input.GamePad.GetData(0);
-            
+
             if (gamePadData.Buttons.HasFlag(Sce.Pss.Core.Input.GamePadButtons.Down))
                 base.DPad.Down = ButtonState.Pressed;
 

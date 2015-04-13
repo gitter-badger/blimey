@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey.AssetBuilder.Configuration
+namespace Blimey.Asset
 {
     using System;
     using System.Collections.Generic;
@@ -52,7 +52,7 @@ namespace Blimey.AssetBuilder.Configuration
         /// includes.
         /// </summary>
         public List<String> Files { get; set; }
-        
+
         /// <summary>
         /// The importer that will load the resource file and convert it into an Asset.
         /// </summary>
@@ -63,8 +63,8 @@ namespace Blimey.AssetBuilder.Configuration
         /// </summary>
         public Dictionary<String, Object> AssetImporterSettings { get; set; }
     }
-    
-    
+
+
     public class Processor
     {
         /// <summary>
@@ -75,9 +75,9 @@ namespace Blimey.AssetBuilder.Configuration
         /// <summary>
         ///
         /// </summary>
-        public Dictionary<String, Object> AssetProcessorSettings { get; set; }   
+        public Dictionary<String, Object> AssetProcessorSettings { get; set; }
     }
-    
+
     /// <summary>
     /// A resource defines a collection of
     /// files for a given collection of platforms, which
@@ -90,13 +90,13 @@ namespace Blimey.AssetBuilder.Configuration
         /// are built for.
         /// </summary>]
         public List<String> Platforms { get; set; }
-        
+
         /// <summary>
         /// Every source set needs exactly one importer with take it from
         /// resource -> asset.
         /// </summary>
         public Importer Importer { get; set; }
-        
+
         /// <summary>
         /// Optionally a source set can define a pipeline of sequential asset
         /// processors which get called one by one, each mutating the originally

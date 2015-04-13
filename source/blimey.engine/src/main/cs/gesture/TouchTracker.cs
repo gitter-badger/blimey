@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Runtime.InteropServices;
@@ -42,6 +42,8 @@ namespace Blimey
     using System.Diagnostics;
 
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
 
     using System.Linq;
@@ -57,15 +59,15 @@ namespace Blimey
         List<Touch> samples = new List<Touch>();
         ScreenSpecification screenSpec;
         PanelSpecification panelSpec;
-        Engine engine;
+        Platform platform;
 
         internal TouchTracker(
-            Engine engine,
+            Platform platform,
             ScreenSpecification displayMode,
             PanelSpecification panelMode,
             string id )
         {
-            this.engine = engine;
+            this.platform = platform;
             this.screenSpec = displayMode;
             this.panelSpec = panelMode;
             this.id = id;
@@ -111,8 +113,8 @@ namespace Blimey
             {
                 case TouchPositionSpace.RealWorld:
 
-                    if(engine.Host.CurrentOrientation == DeviceOrientation.Default ||
-                       engine.Host.CurrentOrientation == DeviceOrientation.Upsidedown)
+                    if(platform.Host.CurrentOrientation == DeviceOrientation.Default ||
+                       platform.Host.CurrentOrientation == DeviceOrientation.Upsidedown)
                     {
                         multiplier = new Vector2(pps.X, pps.Y);
                     }
@@ -125,28 +127,28 @@ namespace Blimey
 
                 case TouchPositionSpace.Screen:
 
-                    if (this.engine.Host.CurrentOrientation == DeviceOrientation.Upsidedown )
+                    if (this.platform.Host.CurrentOrientation == DeviceOrientation.Upsidedown )
                     {
                         pos.Y = - pos.Y;
                         pos.X = - pos.X;
                     }
-                    else if (this.engine.Host.CurrentOrientation == DeviceOrientation.Leftside )
+                    else if (this.platform.Host.CurrentOrientation == DeviceOrientation.Leftside )
                     {
                         Single temp = pos.X;
                         pos.X = -pos.Y;
                         pos.Y = temp;
                     }
-                    else if(this.engine.Host.CurrentOrientation == DeviceOrientation.Rightside )
+                    else if(this.platform.Host.CurrentOrientation == DeviceOrientation.Rightside )
                     {
                         Single temp = pos.X;
                         pos.X = pos.Y;
                         pos.Y = -temp;
                     }
 
-                    Int32 w = this.engine.Status.Width;
-                    Int32 h = this.engine.Status.Height;
+                    Int32 w = this.platform.Status.Width;
+                    Int32 h = this.platform.Status.Height;
 
-                    //this.engine.System.GetEffectiveDisplaySize(ref w, ref h);
+                    //this.platform.System.GetEffectiveDisplaySize(ref w, ref h);
 
                     multiplier = new Vector2(w, h);
 

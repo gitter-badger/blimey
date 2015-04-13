@@ -3,24 +3,25 @@ namespace EngineDemo
     using System;
     using MonoMac.Foundation;
     using MonoMac.AppKit;
-    using Blimey;
+    using Blimey.Engine;
+    using Blimey.Platform;
 
 	class AppDelegate: NSApplicationDelegate, IDisposable
 	{
-        Engine engine;
+        Platform platform;
 
 		public override void FinishedLaunching (NSObject notification)
 		{
-            var appSettings = new AppSettings ("Cor") {
+            var appSettings = new AppSettings ("Blimey Engine Demo") {
                 FullScreen = true,
                 MouseGeneratesTouches = true
             };
 
-            var entryPoint = new Demo();
+            var entryPoint = new Demo ();
+            var api = new Api ();
 
-            var platform = new Platform ();
-
-            engine = new Engine (platform, appSettings, entryPoint);
+            platform = new Platform (api);
+            platform.Start (appSettings, entryPoint);
 		}
 
 		public override bool ApplicationShouldTerminateAfterLastWindowClosed (NSApplication sender)
@@ -30,7 +31,8 @@ namespace EngineDemo
 
         public new void Dispose ()
         {
-            engine.Dispose ();
+            platform.Stop ();
+            platform.Dispose ();
             base.Dispose ();
         }
 	}

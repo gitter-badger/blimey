@@ -38,10 +38,10 @@ using System.Runtime.InteropServices;
 using System.Linq;
 using System.Collections.Generic;
 using Fudge;
+using Blimey.Platform;
+using Blimey.Asset;
 
-using Blimey.Assets.Pipeline;
-
-namespace Blimey.Assets.Builders
+namespace Blimey.Engine
 {
     /// <summary>
     /// Takes an bitmap resource and turns it into a Texture asset.

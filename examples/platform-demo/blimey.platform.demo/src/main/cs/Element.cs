@@ -39,16 +39,16 @@ namespace PlatformDemo
     using System.IO;
     using Abacus.SinglePrecision;
     using Fudge;
-    using Blimey;
+    using Blimey.Platform;
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
 
     public interface IElement
     {
-        void Load (Engine engine);
+        void Load (Platform platform);
         void Unload ();
-        void Update(Engine engine, AppTime time);
-        void Render (Engine engine, Matrix44 projection);
+        void Update(Platform platform, AppTime time);
+        void Render (Platform platform, Matrix44 projection);
 
         Matrix44 World { get; }
         Matrix44 View { get; }
@@ -81,13 +81,13 @@ namespace PlatformDemo
             View = Matrix44.CreateLookAt (Vector3.UnitZ, Vector3.Forward, Vector3.Up);
         }
 
-        public void Load (Engine engine)
+        public void Load (Platform platform)
         {
             var meshResource = new TMesh ();
 
             // put the mesh resource onto the gpu
-            vertexBuffer = engine.Graphics.CreateVertexBuffer (meshResource.VertexDeclaration, meshResource.VertArray.Length);
-            indexBuffer = engine.Graphics.CreateIndexBuffer (meshResource.IndexArray.Length);
+            vertexBuffer = platform.Graphics.CreateVertexBuffer (meshResource.VertexDeclaration, meshResource.VertArray.Length);
+            indexBuffer = platform.Graphics.CreateIndexBuffer (meshResource.IndexArray.Length);
 
             vertexBuffer.SetData <TVertType>(meshResource.VertArray);
             indexBuffer.SetData(meshResource.IndexArray);
@@ -105,7 +105,7 @@ namespace PlatformDemo
             vertexBuffer = null;
         }
 
-        public void Update(Engine engine, AppTime time)
+        public void Update (Platform platform, AppTime time)
         {
             Matrix44 rotation =
                 Matrix44.CreateFromAxisAngle(Vector3.Backward, Maths.Sin(time.Elapsed)) *
@@ -117,11 +117,11 @@ namespace PlatformDemo
             World = worldScale * rotation;
         }
 
-        public void Render (Engine engine, Matrix44 projection)
+        public void Render (Platform platform, Matrix44 projection)
         {
-            engine.Graphics.SetActive (vertexBuffer);
-            engine.Graphics.SetActive (indexBuffer);
-            engine.Graphics.SetActive (texture, 0);
+            platform.Graphics.SetActive (vertexBuffer);
+            platform.Graphics.SetActive (indexBuffer);
+            platform.Graphics.SetActive (texture, 0);
 
             // set the variable on the shader to our desired variables
             shader.ResetSamplers ();
@@ -132,9 +132,9 @@ namespace PlatformDemo
             shader.SetVariable ("Colour", Colour);
             shader.SetSamplerTarget ("TextureSampler", 0);
 
-            engine.Graphics.SetActive (shader);
+            platform.Graphics.SetActive (shader);
 
-            engine.Graphics.DrawIndexedPrimitives (
+            platform.Graphics.DrawIndexedPrimitives (
                 PrimitiveType.TriangleList, 0, 0, vertexBuffer.VertexCount, 0, indexBuffer.IndexCount / 3);
         }
     }

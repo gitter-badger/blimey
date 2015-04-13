@@ -32,25 +32,27 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Abacus.SinglePrecision;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    // 
+    //
     // SCENE RENDERER
     //
     sealed class SceneRenderer
     {
-        readonly Engine engine;
+        readonly Platform platform;
 
-        internal SceneRenderer(Engine cor)
+        internal SceneRenderer(Platform platform)
         {
-            this.engine = cor;
+            this.platform = platform;
         }
 
         internal void Render(Scene scene)
@@ -58,7 +60,7 @@ namespace Blimey
             // Clear the background colour if the scene settings want us to.
             if (scene.Configuration.BackgroundColour.HasValue)
             {
-                this.engine.Graphics.ClearColourBuffer(scene.Configuration.BackgroundColour.Value);
+                this.platform.Graphics.ClearColourBuffer(scene.Configuration.BackgroundColour.Value);
             }
 
             foreach (var renderPass in scene.Configuration.RenderPasses)
@@ -99,7 +101,7 @@ namespace Blimey
             // #0: Apply this pass' clear settings.
             if (pass.Configuration.ClearDepthBuffer)
             {
-                this.engine.Graphics.ClearDepthBuffer();
+                this.platform.Graphics.ClearDepthBuffer();
             }
 
             var cam = scene.CameraManager.GetActiveCamera(pass.Name);
@@ -118,7 +120,7 @@ namespace Blimey
                 // materials define render state, set it now, just the once
                 using (new ProfilingTimer (t => FrameStats.Add ("MaterialUpdateRenderStateTime", t)))
                 {
-                    material.UpdateRenderState (engine.Graphics);
+                    material.UpdateRenderState (platform.Graphics);
                 }
 
                 // perhaps something else has used this shader before us.  for now, to be sure
@@ -176,30 +178,30 @@ namespace Blimey
 
                     using (new ProfilingTimer(t => FrameStats.Add ("SetCullModeTime", t)))
                     {
-                        engine.Graphics.SetCullMode(mr.CullMode);
+                        platform.Graphics.SetCullMode(mr.CullMode);
                     }
 
                     using (new ProfilingTimer(t => FrameStats.Add ("ActivateVertexBufferTime", t)))
                     {
                         // Set our vertex declaration, vertex buffer, and index buffer.
-                        engine.Graphics.SetActive(mr.Mesh.VertexBuffer);
+                        platform.Graphics.SetActive(mr.Mesh.VertexBuffer);
                     }
 
                     using (new ProfilingTimer(t => FrameStats.Add ("ActivateIndexBufferTime", t)))
                     {
                         // Set our vertex declaration, vertex buffer, and index buffer.
-                        engine.Graphics.SetActive(mr.Mesh.IndexBuffer);
+                        platform.Graphics.SetActive(mr.Mesh.IndexBuffer);
                     }
 
                     using (new ProfilingTimer(t => FrameStats.Add ("ActivateShaderTime", t)))
                     {
-                        engine.Graphics.SetActive (material.Shader);
+                        platform.Graphics.SetActive (material.Shader);
                     }
 
                     using (new ProfilingTimer(t => FrameStats.Add ("DrawTime", t)))
                     {
                         FrameStats.Add ("DrawIndexedPrimitivesCount", 1);
-                        engine.Graphics.DrawIndexedPrimitives (
+                        platform.Graphics.DrawIndexedPrimitives (
                             PrimitiveType.TriangleList, 0, 0,
                             mr.Mesh.VertexBuffer.VertexCount, 0, mr.Mesh.TriangleCount);
                     }
@@ -209,13 +211,13 @@ namespace Blimey
             using (new ProfilingTimer (t => FrameStats.Add ("PrimitiveRendererTime", t)))
             {
                 // #2: Render all primitives that are associated with this pass.
-                scene.Blimey.PrimitiveRenderer.Render (this.engine.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
+                scene.Engine.PrimitiveRenderer.Render (this.platform.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
 
             }
             using (new ProfilingTimer (t => FrameStats.Add ("DebugRendererTime", t)))
             {
                 // #3: Render all debug primitives that are associated with this pass.
-                scene.Blimey.DebugRenderer.Render (this.engine.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
+                scene.Engine.DebugRenderer.Render (this.platform.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
             }
         }
 

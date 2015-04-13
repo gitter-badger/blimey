@@ -6,13 +6,6 @@
 // │  |______  /____/__|__|_|  /\___  > ____|                               │ \\
 // │         \/              \/     \/\/                                    │ \\
 // │                                                                        │ \\
-// │ A partial implementation of the Blimey Plaform API targeting           │ \\
-// │ Microsoft's WPF framework.  This partial implementation does not       │ \\
-// │ implement any of the Blimey Plaform API's `gfx` calls and is intended  │ \\
-// │ to be compiled alongside either:                                       │ \\
-// │ - the OpenTK partial file with PLATFORM_WPF defined.                   │ \\
-// │ - the Xna4 partial file with PLATFORM_XNA4_X86 defined.                │ \\
-// │                                                                        │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
 // │ Copyright © 2012 - 2015 ~ Blimey Engine (http://www.blimey.io)         │ \\
 // ├────────────────────────────────────────────────────────────────────────┤ \\
@@ -40,7 +33,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Platform
 {
     using System;
     using System.Collections.Generic;
@@ -49,95 +42,31 @@ namespace Blimey
     using global::OpenTK;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    public class Foo { public Int32 bar; }
 
-    public class Platform
-		: IPlatform
+    public partial class Api
+        : IApi
     {
+        public void Run () { gameWindow.Run (24, 32); }
 
-        public Platform()
-        {
-            var program = new Program();
-            var api = new Api();
-
-            api.InitialiseDependencies(program);
-            program.InitialiseDependencies(api);
-
-            Api = api;
-			_linuxProgram = program;
-
-        }
-
-		public void Run()
-		{
-			_linuxProgram.Run (24, 32);
-		}
-
-		private readonly Program _linuxProgram;
-		public IProgram Program { get { return _linuxProgram; } }
-        public IApi Api { get; private set; }
-    }
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public sealed class Program : GameWindow, IProgram
-    {
-        Api Api { get; set; }
-
-		internal void InitialiseDependencies(Api api) { Api = api; }
-        Action update;
-        Action render;
-
-		bool loaded = false;
-		bool firstUpdate = false;
-
-        public void Start(IApi platformImplementation, Action update, Action render)
-        {
-            this.update = update;
-            this.render = render;
-
-			Load += (object sender, EventArgs e) => { this.loaded = true; };
-
-			this.UpdateFrame += (object sender, FrameEventArgs e) =>
-			{
-				if( !firstUpdate )
-				{
-					firstUpdate = true;
-				}
-
-				double milliseconds = ComputeTimeSlice();
-				Accumulate(milliseconds);
-				update();
-				Animate(milliseconds);
-			};
-
-			this.RenderFrame += (object sender, FrameEventArgs e) =>
-			{
-				//don't render until we have loaded and run the first update
-				if (!loaded || !firstUpdate)
-					return;
-
-				render();
-				SwapBuffers();
-			};
-        }
-
-        public void Stop()
-        {
-        }
-
-        float rotation = 0;
-        private void Animate(double milliseconds)
-        {
-            float deltaRotation = (float)milliseconds / 20.0f;
-            rotation += deltaRotation;
-
-            //glControl.Invalidate();
-        }
+        GameWindow gameWindow = null;
 
         double accumulator = 0;
         int idleCounter = 0;
-        private void Accumulate(double milliseconds)
+        Stopwatch sw = new Stopwatch();
+        float rotation = 0;
+        bool loaded = false;
+        bool firstUpdate = false;
+
+        Action update;
+        Action render;
+
+        void Animate (double milliseconds)
+        {
+            float deltaRotation = (float)milliseconds / 20.0f;
+            rotation += deltaRotation;
+        }
+
+        void Accumulate (double milliseconds)
         {
             idleCounter++;
             accumulator += milliseconds;
@@ -148,8 +77,7 @@ namespace Blimey
             }
         }
 
-        Stopwatch sw = new Stopwatch();
-        private double ComputeTimeSlice()
+        double ComputeTimeSlice()
         {
             sw.Stop();
             double timeslice = sw.Elapsed.TotalMilliseconds;
@@ -158,20 +86,34 @@ namespace Blimey
             return timeslice;
         }
 
-    }
+        void OnLoad (object sender, EventArgs e){ this.loaded = true; }
 
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public partial class Api
-        : IApi
-    {
-        Program Program { get; set; }
-
-        internal void InitialiseDependencies(Program program)
+        void OnUpdate (object sender, FrameEventArgs e)
         {
-            Program = program;
+            if( !firstUpdate )
+            {
+                firstUpdate = true;
+            }
+
+            double milliseconds = ComputeTimeSlice();
+            Accumulate(milliseconds);
+            update();
+            Animate(milliseconds);
         }
+
+        void OnRender (object sender, FrameEventArgs e)
+        {
+            //don't render until we have loaded and run the first update
+            if (!loaded || !firstUpdate)
+            {
+                return;
+            }
+
+            render ();
+
+            gameWindow.SwapBuffers();
+        }
+
 
         /**
          * Audio
@@ -241,19 +183,46 @@ namespace Blimey
         /**
          * Application
          */
+        public void app_Start (Action update, Action render)
+        {
+            this.update = update;
+            this.render = render;
+
+            gameWindow = new GameWindow ();
+
+            gameWindow.Load += OnLoad;
+            gameWindow.UpdateFrame += OnUpdate;
+            gameWindow.RenderFrame += OnRender;
+        }
+
+        public void app_Stop ()
+        {
+            gameWindow.Load -= OnLoad;
+            gameWindow.UpdateFrame -= OnUpdate;
+            gameWindow.RenderFrame -= OnRender;
+
+            gameWindow = null;
+
+            this.update = null;
+            this.render = null;
+
+            this.loaded = false;
+            this.firstUpdate = false;
+        }
+
         public System.Boolean? app_IsFullscreen()
         {
-			return Program.WindowState == WindowState.Fullscreen;
+			return gameWindow.WindowState == WindowState.Fullscreen;
         }
 
         public Int32 app_GetWidth()
         {
-			return Program.Width;
+			return gameWindow.Width;
         }
 
         public Int32 app_GetHeight()
         {
-			return Program.Height;
+			return gameWindow.Height;
         }
 
 

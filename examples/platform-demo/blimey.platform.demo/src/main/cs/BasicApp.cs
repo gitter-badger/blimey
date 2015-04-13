@@ -39,7 +39,7 @@ namespace PlatformDemo
     using System.IO;
     using Abacus.SinglePrecision;
     using Fudge;
-    using Blimey;
+    using Blimey.Platform;
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
 
@@ -63,9 +63,9 @@ namespace PlatformDemo
             new VertPosCol (new Vector3 (1f, -1f, 0.5f), Rgba32.Green)
         };
 
-        public void Start (Engine engine)
+        public void Start (Platform platform)
         {
-            shader = Shaders.CreateUnlit (engine);
+            shader = Shaders.CreateUnlit (platform);
 
             Int32 texSize = 256;
             Int32 gridSize = 4;
@@ -95,7 +95,7 @@ namespace PlatformDemo
                 }
             }
 
-            tex = engine.Graphics.CreateTexture (TextureFormat.Rgba32, texSize, texSize, texData );
+            tex = platform.Graphics.CreateTexture (TextureFormat.Rgba32, texSize, texSize, texData );
 
             elements = new IElement[]
             {
@@ -118,12 +118,12 @@ namespace PlatformDemo
             while (elements.Length > numCols * numRows) ++numRows;
 
 
-            foreach (var element in elements) element.Load (engine);
+            foreach (var element in elements) element.Load (platform);
         }
 
-        public Boolean Update (Engine cor, AppTime time)
+        public Boolean Update (Platform platform, AppTime time)
         {
-            if (cor.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape))
+            if (platform.Input.Keyboard.IsFunctionalKeyDown (FunctionalKey.Escape))
                 return true;
 
             colourChangeProgress += time.Delta / colourChangeTime;
@@ -136,16 +136,16 @@ namespace PlatformDemo
             }
 
             foreach (var element in elements)
-                element.Update (cor, time);
+                element.Update (platform, time);
 
             return false;
         }
 
-        public void Render (Engine cor)
+        public void Render (Platform platform)
         {
-            cor.Graphics.Reset ();
-            cor.Graphics.ClearColourBuffer(Rgba32.Lerp (currentColour, nextColour, colourChangeProgress));
-            cor.Graphics.ClearDepthBuffer(1f);
+            platform.Graphics.Reset ();
+            platform.Graphics.ClearColourBuffer(Rgba32.Lerp (currentColour, nextColour, colourChangeProgress));
+            platform.Graphics.ClearDepthBuffer(1f);
 
             var world = Matrix44.Identity;
             var view = Matrix44.CreateLookAt (Vector3.UnitZ, Vector3.Forward, Vector3.Up);
@@ -157,8 +157,8 @@ namespace PlatformDemo
             shader.SetVariable ("Projection", projection);
             shader.SetVariable ("Colour", Rgba32.White);
             shader.SetSamplerTarget ("TextureSampler", 0);
-            cor.Graphics.SetActive (shader, testLines[0].VertexDeclaration);
-            cor.Graphics.DrawUserPrimitives (PrimitiveType.LineList, testLines, 0, testLines.Length / 2);
+            platform.Graphics.SetActive (shader, testLines[0].VertexDeclaration);
+            platform.Graphics.DrawUserPrimitives (PrimitiveType.LineList, testLines, 0, testLines.Length / 2);
 
             // grid index
             Int32 x = 0;
@@ -173,13 +173,13 @@ namespace PlatformDemo
 
                 Matrix44 proj = Matrix44.CreateOrthographicOffCenter (left, right, bottom, top, 1f, -1f);
 
-                element.Render (cor, proj);
+                element.Render (platform, proj);
 
                 if (++x >= numCols) {x = 0; --y;}
             }
         }
 
-        public void Stop (Engine cor)
+        public void Stop (Platform platform)
         {
             foreach (var element in elements)
                 element.Unload ();

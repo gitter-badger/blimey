@@ -35,7 +35,9 @@
 namespace EngineDemo
 {
     using System;
-    using Blimey;
+    using Blimey.Platform;
+    using Blimey.Asset;
+    using Blimey.Engine;
     using System.Collections.Generic;
     using Abacus.SinglePrecision;
 
@@ -43,7 +45,7 @@ namespace EngineDemo
 
 	public class Demo : App
 	{
-        public Demo() : base (new Scene_MainMenu()) {}
+        public Demo() : base (new Scene_MainMenu ()) {}
 	}
 
 
@@ -54,12 +56,12 @@ namespace EngineDemo
         public static List<Entity> Generate(Scene scene)
         {
             var objects = new List<Entity>();
-            var cubeModel = new CubePrimitive(scene.Cor.Graphics);
-            var billboardModel = new BillboardPrimitive(scene.Cor.Graphics);
-            var teapotModel = new TeapotPrimitive(scene.Cor.Graphics);
-            var cylinderModel = new CylinderPrimitive(scene.Cor.Graphics);
-            var sphereModel = new SpherePrimitive(scene.Cor.Graphics);
-            var torusModel = new TorusPrimitive(scene.Cor.Graphics);
+            var cubeModel = new CubePrimitive(scene.Platform.Graphics);
+            var billboardModel = new BillboardPrimitive(scene.Platform.Graphics);
+            var teapotModel = new TeapotPrimitive(scene.Platform.Graphics);
+            var cylinderModel = new CylinderPrimitive(scene.Platform.Graphics);
+            var sphereModel = new SpherePrimitive(scene.Platform.Graphics);
+            var torusModel = new TorusPrimitive(scene.Platform.Graphics);
 
             objects.Add(CreateShapeGO(scene, "Default", cubeModel.Mesh, 2));
             objects.Add(CreateShapeGO(scene, "Default", billboardModel.Mesh));
@@ -127,15 +129,15 @@ namespace EngineDemo
         public static Shader VertexLitShader;
         public static Shader PixelLitShader;
 
-        public static void Create (Engine cor, Blimey blimey)
+        public static void Create (Platform platform, Engine engine)
         {
-            var unlitShaderAsset = blimey.Assets.Load<ShaderAsset>("assets/unlit.bba");
-            var vertexLitShaderAsset = blimey.Assets.Load<ShaderAsset>("assets/vertex_lit.bba");
-            var pixelLitShaderAsset = blimey.Assets.Load<ShaderAsset>("assets/pixel_lit.bba");
+            var unlitShaderAsset = engine.Assets.Load<ShaderAsset>("assets/unlit.bba");
+            var vertexLitShaderAsset = engine.Assets.Load<ShaderAsset>("assets/vertex_lit.bba");
+            var pixelLitShaderAsset = engine.Assets.Load<ShaderAsset>("assets/pixel_lit.bba");
 
-            UnlitShader = cor.Graphics.CreateShader (unlitShaderAsset);
-            VertexLitShader = cor.Graphics.CreateShader (vertexLitShaderAsset);
-            PixelLitShader = cor.Graphics.CreateShader (pixelLitShaderAsset);
+            UnlitShader = platform.Graphics.CreateShader (unlitShaderAsset);
+            VertexLitShader = platform.Graphics.CreateShader (vertexLitShaderAsset);
+            PixelLitShader = platform.Graphics.CreateShader (pixelLitShaderAsset);
         }
 
         public static void Destroy ()

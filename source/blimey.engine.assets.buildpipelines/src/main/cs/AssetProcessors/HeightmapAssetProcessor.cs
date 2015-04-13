@@ -37,9 +37,10 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Linq;
 using System.Collections.Generic;
-using Blimey.Assets.Pipeline;
+using Blimey.Platform;
+using Blimey.Asset;
 
-namespace Blimey.Assets.Builders
+namespace Blimey.Engine
 {
     /// <summary>
     /// Takes an image resource and turns it into a Texture asset.

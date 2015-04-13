@@ -1,17 +1,17 @@
 Searching 379 files for "BlimeyMathsHelper" (case sensitive)
 
-/Users/ash.pook/repos/ajp/blimey/source/blimey.engine/src/main/cs/maths/MathsUtils.cs:
+/Users/ash.pook/repos/ajp/blimey/source/blimey.platform/src/main/cs/maths/MathsUtils.cs:
    47      // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-   48  
+   48
    49:     public static class BlimeyMathsHelper
    50      {
    51          public static Single Distance(Single value1, Single value2)
 
-/Users/ash.pook/repos/ajp/blimey/source/blimey.engine/src/main/cs/maths/Transform.cs:
+/Users/ash.pook/repos/ajp/blimey/source/blimey.platform/src/main/cs/maths/Transform.cs:
   225          }
-  226  
+  226
   227:         public Vector3 EulerAngles { get { return BlimeyMathsHelper.QuaternionToEuler (Rotation); } }
-  228  
+  228
   229          public Matrix44 Location {
   ...
   243          public Vector3 LocalEulerAngles
@@ -19,23 +19,23 @@ Searching 379 files for "BlimeyMathsHelper" (case sensitive)
   245:             get { return BlimeyMathsHelper.QuaternionToEuler(_localRotation); }
   246:             set { _localRotation = BlimeyMathsHelper.EulerToQuaternion(value); }
   247          }
-  248  
+  248
 
-/Users/ash.pook/repos/ajp/blimey/source/blimey.engine/src/main/cs/util/RandomGenerator.cs:
+/Users/ash.pook/repos/ajp/blimey/source/blimey.platform/src/main/cs/util/RandomGenerator.cs:
   144              float upperX = data.X + variation;
   145              float x = GetRandomSingle(lowerX, upperX);
   146:             data.X = BlimeyMathsHelper.Limit(ref x, 0.0f, 1.0f);
-  147  
+  147
   148              float lowerY = data.Y - variation;
   149              float upperY = data.Y + variation;
   150              float y = GetRandomSingle(lowerY, upperY);
   151:             data.Y = BlimeyMathsHelper.Limit(ref y, 0.0f, 1.0f);
-  152  
+  152
   153              float lowerZ = data.Z - variation;
   154              float upperZ = data.Z + variation;
   155              float z = GetRandomSingle(lowerZ, upperZ);
   156:             data.Z = BlimeyMathsHelper.Limit(ref z, 0.0f, 1.0f);
-  157  
-  158  
+  157
+  158
 
 7 matches across 3 files

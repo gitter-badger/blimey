@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Runtime.InteropServices;
@@ -45,6 +45,8 @@ namespace Blimey
 
     using Abacus.SinglePrecision;
     using Fudge;
+    using Blimey.Platform;
+    using Blimey.Asset;
     using Oats;
 
 
@@ -59,6 +61,35 @@ namespace Blimey
         public Int32 Width { get { return Data.GetLength (0); } }
 
         public Int32 Height { get { return Data.GetLength (1); } }
+
+        internal void DumpToPPM (string file)
+        {
+            using (var writer = new StreamWriter (file))
+            {
+                int w = Data.GetLength (0);
+                int h = Data.GetLength (1);
+                writer.WriteLine ("P3");
+                writer.WriteLine (w + " " + h);
+                writer.WriteLine ("255");
+
+                for (int y = 0; y < h; ++y)
+                {
+                    for (int x = 0; x < w; ++x)
+                    {
+                        writer.Write (Data [x, y].R);
+                        writer.Write (" ");
+                        writer.Write (Data [x, y].G);
+                        writer.Write (" ");
+                        writer.Write (Data [x, y].B);
+
+                        if (x == w - 1)
+                            writer.Write ("\n");
+                        else
+                            writer.Write ("  ");
+                    }
+                }
+            }
+        }
     }
 
 

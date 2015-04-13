@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Runtime.InteropServices;
@@ -42,24 +42,26 @@ namespace Blimey
     using System.Diagnostics;
 
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
 
     using System.Linq;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-        public class InputEventSystem
+    public class InputEventSystem
     {
         MultiTouchController controller;
 
-        internal InputEventSystem(Engine  engine)
+        internal InputEventSystem(Platform platform)
         {
-            this.engine = engine;
+            this.platform = platform;
 
-            this.controller = engine.Input.MultiTouchController;
+            this.controller = platform.Input.MultiTouchController;
         }
 
-        Engine engine;
+        Platform platform;
 
         public delegate void GestureDelegate(Gesture gesture);
 
@@ -117,16 +119,16 @@ namespace Blimey
             // go through all active touches
             foreach (var touch in controller.TouchCollection)
             {
-                // find the corresponding tracker
+                // find the platformresponding tracker
 
                 TouchTracker tracker = touchTrackers.Find(x => (x.TouchID == touch.ID));
 
                 if (tracker == null)
                 {
                     tracker = new TouchTracker(
-                        this.engine,
-                        this.engine.Host.ScreenSpecification,
-                        this.engine.Host.PanelSpecification,
+                        this.platform,
+                        this.platform.Host.ScreenSpecification,
+                        this.platform.Host.PanelSpecification,
                         touch.ID );
 
                     touchTrackers.Add(tracker);

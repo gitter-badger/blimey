@@ -38,11 +38,11 @@ using ServiceStack;
 using ServiceStack.Text;
 using Oats;
 using System.Collections.Generic;
-
-using Blimey.Assets.Pipeline;
+using Blimey.Platform;
+using Blimey.Asset;
 using System.Text;
 
-namespace Blimey.Assets.Builders
+namespace Blimey.Engine
 {
 	public class OpenTKShaderImporter
 		: AssetImporter <ShaderAsset>

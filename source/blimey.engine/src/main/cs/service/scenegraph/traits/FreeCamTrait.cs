@@ -32,12 +32,14 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public class FreeCamTrait
@@ -70,8 +72,8 @@ namespace Blimey
         {
             var input = new FreeCamInputs();
 
-            var xbox = this.Parent.Owner.Cor.Input.Xbox360Gamepad;
-            var keyboard = this.Parent.Owner.Cor.Input.Keyboard;
+            var xbox = this.Parent.Owner.Platform.Input.Xbox360Gamepad;
+            var keyboard = this.Parent.Owner.Platform.Input.Keyboard;
 
             input.mTranslation = new Vector3(
                 xbox.Thumbsticks.Left.X,

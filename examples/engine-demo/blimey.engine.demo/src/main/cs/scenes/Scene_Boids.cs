@@ -37,7 +37,9 @@ namespace EngineDemo
     using System;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Blimey;
+    using Blimey.Platform;
+    using Blimey.Asset;
+    using Blimey.Engine;
     using System.Collections.Generic;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -337,8 +339,8 @@ namespace EngineDemo
             orthoCam.NearPlaneDistance = 0;
             orthoCam.FarPlaneDistance = 2;
             orthoCam.Projection = CameraProjectionType.Orthographic;
-			orthoCam.ortho_width = this.Cor.Status.Width;
-			orthoCam.ortho_height = this.Cor.Status.Height;
+			orthoCam.ortho_width = this.Platform.Status.Width;
+			orthoCam.ortho_height = this.Platform.Status.Height;
 			orthoCam.ortho_zoom = 8f;
 
             this.RuntimeConfiguration.SetRenderPassCameraTo("Default", newCamSo);
@@ -353,9 +355,9 @@ namespace EngineDemo
             Int32 extraH = 1500;
 
             levelleft = -wpadding - extraW;
-			levelright = this.Cor.Status.Width + wpadding + extraW;
+			levelright = this.Platform.Status.Width + wpadding + extraW;
             leveltop = -hpadding - extraH;
-            levelbottom = this.Cor.Status.Height + hpadding + extraH;
+            levelbottom = this.Platform.Status.Height + hpadding + extraH;
 
             cageleft = levelleft + 250;
             cageright = levelright - 250;
@@ -376,25 +378,25 @@ namespace EngineDemo
             float top = (float) leveltop;
             float bottom = (float)levelbottom;
 
-            this.Blimey.DebugRenderer.AddLine(
+            this.Engine.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(left, top, 0),
 				new Vector3(right, top, 0),
 				Rgba32.Red);
 
-            this.Blimey.DebugRenderer.AddLine(
+            this.Engine.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(left, top, 0),
 				new Vector3(left, bottom, 0),
 				Rgba32.Red);
 
-            this.Blimey.DebugRenderer.AddLine(
+            this.Engine.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(left, bottom, 0),
 				new Vector3(right, bottom, 0),
 				Rgba32.Red);
 
-            this.Blimey.DebugRenderer.AddLine(
+            this.Engine.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(right, top, 0),
 				new Vector3(right, bottom, 0),
@@ -405,25 +407,25 @@ namespace EngineDemo
             top = (float) cagetop;
             bottom = (float) cagebottom;
 
-            this.Blimey.DebugRenderer.AddLine(
+            this.Engine.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(left, top, 0),
 				new Vector3(right, top, 0),
 				Rgba32.Yellow);
 
-            this.Blimey.DebugRenderer.AddLine(
+            this.Engine.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(left, top, 0),
 				new Vector3(left, bottom, 0),
 				Rgba32.Yellow);
 
-            this.Blimey.DebugRenderer.AddLine(
+            this.Engine.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(left, bottom, 0),
 				new Vector3(right, bottom, 0),
 				Rgba32.Yellow);
 
-            this.Blimey.DebugRenderer.AddLine(
+            this.Engine.DebugRenderer.AddLine(
                 "Gui",
 				new Vector3(right, top, 0),
 				new Vector3(right, bottom, 0),
@@ -432,7 +434,7 @@ namespace EngineDemo
 			Single boidHalfSize = 15f;
 			foreach (var boid in boidManager.Prey)
 			{
-				this.Blimey.DebugRenderer.AddQuad(
+				this.Engine.DebugRenderer.AddQuad(
 	                "Gui",
 					new Vector3(boid.position.X - boidHalfSize, boid.position.Y - boidHalfSize, 0),
 					new Vector3(boid.position.X + boidHalfSize, boid.position.Y - boidHalfSize, 0),
@@ -444,9 +446,9 @@ namespace EngineDemo
 
         public override Scene Update(AppTime time)
         {
-			if (Cor.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
-				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
-				Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
+			if (Platform.Input.GenericGamepad.Buttons.East == ButtonState.Pressed ||
+				Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Escape) ||
+				Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Backspace))
 			{
 				return new Scene_MainMenu();
 			}

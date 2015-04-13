@@ -35,7 +35,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Blimey.Assets.Pipeline
+namespace Blimey.Asset
 {
     public class AssetProcessorSettings
     {

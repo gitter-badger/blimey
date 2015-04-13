@@ -32,14 +32,14 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Platform
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
 
     // ────────────────────────────────────────────────────────────────────── //
-    
+
     public static class BinaryWriterExtensions
     {
         public static void Write7BitEncodedInt32 (this BinaryWriter me, Int32 value)

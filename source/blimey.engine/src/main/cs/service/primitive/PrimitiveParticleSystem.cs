@@ -32,13 +32,15 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Abacus.SinglePrecision;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -73,7 +75,7 @@ namespace Blimey
         public float fColourStartVar;
         public float fColourEndVar;
     }
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public class PrimitiveParticleSystem

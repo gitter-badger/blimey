@@ -37,7 +37,9 @@ namespace EngineDemo
     using System;
     using Fudge;
     using Abacus.SinglePrecision;
-    using Blimey;
+    using Blimey.Platform;
+    using Blimey.Asset;
+    using Blimey.Engine;
     using System.Collections.Generic;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
@@ -67,32 +69,33 @@ namespace EngineDemo
         Triple q;
 
         Texture tex = null;
+
         public override void Start ()
         {
-            var ta = Blimey.Assets.Load <TextureAsset> ("assets/bg1.bba");
-            tex = Cor.Graphics.CreateTexture (ta);
+            var ta = Engine.Assets.Load <TextureAsset> ("assets/blimey_fnt_tex.bba");
+            tex = Platform.Graphics.CreateTexture (ta);
             q = new Triple ();
             q.blend = BlendMode.Default;
             q.tex = tex;
             q.v [0].Colour = Rgba32.Blue;
-            q.v [0].Position.X = 0.0f;
-            q.v [0].Position.Y = 0.0f;
-            q.v [0].UV = new Vector2 (0, 0);
+            q.v [0].Position.X = -0.5f;
+            q.v [0].Position.Y = 0f;
+            q.v [0].UV = new Vector2 (0, 1);
             q.v [1].Colour = Rgba32.Green;
-            q.v [1].Position.X = 0.5f;
+            q.v [1].Position.X = 0f;
             q.v [1].Position.Y = 0.5f;
-            q.v [1].UV = new Vector2 (1f, 1f);
+            q.v [1].UV = new Vector2 (1, 0);
             q.v [2].Colour = Rgba32.Red;
-            q.v [2].Position.X = 0f;
+            q.v [2].Position.X = -0.5f;
             q.v [2].Position.Y = 0.5f;
-            q.v [2].UV = new Vector2 (0, 1f);
+            q.v [2].UV = new Vector2 (0, 0);
 
             _returnScene = this;
 
-            CommonDemoResources.Create (Cor, Blimey);
+            CommonDemoResources.Create (Platform, Engine);
 
 			this.Configuration.BackgroundColour = _startCol;
-            var teaPotModel = new TeapotPrimitive(this.Cor.Graphics);
+            var teaPotModel = new TeapotPrimitive(this.Platform.Graphics);
 
             var so1 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel.Mesh, 1);
             var so2 = RandomObjectHelper.CreateShapeGO(this, "Gui", teaPotModel.Mesh, 1);
@@ -131,8 +134,8 @@ namespace EngineDemo
             _menuSceneObjects.Add(so7);
             _menuSceneObjects.Add(so8);
 
-            this.Blimey.InputEventSystem.Tap += this.OnTap;
-            this.Blimey.InputEventSystem.Flick += this.OnFlick;
+            this.Engine.InputEventSystem.Tap += this.OnTap;
+            this.Engine.InputEventSystem.Flick += this.OnFlick;
 
         }
 
@@ -141,10 +144,9 @@ namespace EngineDemo
             _menuSceneObjects.Clear();
             _menuSceneObjects = null;
             _menuItemMaterials = null;
-            this.Blimey.InputEventSystem.Tap -= this.OnTap;
-            this.Blimey.InputEventSystem.Flick -= this.OnFlick;
-            this.Cor.Graphics.DestroyTexture (q.tex);
-
+            this.Engine.InputEventSystem.Tap -= this.OnTap;
+            this.Engine.InputEventSystem.Flick -= this.OnFlick;
+            this.Platform.Graphics.DestroyTexture (q.tex);
             tex.Dispose ();
             tex = null;
             CommonDemoResources.Destroy ();
@@ -185,23 +187,23 @@ namespace EngineDemo
         {
             if (_inputTimer == 0f)
             {
-				if (Cor.Input.GenericGamepad.DPad.Down == ButtonState.Pressed ||
-                    Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Left))
+				if (Platform.Input.GenericGamepad.DPad.Down == ButtonState.Pressed ||
+                    Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Left))
                 {
                     this.DecreaseSelected();
                     _inputTimer = _doneSomethingTime;
                 }
 
-				if (Cor.Input.GenericGamepad.DPad.Right == ButtonState.Pressed ||
-                    Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Right))
+				if (Platform.Input.GenericGamepad.DPad.Right == ButtonState.Pressed ||
+                    Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Right))
                 {
                     this.IncreaseSelected();
                     _inputTimer = _doneSomethingTime;
 
                 }
 
-				if (Cor.Input.GenericGamepad.Buttons.South == ButtonState.Pressed ||
-                    Cor.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Enter))
+				if (Platform.Input.GenericGamepad.Buttons.South == ButtonState.Pressed ||
+                    Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Enter))
                 {
                     return GetSceneForCurrentSelection();
                 }
@@ -232,7 +234,7 @@ namespace EngineDemo
 				return new Scene_Boids ();
 
             if (_selectedIndex == 6)
-                return new Scene_Go ();
+                return new Scene_Mushrooms ();
 
             if (_selectedIndex == 7)
                 return new Scene_Parallax ();
@@ -242,11 +244,11 @@ namespace EngineDemo
 
         public override Scene Update(AppTime time)
         {
-            this.Blimey.DebugRenderer.AddGrid ("Debug");
+            this.Engine.DebugRenderer.AddGrid ("Debug");
 
             var menuResult = this.CheckForMenuInput();
 
-            this.Blimey.PrimitiveRenderer.AddTriple ("Gui", q);
+            this.Engine.PrimitiveRenderer.AddTriple ("Gui", q);
 
             if (menuResult != this)
                 return menuResult;

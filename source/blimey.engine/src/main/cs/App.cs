@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Runtime.InteropServices;
@@ -41,15 +41,17 @@ namespace Blimey
     using System.IO;
     using System.Linq;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
     using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
-    /// Blimey provides its own implementation of <see cref="Cor.IApp"/> which means you don't need to do so yourself,
+    /// Blimey provides its own implementation of <see cref="IApp"/> which means you don't need to do so yourself,
     /// instead instantiate <see cref="Blimey.Blimey"/> by providing it with the <see cref="Blimey.Scene"/> you wish
-    /// to run and use it as you would a custom <see cref="Cor.IApp"/> implementation.
+    /// to run and use it as you would a custom <see cref="IApp"/> implementation.
     /// Blimey takes care of the Update and Render loop for you, all you need to do is author <see cref="Blimey.Scene"/>
     /// objects for Blimey to handle.
     /// </summary>
@@ -124,7 +126,7 @@ namespace Blimey
 
         Scene startScene;
         SceneManager sceneManager;
-        protected Blimey blimey;
+        protected Engine engine;
 
         FpsHelper fps;
         FrameBufferHelper frameBuffer;
@@ -140,18 +142,18 @@ namespace Blimey
         /// <summary>
         /// Blimey's initilisation rountine.
         /// </summary>
-        public virtual void Start(Engine cor)
+        public virtual void Start(Platform platform)
         {
             fps = new FpsHelper();
-            frameBuffer = new FrameBufferHelper(cor.Graphics);
-            blimey = new Blimey (cor);
-            sceneManager = new SceneManager(cor, blimey, startScene);
+            frameBuffer = new FrameBufferHelper(platform.Graphics);
+            engine = new Engine (platform);
+            sceneManager = new SceneManager(platform, engine, startScene);
         }
 
         /// <summary>
         /// Blimey's root update loop.
         /// </summary>
-        public virtual Boolean Update(Engine cor, AppTime time)
+        public virtual Boolean Update(Platform platform, AppTime time)
         {
             FrameStats.SlowLog ();
             FrameStats.Reset ();
@@ -168,12 +170,14 @@ namespace Blimey
         /// <summary>
         /// Blimey's render loop.
         /// </summary>
-        public virtual void Render(Engine cor)
+        public virtual void Render(Platform platform)
         {
             using (new ProfilingTimer(t => FrameStats.Add ("RenderTime", t)))
             {
                 fps.LogRender();
                 frameBuffer.Clear();
+
+
                 this.sceneManager.Render();
             }
         }
@@ -181,7 +185,7 @@ namespace Blimey
         /// <summary>
         /// Blimey's termination routine.
         /// </summary>
-        public virtual void Stop (Engine cor)
+        public virtual void Stop (Platform platform)
         {
         }
     }

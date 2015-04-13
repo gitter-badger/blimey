@@ -32,12 +32,14 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public sealed class CameraTrait
@@ -86,8 +88,8 @@ namespace Blimey
                 ref camUp,
                 out _view);
 
-            Single width = (Single) this.Cor.Status.Width;
-            Single height = (Single)this.Cor.Status.Height;
+            Single width = (Single) this.Platform.Status.Width;
+            Single height = (Single)this.Platform.Status.Height;
 
             if (Projection == CameraProjectionType.Orthographic)
             {

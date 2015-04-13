@@ -38,7 +38,7 @@ using System.Runtime.InteropServices;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Blimey.Assets.Pipeline
+namespace Blimey.Asset
 {
     public abstract class AssetProcessor
     {

@@ -337,7 +337,7 @@ blimey_engine_demo.path = 'examples/engine-demo/blimey.engine.demo/src/main/cs/'
 blimey_engine_demo.defines = []
 blimey_engine_demo.references = [
   abacus, blimey_platform_packed, blimey_platform_foundation, blimey_platform_model,
-  blimey_platform, blimey_asset_model, blimey_engine_model, oats, blimey_engine]
+  blimey_platform, blimey_asset_model, blimey_engine_model, oats, blimey_engine, blimey_platform_util]
 blimey_engine_demo.additional_references = []
 blimey_engine_demo.additional_search_paths = []
 blimey_engine_demo.additional_sources = []
@@ -478,6 +478,6 @@ print ''
 if fail_count == 0:
   print bcolors.OKGREEN + 'BUILD SUCCEEDED' + bcolors.ENDC
 else:
-  print bcolors.FAIL + 'BUILD FAILED: ' + str(fail_count) + '/' + len(projects) + bcolors.ENDC
+  print bcolors.FAIL + 'BUILD FAILED: ' + str(fail_count) + '/' + str (len (projects)) + bcolors.ENDC
 
 sys.exit (fail_count)

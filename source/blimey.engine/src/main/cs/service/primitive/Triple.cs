@@ -32,16 +32,18 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Abacus.SinglePrecision;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-    
+
     public sealed class Triple
     {
         public VertexPositionTextureColour[] v = new VertexPositionTextureColour[3];

@@ -36,7 +36,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Platform
 {
     using System;
     using System.Runtime.InteropServices;
@@ -46,22 +46,6 @@ namespace Blimey
 
     using Fudge;
     using Abacus.SinglePrecision;
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public interface IPlatform
-    {
-        IProgram Program { get; }
-        IApi Api { get; }
-    }
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public interface IProgram
-    {
-        void Start (IApi platformImplementation, Action update, Action render);
-        void Stop ();
-    }
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
@@ -161,6 +145,8 @@ namespace Blimey
         /*
          * Application
          */
+        void                    app_Start                               (Action update, Action render);
+        void                    app_Stop                                ();
         Boolean?                app_IsFullscreen                        ();
         Int32                   app_GetWidth                            ();
         Int32                   app_GetHeight                           ();

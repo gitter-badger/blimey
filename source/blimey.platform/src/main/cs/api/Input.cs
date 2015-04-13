@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Platform
 {
     using System;
     using System.Runtime.InteropServices;
@@ -45,7 +45,7 @@ namespace Blimey
 
     using Abacus.SinglePrecision;
     using Fudge;
-    
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     /// <summary>
@@ -58,7 +58,8 @@ namespace Blimey
     public sealed class Input
     {
         readonly IApi platform;
-        readonly Boolean mouseGeneratesTouches;
+
+        Boolean mouseGeneratesTouches;
         String currentMouseTouchId = null;
 
         readonly InputFrame inputFrame = new InputFrame ();
@@ -83,10 +84,9 @@ namespace Blimey
             }
         }
 
-        internal Input (IApi platform, Boolean mouseGeneratesTouches)
+        internal Input (IApi platform)
         {
             this.platform = platform;
-            this.mouseGeneratesTouches = mouseGeneratesTouches;
 
             this.Xbox360Gamepad = humanInputDevices.AddEx (new Xbox360Gamepad (PlayerIndex.One));
             this.PsmGamepad = humanInputDevices.AddEx (new PsmGamepad ());
@@ -94,6 +94,12 @@ namespace Blimey
             this.Mouse = humanInputDevices.AddEx (new Mouse ());
             this.Keyboard = humanInputDevices.AddEx (new Keyboard ());
             this.GenericGamepad = new GenericGamepad ();
+        }
+
+        public void UpdateSettings (Boolean mouseGeneratesTouches)
+        {
+
+            this.mouseGeneratesTouches = mouseGeneratesTouches;
         }
 
         public override int GetHashCode ()

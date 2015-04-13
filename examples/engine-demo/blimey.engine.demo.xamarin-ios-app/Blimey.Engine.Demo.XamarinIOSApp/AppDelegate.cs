@@ -1,14 +1,14 @@
 namespace EngineDemo
 {
     using System;
-    using Blimey;
+    using Blimey.Platform;
 
 	[MonoTouch.Foundation.Register ("AppDelegate")]
 	public partial class AppDelegate
 		: MonoTouch.UIKit.UIApplicationDelegate
         , IDisposable
     {
-        Engine engine;
+        Platform platform;
 
 		// This method is invoked when the application has
 		// loaded its UI and is ready to run
@@ -22,15 +22,18 @@ namespace EngineDemo
             };
 
             var entryPoint = new Demo ();
+            var api = new Api ();
 
-            engine = new Engine(new Platform (), appSettings, entryPoint);
+            platform = new Platform (api);
+            platform.Start (appSettings, entryPoint);
 
 			return true;
 		}
 
         public new void Dispose ()
         {
-            engine.Dispose ();
+            platform.Stop ();
+            platform.Dispose ();
             base.Dispose ();
         }
 	}

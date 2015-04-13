@@ -32,7 +32,7 @@
 // │ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 │ \\
 // └────────────────────────────────────────────────────────────────────────┘ \\
 
-namespace Blimey
+namespace Blimey.Engine
 {
     using System;
     using System.Runtime.InteropServices;
@@ -41,6 +41,8 @@ namespace Blimey
     using System.IO;
     using System.Linq;
     using Fudge;
+    using global::Blimey.Platform;
+    using global::Blimey.Asset;
     using Abacus.SinglePrecision;
     using Oats;
 
@@ -48,18 +50,18 @@ namespace Blimey
 
     public sealed class Assets
     {
-        readonly Engine engine;
+        readonly Platform platform;
 
-        internal Assets (Engine engine)
+        internal Assets (Platform platform)
         {
-            this.engine = engine;
+            this.platform = platform;
         }
 
         public T Load<T> (String assetId)
             where T
             : class, IAsset
         {
-            using (Stream stream = engine.Resources.GetFileStream (assetId))
+            using (Stream stream = platform.Resources.GetFileStream (assetId))
             {
                 using (var channel = new SerialisationChannel<BinaryStreamSerialiser> (stream, ChannelMode.Read))
                 {
@@ -78,7 +80,7 @@ namespace Blimey
             Byte f2 = sc.Read <Byte> ();
 
             if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'A')
-                throw new Exception ("Asset file doesn't have the correct header.");
+                throw new Exception ("Asset file doesn't have the platformrect header.");
 
             // file version
             Byte fileVersion = sc.Read <Byte> ();
