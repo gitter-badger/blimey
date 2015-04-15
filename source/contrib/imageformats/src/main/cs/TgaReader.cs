@@ -68,29 +68,29 @@ namespace DmitryBrant.ImageFormats
     public static class TgaReader
     {
         /// <summary>
-        /// Reads a Targa (.TGA) image from a stream.
+        /// Reads a Targa (.TGA) image from a zStream.
         /// </summary>
-        /// <param name="stream">Stream from which to read the image.</param>
+        /// <param name="zStream">Stream from which to read the image.</param>
         /// <returns>Bitmap that contains the image that was read.</returns>
-        public static Byte[] Load(Stream stream)
+        public static void Load (Stream zStream, out Int32 zWidth, out Int32 zHeight, out Byte[] zData)
         {
-            BinaryReader reader = new BinaryReader(stream);
+            BinaryReader reader = new BinaryReader(zStream);
 
             UInt32[] palette = null;
             byte[] scanline = null;
 
-            byte idFieldLength = (byte)stream.ReadByte();
-            byte colorMap = (byte)stream.ReadByte();
-            byte imageType = (byte)stream.ReadByte();
+            byte idFieldLength = (byte)zStream.ReadByte();
+            byte colorMap = (byte)zStream.ReadByte();
+            byte imageType = (byte)zStream.ReadByte();
             UInt16 colorMapOffset = LittleEndian(reader.ReadUInt16());
             UInt16 colorsUsed = LittleEndian(reader.ReadUInt16());
-            byte bitsPerColorMap = (byte)stream.ReadByte();
+            byte bitsPerColorMap = (byte)zStream.ReadByte();
             UInt16 xCoord = LittleEndian(reader.ReadUInt16());
             UInt16 yCoord = LittleEndian(reader.ReadUInt16());
             UInt16 imgWidth = LittleEndian(reader.ReadUInt16());
             UInt16 imgHeight = LittleEndian(reader.ReadUInt16());
-            byte bitsPerPixel = (byte)stream.ReadByte();
-            byte imgFlags = (byte)stream.ReadByte();
+            byte bitsPerPixel = (byte)zStream.ReadByte();
+            byte imgFlags = (byte)zStream.ReadByte();
 
             if (colorMap > 1)
                 throw new ApplicationException("This is not a valid TGA file.");
@@ -98,7 +98,7 @@ namespace DmitryBrant.ImageFormats
             if (idFieldLength > 0)
             {
                 byte[] idBytes = new byte[idFieldLength];
-                stream.Read(idBytes, 0, idFieldLength);
+                zStream.Read(idBytes, 0, idFieldLength);
                 string idStr = System.Text.Encoding.ASCII.GetString(idBytes);
 
                 //do something with the ID string...
@@ -145,9 +145,9 @@ namespace DmitryBrant.ImageFormats
                         for (int i = colorMapOffset; i < paletteEntries; i++)
                         {
                             palette[i] = 0xFF000000;
-                            palette[i] |= (UInt32)(stream.ReadByte() << 16);
-                            palette[i] |= (UInt32)(stream.ReadByte() << 8);
-                            palette[i] |= (UInt32)(stream.ReadByte());
+                            palette[i] |= (UInt32)(zStream.ReadByte() << 16);
+                            palette[i] |= (UInt32)(zStream.ReadByte() << 8);
+                            palette[i] |= (UInt32)(zStream.ReadByte());
                         }
                     }
                     else if (bitsPerColorMap == 32)
@@ -155,10 +155,10 @@ namespace DmitryBrant.ImageFormats
                         for (int i = colorMapOffset; i < paletteEntries; i++)
                         {
                             palette[i] = 0xFF000000;
-                            palette[i] |= (UInt32)(stream.ReadByte() << 16);
-                            palette[i] |= (UInt32)(stream.ReadByte() << 8);
-                            palette[i] |= (UInt32)(stream.ReadByte());
-                            palette[i] |= (UInt32)(stream.ReadByte() << 24);
+                            palette[i] |= (UInt32)(zStream.ReadByte() << 16);
+                            palette[i] |= (UInt32)(zStream.ReadByte() << 8);
+                            palette[i] |= (UInt32)(zStream.ReadByte());
+                            palette[i] |= (UInt32)(zStream.ReadByte() << 24);
                         }
                     }
                     else if ((bitsPerColorMap == 15) || (bitsPerColorMap == 16))
@@ -166,8 +166,8 @@ namespace DmitryBrant.ImageFormats
                         int hi, lo;
                         for (int i = colorMapOffset; i < paletteEntries; i++)
                         {
-                            hi = stream.ReadByte();
-                            lo = stream.ReadByte();
+                            hi = zStream.ReadByte();
+                            lo = zStream.ReadByte();
                             palette[i] = 0xFF000000;
                             palette[i] |= (UInt32)((hi & 0x1F) << 3) << 16;
                             palette[i] |= (UInt32)((((lo & 0x3) << 3) + ((hi & 0xE0) >> 5)) << 3) << 8;
@@ -184,7 +184,7 @@ namespace DmitryBrant.ImageFormats
                         switch (bitsPerPixel)
                         {
                             case 8:
-                                stream.Read(scanline, 0, scanline.Length);
+                                zStream.Read(scanline, 0, scanline.Length);
                                 if (imageType == 1)
                                 {
                                     for (int x = 0; x < imgWidth; x++)
@@ -211,8 +211,8 @@ namespace DmitryBrant.ImageFormats
                                 int hi, lo;
                                 for (int x = 0; x < imgWidth; x++)
                                 {
-                                    hi = stream.ReadByte();
-                                    lo = stream.ReadByte();
+                                    hi = zStream.ReadByte();
+                                    lo = zStream.ReadByte();
 
                                     data[4 * (y * imgWidth + x)] = (byte)((hi & 0x1F) << 3);
                                     data[4 * (y * imgWidth + x) + 1] = (byte)((((lo & 0x3) << 3) + ((hi & 0xE0) >> 5)) << 3);
@@ -221,7 +221,7 @@ namespace DmitryBrant.ImageFormats
                                 }
                                 break;
                             case 24:
-                                stream.Read(scanline, 0, scanline.Length);
+                                zStream.Read(scanline, 0, scanline.Length);
                                 for (int x = 0; x < imgWidth; x++)
                                 {
                                     data[4 * (y * imgWidth + x)] = scanline[x * 3];
@@ -231,7 +231,7 @@ namespace DmitryBrant.ImageFormats
                                 }
                                 break;
                             case 32:
-                                stream.Read(scanline, 0, scanline.Length);
+                                zStream.Read(scanline, 0, scanline.Length);
                                 for (int x = 0; x < imgWidth; x++)
                                 {
                                     data[4 * (y * imgWidth + x)] = scanline[x * 4];
@@ -250,16 +250,16 @@ namespace DmitryBrant.ImageFormats
                     int bytesPerPixel = bitsPerPixel / 8;
                     scanline = new byte[imgWidth * 4];
 
-                    while (y >= 0 && stream.Position < stream.Length)
+                    while (y >= 0 && zStream.Position < zStream.Length)
                     {
-                        i = stream.ReadByte();
+                        i = zStream.ReadByte();
                         if (i < 128)
                         {
                             i++;
                             switch (bitsPerPixel)
                             {
                                 case 8:
-                                    stream.Read(scanline, 0, i * bytesPerPixel);
+                                    zStream.Read(scanline, 0, i * bytesPerPixel);
                                     if (imageType == 9)
                                     {
                                         for (int j = 0; j < i; j++)
@@ -290,8 +290,8 @@ namespace DmitryBrant.ImageFormats
                                     int hi, lo;
                                     for (int j = 0; j < i; j++)
                                     {
-                                        hi = stream.ReadByte();
-                                        lo = stream.ReadByte();
+                                        hi = zStream.ReadByte();
+                                        lo = zStream.ReadByte();
 
                                         data[4 * (y * imgWidth + x)] = (byte)((hi & 0x1F) << 3);
                                         data[4 * (y * imgWidth + x) + 1] = (byte)((((lo & 0x3) << 3) + ((hi & 0xE0) >> 5)) << 3);
@@ -302,7 +302,7 @@ namespace DmitryBrant.ImageFormats
                                     }
                                     break;
                                 case 24:
-                                    stream.Read(scanline, 0, i * bytesPerPixel);
+                                    zStream.Read(scanline, 0, i * bytesPerPixel);
                                     for (int j = 0; j < i; j++)
                                     {
                                         data[4 * (y * imgWidth + x)] = scanline[j * 3];
@@ -314,7 +314,7 @@ namespace DmitryBrant.ImageFormats
                                     }
                                     break;
                                 case 32:
-                                    stream.Read(scanline, 0, i * bytesPerPixel);
+                                    zStream.Read(scanline, 0, i * bytesPerPixel);
                                     for (int j = 0; j < i; j++)
                                     {
                                         data[4 * (y * imgWidth + x)] = scanline[j * 4];
@@ -335,7 +335,7 @@ namespace DmitryBrant.ImageFormats
                             switch (bitsPerPixel)
                             {
                                 case 8:
-                                    int p = stream.ReadByte();
+                                    int p = zStream.ReadByte();
                                     if (imageType == 9)
                                     {
                                         for (int j = 0; j < i; j++)
@@ -363,8 +363,8 @@ namespace DmitryBrant.ImageFormats
                                     break;
                                 case 15:
                                 case 16:
-                                    int hi = stream.ReadByte();
-                                    int lo = stream.ReadByte();
+                                    int hi = zStream.ReadByte();
+                                    int lo = zStream.ReadByte();
                                     for (int j = 0; j < i; j++)
                                     {
                                         data[4 * (y * imgWidth + x)] = (byte)((hi & 0x1F) << 3);
@@ -376,9 +376,9 @@ namespace DmitryBrant.ImageFormats
                                     }
                                     break;
                                 case 24:
-                                    r = stream.ReadByte();
-                                    g = stream.ReadByte();
-                                    b = stream.ReadByte();
+                                    r = zStream.ReadByte();
+                                    g = zStream.ReadByte();
+                                    b = zStream.ReadByte();
                                     for (int j = 0; j < i; j++)
                                     {
                                         data[4 * (y * imgWidth + x)] = (byte)r;
@@ -390,10 +390,10 @@ namespace DmitryBrant.ImageFormats
                                     }
                                     break;
                                 case 32:
-                                    r = stream.ReadByte();
-                                    g = stream.ReadByte();
-                                    b = stream.ReadByte();
-                                    a = stream.ReadByte();
+                                    r = zStream.ReadByte();
+                                    g = zStream.ReadByte();
+                                    b = zStream.ReadByte();
+                                    a = zStream.ReadByte();
                                     for (int j = 0; j < i; j++)
                                     {
                                         data[4 * (y * imgWidth + x)] = (byte)r;
@@ -417,34 +417,66 @@ namespace DmitryBrant.ImageFormats
                 System.Diagnostics.Debug.WriteLine("Error while processing TGA file: " + e.Message);
             }
 
-
+            bool flipX = false;
+            bool flipY = false;
             int imgOrientation = (imgFlags >> 4) & 0x3;
-            if (imgOrientation == 1)
-                throw new Exception ("todo: flip X");
-            else if (imgOrientation == 2)
-                throw new Exception ("todo: flip Y");
-            else if(imgOrientation == 3)
-                throw new Exception ("todo: flip XY");
 
-            return data;
-/*
+            if (imgOrientation == 1) flipX = true;
+            else if (imgOrientation == 2) flipY = true;
+            else if (imgOrientation == 3)
+            {
+                flipX = true;
+                flipY = true;
+            }
 
-            Bitmap theBitmap = null;
-            theBitmap = new Bitmap((int)imgWidth, (int)imgHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            System.Drawing.Imaging.BitmapData bmpBits = theBitmap.LockBits(new Rectangle(0, 0, theBitmap.Width, theBitmap.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            System.Runtime.InteropServices.Marshal.Copy(data, 0, bmpBits.Scan0, imgWidth * 4 * imgHeight);
-            theBitmap.UnlockBits(bmpBits);
+            UInt32 W_LIM = imgWidth;
+            UInt32 H_LIM = imgHeight;
 
-            int imgOrientation = (imgFlags >> 4) & 0x3;
-            if (imgOrientation == 1)
-                theBitmap.RotateFlip(RotateFlipType.RotateNoneFlipX);
-            else if (imgOrientation == 2)
-                theBitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            else if(imgOrientation == 3)
-                theBitmap.RotateFlip(RotateFlipType.RotateNoneFlipXY);
+            if (flipX && flipY) W_LIM /= 2;
+            else if (flipX) W_LIM /= 2;
+            else if (flipY) H_LIM /= 2;
+            
+            if (flipX || flipY) // copy in place
+            {
+                for (UInt32 sourceX = 0; sourceX < W_LIM; ++sourceX)
+                {
+                    UInt32 targetX = flipX ? imgWidth - sourceX - 1 : sourceX;
 
-            return theBitmap;
-*/
+                    for (UInt32 sourceY = 0; sourceY < H_LIM; ++sourceY)
+                    {
+                        UInt32 sourceI = ((sourceX + (sourceY * imgWidth)) * 4);
+
+                        UInt32 targetY = flipY ? imgHeight - sourceY - 1 : sourceY;
+                        UInt32 targetI = ((targetX + (targetY * imgHeight)) * 4);
+
+                        // Copy
+                        Byte sourceB = data[sourceI + 0];
+                        Byte sourceG = data[sourceI + 1];
+                        Byte sourceR = data[sourceI + 2];
+                        Byte sourceA = data[sourceI + 3];
+
+                        // Overwrite
+                        data[sourceI + 0] = data[targetI + 0];
+                        data[sourceI + 1] = data[targetI + 1];
+                        data[sourceI + 2] = data[targetI + 2];
+                        data[sourceI + 3] = data[targetI + 3];
+
+                        // Paste
+                        data[targetI + 0] = sourceB;
+                        data[targetI + 1] = sourceG;
+                        data[targetI + 2] = sourceR;
+                        data[targetI + 3] = sourceA;
+
+                    }
+                }
+            }
+
+            // assign output
+            zWidth = (int)imgWidth;
+            zHeight = (int)imgHeight;
+            zData = data;
+
+            return;
         }
 
 

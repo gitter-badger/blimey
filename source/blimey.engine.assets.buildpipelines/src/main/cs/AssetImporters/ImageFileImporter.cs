@@ -39,6 +39,7 @@ using Fudge;
 using Blimey.Platform;
 using Blimey.Asset;
 using Hjg.Pngcs;
+using System.IO;
 
 namespace Blimey.Engine
 {
@@ -86,7 +87,34 @@ namespace Blimey.Engine
 
         static Rgba32[,] ReadTGA (String filename)
         {
-            throw new NotImplementedException ();
+            using (var stream = File.OpenRead (filename))
+            {
+                Int32 width;
+                Int32 height;
+                Byte[] data;
+
+                DmitryBrant.ImageFormats.TgaReader.Load (stream, out width, out height, out data);
+
+                Console.WriteLine (string.Format ("Targa info ~ width:{0}, height:{1}, data-length:{2}", width, height, data.LongLength));
+
+                var pixmap = new Rgba32[width, height];
+
+                for (int x = 0; x < width; ++x)
+                {
+                    for (int y = 0; y < height; ++y)
+                    {
+                        int i = ((x + (y * width)) * 4);
+                        Byte b = data[i + 0];
+                        Byte g = data[i + 1];
+                        Byte r = data[i + 2];
+                        Byte a = data[i + 3]; // 3 is defo A
+
+                        pixmap [x, y] = new Rgba32 (r, g, b, a);
+                    }
+                }
+
+                return pixmap;
+            }
         }
 
 		public override AssetImporterOutput <ColourmapAsset> Import (
