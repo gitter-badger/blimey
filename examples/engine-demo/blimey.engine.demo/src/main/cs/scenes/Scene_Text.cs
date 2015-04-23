@@ -41,6 +41,7 @@ namespace EngineDemo
     using Blimey.Asset;
     using Blimey.Engine;
     using System.Collections.Generic;
+    using System.Text.RegularExpressions;
 
     class SpriteFontData
     {
@@ -49,33 +50,83 @@ namespace EngineDemo
         public Int32 LineHeight { get; set; }
         public Int32 BaseLine { get; set; }
 
-        readonly Dictionary <Char, SpriteFontCharacterData> characterData =
+        public readonly Dictionary <Char, SpriteFontCharacterData> CharacterData =
             new Dictionary<Char, SpriteFontCharacterData> ();
 
-        readonly Dictionary <SpriteFontKerningPair, Int32> kerning =
+        public readonly Dictionary <SpriteFontKerningPair, Int32> Kerning =
             new Dictionary<SpriteFontKerningPair, Int32> ();
 
-        public SpriteFontData (String bmFontFile)
+        public static SpriteFontData Parse (String[] lines)
         {
-        }
-        /*
-        #fontFace="Arial" #fontSize=50
-        #lineHeight=56 #baseLine=46 textureWidth=384 #textureHeight=320
-        #textureFile="blimey.png"
-        #charsCount=95
-        #charId=64 #uvStart=(0.0052, 0.0063) #uvEnd=(0.1354, 0.1625) #size=(50.0, 50.0) #xOffset=3 #yOffset=8 #xAdvance=51
-        ...
-        #kerningsCount=64
-        #kerning #first=86 #second=117 #amount=-1
-        ...
-        */
+            var spriteFontData = new SpriteFontData ();
 
+            foreach (var line in lines)
+            {
+                var m0 = Regex.Match (line, "#?fontFace=\"([A-Za-z]+)\" +#?fontSize=([0-9]+)");
+                if (m0.Success)
+                {
+                    spriteFontData.FontFace = m0.GetString (0);
+                    spriteFontData.FontSize = m0.GetInt32 (1);
+                    continue;
+                }
+
+                var m1 = Regex.Match (line, "#?lineHeight=([0-9]+) +#?baseLine=([0-9]+)");
+                if (m1.Success)
+                {
+                    spriteFontData.LineHeight = m1.GetInt32 (0);
+                    spriteFontData.BaseLine = m1.GetInt32 (1);
+                    continue;
+                }
+
+                var m2 = Regex.Match (line, "#?charId=([0-9]+) +#?uvStart=\\(([0-9]+.[0-9]+), ([0-9]+.[0-9]+)\\) +#?uvEnd=\\(([0-9]+.[0-9]+), ([0-9]+.[0-9]+)\\) +#?size=\\(([0-9]+.[0-9]+), ([0-9]+.[0-9]+)\\) +#?xOffset=([0-9]+) +#?yOffset=([0-9]+) +#?xAdvance=([0-9]+)");
+                if (m2.Success)
+                {
+                    Char character = (Char) m2.GetInt32 (0);
+                    var data = new SpriteFontCharacterData ();
+                    data.StartUV = new Vector2 { X = m2.GetSingle (1), Y =  m2.GetSingle (2) };
+                    data.EndUV = new Vector2 { X = m2.GetSingle (3), Y =  m2.GetSingle (4) };
+                    data.Size = new Vector2 { X = m2.GetSingle (5), Y =  m2.GetSingle (6) };
+                    data.XOffset = m2.GetInt32 (7);
+                    data.YOffset = m2.GetInt32 (8);
+                    data.XAdvance = m2.GetInt32 (9);
+                    spriteFontData.CharacterData.Add (character, data);
+                    continue;
+                }
+
+                var m3 = Regex.Match (line, "#?kerning #?first=([0-9]+) +#?second=([0-9]+) +#?amount=(-?[0-9]+)");
+                if (m3.Success)
+                {
+                    var kerningPair = new SpriteFontKerningPair { First = (Char) m3.GetInt32 (0), Second = (Char) m3.GetInt32 (1) };
+                    var kerningAmount = m3.GetInt32 (2);
+                    spriteFontData.Kerning.Add (kerningPair, kerningAmount);
+                    continue;
+                }
+            }
+
+            return spriteFontData;
+        }
     }
 
     struct SpriteFontKerningPair
     {
         public Char First;
         public Char Second;
+
+        public override Int32 GetHashCode () { return First.GetHashCode () ^ Second.GetHashCode (); }
+
+        public override Boolean Equals (Object obj)
+        {
+            if (obj == null) return false;
+            if (obj.GetType () != base.GetType ()) return false;
+            return (this == ((SpriteFontKerningPair)obj));
+        }
+
+        public static Boolean operator == (SpriteFontKerningPair left, SpriteFontKerningPair right)
+        {
+            return (left.First == right.First)
+                && (left.Second == right.Second);
+        }
+        public static Boolean operator != (SpriteFontKerningPair left, SpriteFontKerningPair right) { return !(left == right); }
     }
 
     class SpriteFontCharacterData
