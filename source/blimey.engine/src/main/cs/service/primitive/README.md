@@ -1,1 +1,0 @@
-For batched rendering of Quads and Triangles, plus a bunch of helpers built atop.

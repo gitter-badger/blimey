@@ -46,38 +46,37 @@ namespace Blimey.Engine
     using Abacus.SinglePrecision;
     using Oats;
 
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class App
-        : IApp
+    public partial class RenderPass
     {
-        readonly Engine engine;
 
-        protected Engine Engine { get { return engine; } }
-
-        protected App (Func<Stage> createStartStageFn)
+        public struct Configuration
         {
-            engine = new Engine (createStartStageFn);
-        }
+            public static Configuration Default
+            {
+                get
+                {
+                    var rpc = new Configuration ();
+                    rpc.ClearDepthBuffer = false;
+                    rpc.FogEnabled = false;
+                    rpc.FogColour = Rgba32.CornflowerBlue;
+                    rpc.FogStart = 300.0f;
+                    rpc.FogEnd = 550.0f;
+                    rpc.EnableDefaultLighting = true;
+                    //rpc.CameraProjectionType = CameraProjectionType.Perspective;
+                    return rpc;
+                }
+            }
 
-        public virtual void Start (Platform platform)
-        {
-            engine.Start (platform);
-        }
-
-        public virtual Boolean Update (Platform platform, AppTime time)
-        {
-            return engine.Update (platform, time);
-        }
-
-        public virtual void Render (Platform platform)
-        {
-            engine.Render (platform);
-        }
-
-        public virtual void Stop (Platform platform)
-        {
-            engine.Stop (platform);
+            public Boolean ClearDepthBuffer;
+            public Boolean FogEnabled;
+            public Rgba32 FogColour;
+            public Single FogStart;
+            public Single FogEnd;
+            public Boolean EnableDefaultLighting;
+            //public CameraProjectionType CameraProjectionType;
         }
     }
 }

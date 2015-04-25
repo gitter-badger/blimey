@@ -48,37 +48,11 @@ namespace Blimey.Engine
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class RenderPass
+    public sealed partial class RenderPass
     {
-        public struct RenderPassConfiguration
-        {
-            public static RenderPassConfiguration Default
-            {
-                get
-                {
-                    var rpc = new RenderPassConfiguration ();
-                    rpc.ClearDepthBuffer = false;
-                    rpc.FogEnabled = false;
-                    rpc.FogColour = Rgba32.CornflowerBlue;
-                    rpc.FogStart = 300.0f;
-                    rpc.FogEnd = 550.0f;
-                    rpc.EnableDefaultLighting = true;
-                    rpc.CameraProjectionType = CameraProjectionType.Perspective;
-                    return rpc;
-                }
-            }
-
-            public Boolean ClearDepthBuffer;
-            public Boolean FogEnabled;
-            public Rgba32 FogColour;
-            public Single FogStart;
-            public Single FogEnd;
-            public Boolean EnableDefaultLighting;
-            public CameraProjectionType CameraProjectionType;
-        }
-
         internal RenderPass () {}
+
         public String Name { get; set; }
-        public RenderPassConfiguration Configuration { get; set; }
+        public Configuration Config { get; set; }
     }
 }

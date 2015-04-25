@@ -48,48 +48,40 @@ namespace Blimey.Engine
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class Assets
+    public class FrameGauge
+        : Engine.Component
     {
-        readonly Platform platform;
+        Single fps = 0;
+        TimeSpan sampleSpan;
+        Stopwatch stopwatch;
+        Int32 sampleFrames;
 
-        internal Assets (Platform platform)
+        Single Fps { get { return fps; } }
+
+        public FrameGauge ()
         {
-            this.platform = platform;
+            sampleSpan = TimeSpan.FromSeconds(1);
+            fps = 0;
+            sampleFrames = 0;
+            stopwatch = Stopwatch.StartNew();
         }
 
-        public T Load<T> (String assetId)
-            where T
-            : class, IAsset
+        public void LogRender()
         {
-            using (Stream stream = platform.Resources.GetFileStream (assetId))
+            sampleFrames++;
+        }
+
+        public void Update (Platform platform, AppTime time)
+        {
+            if (stopwatch.Elapsed > sampleSpan)
             {
-                using (var channel = new SerialisationChannel<BinaryStreamSerialiser> (stream, ChannelMode.Read))
-                {
-                    ProcessFileHeader (channel);
-                    T asset = channel.Read <T> ();
-                    return asset;
-                }
+                // Update FPS value and start next sampling period.
+                fps = (Single)sampleFrames / (Single)stopwatch.Elapsed.TotalSeconds;
+
+                stopwatch.Reset();
+                stopwatch.Start();
+                sampleFrames = 0;
             }
-        }
-
-        void ProcessFileHeader (ISerialisationChannel sc)
-        {
-            // file type
-            Byte f0 = sc.Read <Byte> ();
-            Byte f1 = sc.Read <Byte> ();
-            Byte f2 = sc.Read <Byte> ();
-
-            if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'A')
-                throw new Exception ("Asset file doesn't have the platformrect header.");
-
-            // file version
-            Byte fileVersion = sc.Read <Byte> ();
-
-            if (fileVersion != 0)
-                throw new Exception ("Only file format version 0 is supported.");
-
-            // platform index
-            Byte platformIndex = sc.Read <Byte> ();
         }
     }
 }

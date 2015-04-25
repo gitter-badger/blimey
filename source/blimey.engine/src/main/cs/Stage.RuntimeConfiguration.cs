@@ -35,55 +35,49 @@
 namespace Blimey.Engine
 {
     using System;
+    using System.Runtime.InteropServices;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
     using System.Linq;
-    using Abacus.SinglePrecision;
     using Fudge;
     using global::Blimey.Platform;
     using global::Blimey.Asset;
+    using Abacus.SinglePrecision;
+    using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class Quad
+    public partial class Stage
     {
-        public VertexPositionTextureColour[] v;
-        public Texture tex;
-        public BlendMode blend = BlendMode.Default;
-
-        public Quad()
+        /// <summary>
+        /// Provides a means to change some scene configuration settings at runtime,
+        /// not all settings can be changed at runtime.
+        /// </summary>
+        public class RuntimeConfiguration
         {
-            v = new VertexPositionTextureColour[4];
-            v[0].Position.Z = 0.5f;
-            v[1].Position.Z = 0.5f;
-            v[2].Position.Z = 0.5f;
-            v[3].Position.Z = 0.5f;
-        }
+            readonly Stage parent = null;
 
-        public Quad(Quad from)
-        {
-            v = new VertexPositionTextureColour[4];
-
-            for (int i = 0; i < 4; ++i)
+            internal RuntimeConfiguration (Stage parent)
             {
-                v[i] = from.v[i];
+                this.parent = parent;
             }
-            tex = from.tex;
-            blend = from.blend;
-        }
 
-        public static Quad Create (Vector3 a, Vector3 b, Vector3 c, Vector3 d, Rgba32 colour)
-        {
-            var q = new Quad ();
-            q.v = new [] {
-                new VertexPositionTextureColour (a, new Vector2 (0, 0), colour),
-                new VertexPositionTextureColour (b, new Vector2 (0, 1), colour),
-                new VertexPositionTextureColour (c, new Vector2 (1, 1), colour),
-                new VertexPositionTextureColour (d, new Vector2 (1, 0), colour),
-            };
-            q.blend = BlendMode.Default;
-            q.tex = null;
+            public void ChangeBackgroundColour (Rgba32? colour)
+            {
+                parent.configuration.BackgroundColour = colour;
+            }
 
-            return q;
+            /*
+            public void SetRenderPassCameraToDefault(string renderPass)
+            {
+                parent.cameraManager.SetDefaultCamera (renderPass);
+            }
+
+            public void SetRenderPassCameraTo (string renderPass, Entity go)
+            {
+                parent.cameraManager.SetMainCamera(renderPass, go);
+            }*/
         }
     }
 }

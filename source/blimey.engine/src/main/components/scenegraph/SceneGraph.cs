@@ -42,38 +42,114 @@ namespace Blimey.Engine
     using global::Blimey.Platform;
     using global::Blimey.Asset;
 
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+    // Blimey Engine's Scene Graph
     //
-    // SCENE RENDERER
-    //
-    sealed class SceneRenderer
+    public sealed class SceneGraph
+        : Engine.Component
     {
         readonly Platform platform;
 
-        internal SceneRenderer(Platform platform)
+        // Data structure that stores all entities in the scene graph.
+        // Currently this is just as list, it should really be an oct-tree.
+        readonly List<Entity> data = new List<Entity> ();
+
+        // Cache
+        readonly Dictionary<String, Entity> defaultCameras = new Dictionary<String,Entity>();
+        readonly Dictionary<String, Entity> activeCameras = new Dictionary<String,Entity>();
+
+
+        internal SceneGraph (Platform platform)
         {
             this.platform = platform;
+
+            //this.CreateDefaultCameras (config.RenderPasses);
+            //this.CreateDefaultLights ();
         }
 
-        internal void Render(Scene scene)
+        public List<Entity> GetAllEntities ()
         {
-            // Clear the background colour if the scene settings want us to.
-            if (scene.Configuration.BackgroundColour.HasValue)
-            {
-                this.platform.Graphics.ClearColourBuffer(scene.Configuration.BackgroundColour.Value);
-            }
+            return data;
+        }
 
-            foreach (var renderPass in scene.Configuration.RenderPasses)
+        public Entity CreateEntity (String zName)
+        {
+            var go = new Entity (parent, zName);
+            data.Add (go);
+            return go;
+        }
+
+        public void DestroyEntity (Entity zEntity)
+        {
+            zEntity.Shutdown ();
+            foreach (Entity e in zEntity.Children) {
+                this.DestroyStageObject (e);
+                data.Remove (e);
+            }
+            data.Remove (zEntity);
+
+            zEntity = null;
+        }
+
+        public Entity GetRenderPassCamera (String renderPass)
+        {
+            return GetActiveCamera (renderPass).Parent;
+        }
+
+        internal CameraTrait GetActiveCamera (String renderPass)
+        {
+            return activeCameras[renderPass].GetTrait<CameraTrait> ();
+        }
+
+
+        internal void SetDefaultCamera(String renderPass)
+        {
+            activeCameras[renderPass] = defaultCameras[renderPass];
+        }
+
+        internal void SetMainCamera (String renderPass, Entity e)
+        {
+            activeCameras[renderPass] = e;
+        }
+
+        void CreateDefaultCameras (List<RenderPass> renderPasses)
+        {
+            foreach (var renderPass in renderPasses)
             {
-                this.RenderPass(scene, renderPass);
+                var go = CreateSceneObject("RenderPass(" + renderPass + ") Provided Camera");
+
+                var cam = go.AddTrait<CameraTrait>();
+
+                if (renderPass.Configuration.CameraProjectionType == CameraProjectionType.Perspective)
+                {
+                    go.Transform.Position = new Vector3(2, 1, 5);
+
+                    var orbit = go.AddTrait<OrbitAroundSubjectTrait>();
+                    orbit.CameraSubject = Transform.Origin;
+
+                    var lookAtSub = go.AddTrait<LookAtSubjectTrait>();
+                    lookAtSub.Subject = Transform.Origin;
+                }
+                else
+                {
+                    cam.Projection = CameraProjectionType.Orthographic;
+
+                    go.Transform.Position = new Vector3(0, 0, 1f);
+                    go.Transform.LookAt(Vector3.Zero);
+                }
+
+
+                _defaultCameras.Add(renderPass.Name, go);
+                _activeCameras.Add(renderPass.Name, go);
             }
         }
 
-        Dictionary<Material, List<MeshRendererTrait>> GroupMeshRenderersByMaterials(Scene scene, String pass)
+        Dictionary<Material, List<MeshRendererTrait>> GroupMeshRenderersByMaterials (String pass)
         {
             // TODO, make this fast
             var grouping = new Dictionary<Material, List<MeshRendererTrait>> ();
-            foreach (var go in scene.SceneGraph.GetAllObjects())
+            foreach (var go in GetAllObjects())
             {
                 if (!go.Enabled) continue;
 
@@ -96,15 +172,10 @@ namespace Blimey.Engine
             return grouping;
         }
 
-        void RenderPass(Scene scene, RenderPass pass)
+        public virtual void Render (Platform platform, RenderPass pass)
         {
-            // #0: Apply this pass' clear settings.
-            if (pass.Configuration.ClearDepthBuffer)
-            {
-                this.platform.Graphics.ClearDepthBuffer();
-            }
-
-            var cam = scene.CameraManager.GetActiveCamera(pass.Name);
+/*
+            var cam = GetActiveCamera (pass.Name);
 
             // todo, move this to the update loop
             // #1 Render everything in the scene graph that has a material on this pass.
@@ -136,7 +207,7 @@ namespace Blimey.Engine
                     material.Shader.SetVariable ("View", cam.ViewMatrix44);
                     material.Shader.SetVariable ("Projection", cam.ProjectionMatrix44);
 
-                    /*
+
                     // The lighing manager right now just grabs the shader and tries to set
                     // all variables to do with lighting, without even knowing if the shader
                     // supports lighting.
@@ -163,7 +234,7 @@ namespace Blimey.Engine
                     material.SetColour( "DirectionalLight2SpecularColour", LightingManager.dirLight2SpecularColour );
 
                     material.SetVector3( "EyePosition", zView.Translation );
-                    */
+
                     // Get the material's shader and apply all of the settings
                     // it needs.
                 }
@@ -207,19 +278,7 @@ namespace Blimey.Engine
                     }
                 }
             }
-
-            using (new ProfilingTimer (t => FrameStats.Add ("PrimitiveRendererTime", t)))
-            {
-                // #2: Render all primitives that are associated with this pass.
-                scene.Engine.PrimitiveRenderer.Render (this.platform.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
-
-            }
-            using (new ProfilingTimer (t => FrameStats.Add ("DebugRendererTime", t)))
-            {
-                // #3: Render all debug primitives that are associated with this pass.
-                scene.Engine.DebugRenderer.Render (this.platform.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
-            }
+            */
         }
-
     }
 }

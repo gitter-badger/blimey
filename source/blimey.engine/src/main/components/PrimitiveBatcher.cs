@@ -44,18 +44,99 @@ namespace Blimey.Engine
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
     //
-    // PRIMITIVE RENDERER
+    // PRIMITIVE BATCHER
     //
-    // This renders primitivesto screen space.
-    //
-    public sealed class PrimitiveRenderer
+    public sealed partial class PrimitiveBatcher
+        : Engine.Component
     {
+        public sealed class Triple
+        {
+            public VertexPositionTextureColour[] v = new VertexPositionTextureColour[3];
+            public Texture tex = null;
+            public BlendMode blend = BlendMode.Default;
+
+            public Triple()
+            {
+                v[0].Colour = v[1].Colour = v[2].Colour = Rgba32.White;
+                v[0].Position.Z = 0.5f;
+                v[1].Position.Z = 0.5f;
+                v[2].Position.Z = 0.5f;
+            }
+
+            public static Triple Create (Vector3 a, Vector3 b, Vector3 c, Rgba32 colour)
+            {
+                var t = new Triple ();
+                t.v = new [] {
+                    new VertexPositionTextureColour (a, new Vector2 (0, 0), colour),
+                    new VertexPositionTextureColour (b, new Vector2 (0, 1), colour),
+                    new VertexPositionTextureColour (c, new Vector2 (1, 0), colour),
+                };
+                t.blend = BlendMode.Default;
+                t.tex = null;
+
+                return t;
+            }
+        }
+
+
+        // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
+
+        public sealed class Quad
+        {
+            public VertexPositionTextureColour[] v;
+            public Texture tex;
+            public BlendMode blend = BlendMode.Default;
+
+            public Quad()
+            {
+                v = new VertexPositionTextureColour[4];
+                v[0].Position.Z = 0.5f;
+                v[1].Position.Z = 0.5f;
+                v[2].Position.Z = 0.5f;
+                v[3].Position.Z = 0.5f;
+            }
+
+            public Quad(Quad from)
+            {
+                v = new VertexPositionTextureColour[4];
+
+                for (int i = 0; i < 4; ++i)
+                {
+                    v[i] = from.v[i];
+                }
+                tex = from.tex;
+                blend = from.blend;
+            }
+
+            public static Quad Create (Vector3 a, Vector3 b, Vector3 c, Vector3 d, Rgba32 colour)
+            {
+                var q = new Quad ();
+                q.v = new [] {
+                    new VertexPositionTextureColour (a, new Vector2 (0, 0), colour),
+                    new VertexPositionTextureColour (b, new Vector2 (0, 1), colour),
+                    new VertexPositionTextureColour (c, new Vector2 (1, 1), colour),
+                    new VertexPositionTextureColour (d, new Vector2 (1, 0), colour),
+                };
+                q.blend = BlendMode.Default;
+                q.tex = null;
+
+                return q;
+            }
+        }
+
+
+        // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
         enum Type
         {
             PRIM_LINES = 2,
             PRIM_TRIPLES = 3,
             PRIM_QUADS = 4,
         }
+
+
+        // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
         sealed class Batch
         {
@@ -65,10 +146,16 @@ namespace Blimey.Engine
             public VertexPositionTextureColour[] Buffer;
         }
 
+
+        // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
         const int VERT_BUFFER_SIZE = 4096;
         readonly Shader shader;
         readonly Dictionary <String, RenderPassState> passState = new Dictionary<String, RenderPassState> ();
         readonly int[] quadIndices = new int[VERT_BUFFER_SIZE * 3 / 2];
+
+
+        // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
         class RenderPassState
         {
@@ -83,11 +170,14 @@ namespace Blimey.Engine
             public Texture currentTexture = null;
         }
 
+
+        // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
+
         //
         // SETUP GRAPHICS
         // Sets up the transforms for the 2d render and setup the basic effect
         //
-        public PrimitiveRenderer (Platform platform)
+        public PrimitiveBatcher (Platform platform)
         {
             var shaderDecl =
                 new ShaderDeclaration {
@@ -234,28 +324,41 @@ void main()
             }
         }
 
-        internal void PostUpdate (AppTime appTime)
-        {
-            // make sure that everything gets removed.
-            foreach (var pass in passState.Keys)
-                if (passState[pass].nPrimsInBuffer > 0)
-                _enqueue_batch (pass);
-        }
-
-        internal void Render (Graphics zGfx, String pass, Matrix44 zView, Matrix44 zProjection)
+        public override void Render (Platform platform, String pass)
         {
             if (!passState.ContainsKey (pass))
                 return;
+
+            // TODO: No need to process camera settings each frame.
+
+            var camUp = Vector3.Up;
+            var camLook = Vector3.Backward;
+            Vector3 pos = Vector3.Position (0, 0, 1);
+            Vector3 target = pos + (camLook * FarPlaneDistance);
+            Matrix44 view = Matrix44.Identity;
+            Matrix44.CreateLookAt(ref pos, ref target, ref camUp, out view);
+
+            Single ortho_depth = 100f;
+            Single ortho_width = 1f;
+            Single ortho_height = 1f;
+            Single ortho_zoom = 1f;
+            Matrix44 projection = Matrix44.CreateOrthographicOffCenter(
+                -0.5f * ortho_width * ortho_zoom,  +0.5f * ortho_width * ortho_zoom,
+                -0.5f * ortho_height * ortho_zoom, +0.5f * ortho_height * ortho_zoom,
+                +0.5f * ortho_depth,  -0.5f * ortho_depth);
 
             zGfx.SetCullMode (CullMode.None);
             zGfx.SetActive ((VertexBuffer)null);
             zGfx.SetActive ((IndexBuffer)null);
             zGfx.SetActive ((Texture)null, 0);
-            shader.SetVariable ("View", zView);
-            shader.SetVariable ("Projection", zProjection);
+            shader.SetVariable ("View", view);
+            shader.SetVariable ("Projection", projection);
             zGfx.SetActive (shader, VertexPositionTextureColour.Default.VertexDeclaration);
 
-            _render_batch(zGfx, pass);
+            _render_batch (zGfx, pass);
+
+            if (passState[pass].nPrimsInBuffer > 0)
+                _enqueue_batch (pass);
         }
 
         void _render_batch (Graphics gfx, String pass)
@@ -281,7 +384,7 @@ void main()
 
                 Int32 n = batch.Buffer.Length;
 
-                FrameStats.Add ("DrawUserPrimitivesCount", 1);
+                DebugStats.Add ("DrawUserPrimitivesCount", 1);
                 switch(batch.Type.Value)
                 {
                     case Type.PRIM_QUADS:

@@ -44,48 +44,48 @@ namespace Blimey.Engine
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public static class DebugRendererExtensions
+    public static class DebugBatcherExtensions
     {
         public static void AddAxis (
-            this DebugRenderer debugRenderer,
+            this DebugBatcher debugBatcher,
             string renderPass, float size = 50f)
         {
             Rgba32 AxisColourX = Rgba32.Red;
             Rgba32 AxisColourY = Rgba32.Green;
             Rgba32 AxisColourZ = Rgba32.Blue;
 
-            debugRenderer.AddLine(
+            debugBatcher.AddLine(
                 renderPass,
                 new Vector3(-size, 0, 0),
                 new Vector3(0, 0, 0),
                 Rgba32.White);
 
-            debugRenderer.AddLine(
+            debugBatcher.AddLine(
                 renderPass,
                 new Vector3(0, -size, 0),
                 new Vector3(0, 0, 0),
                 Rgba32.White);
 
-            debugRenderer.AddLine(
+            debugBatcher.AddLine(
                 renderPass,
                 new Vector3(0, 0, -size),
                 new Vector3(0, 0, 0),
                 Rgba32.White);
 
 
-            debugRenderer.AddLine(
+            debugBatcher.AddLine(
                 renderPass,
                 new Vector3(0, 0, 0),
                 new Vector3(size, 0, 0),
                 AxisColourX);
 
-            debugRenderer.AddLine(
+            debugBatcher.AddLine(
                 renderPass,
                 new Vector3(0, 0, 0),
                 new Vector3(0, size, 0),
                 AxisColourY);
 
-            debugRenderer.AddLine(
+            debugBatcher.AddLine(
                 renderPass,
                 new Vector3(0, 0, 0),
                 new Vector3(0, 0, size),
@@ -93,7 +93,7 @@ namespace Blimey.Engine
         }
 
         public static void AddGrid(
-            this DebugRenderer debugRenderer,
+            this DebugBatcher debugBatcher,
             string renderPass, float gridSquareSize = 0.50f, int numberOfGridSquares = 10,
             bool ShowXZPlane = true, bool ShowXYPlane = false, bool ShowYZPlane = false)
         {
@@ -112,13 +112,13 @@ namespace Blimey.Engine
                     if (i * gridSquareSize - halfLength == 0)
                         continue;
 
-                    debugRenderer.AddLine(
+                    debugBatcher.AddLine(
                         renderPass,
                         new Vector3(-halfLength, 0.0f, i * gridSquareSize - halfLength),
                         new Vector3(halfLength, 0.0f, i * gridSquareSize - halfLength),
                         gridColour);
 
-                    debugRenderer.AddLine(
+                    debugBatcher.AddLine(
                         renderPass,
                         new Vector3(i * gridSquareSize - halfLength, 0.0f, -halfLength),
                         new Vector3(i * gridSquareSize - halfLength, 0.0f, halfLength),
@@ -133,13 +133,13 @@ namespace Blimey.Engine
                     if (i * gridSquareSize - halfLength == 0)
                         continue;
 
-                    debugRenderer.AddLine(
+                    debugBatcher.AddLine(
                         renderPass,
                         new Vector3(-halfLength, i * gridSquareSize - halfLength, 0f),
                         new Vector3(halfLength, i * gridSquareSize - halfLength, 0f),
                         gridColour);
 
-                    debugRenderer.AddLine(
+                    debugBatcher.AddLine(
                         renderPass,
                         new Vector3(i * gridSquareSize - halfLength, -halfLength, 0f),
                         new Vector3(i * gridSquareSize - halfLength, halfLength, 0f),
@@ -154,13 +154,13 @@ namespace Blimey.Engine
                     if (i * gridSquareSize - halfLength == 0)
                         continue;
 
-                    debugRenderer.AddLine(
+                    debugBatcher.AddLine(
                         renderPass,
                         new Vector3(0f, -halfLength, i * gridSquareSize - halfLength),
                         new Vector3(0f, halfLength, i * gridSquareSize - halfLength),
                         gridColour);
 
-                    debugRenderer.AddLine(
+                    debugBatcher.AddLine(
                         renderPass,
                         new Vector3(0f, i * gridSquareSize - halfLength, -halfLength),
                         new Vector3(0f, i * gridSquareSize - halfLength, halfLength),
@@ -176,13 +176,13 @@ namespace Blimey.Engine
                     if (i * gridSquareSize - halfLength == 0)
                         continue;
 
-                    debugRenderer.AddLine(
+                    debugBatcher.AddLine(
                         renderPass,
                         new Vector3(-halfLength, i * gridSquareSize - halfLength, 0f),
                         new Vector3(halfLength, i * gridSquareSize - halfLength, 0f),
                         gridColour);
 
-                    debugRenderer.AddLine(
+                    debugBatcher.AddLine(
                         renderPass,
                         new Vector3(i * gridSquareSize - halfLength, -halfLength, 0f),
                         new Vector3(i * gridSquareSize - halfLength, halfLength, 0f),
@@ -190,7 +190,7 @@ namespace Blimey.Engine
                 }
             }
 
-            AddAxis (debugRenderer, renderPass, numberOfGridSquares * gridSquareSize);
+            AddAxis (debugBatcher, renderPass, numberOfGridSquares * gridSquareSize);
         }
     }
 }

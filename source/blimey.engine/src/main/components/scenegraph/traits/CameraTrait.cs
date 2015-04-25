@@ -42,108 +42,83 @@ namespace Blimey.Engine
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class FreeCamTrait
+    public sealed class CameraTrait
         : Trait
     {
-        public struct FreeCamInputs
+        public CameraProjectionType Projection = CameraProjectionType.Perspective;
+
+        // perspective settings
+        public Single FieldOfView = Maths.ToRadians(45.0f);
+
+        // orthographic settings
+        public Single ortho_depth = 100f;
+        public Single ortho_width = 1f;
+        public Single ortho_height = 1f;
+        public Single ortho_zoom = 1f;
+
+        // clipping planes
+        public Single NearPlaneDistance = 1.0f;
+        public Single FarPlaneDistance = 10000.0f;
+
+        public Matrix44 ViewMatrix44 { get { return _view; } }
+
+        public Matrix44 ProjectionMatrix44 { get { return _projection; } }
+
+        Matrix44 _projection;
+        Matrix44 _view;
+
+        // return this cameras bounding frustum
+        //public BoundingFrustum BoundingFrustum { get { return new BoundingFrustum (ViewMatrix44 * ProjectionMatrix44); } }
+
+        public bool TempWORKOUTANICERWAY = false;
+
+        // Allows the game component to update itself.
+        public override void OnUpdate (AppTime time)
         {
-            public Vector3 mTranslation;
-            public Vector3 mRotation;
-            public float mTranslationSpeed; //in range 0-1
-            public float mRotationSpeedScale;
-            public bool mFixUp;
-        }
+            var camUp = this.Parent.Transform.Up;
 
-        float localPitch;
-        float localYaw;
-        float localRoll;
+            var camLook = this.Parent.Transform.Forward;
 
-        Vector3 oldPosition = Vector3.Zero;
+            Vector3 pos = this.Parent.Transform.Position;
+            Vector3 target = pos + (camLook * FarPlaneDistance);
 
-        // inputs that come from the controller
-        FreeCamInputs mInputs;
+            Matrix44.CreateLookAt(
+                ref pos,
+                ref target,
+                ref camUp,
+                out _view);
 
-        // fre cam settings
-        float mTranslationSpeedStandard = 10.0f;
-        float mTranslationSpeedMaximum = 100.0f;
-        float mRotationSpeed = 45.0f; //30 degrees per second
+            Single width = (Single) this.Platform.Status.Width;
+            Single height = (Single)this.Platform.Status.Height;
 
-        public void WorkOutInputs()
-        {
-            var input = new FreeCamInputs();
-
-            var xbox = this.Parent.Owner.Platform.Input.Xbox360Gamepad;
-            var keyboard = this.Parent.Owner.Platform.Input.Keyboard;
-
-            input.mTranslation = new Vector3(
-                xbox.Thumbsticks.Left.X,
-                0.0f,
-                -xbox.Thumbsticks.Left.Y
-                );
-
-            input.mRotation = new Vector3(
-                -xbox.Thumbsticks.Right.Y,
-                -xbox.Thumbsticks.Right.X,
-                0.0f
-                );
-
-            input.mTranslationSpeed = xbox.Triggers.Right;
-
-            input.mRotationSpeedScale = 1.0f;
-
-            input.mFixUp = keyboard.IsCharacterKeyUp('u');
-            SetInputs(input);
-        }
-
-        public void SetInputs(FreeCamInputs zIn) { mInputs = zIn; }
-
-
-        public void Reset()
-        {
-            //need to change this to that these values tie in with whatever the camera was looking at before
-            localPitch=0.0f;
-            localYaw = 0.0f;
-            localRoll = 0.0f;
-            oldPosition = Vector3.Zero;
-        }
-
-        public override void OnUpdate(AppTime time)
-        {
-            WorkOutInputs();
-
-            float translationSpeed = mTranslationSpeedStandard
-                + mInputs.mTranslationSpeed *
-                (mTranslationSpeedMaximum - mTranslationSpeedStandard);
-
-            Vector3 translation = mInputs.mTranslation * translationSpeed * time.Delta;
-
-            Vector3 rotation =
-                mInputs.mRotation *
-                Maths.ToRadians(mRotationSpeed) *
-                mInputs.mRotationSpeedScale * time.Delta;
-
-            localPitch += rotation.X;
-            localYaw += rotation.Y;
-            localRoll += rotation.Z;
-
-            Quaternion rotationFromInputs = Quaternion.CreateFromYawPitchRoll(localYaw, localPitch, localRoll);
-
-            Quaternion currentOri = this.Parent.Transform.Rotation;
-
-            this.Parent.Transform.Rotation = Quaternion.Multiply(currentOri, rotationFromInputs);
-
-            float yTranslation = translation.Y;
-            translation.Y = 0.0f;
-
-            this.Parent.Transform.Position +=
-                oldPosition +
-                Vector3.Transform(translation, this.Parent.Transform.Rotation) +
-                new Vector3(0.0f, yTranslation, 0.0f);
-
-            //focusDistance = 3.0f;
-
-            //update the old position for next time
-            oldPosition = this.Parent.Transform.Position;
+            if (Projection == CameraProjectionType.Orthographic)
+            {
+                if(TempWORKOUTANICERWAY)
+                {
+                    _projection =
+                        Matrix44.CreateOrthographic(
+                            width / SpriteTrait.SpriteConfiguration.Default.SpriteSpaceScale,
+                            height / SpriteTrait.SpriteConfiguration.Default.SpriteSpaceScale,
+                            1, -1);
+                }
+                else
+                {
+                    _projection =
+                        Matrix44.CreateOrthographicOffCenter(
+                          -0.5f * ortho_width * ortho_zoom,  +0.5f * ortho_width * ortho_zoom,
+                          -0.5f * ortho_height * ortho_zoom, +0.5f * ortho_height * ortho_zoom,
+                          +0.5f * ortho_depth,  -0.5f * ortho_depth);
+                }
+            }
+            else
+            {
+                _projection =
+                    Matrix44.CreatePerspectiveFieldOfView (
+                        FieldOfView,
+                        width / height, // aspect ratio
+                        NearPlaneDistance,
+                        FarPlaneDistance);
+            }
         }
     }
 }

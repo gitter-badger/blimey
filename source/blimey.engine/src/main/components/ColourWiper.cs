@@ -48,67 +48,28 @@ namespace Blimey.Engine
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    internal class SceneManager
+    public class ColourWiper
+        : Engine.Component
     {
-        Platform platform;
-        Engine engine;
+        readonly Single colourChangeTime = 5.0f;
 
-        readonly SceneRenderer sceneRenderer;
-        Scene activeScene = null;
-        Scene nextScene = null;
+        Rgba32 randomColour = Rgba32.CornflowerBlue;
+        Single colourChangeTimer = 0.0f;
 
-        public Scene ActiveState { get { return activeScene; } }
-
-        public SceneManager (Platform platform, Engine engine, Scene startScene)
+        public override void Update (Platform platform, AppTime time)
         {
-            this.platform = platform;
-            this.engine = engine;
-            nextScene = startScene;
-            sceneRenderer = new SceneRenderer(platform);
+            colourChangeTimer += time.Delta;
 
+            if (colourChangeTimer > colourChangeTime)
+            {
+                colourChangeTimer = 0.0f;
+                randomColour = RandomGenerator.Default.GetRandomColour();
+            }
         }
 
-        public Boolean Update(AppTime time)
+        public override void Render (Platform platform, RenderPass pass)
         {
-            // If the active state returns a game state other than itself then we need to shut
-            // it down and start the returned state.  If a game state returns null then we need to
-            // shut the platform down.
-
-            //quitting the game
-            if (nextScene == null)
-            {
-                activeScene.Uninitilise ();
-                activeScene = null;
-                return true;
-            }
-
-            if (nextScene != activeScene && activeScene != null)
-            {
-                activeScene.Uninitilise ();
-                activeScene = null;
-                GC.Collect ();
-                return false;
-            }
-
-            if (nextScene != activeScene)
-            {
-                activeScene = nextScene;
-                activeScene.Initialize (platform, engine);
-            }
-
-            nextScene = activeScene.RunUpdate (time);
-
-            return false;
-        }
-
-        public void Render()
-        {
-            this.platform.Graphics.Reset ();
-
-            if (activeScene != null && activeScene.Active)
-            {
-                sceneRenderer.Render (activeScene);
-            }
+            platform.Graphics.ClearColourBuffer (randomColour);
         }
     }
 }

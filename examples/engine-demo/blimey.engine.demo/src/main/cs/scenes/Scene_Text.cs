@@ -55,8 +55,12 @@ namespace EngineDemo
         readonly Dictionary <SpriteFontKerningPair, Int32> kerning =
             new Dictionary<SpriteFontKerningPair, Int32> ();
 
-        public SpriteFontData (String bmFontFile)
+        public static SpriteFontData Load (String bmFontFile)
         {
+            //while (true)
+            {
+                ;//if (regex match )
+            }
         }
         /*
         #fontFace="Arial" #fontSize=50

@@ -63,7 +63,8 @@ namespace Blimey.Engine
     /// more lines than are allowed in the Reach profile, it will break them up into multiple draw
     /// calls to make sure the game continues to work for any game.
     /// </remarks>
-    public sealed class DebugRenderer
+    public sealed class DebugBatcher
+        : Engine.Component
     {
         Shader debugShader;
 
@@ -103,7 +104,7 @@ namespace Blimey.Engine
         const int sphereLineCount = (sphereResolution + 1) * 3;
         Vector3[] unitSphere;
 
-        internal DebugRenderer (Platform platform)
+        internal DebugBatcher (Platform platform)
         {
             InitializeSphere();
             debugShader = CreateShader (platform);
@@ -139,10 +140,35 @@ namespace Blimey.Engine
             }
         }
 
-        internal void Render(Graphics zGfx, string pass, Matrix44 zView, Matrix44 zProjection)
+        internal void Render(Platform platform, RenderPass pass)
         {
             if (!activeShapes.ContainsKey(pass))
                 return;
+
+            var camUp = Vector3.Up;
+            var camLook = Vector3.Backward;
+            Vector3 pos = Vector3.Position (0, 0, 1);
+            Vector3 target = pos + (camLook * FarPlaneDistance);
+            Matrix44 view = Matrix44.Identity;
+            Matrix44.CreateLookAt(ref pos, ref target, ref camUp, out view);
+
+            Single ortho_depth = 100f;
+            Single ortho_width = 1f;
+            Single ortho_height = 1f;
+            Single ortho_zoom = 1f;
+            Matrix44 projection = Matrix44.CreateOrthographicOffCenter(
+                -0.5f * ortho_width * ortho_zoom,  +0.5f * ortho_width * ortho_zoom,
+                -0.5f * ortho_height * ortho_zoom, +0.5f * ortho_height * ortho_zoom,
+                +0.5f * ortho_depth,  -0.5f * ortho_depth);
+
+            zGfx.SetCullMode (CullMode.None);
+            zGfx.SetActive ((VertexBuffer)null);
+            zGfx.SetActive ((IndexBuffer)null);
+            zGfx.SetActive ((Texture)null, 0);
+            shader.SetVariable ("View", view);
+            shader.SetVariable ("Projection", projection);
+            zGfx.SetActive (shader, VertexPositionTextureColour.Default.VertexDeclaration);
+
 
             var shapesForThisPass = this.activeShapes[pass];
 
@@ -198,7 +224,7 @@ namespace Blimey.Engine
                     // Figure out how many lines we're going to draw
                     int linesToDraw = Math.Min (lineCount, 65535);
 
-                    FrameStats.Add ("DrawUserPrimitivesCount", 1);
+                    DebugStats.Add ("DrawUserPrimitivesCount", 1);
                     zGfx.DrawUserPrimitives (PrimitiveType.LineList, verts, vertexOffset, linesToDraw);
 
                     // Move our vertex offset ahead based on the lines we drew

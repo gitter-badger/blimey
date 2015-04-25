@@ -48,153 +48,89 @@ namespace Blimey.Engine
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class Entity
+    /// <summary>
+    ///
+    /// </summary>
+    public abstract partial class Stage
     {
-        List<Trait> behaviours = new List<Trait> ();
-        Transform location = new Transform ();
-        String name = "SceneObject";
-        readonly Scene containedBy;
-        Boolean enabled = false;
+        // ======================== //
+        // Consumers must implement //
+        // ======================== //
 
-        public Scene Owner { get { return containedBy; } }
+        public abstract void Start ();
 
-        // Used to define where in the game platform's hierarchy this
-        // game object exists.
-        public Transform Transform { get { return location; } }
 
-        // The name of the this game object, defaults to "SceneObject"
-        // can be set upon creation or changed at anytime.  Only real
-        // use is to doing lazy searches of the hierachy by name
-        // and also making the hierachy look neat.
-        public string Name { get { return name; } set { name = value; } }
+        // If the this returns a function for creating a new state then we need to shut
+        // it down and start the returned state.
 
-        // Defines whether or not the SceneObject's behaviours should be updated
-        // and rendered.
-        public Boolean Enabled
+        //  If a game state returns null then we need to
+        // shut the platform down.
+
+        public abstract Func<Stage> Update (AppTime time);
+
+        public abstract void Shutdown ();
+
+
+        // ========== //
+        // Stage Data //
+        // ========== //
+
+        Platform platform = null;
+        Engine engine = null;
+
+        Boolean isRunning = false;
+        Boolean firstUpdate = true;
+
+        readonly Configuration configuration = null;
+        readonly RuntimeConfiguration runtimeConfiguration = null;
+
+        // ======================= //
+        // Functions for consumers //
+        // ======================= //
+        public Platform Platform { get { return platform; } }
+        public Engine Engine { get { return engine; } }
+
+        public Boolean Active { get { return isRunning;} }
+        public Configuration Config { get { return configuration; } }
+        public RuntimeConfiguration RuntimeConfig { get { return runtimeConfiguration; } }
+
+        protected Stage (Configuration configuration = null)
         {
-            get
-            {
-                return enabled;
-            }
-            set
-            {
-                if( enabled == value )
-                    return;
-
-                Boolean changeFlag = false;
-
-                changeFlag = true;
-                enabled = value;
-
-                if( changeFlag )
-                {
-                    foreach (var behaviour in behaviours)
-                    {
-                        if(enabled)
-                            behaviour.OnEnable();
-                        else
-                            behaviour.OnDisable();
-                    }
-                }
-            }
-        }
-
-
-        internal List<Entity> Children {
-            get {
-                List<Entity> kids = new List<Entity> ();
-                foreach (Entity go in containedBy.SceneGraph.GetAllObjects ()) {
-                    if (go.Transform.Parent == this.Transform)
-                        kids.Add (go);
-                }
-                return kids;
-            }
-        }
-
-
-        public T AddTrait<T> ()
-            where T : Trait, new()
-        {
-            if( this.GetTrait<T>() != null )
-                throw new Exception("This Trait already exists on the gameobject");
-
-            T behaviour = new T ();
-            behaviours.Add (behaviour);
-            behaviour.Initilise(containedBy.Platform, containedBy.Engine, this);
-
-            behaviour.OnAwake();
-
-            if( this.Enabled )
-                behaviour.OnEnable();
+            if (configuration == null)
+                this.configuration = Configuration.CreateDefault ();
             else
-                behaviour.OnDisable();
+                this.configuration = configuration;
 
-            return behaviour;
-
+            this.runtimeConfiguration = new RuntimeConfiguration (this);
         }
 
-        public void RemoveTrait<T> ()
-            where T : Trait
+        // ===================== //
+        // Blimey internal calls //
+        // ===================== //
+
+        internal void Initialize (Platform platform, Engine engine)
         {
-            Trait trait = behaviours.Find(x => x is T );
-            trait.OnDestroy();
-            behaviours.Remove(trait);
+            this.platform = platform;
+            this.engine = engine;
+            this.Start();
         }
 
-        public T GetTrait<T> ()
-            where T : Trait
+        internal Func<Stage> RunUpdate (AppTime time)
         {
-            foreach (Trait b in behaviours) {
-                if (b as T != null)
-                    return b as T;
-            }
-
-            return null;
-        }
-
-        public T GetTraitInChildren<T> ()
-            where T : Trait
-        {
-            foreach (var go in Children) {
-                foreach (var b in go.behaviours) {
-                    if (b as T != null)
-                        return b as T;
-                }
-            }
-
-            return null;
-        }
-
-        internal Entity (Scene containedBy, string name)
-        {
-            this.Name = name;
-
-            this.containedBy = containedBy;
-
-            // directly set _enabled to false, don't want any callbacks yet
-            this.enabled = true;
-
-        }
-
-        internal void Update(AppTime time)
-        {
-            if (!Enabled)
-                return;
-
-            foreach (Trait behaviour in behaviours) {
-                if (behaviour.Active)
-                {
-                    behaviour.OnUpdate(time);
-                }
-            }
-        }
-
-        internal void Shutdown ()
-        {
-            foreach (var behaviour in behaviours)
+            if (this.firstUpdate)
             {
-                behaviour.OnDestroy ();
+                this.firstUpdate = false;
+                this.isRunning = true;
             }
+
+            var ret = this.Update(time);
+            return ret;
+        }
+
+        internal void RunShutdown ()
+        {
+            this.Shutdown ();
+            this.isRunning = false;
         }
     }
 }

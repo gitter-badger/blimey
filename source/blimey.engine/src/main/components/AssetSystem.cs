@@ -35,35 +35,62 @@
 namespace Blimey.Engine
 {
     using System;
+    using System.Runtime.InteropServices;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
     using Fudge;
     using global::Blimey.Platform;
     using global::Blimey.Asset;
     using Abacus.SinglePrecision;
+    using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class DebugRendererTrait
-        : Trait
+    public sealed class AssetSystem
+        : Engine.Component
     {
-        public Rgba32 Colour { get; set; }
-        public String RenderPass { get; set; }
+        readonly Platform platform;
 
-        public DebugRendererTrait ()
+        internal AssetSystem (Platform platform)
         {
-            this.Colour = Rgba32.Red;
-            this.RenderPass = "Debug";
+            this.platform = platform;
         }
 
-        public override void OnUpdate (AppTime time)
+        public T Load<T> (String assetId)
+            where T
+            : class, IAsset
         {
-            BoundingBox b;
+            using (Stream stream = platform.Resources.GetFileStream (assetId))
+            {
+                using (var channel = new SerialisationChannel<BinaryStreamSerialiser> (stream, ChannelMode.Read))
+                {
+                    ProcessFileHeader (channel);
+                    T asset = channel.Read <T> ();
+                    return asset;
+                }
+            }
+        }
 
-            //fuck
-            //this.Parent.Transform.Position
-            b.Min = this.Parent.Transform.Location.Translation - (this.Parent.Transform.Scale / 2f);
-            b.Max = this.Parent.Transform.Location.Translation + (this.Parent.Transform.Scale / 2f);
+        void ProcessFileHeader (ISerialisationChannel sc)
+        {
+            // file type
+            Byte f0 = sc.Read <Byte> ();
+            Byte f1 = sc.Read <Byte> ();
+            Byte f2 = sc.Read <Byte> ();
 
-            this.Parent.Owner.Engine.DebugRenderer.AddBoundingBox (RenderPass, b, Colour);
+            if (f0 != (Byte) 'C' || f1 != (Byte) 'B' || f2 != (Byte) 'A')
+                throw new Exception ("Asset file doesn't have the platformrect header.");
+
+            // file version
+            Byte fileVersion = sc.Read <Byte> ();
+
+            if (fileVersion != 0)
+                throw new Exception ("Only file format version 0 is supported.");
+
+            // platform index
+            Byte platformIndex = sc.Read <Byte> ();
         }
     }
 }

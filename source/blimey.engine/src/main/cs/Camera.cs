@@ -35,60 +35,140 @@
 namespace Blimey.Engine
 {
     using System;
+    using System.Runtime.InteropServices;
+    using System.Globalization;
+    using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
-    using Abacus.SinglePrecision;
     using Fudge;
     using global::Blimey.Platform;
     using global::Blimey.Asset;
+    using Abacus.SinglePrecision;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class ParticlePrimitive
+    public class OrthographicCamera: Camera
     {
-        public Vector2 vecLocation;
-        public Vector2 vecVelocity;
+        public Single Depth;
+        public Single Width;
+        public Single Height;
+        public Single Zoom;
 
-        public float fGravity;
-        public float fRadialAccel;
-        public float fTangentialAccel;
-
-        public float fSpin;
-        public float fSpinDelta;
-
-        public float fSize;
-        public float fSizeDelta;
-
-        public Rgba32 colColour;      // + alpha
-        public Rgba32 colColourStart;
-        public Rgba32 colColourEnd;
-
-        public float fAge;
-        public float fTerminalAge;
-
-        public ParticlePrimitive(){}
-
-
-        public ParticlePrimitive (ParticlePrimitive o)
+        public OrthographicCamera ()
+            : base (Camera.ProjectionType.Orthographic)
         {
-            this.vecLocation = o.vecLocation;
-            this.vecVelocity = o.vecVelocity;
+            this.Depth = 100f;
+            this.Width = 1f;
+            this.Height = 1f;
+            this.Zoom = 1f;
+        }
 
-            this.fGravity = o.fGravity;
-            this.fRadialAccel = o.fRadialAccel;
-            this.fTangentialAccel = o.fTangentialAccel;
-            this.fSpin = o.fSpin;
-            this.fSpinDelta = o.fSpinDelta;
+        public override Matrix44 Projection
+        {
+            get
+            {
+                bool TempWORKOUTANICERWAY = false;
+                if(TempWORKOUTANICERWAY)
+                {
+                    throw new NotImplementedException ();
+                    /*
+                    Single width = (Single) this.Platform.Status.Width;
+                    Single height = (Single)this.Platform.Status.Height;
+                    _projection =
+                        Matrix44.CreateOrthographic(
+                            width / SpriteTrait.SpriteConfiguration.Default.SpriteSpaceScale,
+                            height / SpriteTrait.SpriteConfiguration.Default.SpriteSpaceScale,
+                            1, -1);
+                    */
+                }
+                else
+                {
+                    return Matrix44.CreateOrthographicOffCenter(
+                          -0.5f * Width * Zoom,  +0.5f * Width * Zoom,
+                          -0.5f * Height * Zoom, +0.5f * Height * Zoom,
+                          +0.5f * Depth,  -0.5f * Depth);
+                }
+            }
+        }
+    }
 
-            this.fSize = o.fSize;
-            this.fSizeDelta = o.fSizeDelta;
+    public class PerspectiveCamera: Camera
+    {
+        public Single FieldOfView { get; private set; }
+        public Single NearPlaneDistance { get; private set; }
+        public Single FarPlaneDistance { get; private set; }
 
-            this.colColour = o.colColour;     // + alpha
-            this.colColourStart = o.colColourStart;
-            this.colColourEnd = o.colColourEnd;
+        public PerspectiveCamera ()
+            : base (Camera.ProjectionType.Perspective)
+        {
+            this.FieldOfView = Maths.ToRadians(45.0f);
+            this.NearPlaneDistance = NearPlaneDistance = 1.0f;
+            this.FarPlaneDistance = FarPlaneDistance = 10000.0f;
+        }
 
-            this.fAge = o.fAge;
-            this.fTerminalAge = o.fTerminalAge;
+        public override Matrix44 Projection
+        {
+            get
+            {
+                var camUp = this.Parent.Transform.Up;
+
+                var camLook = this.Parent.Transform.Forward;
+
+                Vector3 pos = this.Parent.Transform.Position;
+                Vector3 target = pos + (camLook * FarPlaneDistance);
+
+                Matrix44.CreateLookAt(
+                    ref pos,
+                    ref target,
+                    ref camUp,
+                    out _view);
+
+                return _view;
+            }
+        }
+    }
+
+    public abstract class Camera
+    {
+        public enum ProjectionType
+        {
+            Perspective,
+            Orthographic,
+        }
+
+        public Vector3 Position { get; set; }
+        public Quaternion Orientation { get; set; }
+
+        public BoundingFrustum BoundingFrustum { get { throw new NotImplementedException (); } }
+
+        readonly ProjectionType projectionType;
+
+        public Camera (ProjectionType projectionType)
+        {
+            this.projectionType = projectionType;
+        }
+
+        public ProjectionType ProjType { get { return projectionType; } }
+
+        // clipping planes
+
+        public abstract Matrix44 Projection { get; }
+
+        public Matrix44 View
+        {
+            get
+            {
+                Single width = (Single) this.Platform.Status.Width;
+                Single height = (Single)this.Platform.Status.Height;
+
+                _projection =
+                    Matrix44.CreatePerspectiveFieldOfView (
+                        FieldOfView,
+                        width / height, // aspect ratio
+                        NearPlaneDistance,
+                        FarPlaneDistance);
+            }
         }
     }
 }

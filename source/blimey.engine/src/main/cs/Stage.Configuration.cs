@@ -36,66 +36,88 @@ namespace Blimey.Engine
 {
     using System;
     using System.Runtime.InteropServices;
-    using System.Globalization;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
     using Fudge;
     using global::Blimey.Platform;
     using global::Blimey.Asset;
     using Abacus.SinglePrecision;
+    using Oats;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    internal static class FrameStats
+    public partial class Stage
     {
-        static readonly Dictionary <String, Double> timers = new Dictionary <String, Double> ();
-
-        static FrameStats ()
+        public class Configuration
         {
-            Reset ();
-        }
+            readonly Dictionary<String, RenderPass> renderPasses = new Dictionary<String, RenderPass> ();
 
-        public static void Add (String key, Double delta)
-        {
-            if (!timers.ContainsKey (key))
-                timers [key] = 0;
-            timers [key] += delta;
-        }
+            public Rgba32? BackgroundColour { get; set; }
 
-        public static void Reset ()
-        {
-            timers.Clear ();
-        }
+            public List<RenderPass> RenderPasses { get { return renderPasses.Values.ToList (); } }
 
-        static Int32 counter = 0;
-        public static void SlowLog ()
-        {
-            if (counter++ % 30 != 0)
-                return;
-            // Right now we are targeting 30 FPS
-            // and have allocated 10ms to update
-            // and 10ms to render per frame which
-            // gives us plenty of headroom.
+            internal Configuration() {}
 
-            foreach (var key in timers.Keys)
+            public void AddRenderPass (String passName, RenderPass.Configuration renderPassConfig)
             {
-                if (key == "DrawUserPrimitivesCount" || key == "DrawIndexedPrimitivesCount")
+                if (renderPasses.ContainsKey (passName))
                 {
-                    if (timers [key] > 50)
-                        Console.WriteLine (String.Format ("{0} -> {1}", key, timers [key]));
+                    throw new Exception("Can't have render passes with the same name");
                 }
-                else if (key == "RenderTime" || key == "UpdateTime")
+
+                var renderPass = new RenderPass ()
                 {
-                    if (timers [key] > 10)
-                        Console.WriteLine (String.Format ("{0} -> {1:0.##}ms", key, timers [key]));
-                }
-                else
+                    Name = passName,
+                    Config = renderPassConfig
+                };
+
+                renderPasses.Add(passName, renderPass);
+            }
+
+            public void RemoveRenderPass (String passName)
+            {
+                renderPasses.Remove (passName);
+            }
+
+            public RenderPass GetRenderPass(String passName)
+            {
+                if (!renderPasses.ContainsKey (passName))
                 {
-                    if (timers [key] > 0.5)
-                        Console.WriteLine (String.Format ("{0} -> {1:0.##}ms", key, timers [key]));
+                    return null;
                 }
+
+                return renderPasses[passName];
+            }
+
+            public static Configuration CreateVanilla ()
+            {
+                var ss = new Configuration ();
+                return ss;
+            }
+
+            public static Configuration CreateDefault ()
+            {
+                var ss = new Configuration ();
+
+                ss.BackgroundColour = Rgba32.Crimson;
+
+                var debugPassSettings = new RenderPass.Configuration ();
+                debugPassSettings.ClearDepthBuffer = true;
+                ss.AddRenderPass ("Debug", debugPassSettings);
+
+                var defaultPassSettings = new RenderPass.Configuration ();
+                defaultPassSettings.EnableDefaultLighting = true;
+                defaultPassSettings.FogEnabled = true;
+                ss.AddRenderPass ("Default", defaultPassSettings);
+
+                var guiPassSettings = new RenderPass.Configuration ();
+                guiPassSettings.ClearDepthBuffer = true;
+                //guiPassSettings.Camera.ProjectionType = CameraProjectionType.Orthographic;
+                ss.AddRenderPass ("Gui", guiPassSettings);
+
+                return ss;
             }
         }
     }

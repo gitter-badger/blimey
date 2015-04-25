@@ -48,33 +48,186 @@ namespace Blimey.Engine
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class Engine
+    public sealed partial class Engine
     {
-        public Engine (Platform platform)
+        // STAGE MANAGEMENT
+        Stage activeStage = null;
+        Func<Stage> createNextStageFn = null;
+
+        // ENGINE COMPONENTS
+
+/*
+        FrameGauge frameGauge;
+        ColourWiper colourWiper;
+        AssetSystem assets;
+        InputEventSystem inputEventSystem;
+        DebugBatcher debugBatcher;
+        PrimitiveBatcher primitiveBatcher;
+        SceneGraph sceneGraph;
+
+        public FrameGauge FrameGauge { get { return frameGauge; } }
+        public ColourWiper ColourWiper { get { return colourWiper; } }
+        public AssetSystem Assets { get { return assets; } }
+        public InputEventSystem Touch { get { return inputEventSystem; } }
+        public DebugBatcher DebugBatcher { get { return debugBatcher; } }
+        public PrimitiveBatcher PrimitiveBatcher { get { return primitiveBatcher; } }
+        public SceneGraph SceneGraph { get { return sceneGraph; } }
+*/
+        readonly Func<Stage> createStartStageFn = null;
+        readonly List<Component> components = new List <Component> ();
+
+        public Engine (Func<Stage> createStartStageFn)
         {
-            this.Assets = new Assets (platform);
-            this.InputEventSystem = new InputEventSystem (platform);
-            this.DebugRenderer = new DebugRenderer (platform);
-            this.PrimitiveRenderer = new PrimitiveRenderer (platform);
+            this.createStartStageFn = createStartStageFn;
         }
 
-        public Assets Assets { get; private set; }
-
-        public InputEventSystem InputEventSystem { get; private set; }
-
-        public DebugRenderer DebugRenderer { get; private set; }
-
-        public PrimitiveRenderer PrimitiveRenderer { get; private set; }
-
-        internal void PreUpdate (AppTime time)
+        internal void Start (Platform platform)
         {
-            this.DebugRenderer.Update(time);
-            this.InputEventSystem.Update(time);
+            activeStage = null;
+            createNextStageFn = createStartStageFn;
+/*
+            frameGauge =           components.AddEx (new FrameGauge ());
+            colourWiper =          components.AddEx (new ColourWiper ());
+            assets =               components.AddEx (new AssetSystem (platform));
+            inputEventSystem =     components.AddEx (new InputEventSystem (platform));
+            debugBatcher =         components.AddEx (new DebugBatcher (platform));
+            primitiveBatcher =     components.AddEx (new PrimitiveBatcher (platform));
+            sceneGraph =           components.AddEx (new SceneGraph (platform));
+*/
         }
 
-        internal void PostUpdate(AppTime time)
+        internal void Stop (Platform platform)
         {
-            this.PrimitiveRenderer.PostUpdate (time);
+            createNextStageFn = null;
+
+            components.Clear ();
+/*
+            frameGauge = null;
+            colourWiper = null;
+            assets = null;
+            inputEventSystem = null;
+            debugBatcher = null;
+            primitiveBatcher = null;
+            sceneGraph = null;
+*/
+        }
+
+        internal Boolean Update (Platform platform, AppTime time)
+        {
+            /*
+            // If quitting the game
+            if (createNextStageFn == null)
+            {
+                activeStage.Uninitilise ();
+                activeStage = null;
+                return true;
+            }
+
+            // Shutdown active stage, we'll init a new one
+            // next update.
+            if (nextStage != activeStage && activeStage != null)
+            {
+                activeStage.Uninitilise ();
+                activeStage = null;
+                GC.Collect ();
+                return false;
+            }
+
+            if (nextStage != activeStage)
+            {
+                activeStage = nextStage;
+                activeStage.Initialize (platform, engine);
+            }
+
+            if (activeStage == null)
+            {
+                return;
+            }
+
+            nextStage = activeStage.RunUpdate (time);
+
+
+
+            frameStats.SlowLog ();
+            frameStats.Reset ();
+
+            using (new ProfilingTimer (t => frameStats.Add ("UpdateTime", t)))
+            {
+                foreach (var component in components)
+                {
+                    using (new ProfilingTimer (t => frameStats.Add (component.Name + " UpdateTime", t)))
+                    {
+                        component.Update (platform, time);
+                    }
+                }
+
+                fps.Update (time);
+                frameBuffer.Update (time);
+
+                debugBatcher.Update (time);
+                inputEventSystem.Update (time);
+
+                val x = sceneGraph.Update (time);
+
+                primitiveBatcher.PostUpdate (time);
+
+                return x;
+            }
+            */
+            return false;
+        }
+
+        internal void Render (Platform platform)
+        {
+            /*
+            if (activeStage == null) return;
+
+            using (new ProfilingTimer (t => FrameStats.Add ("RenderTime", t)))
+            {
+                fps.LogRender ();
+                frameBuffer.Clear ();
+
+                // Clear the background colour if the scene settings want us to.
+                if (scene.Configuration.BackgroundColour.HasValue)
+                {
+                    platform.Graphics.ClearColourBuffer (scene.Configuration.BackgroundColour.Value);
+                }
+
+                platform.Graphics.Reset ();
+
+                if (activeStage != null && activeStage.Active)
+                {
+                    sceneRenderer.Render (activeStage);
+                }
+
+                foreach (var renderPass in scene.Configuration.RenderPasses)
+                {
+                    // #0: Apply this pass' clear settings.
+                    if (pass.Configuration.ClearDepthBuffer)
+                    {
+                        this.platform.Graphics.ClearDepthBuffer ();
+                    }
+
+                    // #0: Render the scene graph.
+                    using (new ProfilingTimer (t => FrameStats.Add ("StageGraphRenderTime", t)))
+                    {
+                        StageManager.Render (this.platform.Graphics, pass.Name);
+                    }
+
+                    using (new ProfilingTimer (t => FrameStats.Add ("PrimitiveRenderTime", t)))
+                    {
+                        // #2: Render all primitives that are associated with this pass.
+                        PrimitivBatcher.Render (this.platform.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
+                    }
+
+                    using (new ProfilingTimer (t => FrameStats.Add ("DebugRenderTime", t)))
+                    {
+                        // #3: Render all debug primitives that are associated with this pass.
+                        DebugBatcher.Render (this.platform.Graphics, pass.Name, cam.ViewMatrix44, cam.ProjectionMatrix44);
+                    }
+                }
+            }
+            */
         }
     }
 }

@@ -34,77 +34,17 @@
 
 namespace Blimey.Engine
 {
-    using System;
-    using System.Runtime.InteropServices;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using Fudge;
-    using global::Blimey.Platform;
-    using global::Blimey.Asset;
-    using Abacus.SinglePrecision;
-    using Oats;
+    using Blimey.Platform;
 
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
-
-    public class CameraManager
+    public partial class Engine
     {
-        public Entity GetRenderPassCamera (String renderPass)
+        public abstract class Component
         {
-            return GetActiveCamera(renderPass).Parent;
-        }
+            protected Component () {}
 
-        internal CameraTrait GetActiveCamera(String RenderPass)
-        {
-            return _activeCameras[RenderPass].GetTrait<CameraTrait> ();
-        }
+            public virtual void Update (Platform platform, AppTime time) {}
 
-        readonly Dictionary<String, Entity> _defaultCameras = new Dictionary<String,Entity>();
-        readonly Dictionary<String, Entity> _activeCameras = new Dictionary<String,Entity>();
-
-        internal void SetDefaultCamera(String RenderPass)
-        {
-            _activeCameras[RenderPass] = _defaultCameras[RenderPass];
-        }
-
-        internal void SetMainCamera (String RenderPass, Entity go)
-        {
-            _activeCameras[RenderPass] = go;
-        }
-
-        internal CameraManager (Scene scene)
-        {
-            var settings = scene.Configuration;
-
-            foreach (var renderPass in settings.RenderPasses)
-            {
-                var go = scene.SceneGraph.CreateSceneObject("RenderPass(" + renderPass + ") Provided Camera");
-
-                var cam = go.AddTrait<CameraTrait>();
-
-                if (renderPass.Configuration.CameraProjectionType == CameraProjectionType.Perspective)
-                {
-                    go.Transform.Position = new Vector3(2, 1, 5);
-
-                    var orbit = go.AddTrait<OrbitAroundSubjectTrait>();
-                    orbit.CameraSubject = Transform.Origin;
-
-                    var lookAtSub = go.AddTrait<LookAtSubjectTrait>();
-                    lookAtSub.Subject = Transform.Origin;
-                }
-                else
-                {
-                    cam.Projection = CameraProjectionType.Orthographic;
-
-                    go.Transform.Position = new Vector3(0, 0, 1f);
-                    go.Transform.LookAt(Vector3.Zero);
-                }
-
-
-                _defaultCameras.Add(renderPass.Name, go);
-                _activeCameras.Add(renderPass.Name, go);
-            }
+            public virtual void Render (Platform platform, RenderPass pass, Camera cam) {}
         }
     }
 }

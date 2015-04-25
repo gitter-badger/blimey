@@ -51,6 +51,7 @@ namespace Blimey.Engine
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
     public class InputEventSystem
+        : Engine.Component
     {
         MultiTouchController controller;
 

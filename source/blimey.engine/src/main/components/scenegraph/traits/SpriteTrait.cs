@@ -287,7 +287,7 @@ namespace Blimey.Engine
                 c = this.Parent.Transform.LocalPosition + c;
                 d = this.Parent.Transform.LocalPosition + d;
 
-                this.Engine.DebugRenderer.AddQuad(
+                this.Engine.DebugBatcher.AddQuad(
                     this.DebugRender,
                     a,
                     b,

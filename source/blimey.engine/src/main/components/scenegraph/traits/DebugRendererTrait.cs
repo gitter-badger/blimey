@@ -35,41 +35,35 @@
 namespace Blimey.Engine
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Abacus.SinglePrecision;
     using Fudge;
     using global::Blimey.Platform;
     using global::Blimey.Asset;
+    using Abacus.SinglePrecision;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public sealed class Triple
+    public sealed class DebugRendererTrait
+        : Trait
     {
-        public VertexPositionTextureColour[] v = new VertexPositionTextureColour[3];
-        public Texture tex = null;
-        public BlendMode blend = BlendMode.Default;
+        public Rgba32 Colour { get; set; }
+        public String RenderPass { get; set; }
 
-        public Triple()
+        public DebugRendererTrait ()
         {
-            v[0].Colour = v[1].Colour = v[2].Colour = Rgba32.White;
-            v[0].Position.Z = 0.5f;
-            v[1].Position.Z = 0.5f;
-            v[2].Position.Z = 0.5f;
+            this.Colour = Rgba32.Red;
+            this.RenderPass = "Debug";
         }
 
-        public static Triple Create (Vector3 a, Vector3 b, Vector3 c, Rgba32 colour)
+        public override void OnUpdate (AppTime time)
         {
-            var t = new Triple ();
-            t.v = new [] {
-                new VertexPositionTextureColour (a, new Vector2 (0, 0), colour),
-                new VertexPositionTextureColour (b, new Vector2 (0, 1), colour),
-                new VertexPositionTextureColour (c, new Vector2 (1, 0), colour),
-            };
-            t.blend = BlendMode.Default;
-            t.tex = null;
+            BoundingBox b;
 
-            return t;
+            //fuck
+            //this.Parent.Transform.Position
+            b.Min = this.Parent.Transform.Location.Translation - (this.Parent.Transform.Scale / 2f);
+            b.Max = this.Parent.Transform.Location.Translation + (this.Parent.Transform.Scale / 2f);
+
+            this.Engine.DebugBatcher.AddBoundingBox (RenderPass, b, Colour);
         }
     }
 }

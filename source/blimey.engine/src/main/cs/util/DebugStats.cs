@@ -48,9 +48,55 @@ namespace Blimey.Engine
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public enum CameraProjectionType
+    internal static class DebugStats
     {
-        Perspective,
-        Orthographic,
+        static readonly Dictionary <String, Double> timers = new Dictionary <String, Double> ();
+
+        static DebugStats ()
+        {
+            Reset ();
+        }
+
+        public static void Add (String key, Double delta)
+        {
+            if (!timers.ContainsKey (key))
+                timers [key] = 0;
+            timers [key] += delta;
+        }
+
+        public static void Reset ()
+        {
+            timers.Clear ();
+        }
+
+        static Int32 counter = 0;
+        public static void SlowLog ()
+        {
+            if (counter++ % 30 != 0)
+                return;
+            // Right now we are targeting 30 FPS
+            // and have allocated 10ms to update
+            // and 10ms to render per frame which
+            // gives us plenty of headroom.
+
+            foreach (var key in timers.Keys)
+            {
+                if (key == "DrawUserPrimitivesCount" || key == "DrawIndexedPrimitivesCount")
+                {
+                    if (timers [key] > 50)
+                        Console.WriteLine (String.Format ("{0} -> {1}", key, timers [key]));
+                }
+                else if (key == "RenderTime" || key == "UpdateTime")
+                {
+                    if (timers [key] > 10)
+                        Console.WriteLine (String.Format ("{0} -> {1:0.##}ms", key, timers [key]));
+                }
+                else
+                {
+                    if (timers [key] > 0.5)
+                        Console.WriteLine (String.Format ("{0} -> {1:0.##}ms", key, timers [key]));
+                }
+            }
+        }
     }
 }

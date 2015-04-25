@@ -44,8 +44,7 @@ namespace EngineDemo
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────── //
 
-    public class Scene_MainMenu
-        : Scene
+    public class Act_MainMenu: Act
     {
         const Single scaleBig = 0.075f;
         const Single scaleSmall = 0.05f;
@@ -62,9 +61,9 @@ namespace EngineDemo
         static Int32 _selectedIndex = 0;
 
         List<Material> _menuItemMaterials = new List<Material>();
-        List<Entity> _menuSceneObjects = new List<Entity>();
+        List<Entity> _menuActObjects = new List<Entity>();
 
-        Scene _returnScene;
+        Act _returnAct;
 
         Triple q;
 
@@ -90,7 +89,7 @@ namespace EngineDemo
             q.v [2].Position.Y = 0.5f;
             q.v [2].UV = new Vector2 (0, 0);
 
-            _returnScene = this;
+            _returnAct = this;
 
             CommonDemoResources.Create (Platform, Engine);
 
@@ -125,14 +124,14 @@ namespace EngineDemo
             _menuItemMaterials.Add(so7.GetTrait<MeshRendererTrait>().Material);
             _menuItemMaterials.Add(so8.GetTrait<MeshRendererTrait>().Material);
 
-			_menuSceneObjects.Add(so1);
-			_menuSceneObjects.Add(so2);
-			_menuSceneObjects.Add(so3);
-			_menuSceneObjects.Add(so4);
-			_menuSceneObjects.Add(so5);
-			_menuSceneObjects.Add(so6);
-            _menuSceneObjects.Add(so7);
-            _menuSceneObjects.Add(so8);
+			_menuActObjects.Add(so1);
+			_menuActObjects.Add(so2);
+			_menuActObjects.Add(so3);
+			_menuActObjects.Add(so4);
+			_menuActObjects.Add(so5);
+			_menuActObjects.Add(so6);
+            _menuActObjects.Add(so7);
+            _menuActObjects.Add(so8);
 
             this.Engine.InputEventSystem.Tap += this.OnTap;
             this.Engine.InputEventSystem.Flick += this.OnFlick;
@@ -141,8 +140,8 @@ namespace EngineDemo
 
         public override void Shutdown ()
         {
-            _menuSceneObjects.Clear();
-            _menuSceneObjects = null;
+            _menuActObjects.Clear();
+            _menuActObjects = null;
             _menuItemMaterials = null;
             this.Engine.InputEventSystem.Tap -= this.OnTap;
             this.Engine.InputEventSystem.Flick -= this.OnFlick;
@@ -168,22 +167,22 @@ namespace EngineDemo
 
         void OnTap(Gesture gesture)
         {
-            _returnScene = GetSceneForCurrentSelection();
+            _returnAct = GetActForCurrentSelection();
         }
 
         void IncreaseSelected()
         {
             _selectedIndex++;
-            _selectedIndex = MathsUtils.Clamp(_selectedIndex, 0, _menuSceneObjects.Count - 1);
+            _selectedIndex = MathsUtils.Clamp(_selectedIndex, 0, _menuActObjects.Count - 1);
         }
 
         void DecreaseSelected()
         {
             _selectedIndex--;
-            _selectedIndex = MathsUtils.Clamp(_selectedIndex, 0, _menuSceneObjects.Count - 1);
+            _selectedIndex = MathsUtils.Clamp(_selectedIndex, 0, _menuActObjects.Count - 1);
         }
 
-        Scene CheckForMenuInput()
+        Act CheckForMenuInput()
         {
             if (_inputTimer == 0f)
             {
@@ -205,44 +204,44 @@ namespace EngineDemo
 				if (Platform.Input.GenericGamepad.Buttons.South == ButtonState.Pressed ||
                     Platform.Input.Keyboard.IsFunctionalKeyDown(FunctionalKey.Enter))
                 {
-                    return GetSceneForCurrentSelection();
+                    return GetActForCurrentSelection();
                 }
             }
 
-            return _returnScene;
+            return _returnAct;
 
         }
 
-        Scene GetSceneForCurrentSelection()
+        Act GetActForCurrentSelection()
         {
             if (_selectedIndex == 0)
-                return new Scene_Darius ();
+                return new Act_Darius ();
 
             if (_selectedIndex == 1)
-                return new Scene_Airports ();
+                return new Act_Airports ();
 
             if (_selectedIndex == 2)
-                return new Scene_Sprites ();
+                return new Act_Sprites ();
 
             if (_selectedIndex == 3)
-				return new Scene_Particles ();
+				return new Act_Particles ();
 
 			if (_selectedIndex == 4)
-				return new Scene_Text ();
+				return new Act_Text ();
 
 			if (_selectedIndex == 5)
-				return new Scene_Boids ();
+				return new Act_Boids ();
 
             if (_selectedIndex == 6)
-                return new Scene_Mushrooms ();
+                return new Act_Mushrooms ();
 
             if (_selectedIndex == 7)
-                return new Scene_Parallax ();
+                return new Act_Parallax ();
 
             return this;
         }
 
-        public override Scene Update(AppTime time)
+        public override Act Update (AppTime time)
         {
             this.Engine.DebugRenderer.AddGrid ("Debug");
 
@@ -253,15 +252,15 @@ namespace EngineDemo
             if (menuResult != this)
                 return menuResult;
 
-            for (int i = 0; i < _menuSceneObjects.Count; ++i)
+            for (int i = 0; i < _menuActObjects.Count; ++i)
             {
                 if( i == _selectedIndex )
                 {
-                    _menuSceneObjects[i].Transform.LocalScale = new Vector3(scaleBig, scaleBig, scaleBig);
+                    _menuActObjects[i].Transform.LocalScale = new Vector3(scaleBig, scaleBig, scaleBig);
                 }
                 else
                 {
-                    _menuSceneObjects[i].Transform.LocalScale = new Vector3(scaleSmall, scaleSmall, scaleSmall);
+                    _menuActObjects[i].Transform.LocalScale = new Vector3(scaleSmall, scaleSmall, scaleSmall);
                 }
             }
 
