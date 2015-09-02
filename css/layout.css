@@ -1,0 +1,45 @@
+/*** offset for the navbar ****************************************************/
+
+body {
+    padding-top: 66px;
+    background-color: #fff;
+}
+/*** nav **********************************************************************/
+
+.navbar {
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+}
+
+
+.hero-unit {
+    padding-top: 0px;
+    background: #333;
+    color:#969696;
+}
+.section > div {
+    padding-top: 20px;
+}
+
+.section > div.title {
+    color:#969696;
+    font-size:18pt;
+}
+
+
+/*** footer *******************************************************************/
+
+.footer {
+    background: #434639;
+    font-size:11pt;
+    color:#969696;
+}
+
+.footer p {
+    margin-bottom:10px;
+    text-align: center;
+}
+
+.starting {
+    width: 550px;
+}
